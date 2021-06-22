@@ -4,4 +4,10 @@ tags={
 	"History"
 }
 name="The Winter King"
-supported_version="1.3.1"
+supported_version="1.4.0"
+replace_path = "common/culture/cultures"
+replace_path = "common/religion/religions"
+replace_path = "history/characters"
+replace_path = "history/cultures"
+replace_path = "history/provinces"
+replace_path = "history/titles"

@@ -4,5 +4,11 @@ tags={
 	"History"
 }
 name="The Winter King"
-supported_version="1.3.1"
-path="C:/Users/Darren/Documents/Paradox Interactive/Crusader Kings III/mod/Britannia"
+replace_path="common/culture/cultures"
+replace_path="common/religion/religions"
+replace_path="history/characters"
+replace_path="history/cultures"
+replace_path="history/provinces"
+replace_path="history/titles"
+supported_version="1.4.0"
+path="mod/Britannia"
