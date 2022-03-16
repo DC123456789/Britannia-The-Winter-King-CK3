@@ -8,8 +8,6 @@
 	#ADD NICK "Pendragon"
 	dynasty = 1
 	religion = "briton_pagan"
-	dna = "biiek0cicc0"
-	properties = "ae0bbb000000"
 	martial = 11
 	diplomacy = 12
 	intrigue = 6
@@ -28,6 +26,7 @@
 	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
 	father = 1000	# Constantine
 	mother = 1003	# Anna
+	fertility = 0
 	427.5.10 = {
 		birth = "427.5.10"
 		effect = {
@@ -36,11 +35,15 @@
 		}
 	}
 	447.11.3 = {
-		add_prestige = 2300
-		add_piety = 150
+		effect = {
+			add_prestige = 2300
+			add_piety = 150
+		}
 	}
 	457.3.18 = {
-		add_gold = 155
+		effect = {
+			add_gold = 155
+		}
 		add_spouse = 11		# Queen Isabel
 		add_pressed_claim = e_britannia
 	}
@@ -49,7 +52,6 @@
 	}
 	479.5.1 = {
 		trait = pneumonic
-		fertility = 0
 	}
 	480.10.20 = {
 		death = {
@@ -62,8 +64,6 @@
 	# Arthur, book/legendary character
 	name = "Arthur"
 	dynasty = 1
-	dna = "baecgzjabae"
-	properties = "ge0jjj000000"
 	religion = "briton_pagan"
 	martial = 6
 	diplomacy = 9
@@ -87,10 +87,10 @@
 	trait = generous
 	trait = content
 	trait = education_martial_4
-	add_trait = "flat_terrain_leader"
+	trait = open_terrain_expert
 	trait = brother_of_mithra
 	
-	add_trait = inspiring_leader	# Add by Clay
+	# trait = inspiring_leader	# Add by Clay
 	trait = physique_good_2	# Add by Clay
 	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
 	trait = beauty_good_1	# Add by Clay
@@ -106,7 +106,6 @@
 		effect = {
 			add_character_flag = arthur
 		}
-		add_trait = forbid_marriage
 	}
 	470.3.21 = {
 		effect = {
@@ -119,67 +118,60 @@
 		}
 	}
 	475.1.1 = {
-		effect = {
-			add_friend = 21			# Sagramor
-		}
+		set_relation_friend = character:21 # Sagramor
 	}
 	479.7.5 = {
 		employer = 32
-		add_prestige = 550
+		give_council_position = councillor_marshal
 		effect = {
-			give_job_title = job_marshal
-			c_avalon = {
-				holder_scope = {
-					add_friend = ROOT
-				}
-			}
-			spawn_unit = {
-				earmark = arthur_warrior_band
-				province = 78				# Ynys Trebes
-				home = 1				# Durnovaria
-				owner = ROOT
-				leader = ROOT
-				troops = {
-					knights = {
-						50
-						50
-					}
-				}
-				attrition = 0.5
-			}
+			add_prestige = 550
+			set_relation_friend = character:2
+			# spawn_unit = {
+			# 	earmark = arthur_warrior_band
+			# 	province = 78				# Ynys Trebes
+			# 	home = 1				# Durnovaria
+			# 	owner = ROOT
+			# 	leader = ROOT
+			# 	troops = {
+			# 		knights = {
+			# 			50
+			# 			50
+			# 		}
+			# 	}
+			# 	attrition = 0.5
+			# }
 		}
 	}
 	480.10.20 = {
 		employer = 5
-		add_prestige = 600
 		give_nickname = nick_pendragon
 		add_pressed_claim = k_dumnonia
 		effect = {
+			add_prestige = 600
 			add_character_flag = returned
-			disband_event_forces = arthur_warrior_band
-			spawn_unit = {
-				earmark = arthur_warrior_band
-				province = 1				# Ynys Trebes
-				home = 1				# Durnovaria
-				owner = ROOT
-				leader = ROOT
-				troops = {
-					heavy_infantry = {
-						50
-						50
-					}
-				}
-				attrition = 0.5
-			}
+			# disband_event_forces = arthur_warrior_band
+			# spawn_unit = {
+			# 	earmark = arthur_warrior_band
+			# 	province = 1				# Ynys Trebes
+			# 	home = 1				# Durnovaria
+			# 	owner = ROOT
+			# 	leader = ROOT
+			# 	troops = {
+			# 		heavy_infantry = {
+			# 			50
+			# 			50
+			# 		}
+			# 	}
+			# 	attrition = 0.5
+			# }
 		}
 	}
-	480.12.5 = {
-		effect = {
-			give_minor_title = title_regent
-		}
-	}
+	# 480.12.5 = {
+	# 	effect = {
+	# 		give_minor_title = title_regent
+	# 	}
+	# }
 	481.4.1 = {
-		remove_trait = forbid_marriage
 		effect = {
 			set_relation_lover = character:26			# Guinevere			
 			remove_relation_lover = character:707			# Aileann	
@@ -188,7 +180,9 @@
 		add_spouse = 26		# Guinevere		
 	}
 	496.1.1 = {
-		add_prestige = 1500
+		effect = {
+			add_prestige = 1500
+		}
 	}
 	504.6.6 = {
 		add_trait = maimed
@@ -202,8 +196,6 @@
 	# Mordred (child), book/legendary character
 	name = "Mordred"
 	dynasty = 1
-	dna = "bmeib0fiab0"
-	properties = "fi0hakbcbb"
 	religion = "catholic"
 	martial = 11
 	diplomacy = 4
@@ -235,10 +227,10 @@
 		employer = 5
 	}
 	485.12.2 = {
-		guardian = 670		# Nabur
+		set_relation_guardian = character:670		# Nabur
 	}
 	486.10.1 = {
-		guardian = 1006		# Culhwch
+		set_relation_guardian = character:1006		# Culhwch
 	}
 	504.6.6 = {
 		death = {
@@ -252,8 +244,6 @@
 	# Mordred (father), book character
 	name = "Mordred"
 	dynasty = 1
-	dna = "bgiig0cbcc0"
-	properties = "kh0dckbebb"
 	religion = "catholic"
 	martial = 9
 	diplomacy = 7
@@ -273,7 +263,9 @@
 		add_spouse = 19		# Norwenna
 	}
 	479.6.23 = {
-		add_prestige = 520
+		effect = {
+			add_prestige = 520
+		}
 		death = {
 			death_reason = death_battle
 			killer = 80
@@ -285,8 +277,6 @@
 	# King Tewdric of Gwent										# KING, partly book character
 	name = "Tewdric"
 	dynasty = 5
-	dna = "afgdc0hjfc0"
-	properties = "al0bhc000000"
 	religion = "catholic"
 	martial = 8
 	diplomacy = 9
@@ -309,9 +299,11 @@
 	mother = 1520
 	445.2.3 = {
 		birth = "445.2.3"
-		add_gold = 240
-		add_piety = 175
-		add_prestige = 1350
+		effect = {
+			add_gold = 240
+			add_piety = 175
+			add_prestige = 1350
+		}
 		effect = {
 			add_character_flag = tewdric_of_gwent
 			save_global_event_target_as = tewdric_of_gwent
@@ -322,26 +314,16 @@
 	}
 	470.4.18 = {
 		effect = {
-			opinion = {
-				modifier = in_non_aggression_pact
-				years = 1000
-				who = 1				# Uther
-			}
+			# opinion = {
+			# 	modifier = in_non_aggression_pact
+			# 	years = 1000
+			# 	who = 1				# Uther
+			# }
 			#add_alliance = {
 			#	who = 1		# Uther		
 			#	years = 1000
 			#}
-			event_target:uther_pendragon = {
-				opinion = {
-					modifier = in_non_aggression_pact
-					years = 1000
-					who = 14
-				}
-				add_alliance = {
-					who = PREV
-					years = 1000
-				}
-			}
+			create_alliance = character:1
 		}
 	}
 	490.1.1 = {
@@ -358,8 +340,6 @@
 	female = yes
 	dynasty = 52
 	religion = "catholic"
-	dna = "dfala0bbab0"
-	properties = "ui0gdhbebb"
 	martial = 3
 	diplomacy = 8
 	intrigue = 3
@@ -393,8 +373,6 @@
 	# Lord Owain Marshal of Dumnonia, book/legendary character
 	name = "Owain"
 	dynasty = 38
-	dna = "adeae0ggaa0"
-	properties = "ki0ibkbcbb"
 	religion = "briton_pagan"
 	martial = 10
 	diplomacy = 5
@@ -424,10 +402,10 @@
 	}
 	477.1.1 = {
 		employer = 1
+		give_council_position = councillor_marshal
 		effect = {
-			give_job_title = job_marshal
+			add_prestige = 655
 		}
-		add_prestige = 655
 	}
 	480.12.5 = {
 		death = {
@@ -441,8 +419,6 @@
 	# Prince Gereint of the Stones, partly book character
 	name = "Gereint"
 	dynasty = 237
-	dna = "agmgi0aifb0"
-	properties = "gi0iekbebb"
 	religion = "briton_pagan"
 	martial = 7
 	diplomacy = 6
@@ -460,15 +436,14 @@
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
 	trait = content
-	give_nickname = "nick_lord_of_the_stones"
 	father = 1636
 	#mother=
 	442.12.27 = {
 		birth = "442.12.27"
+		give_nickname = nick_lord_of_the_stones
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 375
+			add_gold = 95
 		}
 		effect = {
 			add_character_flag = gereint_of_the_stones
@@ -482,17 +457,17 @@
 	}
 	479.1.1 = {
 		remove_claim = k_dumnonia
-		effect = {
-			liege = {
-				any_vassal = {
-					limit = {
-						has_minor_title = title_councilmember_king
-					}
-					remove_title = title_councilmember_king
-				}
-			}
-			give_minor_title = title_councilmember_king
-		}
+		# effect = {
+		# 	liege = {
+		# 		any_vassal = {
+		# 			limit = {
+		# 				has_minor_title = title_councilmember_king
+		# 			}
+		# 			remove_title = title_councilmember_king
+		# 		}
+		# 	}
+		# 	give_minor_title = title_councilmember_king
+		# }
 	}
 	486.8.12 = {
 		death = {
@@ -506,8 +481,6 @@
 	# Vassal King Melwas of the Belgae, book/legendary character
 	name = "Melwas"
 	dynasty = 25
-	dna = "dkakd0jidb0"
-	properties = "gd0fbkbcbb"
 	religion = "briton_pagan"
 	martial = 8
 	diplomacy = 7
@@ -527,8 +500,10 @@
 	#mother=
 	442.1.20 = {
 		birth = "442.1.20"
-		add_gold = 130
-		add_prestige = 105
+		effect = {
+			add_gold = 130
+			add_prestige = 105
+		}
 	}
 	462.2.10 = {
 		add_spouse = 247		# Lady Nwylle
@@ -545,8 +520,6 @@
 	# Prince Meurig Heir of Gwent, partly book character
 	name = "Meurig"
 	dynasty = 5
-	dna = "afgdc0hjfc0"
-	properties = "al0fhdbebb"
 	culture = "romanobritish"
 	religion = "catholic"
 	martial = 2
@@ -559,20 +532,22 @@
 	trait = education_learning_3
 	trait = lustful
 	#add_trait="weak"
-	add_trait = feeble	# Add by Clay
+	trait = physique_bad_1	# Add by Clay
 	trait = education_martial_prowess_1
 	
 	trait = ambitious
 	#add_trait=blood_magnus_maximus
-	add_trait = stiff	# Add by Clay
-	add_trait = short	# Add by Clay
+	# trait = stiff	# Add by Clay
+	# trait = short	# Add by Clay
 	trait =  intellect_good_1
 	father = 14
 	mother = 240
 	470.6.23 = {
 		birth = "470.6.23"
-		add_prestige = 170
-		guardian = 14
+		effect = {
+			add_prestige = 170
+		}
+		set_relation_guardian = character:14
 	}
 	512.4.2 = {
 		death = yes
@@ -583,8 +558,6 @@
 	# Lord Marcus of Magnis, Praetor of Glevensium (fictional)
 	name = "Marcus"
 	dynasty = 158
-	dna = "akccd0gbea0"
-	properties = "fm0ehkbebb"
 	martial = 10
 	diplomacy = 8
 	intrigue = 6
@@ -607,16 +580,13 @@
 	450.4.6 = {
 		birth = "450.4.6"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 270
+			add_gold = 100
 		}
 	}
 	478.10.12 = {
 		employer = 14
-		effect = {
-			give_job_title = job_chancellor
-		}
+		give_council_position = councillor_chancellor
 	}
 	510.11.2 = {
 		death = "510.11.2"
@@ -627,8 +597,6 @@
 	# Lord Gydion of Ratae (fictional)
 	name = "Gydion"
 	dynasty = 30
-	dna = "bdcbk0alfc0"
-	properties = "bh0ebkbebb"
 	martial = 7
 	diplomacy = 9
 	intrigue = 4
@@ -648,9 +616,8 @@
 	445.1.23 = {
 		birth = "445.1.23"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 240
+			add_gold = 60
 		}
 	}
 	500.4.17 = {
@@ -662,8 +629,6 @@
 	# Lord Cadog of Vectis (fictional)
 	name = "Cadog"
 	dynasty = 210
-	dna = "ajbmd0kkfa0"
-	properties = "ll0dckbebb"
 	martial = 7
 	diplomacy = 6
 	intrigue = 5
@@ -672,7 +637,7 @@
 	culture = "romanobritish"
 	religion = "briton_pagan"
 	trait = education_stewardship_3
-	add_trait = "arbitrary"
+	trait = arbitrary
 	trait = temperate
 	trait = brave
 	trait =  stubborn
@@ -683,9 +648,8 @@
 	449.10.3 = {
 		birth = "449.10.3"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 130
+			add_gold = 80
 		}
 	}
 	476.3.24 = {
@@ -717,7 +681,9 @@
 	#mother=
 	446.11.13 = {
 		birth = yes
-		add_prestige = 100
+		effect = {
+			add_prestige = 100
+		}
 	}
 	501.1.1 = {
 		death = yes
@@ -728,8 +694,6 @@
 	# Magistrate Cildydd of Aquae Sulis (book character)
 	name = "Cildydd"
 	dynasty = 220
-	dna = "aaiaf0cbcb0"
-	properties = "ra0lhkbebb"
 	martial = 2
 	diplomacy = 7
 	intrigue = 5
@@ -753,9 +717,8 @@
 		# employer=1
 		# give_job_title = job_treasurer
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 220
+			add_gold = 180
 		}
 	}
 	513.2.6 = {
@@ -767,8 +730,6 @@
 	# Bishop Bedwin of Lindinis, Chancellor of Dumnonia (book character)
 	name = "Bedwin"
 	#dynasty=54
-	dna = "bgmgi0joca0"
-	properties = "uf0dhfbebb"
 	martial = 8
 	diplomacy = 11
 	intrigue = 6
@@ -795,19 +756,17 @@
 	}
 	474.3.20 = {
 		employer = 1
+		give_council_position = councillor_chancellor
 		effect = {
-			give_job_title = job_chancellor
-			give_minor_title = title_appointed_regent
+			# give_minor_title = title_appointed_regent # No regencies
+			add_prestige = 490
+			add_piety = 550
 		}
-		add_prestige = 490
-		add_piety = 550
 	}
 	480.10.20 = {
 		employer = 5
-		effect = {
-			give_job_title = job_chancellor
-			give_minor_title = title_regent
-		}
+		give_council_position = councillor_chancellor
+		# give_minor_title = title_appointed_regent # No regencies
 	}
 	486.11.6 = {
 		add_trait = ill
@@ -839,9 +798,8 @@
 	456.10.11 = {
 		birth = yes
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 205
+			add_gold = 125
 		}
 	}
 	493.8.12 = {
@@ -871,7 +829,9 @@
 	#mother=
 	475.11.13 = {
 		birth = yes
-		add_prestige = 100
+		effect = {
+			add_prestige = 100
+		}
 	}
 	520.1.1 = {
 		death = yes
@@ -883,8 +843,6 @@
 	name = "Anna"
 	female = yes
 	dynasty = 1
-	dna = "djadc0giaa0"
-	properties = "gm0cdkbebb"
 	martial = 3
 	diplomacy = 7
 	intrigue = 4
@@ -903,7 +861,9 @@
 	mother = 8
 	452.11.20 = {
 		birth = "452.11.20"
-		add_prestige = 270
+		effect = {
+			add_prestige = 270
+		}
 	}
 	507.1.26 = {
 		death = "507.1.26"
@@ -914,8 +874,6 @@
 	# Bishop Sansum (book character)
 	name = "Sansum"
 	#dynasty=32
-	dna = "cmkld0mkcc0"
-	properties = "ia0chfbebb"
 	religion = "catholic"
 	martial = 4
 	diplomacy = 8
@@ -938,10 +896,10 @@
 	}
 	476.1.1 = {
 		employer = 14
-		add_prestige = 210
-		add_piety = 750
+		give_council_position = councillor_court_chaplain
 		effect = {
-			give_job_title = job_spiritual
+			add_prestige = 210
+			add_piety = 750
 		}
 	}
 	491.1.1 = {
@@ -957,8 +915,6 @@
 	name = "Morgause"
 	female = yes
 	dynasty = 1
-	dna = "daagh0cica0"
-	properties = "ke0cdkbebb"
 	martial = 6
 	diplomacy = 14
 	intrigue = 12
@@ -985,8 +941,6 @@
 	# Lord Decimus of Lindum, High Lord of The Wetlands (fictional)
 	name = "Decimus"
 	dynasty = 232
-	dna = "akgbh0dfcc0"
-	properties = "bl0eckbebb"
 	martial = 8
 	diplomacy = 9
 	intrigue = 6
@@ -1006,8 +960,10 @@
 	#mother=
 	437.9.23 = {
 		birth = "437.9.23"
-		add_gold = 190
-		add_prestige = 305
+		effect = {
+			add_gold = 190
+			add_prestige = 305
+		}
 	}
 	460.4.14 = {
 		add_spouse = 153		# Lady Margred
@@ -1039,7 +995,9 @@
 	#mother=
 	422.9.12 = {
 		birth = "422.9.12"
-		add_prestige = 230
+		effect = {
+			add_prestige = 230
+		}
 	}
 	469.6.10 = {
 		death = {
@@ -1053,8 +1011,6 @@
 	# Lord Gareth of Verulanium (fictional)
 	name = "Gareth"
 	dynasty = 36
-	dna = "agcfk0jdbb0"
-	properties = "gi0iakbebb"
 	martial = 6
 	diplomacy = 7
 	intrigue = 8
@@ -1067,7 +1023,7 @@
 	trait = brave
 	trait = education_martial_3
 	trait = hunter_2
-	add_trait = arbitrary
+	trait = arbitrary
 	trait = veteran
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
@@ -1076,9 +1032,8 @@
 	454.1.20 = {
 		birth = "454.1.20"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 140
+			add_gold = 105
 		}
 	}
 	495.5.16 = {
@@ -1092,8 +1047,6 @@
 	dynasty = 143
 	religion = "hellenic_pagan"
 	culture = "romanobritish"
-	dna = "agcfk0jdbb0"
-	properties = "gi0iakbebb"
 	martial = 7
 	diplomacy = 5
 	intrigue = 6
@@ -1112,7 +1065,9 @@
 	#mother=
 	445.9.21 = {
 		birth = "445.9.21"
-		add_gold = 210
+		effect = {
+			add_gold = 210
+		}
 	}
 	465.12.12 = {
 		add_spouse = 127		# Viola ad Vindocladia
@@ -1127,8 +1082,6 @@
 	name = "Einion"
 	dynasty = 30
 	religion = "catholic"
-	dna = "akbgi0jlac0"
-	properties = "gd0dfkbabb"
 	martial = 11
 	diplomacy = 7
 	intrigue = 6
@@ -1147,7 +1100,9 @@
 	#mother=
 	447.5.12 = {
 		birth = "447.5.12"
-		add_prestige = 210
+		effect = {
+			add_prestige = 210
+		}
 	}
 	510.4.10 = {
 		death = "510.4.10"
@@ -1165,7 +1120,7 @@
 	stewardship = 5
 	learning = 6
 	culture = "romanobritish"
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait = arrogant
 	trait = diligent
 	trait = education_martial_prowess_3
@@ -1178,9 +1133,8 @@
 	436.11.10 = {
 		birth = "436.11.10"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 165
+			add_gold = 125
 		}
 	}
 	469.5.24 = {
@@ -1196,8 +1150,6 @@
 	name = "Cai"
 	dynasty = 267
 	religion = "briton_pagan"
-	dna = "bkcie0ehfb0"
-	properties = "km0dhkbabb"
 	martial = 5
 	diplomacy = 9
 	intrigue = 7
@@ -1217,9 +1169,8 @@
 	445.12.13 = {
 		birth = "445.12.13"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 250
+			add_gold = 90
 		}
 	}
 	509.12.26 = {
@@ -1250,9 +1201,8 @@
 	443.10.11 = {
 		birth = "443.10.11"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 250
+			add_gold = 100
 		}
 	}
 	509.5.21 = {
@@ -1264,8 +1214,6 @@
 	# Lord Mared of Verlucio (fictional)
 	name = "Mared"
 	dynasty = 231
-	dna = "baame0acfb0"
-	properties = "kd0kckbcbb"
 	religion = "briton_pagan"
 	martial = 7
 	diplomacy = 3
@@ -1275,7 +1223,7 @@
 	culture = "romanobritish"
 	trait = patient
 	trait = arrogant
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait = education_martial_prowess_3
 	trait = brave
 	trait = education_martial_3
@@ -1287,9 +1235,8 @@
 	440.12.10 = {
 		birth = "440.12.10"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 265
+			add_gold = 80
 		}
 	}
 	503.5.16 = {
@@ -1384,9 +1331,8 @@
 	438.11.10 = {
 		birth = "438.11.10"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 125
+			add_gold = 120
 		}
 	}
 	490.1.1 = {
@@ -1465,13 +1411,15 @@
 	trait = education_intrigue_1
 	trait =  scholar
 	trait = tolerant
-	add_trait = "arbitrary"
+	trait = arbitrary
 	#father=
 	#mother=
 	429.6.20 = {
 		birth = "429.6.20"
-		add_gold = 105
-		add_prestige = 235
+		effect = {
+			add_gold = 105
+			add_prestige = 235
+		}
 	}
 	496.5.27 = {
 		death = "496.5.27"
@@ -1615,8 +1563,10 @@
 	#mother=
 	437.10.6 = {
 		birth = "437.10.6"
-		add_prestige = 230
-		add_piety = 200
+		effect = {
+			add_prestige = 230
+			add_piety = 200
+		}
 	}
 	499.10.10 = {
 		death = "499.10.10"
@@ -1765,7 +1715,9 @@
 	#mother=
 	450.3.21 = {
 		birth = "450.3.21"
-		add_prestige = 125
+		effect = {
+			add_prestige = 125
+		}
 	}
 	486.8.12 = {
 		death = "486.8.12"
@@ -1786,7 +1738,9 @@
 	# trait = tall # TODO: Height is now tied to genetics
 	487.3.21 = {
 		birth = yes
-		add_prestige = 200
+		effect = {
+			add_prestige = 200
+		}
 	}
 	501.6.7 = {
 		add_spouse = 295		# Morwenna
@@ -1940,14 +1894,14 @@
 	#mother=
 	346.3.26 = {
 		birth = "346.3.26"
-		add_prestige = 2030
 		give_nickname = nick_hen
 		effect = {
+			add_prestige = 2030
 			add_character_flag = coel_hen
 		}
-		create_bloodline = {
-			type = coel_hen
-		}
+		# create_bloodline = {
+		# 	type = coel_hen
+		# }
 	}
 	380.1.1 = {
 		add_spouse = 309		# Princess Ystradwal of Dumnonia
@@ -2031,7 +1985,6 @@
 	# Lady Veneva of Ebrauc (fictional)
 	name = "Veneva"
 	female = yes
-	dna = "dkhhe0kcgc0"
 	religion = "briton_pagan"
 	martial = 5
 	diplomacy = 5
@@ -2055,8 +2008,6 @@
 670 = {
 	# Magistrate Nabur of Durnovaria (book character)
 	name = "Nabur"
-	dna = "dficf0fdaa0"
-	properties = "ub0hhkbebb"
 	martial = 4
 	diplomacy = 7
 	intrigue = 10
@@ -2067,7 +2018,6 @@
 	trait =  scholar
 	trait = greedy
 	trait = deceitful
-	
 	trait =  education_diplomacy_3
 	trait = ambitious
 	#father=
@@ -2077,13 +2027,10 @@
 	}
 	478.4.10 = {
 		employer = 1
+		give_council_position = councillor_spymaster
 		effect = {
-			give_job_title = job_spymaster
-		}
-		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 105
+			add_gold = 120
 		}
 	}
 	486.10.1 = {
@@ -2099,8 +2046,6 @@
 	name = "Lucius"
 	dynasty = 324
 	religion = "briton_pagan"
-	dna = "djekg0ilfa0"
-	properties = "kg0ickbebb"
 	martial = 6
 	diplomacy = 5
 	intrigue = 7
@@ -2121,9 +2066,8 @@
 	448.12.3 = {
 		birth = "448.12.3"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 175
+			add_gold = 127
 		}
 	}
 	478.3.10 = {
@@ -2150,7 +2094,7 @@
 	trait = just
 	trait = temperate
 	trait = veteran
-	add_trait = "roman_trained"
+	trait = roman_trained
 	# add_trait="honorable"
 	trait = education_martial_prowess_3
 	trait = education_martial_3
@@ -2160,9 +2104,11 @@
 	#add_trait=blood_magnus_maximus
 	410.1.1 = {
 		birth = yes
-		add_gold = 110
-		add_piety = 105
-		add_prestige = 1260
+		effect = {
+			add_gold = 110
+			add_piety = 105
+			add_prestige = 1260
+		}
 	}
 	443.1.1 = {
 		add_spouse = 1520
@@ -2177,8 +2123,6 @@
 	name = "Constantine"
 	dynasty = 3
 	religion = "briton_pagan"
-	dna = "bgmie0kbcc0"
-	properties = "ki0ddkbabb"
 	martial = 8
 	diplomacy = 16
 	intrigue = 8
@@ -2197,7 +2141,9 @@
 	#mother=
 	419.9.15 = {
 		birth = yes
-		add_prestige = 1670
+		effect = {
+			add_prestige = 1670
+		}
 	}
 	422.1.25 = {
 		add_spouse = 1003		#Anna
@@ -2212,8 +2158,6 @@
 	name = "Constans"
 	dynasty = 1068
 	religion = "catholic"
-	dna = "bgmie0kbcc0"
-	properties = "ki0ddkbabb"
 	martial = 10
 	diplomacy = 15
 	intrigue = 10
@@ -2236,20 +2180,12 @@
 	}
 	410.1.1 = {
 		effect = {
-			if = {
-				limit = {
-					has_dlc = "Conclave"
-				}
-				give_minor_title = title_caesar
-			}
-			if = {
-				limit = {
-					NOT = {
-						has_dlc = "Conclave"
-					}
-				}
-				give_minor_title = title_caesar_non_voter
-			}
+			# character:1633 = {
+			# 	appoint_court_position = {
+			# 		recipient = character:1001
+			# 		court_position = caesar_court_position
+			# 	}
+			# }
 		}
 	}
 	411.1.9 = {
@@ -2264,8 +2200,6 @@
 	name = "Ambrosius"
 	dynasty = 1069
 	religion = "catholic"
-	dna = "bjeke0cbcc0"
-	properties = "ke0dhkbebb"
 	martial = 10
 	diplomacy = 13
 	intrigue = 8
@@ -2280,7 +2214,7 @@
 	trait = just
 	trait = family_first
 	trait = compassionate
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait = intellect_good_2
 	trait = physique_good_1
 	# trait = tall # TODO: Height is now tied to genetics
@@ -2307,8 +2241,6 @@
 	female = yes
 	dynasty = 224
 	religion = "hellenic_pagan"
-	dna = "ajffg0kgda0"
-	properties = "kk0ovhbebb"
 	martial = 5
 	diplomacy = 12
 	intrigue = 8
@@ -2326,7 +2258,9 @@
 	#mother=
 	405.8.25 = {
 		birth = "405.8.25"
-		add_prestige = 225
+		effect = {
+			add_prestige = 225
+		}
 	}
 	440.11.21 = {
 		death = "440.11.21"
@@ -2364,8 +2298,6 @@
 	name = "Culhwch"
 	dynasty = 1070
 	religion = "briton_pagan"
-	dna = "dcgia0caac0"
-	properties = "gh0ebkbebb"
 	martial = 8
 	diplomacy = 7
 	intrigue = 6
@@ -2385,7 +2317,9 @@
 	mother = 1726	# Goleuddydd
 	455.2.21 = {
 		birth = yes
-		add_prestige = 175
+		effect = {
+			add_prestige = 175
+		}
 	}
 	476.2.10 = {
 		give_nickname = nick_longspear
@@ -2416,17 +2350,19 @@
 	trait = education_martial_1
 	trait = loyal
 	trait = gregarious
-	add_trait = craven
+	trait = craven
 	453.8.20 = {
 		birth = yes
-		add_prestige = 175
+		effect = {
+			add_prestige = 175
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
 	}
 	496.3.3 = {
 		death = {
-			death_reason = death_rabble
+			death_reason = death_ripped_apart_limb_by_limb
 		}
 	}
 }
@@ -2450,14 +2386,16 @@
 	father = 1301
 	457.1.8 = {
 		birth = yes
-		add_prestige = 65
+		effect = {
+			add_prestige = 65
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
 	}
 	496.3.3 = {
 		death = {
-			death_reason = death_rabble
+			death_reason = death_ripped_apart_limb_by_limb
 		}
 	}
 }
@@ -2486,7 +2424,9 @@
 	trait =  beauty_good_2
 	459.8.13 = {
 		birth = yes
-		add_prestige = 200
+		effect = {
+			add_prestige = 200
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
@@ -2504,13 +2444,15 @@
 	name = "Balan"
 	dynasty = 147
 	religion = "briton_pagan"
-	culture = romanobritish
+	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	father = 99
 	mother = 253
 	454.10.8 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
@@ -2528,13 +2470,15 @@
 	name = "Balin"
 	dynasty = 147
 	religion = "briton_pagan"
-	culture = romanobritish
+	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	father = 99
 	mother = 253
 	456.1.12 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
@@ -2550,19 +2494,21 @@
 1013 = {
 	# Blaise (book/legendary character)
 	name = "Blaise"
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = "briton_pagan"
 	trait = education_martial_prowess_2
 	443.7.19 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
 	}
 	496.3.3 = {
 		death = {
-			death_reason = death_rabble
+			death_reason = death_ripped_apart_limb_by_limb
 		}
 	}
 }
@@ -2570,19 +2516,21 @@
 1014 = {
 	# St. Illtyd (partly book/legendary character)
 	name = "Illtyd"
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = "catholic"
 	dynasty = 1075
 	trait = education_martial_prowess_2
 	trait = scholar
-	add_trait = theologian
+	trait = theologian
 	trait = diligent
 	father = 1015
 	mother = 1016
 	learning = 12
 	452.9.13 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
@@ -2596,20 +2544,22 @@
 	# Eiddilig (book/legendary character)
 	name = "Eiddilig"
 	dynasty = 1076
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = "briton_pagan"
-	add_trait = dwarf
+	trait = dwarf
 	trait = deceitful
 	451.9.10 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
 	}
 	496.3.3 = {
 		death = {
-			death_reason = death_rabble
+			death_reason = death_ripped_apart_limb_by_limb
 		}
 	}
 }
@@ -2618,7 +2568,7 @@
 	# Sir Bedivere (book/legendary character)
 	name = "Bedwyr"
 	dynasty = 1076
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = "briton_pagan"
 	trait = education_martial_prowess_3
 	trait = veteran
@@ -2627,14 +2577,16 @@
 	trait =  beauty_good_2
 	451.9.10 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
 	}
 	496.3.3 = {
 		death = {
-			death_reason = death_rabble
+			death_reason = death_ripped_apart_limb_by_limb
 		}
 	}
 }
@@ -2642,7 +2594,7 @@
 1019 = {
 	# Morfans the Ugly (book character)
 	name = "Morfans"
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = "briton_pagan"
 	diplomacy = 8
 	martial = 10
@@ -2650,14 +2602,16 @@
 	trait = veteran
 	trait = education_martial_3
 	trait = loyal
-	add_trait = unsightly
+	trait = beauty_bad_3
 	trait = arrogant
 	trait = brave
 	trait = gregarious
 	trait = compassionate
 	451.9.10 = {
 		birth = yes
-		add_prestige = 50
+		effect = {
+			add_prestige = 50
+		}
 	}
 	479.7.5 = {
 		give_nickname = nick_the_ugly
@@ -2681,12 +2635,12 @@
 	intrigue = 5
 	learning = 8
 	stewardship = 5
-	culture = romanobritish
+	culture = "romanobritish"
 	religion = catholic
 	# trait = tall # TODO: Height is now tied to genetics
 	trait = physique_good_2
 	trait = intellect_good_2
-	add_trait = midas_touched
+	trait = education_stewardship_4
 	father = 1519
 	mother = 1516
 	402.4.6 = {
@@ -3016,7 +2970,6 @@
 	dynasty = 1059
 	religion = "briton_pagan"
 	culture = "romanobritish"
-	give_nickname = nick_the_great
 	#add_trait=blood_magnus_maximus
 	trait = education_martial_prowess_2
 	trait = beauty_good_1
@@ -3025,6 +2978,7 @@
 	mother = 1614
 	361.1.1 = {
 		birth = yes
+		give_nickname = nick_the_great
 	}
 	390.2.21 = {
 		death = "390.2.21"
@@ -3238,13 +3192,13 @@
 	trait = education_martial_4
 	martial = 13
 	trait = physique_good_3
-	add_trait = "giant"
+	trait = giant
 	trait = education_martial_prowess_3
-	give_nickname = "nick_the_giant"
 	# father=
 	# mother=
 	478.1.1 = {
 		birth = yes
+		give_nickname = "nick_the_giant"
 	}
 	537.1.1 = {
 		death = yes
@@ -3545,34 +3499,34 @@
 		birth = yes
 	}
 	407.1.1 = {
-		add_trait = northaugustus
-		effect = {
-			# Legio I Flavia Gallicana Constantia
-			79 = {
-				ROOT = {
-					spawn_legio_I_flavia_gallicana_constantia = yes
-				}
-			}
-			# Legio I Flavia Martis
-			521 = {
-				ROOT = {
-					spawn_legio_I_flavia_martis = yes
-				}
-			}
-			# Legio VI Gallicana
-			801 = {
-				ROOT = {
-					spawn_legio_VI_gallicana = yes
-				}
-			}
-		}
+		trait = northaugustus
+		# effect = {
+		# 	# Legio I Flavia Gallicana Constantia
+		# 	79 = {
+		# 		ROOT = {
+		# 			spawn_legio_I_flavia_gallicana_constantia = yes
+		# 		}
+		# 	}
+		# 	# Legio I Flavia Martis
+		# 	521 = {
+		# 		ROOT = {
+		# 			spawn_legio_I_flavia_martis = yes
+		# 		}
+		# 	}
+		# 	# Legio VI Gallicana
+		# 	801 = {
+		# 		ROOT = {
+		# 			spawn_legio_VI_gallicana = yes
+		# 		}
+		# 	}
+		# }
 	}
 	411.10.1 = {
-		effect = {
-			disband_event_forces = legio_one_constantia
-			disband_event_forces = legio_one_flavia
-			disband_event_forces = legio_six_gallicana
-		}
+		# effect = {
+		# 	disband_event_forces = legio_one_constantia
+		# 	disband_event_forces = legio_one_flavia
+		# 	disband_event_forces = legio_six_gallicana
+		# }
 		death = {
 			death_reason = death_execution
 			killer = 2275
@@ -3732,9 +3686,9 @@
 	father = 1002
 	#mother=
 	trait = shrewd
-	trait = trained_warrior
+	trait = education_martial_prowess_2
 	trait = roman_trained
-	trait = tough_soldier
+	trait = education_martial_2
 	460.1.1 = {
 		birth = yes
 	}
@@ -3901,7 +3855,7 @@
 	culture = "romanobritish"
 	#father=
 	#mother=
-	add_trait = northaugustus
+	trait = northaugustus
 	371.1.1 = {
 		birth = yes
 	}
@@ -3920,7 +3874,7 @@
 	culture = "romanobritish"
 	#father=
 	#mother=
-	add_trait = northaugustus
+	trait = northaugustus
 	376.1.1 = {
 		birth = yes
 	}
@@ -4498,7 +4452,7 @@
 		trait = devoted
 	}
 	432.1.1 = {
-		remove_trait = monk
+		remove_trait = devoted
 	}
 	493.3.17 = {
 		death = yes
@@ -4526,12 +4480,14 @@
 4012 = {
 	# Conchessa, mother of St. Patrick
 	name = "Conchessa"
-	dynasty = 0
 	culture = "romanobritish"
 	religion = "catholic"
 	female = yes
 	340.1.1 = {
 		birth = yes
+		effect = {
+			set_to_lowborn = yes
+		}
 	}
 	355.1.1 = {
 		add_spouse = 4011

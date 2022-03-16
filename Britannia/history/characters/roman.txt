@@ -6,8 +6,6 @@
 	# Agricola, Marshal of Gwent
 	name = "Agricola"
 	dynasty = 1069
-	dna = "dlcch0gefc0"
-	properties = "fl0fhkbebb"
 	martial = 11
 	diplomacy = 12
 	intrigue = 6
@@ -24,8 +22,8 @@
 	trait = brave
 	trait = education_martial_prowess_3
 	trait = education_martial_4
-	add_trait = "roman_trained"
-	add_trait = "flat_terrain_leader"
+	trait = roman_trained
+	trait = open_terrain_expert
 	#trait = heavy_infantry_leader
 	trait = brother_of_mithra
 	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
@@ -38,30 +36,13 @@
 	}
 	470.1.1 = {
 		employer = 14
+		give_council_position = councillor_marshal
 		effect = {
-			give_job_title = job_marshal
+			add_prestige = 570
 		}
-		add_prestige = 570
 	}
 	470.6.13 = {
-		effect = {
-			k_gwent = {
-				holder_scope = {
-					opinion = {
-						modifier = opinion_friend
-						who = ROOT
-						years = 100
-					}
-					ROOT = {
-						opinion = {
-							modifier = opinion_friend
-							who = PREV
-							years = 100
-						}
-					}
-				}
-			}
-		}
+		set_relation_friend = character:14
 	}
 	503.12.26 = {
 		death = "503.12.26"
@@ -100,8 +81,6 @@
 	name = "Ianomarcus"
 	dynasty = 1051
 	religion = "briton_pagan"
-	dna = "bcagg0miac0"
-	properties = "gm0chkbebb"
 	martial = 6
 	diplomacy = 5
 	intrigue = 7
@@ -110,20 +89,19 @@
 	culture = "roman"
 	trait = education_martial_3
 	trait = intellect_good_1
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait = veteran
 	trait = education_martial_prowess_3
 	trait = tolerant
-	add_trait = "slothful"
+	trait = lazy
 	trait = arrogant
 	trait = hunter_2
 	trait = brother_of_mithra
 	449.3.15 = {
 		birth = "449.3.15"
 		effect = {
-			#TODO: Bring back the correct prestige and gold values
-			add_prestige = 1
-			add_gold = 1
+			add_prestige = 175
+			add_gold = 103
 		}
 	}
 	478.3.10 = {
@@ -138,8 +116,6 @@
 	# Papal Nuntius Ambrosinus I
 	name = "Ambrosinus"
 	dynasty = 153
-	dna = "aeifi0cbba0"
-	properties = "uf0aafbebb"
 	religion = "catholic"
 	martial = 5
 	diplomacy = 13
@@ -147,7 +123,7 @@
 	stewardship = 13
 	learning = 13
 	culture = "roman"
-	add_trait = "nuncio"
+	# trait = "nuncio"
 	trait = education_learning_4
 	trait = diligent
 	trait = zealous
@@ -158,8 +134,10 @@
 		birth = "423.8.25"
 	}
 	461.1.15 = {
-		add_prestige = 500
-		add_piety = 1000
+		effect = {
+			add_prestige = 500
+			add_piety = 1000
+		}
 	}
 	499.4.24 = {
 		death = "499.4.24"
@@ -178,7 +156,7 @@
 	learning = 12
 	culture = "roman"
 	trait = just
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait = veteran
 	# add_trait="honorable"
 	trait = education_martial_prowess_2
@@ -188,9 +166,11 @@
 	#mother=
 	363.1.13 = {
 		birth = "363.1.13"
-		add_gold = 195
-		add_piety = 70
-		add_prestige = 1750
+		effect = {
+			add_gold = 195
+			add_piety = 70
+			add_prestige = 1750
+		}
 	}
 	427.4.18 = {
 		death = "427.4.18"
@@ -201,8 +181,6 @@
 	# Dux Honorius of Cenomannia
 	name = "Honorius"
 	dynasty = 1010
-	dna = "baffa0gmaa0"
-	properties = "bg0fhkbebb"
 	religion = "catholic"
 	martial = 10
 	diplomacy = 7
@@ -221,7 +199,9 @@
 	#mother=
 	438.2.21 = {
 		birth = "438.2.21"
-		add_prestige = 175
+		effect = {
+			add_prestige = 175
+		}
 	}
 	464.12.5 = {
 		add_spouse = 927		# Lady Petiliana
@@ -291,21 +271,21 @@
 	culture = "roman"
 	religion = "catholic"
 	trait = ambitious
-	add_trait = authoritative
+	# trait = authoritative
 	trait = education_martial_prowess_4
 	trait = education_martial_4
 	#add_trait=blood_magnus_maximus
-	add_trait = northaugustus
+	trait = northaugustus
 	trait = physique_good_2	# Add by Clay
 	trait =  intellect_good_1	# Add by Clay
-	give_nickname = nick_maximus
 	father = 2276
 	#mother=
 	335.1.1 = {
 		birth = yes
-		create_bloodline = {
-			type = magnus_maximus
-		}
+		give_nickname = nick_maximus
+		# create_bloodline = {
+		# 	type = magnus_maximus
+		# }
 	}
 	352.1.1 = {
 		add_spouse = 1612
@@ -375,7 +355,7 @@
 	trait = just
 	trait = tolerant
 	# add_trait="honorable"
-	add_trait = "roman_trained"
+	trait = roman_trained
 	trait =  intellect_good_1
 	trait = physique_good_2
 	# trait = tall # TODO: Height is now tied to genetics
@@ -389,65 +369,40 @@
 			add_character_flag = has_health_bonus_20
 			save_global_event_target_as = aurelius_ambrosius_the_elder
 		}
-		create_bloodline = {
-			type = ambrosius_aurelianus
-		}
+		# create_bloodline = {
+		# 	type = ambrosius_aurelianus
+		# }
 	}
 	#Could set his birthday to 9 Aug 378 - Adrianople
 	395.1.1 = {
-		add_prestige = 1000
-	}
-	407.5.1 = {
 		effect = {
-			47 = {
-				ROOT = {
-					spawn_legio_II_augusta = yes
-				}
-			}
+			add_prestige = 1000
 		}
 	}
+	# 407.5.1 = {
+	# 	effect = {
+	# 		47 = {
+	# 			ROOT = {
+	# 				spawn_legio_II_augusta = yes
+	# 			}
+	# 		}
+	# 	}
+	# }
 	# 410.1.1 = {
-	# effect = {
-	# add_character_modifier = {
-	# name = maxima_caesariensis_decaying_realm
-	# duration = -1
+	# 	effect = {
+	# 		add_character_modifier = {
+	# 			name = maxima_caesariensis_decaying_realm
+	# 			duration = -1
+	# 		}
+	# 	}
 	# }
-	# }
-	# }
-	430.1.1 = {
-		effect = {
-			add_character_flag = aurelius_health_reduced
-			health = -5
-		}
-	}
 	432.1.1 = {
-		effect = {
-			add_character_flag = ambrosius_married
-			fertility = -1
-		}
 		add_spouse = 1069
 	}
-	433.1.1 = {
-		effect = {
-			fertility = 1
-		}
-	}
-	435.1.1 = {
-		effect = {
-			add_character_flag = aurelius_health_reduced
-			health = -5
-		}
-	}
-	440.1.1 = {
-		effect = {
-			add_character_flag = aurelius_health_reduced
-			health = -5
-		}
-	}
 	442.1.1 = {
-		effect = {
-			disband_event_forces = legio_two_augusta
-		}
+		# effect = {
+		# 	disband_event_forces = legio_two_augusta
+		# }
 		death = yes
 	}
 }
@@ -488,8 +443,8 @@
 	father = 2275
 	trait = zealous
 	trait = education_diplomacy_1
-	add_trait = hedonist
-	add_trait = arbitrary
+	trait = reveler_2
+	trait = arbitrary
 	trait = mystic_2
 	419.7.2 = {
 		birth = yes
@@ -514,12 +469,12 @@
 	culture = "roman"
 	dynasty = 10600
 	religion = "catholic"
-	give_nickname = nick_maximus
-	add_trait = grey_eminence
+	trait = education_diplomacy_4
 	father = 34001
 	mother = 34004
 	396.1.1 = {
 		birth = yes
+		give_nickname = nick_maximus
 	}
 	411.1.1 = {
 		add_spouse = 30105
@@ -562,7 +517,7 @@
 	religion = "catholic"
 	trait = education_martial_4
 	trait = ambitious
-	add_trait = authoritative
+	# trait = authoritative
 	trait = veteran
 	420.1.1 = {
 		birth = yes
@@ -593,7 +548,7 @@
 	}
 	465.8.15 = {
 		death = {
-			death_reason = death_murder_unknown
+			death_reason = death_murder
 		}
 		
 	}
@@ -627,11 +582,11 @@
 	female = yes
 	culture = "roman"
 	religion = "catholic"
-	give_nickname = nick_the_younger
 	father = 2012
 	mother = 2013
 	438.1.1 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	476.12.1 = {
 		employer = 58001
@@ -710,8 +665,8 @@
 	culture = "roman"
 	religion = "hellenic_pagan"
 	trait = northaugustus_offmap
-	add_trait = grey_eminence
-	add_trait = authoritative
+	trait = education_diplomacy_4
+	# trait = authoritative
 	trait = veteran
 	trait = ambitious
 	trait = intellect_good_3	# Add by Clay - Could be brilliant, I guess
@@ -731,7 +686,7 @@
 	female = yes
 	culture = "roman"
 	religion = "hellenic_pagan"
-	add_trait = elusive_shadow
+	trait = education_intrigue_4
 	1.1.1 = {
 		birth = yes
 	}
@@ -746,7 +701,7 @@
 	dynasty = 10690
 	culture = "roman"
 	religion = "hellenic_pagan"
-	add_trait = fortune_builder
+	trait = education_stewardship_3
 	trait = northaugustus_offmap
 	mother = 2032
 	father = 2126
@@ -765,11 +720,11 @@
 	culture = "roman"
 	religion = "hellenic_pagan"
 	trait = northaugustus_offmap
-	give_nickname = nick_caligula
 	father = 2121
 	mother = 2120
 	12.8.31 = {
 		birth = yes
+		give_nickname = nick_caligula
 	}
 	41.1.24 = {
 		death = {
@@ -804,8 +759,8 @@
 	dynasty = 10690
 	culture = "roman"
 	religion = "hellenic_pagan"
-	add_trait = naive_appeaser
-	add_trait = poet
+	trait = education_diplomacy_1
+	trait = poet
 	trait = northaugustus_offmap
 	father = 2038
 	mother = 2037
@@ -823,14 +778,14 @@
 	dynasty = 10690
 	culture = "roman"
 	religion = "hellenic_pagan"
-	add_trait = elusive_shadow
+	trait = education_intrigue_4
 	trait = ambitious
-	add_trait = attractive
-	give_nickname = nick_the_younger
+	trait = beauty_good_2
 	father = 2121
 	mother = 2120
 	16.11.6 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	59.3.19 = {
 		death = yes
@@ -927,11 +882,11 @@
 2043 = {
 	name = "Domitilla"
 	female = yes
-	give_nickname = nick_the_elder
 	culture = "roman"
 	religion = "hellenic_pagan"
 	20.1.1 = {
 		birth = yes
+		give_nickname = nick_the_elder
 	}
 	65.1.1 = {
 		death = yes
@@ -1217,10 +1172,10 @@
 	dynasty = 10810
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_pius
 	trait = northaugustus_offmap
 	86.9.19 = {
 		birth = yes
+		give_nickname = nick_pius
 	}
 	118.1.1 = {
 		add_spouse = 2073
@@ -1236,11 +1191,11 @@
 	dynasty = 10820
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_elder
 	father = 2074
 	mother = 2075
 	100.9.21 = {
 		birth = yes
+		give_nickname = nick_the_elder
 	}
 	140.11.1 = {
 		death = yes
@@ -1252,9 +1207,9 @@
 	dynasty = 10820
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_elder
 	50.1.1 = {
 		birth = yes
+		give_nickname = nick_the_elder
 	}
 	98.1.1 = {
 		add_spouse = 2075
@@ -1301,11 +1256,11 @@
 	dynasty = 10820
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_younger
 	father = 2074
 	mother = 2075
 	101.1.1 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	120.1.1 = {
 		add_spouse = 2079
@@ -1352,7 +1307,7 @@
 	father = 2077
 	mother = 2079
 	trait = intellect_good_2	# Add by Clay
-	add_trait = scholar	# Add by Clay
+	trait = scholar	# Add by Clay
 	trait = northaugustus_offmap
 	121.4.26 = {
 		birth = yes
@@ -1387,11 +1342,11 @@
 	dynasty = 10810
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_younger
 	father = 2072
 	mother = 2073
 	125.2.16 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	175.1.1 = {
 		death = yes
@@ -1406,12 +1361,12 @@
 	religion = "hellenic_pagan"
 	father = 2080
 	mother = 2082
-	add_trait = naive_appeaser
+	trait = education_diplomacy_1
 	trait = arrogant
-	add_trait = envious
-	add_trait = craven
-	add_trait = arbitrary
-	add_trait = paranoid
+	trait = greedy
+	trait = craven
+	trait = arbitrary
+	trait = paranoid
 	trait = northaugustus_offmap
 	161.8.31 = {
 		birth = yes
@@ -1539,12 +1494,12 @@
 	dynasty = 10860
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_caracella
 	father = 2089
 	mother = 2091
 	trait = northaugustus_offmap
 	188.4.4 = {
 		birth = yes
+		give_nickname = nick_caracella
 	}
 	202.4.1 = {
 		add_spouse = 2096
@@ -1741,10 +1696,10 @@
 	dynasty = 10680
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_elder
 	mother = 2122
 	1.1.3 = {
 		birth = yes
+		give_nickname = nick_the_elder
 		add_spouse = 2121		# Germanicus
 	}
 	33.10.17 = {
@@ -1776,11 +1731,11 @@
 	dynasty = 10680
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_elder
 	father = 2031
 	mother = 2123
 	1.1.2 = {
 		birth = yes
+		give_nickname = nick_the_elder
 	}
 	14.5.1 = {
 		death = yes
@@ -1808,12 +1763,12 @@
 	dynasty = 10690
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_elder
 	father = 2126
 	mother = 2032
 	1.1.2 = {
 		# Should be dead, but added for family tree purposes
 		birth = yes
+		give_nickname = nick_the_elder
 		add_spouse = 2125		# Antonia the Younger
 	}
 	2.1.1 = {
@@ -1828,9 +1783,9 @@
 	female = yes
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_younger
 	1.1.2 = {
 		birth = yes
+		give_nickname = nick_the_younger
 		add_spouse = 2124		# Drusus the Elder
 	}
 	37.9.1 = {
@@ -2003,11 +1958,11 @@
 	dynasty = 11110
 	culture = "roman"
 	religion = "hellenic_pagan"
-	give_nickname = nick_the_younger
 	father = 2242
 	mother = 2241
 	330.1.1 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	350.6.1 = {
 		death = {
@@ -2524,7 +2479,7 @@
 	stewardship = 13
 	learning = 13
 	culture = "roman"
-	add_trait = "nuncio"
+	# trait = "nuncio"
 	trait = education_learning_4
 	trait = diligent
 	trait = zealous
@@ -2535,8 +2490,10 @@
 		birth = yes
 	}
 	410.1.1 = {
-		add_prestige = 500
-		add_piety = 1000
+		effect = {
+			add_prestige = 500
+			add_piety = 1000
+		}
 	}
 	430.1.1 = {
 		death = yes
@@ -2811,7 +2768,7 @@
 		birth = yes
 	}
 	404.1.1 = {
-		trait = nun
+		trait = devoted
 	}
 	445.1.1 = {
 		death = yes
@@ -2848,7 +2805,7 @@
 		birth = yes
 	}
 	380.1.1 = {
-		trait = nun
+		trait = devoted
 	}
 	420.9.28 = {
 		death = yes
@@ -2868,7 +2825,7 @@
 		birth = yes
 	}
 	380.1.1 = {
-		trait = nun
+		trait = devoted
 	}
 	404.1.28 = {
 		death = yes
@@ -2888,7 +2845,7 @@
 		birth = yes
 	}
 	384.1.1 = {
-		trait = nun
+		trait = devoted
 	}
 	384.4.1 = {
 		death = yes
@@ -2970,7 +2927,7 @@
 	culture = "roman"
 	dynasty = 10608
 	religion = "catholic"
-	add_trait = scholar
+	trait = scholar
 	learning = 10
 	father = 34027
 	mother = 34028
@@ -3645,9 +3602,9 @@
 	religion = "hellenic_pagan"
 	140.1.1 = {
 		birth = yes
-		create_bloodline = {
-			type = anicii
-		}
+		# create_bloodline = {
+		# 	type = anicii
+		# }
 	}
 	160.1.1 = {
 		add_spouse = 34059
@@ -3865,10 +3822,10 @@
 	religion = "catholic"
 	father = 2006
 	mother = 2319
-	give_nickname = nick_the_younger
 	trait = northaugustus_offmap
 	401.4.10 = {
 		birth = yes
+		give_nickname = nick_the_younger
 	}
 	450.7.28 = {
 		death = yes
