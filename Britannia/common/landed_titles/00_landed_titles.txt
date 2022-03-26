@@ -2,109 +2,367 @@
 @better_than_the_alternatives_score = 50
 @always_primary_score = 1000
 
-e_test = {
-	color =  hsv{ 0.9 1 0.3 } #hsv{ 0.73 0.8 0.4 }  #hsv{ 0.77 0.8 0.6 } #{ 143 12 125 }
-	color2 = { 255 255 255 }
+e_britannia = {
+	color={ 76 141 67 }
+	color2={ 255 255 255 }
 	
-	capital = c_test_1
+	capital = c_durnovaria		# Temporary
 	
-	definite_form = yes
+	de_jure_drift_disabled = yes
+	can_be_named_after_dynasty = no
+
+	can_create = {
+		is_brythonic_culture_trigger = yes
+	}
 	
-	k_test = {
-		color = { 175 30 130 }
+	ai_primary_priority = {
+		if = {
+			limit = {
+				is_brythonic_culture_trigger = yes
+			}
+			add = @correct_culture_primary_score
+		}
+	}
+	
+	k_dumnonia = {
+		color={ 96 160 96 }
 		color2 = { 255 255 23 }
 		
-		capital = c_test_1
-		
-		d_test_1 = {
-			color = { 180 25 100 }
-			color2 = { 255 255 255 }
-			
-			capital = c_test_1
-			c_test_1 = {
-				color = { 170 55 90 }
-				color2 = { 255 255 255 }
-				
-				b_test_1 = {
-					province = 1
-					
-					color = { 170 55 90 }
-					color2 = { 255 255 255 }
+		capital = c_durnovaria		# Temporary
+	
+		de_jure_drift_disabled = yes
+		can_be_named_after_dynasty = no
+	
+		ai_primary_priority = {
+			if = {
+				limit = {
+					is_brythonic_culture_trigger = yes
 				}
-				
-				b_test_2 = {
-					province = 2
-					
-					color = { 170 65 90 }
-					color2 = { 255 255 255 }
-				}
-			}
-			
-			c_test_2 = {
-				color = { 170 55 90 }
-				color2 = { 255 255 255 }
-				
-				#capital = 497 # Brysis / Verissa
-				
-				b_test_3 = {
-					province = 3
-					
-					color = { 170 75 90 }
-					color2 = { 255 255 255 }
-				}
-				
-				b_test_4 = {
-					province = 4
-					
-					color = { 170 75 90 }
-					color2 = { 255 255 255 }
-				}
+				add = @better_than_the_alternatives_score
 			}
 		}
+
+		can_create = {
+			is_brythonic_culture_trigger = yes
+		}
 		
-		d_test_2 = {
-			color = { 180 25 100 }
+		d_centdumnonia = {		# Durnac
+			color={ 95 145 90 }
 			color2 = { 255 255 255 }
 			
-			capital = c_test_3
-			c_test_3 = {
-				color = { 170 55 90 }
+			capital = c_durnovaria
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+			
+			can_create = {
+				OR = {
+					culture = { NOT = { has_cultural_pillar = heritage_germanic } }
+					is_romanized_germanic_culture_trigger = yes
+				}
+			}
+			
+			cultural_names = {
+				name_list_roman = cn_durotrigia
+				name_list_romanogallic = cn_durotrigia
+				name_list_romanorhaetian = cn_durotrigia
+				name_list_romanoaquitanian = cn_durotrigia
+				name_list_romanogermanic = cn_durotrigia
+				name_list_romanoscandian = cn_durotrigia
+				name_list_romanonumidian = cn_durotrigia
+				name_list_romanoafrican = cn_durotrigia
+				name_list_greek = cn_durotrigia_greek
+				name_list_armenian = cn_durotrigia_greek
+				name_list_romanosyrian = cn_durotrigia_greek
+				name_list_romanoegyptian = cn_durotrigia_greek
+			}
+			
+			c_durnovaria = {
+				color={ 80 150 80 }
 				color2 = { 255 255 255 }
+			
+				cultural_names = {
+					name_list_briton = cn_caer_durnac
+					name_list_cumbrian = cn_caer_durnac
+					name_list_anglo_saxon = cn_dorchester_anglosaxon
+					name_list_oldfrisian = cn_dorchester_anglosaxon
+					name_list_frisian = cn_dorchester_anglosaxon
+					name_list_angle = cn_dorchester_anglosaxon
+					name_list_old_saxon = cn_dorchester_anglosaxon
+					name_list_saxon = cn_dorchester_anglosaxon
+					name_list_jute = cn_dorchester_anglosaxon
+				}
 				
-				b_test_5 = {
-					province = 5
+				b_durnovariacastle = {		# Durnovaria/Dorchester
+					province = 1
+			
+					cultural_names = {
+						name_list_briton = cn_caer_durnac
+						name_list_cumbrian = cn_caer_durnac
+						name_list_anglo_saxon = cn_dorchester_anglosaxon
+						name_list_oldfrisian = cn_dorchester_anglosaxon
+						name_list_frisian = cn_dorchester_anglosaxon
+						name_list_angle = cn_dorchester_anglosaxon
+						name_list_old_saxon = cn_dorchester_anglosaxon
+						name_list_saxon = cn_dorchester_anglosaxon
+						name_list_jute = cn_dorchester_anglosaxon
+					}
 					
-					color = { 170 55 90 }
+					color={ 80 150 80 }
 					color2 = { 255 255 255 }
 				}
 				
-				b_test_6 = {
-					province = 6
+				b_durnovariacity = {		# Traxula/Weymouth
+					province = 2
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_weymouth_anglosaxon
+						name_list_oldfrisian = cn_weymouth_anglosaxon
+						name_list_frisian = cn_weymouth_anglosaxon
+						name_list_angle = cn_weymouth_anglosaxon
+						name_list_old_saxon = cn_weymouth_anglosaxon
+						name_list_saxon = cn_weymouth_anglosaxon
+						name_list_jute = cn_weymouth_anglosaxon
+					}
 					
-					color = { 170 65 90 }
+					color={ 80 155 80 }
 					color2 = { 255 255 255 }
 				}
 				
-				b_test_7 = {
-					province = 7
+				b_durnovariatemple = {		# Waddon Hill/Beaminster
+					province = 4
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_beaminster_anglosaxon
+						name_list_oldfrisian = cn_beaminster_anglosaxon
+						name_list_frisian = cn_beaminster_anglosaxon
+						name_list_angle = cn_beaminster_anglosaxon
+						name_list_old_saxon = cn_beaminster_anglosaxon
+						name_list_saxon = cn_beaminster_anglosaxon
+						name_list_jute = cn_beaminster_anglosaxon
+					}
 					
-					color = { 170 75 90 }
+					color={ 80 160 80 }
+					color2 = { 255 255 255 }
+				}
+				
+				b_durnovariatown = {		# Bridport
+					province = 3
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_bridport_anglosaxon
+						name_list_oldfrisian = cn_bridport_anglosaxon
+						name_list_frisian = cn_bridport_anglosaxon
+						name_list_angle = cn_bridport_anglosaxon
+						name_list_old_saxon = cn_bridport_anglosaxon
+						name_list_saxon = cn_bridport_anglosaxon
+						name_list_jute = cn_bridport_anglosaxon
+					}
+					
+					color={ 80 155 80 }
 					color2 = { 255 255 255 }
 				}
 			}
 			
-			c_test_4 = {
-				color = { 170 55 90 }
+			c_velox = {
+				color={ 120 150 65 }
 				color2 = { 255 255 255 }
+			
+				cultural_names = {
+					name_list_anglo_saxon = cn_wareham_anglosaxon
+					name_list_oldfrisian = cn_wareham_anglosaxon
+					name_list_frisian = cn_wareham_anglosaxon
+					name_list_angle = cn_wareham_anglosaxon
+					name_list_old_saxon = cn_wareham_anglosaxon
+					name_list_saxon = cn_wareham_low_saxon
+					name_list_jute = cn_wareham_anglosaxon
+					name_list_oldfrankish = cn_wareham_frankish
+					name_list_frankish = cn_wareham_frankish
+					name_list_dutch = cn_wareham_dutch
+					name_list_franconian = cn_wareham_high_german
+					name_list_oldalemannic = cn_wareham_high_german
+					name_list_alemannic = cn_wareham_high_german
+					name_list_oldthuringian = cn_wareham_high_german
+					name_list_thuringian = cn_wareham_high_german
+					name_list_oldbavarian = cn_wareham_high_german
+					name_list_bavarian = cn_wareham_high_german	
+					name_list_dane = cn_wareham_norse
+					name_list_norse_gael = cn_wareham_norse
+					name_list_proto_norse = cn_wareham_norse
+				}
 				
-				#capital = 497 # Brysis / Verissa
-				
-				b_test_8 = {
-					province = 8
+				b_veloxcastle = {		# Velox/Wareham
+					province = 5
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_wareham_anglosaxon
+						name_list_oldfrisian = cn_wareham_anglosaxon
+						name_list_frisian = cn_wareham_anglosaxon
+						name_list_angle = cn_wareham_anglosaxon
+						name_list_old_saxon = cn_wareham_anglosaxon
+						name_list_saxon = cn_wareham_low_saxon
+						name_list_jute = cn_wareham_anglosaxon
+						name_list_oldfrankish = cn_wareham_frankish
+						name_list_frankish = cn_wareham_frankish
+						name_list_dutch = cn_wareham_dutch
+						name_list_franconian = cn_wareham_high_german
+						name_list_oldalemannic = cn_wareham_high_german
+						name_list_alemannic = cn_wareham_high_german
+						name_list_oldthuringian = cn_wareham_high_german
+						name_list_thuringian = cn_wareham_high_german
+						name_list_oldbavarian = cn_wareham_high_german
+						name_list_bavarian = cn_wareham_high_german	
+						name_list_dane = cn_wareham_norse
+						name_list_norse_gael = cn_wareham_norse
+						name_list_proto_norse = cn_wareham_norse
+					}
 					
-					color = { 170 75 90 }
+					color={ 120 150 65 }
 					color2 = { 255 255 255 }
 				}
+				
+				b_veloxtemple = {		# Milton Abbey
+					province = 6
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_milton_anglosaxon
+						name_list_oldfrisian = cn_milton_anglosaxon
+						name_list_frisian = cn_milton_anglosaxon
+						name_list_angle = cn_milton_anglosaxon
+						name_list_old_saxon = cn_milton_anglosaxon
+						name_list_saxon = cn_milton_anglosaxon
+						name_list_jute = cn_milton_anglosaxon
+					}
+					
+					color={ 120 160 65 }
+					color2 = { 255 255 255 }
+				}
+			}
+			
+			
+			c_vindocladia = {
+				color={ 100 160 70 }
+				color2 = { 255 255 255 }
+				
+				cultural_names = {
+					name_list_anglo_saxon = cn_wimborne_anglosaxon
+					name_list_oldfrisian = cn_wimborne_anglosaxon
+					name_list_frisian = cn_wimborne_anglosaxon
+					name_list_angle = cn_wimborne_anglosaxon
+					name_list_old_saxon = cn_wimborne_anglosaxon
+					name_list_saxon = cn_wimborne_anglosaxon
+					name_list_jute = cn_wimborne_anglosaxon
+				}
+				
+				b_vindocladiacastle = {		# Vindocladia/Wimborne
+					province = 7
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_wimborne_anglosaxon
+						name_list_oldfrisian = cn_wimborne_anglosaxon
+						name_list_frisian = cn_wimborne_anglosaxon
+						name_list_angle = cn_wimborne_anglosaxon
+						name_list_old_saxon = cn_wimborne_anglosaxon
+						name_list_saxon = cn_wimborne_anglosaxon
+						name_list_jute = cn_wimborne_anglosaxon
+					}
+					
+					color={ 120 150 65 }
+					color2 = { 255 255 255 }
+				}
+				
+				b_vindocladiacity = {		# Moriconium/Hamworthy
+					province = 8
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_hamworthy_anglosaxon
+						name_list_oldfrisian = cn_hamworthy_anglosaxon
+						name_list_frisian = cn_hamworthy_anglosaxon
+						name_list_angle = cn_hamworthy_anglosaxon
+						name_list_old_saxon = cn_hamworthy_anglosaxon
+						name_list_saxon = cn_hamworthy_anglosaxon
+						name_list_jute = cn_hamworthy_anglosaxon
+					}
+					
+					color={ 120 160 65 }
+					color2 = { 255 255 255 }
+				}
+			}
+			
+			
+			c_dunum = {
+				color={ 67 140 80 }
+				color2 = { 255 255 255 }
+				
+				cultural_names = {
+					name_list_greek = cn_dunum_greek
+					name_list_armenian = cn_dunum_greek
+					name_list_romanosyrian = cn_dunum_greek
+					name_list_romanoegyptian = cn_dunum_greek
+					name_list_anglo_saxon = cn_sherborne_anglosaxon
+					name_list_oldfrisian = cn_sherborne_anglosaxon
+					name_list_frisian = cn_sherborne_anglosaxon
+					name_list_angle = cn_sherborne_anglosaxon
+					name_list_old_saxon = cn_sherborne_anglosaxon
+					name_list_saxon = cn_sherborne_anglosaxon
+					name_list_jute = cn_sherborne_anglosaxon
+				}
+				
+				b_dunumcastle = {		# Dunum/Blandford
+					province = 9
+				
+					cultural_names = {
+						name_list_greek = cn_dunum_greek
+						name_list_armenian = cn_dunum_greek
+						name_list_romanosyrian = cn_dunum_greek
+						name_list_romanoegyptian = cn_dunum_greek
+						name_list_anglo_saxon = cn_blandford_anglosaxon
+						name_list_oldfrisian = cn_blandford_anglosaxon
+						name_list_frisian = cn_blandford_anglosaxon
+						name_list_angle = cn_blandford_anglosaxon
+						name_list_old_saxon = cn_blandford_anglosaxon
+						name_list_saxon = cn_blandford_anglosaxon
+						name_list_jute = cn_blandford_anglosaxon
+					}
+					
+					color={ 67 140 80 }
+					color2 = { 255 255 255 }
+				}
+				
+				b_dunumtemple = {		# Lanprobi/Sherborne
+					province = 11
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_sherborne_anglosaxon
+						name_list_oldfrisian = cn_sherborne_anglosaxon
+						name_list_frisian = cn_sherborne_anglosaxon
+						name_list_angle = cn_sherborne_anglosaxon
+						name_list_old_saxon = cn_sherborne_anglosaxon
+						name_list_saxon = cn_sherborne_anglosaxon
+						name_list_jute = cn_sherborne_anglosaxon
+					}
+					
+					color={ 67 150 80 }
+					color2 = { 255 255 255 }
+				}
+				
+				b_dunumcity = {		# Caer Vynnydd/Shaftesbury
+					province = 10
+			
+					cultural_names = {
+						name_list_anglo_saxon = cn_shaftesbury_anglosaxon
+						name_list_oldfrisian = cn_shaftesbury_anglosaxon
+						name_list_frisian = cn_shaftesbury_anglosaxon
+						name_list_angle = cn_shaftesbury_anglosaxon
+						name_list_old_saxon = cn_shaftesbury_anglosaxon
+						name_list_saxon = cn_shaftesbury_anglosaxon
+						name_list_jute = cn_shaftesbury_anglosaxon
+					}
+					
+					color={ 67 130 80 }
+					color2 = { 255 255 255 }
+				}			
+				
 			}
 		}
 

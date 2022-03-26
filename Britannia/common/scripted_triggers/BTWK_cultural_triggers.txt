@@ -1,0 +1,61 @@
+﻿# Does the culture derive primarily from Romano-British?
+is_romanobritish_culture_trigger = {
+	has_cultural_pillar = heritage_imperial
+	OR = {
+		THIS = culture:romanobritish
+		custom_tooltip = {
+			text = is_romanobritish_trigger_desc
+			any_parent_culture = {
+				culture_is_romanobritish_culture_trigger = yes
+			}
+		}
+	}
+}
+
+# Determines access to Brythonic titles and mechanics
+# Does the culture derive primarily from Briton, Cumbrian, or Romano-British?
+is_brythonic_culture_trigger = {
+	culture = { culture_is_brythonic_culture_trigger = yes }
+}
+
+culture_is_brythonic_culture_trigger = {
+	OR = {
+		AND = {
+			has_cultural_pillar = heritage_celtic
+			OR = {
+				THIS = culture:briton
+				THIS = culture:cumbrian
+				any_parent_culture = {
+					custom_tooltip = {
+						text = is_briton_or_cumbrian_trigger_desc
+						culture_is_brythonic_culture_trigger = yes
+					}
+				}
+			}
+		}
+		culture_is_romanobritish_culture_trigger = yes
+	}
+}
+
+# Determines access to Romanized Germanic titles (= Roman titles, pretty much)
+is_romanized_germanic_culture_trigger = {
+	culture = { culture_is_romanized_germanic_culture_trigger = yes }
+}
+
+culture_is_romanized_germanic_culture_trigger = {
+	has_cultural_pillar = heritage_germanic
+	OR = {
+		THIS = culture:visigoth
+		THIS = culture:ostrogoth
+		THIS = culture:burgundian
+		THIS = culture:taifal
+		THIS = culture:vandal
+		THIS = culture:suebic
+		any_parent_culture = {
+			custom_tooltip = {
+				text = is_romanized_germanic_trigger_desc
+				culture_is_romanized_germanic_culture_trigger = yes
+			}
+		}
+	}
+}
