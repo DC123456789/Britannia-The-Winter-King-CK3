@@ -11,99 +11,13 @@ NJominiMap = {
 
 NCombat = {
 	UNRAISED_LEVY_REGIMENTS_SPEED = 10.0			# How many distance units do unraised regiments travel per day when gathering
-	COMBAT_ROLL_DAYS = 3							# How many days are there between rolls?
-	COMBAT_EVENT_DAYS = 5							# How many days are there between knight events?
 	
-	DEVIATION_FALLOFF = 0.1							# If the mean was clamped to ACTION_LEVELS, the standard deviation is decreased using this factor (the higher the value the faster the decrease)
-	WAR_ATTACKER_COMBAT_SCORE_SCALE = 50			# Scale factor for how much war score battles give to the war attacker. Can be overriden by CB
-	WAR_DEFENDER_COMBAT_SCORE_SCALE = 50			# Scale factor for how much war score battles give to the war defender. Can be overriden by CB
-	WAR_ATTACKER_COMBAT_MAX_SCORE = 50				# The maximum amount of warscore gained from a single battle by the war attacker
-	WAR_DEFENDER_COMBAT_MAX_SCORE = 50				# The maximum amount of warscore gained from a single battle by the war attacker
-	MANEUVER_PHASE_DAYS = 1							# How many days should the maneuver phase last
-	LEVY_TOUGHNESS = 10								# How much toughness does each levy soldier have
-	LEVY_ATTACK = 10								# How much attack does each levy soldier have
-	DAMAGE_SCALING_FACTOR = 0.03					# Scaling factor for dealing damage in combat
-	BASE_RATIO_CASUALTIES_CONVERSION = 0.3			# How many of the soft casualties should be converted to hard casualties during the main phase
-	PURSUIT_PHASE_DAYS = 1							# How many days should the pursuit phase be
-	ADVANTAGE_DAMAGE_SCALING_FACTOR = 2				# How much should the advantage affect damage given
-	BASE_WIDTH_RATIO = 1							# The base combat width is set by multiplying the size of the defender by this ratio
-	COMMANDER_MIN_ROLL = 0
-	COMMANDER_MAX_ROLL = 10
-	MEN_AT_ARMS_MAX_COUNTER = 0.9					# When RATIO_FOR_MAX_COUNTER is hit, the damage output for the MaA will be reduced by this much. For values lower, it'll be linear between 0 and this value
-	RATIO_FOR_MAX_COUNTER = 2.0						# You need this many effective regiment chunks to counter a single regiment chunk. Modified by counter effectiveness (E.G., = 2.0 in the MaA's counter section means twice as effective countering). So if stack size is 100, 50 men from a regiment with 2x counter will produce one point of countering. Thus if the ratio for max counter is 1.0, they'd fully counter a full-strength MaA chunk, or halfway counter two, etc.
-	MEN_AT_ARMS_COUNTER_MODIFICATION = 6			# A countered men at arms base type get this modification to all of their rolls
-	MIN_DAYS_BEFORE_MANUAL_RETREAT = 3				# Number of days before a retreat can be ordered
-	
-	RANDOM_ADVANTAGE_MIN = -25						# The worst initial battle Advantage from the 'random_advantage' Trait modifier
-	RANDOM_ADVANTAGE_RANGE = 65						# The roll range from the 'random_advantage' Trait modifier
-	
-	MINIMUM_COMBAT_WIDTH = 100						# Combat width cannot be smaller than this
-	BASE_RATIO_CASUALTIES_CONVERSION_PURSUIT = 1	# How many of the hard casualties inflicted on the retreating side should be converted to hard casualties during retreat. Interacts with BASE_TOUGHNESS_TO_PURSUIT and such
-	PURSUIT_STAT_TO_PURSUIT_DAMAGE = 0.5			# The pursuit stat is multiplied by this before being turned into actual damage
-	BASE_TOUGHNESS_TO_PURSUIT = 0.05				# This many % of the toughness of the retreater's soft casualties will turn into pursuit (during the full pursuit, not per day). Essentially, this means if neither side has screen or pursuit, 5% of the soft casualties will become hard casualties. More if the pursuer has more pursuit than the defender has screen, and vice versa
-	MINIMUM_PURSUIT_DAMAGE = 0.01					# High screen can't bring casualties below 1% in the pursuit phase
-	DISEMBARK_PENALTY_DAYS = 30						# How long does an army have a penalty after disembarking?
-	KNIGHT_DAMAGE_PER_PROWESS = 100					# How much "Damage" stat does a knight get per prowess?
-	KNIGHT_TOUGHNESS_PER_PROWESS = 10				# How much "Toughness" stat does a knight get per prowess?
-	COMBAT_RESULT_MONTHS_TO_TIMEOUT = 12			# Combat results timeout after this many months
 }
 NArmy = {
 	MOVEMENT_SPEED_RETREAT = 25					# Movement speed while retreating
 	MOVEMENT_SPEED = 18								# Normal movement speed
 	MOVEMENT_SPEED_BONUS_FRIENDLY_AREA = 0.6		# In friendly areas you get a 90% speed bonus
-	REGIMENT_MONTHLY_REINFORCE_SPEED = 0.03			# Monthly reinforcement percentage of unraised chunks [0-1]
-	REGIMENT_MONTHLY_MAA_REINFORCE_SPEED = 0.1		# Monthly reinforcement percentage of unraised MAA chunks [0-1]
-	GOLD_COST_PER_SOLDIER = 0.003					# Gold maintenance cost per soldier
-	RAID_ARMY_COST_MULT = 0.5						# Maintenance of raid armies is multiplied by this
-	MOVEMENT_LOCKED = 0.5							# Percentage after which movement is locked
-	COUNTY_MOVEMENT_ATTRITION_PERCENTAGE = 0.05
-	MINIMUM_COUNTY_MOVEMENT_ATTRITION = 100	
-	REGIMENT_DEFAULT_STACK_SIZE = 100
-	REGIMENT_DEFAULT_MAX_SIZE = 3					# Number of regiment chunks
-	REGIMENT_MAA_CAP_BY_TIER = { 0 1 2 3 4 5 }
-	REGIMENT_MAA_EXTRA_BY_CAP = 0.2					# Percentage [0-1] applied to each MAA regiment by each regiment above the cap
-	REGIMENT_MAA_SHOW_INFO_PERCENTAGE = 0.3
-	REGIMENT_MAA_STARTING_COUNT = 5
-
-	FULL_SUPPLY = 100								# Fully supplied units' supply value
-	SUPPLY_LOSS_AT_SEA = 8							# This is the supply loss at sea after the ATTRITION_AFTER_DAYS grace period
-	SUPPLY_LOSS_PER_SOLDIER_ABOVE_LIMIT = 0.001		# Each check's supply loss per every soldier over the province's supply limit
-	SUPPLY_LOSS_MINIMUM = 5							# This is the minimum supply limit loss (before commander effects)
-	SUPPLY_LOSS_MAXIMUM = 10						# This is the maximum supply limit loss (after commander effects)
-	SUPPLY_GAIN_BELOW_LIMIT = 20					# Each check's supply gain under or at the province's supply limit
-	SUPPLY_OWN_REALM = 0.15							# Extra supply within top realm
-	SUPPLY_OWN_SUB_REALM = 0.3						# Extra supply within subrealm
-	MINIMUM_SUPPLY_LIMIT = 1000						# Supply limit will never ever be lower than this
-	NO_SUPPLY_LOSS_DAYS = 30						# After gathering, armies won't lose supplies for this number of days
 	
-	SUPPLY_STATE_LEVELS = {
-		60
-		10
-		0
-	}
-
-	SUPPLY_STATE_NAMES = {
-		"SUPPLY_STATE_0"
-		"SUPPLY_STATE_1"
-		"SUPPLY_STATE_2"
-	}
 	
-	SUPPLY_STATE_ATTRITION = {
-		0.0
-		0.0
-		0.05
-	}
-
-	MAA_PRESTIGE_BUY_COST_MULT = 2					# If using prestige as gold for MaA, multiply buy cost by this
-	MAA_PRESTIGE_LOW_COST_MULT = 0.7				# If using prestige as gold for MaA, multiply basic maintenance cost by this
-	MAA_PRESTIGE_HIGH_COST_MULT = 0.7				# If using prestige as gold for MaA, multiply raised/reinforce cost by this
-	REGIMENT_MAX_SIZE = 1000						# The game will avoid making regiments larger than this. Can still happen if a province provides more levies than the cap
-	REGIMENT_MAX_SIZE_PERCENT = 0.2					#  The game will avoid making regiments larger than this compared to the max troops you can raise
 }
 
-NFleet = {
-	FLEET_SPEED = 85						# Fleet speed
-	EMBARK_GOLD_COST_PER_HUNDRED = 1		# Embark cost for every hundred units
-	GOLD_COST_MAINTENANCE_MULT = 0.25		# Increase in the gold maintenance for armies that are embarked
-	ATTRITION_AFTER_DAYS = 30				# After embarking the army can expend this time without getting attrition
-}
