@@ -5,13 +5,60 @@
 			LANGUAGE = language_east_germanic
 		}
 	}
+	parameters = {
+		language_group_germanic = yes
+		language_family_indo_european = yes 				
+	}
 	ai_will_do = {
 		value = 10
 		if = {
 			limit = { has_cultural_pillar = language_east_germanic }
-			multiply = 10
+			multiply = same_language_choice_factor
+		}
+		else_if = {
+			limit = { has_cultural_parameter = language_group_germanic }
+			multiply = same_language_group_choice_factor
+		}
+		else_if = {
+			limit = { has_cultural_parameter = language_family_indo_european }
+			multiply = same_language_family_choice_factor
 		}
 	}
 	
 	color = visigoth
+}
+
+language_hunnic = {
+	type = language
+	is_shown = {
+		language_is_shown_trigger = {
+			LANGUAGE = language_hunnic
+		}
+	}
+	parameters = {
+		language_group_shaz_turkic = yes
+		language_family_turkic = yes 
+		language_union_steppe_siberian = yes			
+	}
+	ai_will_do = {
+		value = 10
+		if = {
+			limit = { has_cultural_pillar = language_hunnic }
+			multiply = same_language_choice_factor
+		}
+		else_if = {
+			limit = { has_cultural_parameter = language_group_shaz_turkic }
+			multiply = same_language_group_choice_factor
+		}
+		else_if = {
+			limit = { has_cultural_parameter = language_family_turkic }
+			multiply = same_language_family_choice_factor
+		}
+		else_if = {
+			limit = { has_cultural_parameter = language_union_steppe_siberian }
+			multiply = same_language_union_choice_factor
+		}
+	}
+	
+	color = { 198 128 38 }
 }
