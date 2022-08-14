@@ -387,84 +387,11 @@ on_game_start = {
 			# set_variable = { name = block_conversion_till_decision_taken }
 		# }
 	}
-	on_actions = {
-		ccu_startup
-	}
 }
 
 # Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
 on_game_start_after_lobby = {
 	effect = {		
-		# TODO Set starting cultural acceptance
-		on_actions = { 
-			delay = { days = 1 }
-			ccu_startup_debug 
-		}
-	}
-}
-
-ccu_startup = {	
-	effect = { every_culture_global = { ccu_initialize_culture = yes } }
-}
-
-ccu_startup_debug = {
-	effect = {
-		every_culture_global = {
-			if = {
-				limit = { NOT = { has_variable = heritage_group } }
-				save_scope_as = problem_culture
-				every_player = {
-					send_interface_message = {
-						type = event_steward_task_bad
-						title = ccu_debug_culture_heritage_group
-						desc = ccu_debug_culture_heritage_group_desc
-					}
-				}
-			}
-			else_if = {
-				limit = { NOT = { has_variable = heritage_family } }
-				save_scope_as = problem_culture
-				every_player = {
-					send_interface_message = {
-						type = event_steward_task_bad
-						title = ccu_debug_culture_heritage_family
-						desc = ccu_debug_culture_heritage_family_desc
-					}
-				}
-			}
-			if = {
-				limit = { NOT = { has_variable = language_group } }
-				save_scope_as = problem_culture
-				every_player = {
-					send_interface_message = {
-						type = event_steward_task_bad
-						title = ccu_debug_culture_language_group
-						desc = ccu_debug_culture_language_group_desc
-					}
-				}
-			}
-			else_if = {
-				limit = { NOT = { has_variable = language_family } }
-				save_scope_as = problem_culture
-				every_player = {
-					send_interface_message = {
-						type = event_steward_task_bad
-						title = ccu_debug_culture_language_family
-						desc = ccu_debug_culture_language_family_desc
-					}
-				}
-			}
-			else_if = {
-				limit = { NOT = { has_variable = language_union } }
-				save_scope_as = problem_culture
-				every_player = {
-					send_interface_message = {
-						type = event_steward_task_bad
-						title = ccu_debug_culture_language_union
-						desc = ccu_debug_culture_language_union_desc
-					}
-				}
-			}
-		}
+		# TODO Set starting cultural acceptance		
 	}
 }
