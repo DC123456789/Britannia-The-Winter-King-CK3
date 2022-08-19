@@ -3,6 +3,7 @@ is_romanobritish_culture_trigger = {
 	culture = { culture_is_romanobritish_culture_trigger = yes }
 }
 
+# TODO Make this a (hidden?) parameter of Romano-British and derived cultures instead
 culture_is_romanobritish_culture_trigger = {
 	has_cultural_pillar = heritage_latin
 	OR = {
@@ -27,16 +28,7 @@ is_brythonic_culture_trigger = {
 
 culture_is_brythonic_culture_trigger = {
 	OR = {
-		AND = {
-			has_cultural_pillar = heritage_celtic
-			OR = {
-				THIS = culture:briton
-				THIS = culture:cumbrian
-				any_parent_culture = {
-					culture_is_brythonic_culture_trigger = yes
-				}
-			}
-		}
+		has_cultural_pillar = heritage_brythonic
         AND = {
             has_cultural_pillar = heritage_latin
             OR = {
@@ -52,63 +44,41 @@ culture_is_brythonic_culture_trigger = {
 # Determines access to Romanized Germanic titles (= Roman titles, pretty much)
 # TODO Might want to split the Germanic heritage to handle this more easily
 is_romanized_germanic_culture_trigger = {
-    custom_tooltip = {
-		text = is_romanized_germanic_culture_trigger_desc
-		culture = { culture_is_romanized_germanic_culture_trigger = yes }
-	}
+	culture = { has_cultural_pillar = heritage_romanized_german }
 }
 
 culture_is_romanized_germanic_culture_trigger = {
-	has_cultural_pillar = heritage_germanic
-	OR = {
-		THIS = culture:visigoth
-		THIS = culture:ostrogoth
-		THIS = culture:burgundian
-		THIS = culture:taifal
-		THIS = culture:vandal
-		THIS = culture:suebic
-		any_parent_culture = {
-			custom_tooltip = {
-				text = is_romanized_germanic_trigger_desc
-				culture_is_romanized_germanic_culture_trigger = yes
-			}
-		}
-	}
+	has_cultural_pillar = heritage_romanized_german
 }
 
 # Determines access to Anglo-Saxon titles and mechanics
 # Does the culture derive primarily from Angle, Old Saxon, Jute, or Old Frisian?
 is_ingvaeonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_ingvaeonic_culture_trigger_desc
-		culture = { culture_is_ingvaeonic_culture_trigger = yes }
-	}
+	culture = { has_cultural_pillar = heritage_west_germanic }
 }
 
 culture_is_ingvaeonic_culture_trigger = {
-	has_cultural_pillar = heritage_germanic
-	OR = {
-		THIS = culture:angle
-		THIS = culture:old_saxon
-		THIS = culture:jute
-		THIS = culture:oldfrisian
-		any_parent_culture = {
-			custom_tooltip = {
-				text = is_ingvaeonic_trigger_desc
-				culture_is_ingvaeonic_culture_trigger = yes
-			}
+	has_cultural_pillar = heritage_west_germanic
+}
+
+can_create_roman_celtic_titles_trigger = {
+	culture = {
+		NOR = {
+			has_cultural_pillar = heritage_west_germanic
+			has_cultural_pillar = heritage_frankish
+			has_cultural_pillar = heritage_central_germanic
+			has_cultural_pillar = heritage_north_germanic
 		}
 	}
 }
 
-can_create_roman_celtic_titles_trigger = {
-	OR = {
-		culture = { NOT = { has_cultural_pillar = heritage_germanic } }
-		is_romanized_germanic_culture_trigger = yes
-	}
-}
-
 can_create_germanic_title_trigger = {
-	has_cultural_pillar = heritage_germanic
-	is_romanized_germanic_culture_trigger = no
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_west_germanic
+			has_cultural_pillar = heritage_frankish
+			has_cultural_pillar = heritage_central_germanic
+			has_cultural_pillar = heritage_north_germanic
+		}
+	}
 }
