@@ -4,7 +4,7 @@ tags={
 	"History"
 }
 name="The Winter King"
-supported_version="1.6.*"
+supported_version="1.7.*"
 replace_path = "common/culture/cultures"
 replace_path = "common/culture/name_lists"
 replace_path = "common/religion/religions"
