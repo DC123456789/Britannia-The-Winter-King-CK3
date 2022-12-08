@@ -1,8 +1,30 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
+	on_actions = { BTWK_de_jure_setup }
+	effect = {
+		# Mark some faiths to block conversion till specific decisions are taken.
+		# TODO Block all Muslim faiths until it appears
+		# religion:islam_religion = {
+			# set_variable = { name = block_conversion_till_decision_taken }
+		# }
+	}
+}
+
+# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
+on_game_start_after_lobby = {
+	effect = {		
+		# TODO Set starting cultural acceptance		
+	}
+}
+
+BTWK_de_jure_setup = {
 	effect = {
 		### ANGLO-SAXON TITLE SETUP ###
+		add_to_global_variable_list = {
+			name = test
+			target = title:e_aengland
+		}
 		
 		## KENT
 		title:d_cantware = {
@@ -52,7 +74,7 @@ on_game_start = {
 		title:d_surrey = {
 			add_to_variable_list = {
 				name = de_jure_territory
-				target = title:c_durnovaria
+				target = title:c_crondall
 			}
 			add_to_variable_list = {
 				name = de_jure_territory
@@ -357,10 +379,10 @@ on_game_start = {
 		}
 		
 		## EAST ANGLIA
-		title:d_eastseaxe = {
+		title:d_norfolc = {
 			add_to_variable_list = {
 				name = de_jure_territory
-				target = title:d_norfolc
+				target = title:c_nortwic
 			}
 			add_to_variable_list = {
 				name = de_jure_territory
@@ -527,18 +549,30 @@ on_game_start = {
 				target = title:c_banovallum
 			}
 		}
-
-		# Mark some faiths to block conversion till specific decisions are taken.
-		# TODO Block all Muslim faiths until it appears
-		# religion:islam_religion = {
-			# set_variable = { name = block_conversion_till_decision_taken }
-		# }
-	}
-}
-
-# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
-on_game_start_after_lobby = {
-	effect = {		
-		# TODO Set starting cultural acceptance		
+		
+		title:e_aengland = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_duchy }
+				if = {
+					limit = { has_variable_list = de_jure_territory }
+					add_to_global_variable_list = {
+						name = anglo_saxon_duchy_list
+						target = THIS
+					}
+					every_in_list = {
+						variable = de_jure_territory
+						set_variable = {
+							name = anglo_saxon_duchy
+							value = PREV
+						}
+					}
+				}
+			}
+		}
+		
+		# Initialize de jure structure
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
 	}
 }

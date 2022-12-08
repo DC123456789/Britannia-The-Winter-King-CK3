@@ -4,8 +4,10 @@ e_aengland = {
 	}
 	496.3.4 = {
 		holder = 80			# Aelle of Anglia
-		set_global_flag = first_bretwalda
-		set_capital_county = c_thunreslea
+		effect={
+			set_global_variable = first_bretwalda
+		}
+		set_capital_county = c_elmham
 	}
 	497.4.16={
 		holder = 0
@@ -21,7 +23,9 @@ k_anglia = {
 		liege=0
 	#	active = yes
 		holder = 80
-		set_global_flag = aelle_ruling_anglia
+		effect={
+			set_global_variable = aelle_ruling_anglia
+		}
 	}
 	496.3.4 = {
 		liege = e_aengland
@@ -32,9 +36,9 @@ k_anglia = {
 	497.4.16={
 		holder=0
 		liege = 0
-		clr_global_flag = aelle_ruling_anglia
-		set_global_flag = anglia_collapsed
 		effect = {
+			remove_global_variable = aelle_ruling_anglia
+			set_global_variable = anglia_collapsed
 			clr_title_flag = aengland_primary_kingdom
 		}
 	#	active = no
@@ -54,7 +58,7 @@ k_east_anglia = {
 	560.1.1 = {
 		holder = 1905
 		effect={
-			set_global_flag = east_anglia_created
+			set_global_variable = east_anglia_created
 		}
 	}
 	571.1.1={
@@ -103,7 +107,9 @@ d_norfolc = {
 		de_jure_liege = k_east_anglia
 	}
 	450.1.1={
-		set_global_flag = norfolc_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 		holder=3062
 	}
 	472.4.5 = {
@@ -134,7 +140,9 @@ d_southfolc = {
 	}
 	450.1.1={
 		holder=191
-		set_global_flag = southfolc_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	475.1.1={
 		liege=k_anglia
@@ -204,7 +212,7 @@ k_eastseaxe = {
 	}
 	#527.1.16 = {
 		#holder = 1903 		# Æscwine
-		#set_global_flag = essex_created
+		#set_global_variable = essex_created
 		#set_tribute_suzerain = { who = k_cantia type = anglosaxon_tributary }
 	#}
 	#540.1.1 = {
@@ -215,7 +223,9 @@ k_eastseaxe = {
 	#}
 	560.1.1 = {
 		holder = 1903 		# Æscwine
-		set_global_flag = essex_created
+		effect={
+			set_global_variable = essex_created
+		}
 	#	set_tribute_suzerain = { who = k_cantia type = anglosaxon_tributary }
 	}
 	587.1.1 = {
@@ -236,7 +246,9 @@ d_eastseaxe = {
 	}
 	441.1.1={
 		holder=3025
-		set_global_flag = eastseaxe_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	450.1.1 = {
 		holder = 3026
@@ -278,6 +290,11 @@ d_middleseaxe = {
 	410.1.1 = {
 		de_jure_liege=k_eastseaxe
 	}
+	470.1.1 = {		
+		effect = {
+			set_variable = title_created_de_jure
+		}
+	}
 	475.1.1 = {
 		de_jure_liege = k_anglia
 	}
@@ -305,22 +322,28 @@ d_middleseaxe = {
 k_cantia = {
 	436.1.1={
 		holder=810		# Hengist
-		set_global_flag = cantia_created
+		effect={
+			set_global_variable = cantia_created
+		}
 	}
 	439.1.1={
-		set_global_flag = great_saxon_revolt_inital
+		effect={
+			set_global_variable = great_saxon_revolt_inital
+		}
 	}
 	464.6.20={
 		holder=1252		# Æsc of Cantware
 	}
 	477.6.24={
 		holder=0
-		clr_global_flag = cantia_created
+		effect = {
+			remove_global_variable = cantia_created
+		}
 	}
 	514.5.10={
 		holder=1253		# King Octa
-		set_global_flag = cantia_created
 		effect={
+			set_global_variable = cantia_created
 			insert_title_history = d_cantware # Will add all history entries in d_cantware earlier than the earliest entry here
 		}
 	}
@@ -344,7 +367,9 @@ d_cantware = {
 	}
 	436.1.1={
 		holder=810		# Hengist
-		set_global_flag = cantware_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 		liege = k_cantia
 	}
 	464.6.20={
@@ -381,7 +406,9 @@ d_westcantware = {
 	}
 	457.1.1={
 		holder=196		# King Unno of West Kent
-		set_global_flag = westcantware_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 		liege = k_cantia
 	}
 	472.2.18={
@@ -415,7 +442,9 @@ d_surrey = {
 	457.1.1={		# Battle of Crecganford
 		holder=1659
 		liege=k_cantia
-		set_global_flag = surrey_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	470.1.1={
 		holder=87	# Ealdorman Leofric of The Downs
@@ -458,13 +487,15 @@ k_sussex = {
 	477.6.24={
 		liege=0
 		holder=86
-		set_global_flag = cerdic_ruling_sussex
+		effect={
+			set_global_variable = cerdic_ruling_sussex
+		}
 	}
 	514.5.10={
 		holder=1251
 	}
 	567.1.1={
-			holder=0
+		holder=0
 	}
 }
 
@@ -476,7 +507,9 @@ d_the_weald = {
 	477.6.24={
 		holder=86
 		liege = k_sussex
-		set_global_flag = weald_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	514.5.10={
 		holder=1251
@@ -493,7 +526,9 @@ d_grentbryce = {
 	}
 	460.1.1={
 		holder=830
-		set_global_flag = grentbryce_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	475.1.1 = {
 		liege=k_anglia
@@ -518,7 +553,9 @@ d_gyrwas = {
 	}
 	460.1.1={
 		holder=81
-		set_global_flag = gyrwas_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	475.1.1 = {
 		liege=k_anglia
@@ -541,7 +578,7 @@ k_mercia = {
 	584.1.1={
 		holder = 14082 	# King Creoda Cynewaldsson of Mercia (Iceling)
 		effect={
-			set_global_flag = mercia_created
+			set_global_variable = mercia_created
 		}
 	}
 	593.1.1={
@@ -583,17 +620,23 @@ d_hiccas = {
 	480.1.1 = { 
 		holder=834
 		liege=k_anglia
-		set_global_flag = hiccas_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	497.4.16={
 		liege=0
 		holder = 0
 		de_jure_liege=k_mercia
-		clr_global_flag = hiccas_created
+		effect = {
+			remove_variable = title_created_de_jure
+		}
 	}
 	610.1.1 = {
 		liege = k_mercia
-		set_global_flag = hiccas_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 }
 
@@ -607,17 +650,23 @@ d_middle_angles = {
 	486.8.12={ 
 		holder=1651
 		liege=k_anglia
-		set_global_flag = middleangles_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	497.4.16={
 		liege=k_mercia
 		holder = 0
 		de_jure_liege=k_mercia
-		clr_global_flag = middleangles_created
+		effect = {
+			remove_variable = title_created_de_jure
+		}
 	}
 	515.1.1 = {
 		holder = 1655
-		set_global_flag = middleangles_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	521.1.1 = {
 		holder = 1910
@@ -776,17 +825,23 @@ d_cilternsaete = {
 	486.8.12={ 
 		holder=10058
 		liege=k_anglia
-		set_global_flag = cilternsaete_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	487.4.24={
 		holder=0
 		liege=0
 		de_jure_liege=k_wessex
-		clr_global_flag = cilternsaete_created
+		effect = {
+			remove_variable = title_created_de_jure
+		}
 	}
 	512.4.2={
 		holder=1650
-		set_global_flag = cilternsaete_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	530.1.1 = {
 		holder = 1909
@@ -838,7 +893,9 @@ k_northumbria = {
 	}
 	654.1.1={
 		holder = 14034
-		set_global_flag = northumbria_created
+		effect = {
+			set_global_variable = northumbria_created
+		}
 	}
 }
 
@@ -850,7 +907,9 @@ d_lindsey = {
 	}
 	535.1.1={
 		holder=1281
-		set_global_flag = lindsey_created
+		effect = {
+			set_variable = title_created_de_jure
+		}
 	}
 	560.1.1={
 		holder=1282
@@ -870,7 +929,9 @@ d_lindsey = {
 # 	}
 # 	560.1.1={
 # 		holder = 14036
-# 		set_global_flag = deira_created
+#		effect = {
+#			set_variable = title_created_de_jure
+#		}
 # 	}
 # 	588.1.1={
 # 		holder = 14041
@@ -930,7 +991,9 @@ d_lindsey = {
 # 	548.1.1 = {
 # 		holder = 3015	# Ida Eoppasson  of the North Angles, later King of Bernicia
 # 		liege = 0
-# 		set_global_flag = bernicia_created
+#		effect = {
+#			set_variable = title_created_de_jure
+#		}
 # 	}
 # 	559.1.1={
 # 		holder=14020
@@ -1305,7 +1368,9 @@ d_lindsey = {
 # 	#	active = yes
 # 	#	law = agnatic_succession
 # 	#	law = succ_elective_gavelkind
-# 		set_global_flag = benoc_folc_migrated_bernicia
+#		effect={
+# 			set_global_variable = benoc_folc_migrated_bernicia
+#		}
 # 	}
 # 	520.1.1 = {
 # 		holder = 3014	# Eoppa Esasson of the North Angles
@@ -1381,7 +1446,9 @@ d_lindsey = {
 # 		}
 # 	}
 # 	450.1.1 = {
-# 		set_global_flag = anglian_east_invasion_450
+#		effect = {
+# 			set_global_variable = anglian_east_invasion_450
+#		}
 # 	}
 # }
 
