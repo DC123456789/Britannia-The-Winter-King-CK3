@@ -31,3 +31,87 @@
 		set_de_jure_liege_title = this.var:default_duchy
 	}
 }
+
+check_de_jure_liege_duchy_effect = {
+	if = {
+		limit = {
+			has_variable = roman_title_created_de_jure
+			has_variable = roman_kingdom
+		}
+		set_de_jure_liege_title = this.var:roman_kingdom
+		set_roman_duchy_name_effect = yes
+	}
+	else = {
+		set_de_jure_liege_title = this.var:default_kingdom
+		if = {
+			limit = { NOT = { has_variable = custom_name } }
+			reset_title_name = yes
+		}
+	}
+}
+
+set_roman_duchy_name_effect = {
+	## MAXIMA CAESARIENSIS
+    if = {
+        limit = { this = title:d_lundein }
+        set_title_name = cn_londinium
+    }
+	else_if = {
+		limit = { this = title:d_mincip }
+		set_title_name = cn_catuvellaunia
+	}
+	else_if = {
+		limit = { this = title:d_eastgwent }
+		set_title_name = cn_lactodorum
+	}
+	else_if = {
+		limit = { this = title:d_trinovantia }
+		set_title_name = cn_trinovantia
+	}
+	else_if = {
+		limit = { this = title:d_cantuaria }
+		set_title_name = cn_cantiacia
+	}
+	else_if = {
+		limit = { this = title:d_rhegin }
+		set_title_name = cn_regnia
+	}
+	else_if = {
+		limit = { this = title:d_eastdumnonia }
+		set_title_name = cn_atrebatia
+	}
+	else_if = {
+		limit = { this = title:d_the_belgae }
+		set_title_name = cn_belgia
+	}
+	## FLAVIA CAESARIENSIS
+	else_if = {
+		limit = { this = title:d_lindum }
+		set_title_name = cn_lindum
+	}
+	else_if = {
+		limit = { this = title:d_grwath }
+		set_title_name = cn_durobrivae
+	}
+	else_if = {
+		limit = { this = title:d_went }
+		set_title_name = cn_icenia
+	}
+	 ## BRITANNIA PRIMA
+	else_if = {
+		limit = { this = title:d_avalon }
+		set_title_name = cn_lendeniensia
+	}
+	else_if = {
+		limit = { this = title:d_centdumnonia }
+		set_title_name = cn_durotrigia
+	}
+	else_if = {
+		limit = { this = title:d_westdumnonia }
+		set_title_name = cn_dumnonia
+	}
+	else_if = {
+		limit = { this = title:d_kernow }
+		set_title_name = cn_cornubia
+	}
+}
