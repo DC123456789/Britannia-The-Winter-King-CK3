@@ -10,6 +10,12 @@
 		limit = {
 			has_variable = anglo_saxon_duchy
 			this.var:anglo_saxon_duchy = { has_variable = title_created_de_jure }
+			OR = {
+				# If the anglo_saxon_duchy_dependency title has been set, it must also exist
+				# in order for the county to come under anglo_saxon_duchy
+				NOT = { has_variable = anglo_saxon_duchy_dependency }
+				this.var:anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+			}
 		}
 		set_de_jure_liege_title = this.var:anglo_saxon_duchy
 	}
