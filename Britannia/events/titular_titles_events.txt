@@ -1,8 +1,8 @@
 ﻿namespace = titular_titles_test
 
 
-# Revert all de jure changes
-titular_titles_test.1 = {
+# Revert all de jure changes (aka apply Briton setup)
+titular_titles_test.0001 = {
 	hidden = yes
 
 	immediate = {
@@ -29,9 +29,9 @@ titular_titles_test.1 = {
 }
 
 # Apply full Anglo-Saxon de jure setup
-titular_titles_test.2 = {
+titular_titles_test.1001 = {
 	hidden = yes
-
+	
 	immediate = {
 		every_in_global_list = {
 			variable = norse_duchy_list
@@ -41,7 +41,52 @@ titular_titles_test.2 = {
 			variable = anglo_saxon_duchy_list
 			set_variable = title_created_de_jure
 		}
-		
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Apply Anglo-Saxon de jure setup in Aengland only
+titular_titles_test.1002 = {
+	hidden = yes
+
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			if = {
+				limit = {
+					NOT = { title_capital_county = { title_province = { geographical_region = world_britannia_wales } } }
+				}
+				remove_variable = title_created_de_jure
+			}
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			if = {
+				limit = {
+					NOT = { title_capital_county = { title_province = { geographical_region = world_britannia_wales } } }
+				}
+				set_variable = title_created_de_jure
+			}
+		}
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Toggle Anglia/Sussex formation status
+titular_titles_test.1003 = {
+	hidden = yes
+
+	immediate = {
 		every_county = {
 			check_de_jure_liege_county_effect = yes
 		}
@@ -52,7 +97,7 @@ titular_titles_test.2 = {
 }
 
 # Apply full Roman de jure setup
-titular_titles_test.3 = {
+titular_titles_test.2001 = {
 	hidden = yes
 
 	immediate = {
