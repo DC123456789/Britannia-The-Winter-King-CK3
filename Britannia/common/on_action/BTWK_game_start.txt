@@ -277,6 +277,26 @@ BTWK_de_jure_setup = {
 			title:c_gobannium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 		}
 		
+		## Flag Anglia duchies
+		title:k_anglia = {
+			title:d_norfolc = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_southfolc = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_grentbryce = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_gyrwas = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_eastseaxe = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_middleseaxe = { set_variable = { name = formable_kingdom value = PREV } }
+			title:d_hiccas = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_middle_angles = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_cilternsaete = { set_variable = { name = expansion_kingdom value = PREV } }
+		}
+		
+		## Flag Sussex expansion duchies
+		title:k_sussex = {
+			title:d_cantware = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_westcantware = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_surrey = { set_variable = { name = expansion_kingdom value = PREV } }
+		}
+		
 		### ROMAN TITLE SETUP ###
 		
 		## MAXIMA CAESARIENSIS
@@ -540,7 +560,7 @@ BTWK_de_jure_setup = {
 				limit = { has_variable = anglo_saxon_duchy }
 				this.var:anglo_saxon_duchy = { 
 					add_to_variable_list = {
-						name = de_jure_territory
+						name = dynamic_de_jure_territory
 						target = PREV
 					}
 				}
@@ -549,7 +569,7 @@ BTWK_de_jure_setup = {
 				limit = { has_variable = secondary_anglo_saxon_duchy }
 				this.var:secondary_anglo_saxon_duchy = { 
 					add_to_variable_list = {
-						name = de_jure_territory
+						name = dynamic_de_jure_territory
 						target = PREV
 					}
 				}
@@ -565,12 +585,44 @@ BTWK_de_jure_setup = {
 			}
 		}
 		
+		# Similar list for kingdoms
+		every_duchy = {
+			if = {
+				limit = { has_variable = formable_kingdom }
+				this.var:formable_kingdom = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_kingdom }
+				this.var:expansion_kingdom = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = potential_integration_kingdoms }
+				ordered_in_list = {
+					variable = potential_integration_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+		}
+		
 		# Get a list of what duchies are under what hierarchies
 		title:e_aengland = {
 			every_in_de_jure_hierarchy = {
 				limit = { tier = tier_duchy }
 				if = {
-					limit = { has_variable_list = de_jure_territory }
+					limit = { has_variable_list = dynamic_de_jure_territory }
 					add_to_global_variable_list = {
 						name = anglo_saxon_duchy_list
 						target = THIS
