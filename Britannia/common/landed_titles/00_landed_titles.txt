@@ -11234,6 +11234,176 @@ e_britannia = {
 			}
 		}
 	}
+	k_powys = {
+		color={ 45 115 175 }
+		
+		capital = c_caereinion
+	
+		de_jure_drift_disabled = yes
+		can_be_named_after_dynasty = no
+		
+		# TODO Block for Roman characters
+		can_create = {
+			is_brythonic_culture_trigger = yes
+		}
+		
+		d_centpowys = {			# Teyrnllwg
+			color={ 60 137 190 }
+			
+			capital = c_caereinion
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+			
+			can_create = {
+				can_create_roman_celtic_titles_trigger = yes
+			}
+	
+			ai_primary_priority = {
+				if = {
+					limit = {
+						culture = { 
+							OR = {
+								has_cultural_pillar = heritage_celtic
+								has_cultural_pillar = heritage_latin
+							}
+						}
+					}
+					add = @better_than_the_alternatives_score
+				}
+			}
+			
+			c_caer_swys = {				# Arwystli
+				color={ 40 110 170 }
+				
+				b_caer_swyscastle = {			# Caer Swys/Caersws
+					province = 412
+					
+					color={ 40 110 170 }
+				}
+				
+				b_caer_swystemple = {			# Llanidloes
+					province = 413
+					
+					color={ 40 120 170 }
+				}
+				
+				b_caer_swystown = {				# Llanbrynmair
+					province = 414
+					
+					color={ 40 90 170 }
+				}
+			}
+			
+			c_mawddwy = {
+				color={ 50 120 180 }
+				
+				b_mawddwycastle = {			# Llanymawddwy
+					province = 415
+					
+					ccolor={ 50 120 180 }
+				}
+			}
+			
+			c_caereinion = {
+				color={ 120 105 120 }
+				
+				b_caereinioncastle = {			# Mathrafal
+					province = 416
+					
+					color={ 120 105 120 }
+				}
+				
+				b_caereiniontemple = {			# Caer Meguaidd/Meifod
+					province = 417
+					
+					color={ 120 115 120 }
+				}
+				
+				b_caereiniontown = {			# (Caer) Dolforwyn
+					province = 418
+					
+					color={ 120 105 130 }
+				}
+				
+				b_caereinionchurch = {			# Llangadfan
+					province = 419
+					
+					color={ 120 95 120 }
+				}
+			}
+			
+			c_dinnewrac = {				# Mechain
+				color={ 30 125 160 }
+			
+				cultural_names = {
+					name_list_anglo_saxon = cn_pool_anglosaxon
+					name_list_oldfrisian = cn_pool_anglosaxon
+					name_list_frisian = cn_pool_anglosaxon
+					name_list_angle = cn_pool_anglosaxon
+					name_list_old_saxon = cn_pool_anglosaxon
+					name_list_saxon = cn_pool_anglosaxon
+					name_list_jute = cn_pool_anglosaxon
+				}
+				
+				b_dinnewraccastle = {			# Llanfyllin
+					province = 420
+					
+					color={ 30 125 160 }
+				}
+				
+				b_dinnewractemple = {			# Dinnewrac (fictional)/Welshpool
+					province = 421
+			
+					cultural_names = {
+						name_list_briton = cn_dinnewrac
+						name_list_cumbrian = cn_dinnewrac
+						name_list_anglo_saxon = cn_pool_anglosaxon
+						name_list_oldfrisian = cn_pool_anglosaxon
+						name_list_frisian = cn_pool_anglosaxon
+						name_list_angle = cn_pool_anglosaxon
+						name_list_old_saxon = cn_pool_anglosaxon
+						name_list_saxon = cn_pool_anglosaxon
+						name_list_jute = cn_pool_anglosaxon
+					}
+					
+					color={ 30 135 160 }
+				}
+				
+				b_dinnewractown = {				# Llanrhaeadr-ym-Mochnant
+					province = 422
+					
+					color={ 30 115 160 }
+				}
+			}
+			
+			c_chirkland = {				# Swydd y Waun
+				color={ 60 95 160 }
+			
+				cultural_names = {
+					name_list_anglo_saxon = cn_chirkland_anglosaxon
+					name_list_oldfrisian = cn_chirkland_anglosaxon
+					name_list_frisian = cn_chirkland_anglosaxon
+					name_list_angle = cn_chirkland_anglosaxon
+					name_list_old_saxon = cn_chirkland_anglosaxon
+					name_list_saxon = cn_chirkland_anglosaxon
+					name_list_jute = cn_chirkland_anglosaxon
+				}
+				
+				b_chirklandcastle = {			# Llangollen
+					province = 423
+					
+					color={ 60 95 160 }
+				}
+				
+				b_chirklandtemple = {			# Llansilin
+					province = 424
+					
+					color={ 60 105 160 }
+				}
+			}
+		}
+	}
 }
 
 e_aengland = {
@@ -11921,6 +12091,25 @@ e_aengland = {
 				can_create_germanic_title_trigger = yes
 				completely_controls = title:c_gobannium
 				completely_controls = title:c_venta_siluria
+			}
+		}
+		
+		d_montgomeryshire = {
+			color={ 195 115 40 }
+			
+			capital = c_caereinion	# Temporary
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+
+			can_create = {
+				can_create_germanic_title_trigger = yes
+				# completely_controls = title:c_montgomery
+				# TODO Need to make custom description for this...
+				OR = {
+					completely_controls = title:c_caereinion
+					completely_controls = title:c_caer_swys
+				}
 			}
 		}
 	}
