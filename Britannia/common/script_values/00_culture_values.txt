@@ -109,7 +109,6 @@ revoke_title_culture_acceptance_impact = {
 
 auto_grant_county_cultural_acceptance_impact = {
 	value = 0
-	
 	add = {
 		value = 1
 		divide = {
@@ -120,7 +119,7 @@ auto_grant_county_cultural_acceptance_impact = {
 
 		min = 0.5
 		max = 15
-	}		
+	}
 }
 
 culture_conversion_acceptance_impact = { #The smaller a culture is, the more upset it will be.
@@ -373,7 +372,6 @@ divergence_yearly_chance = {
 	}
 }
 
-### TODO Review these, 10 and 20 are ENORMOUS comparative changes
 # % values used in events
 miniscule_positive_culture_acceptance = 5
 low_positive_culture_acceptance = 10
@@ -424,7 +422,7 @@ current_extra_languages = {
 }
 
 language_soft_cap = {
-	value = 1
+	value = 2
 	if = {
 		limit = {
 			learning >= language_learning_divide_value
@@ -515,7 +513,8 @@ family_business_court_poistion_aptitude_bonus = 20
 court_position_aptitude_family_business_value = {
 	if = {
 		limit = {
-			culture = liege.culture 
+			exists = liege
+			culture = liege.culture
 			culture = { has_cultural_parameter = close_family_better_court_positions }
 			is_close_family_of = liege
 		}
@@ -812,4 +811,12 @@ non_tribal_loot_value = {
 	value = root.var:raid_loot
 	multiply = not_tribal_raid_prestige_multiplier
 	multiply = -1
+}
+
+tradition_travel_discount = {
+	value = -1000
+}
+
+tradition_tournament_discount = {
+	value = -2000
 }
