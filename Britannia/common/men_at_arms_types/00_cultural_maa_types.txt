@@ -7,10 +7,10 @@
 huscarl = {
 	type = heavy_infantry
 
-	damage = 40
-	toughness = 26
+	damage = 60
+	toughness = 40
 	pursuit = 0
-	screen = 24
+	screen = 40
 	
 	terrain_bonus = {
 		taiga = { damage = 8 }
@@ -23,7 +23,12 @@ huscarl = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_huscarls }
+		culture = {
+		
+			has_innovation = innovation_quilted_armor
+			has_innovation = innovation_caballeros
+			
+		}
 	}
 
 	winter_bonus = {
@@ -35,7 +40,7 @@ huscarl = {
 	low_maintenance_cost = { gold = huscarls_low_maint_cost }
 	high_maintenance_cost = { gold = huscarls_high_maint_cost }
 	
-	stack = 100
+	stack = 20
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = danish_huskarls
 }
@@ -84,6 +89,21 @@ longbowmen = {
 	
 	terrain_bonus = {
 		hills = { damage = 12 toughness = 4 }
+	}
+
+	era_bonus = {
+		culture_era_early_medieval = {
+			damage = 8
+			toughness = 2
+		}
+		culture_era_high_medieval = {
+			damage = 16
+			toughness = 4
+		}
+		culture_era_late_medieval = {
+			damage = 24
+			toughness = 6
+		}
 	}
 
 	counters = {
@@ -183,7 +203,9 @@ chasseur = {
 	winter_bonus = {
 		harsh_winter = { damage = -5 toughness = -2 }
 	}
-
+	can_recruit = {
+		culture = { has_cultural_parameter = unlock_maa_chasseur }
+	}
 	buy_cost = { gold = chasseur_recruitment_cost }
 	low_maintenance_cost = { gold = chasseur_low_maint_cost }
 	high_maintenance_cost = { gold = chasseur_high_maint_cost }
@@ -239,43 +261,43 @@ praetorian = {
 	low_maintenance_cost = { gold = praetorian_low_maint_cost }
 	high_maintenance_cost = { gold = praetorian_high_maint_cost }
 	
-	stack = 100
+	stack = 20
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = heavy_infantry
 }
 
 caballero = {
-	type = light_cavalry
+	type = pikemen
 	
-	damage = 22
-	toughness = 16
-	pursuit = 30
-	screen = 50
+	damage = 45
+	toughness = 18
+	pursuit = 1
+	screen = 5
 	
 	terrain_bonus = {
 		hills = { damage = 15 toughness = 10 }
 		plains = { damage = 10 }
 		drylands = { damage = 10 }
-		mountains = { damage = -8 pursuit = -10 }
-		desert_mountains = { damage = -12 pursuit = -20 }
-		wetlands = { damage = -15 toughness = -10 pursuit = -20 screen = -20 }
+		mountains = { damage = 15  }
+		desert_mountains = { damage = 15  }
+		
 	}
 
 	counters = {
-		archers = 1
+		light_cavalry = 1
+		heavy_cavalry = 1
+		camel_cavalry = 1
+		elephant_cavalry = 1
 	}
 
-	winter_bonus = {
-		harsh_winter = { damage = -5 toughness = -2 }
-	}
-
+	
 	buy_cost = { gold = caballero_recruitment_cost }
 	low_maintenance_cost = { gold = caballero_low_maint_cost }
 	high_maintenance_cost = { gold = caballero_high_maint_cost }
 	
-	stack = 100
+	stack = 25
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 20] }
-	icon = light_cavalry
+	icon = pikemen
 }
 
 monaspa = {
@@ -321,7 +343,7 @@ cataphract = {
 	
 	damage = 120
 	toughness = 35
-	pursuit = 25
+	pursuit = 30
 	screen = 10
 	
 	terrain_bonus = {
@@ -341,16 +363,20 @@ cataphract = {
 		normal_winter = { damage = -15 toughness = -5 }
 		harsh_winter = { damage = -30 toughness = -10 }
 	}
-	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_cataphract }
+		culture = {
+		
+			has_innovation = innovation_quilted_armor
+			has_innovation = innovation_sahel_horsemen
+			
+		}
 	}
-
+	
 	buy_cost = { gold = cataphract_recruitment_cost }
 	low_maintenance_cost = { gold = cataphract_low_maint_cost }
 	high_maintenance_cost = { gold = cataphract_high_maint_cost }
 	
-	stack = 50
+	stack = 10
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = heavy_cavalry
 }
@@ -383,9 +409,38 @@ hobelar = {
 	low_maintenance_cost = { gold = hobelar_low_maint_cost }
 	high_maintenance_cost = { gold = hobelar_high_maint_cost }
 	
-	stack = 100
+	stack = 25
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = light_cavalry
+}
+
+schiltron = {
+	type = pikemen
+	
+	damage = 36
+	toughness = 28
+	pursuit = 0
+	screen = 0
+	
+	terrain_bonus = {
+		mountains = { toughness = 12 }
+		desert_mountains = { toughness = 12 }
+		hills = { toughness = 8 }
+		plains = { damage = 8 }
+	}
+
+	counters = {
+		light_cavalry = 1
+		heavy_cavalry = 1
+	}
+
+	buy_cost = { gold = schiltron_recruitment_cost }
+	low_maintenance_cost = { gold = schiltron_low_maint_cost }
+	high_maintenance_cost = { gold = schiltron_high_maint_cost }
+	
+	stack = 100
+	ai_quality = { value = @cultural_maa_extra_ai_score }
+	icon = pikemen
 }
 
 schiltron = {
@@ -476,14 +531,17 @@ horse_archers = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_horse_archers }
+		culture = { has_cultural_parameter = unlock_maa_horse_archers 
+
+			    has_innovation = innovation_sahel_horsemen  }
+			
 	}
 
 	buy_cost = { gold = horse_archers_recruitment_cost }
 	low_maintenance_cost = { gold = horse_archers_low_maint_cost }
 	high_maintenance_cost = { gold = horse_archers_high_maint_cost }
 	
-	stack = 100
+	stack = 50
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = horse_archers
 }
