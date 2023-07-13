@@ -7,19 +7,16 @@
 huscarl = {
 	type = heavy_infantry
 
-	damage = 50
-	toughness = 35
+	damage = 41
+	toughness = 44
 	pursuit = 0
-	screen = 40
+	screen = 0
 	
-	terrain_bonus = {
-		taiga = { damage = 8 }
-		forest = { damage = 8 }
-	}
+	
 	
 	counters = {
-		pikemen = 1
-		archers = 1
+		pikemen = 0.5
+		heavy_infantry = 1
 	}
 
 	can_recruit = {
@@ -40,7 +37,7 @@ huscarl = {
 	low_maintenance_cost = { gold = huscarls_low_maint_cost }
 	high_maintenance_cost = { gold = huscarls_high_maint_cost }
 	
-	stack = 20
+	stack = 25
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = danish_huskarls
 }
@@ -142,11 +139,12 @@ goedendag = {
 	icon = skirmishers
 }
 
+#Commander's Unit Cavalry
 gendarme = {
 	type = heavy_cavalry
 	
-	damage = 125
-	toughness = 40
+	damage = 120
+	toughness = 60
 	pursuit = 20
 	screen = 10
 	
@@ -160,20 +158,15 @@ gendarme = {
 		wetlands = { damage = -75 }
 	}
 
-	counters = {
-		archers = 1
-	}
+	
 
-	winter_bonus = {
-		normal_winter = { damage = -15 toughness = -5 }
-		harsh_winter = { damage = -30 toughness = -10 }
-	}
+	
 
 	buy_cost = { gold = gendarme_recruitment_cost }
 	low_maintenance_cost = { gold = gendarme_low_maint_cost }
 	high_maintenance_cost = { gold = gendarme_high_maint_cost }
 	
-	stack = 50
+	stack = 1
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = heavy_cavalry
 }
@@ -219,8 +212,8 @@ chasseur = {
 picchieri = {
 	type = pikemen
 	
-	damage = 22
-	toughness = 24
+	damage = 30
+	toughness = 32
 	pursuit = 0
 	screen = 0
 	
@@ -231,24 +224,23 @@ picchieri = {
 			
 		}
 	}
-	terrain_bonus = {
-		mountains = { toughness = 12 }
-		desert_mountains = { toughness = 12 }
-		hills = { toughness = 10 }
-	}
+	
 
 	counters = {
-		light_cavalry = 1
-		heavy_cavalry = 1
+		pikemen = 1
+		heavy_infantry = .5
+		light_cavalry = 3
+		heavy_cavalry = 2
 		camel_cavalry = 1
 		elephant_cavalry = 1
+		archer_cavalry = 1	
 	}
 
 	buy_cost = { gold = picchieri_recruitment_cost }
 	low_maintenance_cost = { gold = picchieri_low_maint_cost }
 	high_maintenance_cost = { gold = picchieri_high_maint_cost }
 	
-	stack = 35
+	stack = 25
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = pikemen
 }
@@ -257,10 +249,10 @@ picchieri = {
 praetorian = {
 	type = heavy_infantry
 	
-	damage = 42
-	toughness = 35
+	damage = 40
+	toughness = 45
 	pursuit = 0
-	screen = 20
+	screen = 0
 	
 	can_recruit = {
 		culture = {
@@ -270,7 +262,8 @@ praetorian = {
 		}
 	}
 	counters = {
-		pikemen = 1
+		pikemen = .5
+		heavy_infantry = 1
 	}
 	
 	buy_cost = { gold = praetorian_recruitment_cost }
@@ -286,25 +279,21 @@ praetorian = {
 caballero = {
 	type = pikemen
 	
-	damage = 36
-	toughness = 25
+	damage = 30
+	toughness = 41
 	pursuit = 1
-	screen = 5
+	screen = 0
 	
-	terrain_bonus = {
-		hills = { damage = 15 toughness = 10 }
-		plains = { damage = 10 }
-		drylands = { damage = 10 }
-		mountains = { damage = 15  }
-		desert_mountains = { damage = 15  }
-		
-	}
+	
 
 	counters = {
-		light_cavalry = 1
-		heavy_cavalry = 1
+		pikemen = 1
+		heavy_infantry = .5
+		light_cavalry = 3
+		heavy_cavalry = 2
 		camel_cavalry = 1
 		elephant_cavalry = 1
+		archer_cavalry = 1	
 	}
 	can_recruit = {
 		culture = {has_innovation = innovation_caballeros }
@@ -326,7 +315,7 @@ monaspa = {
 	
 	damage = 110
 	toughness = 30
-	pursuit = 25
+	pursuit = 80
 	screen = 10
 	
 	terrain_bonus = {
@@ -340,10 +329,7 @@ monaspa = {
 		archers = 1
 	}
 
-	winter_bonus = {
-		normal_winter = { damage = -10 toughness = -5 }
-		harsh_winter = { damage = -20 toughness = -5 }
-	}
+	
 	
 	can_recruit = {
 		culture = { has_cultural_parameter = unlock_maa_monaspa }
@@ -363,9 +349,9 @@ cataphract = {
 	type = heavy_cavalry
 	
 	damage = 120
-	toughness = 35
-	pursuit = 30
-	screen = 10
+	toughness = 38
+	pursuit = 60
+	screen = 20
 	
 	terrain_bonus = {
 		plains = { damage = 30 }
@@ -377,13 +363,10 @@ cataphract = {
 	}
 
 	counters = {
-		archers = 1
+		
 	}
 
-	winter_bonus = {
-		normal_winter = { damage = -15 toughness = -5 }
-		harsh_winter = { damage = -30 toughness = -10 }
-	}
+	
 	can_recruit = {
 		culture = {
 			has_cultural_parameter = heritage_latin
@@ -531,13 +514,13 @@ metsanvartija = {
 horse_archers = {
 	type = archer_cavalry
 	
-	damage = 45
+	damage = 35
 	toughness = 20
-	pursuit = 40
+	pursuit = 140
 	screen = 30
 	
 	terrain_bonus = {
-		steppe = { damage = 45 }
+		steppe = { damage = 35 }
 		plains = { damage = 20 }
 		drylands = { damage = 20 }
 		jungle = { damage = -20 pursuit = -20 }
@@ -548,7 +531,11 @@ horse_archers = {
 
 	counters = {
 		skirmishers = 1
-		heavy_infantry = 1
+		heavy_infantry = .5
+		archer_cavalry = 1
+		archers = 1
+		pikemen = .5
+		
 	}
 
 	can_recruit = {
@@ -971,9 +958,9 @@ mountaineer = {
 sahel_horsemen = {
 	type = light_cavalry
 	
-	damage = 22
-	toughness = 15
-	pursuit = 30
+	damage = 23
+	toughness = 28
+	pursuit = 130
 	screen = 30
 	
 	terrain_bonus = {
@@ -988,19 +975,17 @@ sahel_horsemen = {
 	}
 
 	counters = {
-		archers = 1
-		heavy_infantry = 1
+		light_cavalry = 1
+		archer_cavalry = .75
 	}
 
-	winter_bonus = {
-		harsh_winter = { damage = -5 toughness = -2 }
-	}
+	
 
 	buy_cost = { gold = sahel_rider_recruitment_cost }
 	low_maintenance_cost = { gold = sahel_rider_low_maint_cost }
 	high_maintenance_cost = { gold = sahel_rider_high_maint_cost }
 	
-	stack = 100
+	stack = 20
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 30] }
 	icon = light_cavalry
 }
@@ -1164,11 +1149,11 @@ palace_guards = {
 chu_ko_nu = {
 	type = archers
 	
-	damage = 80
-	toughness = 1
+	damage = 100
+	toughness = 10
 	pursuit = 0
-	screen = 30
-	
+	screen = 0
+	siege_value = 0.2
 	terrain_bonus = {
 		hills = { damage = 10 toughness = 9 }
 		mountains = { damage = 15 toughness = 15 }
@@ -1176,8 +1161,8 @@ chu_ko_nu = {
 	}
 	
 	counters = {
-		skirmishers = 1
-		archer_cavalry = 0.5
+		archers = 1
+		
 	}
 	can_recruit = {
 		culture = { has_cultural_parameter = heritage_latin }

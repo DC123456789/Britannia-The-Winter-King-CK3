@@ -6,19 +6,14 @@
 light_footmen = {
 	type = skirmishers
 	
-	damage = 10
-	toughness = 16
-	pursuit = 10
-	screen = 16
+	damage = 16
+	toughness = 19
+	pursuit = 20
+	screen = 0
 	
-	terrain_bonus = {
-		forest = { damage = 4 toughness = 6 }
-		taiga = { damage = 4 toughness = 6 }
-		jungle = { damage = 4 toughness = 6 }
-	}
-
+	
 	counters = {
-		heavy_infantry = 1
+		skirmishers = 1
 	}
 
 	buy_cost = { gold = skirmisher_recruitment_cost }
@@ -28,7 +23,7 @@ light_footmen = {
 	mercenary_fallback = yes
 	holy_order_fallback = yes
 	
-	stack = 65
+	stack = 50
 	ai_quality = { value = culture_ai_weight_skirmishers }
 	icon = skirmishers
 }
@@ -36,19 +31,21 @@ light_footmen = {
 bowmen = {
 	type = archers
 	
-	damage = 25
-	toughness = 10
-	pursuit = 0
+	damage = 50
+	toughness = 17
+	pursuit = 20
 	screen = 0
 	
 	terrain_bonus = {
-		hills = { damage = 10 toughness = 4 }
-		forest = { toughness = 4 screen = 4 }
-		taiga = { toughness = 4 screen = 4 }
+		hills = { damage = 10  }
+		mountains = { damage = 15  }
+		
 	}
 
 	counters = {
-		skirmishers = 1
+		
+		archers = 1
+		skirmishers = .75
 	}
 
 	buy_cost = { gold = bowmen_recruitment_cost }
@@ -58,7 +55,7 @@ bowmen = {
 	mercenary_fallback = yes
 	holy_order_fallback = yes
 	
-	stack = 45
+	stack = 25
 	ai_quality = { 
 		value = culture_ai_weight_archers
 		value = counter_synergy_ai_weight_archers
@@ -67,33 +64,25 @@ bowmen = {
 
 light_horsemen = {
 	type = light_cavalry
-	can_recruit = {
-		exists = dynasty
-		dynasty = {
-			has_dynasty_perk = warfare_legacy_5
-		}
-	}
-	damage = 22
+	
+	
+	damage = 10
 	toughness = 15
-	pursuit = 30
-	screen = 30
+	pursuit = 40
+	screen = 120
 	
 	terrain_bonus = {
-		plains = { damage = 15 }
-		drylands = { damage = 15 }
-		hills = { damage = -5 }
-		mountains = { damage = -10 pursuit = -20 }
-		desert_mountains = { damage = -15 pursuit = -20 }
-		wetlands = { damage = -15 toughness = -10 pursuit = -30 screen = -30 }
+		plains = { damage = 1 }
+		drylands = { damage = 1 }
+		hills = { damage = 1 }
+		mountains = { damage = 1 pursuit = 1 }
+		desert_mountains = { damage = 1 pursuit = 1 }
+		wetlands = { damage = 1 toughness = 1 pursuit = 1 screen = 1 }
 	}
 	
-	counters = {
-		archers = 1
-	}
+	
 
-	winter_bonus = {
-		harsh_winter = { damage = -5 toughness = -2 }
-	}
+	
 
 	buy_cost = { gold = light_cavalry_recruitment_cost }
 	low_maintenance_cost = { gold = light_cavalry_low_maint_cost }
@@ -102,10 +91,10 @@ light_horsemen = {
 	mercenary_fallback = yes
 	holy_order_fallback = yes
 	
-	stack = 30
+	stack = 15
 	ai_quality = { 
+		
 		value = culture_ai_weight_light_cavalry
-		value = counter_synergy_ai_weight_light_cavalry
 	}
 	icon = light_cavalry
 }
@@ -113,22 +102,21 @@ light_horsemen = {
 pikemen_unit = {
 	type = pikemen
 	
-	damage = 22
-	toughness = 20
+	damage = 21
+	toughness = 25
 	pursuit = 0
 	screen = 0
 	
-	terrain_bonus = {
-		mountains = { toughness = 12 }
-		desert_mountains = { toughness = 12 }
-		hills = { toughness = 8 }
-	}
+	
 
 	counters = {
-		light_cavalry = 1
-		heavy_cavalry = 1
+		pikemen = 1
+		heavy_infantry = .5
+		light_cavalry = 3
+		heavy_cavalry = 2
 		camel_cavalry = 1
 		elephant_cavalry = 1
+		archer_cavalry = 1	
 	}
 
 	buy_cost = { gold = pikemen_recruitment_cost }
@@ -148,7 +136,7 @@ pikemen_unit = {
 
 
 
-#Tribal Era 
+#Tribal Era   #Future Unit
 armored_footmen = {
 	type = heavy_infantry
 	
@@ -221,7 +209,7 @@ armored_horsemen = {
 	}
 
 	counters = {
-		archers = 1
+		
 	}
 
 	winter_bonus = {
