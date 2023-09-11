@@ -1,7 +1,10 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
-	on_actions = { BTWK_de_jure_setup }
+	on_actions = {
+		BTWK_de_jure_setup
+		BTWK_story_trigger_on_game_start_479
+		}
 	effect = {
 		# Mark some faiths to block conversion till specific decisions are taken.
 		# TODO Block all Muslim faiths until it appears
@@ -322,7 +325,6 @@ BTWK_de_jure_setup = {
 			title:c_campodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_legiolium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 		}
-		
 		## WALES
 		title:d_monmouthshire = {
 			title:c_venta_siluria = { set_variable = { name = anglo_saxon_duchy value = PREV } }
@@ -876,5 +878,16 @@ BTWK_de_jure_setup = {
 		every_duchy = {
 			check_de_jure_liege_duchy_effect = yes
 		}
+	}
+}
+
+#############################################################
+
+BTWK_story_trigger_on_game_start_479 = {
+	events = {
+		delay = {days = 270}
+		BTWK_story_event.0001
+		delay = {days = 160}
+		BTWK_story_event.0002
 	}
 }
