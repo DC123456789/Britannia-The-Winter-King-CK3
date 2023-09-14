@@ -1,21 +1,26 @@
 ﻿on_death = {
-	on_actions = {BTWK_arthur_return_to_dumnonia}
+	on_actions = {BTWK_uther_dies_on_action}
 }
 
 
 #Trigger to return Arthur to Dumnonia a few weeks after Uther's death (simulate time for news to reach Arthur, & for his return)
 
-BTWK_arthur_return_to_dumnonia = {
+BTWK_uther_dies_on_action = {
 	effect = {
 		if = {
 			limit = {
-				character:1 = {
-					is_alive = no
+				trigger_if = {
+					limit = {
+						root = character:1
+						global_var:uther_is_dead = 0
+					}
+					
 				}
 			}
-			trigger_event = {
-				id = BTWK_story_event.0003
-				days = {20 40}
+			character:3 = {
+				trigger_event = {
+					id = BTWK_story_event.0003
+				}
 			}
 		}
 	}

@@ -11,125 +11,180 @@
 ### UTHER'S DEATH and ARTHUR'S RETURN ###
 # BTWK_story_event.0001 = Autumn 480 AD. Uther Pendragon health is worsening...
 # BTWK_story_event.0002 = January 481 AD. If Uther still alive, he becomes incapable...
-# BTWK_story_event.0003 = Uther Pendragon is dead. Arthur is back to Dumnonia. News spreading...
-# BTWK_story_event.0004 = Everyone except Mordred get this...
-# BTWK_story_event.0005 = Event for King Mordred
-# BTWK_story_event.0006 = Event for Arthur ---IF PLAYER TAG SWITCHES---
+# BTWK_story_event.0003 = Uther is Dead - Hidden Effects: Triggers EVTs .0004 
+# BTWK_story_event.0004 = Arthur Returns - Hidden Effects: Title Swaps; Triggers EVTs .0005 & .0006
+# BTWK_story_event.0005 = Uther is Dead global ping
+# BTWK_story_event.0006 = Unique event for player controlled mordred allowing tag switch to arthur
+# BTWK_story_event.0007 = Arthur introduction event
 
 ### ARTHUR REGENCY CHAIN ###
-# BTWK_story_event.0007 = Regent decides to give power to Arthur
-# BTWK_story_event.0008 = Arthur accepts regency
-# BTWK_story_event.0009 = Notify Mordred
-# BTWK_story_event.0010 = Notify other vassals
-# BTWK_story_event.0011 = Set Flag
+# BTWK_story_event.0008 = Regent decides to give power to Arthur
+# BTWK_story_event.0009 = Arthur accepts regency
+# BTWK_story_event.0010 = Notify Mordred
+# BTWK_story_event.0011 = Notify other vassals
+# BTWK_story_event.0012 = Set Flag
+
 
 ############## UTHER'S DEATH and ARTHUR'S RETURN ##############
 
+
 BTWK_story_event.0001 = {  # Triggered by on_game_start on_action incase Uther's pneumonia is cured. Possibly make it non-hidden also. "Second bout of illness..."
-	type = character_event
-	hidden = yes
-	
-	trigger = {
-		character:1 = {		
-			NOT = { has_character_flag = utherillness }
-			is_alive = yes
-			
-		}
+	title = BTWK_story_event.0001.t
+	desc = BTWK_story_event.0001.desc
+	# More fitting music cue/sounds needed
+	theme = skull
+
+	right_portrait = {
+		character = character:1
+		animation = worry
 	}
-	immediate = {
-		character:1 = {
-			add_character_flag = utherillness
-			add_trait = pneumonic 
+	
+	option = {
+		name = BTWK_story_event.0001.a
+		trigger = {
+			NOT = { has_character_flag = utherillness }
+			is_alive = yes	
 		}
+		character:1 = {
+			add_trait = pneumonic
+			add_character_flag = utherillness
+			trigger_event = {
+				id = BTWK_story_event.0002
+				days = {130 180}
+			}
+		}
+		
 	}
 }
 
 BTWK_story_event.0002 = {  # Should probably change this to make it non-hidden & a unique end of life event for Uther.
-
 	type = character_event
-	hidden = yes
+	title = BTWK_story_event.0002.t
+	desc = BTWK_story_event.0002.desc
+	# More fitting music cue/sounds needed
+	theme = skull
 
-	trigger = {
-		character:1 = {
+
+	right_portrait = {
+		character = character:1
+		animation = worry
+	}
+	
+	option = {
+		name = BTWK_story_event.0002.a
+		trigger = {
+			this = character:1	
 			has_character_flag = utherillness
 			is_alive = yes
 			NOT = { has_character_flag = utherincapable }
 		}
-	}
-	
-	immediate = {
 		character:1 = {
 			add_trait = incapable
 			add_character_flag = utherincapable
 		}
+		
 	}
 }
 
-BTWK_story_event.0003 = {  # Should be triggered by on_death with Uther. Effects are now hidden as Arthur will be unplayable until this event fires.
+BTWK_story_event.0003 = {  #Sub-event that delays Arthur's return, & fires "Uther is dead" event.
 
 	type = character_event
 	hidden = yes
 	
-	immediate = {
-		# This doesn't work #
-		scope:landed_title = {
-			every_claimant = {
-				limit = { 
-					has_claim_on = title:k_dumnonia
-					NOT = {dynasty = 3} # All Corneus still hold claims on Dumnonia if that isn't wanted. Also doesn't remove claims from any other claimants.
-				}
-			remove_claim = title:k_dumnonia
-			}
-		}
-		####################
-		
-		character:3 = {
-			# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
-			add_character_flag = arthur_pendragon
-			save_scope_as = arthur_pendragon
-			# The "get_titles" below are flagging as errors in Visual Studio. I tried to set up a create_title_and_vassal_change, but another error flagged telling
-			# me "every_de_jure_county" is unexpected in "immediate". The get_titles work, so given they only happen once, is it safe to leave them as is? 
-			get_title = title:c_durnovaria
-			get_title = title:c_dunum 
-			get_title = title:c_velox 
-			get_title = title:d_centdumnonia
-			give_nickname = nick_pendragon
-		}
-		
-#### Add destroy "Arthur's Company" section when the title is implemented ####
+	trigger = {
 
-		character:5 = { # Unique Event for Mordred
-			add_character_flag = mordred_pengdragon
-			save_scope_as = mordred_pendragon
-			trigger_event = {
-				id = BTWK_story_event.0005
-				days = 5
-			}
+		character:1 = {
+			is_alive = no
 		}
-#### Do we really need to fire Mordred's council like in CK2??? It's whoever was in power as selected by Uther - don't see how a baby is going to control who is in the council. ####	
-		
-		every_ruler = {
-			limit = {
-				NOT = { has_character_flag = mordred_pendragon }
-				NOT = { has_character_flag = arthur_pendragon }
-#				capital_county = {
-#					region = world_britannia
-#					NOT = { region = world_britannia_cymry_henogledd }
-#				}
-			}
-			
-			trigger_event = { # Event for everyone else
-				id = BTWK_story_event.0004
-				days = 5
-			}
+		global_var:uther_is_dead = 0
+	}
+	
+	immediate = {
+
+		change_global_variable = {
+			name = uther_is_dead
+			add = 1
+		}
+
+		#  Fires Arthur's return HIDDEN EVENT  #
+		trigger_event = {
+			id = BTWK_story_event_0004
 		}
 	}
 }
 
-BTWK_story_event.0004 = {
+BTWK_story_event_0004 = {
+
 	type = character_event
-	title = BTWK_story_event.0004.t
-	desc = BTWK_story_event.0004.desc
+	hidden = yes
+
+	immediate = {
+
+		#  Arthur gets d_durnac & vassals  #
+		create_title_and_vassal_change = {
+			type = granted
+			save_scope_as = arthur_pendragon_durnac
+			add_claim_on_loss = yes
+		}
+		title:d_centdumnonia = {
+			every_de_jure_county = {
+				limit = {
+					holder = character:5
+				}
+				change_title_holder = {
+					holder = character:3
+					change = scope:arthur_pendragon_durnac
+				}
+			}
+			change_title_holder = {
+				holder = character:3
+				change = scope:arthur_pendragon_durnac
+			}
+		}
+		title:c_vindocladia.holder = {
+			change_liege = {
+			liege = character:3
+			change = scope:arthur_pendragon_durnac
+			}
+		}
+		resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
+		#####################################
+
+		# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
+		character:3 = {
+			add_character_flag = arthur_pendragon
+			give_nickname = nick_pendragon
+		}
+		character:5 = {
+			add_character_flag = mordred_pendragon
+		}
+
+		#  Fires "Uther is dead & Arthur returns" event  #
+		every_ruler = {
+			if = {
+				limit = { 
+					NOT = { has_character_flag = mordred_pendragon }
+					NOT = { has_character_flag = arthur_pendragon }
+				}
+				trigger_event = {  
+					id = BTWK_story_event.0005
+					days = {0 5}
+				}
+			}
+		}
+		character:5 = {
+			trigger_event = {
+				id = BTWK_story_event.0006
+			}
+		}		
+	}
+}
+
+BTWK_story_event.0005 = { 
+	
+	type = character_event
+	title = BTWK_story_event.0005.t
+	desc = BTWK_story_event.0005.desc
 # More fitting music cue/sounds needed
 	theme = dynasty
 	left_portrait = {
@@ -144,20 +199,23 @@ BTWK_story_event.0004 = {
 		character = character:5
 		animation = no
 	}
-# All events fire correctly for each character type in question
+
 
 # Dumnonians	
 	option = { 												
-		name = BTWK_story_event.0004.a
+		name = BTWK_story_event.0005.a
 		trigger = {
 			top_liege = { has_title = title:k_dumnonia }
-			NOT = {culture = {has_cultural_pillar = heritage_west_germanic }}
+			NOT = {
+				culture = {has_cultural_pillar = heritage_west_germanic }
+			}
+
 		}
 	}	
 
 # Non-Dumnonian Brythons & Imperials.
 	option = { 												
-		name = BTWK_story_event.0004.b
+		name = BTWK_story_event.0005.b
 		trigger = {	
 			culture = {
 				OR = {
@@ -171,7 +229,7 @@ BTWK_story_event.0004 = {
 
 # Is a North Sea Germanic.
 	option = {  											
-		name = BTWK_story_event.0004.c
+		name = BTWK_story_event.0005.c
 		trigger = {
 			culture = { has_cultural_pillar = heritage_west_germanic }
 		}
@@ -180,7 +238,7 @@ BTWK_story_event.0004 = {
 
 # Doesn't have cultural pillars Brythonic, Latin & North Sea Germanic, and NOT located in key "Britannia" regions.
 	option = {  											
-		name = BTWK_story_event.0004.d
+		name = BTWK_story_event.0005.d
 		trigger = {
 			culture = {
 				NOR = {
@@ -195,10 +253,10 @@ BTWK_story_event.0004 = {
 }
 
 
-BTWK_story_event.0005 = {
+BTWK_story_event.0006 = {
 	type = character_event
-	title = BTWK_story_event.0005.t
-	desc = BTWK_story_event.0005.desc
+	title = BTWK_story_event.0006.t
+	desc = BTWK_story_event.0006.desc
 	theme = dynasty
 	# More fitting sound & music cue
 	left_portrait = {
@@ -215,10 +273,10 @@ BTWK_story_event.0005 = {
 	}
 
 	option = {  # Continue to play as Mordred.
-		name = BTWK_story_event.0005.a
+		name = BTWK_story_event.0006.a
 	}
 	option = {  # Continue as Arthur.
-		name = BTWK_story_event.0005.b
+		name = BTWK_story_event.0006.b
 		trigger = {
 			is_ai = no
 		}
@@ -226,21 +284,20 @@ BTWK_story_event.0005 = {
 		# Doesn't work correctly #
 		character:3 = {
 			trigger_event = {
-				id = BTWK_story_event.0006
+				id = BTWK_story_event.0007
 				days = 1
 			}
 		}
 		##########################
 
-		set_player_character = character:3
-		# Add on_action to trigger Arthur introduction event			
+		set_player_character = character:3		
 	}
 }
 
-BTWK_story_event.0006 = {
+BTWK_story_event.0007 = {
 	type = character_event
-	title = BTWK_story_event.0006.t
-	desc = BTWK_story_event.0006.desc
+	title = BTWK_story_event.0007.t
+	desc = BTWK_story_event.0007.desc
 	theme = dynasty
 
 	right_portrait = {
@@ -252,19 +309,19 @@ BTWK_story_event.0006 = {
 		is_ai = no
 	}
 	option = {
-		name = BTWK_story_event.0006.a
+		name = BTWK_story_event.0007.a
 	}
 }
 
 ############## ARTHUR REGENCY CHAIN ##############
 # WILL NOT FIRE - DECISION NEEDS TO BE MADE
-BTWK_story_event.0007 = {	# Regent decides to give power to Arthur
+BTWK_story_event.0008 = {	# Regent decides to give power to Arthur
 	type = character_event
-	title = BTWK_story_event.0007.t
+	title = BTWK_story_event.0008.t
 	theme = dynasty
 	
 	desc = {
-		desc = BTWK_story_event.0007.desc
+		desc = BTWK_story_event.0008.desc
 		first_valid = {
 			triggered_desc = { 
 				trigger = {
@@ -307,20 +364,20 @@ BTWK_story_event.0007 = {	# Regent decides to give power to Arthur
 	}
 	
 	option = {
-		name = BTWK_story_event.0007.a
+		name = BTWK_story_event.0008.a
 		ai_chance = {
 			base = 100
 		}
 #		character:3 = {
 #			trigger_event = { 
-#				id = BTWK_story_event.0008
+#				id = BTWK_story_event.0009
 #				days = 1 
 #			}
 #		}
 	}
 	
 	option = {
-		name = BTWK_story_event.0007.b
+		name = BTWK_story_event.0008.b
 		ai_chance = {
 			base = 0
 		}
