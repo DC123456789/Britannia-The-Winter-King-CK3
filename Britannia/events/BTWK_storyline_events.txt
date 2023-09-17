@@ -28,12 +28,14 @@
 ############## UTHER'S DEATH and ARTHUR'S RETURN ##############
 
 
-BTWK_story_event.0001 = {  # Triggered by on_game_start on_action incase Uther's pneumonia is cured. Possibly make it non-hidden also. "Second bout of illness..."
+BTWK_story_event.0001 = {  # Triggered by on_game_start on_action.
+	type = character_event
 	title = BTWK_story_event.0001.t
 	desc = BTWK_story_event.0001.desc
 	# More fitting music cue/sounds needed
 	theme = skull
-
+	# Won't use "window = fullscreen_event" until figure out how to add portraits to the event.
+	
 	right_portrait = {
 		character = character:1  # Uther
 		animation = worry
@@ -42,31 +44,29 @@ BTWK_story_event.0001 = {  # Triggered by on_game_start on_action incase Uther's
 		character = character:5  # Mordred ap Mordred
 		animation = no
 	}
-	lower_right_portrait = {
+	lower_center_portrait = {
 		character = character:2  # Merlin
 		animation = no
 	}
-	lower_center_portrait = {
-		character = character:20  # Tewdric
+	lower_right_portrait = {
+		character = character:3  # Arthur
 		animation = no
 	}
-
 	
 	option = {
 		name = BTWK_story_event.0001.a
-		trigger = {
-			NOT = { has_character_flag = utherillness }
-			is_alive = yes	
-		}
+		set_global_variable = utherillness
 		character:1 = {
 			add_trait = pneumonic
 			add_character_flag = utherillness
-			trigger_event = {
-				id = BTWK_story_event.0002
-				days = {100 180}
+			if = {
+				limit = { NOT = { has_global_variable = utherincapable } }
+				trigger_event = {
+					id = BTWK_story_event.0002
+					days = {100 180}
+				}
 			}
 		}
-		
 	}
 }
 
@@ -85,15 +85,9 @@ BTWK_story_event.0002 = {  # Should probably change this to make it non-hidden &
 	
 	option = {
 		name = BTWK_story_event.0002.a
-		trigger = {
-			this = character:1	
-			has_character_flag = utherillness
-			is_alive = yes
-			NOT = { has_character_flag = utherincapable }
-		}
 		character:1 = {
 			add_trait = incapable
-			add_character_flag = utherincapable
+			set_global_variable = utherincapable
 		}
 		
 	}
@@ -106,13 +100,13 @@ BTWK_story_event.0003 = {  #Sub-event that delays Arthur's return, & fires "Uthe
 	
 	trigger = {
 		character:1 = { is_alive = no }
-		has_global_variable = uther_is_dead
+		NOT = { has_global_variable = uther_is_dead }
 	}
 	immediate = {
-		remove_global_variable = uther_is_dead
+		set_global_variable = uther_is_dead
 		#  Fires Arthur's return HIDDEN EVENT  #
 		trigger_event = {
-			id = BTWK_story_event_0004
+			id = BTWK_story_event.0004
 		}
 	}
 }
@@ -145,6 +139,12 @@ BTWK_story_event.0004 = {
 				change = scope:arthur_pendragon_durnac
 			}
 			every_de_jure_county_holder = {
+				limit = {
+					# Don't need highest title <= county limit
+					capital_county.duchy = title:d_centdumnonia
+					primary_title.duchy = title:d_centdumnonia
+					liege = title:k_dumnonia.holder					
+				}
 				change_liege = {
 					liege = character:3
 					change = scope:arthur_pendragon_durnac
@@ -165,23 +165,20 @@ BTWK_story_event.0004 = {
 
 		#  Fires "Uther is dead & Arthur returns" event  #
 		every_ruler = {
-			if = {
-				limit = { 
-					NOT = { has_character_flag = mordred_pendragon }
-					NOT = { has_character_flag = arthur_pendragon }
-				}
-				trigger_event = {  
-					id = BTWK_story_event.0005
-					days = {0 5}
-				}
+			limit = { 
+				NOT = { has_character_flag = mordred_pendragon }
+				NOT = { has_character_flag = arthur_pendragon }
+			}
+			trigger_event = {  
+				id = BTWK_story_event.0005
 			}
 		}
 		character:5 = {
 			trigger_event = {
 				id = BTWK_story_event.0006
 			}
-		}		
-	}
+		}
+	}		
 }
 
 BTWK_story_event.0005 = { 
