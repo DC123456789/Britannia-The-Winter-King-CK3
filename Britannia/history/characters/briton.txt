@@ -319,7 +319,6 @@
 		effect = {
 			add_prestige = 270
 			add_character_flag = tristan_of_cornwall
-			save_global_event_target_as = tristan_of_cornwall
 		}
 	}
 	495.9.15 = {
@@ -439,6 +438,7 @@
 	trait = family_first
 	trait = arrogant
 	trait = veteran
+	trait = vengeful
 	trait = gluttonous
 	trait = education_martial_3
 	trait = lifestyle_hunter
@@ -453,7 +453,6 @@
 		effect = {
 			add_gold = 160
 			add_prestige = 1260
-			save_global_event_target_as = gorfyddyd_of_powys
 			add_character_flag = gorfyddyd_of_powys
 		}
 	}
@@ -461,15 +460,6 @@
 		add_spouse = 34
 	}
 	470.1.16 = {
-		effect = {
-			# TODO
-			# add_opinion = {
-			# 	modifier = in_non_aggression_pact
-			# 	years = 1000
-			# 	target = character:18
-			# }
-			create_alliance = character:18
-		}
 	}
 	486.9.16 = {
 		trait = maimed
@@ -570,7 +560,17 @@
 			# 	years = 1000
 			# 	target = character:16
 			# }
-			create_alliance = character:16
+			create_alliance = {
+				target = character:16
+				allied_through_owner = character:18
+				allied_through_target = character:16
+			}
+			character:16 = {
+				add_opinion = {
+					modifier = event_negotiated_alliance_opinion
+					target = character:18
+				}
+			}
 		}
 	}
 	486.9.16 = {
