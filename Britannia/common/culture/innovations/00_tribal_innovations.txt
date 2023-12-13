@@ -37,11 +37,7 @@ innovation_motte = {
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @fortifications
-	
-	character_modifier = {
-		levy_reinforcement_rate = 0.25
-		active_accolades = 1
-	}
+
 	custom = unlock_tribal_fortification_buildings
 
 	flag = global_regular
@@ -65,10 +61,6 @@ innovation_barracks = {
 	icon = @levy_building
 
 	custom = unlock_tribal_military_buildings
-	character_modifier = {
-		men_at_arms_cap = 1
-		men_at_arms_limit = 1
-	}
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -81,7 +73,7 @@ innovation_mustering_grounds = {
 
 	character_modifier = {
 		men_at_arms_cap = 1
-		men_at_arms_limit = 1
+		men_at_arms_limit = 2
 	}
 
 	flag = global_regular
@@ -94,9 +86,11 @@ innovation_bannus = {
 	icon = @raised_banner
 
 	custom = unlock_march_contract
-	custom = multiple_claim_wars_others
 
-	
+	character_modifier = {
+		levy_reinforcement_rate = 0.15
+		active_accolades = 1
+	}
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -110,8 +104,6 @@ innovation_quilted_armor = {
 	character_modifier = {
 		prowess = 10
 	}
-	
-	custom = eligible_accolade_vanguard_attribute
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -122,8 +114,7 @@ innovation_development_01 = {
 	culture_era = culture_era_tribal
 	icon = @civil_construction_1
 
-	custom = reduce_develop_county_penalty_03
-	
+	custom = reduce_develop_county_penalty_01
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -135,7 +126,7 @@ innovation_currency_01 = {
 	icon = @majesty_02
 
 	character_modifier = {
-		development_growth_factor = 0.25
+		development_growth_factor = 0.1
 	}
 
 	flag = global_regular
@@ -148,52 +139,15 @@ innovation_gavelkind = {
 	culture_era = culture_era_tribal
 	icon = @administration_3
 
-		
+	unlock_law = confederate_partition_succession_law
+	
 	character_modifier = {
-		domain_limit = 2
-	}
-
-	
-	flag = global_regular
-	flag = tribal_era_regular
-}
-innovation_heraldry = {
-	group = culture_group_civic
-	culture_era = culture_era_tribal
-	icon = @raised_banner
-
-	unlock_law = high_partition_succession_law
-
-	potential = {
-		this = {has_innovation = innovation_gavelkind	}
-	}
-	
-	
-
-	flag = global_regular
-	flag = tribal_era_regular
-}
-
-innovation_primogeniture = {
-	group = culture_group_civic
-	culture_era = culture_era_tribal
-	icon = @majesty_01
-	
-	unlock_law = single_heir_succession_law
-	unlock_law = single_heir_succession_law_youngest
-	
-	potential = {
-		this = {
-			has_innovation = innovation_heraldry
-			has_innovation = innovation_ledger
-			
-		}
+		domain_limit = 1
 	}
 
 	flag = global_regular
 	flag = tribal_era_regular
 }
-
 
 innovation_crop_rotation = {
 	group = culture_group_civic
@@ -227,7 +181,7 @@ innovation_casus_belli = {
 	icon = @administration_1
 
 	unlock_casus_belli = individual_county_de_jure_cb
-	unlock_casus_belli = de_jure_cb
+	unlock_casus_belli = individual_duchy_de_jure_cb
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -239,22 +193,8 @@ innovation_plenary_assemblies = {
 	icon = @leadership_1
 
 	unlock_law = crown_authority_1
+
 	unlock_building = tribe_02
-
-	flag = global_regular
-	flag = tribal_era_regular
-}
-
-innovation_royal_prerogative = {
-	group = culture_group_civic
-	culture_era = culture_era_tribal
-	icon = @majesty_01
-	potential = {
-		this = {has_innovation = innovation_plenary_assemblies	}
-	}
-	unlock_law = crown_authority_2
-	unlock_law = crown_authority_3
-	
 
 	flag = global_regular
 	flag = tribal_era_regular
@@ -273,7 +213,26 @@ innovation_ledger = {
 	flag = tribal_era_regular
 }
 
-
+#culture_group_regional
+innovation_table_of_princes = {
+	group = culture_group_regional
+	culture_era = culture_era_tribal
+	icon = @nobility_01
+	
+	potential = {
+		OR = {
+			#West Slavic
+			this = culture:czech
+			this = culture:slovien
+		}
+	}
+	
+	unlock_law = single_heir_dynasty_house
+	custom = unlock_single_heir_dynasty_house_changing
+	
+	flag = global_regional
+	flag = tribal_era_regional
+}
 
 innovation_longboats = {
 	group = culture_group_regional
