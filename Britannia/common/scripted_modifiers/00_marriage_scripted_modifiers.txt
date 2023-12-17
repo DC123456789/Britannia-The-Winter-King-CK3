@@ -39,6 +39,12 @@
 		add = glory_legacy_1_marriage_acceptance
 		desc = DYNASTY_LEGACY_GLORY_MARRIAGE_ACCEPTANCE_PERK_MODIFIER
 	}
+	modifier = { # Dynasty Khvarenah Perk acceptance, checks the secondary recipients dynasty for the perk
+		exists = scope:secondary_actor.dynasty
+		scope:secondary_actor.dynasty = { has_dynasty_perk = fp3_khvarenah_legacy_3 }
+		add = khvarenah_legacy_marriage_acceptance
+		desc = DYNASTY_LEGACY_KHVARENAH_MARRIAGE_ACCEPTANCE_PERK_MODIFIER
+	}
 
 	##########################
 	# WHO IS GETTING MARRIED #
@@ -967,181 +973,247 @@
 		desc = MATRILINEAL_PATRILINEAL_REASON
 	}
 
-	###########################
-	# BTWK_CULTURAL_AND_FAITH #
-	###########################
-
+	##########################
+	# BTWK_FAITH_AND_CULTURE #
+	##########################
+	
+	# DIFFERENT HERITAGE #
+	# SAME FAITH
 	modifier = {
 		add = {
 			value = 0
-			# DIFFERENT HERITAGE
 			if = {
-				limit = {
-					NAND = {
-						scope:recipient = {
-							has_trait = tolerant
-						}					
+				limit = {	
+					NOT = {		
 						scope:recipient.culture = {
 							has_same_culture_heritage = scope:actor.culture
 						}
 					}
-				}
-				# SAME FAITH
-				if = {
-					limit = {
-						scope:recipient.faith = {
-							faith_hostility_level = {
-								target = scope:actor.faith
-								value = 0  #RIGHTEOUS
-							}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 0  #RIGHTEOUS
 						}
 					}
-					subtract = 25
-					desc = MARRY_SAME_FAITH_DIFFERENT_HERITAGE
 				}
-				# ASTRAY FAITH
-				else_if = {
-					limit = {
-						scope:recipient.faith = {
-							faith_hostility_level = {
-								target = scope:actor.faith
-								value > faith_astray_level
-							}
-						}
-					}
-					desc = MARRY_ASTRAY_FAITH_AND_DIFFERENT_HERITAGE
-					subtract = 250
-				}
-				# HOSITLE FAITH
-				else_if = {
-					limit = {
-						scope:recipient.faith = {
-							faith_hostility_level = {
-								target = scope:actor.faith
-								value >= faith_hostility_prevents_marriage_level
-							}
-						}
-					}
-					desc = MARRY_HOSTILE_FAITH_AND_DIFFERENT_HERITAGE
-					subtract = 1000
-				}
+				subtract = 25
 			}
+		}
+		desc = MARRY_SAME_FAITH_AND_DIFFERENT_HERITAGE
+	}
+	# ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {		
+						scope:recipient.culture = {
+							has_same_culture_heritage = scope:actor.culture
+						}
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1 
+						}
+					}
+				}
+				subtract = 50
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_DIFFERENT_HERITAGE
+	}
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {		
+						scope:recipient.culture = {
+							has_same_culture_heritage = scope:actor.culture
+						}
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1 
+						}
+					}
+				}
+				subtract = 1000
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_DIFFERENT_HERITAGE
+	}
 
-			# SAME CULTURE
-			if = {  
-				limit = {
+	# SAME CULTURE #
+	# SAME FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
 					NOT = {
 						scope:recipient = {
 							has_trait = zealous
 						}
 					}
-				}
-
-				# SAME CULTURE
-				if = {
-					limit = {
-						scope:recipient.culture = {
-							has_same_culture_as = scope:actor.culture
+					scope:recipient.culture = scope:actor.culture
+					
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 0 
 						}
-					}
-					# SAME FAITH
-					if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value = 0
-								}
-							}
-						}
-						desc = MARRY_SAME_FAITH_AND_SAME_CULTURE
-						add = 25
-					}
-					# ASTRAY FAITH
-					else_if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value > faith_astray_level
-								}
-							}
-						}
-						desc = MARRY_ASTRAY_FAITH_AND_SAME_CULTURE
-						subtract = 25
-					}
-					# HOSTILE FAITH
-					else_if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value >= faith_hostility_prevents_marriage_level
-								}
-							}
-						}
-						desc = MARRY_HOSTILE_FAITH_AND_SAME_CULTURE
-						subtract = 50
 					}
 				}
-				
-				# SAME HERITAGE
-				else_if = {
-					limit = {
-						scope:recipient.culture = {
-							has_same_culture_heritage = scope:actor.culture
-						}
-					}
-					# SAME FAITH
-					if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value = 0
-								}
-							}
-						}
-						desc = MARRY_SAME_FAITH_AND_SAME_HERITAGE
-						add = 10
-					}
-					# ASTRAY FAITH
-					else_if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value > faith_astray_level
-								}
-							}
-						}
-						desc = MARRY_ASTRAY_FAITH_AND_SAME_HERITAGE
-						subtract = 50
-					}
-					# HOSTILE FAITH
-					else_if = {
-						limit = {
-							scope:recipient.faith = {
-								faith_hostility_level = {
-									target = scope:actor.faith
-									value >= faith_hostility_prevents_marriage_level
-								}
-							}
-						}
-						desc = MARRY_HOSTILE_FAITH_AND_SAME_HERITAGE
-						subtract = 75
-					}
-				}
+				add = 25
 			}
+		}
+		desc = MARRY_SAME_FAITH_AND_SAME_CULTURE
+	}
+	#ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = scope:actor.culture
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				subtract = 25
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_SAME_CULTURE
+	}
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = scope:actor.culture
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1
+						}
+					}
+				}
+				subtract = 50
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_SAME_CULTURE
+	}
 
-			# ZEALOUS RECIPIENT
+	# SAME HERITAGE # 
+	# SAME FAITH 
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				add = 10
+			}
+		}
+		desc = MARRY_SAME_FAITH_AND_SAME_HERITAGE
+	}
+	# ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				subtract = 25
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_SAME_HERITAGE
+	}	
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1
+						}
+					}
+				}
+				subtract = 75
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_SAME_HERITAGE
+	}		
+
+	# ZEALOUS RECIPIENT #
+	modifier = {
+		add = {
+			value = 0
 			if = { 
 				limit = {
 					AND = {
 						scope:recipient.faith = {
 							faith_hostility_level = {
 								target = scope:actor.faith
-								value > 0  
+								value > 0 
 							}
 						}
 						scope:recipient = {
@@ -1149,12 +1221,15 @@
 						}
 					}	
 				}
-				subtract = 200
-				desc = MARRY_DIFFERENT_FAITH_AND_ZEALOUS 
+				subtract = 100
 			}
 		}
+		desc = MARRY_DIFFERENT_FAITH_AND_ZEALOUS 
 	}
 
+	###########################
+	# VANILLA FAITH MODIFIERS #
+	###########################
 	modifier = { # Polygamy not supported
 		add = -1000
 		desc = DIVORCE_POLYGAMY
@@ -1855,6 +1930,36 @@
 					add = 0.2
 				}
 			}
+			if = {
+				limit = {
+					scope:actor = {
+						has_trait = fp3_struggle_detractor
+						any_character_struggle = {
+							involvement = involved
+							phase_has_catalyst = catalyst_forming_alliance_between_detractor_uninvolved_rulers
+						}
+					}
+					scope:recipient = {
+						fp3_character_uninvolved_in_struggle_trigger = yes
+					}
+				}
+				add = 0.2
+			}
+			else_if = {
+				limit = {
+					scope:recipient = {
+						has_trait = fp3_struggle_detractor
+						any_character_struggle = {
+							involvement = involved
+							phase_has_catalyst = catalyst_forming_alliance_between_detractor_uninvolved_rulers
+						}
+					}
+					scope:actor = {
+						fp3_character_uninvolved_in_struggle_trigger = yes
+					}
+				}
+				add = 0.2
+			}
 		}
 		OR = {
 			AND = {
@@ -1904,7 +2009,7 @@
 					is_ai = yes
 					any_character_struggle = {
 						involvement = involved
-							is_secondary_character_involvement_interloper_trigger = { CHAR = scope:actor }
+						is_secondary_character_involvement_interloper_trigger = { CHAR = scope:actor }
 					}
 				}
 				scope:actor = { is_ai = yes }
@@ -1912,6 +2017,12 @@
 		}
 	}
 
+	modifier = { # This could technically go in piety, but since it is tied to the struggle, it goes here
+		add = 25
+		desc = STRUGGLE_MARRIAGE_ACCEPTANCE_USING_PIETY_AS_CURRENCY
+		scope:piety_cost_reduction ?= yes
+	}
+	
 	################
 	#  DIARCHIES   #
 	################
@@ -2156,6 +2267,9 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 		desc = MARRYING_DOWN_REASON
 	}
 
+	
+
+	
 	###########################
 	# DYNASTY PRESTIGE LEVELS #
 	###########################
@@ -2185,57 +2299,258 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 		desc = AI_DYNASTY_PRESTIGE_REASON
 	}
 
-	#########
-	# FAITH #
-	#########
-	modifier = { # A recipient will be reluctant (to differing degrees) to agree to marriages sent from an actor of a different faith
-		scope:recipient.faith = {
-			faith_hostility_level = {
-				target = scope:actor.faith
-				value > faith_fully_accepted_level
-			}
-		}
+	##########################
+	# BTWK_FAITH_AND_CULTURE #
+	##########################
+	
+	# DIFFERENT HERITAGE #
+	# SAME FAITH
+	modifier = {
 		add = {
-			value = -10
+			value = 0
 			if = {
-				limit = {
-				
-					NOR = {
-						# Exempt certain struggle phases.
-						is_struggle_parameter_active_interfaith_marriages_available_between_involved_characters_trigger = yes
-						# Exempt Conciliation struggle resolution
-						AND = {
-							has_global_variable = fp2_struggle_conciliation_ending
-							fp2_struggle_conciliation_special_cultural_rules_trigger = { C1 = scope:recipient C2 = scope:actor }
+				limit = {	
+					NOT = {		
+						scope:recipient.culture = {
+							has_same_culture_heritage = scope:actor.culture
+						}
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 0  #RIGHTEOUS
 						}
 					}
 				}
-				if = {
-					limit = {
-						scope:recipient.faith = {
-							faith_hostility_level = {
-								target = scope:actor.faith
-								value > faith_astray_level
-							}
-						}
-					}
-					subtract = 15
-				}
-				if = {
-					limit = {
-						scope:recipient.faith = {
-							faith_hostility_level = {
-								target = scope:actor.faith
-								value >= faith_hostility_prevents_marriage_level
-							}
-						}
-					}
-					subtract = 975
-				}
+				subtract = 25	
 			}
 		}
-		
-		desc = MARRY_DIFFERENT_FAITH_REASON
+	desc = MARRY_SAME_FAITH_AND_DIFFERENT_HERITAGE
+	}
+	# ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {		
+						scope:recipient.culture = {
+							has_same_culture_heritage = scope:actor.culture
+						}
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1 
+						}
+					}
+				}
+				subtract = 50
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_DIFFERENT_HERITAGE
+	}
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {		
+						scope:recipient.culture = {
+							has_same_culture_heritage = scope:actor.culture
+						}
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1 
+						}
+					}
+				}
+				subtract = 1000
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_DIFFERENT_HERITAGE
+	}
+
+	# SAME CULTURE #
+	# SAME FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = scope:actor.culture
+					
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 0 
+						}
+					}
+				}
+				add = 25
+			}
+		}
+		desc = MARRY_SAME_FAITH_AND_SAME_CULTURE
+	}
+	#ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = scope:actor.culture
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				subtract = 25
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_SAME_CULTURE
+	}
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = scope:actor.culture
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1
+						}
+					}
+				}
+				subtract = 50
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_SAME_CULTURE
+	}
+
+	# SAME HERITAGE # 
+	# SAME FAITH 
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				add = 10
+			}
+		}
+		desc = MARRY_SAME_FAITH_AND_SAME_HERITAGE
+	}
+	# ASTRAY FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value = 1
+						}
+					}
+				}
+				subtract = 25
+			}
+		}
+		desc = MARRY_ASTRAY_FAITH_AND_SAME_HERITAGE
+	}	
+	# HOSTILE FAITH
+	modifier = {
+		add = {
+			value = 0
+			if = {
+				limit = {	
+					NOT = {
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}
+					scope:recipient.culture = {
+						has_same_culture_heritage = scope:actor.culture
+					}
+					scope:recipient.faith = {
+						faith_hostility_level = {
+							target = scope:actor.faith
+							value > 1
+						}
+					}
+				}
+				subtract = 75
+			}
+		}
+		desc = MARRY_HOSTILE_FAITH_AND_SAME_HERITAGE
+	}		
+
+	# ZEALOUS RECIPIENT #
+	modifier = {
+		add = {
+			value = 0
+			if = { 
+				limit = {
+					AND = {
+						scope:recipient.faith = {
+							faith_hostility_level = {
+								target = scope:actor.faith
+								value > 0 
+							}
+						}
+						scope:recipient = {
+							has_trait = zealous
+						}
+					}	
+				}
+				subtract = 100
+			}
+		}
+		desc = MARRY_DIFFERENT_FAITH_AND_ZEALOUS 
 	}
 	
 	##################
