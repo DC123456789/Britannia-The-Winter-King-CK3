@@ -973,217 +973,45 @@
 		desc = MATRILINEAL_PATRILINEAL_REASON
 	}
 
-	##########################
-	# BTWK_FAITH_AND_CULTURE #
-	##########################
+	##############
+	# BTWK FAITH #
+	##############
 	
-	# DIFFERENT HERITAGE #
-	# SAME FAITH
+	# ASTRAY
 	modifier = {
-		add = 5
-		desc = MARRY_SAME_FAITH_AND_DIFFERENT_HERITAGE
+		add = -10
+		desc = MARRIAGE_FAITH_IS_ASTRAY
 		trigger = {
-			NOT = { 
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
 			scope:recipient.faith = {
 				faith_hostility_level = {
 					target = scope:actor.faith
-					value = 0  #RIGHTEOUS
-				}
-			}
-		}
-
-	}
-	# ASTRAY FAITH
-	modifier = {		
-		add = -30
-		desc = MARRY_ASTRAY_FAITH_AND_DIFFERENT_HERITAGE
-		trigger = {
-			NOT = {		
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1 
+					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
 				}
 			}
 		}
 	}
-	# HOSTILE FAITH
-	modifier = {	
-		add = -50
-		desc = MARRY_HOSTILE_FAITH_AND_DIFFERENT_HERITAGE
-		trigger = {
-			NOT = {		
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value > 1 
-				}
-			}
-		}
-	}
-
-	# SAME CULTURE #
-	# SAME FAITH
-	modifier = {		
-		add = 25
-		desc = MARRY_SAME_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0 
-				}
-			}
-		}
-	}
-	#ASTRAY FAITH
-	modifier = {
-		add = -5
-		desc = MARRY_ASTRAY_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1
-				}
-			}
-		}
-	}
-	# HOSTILE FAITH
-	modifier = {
-		add = -15
-		desc = MARRY_HOSTILE_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value > 1
-				}
-			}
-		}
-	}
-
-	# SAME HERITAGE # 
-	# SAME FAITH 
-	modifier = {
-		add = 10
-		desc = MARRY_SAME_FAITH_AND_SAME_HERITAGE
-		trigger = {		
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0
-				}
-			} 
-		}
-	}
-	# ASTRAY FAITH
+	# HOSTILE 
 	modifier = {
 		add = -20
-		desc = MARRY_ASTRAY_FAITH_AND_SAME_HERITAGE
-		trigger = {		
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
+		desc = MARRIAGE_FAITH_IS_HOSTILE
+		trigger = {
 			scope:recipient.faith = {
 				faith_hostility_level = {
 					target = scope:actor.faith
-					value = 1
-				}
-			} 
-		}
-	}	
-	# HOSTILE FAITH
-	modifier = {
-		add = -40
-		desc = MARRY_HOSTILE_FAITH_AND_SAME_HERITAGE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0
-				}
-			} 
-		}
-	}	
-
-	# PARENT/CHILD CULTURES # 
-	# LOGIC:
-	# 	SAME HERITAGE CHILD CULTURE = SIMILAR TO PARENT CULTURE. E.G. FOR SAME FAITH: 15 (FROM SAME HERTIAGE) + 10 (FROM CHILD CULTURE) = 25 (EQUAL TO SAME CULTURE) 
-	# 	DIFFERENT HERITAGE CHILD CULTURE = SIMILAR TO SAME HERITAGE CULTURE. E.G. FOR SAME FAITH: 10 (FROM DIFF HERITAGE) + 10 (FROM CHILD CULTURE) = 20 (HIGHER THAN SAME HERITAGE, LOWER THAN SAME CULTURE)
-	# 	GIVES A GENERAL INCREASE IN ACCEPTANCE FOR A CULTURE, IN SOME CASES NEARLY UP TO (BUT NOT EXACTLY) THAT OF THE PROGENITOR CULTURE.
-	
-	# ACTOR'S CULTURE IS THE CHILD CULTURE OF THE RECIPIENT'S
-	modifier = {
-		add = 10
-		desc = ACTOR_IS_CHILD_CULTURE_MODIFIER
-		trigger = {
-			scope:actor.culture = {
-				any_parent_culture = {
-					this = scope:recipient.culture
+					value = 2  # 2 = HOSTILE
 				}
 			}
 		}
 	}
-	# ACTOR'S CULTURE IS THE PARENT CULTURE OF THE RECIPIENT'S
+	# EVIL 
 	modifier = {
-		add = 10
-		desc = ACTOR_IS_PARENT_CULTURE_MODIFIER
+		add = -25
+		desc = MARRIAGE_FAITH_IS_EVIL
 		trigger = {
-			scope:recipient.culture = {
-				any_parent_culture = {
-					this = scope:actor.culture
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 3  # 3 = EVIL
 				}
 			}
 		}
@@ -1191,8 +1019,8 @@
 
 	# ZEALOUS RECIPIENT #
 	modifier = {		
-		add = -10
-		desc = MARRY_DIFFERENT_FAITH_AND_ZEALOUS 
+		add = -15
+		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
 		trigger = {
 			AND = {
 				scope:recipient.faith = {
@@ -1205,6 +1033,93 @@
 					has_trait = zealous
 				}
 			}	
+		}
+	}
+	# TOLERANT RECIPIENT # 
+	modifier = {		
+		add = 10
+		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = tolerant
+				}
+			}	
+		}
+	}
+
+	################
+	# BTWK CULTURE #
+	################
+	# HERITAGE GROUPS & CULTURE ~ SAME IN THIS PERIOD THEREFORE NO DISTINCTION
+	# PARENT/CHILD CULTURES, PARTICULARLY ROMANO-CULTRUES, GETS LESS -VE DIFFERENT HERITAGE BONUS 
+	# ACTOR'S CULTURE IS THE CHILD CULTURE OF THE RECIPIENT'S
+
+	# ALL BELOW ARE FOR DIFFERENT HERITAGES:
+	# DIFFERENT HERITAGE ONLY
+	modifier = {
+		add = -10
+		desc = MARRIAGE_DIFFERENT_HERITAGE
+		trigger = {
+			NOT = {
+				scope:actor.culture = {
+						has_same_culture_heritage = scope:recipient.culture
+					} 
+			}
+		}
+	}
+
+	# DIFFERENT HERITAGE GROUP
+	modifier = {
+		add = -15
+		desc = MARRIAGE_DIFFERENT_HERITAGE_GROUP
+		trigger = {
+			NOT = {
+				scope:actor.culture = {
+					has_same_heritage_group_as = {
+						TARGET = scope:recipient.culture
+					} 
+				} 
+			}
+		}
+	}
+
+	# RECIPIENT'S CULTURE IS THE PARENT OF THE ACTOR'S
+	modifier = {
+		add = 10
+		desc = MARRIAGE_DIFFERENT_HERITAGE_BUT_ACTOR_CHILD_CULTURE
+		trigger = {
+			scope:actor.culture = {
+				any_parent_culture = {
+					this = scope:recipient.culture
+				}
+				# BELOW SUCH THAT THIS ONLY TRIGGERS FOR DIFFERENT HERITAGE			
+				NOT = {
+					has_same_culture_heritage = scope:target.culture
+				} 
+			}
+		}
+	}
+	# ACTOR'S CULTURE IS THE PARENT CULTURE OF THE RECIPIENT'S
+	modifier = {
+		add = 10
+		desc = MARRIAGE_DIFFERENT_HERITAGE_BUT_ACTOR_PARENT_CULTURE
+		trigger = {
+			scope:recipient.culture = {
+				any_parent_culture = {
+					this = scope:actor.culture
+				}
+				# BELOW SUCH THAT THIS ONLY TRIGGERS FOR DIFFERENT HERITAGE
+				NOT = {
+					has_same_culture_heritage = scope:actor.culture
+				} 
+			}
 		}
 	}
 
@@ -2280,217 +2195,45 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 		desc = AI_DYNASTY_PRESTIGE_REASON
 	}
 
-	##########################
-	# BTWK_FAITH_AND_CULTURE #
-	##########################
+##############
+	# BTWK FAITH #
+	##############
 	
-	# DIFFERENT HERITAGE #
-	# SAME FAITH
+	# ASTRAY
 	modifier = {
-		add = 5
-		desc = MARRY_SAME_FAITH_AND_DIFFERENT_HERITAGE
+		add = -10
+		desc = MARRIAGE_FAITH_IS_ASTRAY
 		trigger = {
-			NOT = { 
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
 			scope:recipient.faith = {
 				faith_hostility_level = {
 					target = scope:actor.faith
-					value = 0  #RIGHTEOUS
-				}
-			}
-		}
-
-	}
-	# ASTRAY FAITH
-	modifier = {		
-		add = -30
-		desc = MARRY_ASTRAY_FAITH_AND_DIFFERENT_HERITAGE
-		trigger = {
-			NOT = {		
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1 
+					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
 				}
 			}
 		}
 	}
-	# HOSTILE FAITH
-	modifier = {	
-		add = -50
-		desc = MARRY_HOSTILE_FAITH_AND_DIFFERENT_HERITAGE
-		trigger = {
-			NOT = {		
-				scope:recipient.culture = {
-					has_same_culture_heritage = scope:actor.culture
-				}
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value > 1 
-				}
-			}
-		}
-	}
-
-	# SAME CULTURE #
-	# SAME FAITH
-	modifier = {		
-		add = 25
-		desc = MARRY_SAME_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0 
-				}
-			}
-		}
-	}
-	#ASTRAY FAITH
-	modifier = {
-		add = -5
-		desc = MARRY_ASTRAY_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1
-				}
-			}
-		}
-	}
-	# HOSTILE FAITH
-	modifier = {
-		add = -15
-		desc = MARRY_HOSTILE_FAITH_AND_SAME_CULTURE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = scope:actor.culture
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value > 1
-				}
-			}
-		}
-	}
-
-	# SAME HERITAGE # 
-	# SAME FAITH 
-	modifier = {
-		add = 10
-		desc = MARRY_SAME_FAITH_AND_SAME_HERITAGE
-		trigger = {		
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0
-				}
-			} 
-		}
-	}
-	# ASTRAY FAITH
+	# HOSTILE 
 	modifier = {
 		add = -20
-		desc = MARRY_ASTRAY_FAITH_AND_SAME_HERITAGE
-		trigger = {		
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
+		desc = MARRIAGE_FAITH_IS_HOSTILE
+		trigger = {
 			scope:recipient.faith = {
 				faith_hostility_level = {
 					target = scope:actor.faith
-					value = 1
-				}
-			} 
-		}
-	}	
-	# HOSTILE FAITH
-	modifier = {
-		add = -40
-		desc = MARRY_HOSTILE_FAITH_AND_SAME_HERITAGE
-		trigger = {
-			NOT = {
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}
-			scope:recipient.culture = {
-				has_same_culture_heritage = scope:actor.culture
-			}
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 0
-				}
-			} 
-		}
-	}	
-
-	# PARENT/CHILD CULTURES # 
-	# LOGIC:
-	# 	SAME HERITAGE CHILD CULTURE = SIMILAR TO PARENT CULTURE. E.G. FOR SAME FAITH: 15 (FROM SAME HERTIAGE) + 10 (FROM CHILD CULTURE) = 25 (EQUAL TO SAME CULTURE) 
-	# 	DIFFERENT HERITAGE CHILD CULTURE = SIMILAR TO SAME HERITAGE CULTURE. E.G. FOR SAME FAITH: 10 (FROM DIFF HERITAGE) + 10 (FROM CHILD CULTURE) = 20 (HIGHER THAN SAME HERITAGE, LOWER THAN SAME CULTURE)
-	# 	GIVES A GENERAL INCREASE IN ACCEPTANCE FOR A CULTURE, IN SOME CASES NEARLY UP TO (BUT NOT EXACTLY) THAT OF THE PROGENITOR CULTURE.
-	
-	# ACTOR'S CULTURE IS THE CHILD CULTURE OF THE RECIPIENT'S
-	modifier = {
-		add = 10
-		desc = ACTOR_IS_CHILD_CULTURE_MODIFIER
-		trigger = {
-			scope:actor.culture = {
-				any_parent_culture = {
-					this = scope:recipient.culture
+					value = 2  # 2 = HOSTILE
 				}
 			}
 		}
 	}
-	# ACTOR'S CULTURE IS THE PARENT CULTURE OF THE RECIPIENT'S
+	# EVIL 
 	modifier = {
-		add = 10
-		desc = ACTOR_IS_PARENT_CULTURE_MODIFIER
+		add = -25
+		desc = MARRIAGE_FAITH_IS_EVIL
 		trigger = {
-			scope:recipient.culture = {
-				any_parent_culture = {
-					this = scope:actor.culture
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 3  # 3 = EVIL
 				}
 			}
 		}
@@ -2498,8 +2241,8 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 
 	# ZEALOUS RECIPIENT #
 	modifier = {		
-		add = -10
-		desc = MARRY_DIFFERENT_FAITH_AND_ZEALOUS 
+		add = -15
+		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
 		trigger = {
 			AND = {
 				scope:recipient.faith = {
@@ -2512,6 +2255,93 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 					has_trait = zealous
 				}
 			}	
+		}
+	}
+	# TOLERANT RECIPIENT # 
+	modifier = {		
+		add = 10
+		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = tolerant
+				}
+			}	
+		}
+	}
+
+	################
+	# BTWK CULTURE #
+	################
+	# HERITAGE GROUPS & CULTURE ~ SAME IN THIS PERIOD THEREFORE NO DISTINCTION
+	# PARENT/CHILD CULTURES, PARTICULARLY ROMANO-CULTRUES, GETS LESS -VE DIFFERENT HERITAGE BONUS 
+	# ACTOR'S CULTURE IS THE CHILD CULTURE OF THE RECIPIENT'S
+
+	# ALL BELOW ARE FOR DIFFERENT HERITAGES:
+	# DIFFERENT HERITAGE ONLY
+	modifier = {
+		add = -15
+		desc = MARRIAGE_DIFFERENT_HERITAGE
+		trigger = {
+			NOT = {
+				scope:actor.culture = {
+						has_same_culture_heritage = scope:recipient.culture
+					} 
+			}
+		}
+	}
+
+	# DIFFERENT HERITAGE GROUP
+	modifier = {
+		add = -10
+		desc = MARRIAGE_DIFFERENT_HERITAGE_GROUP
+		trigger = {
+			NOT = {
+				scope:actor.culture = {
+					has_same_heritage_group_as = {
+						TARGET = scope:recipient.culture
+					} 
+				} 
+			}
+		}
+	}
+
+	# RECIPIENT'S CULTURE IS THE PARENT OF THE ACTOR'S
+	modifier = {
+		add = 10
+		desc = MARRIAGE_DIFFERENT_HERITAGE_BUT_ACTOR_CHILD_CULTURE
+		trigger = {
+			scope:actor.culture = {
+				any_parent_culture = {
+					this = scope:recipient.culture
+				}
+				# BELOW SUCH THAT THIS ONLY TRIGGERS FOR DIFFERENT HERITAGE			
+				NOT = {
+					has_same_culture_heritage = scope:target.culture
+				} 
+			}
+		}
+	}
+	# ACTOR'S CULTURE IS THE PARENT CULTURE OF THE RECIPIENT'S
+	modifier = {
+		add = 10
+		desc = MARRIAGE_DIFFERENT_HERITAGE_BUT_ACTOR_PARENT_CULTURE
+		trigger = {
+			scope:recipient.culture = {
+				any_parent_culture = {
+					this = scope:actor.culture
+				}
+				# BELOW SUCH THAT THIS ONLY TRIGGERS FOR DIFFERENT HERITAGE
+				NOT = {
+					has_same_culture_heritage = scope:actor.culture
+				} 
+			}
 		}
 	}
 
