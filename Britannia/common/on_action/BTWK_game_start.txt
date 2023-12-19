@@ -1,7 +1,10 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
-	on_actions = { BTWK_de_jure_setup }
+	on_actions = {
+		BTWK_de_jure_setup
+		BTWK_story_trigger_on_game_start_479
+	}
 	effect = {
 		# Mark some faiths to block conversion till specific decisions are taken.
 		# TODO Block all Muslim faiths until it appears
@@ -10,7 +13,6 @@ on_game_start = {
 		# }
 	}
 }
-
 # Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
 on_game_start_after_lobby = {
 	effect = {		
@@ -1012,6 +1014,25 @@ BTWK_de_jure_setup = {
 		}
 		every_duchy = {
 			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+#############################################################
+
+BTWK_story_trigger_on_game_start_479 = {
+	effect = {
+		if = {
+			limit = { has_game_rule = BTWK_enabled }		
+			character:1 = {
+				add_character_modifier = {
+					modifier =  story_health_bonus_medium_modifier
+				}
+				trigger_event = {
+					id = BTWK_story_event.0101
+					days = {70 90} # Fires around Feb-Mar
+					}
+			}
 		}
 	}
 }
