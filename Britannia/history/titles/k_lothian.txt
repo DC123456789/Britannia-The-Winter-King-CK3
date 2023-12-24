@@ -1,40 +1,445 @@
-# k_lothian
-## d_eidyn ###################################
-### c_merse
-790 = {	# BERWICK-UPON-TWEED/CAERFERWIG
-	culture = cumbrian
-	religion = briton_pagan
-	holding = tribal_holding
-	450.1.1 = { religion = catholic }
-}
-791 = {	# COLDINGHAM/BAILE COLDAIN
-	holding = church_holding
-}
-792 = {	# ECCLES/EGLWYS
-	holding = city_holding
-}
-   
-### c_dunperder
-793 = {	# HADDINGTON/DIN PELYDR 
-	culture = cumbrian
-	religion = briton_pagan
-	holding = castle_holding
-	450.1.1 = { religion = catholic }
-}
-794 = {	# COLDINGHAM/BAILE COLDAIN
-	holding = church_holding
-}
-795 = {	# DUNBAR/DIN BAR 
-    holding = city_holding
+k_lothian = {
+	410.1.1={
+		liege=0
+	#	law = agnatic_succession
+	#	law = succ_elective_gavelkind
+		# law = tribal_organization_1
+		# law = crown_authority_1
+		# law = investiture_law_1
+		#holder=1228 # King Ceretic of Ystrad Clut
+		effect = {
+			if = {
+				limit = {
+					exists = holder
+					has_dlc_feature = royal_court
+				}
+				holder = {
+					set_court_language = language_latin
+					if = {
+						limit = { NOT = { knows_court_language_of = this } }
+						learn_court_language_of = this
+					}
+				}
+			}
+		}
+	}
+	420.11.4={
+		de_jure_liege = e_britannia
+	}
+	#450.2.21={
+	#	holder=1230 # King Dumnagual Hen of Ystrad Clut
+	#}
+	460.1.1={
+		holder=70
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	560.1.1={
+		holder=1512
+		name = "Gododdin"				# TODO Why name change?
+		#adjective = "Gododdin"	
+	}
+	600.1.1={
+		holder=8007 # King Mynyddog Mwynfawr of Gododdin
+	}
+	600.9.15={
+		holder=8011
+	}
+	610.1.1={
+		holder=0
+		#
+	}
 }
 
-### c_lammermuirs
-796 = {	# LAMMERMUIR/GALASHIELS
-	culture = cumbrian
-	religion = briton_pagan
-	holding = castle_holding
-	450.1.1 = { religion = catholic }
+d_eidyn = {
+	120.1.1 = {
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	410.1.1={
+		liege=k_strathclyde
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	460.1.1 = {
+		liege=k_lothian
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8007 # King Mynyddog Mwynfawr of Gododdin
+	}
 }
-795 = {	# LAWEDDER/LLOWADR 
-    holding = none
+
+c_merse = {
+	410.1.1 = { change_development_level = 10 }
+	120.1.1 = {
+		liege=d_eidyn
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8025			# Morien
+	}
 }
+
+c_lammermuirs = {
+	410.1.1 = { change_development_level = 7 }
+	120.1.1 = {
+		liege=d_eidyn
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8025			# Morien
+	}
+}
+
+c_dunpelder = {
+	410.1.1 = { change_development_level = 12 }
+	120.1.1 = {
+		liege=d_eidyn
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8025			# Morien
+	}
+}
+
+c_din_eidyn = {
+	410.1.1 = { change_development_level = 14 }
+	120.1.1 = {
+		liege=d_eidyn
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8007 # King Mynyddog Mwynfawr of Gododdin
+	}
+}
+
+c_abercorn = {
+	410.1.1 = { change_development_level = 11 }
+	120.1.1 = {
+		liege=d_eidyn
+		holder = 2502		# Louhen of the Votadini
+	}
+	160.1.1 = {
+		holder = 2501		# Cinis Scaplaut of the Votadini
+	}
+	240.1.1 = {
+		holder = 2500		# Decion of the Votadini
+	}
+	300.1.1 = {
+		holder = 1912		# Cadell of the Votadini
+	}
+	380.1.1={
+		holder=1911 		# Cadlew of Eidyn
+	}
+	440.1.1={
+		holder=70			# King Lot
+	}
+	490.12.16={
+		holder=269
+	}
+	510.1.20={
+		holder=76
+	}
+	600.1.1={
+		holder=8025			# Morien
+	}
+}
+
+# d_manaw = {
+# 	1.1.1 = {
+# 		liege = 0
+# 		holder = 2519
+# 	}
+# 	16.1.1 = {
+# 		holder = 2520
+# 	}
+# 	53.1.1 = {
+# 		holder = 2521
+# 	}
+# 	93.1.1 = {
+# 		holder = 2522
+# 	}
+# 	135.1.1 = {
+# 		holder = 2523
+# 	}
+# 	157.1.1 = {
+# 		holder = 2524
+# 	}
+# 	189.1.1 = {
+# 		holder = 2525
+# 	}
+# 	224.1.1 = {
+# 		holder = 2526
+# 	}
+# 	278.1.1 = {
+# 		holder = 2527
+# 	}
+# 	287.1.1 = {
+# 		holder = 2528
+# 	}
+# 	305.1.1={
+# 		holder=1470
+# 	}
+# 	340.1.1={
+# 		holder=1469
+# 	}
+# 	390.1.1={
+# 		holder=1004
+# 	}
+# 	410.1.1={
+# 		liege=k_strathclyde
+# 		holder=1385
+# 	}
+# 	447.1.1={
+# 		holder=1388
+# 	}
+# 	460.1.1={
+# 		liege=k_lothian
+# 	}
+# 	480.1.1={
+# 		holder=165
+# 	}
+# 	500.12.28={
+# 		holder=76
+# 	}
+# 	560.1.1={
+# 		holder=1512
+# 	}
+# 	600.1.1={
+# 		holder=8007 # King Mynyddog Mwynfawr of Gododdin
+# 	}
+# 	600.9.15={
+# 		holder=8011
+# 	}
+# 	610.1.1={
+# 		holder=0
+# 		#
+# 	}
+# }
+
+# c_iuddeu = {
+# 	1.1.1 = {
+# 		liege=d_manaw
+# 		holder = 2519
+# 	}
+# 	16.1.1 = {
+# 		holder = 2520
+# 	}
+# 	53.1.1 = {
+# 		holder = 2521
+# 	}
+# 	93.1.1 = {
+# 		holder = 2522
+# 	}
+# 	135.1.1 = {
+# 		holder = 2523
+# 	}
+# 	157.1.1 = {
+# 		holder = 2524
+# 	}
+# 	189.1.1 = {
+# 		holder = 2525
+# 	}
+# 	224.1.1 = {
+# 		holder = 2526
+# 	}
+# 	278.1.1 = {
+# 		holder = 2527
+# 	}
+# 	287.1.1 = {
+# 		holder = 2528
+# 	}
+# 	305.1.1={
+# 		holder=1470
+# 	}
+# 	340.1.1={
+# 		holder=1469
+# 	}
+# 	390.1.1={
+# 		holder=1004
+# 	}
+# 	410.1.1={
+# 		liege=d_manaw
+# 		holder=1385
+# 	}
+# 	447.1.1={
+# 		holder=1388
+# 	}
+# 	480.1.1={
+# 		holder=165
+# 	}
+# 	500.12.28={
+# 		holder=76
+# 	}
+# 	600.1.1={
+# 		holder=8007 # King Mynyddog Mwynfawr of Gododdin
+# 	}
+# }
+
+# c_lothian = {
+# 	1.1.1 = {
+# 		liege=d_manaw
+# 		holder = 2519
+# 	}
+# 	16.1.1 = {
+# 		holder = 2520
+# 	}
+# 	53.1.1 = {
+# 		holder = 2521
+# 	}
+# 	93.1.1 = {
+# 		holder = 2522
+# 	}
+# 	135.1.1 = {
+# 		holder = 2523
+# 	}
+# 	157.1.1 = {
+# 		holder = 2524
+# 	}
+# 	189.1.1 = {
+# 		holder = 2525
+# 	}
+# 	224.1.1 = {
+# 		holder = 2526
+# 	}
+# 	278.1.1 = {
+# 		holder = 2527
+# 	}
+# 	287.1.1 = {
+# 		holder = 2528
+# 	}
+# 	305.1.1={
+# 		holder=1470
+# 	}
+# 	340.1.1={
+# 		holder=1469
+# 	}
+# 	390.1.1={
+# 		holder=1004
+# 	}
+# 	410.1.1={
+# 		holder=1385
+# 	}
+# 	447.1.1={
+# 		holder=1388
+# 	}
+# 	480.1.1={
+# 		holder=165
+# 	}
+# 	500.12.28={
+# 		holder=76
+# 	}
+# 	560.1.1={
+# 		holder=1512
+# 	}
+# 	600.1.1={
+# 		holder=8011 #Cynon ap Clydno Eidyn
+# 	}
+# }
+
