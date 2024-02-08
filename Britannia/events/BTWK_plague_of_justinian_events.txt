@@ -1,0 +1,121 @@
+﻿namespace = poj_event
+
+##############################
+# PLAGUE OF JUSTINIAN EVENTS #
+##############################
+
+##############################
+
+# PLACEHOLDER FILE UNTIL PLAGUES ARE BETTER IMPLEMENTED IN VANILLA, OR WE GET BORED AND DO IT OURSELVES
+
+poj_event.0101 = {  # Rumour of a plague.
+	theme = skull
+	type = character_event
+	title = poj_event.0101.t
+	desc = poj_event.0101.desc
+
+	right_portrait = {
+		character = root
+		animation = personality_worry
+	}
+
+	option = {
+		name = poj_event.0101.a_standard
+		name = {
+			trigger = {
+				has_trait = cynical
+			}
+			text = poj_event.0101.a_cynical
+		}
+		name = {
+			trigger = {
+				AND = {
+					OR = {
+						has_religion = religion:christianity_religion
+						has_religion = religion:judaism_religion
+					}
+					has_trait = zealous
+				}
+			}
+			text = poj_event.0101.a_zealous_abrahamic
+		}
+		name = {
+			trigger = {
+				AND = {
+					OR = {
+						has_religion = religion:germanic_religion
+						has_religion = religion:celtic_religion
+						has_religion = religion:basque_religion
+						has_religion = religion:hellenism_religion
+						has_religion = religion:scythian_religion
+					}
+					has_trait = zealous
+				}
+			}
+			text = poj_event.0101.a_zealous_pagan
+		}
+	}
+}
+
+poj_event.0102 = {  # The plague has struck our land!
+	theme = skull
+	type = character_event
+	title = poj_event.0102.t
+	desc = {
+		desc = poj_event.0102.desc
+		first_valid = {
+			# Christians
+			triggered_desc = {
+				trigger = {
+					has_religion = religion:christianity_religion
+				}
+				desc = poj_event.0102.desc_christian
+			}
+		}
+	}
+
+	right_portrait = {
+		character = root
+		animation = personality_worry
+	}
+
+	option = {
+		name = poj_event.0102.a_standard
+		name = {
+			trigger = {
+				has_religion = religion:christianity_religion
+				has_trait = cynical
+			}
+			text = poj_event.0102.a_cynical_christian
+		}
+
+		name = {
+			trigger = {
+				AND = {
+					OR = {
+						has_religion = religion:germanic_religion
+						has_religion = religion:celtic_religion
+						has_religion = religion:basque_religion
+						has_religion = religion:hellenism_religion
+						has_religion = religion:scythian_religion
+					}
+					has_trait = zealous
+				}
+			}
+			text = poj_event.0101.a_zealous_pagan
+		}
+
+		name = {
+			trigger = {
+				AND = {
+					OR = {
+						has_religion = religion:christianity_religion
+						has_religion = religion:judaism_religion
+					}
+					has_trait = zealous
+				}
+			}
+			text = poj_event.0102.a_zealous_abrahamic
+		}
+	}
+}
