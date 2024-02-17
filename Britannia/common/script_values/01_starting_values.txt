@@ -142,6 +142,35 @@ starting_culture_acceptance = {
 			add = 20
 		}
 	}
+	# BTWK # 
+	if = {
+		limit = { current_date <= 500.1.1}  
+		# Add acceptance within the Brythonic Cultural Sphere:
+			# Briton, Cumbrian & Armorican already have high base acceptance as same heritage; RB does not.
+			# Add ~40 for these cultures & with RB.
+		if = {
+			limit = {
+				this = culture:briton
+				scope:culture = culture:romanobritish
+			}
+			add = 40
+		}
+		if = {
+			limit = {
+				this = culture:cumbrian
+				scope:culture = culture:romanobritish
+			}
+			add = 40
+		}
+		if = {
+			limit = {
+				this = culture:armorican
+				scope:culture = culture:romanobritish
+			}
+			add = 40
+		}
+		########
+	}
 }
 
 # What cultural acceptance should two cultures drift down towards if above?
@@ -162,6 +191,13 @@ culture_acceptance_baseline = {
 				}
 				calc_culture_dominant_religion = { save_temporary_scope_as = our_religion }
 				calc_culture_dominant_faith = { save_temporary_scope_as = our_faith }
+				# BTWK #
+				every_parent_culture = {
+					add_to_temporary_list = {
+						name = our_parent_cultures
+					}
+				}
+				########
 			}
 			scope:culture = {
 				trigger_if = {
@@ -170,8 +206,16 @@ culture_acceptance_baseline = {
 					}
 					calc_culture_dominant_religion = { save_temporary_scope_as = their_religion }
 					calc_culture_dominant_faith = { save_temporary_scope_as = their_faith }
+					# BTWK #
+					every_parent_culture = {
+						add_to_temporary_list = {
+							name = their_parent_cultures
+						}
+					}
+					########
 				}
 			}
+
 		}
 		# Increase base acceptance for sharing the same heritage
 		if = {
@@ -230,6 +274,65 @@ culture_acceptance_baseline = {
 			}
 		}
 		
+		# BTWK #
+		# Increase base acceptance for parent-child culture relations
+		if = {
+			limit = {
+				OR = {
+					scope:culture = {
+						any_parent_culture = {
+							this = root
+						}
+					}				
+					any_parent_culture = {
+						this = scope:culture
+					}
+				}
+			}
+			add = {
+				value = parent_child_relation_cultural_acceptance
+				desc = ACCEPTANCE_BASELINE_PARENT_CHILD_RELATION
+			}
+		}		
+		# Increase base acceptance for 'sibling' cultures
+		if = {
+			limit = {
+				# Any of 'our' parent cultures = 'their' parent cultures
+				# Given NOT THE PARENT OR CHILD CULTURE
+				# root's parent culture treated as root's culture
+				any_parent_culture = {
+					is_target_in_temporary_list = {
+						target = their_parent_cultures
+					}
+				}
+				scope:culture = {
+					any_parent_culture = {
+						is_target_in_temporary_list = {
+							target = our_parent_cultures
+						}
+					}
+				}
+				NOT = {
+					OR = {
+						scope:culture = {
+							any_parent_culture = {
+								this = root
+							}
+						}				
+						any_parent_culture = {
+							this = scope:culture
+						}
+					}
+				}
+			}
+			add = {
+				value = sibling_relation_cultural_acceptance
+				desc = ACCEPTANCE_BASELINE_SIBLING_RELATION
+			}
+		}		
+
+		########
+
 		# Decrease base acceptance for differing martial custom
 		if = {
 			limit = { NOT = { has_same_culture_martial_tradition = scope:culture } }

@@ -1123,6 +1123,55 @@
 		}
 	}
 
+	# CULTURAL ACCEPTANCE MODIFIER. 
+	# SCALES ARE SUCH THAT, OVERALL, MAXIMUM ACCEPTANCE NEUTRALISES DIFFERENT "X" MALUS:
+		# SCALES FROM -25 TO 10 FOR DIFFERENT HERITAGE (I.E. 100% ACCEPTANCE COUNTERACTS DIFFERENT CULTURE MALUS OF -10)
+		# SCALES FROM -25 TO 25 FOR DIFFERENT HERITAGE GROUP (I.E. 100% ACCEPTANCE COUNTERACTS DIFFERENT CULTURE & HERITAGE MALUS OF -25) 
+		# KEEPING BOTH AT -25 ACCEPTANCE, RATHER THAN -10/-25, FOR CONSISTENCY. ENCOURAGES PROMOTION OF C.A. FOR ALL CULTURES.
+
+	modifier = {
+		add = {
+			value = "scope:actor.culture.cultural_acceptance(scope:recipient.culture)" #  0 to 100
+			# DIFFERENT HERITAGE
+			if = {
+				limit = {
+					NOT = {
+						scope:actor.culture = {
+								has_same_culture_heritage = scope:recipient.culture
+						} 
+					}
+					scope:actor.culture = {
+						has_same_heritage_group_as = { TARGET = scope:recipient.culture }
+					} 
+				}
+				if = {
+					limit = {
+						ca_value < 50
+					}
+					subtract = 50  # -50 to 50
+					multiply = 0.5 # -25 to 0
+				}
+				else = {
+					subtract = 50  # -50 to 50
+					multiply = 0.2  # 0 to 10
+				}
+			}
+			# DIFFERENT HERITAGE GROUP
+			else_if = {
+				limit = {
+					NOT = {
+						scope:actor.culture = {
+							has_same_heritage_group_as = { TARGET = scope:recipient.culture } 
+						} 
+					}
+				}
+				subtract = 50  # -50 to 50
+				multiply = 0.5  # -25 to 25
+			}
+		}
+		desc = MARRIAGE_CULTURAL_ACCEPTANCE_MODIFIER	
+	}
+
 	###########################
 	# VANILLA FAITH MODIFIERS #
 	###########################
@@ -2286,20 +2335,20 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 	# ALL BELOW ARE FOR DIFFERENT HERITAGES:
 	# DIFFERENT HERITAGE ONLY
 	modifier = {
-		add = -15
+		add = -10
 		desc = MARRIAGE_DIFFERENT_HERITAGE
 		trigger = {
 			NOT = {
 				scope:actor.culture = {
 						has_same_culture_heritage = scope:recipient.culture
-					} 
+				} 
 			}
 		}
 	}
 
 	# DIFFERENT HERITAGE GROUP
 	modifier = {
-		add = -10
+		add = -15
 		desc = MARRIAGE_DIFFERENT_HERITAGE_GROUP
 		trigger = {
 			NOT = {
@@ -2344,6 +2393,57 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 			}
 		}
 	}
+	
+	# CULTURAL ACCEPTANCE MODIFIER. 
+	# SCALES ARE SUCH THAT, OVERALL, MAXIMUM ACCEPTANCE NEUTRALISES DIFFERENT "X" MALUS:
+		# SCALES FROM -25 TO 10 FOR DIFFERENT HERITAGE (I.E. 100% ACCEPTANCE COUNTERACTS DIFFERENT CULTURE MALUS OF -10)
+		# SCALES FROM -25 TO 25 FOR DIFFERENT HERITAGE GROUP (I.E. 100% ACCEPTANCE COUNTERACTS DIFFERENT CULTURE & HERITAGE MALUS OF -25) 
+		# KEEPING BOTH AT -25 ACCEPTANCE, RATHER THAN -10/-25, FOR CONSISTENCY. ENCOURAGES PROMOTION OF C.A. FOR ALL CULTURES.
+
+	modifier = {
+		add = {
+			value = "scope:actor.culture.cultural_acceptance(scope:recipient.culture)" #  0 to 100
+			# DIFFERENT HERITAGE
+			if = {
+				limit = {
+					NOT = {
+						scope:actor.culture = {
+								has_same_culture_heritage = scope:recipient.culture
+						} 
+					}
+					scope:actor.culture = {
+						has_same_heritage_group_as = { TARGET = scope:recipient.culture }
+					} 
+				}
+				if = {
+					limit = {
+						ca_value < 50
+					}
+					subtract = 50  # -50 to 50
+					multiply = 0.5 # -25 to 0
+				}
+				else = {
+					subtract = 50  # -50 to 50
+					multiply = 0.2  # 0 to 10
+				}
+			}
+			# DIFFERENT HERITAGE GROUP
+			else_if = {
+				limit = {
+					NOT = {
+						scope:actor.culture = {
+							has_same_heritage_group_as = { TARGET = scope:recipient.culture } 
+						} 
+					}
+				}
+				subtract = 50  # -50 to 50
+				multiply = 0.5  # -25 to 25
+			}
+		}
+		desc = MARRIAGE_CULTURAL_ACCEPTANCE_MODIFIER	
+	}
+	
+
 
 	##################
 	# MISC PENALTIES #
