@@ -4,7 +4,11 @@
 			has_variable = norse_duchy
 			this.var:norse_duchy = { has_variable = title_created_de_jure }
 		}
-		set_de_jure_liege_title = this.var:norse_duchy
+		# This check is for tooltip purposes
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:norse_duchy } }
+			set_de_jure_liege_title = this.var:norse_duchy
+		}
 	}
 	else_if = {
 		limit = {
@@ -14,27 +18,39 @@
 				# If the anglo_saxon_duchy_dependency title has been set, it must also exist
 				# in order for the county to come under anglo_saxon_duchy
 				NOT = { has_variable = anglo_saxon_duchy_dependency }
-				this.var:anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				this.var:anglo_saxon_dhy_dependency = { has_variable = title_created_de_jure }
 			}
 		}
-		set_de_jure_liege_title = this.var:anglo_saxon_duchy
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:anglo_saxon_duchy } }
+			set_de_jure_liege_title = this.var:anglo_saxon_duchy
+		}
 	}
 	else_if = {
 		limit = {
 			has_variable = secondary_anglo_saxon_duchy
 			this.var:secondary_anglo_saxon_duchy = { has_variable = title_created_de_jure }
 		}
-		set_de_jure_liege_title = this.var:secondary_anglo_saxon_duchy
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:secondary_anglo_saxon_duchy } }
+			set_de_jure_liege_title = this.var:secondary_anglo_saxon_duchy
+		}
 	}
 	else_if = {
 		limit = {
 			has_variable = roman_duchy
 			this.var:roman_duchy = { has_variable = roman_title_created_de_jure }
 		}
-		set_de_jure_liege_title = this.var:roman_duchy
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:roman_duchy } }
+			set_de_jure_liege_title = this.var:roman_duchy
+		}
 	}
 	else = {
-		set_de_jure_liege_title = this.var:default_duchy
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:default_duchy } }
+			set_de_jure_liege_title = this.var:default_duchy
+		}
 	}
 }
 

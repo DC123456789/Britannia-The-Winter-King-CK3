@@ -1,0 +1,44 @@
+﻿anglo_saxon_duchy_formation = {
+	scope = character
+	
+	is_shown = {
+		scope:anglo_saxon_duchy = {
+			NOT = { has_variable = title_created_de_jure }
+			any_in_list = {
+				variable = dynamic_de_jure_territory
+				OR = {
+					root = { completely_controls = prev }
+					is_neighbor_to_realm = root
+				}
+			}
+		}
+	}
+	
+	is_valid = {
+		# completely_controls = scope:anglo_saxon_duchy.title_capital_county
+	}
+	
+	effect = {
+		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
+	}
+}
+
+anglo_saxon_duchy_formation_reset = {
+	scope = character
+	
+	effect = {
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
+	}
+}
+
+anglo_saxon_duchy_formation_is_selected = {
+	scope = character
+	
+	is_valid = {
+		has_variable = selected_anglo_saxon_duchy
+		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
+	}
+}
