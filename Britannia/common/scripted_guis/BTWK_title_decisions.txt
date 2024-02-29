@@ -1,4 +1,4 @@
-﻿anglo_saxon_duchy_formation = {
+﻿anglo_saxon_duchy_formation_show = {
 	scope = character
 	
 	is_shown = {
@@ -13,32 +13,20 @@
 			}
 		}
 	}
-	
-	is_valid = {
-		# completely_controls = scope:anglo_saxon_duchy.title_capital_county
-	}
+}
+
+anglo_saxon_duchy_formation_selection = {
+	scope = character
 	
 	effect = {
 		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
 	}
 }
 
-anglo_saxon_duchy_formation_reset = {
+anglo_saxon_duchy_formation_reset_selection = {
 	scope = character
 	
 	effect = {
-		if = {
-			limit = { has_variable = selected_anglo_saxon_duchy }
-			remove_variable = selected_anglo_saxon_duchy
-		}
-	}
-}
-
-anglo_saxon_duchy_formation_reset_close = {
-	scope = character
-	
-	effect = {
-		debug_log = "i_got_hit"
 		if = {
 			limit = { has_variable = selected_anglo_saxon_duchy }
 			remove_variable = selected_anglo_saxon_duchy
@@ -52,5 +40,21 @@ anglo_saxon_duchy_formation_is_selected = {
 	is_valid = {
 		has_variable = selected_anglo_saxon_duchy
 		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
+	}
+}
+
+anglo_saxon_duchy_formation_create = {
+	scope = character
+	
+	is_valid = {
+		can_create_formable_title = { TITLE = scope:anglo_saxon_duchy }
+	}
+	
+	effect = {
+		create_anglo_saxon_duchy_effect = { TITLE = scope:anglo_saxon_duchy }
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
 	}
 }

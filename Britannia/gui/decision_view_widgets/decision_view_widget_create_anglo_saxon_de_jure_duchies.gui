@@ -37,53 +37,88 @@ vbox = {
 	state = {
 		name = init_state
 		trigger_on_create = yes
-		on_start = "[GetScriptedGui('anglo_saxon_duchy_formation_reset').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
-	}
-	
-	state = {
-		name = _hide
-		on_start = "[GetScriptedGui('anglo_saxon_duchy_formation_reset').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		on_start = "[GetScriptedGui('anglo_saxon_duchy_formation_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 	}
 }
 
 types DuchyTitleTypes
 {
-	type DuchyTitleType = button_standard {
-		size = { 330 50 }
-		margin = { 10 10 }
+	type DuchyTitleType = hbox {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		spacing = 10
+		
+		visible = "[GetScriptedGui('anglo_saxon_duchy_formation_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 
-		onclick = "[GetScriptedGui('anglo_saxon_duchy_formation').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-		visible = "[GetScriptedGui('anglo_saxon_duchy_formation').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-		# enabled = "[GetScriptedGui('anglo_saxon_duchy_formation').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-		# tooltip = "[Entry.GetTooltip]"
-		down = "[GetScriptedGui('anglo_saxon_duchy_formation_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+		button_standard = {
+			size = { 280 50 }
+			margin = { 10 10 }
 
-		hbox = {
-			layoutpolicy_horizontal = expanding
-			layoutpolicy_vertical = expanding
-			spacing = 10
-			margin_left = 10
+			onclick = "[GetScriptedGui('anglo_saxon_duchy_formation_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			# enabled = "[GetScriptedGui('anglo_saxon_duchy_formation_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			# tooltip = "[Entry.GetTooltip]"
+			down = "[GetScriptedGui('anglo_saxon_duchy_formation_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 
-			coa_title_tiny = {
-				datacontext = "[Scope.Title]"
-			}
-
-			vbox = {
-				datacontext = "[Scope.Title]"
-				name = "title_info"
+			hbox = {
+				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
-				margin_bottom = 5
+				spacing = 10
+				margin_left = 10
 
-				text_single = {
-					name = "title_name"
-					alwaystransparent = yes
-					text = "[Title.GetName]"
-					max_width = 250
-					align = left
+				coa_title_tiny = {
+					datacontext = "[Scope.Title]"
 				}
-			}
 
-			expand = {}
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						text = "[Title.GetName]"
+						max_width = 250
+						align = left
+					}
+				}
+				
+				expand = {}
+			}
+		}
+		
+		button_standard = {
+			size = { 70 50 }
+			margin = { 10 10 }
+
+			onclick = "[GetScriptedGui('anglo_saxon_duchy_formation_create').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			enabled = "[GetScriptedGui('anglo_saxon_duchy_formation_create').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			tooltip = "[GetScriptedGui('anglo_saxon_duchy_formation_create').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 10
+				margin_left = 13
+
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						text = "Create"
+						max_width = 250
+						align = center
+					}
+				}
+				
+				expand = {}
+			}
 		}
 	}
 }
