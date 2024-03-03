@@ -231,7 +231,13 @@ titular_titles_test.2002 = {
 		every_in_global_list = {
 			variable = roman_duchy_list
 			if = {
-				limit = { NOT = { this.var:roman_kingdom = title:k_valentia } }
+				limit = {
+					OR = {
+						NOT = { this.var:roman_kingdom = title:k_valentia }
+						this = title:d_westrheged
+						this = title:d_eastrheged
+					}
+				}
 				set_variable = roman_title_created_de_jure
 			}
 		}
