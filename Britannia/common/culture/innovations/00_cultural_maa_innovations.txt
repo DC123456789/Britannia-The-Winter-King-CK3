@@ -31,14 +31,15 @@
 @special_maa_01 = "gfx/interface/icons/culture_innovations/innovation_special_maa_01.dds"
 @special_maa_02 = "gfx/interface/icons/culture_innovations/innovation_special_maa_02.dds"
 
+#Gesithes
 innovation_zweihanders = {
 	group = culture_group_regional
-	culture_era = culture_era_late_medieval
+	culture_era = culture_era_tribal
 	icon = @special_maa_01
-	region = ghw_region_germany
+	
 
 	potential = {
-		has_cultural_pillar = heritage_central_germanic
+		has_cultural_pillar = heritage_west_germanic
 	}
 
 	unlock_maa = landsknecht
@@ -167,16 +168,19 @@ innovation_rectilinear_schiltron = {
 innovation_bamboo_bows = {
 	group = culture_group_regional
 	culture_era = culture_era_tribal
-	region = world_india
+	
 	icon = @special_maa_02
-
+	
+	potential = {
+		has_cultural_parameter = unlock_bamboo_bows_innovation
+	}
 	unlock_maa = paiks
 
 	flag = global_regional
-	flag = global_maa
+	flag = tribal_era_regional
 }
 
-
+#Light Horse
 innovation_sahel_horsemen = {
 	group = culture_group_regional
 	culture_era = culture_era_tribal
@@ -202,6 +206,7 @@ innovation_sarawit = {
 	flag = global_maa
 }
 
+#Manuballista
 innovation_repeating_crossbow = {
 	group = culture_group_regional
 	culture_era = culture_era_tribal
@@ -216,21 +221,19 @@ innovation_repeating_crossbow = {
 	flag = global_maa
 }
 
+#Huscarls
 innovation_pole_vault = {
 	group = culture_group_regional
 	culture_era = culture_era_tribal
 	icon = @weapons_and_armor_01
-
+	
 	potential = {
-		OR = {
-			this = culture:guanches
-			any_parent_culture_or_above = {
-				this = culture:guanches
-			}
-		}
+		has_cultural_pillar = heritage_west_germanic
+		has_innovation = innovation_zweihanders
+		has_innovation = innovation_caballeros 
 	}
-
-	unlock_maa = guanch_vaulter
+	
+	unlock_maa = huscarl
 
 	flag = global_maa
 }
