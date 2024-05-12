@@ -1,0 +1,98 @@
+tradition_wetland_draining = {
+	category = realm
+
+	layers = {
+		0 = steward
+		1 = mena
+		4 = svamp.dds
+	}
+
+	can_pick = {
+		custom_tooltip = {
+			text = culture_in_wetlands_desc
+			any_culture_county = {
+				any_county_province = {
+					terrain = wetlands
+				}
+			}
+		}
+	}
+	
+	parameters = {
+		peat_quarries_building_bonuses = yes
+		build_farms_in_wetlands = yes
+	}
+	character_modifier = {
+		wetlands_travel_danger = wetlands_low_danger_reduction
+		floodplains_travel_danger = floodplains_low_danger_reduction
+	}
+	county_modifier = {
+		wetlands_development_growth_factor = 0.30
+	}
+	province_modifier = {
+		wetlands_construction_gold_cost = -0.25
+		wetlands_holding_construction_gold_cost = -0.25
+		wetlands_supply_limit_mult = 0.30
+	}
+
+	cost = {
+		prestige = {
+			add = {
+				value = tradition_base_cost
+				desc = BASE
+				format = "BASE_VALUE_FORMAT"
+			}
+			if = {
+				limit = {
+					NOR = {
+						culture_pillar:ethos_communal = { is_in_list = traits }
+						culture_pillar:ethos_bureaucratic = { is_in_list = traits }
+						culture_pillar:ethos_stoic = { is_in_list = traits }
+					}
+				}
+				add = {
+					value = tradition_incompatible_ethos_penalty
+					desc = not_communal_bureaucratic_or_stoic_desc
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_culture_county = {
+							percent >= 0.3
+							any_county_province = {
+								terrain = wetlands
+							}
+						}
+					}
+				}
+				add = {
+					value = tradition_unfulfilled_criteria_penalty
+					desc = culture_in_wetlands_count_desc
+				}
+			}
+			
+			multiply = tradition_replacement_cost_if_relevant
+		}
+	}
+	
+	ai_will_do = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					scope:character = {
+						any_sub_realm_county = {
+							count >= 3
+							culture = scope:character.culture
+							any_county_province = {
+								terrain = wetlands
+							}
+						}
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
