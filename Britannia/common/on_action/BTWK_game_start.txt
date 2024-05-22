@@ -1,20 +1,42 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
-	on_actions = { BTWK_de_jure_setup }
+	on_actions = { BTWK_de_jure_setup BTWK_religion_setup }
+	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
+}
+
+# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
+on_game_start_after_lobby = {
+	on_actions = { BTWK_culture_setup }
+	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
+}
+
+BTWK_culture_setup = {
+	effect = {
+		# TODO Set starting cultural acceptance
+		
+		# Custom Court Grandeur settings
+		if = {
+			limit = {
+				has_dlc_feature = royal_court
+			}
+			character:1 = {		# Dumnonia
+				set_current_court_grandeur = 45
+			}
+			character:14 = {	# Gwent
+				set_current_court_grandeur = 30
+			}
+		}
+	}
+}
+
+BTWK_religion_setup = {
 	effect = {
 		# Mark some faiths to block conversion till specific decisions are taken.
 		# TODO Block all Muslim faiths until it appears
 		# religion:islam_religion = {
 			# set_variable = { name = block_conversion_till_decision_taken }
 		# }
-	}
-}
-
-# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
-on_game_start_after_lobby = {
-	effect = {		
-		# TODO Set starting cultural acceptance		
 	}
 }
 
