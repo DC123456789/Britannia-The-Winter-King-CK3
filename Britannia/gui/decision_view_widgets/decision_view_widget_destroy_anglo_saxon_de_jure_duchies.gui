@@ -1,7 +1,7 @@
 # Required controller: decision_option_list_controller
 
 vbox = {
-	name = "decision_view_widget_create_anglo_saxon_de_jure_duchies"
+	name = "decision_view_widget_destroy_anglo_saxon_de_jure_duchies"
 	layoutpolicy_horizontal = expanding
 	layoutpolicy_vertical = expanding
 	ignoreinvisible = yes
@@ -25,7 +25,7 @@ vbox = {
 					spacing = 6
 
 					item = {
-						CreateAngloSaxonDuchyTitleType = {}
+						DestroyAngloSaxonTitleType = {}
 					}
 				}
 			}
@@ -37,27 +37,27 @@ vbox = {
 	state = {
 		name = init_state
 		trigger_on_create = yes
-		on_start = "[GetScriptedGui('anglo_saxon_duchy_formation_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		on_start = "[GetScriptedGui('anglo_saxon_duchy_destruction_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 	}
 }
 
-types CreateAngloSaxonDuchyTitleTypes
+types DestroyAngloSaxonDuchyTitleTypes
 {
-	type CreateAngloSaxonDuchyTitleType = hbox {
+	type DestroyAngloSaxonTitleType = hbox {
 		layoutpolicy_horizontal = expanding
 		layoutpolicy_vertical = expanding
 		spacing = 10
 		
-		visible = "[GetScriptedGui('anglo_saxon_duchy_formation_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+		visible = "[GetScriptedGui('anglo_saxon_duchy_destruction_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 
 		button_standard = {
 			size = { 280 50 }
 			margin = { 10 10 }
 
-			onclick = "[GetScriptedGui('anglo_saxon_duchy_formation_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			# enabled = "[GetScriptedGui('anglo_saxon_duchy_formation_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			onclick = "[GetScriptedGui('anglo_saxon_duchy_destruction_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			# enabled = "[GetScriptedGui('anglo_saxon_duchy_destruction_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 			# tooltip = "[Entry.GetTooltip]"
-			down = "[GetScriptedGui('anglo_saxon_duchy_formation_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			down = "[GetScriptedGui('anglo_saxon_duchy_destruction_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 
 			hbox = {
 				layoutpolicy_horizontal = expanding
@@ -92,15 +92,15 @@ types CreateAngloSaxonDuchyTitleTypes
 			size = { 70 50 }
 			margin = { 10 10 }
 
-			onclick = "[GetScriptedGui('anglo_saxon_duchy_formation_create').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			enabled = "[GetScriptedGui('anglo_saxon_duchy_formation_create').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			tooltip = "[GetScriptedGui('anglo_saxon_duchy_formation_create').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			onclick = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			enabled = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
+			tooltip = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
 			
 			hbox = {
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
 				spacing = 10
-				margin_left = 13
+				margin_left = 10
 
 				vbox = {
 					datacontext = "[Scope.Title]"
@@ -111,7 +111,7 @@ types CreateAngloSaxonDuchyTitleTypes
 					text_single = {
 						name = "title_name"
 						alwaystransparent = yes
-						text = "Create"
+						text = "Destroy"
 						max_width = 250
 						align = center
 					}

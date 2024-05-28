@@ -2,7 +2,7 @@
 	if = {
 		limit = {
 			has_variable = norse_duchy
-			this.var:norse_duchy = { has_variable = title_created_de_jure }
+			this.var:norse_duchy = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
 		}
 		# This check is for tooltip purposes
 		if = {
@@ -13,12 +13,16 @@
 	else_if = {
 		limit = {
 			has_variable = anglo_saxon_duchy
-			this.var:anglo_saxon_duchy = { has_variable = title_created_de_jure }
+			this.var:anglo_saxon_duchy = {
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
+			}
 			OR = {
 				# If the anglo_saxon_duchy_dependency title has been set, it must also exist
 				# in order for the county to come under anglo_saxon_duchy
 				NOT = { has_variable = anglo_saxon_duchy_dependency }
-				this.var:anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				this.var:anglo_saxon_duchy_dependency = { 
+					title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
+				}
 			}
 		}
 		if = {
@@ -29,7 +33,9 @@
 	else_if = {
 		limit = {
 			has_variable = secondary_anglo_saxon_duchy
-			this.var:secondary_anglo_saxon_duchy = { has_variable = title_created_de_jure }
+			this.var:secondary_anglo_saxon_duchy = { 
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
+			}
 		}
 		if = {
 			limit = { NOT = { de_jure_liege = this.var:secondary_anglo_saxon_duchy } }
@@ -39,7 +45,9 @@
 	else_if = {
 		limit = {
 			has_variable = roman_duchy
-			this.var:roman_duchy = { has_variable = roman_title_created_de_jure }
+			this.var:roman_duchy = { 
+				title_has_de_jure_variable_trigger = { FLAG = roman_title_created_de_jure } 
+			}
 		}
 		if = {
 			limit = { NOT = { de_jure_liege = this.var:roman_duchy } }
@@ -57,7 +65,7 @@
 check_de_jure_liege_duchy_effect = {
 	if = {
 		limit = {
-			has_variable = roman_title_created_de_jure
+			title_has_de_jure_variable_trigger = { FLAG = roman_title_created_de_jure }
 			has_variable = roman_kingdom
 		}
 		set_de_jure_liege_title = this.var:roman_kingdom
@@ -67,6 +75,7 @@ check_de_jure_liege_duchy_effect = {
 			set_capital_county = this.var:roman_title_capital
 		}
 	}
+	# No tooltip bypass/ignore for now as this is a bit more complicated
 	else_if = {
 		limit = {
 			has_variable = integration_kingdom
@@ -80,14 +89,18 @@ check_de_jure_liege_duchy_effect = {
 	else_if = {
 		limit = {
 			has_variable = expansion_kingdom
-			this.var:expansion_kingdom = { has_variable = title_expanded_de_jure }
+			this.var:expansion_kingdom = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			}
 		}
 		set_de_jure_liege_title = this.var:expansion_kingdom
 	}
 	else_if = {
 		limit = {
 			has_variable = formable_kingdom
-			this.var:formable_kingdom = { has_variable = title_created_de_jure }
+			this.var:formable_kingdom = {
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			}
 		}
 		set_de_jure_liege_title = this.var:formable_kingdom
 	}

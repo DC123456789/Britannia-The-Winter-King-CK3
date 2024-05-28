@@ -13,7 +13,7 @@ namespace = titular_titles_test
 # Anglo-Saxons
 ##################################################
 
-# Creation of new duchy - creator
+# Creation of duchy
 titular_titles.0001 = {
 	type = character_event
 	title = titular_titles.0001.t
@@ -66,6 +66,47 @@ titular_titles.0001 = {
 	}
 }
 
+# Destruction of duchy
+titular_titles.0002 = {
+	type = character_event
+	title = titular_titles.0002.t
+	desc = {
+		desc = titular_titles.0002.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_hampshire }
+				desc = titular_titles.0001.desc.d_hampshire
+			}
+			desc = titular_titles.0002.desc.fallback
+		}
+		desc = titular_titles.0002.desc.outro
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { exists = scope:old_duchy_title.holder }
+			destroy_title = scope:old_duchy_title
+		}
+		show_as_tooltip = {
+			scope:old_duchy_title = {
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_county_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = titular_titles.0002.a
+	}
+}
 
 ##################################################
 # Debug Test Events
