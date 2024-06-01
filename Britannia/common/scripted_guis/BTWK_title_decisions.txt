@@ -1,0 +1,133 @@
+﻿## Anglo-Saxon Duchy Formation
+anglo_saxon_duchy_formation_show = {
+	scope = character
+	
+	is_shown = {
+		scope:anglo_saxon_duchy = {
+			NOT = { has_variable = title_created_de_jure }
+			any_in_list = {
+				variable = dynamic_de_jure_territory
+				OR = {
+					root = { completely_controls = prev }
+					is_neighbor_to_realm = root
+				}
+			}
+		}
+	}
+}
+
+anglo_saxon_duchy_formation_selection = {
+	scope = character
+	
+	effect = {
+		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
+	}
+}
+
+anglo_saxon_duchy_formation_reset_selection = {
+	scope = character
+	
+	effect = {
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
+	}
+}
+
+anglo_saxon_duchy_formation_is_selected = {
+	scope = character
+	
+	is_valid = {
+		has_variable = selected_anglo_saxon_duchy
+		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
+	}
+}
+
+anglo_saxon_duchy_formation_create = {
+	scope = character
+	
+	is_valid = {
+		can_create_germanic_title_trigger = yes
+		trigger_if = {
+			limit = { is_independent_ruler = no }
+			liege = { highest_held_title_tier > tier_duchy }
+		}
+		can_create_formable_title = { TITLE = scope:anglo_saxon_duchy }
+	}
+	
+	effect = {
+		create_anglo_saxon_duchy_effect = { TITLE = scope:anglo_saxon_duchy }
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
+	}
+}
+
+## Anglo-Saxon Duchy Destruction
+anglo_saxon_duchy_destruction_show = {
+	scope = character
+	
+	is_shown = {
+		scope:anglo_saxon_duchy = {
+			has_variable = title_created_de_jure
+			any_in_list = {
+				variable = dynamic_de_jure_territory
+				OR = {
+					root = { completely_controls = prev }
+					is_neighbor_to_realm = root
+				}
+			}
+		}
+	}
+}
+
+anglo_saxon_duchy_destruction_selection = {
+	scope = character
+	
+	effect = {
+		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
+	}
+}
+
+anglo_saxon_duchy_destruction_reset_selection = {
+	scope = character
+	
+	effect = {
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
+	}
+}
+
+anglo_saxon_duchy_destruction_is_selected = {
+	scope = character
+	
+	is_valid = {
+		has_variable = selected_anglo_saxon_duchy
+		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
+	}
+}
+
+anglo_saxon_duchy_destruction_destroy = {
+	scope = character
+	
+	is_valid = {
+		NOT = { top_liege_can_create_germanic_title_culture_trigger = yes }
+		NOT = { can_create_germanic_title_trigger = yes }
+		can_destroy_formable_title = { 
+			TITLE = scope:anglo_saxon_duchy 
+			COUNTY_TRIGGER = "NOT = { germanic_controlled_trigger = yes }" 
+		}
+	}
+	
+	effect = {
+		destroy_anglo_saxon_duchy_effect = { TITLE = scope:anglo_saxon_duchy }
+		if = {
+			limit = { has_variable = selected_anglo_saxon_duchy }
+			remove_variable = selected_anglo_saxon_duchy
+		}
+	}
+}

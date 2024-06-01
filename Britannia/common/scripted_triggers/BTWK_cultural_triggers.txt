@@ -41,8 +41,14 @@ culture_is_brythonic_culture_trigger = {
 	}
 }
 
+is_celtic_culture_trigger = {
+    custom_tooltip = {
+		text = is_celtic_culture_trigger_desc
+        culture = { has_same_heritage_family_as = { TARGET = culture:briton } }
+	}
+}
+
 # Determines access to Romanized Germanic titles (= Roman titles, pretty much)
-# TODO Might want to split the Germanic heritage to handle this more easily
 is_romanized_germanic_culture_trigger = {
 	culture = { has_cultural_pillar = heritage_romanized_germanic }
 }
@@ -72,19 +78,22 @@ can_create_roman_celtic_titles_trigger = {
 	}
 }
 
-can_create_germanic_title_trigger = {
-	culture = {
-		OR = {
-			has_cultural_pillar = heritage_west_germanic
-			has_cultural_pillar = heritage_frankish
-			has_cultural_pillar = heritage_central_germanic
-			has_cultural_pillar = heritage_north_germanic
+can_create_germanic_title_culture_trigger = {
+	custom_description = {
+		text = can_create_germanic_title_culture_trigger
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_west_germanic
+				has_cultural_pillar = heritage_frankish
+				has_cultural_pillar = heritage_central_germanic
+				has_cultural_pillar = heritage_north_germanic
+			}
 		}
 	}
 }
 
-is_saxon_culture_trigger = { 
-# Used in Anglo-Saxon patron deity selection: Ingwine (Angle, Frisian, Jutish) vs. Seaxneat (Saxon)
+is_old_saxon_culture_trigger = { 
+# Used in Anglo-Saxon patron deity selection: Wodan (Angle, Frisian, Jutish) vs. Seaxneat (Saxon)
 	OR = {
 		has_culture = culture:old_saxon
 		has_culture = culture:saxon

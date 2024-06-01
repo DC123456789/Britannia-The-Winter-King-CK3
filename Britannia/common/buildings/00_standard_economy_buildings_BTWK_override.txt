@@ -1,0 +1,413 @@
+### peat_quarries
+
+peat_quarries_01 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+		building_requirement_castle_city_church = { LEVEL = 01 }
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_1_cost
+
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_1
+		build_speed = normal_building_build_speed_tier_1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.02
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.02
+		build_gold_cost = -0.01
+		tax_mult = 0.02
+		levy_size = 0.02
+	}
+	
+	next_building = peat_quarries_02
+
+	type_icon = "icon_building_peat_quarries.dds"
+	
+	ai_value = {
+		base = 12 # A little bit higher than normal, they're very handy for further development
+		ai_tier_1_building_modifier = yes
+		ai_tier_1_economical_building_preference_modifier = yes
+		ai_general_building_modifier = yes
+		ai_peat_quarries_improvement_from_culture_modifier = yes
+	}
+}
+
+peat_quarries_02 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+		building_requirement_castle_city_church = { LEVEL = 01 }
+		scope:holder.culture = {
+			has_innovation = innovation_crop_rotation
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_2_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_2
+		build_speed = normal_building_build_speed_tier_2
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.03
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.04
+		build_gold_cost = -0.02
+		tax_mult = 0.03
+		levy_size = 0.03
+	}
+	
+	next_building = peat_quarries_03
+	
+	ai_value = {
+		base = 9
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0 years_from_game_start > 0.01
+		}
+	}
+}
+
+peat_quarries_03 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_manorialism
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_3_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_3
+		build_speed = normal_building_build_speed_tier_3
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.04
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.05
+		supply_limit = 200
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.06
+		build_gold_cost = -0.03
+		tax_mult = 0.04
+		levy_size = 0.04
+	}
+	
+	next_building = peat_quarries_04
+	
+	ai_value = {
+		base = 8
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+peat_quarries_04 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_manorialism
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_4_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_4
+		build_speed = normal_building_build_speed_tier_4
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.05
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.05
+		supply_limit = 200
+		supply_limit_mult = 0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.08
+		build_gold_cost = -0.04
+		tax_mult = 0.05
+		levy_size = 0.05
+	}
+	
+	next_building = peat_quarries_05
+	
+	ai_value = {
+		base = 7
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+peat_quarries_05 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_guilds
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_5_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_5
+		build_speed = normal_building_build_speed_tier_5
+		hostile_raid_time = 0.1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.06
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.05
+		supply_limit = 200
+		supply_limit_mult = 0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.010
+		build_gold_cost = -0.05
+		tax_mult = 0.06
+		levy_size = 0.06
+	}
+	
+	next_building = peat_quarries_06
+	
+	ai_value = {
+		base = 6
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+peat_quarries_06 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_guilds
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_6_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_6
+		build_speed = normal_building_build_speed_tier_6
+		hostile_raid_time = 0.1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.07
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.05
+		supply_limit = 200
+		supply_limit_mult = 0.05
+		development_growth_factor = 0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.12
+		build_gold_cost = -0.06
+		tax_mult = 0.07
+		levy_size = 0.07
+	}
+	
+	next_building = peat_quarries_07
+	
+	ai_value = {
+		base = 5
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+peat_quarries_07 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_cranes
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_7_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_7
+		build_speed = normal_building_build_speed_tier_7
+		hostile_raid_time = 0.1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.08
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.1
+		supply_limit = 200
+		supply_limit_mult = 0.05
+		development_growth_factor = 0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.14
+		build_gold_cost = -0.07
+		tax_mult = 0.08
+		levy_size = 0.08
+	}
+	
+	next_building = peat_quarries_08
+	
+	ai_value = {
+		base = 4
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+peat_quarries_08 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		building_peat_quarries_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_cranes
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = cheap_building_tier_8_cost
+	
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_8
+		build_speed = normal_building_build_speed_tier_8
+		hostile_raid_time = 0.1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.09
+	}
+	
+	county_modifier = {
+		build_gold_cost = -0.1
+		supply_limit = 600
+		supply_limit_mult = 0.05
+		development_growth_factor = 0.05
+	}
+	county_culture_modifier = {
+		parameter = peat_quarries_building_bonuses
+		build_speed = -0.16
+		build_gold_cost = -0.08
+		tax_mult = 0.10
+		levy_size = 0.10
+	}
+	
+	ai_value = {
+		base = 3
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+

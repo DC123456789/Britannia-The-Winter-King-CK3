@@ -1,0 +1,37 @@
+﻿create_anglo_saxon_duchy_effect = {
+	$TITLE$ = {
+		save_scope_as = new_duchy_title
+		set_variable = title_created_de_jure
+	}
+	save_scope_as = conqueror
+	trigger_event = { id = titular_titles.0001 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles.0001 }
+	}
+	scope:new_duchy_title = {
+		every_in_list = {
+			variable = de_jure_affected_territory
+			check_de_jure_liege_county_effect = yes
+		}
+	}
+}
+
+destroy_anglo_saxon_duchy_effect = {
+	$TITLE$ = {
+		save_scope_as = old_duchy_title
+		remove_variable = title_created_de_jure
+	}
+	save_scope_as = conqueror
+	trigger_event = { id = titular_titles.0002 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles.0002 }
+	}
+	scope:old_duchy_title = {
+		every_in_list = {
+			variable = de_jure_affected_territory
+			check_de_jure_liege_county_effect = yes
+		}
+	}
+}

@@ -1,0 +1,111 @@
+﻿# Checks if a title has a certain flag/variable
+# If the [flag]_pretend scope is set to the scoped title, then the flag is considered set even if it isn't 
+# actually - this is used for tooltip purposes
+# Same with [flag]_ignore scope, which ignores the flag even if it is set
+title_has_de_jure_variable_trigger = {
+	OR = {
+		has_variable = $FLAG$
+		scope:$FLAG$_pretend ?= this
+	}
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
+# TODO Allow for Roman characters, but only if they are under the empire
+can_create_briton_kingdom_trigger = {
+	is_celtic_culture_trigger = yes
+}
+
+germanic_controlled_trigger = {
+	custom_description = {
+		text = germanic_controlled_trigger
+		holder.top_liege = { can_create_germanic_title_culture_trigger = yes }
+	}
+}
+
+# TODO
+can_create_formable_title = {
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_1 } }
+		trigger_if = {
+			limit = { $TITLE$ = { has_variable = creation_requirement_1_alt } }
+			$TITLE$ = {		# Custom description needs to be in this title scope to work properly
+				custom_description = {
+					text = completely_controls_creation_requirement_1_or_alt_trigger
+					OR = {
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_1 }
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_1_alt }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			completely_controls = $TITLE$.var:creation_requirement_1
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_2 } }
+		trigger_if = {
+			limit = { $TITLE$ = { has_variable = creation_requirement_2_alt } }
+			$TITLE$ = {		# Custom description needs to be in this title scope to work properly
+				custom_description = {
+					text = completely_controls_creation_requirement_2_or_alt_trigger
+					OR = {
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_2 }
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_2_alt }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			completely_controls = $TITLE$.var:creation_requirement_2
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_3 } }
+		trigger_if = {
+			limit = { $TITLE$ = { has_variable = creation_requirement_3_alt } }
+			$TITLE$ = {		# Custom description needs to be in this title scope to work properly
+				custom_description = {
+					text = completely_controls_creation_requirement_3_or_alt_trigger
+					OR = {
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_3 }
+						PREV = { completely_controls = $TITLE$.var:creation_requirement_3_alt }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			completely_controls = $TITLE$.var:creation_requirement_3
+		}
+	}
+}
+
+can_destroy_formable_title = {
+	completely_controls = $TITLE$.title_capital_county
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_1 } }
+		$TITLE$.var:creation_requirement_1 = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_1_alt } }
+		$TITLE$.var:creation_requirement_1_alt = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_2 } }
+		$TITLE$.var:creation_requirement_2 = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_2_alt } }
+		$TITLE$.var:creation_requirement_2_alt = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_3 } }
+		$TITLE$.var:creation_requirement_3 = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_3_alt } }
+		$TITLE$.var:creation_requirement_3_alt = { $COUNTY_TRIGGER$ }
+	}
+}
