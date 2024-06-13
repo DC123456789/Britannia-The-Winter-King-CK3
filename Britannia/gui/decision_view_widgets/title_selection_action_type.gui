@@ -1,0 +1,127 @@
+
+types TitleSelectionActionTypes
+{
+	type TitleSelectionActionBoxType vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		ignoreinvisible = yes
+
+		margin_top = 10
+		spacing = 10
+
+		vbox = {		
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				
+				size = { 400 200 }
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						block "box_datamodel" {
+						}
+						spacing = 6
+
+						item = {
+							TitleSelectionActionTitleType = {
+							}
+						}
+					}
+				}
+
+				blockoverride "scrollbox_background_fade" {}
+			}
+		}
+		
+		state = {
+			name = init_state
+			trigger_on_create = yes
+			block "box_create_state" {
+			}
+		}
+	}
+	
+	type TitleSelectionActionTitleType = hbox {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		spacing = 10
+		
+		block "title_visible" {
+		}
+		
+		button_standard = {
+			size = { 280 50 }
+			margin = { 10 10 }
+
+			block "title_button" {
+			}
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 10
+				margin_left = 10
+
+				coa_title_tiny = {
+					datacontext = "[Scope.Title]"
+				}
+
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						text = "[Title.GetName]"
+						max_width = 250
+						align = left
+					}
+				}
+				
+				expand = {}
+			}
+		}
+		
+		button_standard = {
+			size = { 70 50 }
+			margin = { 10 10 }
+
+			block "selection_button" {
+			}
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 10
+				block "selection_button_text_box" {
+					margin_left = 10
+				}
+
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						block "selection_button_text" {
+							text = "Select"
+						}
+						max_width = 250
+						align = center
+					}
+				}
+				
+				expand = {}
+			}
+		}
+	}
+}
