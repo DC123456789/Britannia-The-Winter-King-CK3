@@ -35,3 +35,23 @@ destroy_anglo_saxon_duchy_effect = {
 		}
 	}
 }
+
+create_roman_duchy_effect = {
+	$TITLE$ = {
+		save_scope_as = new_roman_duchy_title
+		set_variable = roman_title_created_de_jure
+	}
+	save_scope_as = conqueror
+	trigger_event = { id = titular_titles.0101 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles.0101 }
+	}
+	scope:new_roman_duchy_title = {
+		check_de_jure_liege_duchy_effect = yes
+		every_in_list = {
+			variable = roman_de_jure_affected_territory
+			check_de_jure_liege_county_effect = yes
+		}
+	}
+}

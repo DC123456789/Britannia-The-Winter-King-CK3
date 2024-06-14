@@ -40,6 +40,7 @@ types TitleSelectionActionTypes
 			name = init_state
 			trigger_on_create = yes
 			block "box_create_state" {
+				on_start = "[GetScriptedGui('title_selection_decision_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 			}
 		}
 	}
@@ -57,6 +58,10 @@ types TitleSelectionActionTypes
 			margin = { 10 10 }
 
 			block "title_button" {
+				onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				# enabled = "[GetScriptedGui('title_selection_decision_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				# tooltip = "[Entry.GetTooltip]"
+				down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
 			}
 			
 			hbox = {
@@ -78,7 +83,9 @@ types TitleSelectionActionTypes
 					text_single = {
 						name = "title_name"
 						alwaystransparent = yes
-						text = "[Title.GetName]"
+						block "title_button_text" {
+							text = "[Title.GetName]"
+						}
 						max_width = 250
 						align = left
 					}
