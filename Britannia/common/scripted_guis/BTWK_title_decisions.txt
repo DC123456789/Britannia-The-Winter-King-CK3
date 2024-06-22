@@ -28,6 +28,26 @@ title_selection_decision_is_selected = {
 }
 
 ## Anglo-Saxon Duchy Formation
+anglo_saxon_duchy_formation_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = anglo_saxon_duchy_list
+				NOT = { has_variable = title_created_de_jure }
+				any_in_list = {
+					variable = dynamic_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
 anglo_saxon_duchy_formation_show = {
 	scope = character
 	
@@ -67,6 +87,26 @@ anglo_saxon_duchy_formation_create = {
 }
 
 ## Anglo-Saxon Duchy Destruction
+anglo_saxon_duchy_destruction_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = anglo_saxon_duchy_list
+				has_variable = title_created_de_jure
+				any_in_list = {
+					variable = dynamic_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
 anglo_saxon_duchy_destruction_show = {
 	scope = character
 	
@@ -106,6 +146,26 @@ anglo_saxon_duchy_destruction_destroy = {
 }
 
 ## Roman Duchy Formation
+roman_duchy_formation_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = roman_duchy_list
+				NOT = { has_variable = roman_title_created_de_jure }
+				any_in_list = {
+					variable = roman_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
 roman_duchy_formation_show = {
 	scope = character
 	
@@ -132,7 +192,6 @@ roman_duchy_formation_create = {
 			limit = { is_independent_ruler = no }
 			liege = { highest_held_title_tier > tier_duchy }
 		}
-		completely_controls = scope:scoped_duchy.title_capital_county
 		can_create_formable_title = { TITLE = scope:scoped_duchy }
 	}
 	

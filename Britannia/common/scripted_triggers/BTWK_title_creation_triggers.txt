@@ -26,6 +26,7 @@ germanic_controlled_trigger = {
 
 # Checks if the scoped character can form TITLE, 
 # which is defined as controlling the titles defined by the creation_requirement_* variables
+# and the creation_requirement_title_unformed_* titles *not* being formed
 can_create_formable_title = {
 	trigger_if = {
 		limit = { $TITLE$ = { has_variable = creation_requirement_1 } }
@@ -79,6 +80,33 @@ can_create_formable_title = {
 		}
 		trigger_else = {
 			completely_controls = $TITLE$.var:creation_requirement_3
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_1 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_1_trigger
+				NOT = { this.var:creation_requirement_title_unformed_1 = { has_variable = title_created_de_jure } }
+			}
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_2 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_2_trigger
+				NOT = { this.var:creation_requirement_title_unformed_2 = { has_variable = title_created_de_jure } }
+			}
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_3 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_3_trigger
+				NOT = { this.var:creation_requirement_title_unformed_3 = { has_variable = title_created_de_jure } }
+			}
 		}
 	}
 }
