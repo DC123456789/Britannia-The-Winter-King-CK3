@@ -1,0 +1,179 @@
+﻿story_uther_high_council = {
+
+	on_setup = {
+
+	}
+
+	on_end = {
+		debug_log = "Uther's 'High Council' cycle ended on:"
+		debug_log_date = yes
+	}
+
+	on_owner_death = {
+		set_global_variable = uther_is_dead
+		
+		create_title_and_vassal_change = {
+			type = granted
+			save_scope_as = arthur_pendragon_durnac
+			add_claim_on_loss = yes
+		}
+		title:d_centdumnonia = {
+			every_de_jure_county = {
+				limit = {
+						holder = character:1
+				}
+				change_title_holder = {
+					holder = character:3
+					change = scope:arthur_pendragon_durnac
+				}
+			}
+			change_title_holder = {
+				holder = character:3
+				change = scope:arthur_pendragon_durnac
+			}
+			every_de_jure_county_holder = {
+				limit = {
+					primary_title.duchy = title:d_centdumnonia
+					liege = title:k_dumnonia.holder					
+				}
+				change_liege = {
+					liege = character:3
+					change = scope:arthur_pendragon_durnac
+				}
+			}
+		}
+		resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
+
+		# Mordred - Arthur character flags #
+		# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
+		# Pendragon nickname should be added later, I think.
+		character:3 = {
+			add_character_flag = arthur_pendragon
+		}
+		character:5 = {
+			add_character_flag = mordred_pendragon
+		}
+		# ADD DEATH OATH MODIFIER TO ARTHUR IF MORDRED IS AI-CONTROLLED
+		if = {
+			limit = {
+				character:5 = {
+					is_ai = yes
+				}
+			}
+			character:3 = {
+				add_character_modifier = {
+					modifier = story_death_oath
+				}
+			}
+		}
+		# Failsafe for removing some restricted marriage traits if uther dies and glevum is cancelled.
+		character:18 = {
+			remove_trait = restricted_marriage
+		}
+		character:12 = {
+			remove_trait = restricted_marriage
+		}
+		character:17 = {
+			remove_trait = restricted_marriage
+		}
+		character:19 = {
+			remove_trait = restricted_marriage
+		}
+		################################
+
+		# Mordred - Tewdric alliance #
+		character:14 = {
+			event_alliance_effect = {
+				TARGET = character:5 
+				ACTOR = character:14
+			}
+		}
+		character:19.primary_spouse = {
+			event_alliance_effect = {
+				TARGET = character:5
+				ACTOR = character:19.primary_spouse
+			}
+		}
+
+		# Promise opinion modifier added to Mordred's guardians. #
+		# Unsure if Merlin and Owain should have the modifier as they didn't like him.
+
+		character:3 = {
+			add_opinion = {
+				target = character:5
+				modifier = promise_to_predecessor
+				opinion = 50
+			}
+		}	
+		character:20 = {
+			add_opinion = {
+				target = character:5
+				modifier = promise_to_predecessor
+				opinion = 50
+			}
+		}	
+		character:14 ={
+			add_opinion = {
+				target = character:5
+				modifier = promise_to_predecessor
+				opinion = 50
+			}
+		}	
+		
+		#  Fires "Uther is dead & Arthur returns" event 
+		every_ruler = {
+			limit = { 
+				NOT = { has_character_flag = mordred_pendragon }
+				NOT = { has_character_flag = arthur_pendragon }
+				OR = {
+					root.capital_province = { geographical_region = world_britannia_south }
+					root.capital_province = { geographical_region = world_britannia_hen_ogledd }
+						#geographical_region = world_hibernia
+						#geographical_region = world_caledonia
+						#geographical_region = world_gaul_armorica
+				}
+			}
+			trigger_event = {  
+				id = BTWK_story_event.0110
+			}
+		}
+		character:5 = {
+			trigger_event = {
+				id = BTWK_story_event.0111
+			}
+		}
+		character:3 = {
+			trigger_event = {
+				id = BTWK_story_event.0113
+			}
+		}
+		end_story = yes
+	}
+
+	# Trigger the High Council Event Chain
+	effect_group = {
+		days = { 60 90 }
+
+		trigger = {
+			story_owner = {
+				is_alive = yes
+				
+			} 
+			NOT = {
+				has_global_variable = glevum_finished
+			}
+		}
+
+		triggered_effect = {
+			trigger = {
+				always = yes
+			}
+			effect = {
+				debug_log = "Starting Uther High Council Cycle."
+				story_owner = {
+					trigger_event = BTWK_story_event.0101
+				}
+			}
+		}
+	}
+}

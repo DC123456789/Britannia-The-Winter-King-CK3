@@ -34,8 +34,8 @@
 
 # BTWK_story_event.0106 = UTHER'S DEATH: Summer 480 AD. Uther Pendragon's health is worsening...
 # BTWK_story_event.0107 = UTHER'S DEATH: Autumn 480 AD. If Uther is still alive, he becomes incapable...
-# BTWK_story_event.0108 = UTHER'S DEATH: Uther is Dead - Trigger event for on_death to work properly
-# BTWK_story_event.0109 = UTHER'S DEATH: Arthur Returns - Hidden Effects: Title Swaps 
+# BTWK_story_event.0108 = ID NOW FREE
+# BTWK_story_event.0109 = ID NOW FREE
 # BTWK_story_event.0110 = UTHER'S DEATH: Uther is Dead - Global Event
 # BTWK_story_event.0111 = UTHER'S DEATH: Tag Switch Event for Player Mordred
 
@@ -1080,6 +1080,15 @@ BTWK_story_event.0119 = {  # Event for Uther's Direct Vassals & Tewdric (players
 		add_character_modifier = {
 			modifier = story_death_oath
 		}
+		
+		ai_chance = {
+			base = 50
+			# Likes Uther => increased chance
+			modifier = {
+				add = 25
+				has_trait = loyal
+			}
+		}
 	}
 
 	# DO NOT TAKE DEATH-OATH
@@ -1095,6 +1104,15 @@ BTWK_story_event.0119 = {  # Event for Uther's Direct Vassals & Tewdric (players
 			add_stress = 30
 		}
 		add_prestige = -50
+
+		ai_chance = {
+			base = 50
+			# Dislikes Uther => increased chance
+			modifier = {
+				add = -25
+				has_trait  = disloyal
+			}
+		}
 	}
 }
 
@@ -1155,6 +1173,10 @@ BTWK_story_event.0120 = {  # Trigger Event for Global Notifications
 						target = this
 					}
 				}
+				NOT = {
+					has_character_flag = uther_finished_glevum
+				}
+
 			}
 			trigger_event = {
 				id = BTWK_story_event.0115
@@ -1328,6 +1350,7 @@ BTWK_story_event.0106 = {  # Uther's health is worsening
 	}
 	
 	option = {	
+
 		hidden_effect = {
 			remove_generated_diarch_consequences_effect = {
 				NEW_DIARCH = character:51
@@ -1338,7 +1361,7 @@ BTWK_story_event.0106 = {  # Uther's health is worsening
 		name = BTWK_story_event.0106.a
 		character:1 = {
 			add_trait = pneumonic
-			remove_character_modifier = story_health_bonus_medium_modifier
+			remove_character_modifier = story_health_bonus_large_modifier
 			designate_diarch = character:51  # Father Bedwin 
 			trigger_event = {
 				id = BTWK_story_event.0107
@@ -1366,165 +1389,6 @@ BTWK_story_event.0107 = {  # Uther is now incapable
 			add_trait = incapable
 		}	
 	}
-}
-
-BTWK_story_event.0108 = {  # Hidden trigger event to fire "Uther is dead" event and make sure the hidden effects don't fire again.
-	type = character_event
-	hidden = yes
-	
-	trigger = {
-		character:1 = { is_alive = no }
-		NOT = { has_global_variable = uther_is_dead }
-	}
-
-
-	immediate = {
-		set_global_variable = uther_is_dead
-		trigger_event = {
-			id = BTWK_story_event.0109
-		}
-	}
-}
-
-BTWK_story_event.0109 = {  # Hidden effects after Uther's death
-	type = character_event
-	hidden = yes
-
-	immediate = {
-
-		#  Arthur gets d_durnac & vassals  #
-		create_title_and_vassal_change = {
-			type = granted
-			save_scope_as = arthur_pendragon_durnac
-			add_claim_on_loss = yes
-		}
-		title:d_centdumnonia = {
-			every_de_jure_county = {
-				limit = {
-					holder = character:5
-				}
-				change_title_holder = {
-					holder = character:3
-					change = scope:arthur_pendragon_durnac
-				}
-			}
-			change_title_holder = {
-				holder = character:3
-				change = scope:arthur_pendragon_durnac
-			}
-			every_de_jure_county_holder = {
-				limit = {
-					primary_title.duchy = title:d_centdumnonia
-					liege = title:k_dumnonia.holder					
-				}
-				change_liege = {
-					liege = character:3
-					change = scope:arthur_pendragon_durnac
-				}
-			}
-		}
-		resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
-
-		# Mordred - Arthur character flags #
-		# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
-		# Pendragon nickname should be added later, I think.
-		character:3 = {
-			add_character_flag = arthur_pendragon
-		}
-		character:5 = {
-			add_character_flag = mordred_pendragon
-		}
-		# ADD DEATH OATH MODIFIER TO ARTHUR IF MORDRED IS AI-CONTROLLED
-		if = {
-			limit = {
-				character:5 = {
-					is_ai = yes
-				}
-			}
-			character:3 = {
-				add_character_modifier = {
-					modifier = story_death_oath
-				}
-			}
-		}
-		# Failsafe for removing some restricted marriage traits if uther dies and glevum is cancelled.
-		# Can remove when event chain definitely sound.
-		character:18 = {
-			remove_trait = restricted_marriage
-		}
-		character:12 = {
-			remove_trait = restricted_marriage
-		}
-		character:17 = {
-			remove_trait = restricted_marriage
-		}
-		character:19 = {
-			remove_trait = restricted_marriage
-		}
-		################################
-
-		# Mordred - Tewdric alliance #
-		character:14 = {
-			event_alliance_effect = {
-				TARGET = character:5 
-				ACTOR = character:14
-			}
-		}
-		character:19.primary_spouse = {
-			event_alliance_effect = {
-				TARGET = character:5
-				ACTOR = character:19.primary_spouse
-			}
-		}
-
-		# Promise opinion modifier added to Mordred's guardians. #
-		# Unsure if Merlin and Owain should have the modifier as they didn't like him.
-
-		character:3 = {
-			add_opinion = {
-				target = character:5
-				modifier = promise_to_predecessor
-				opinion = 50
-			}
-		}	
-		character:20 = {
-			add_opinion = {
-				target = character:5
-				modifier = promise_to_predecessor
-				opinion = 50
-			}
-		}	
-		character:14 ={
-			add_opinion = {
-				target = character:5
-				modifier = promise_to_predecessor
-				opinion = 50
-			}
-		}	
-
-		#  Fires "Uther is dead & Arthur returns" event 
-		every_ruler = {
-			limit = { 
-				NOT = { has_character_flag = mordred_pendragon }
-				NOT = { has_character_flag = arthur_pendragon }
-				OR = {
-					root.capital_province = { geographical_region = world_britannia_south }
-					root.capital_province = { geographical_region = world_britannia_hen_ogledd }
-						#geographical_region = world_hibernia
-						#geographical_region = world_caledonia
-						#geographical_region = world_gaul_armorica
-				}
-			}
-			trigger_event = {  
-				id = BTWK_story_event.0110
-			}
-		}
-		character:5 = {
-			trigger_event = {
-				id = BTWK_story_event.0111
-			}
-		}
-	}		
 }
 
 BTWK_story_event.0110 = {  # Global event alerting of Uther's death.
@@ -1648,15 +1512,61 @@ BTWK_story_event.0111 = {  # Event for Mordred: Player gets to choose to play Ar
 		animation = no
 	}
 
+	# Give Arthur his army if Mordred is AI
+	immediate = {
+		if = {
+			limit = {
+				character:5 = {
+					is_ai = yes
+				}
+			}
+			character:3 = {
+				spawn_army = {
+					name = "Arthur's Company"
+					men_at_arms = {
+						type = gendarme
+						men = 40
+					}
+					war_keep_on_attacker_victory = yes
+					inheritable = no
+					location = province:12
+					origin = province:12
+				}
+			}
+		}
+	}
+
 	option = {  # Continue to play as Mordred.
 		name = BTWK_story_event.0111.a
+		# Ensure Arthur still gets his army if you don't choose to play as him.
+		# This is required as we want to alert the player that they gain special troops if they play as Arthur
+		if = {
+			limit = {
+				is_ai = no
+			}
+			hidden_effect = {
+				character:3 = {
+					spawn_army = {
+						name = "Arthur's Company"
+						men_at_arms = {
+							type = gendarme
+							men = 40
+						}
+						war_keep_on_attacker_victory = yes
+						inheritable = no
+						location = province:12
+						origin = province:12
+					}
+				}
+			}
+		}
 	}
+
 	option = {  # Continue as Arthur.
 		name = BTWK_story_event.0111.b
 		trigger = {
 			is_ai = no
 		}
-
 		set_player_character = character:3
 		character:3 = {
 			trigger_event = {
@@ -1677,6 +1587,7 @@ BTWK_story_event.0112 = {  # Event for Arthur: Flavour text for the player.
 		character = root
 		animation = personality_honorable
 	}
+
 	option = {
 		name = BTWK_story_event.0112.a
 		if = {
@@ -1686,6 +1597,18 @@ BTWK_story_event.0112 = {  # Event for Arthur: Flavour text for the player.
 			add_character_modifier = {
 				modifier = story_death_oath
 			}
+		}
+		
+		spawn_army = {
+				name = "Arthur's Company"
+				men_at_arms = {
+					type = gendarme
+					men = 40
+				}
+				war_keep_on_attacker_victory = yes
+				inheritable = no
+				location = province:12
+				origin = province:12
 		}
 	}
 }

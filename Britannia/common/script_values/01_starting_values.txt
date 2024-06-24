@@ -381,10 +381,80 @@ culture_acceptance_baseline = {
 				}
 			}
 			add = {
-				value = 5
+				value = 6  # MODIFIED BY BTWK: 5 --> 6
 				desc = ACCEPTANCE_BASELINE_RELIGION
 			}
 		}
+		
+		# BTWK # 
+			
+		# Majority religion of your culture is shared by target culture
+		if = {
+			limit = {
+				exists = scope:our_religion
+				exists = scope:their_religion
+				scope:our_religion = scope:their_religion
+				root = {
+					any_culture_county = {
+						percent >= 0.5
+						religion = scope:our_religion
+					}
+				}
+				scope:culture = {
+					any_culture_county = {
+						percent >= 0.35
+						religion = scope:our_religion
+					}
+				}
+				NOT = {
+					scope:culture = {
+						any_culture_county = {
+							percent >= 0.5
+							religion = scope:our_religion
+						}
+					}
+				}
+			}
+			add = {
+				value = 4
+				desc = ACCEPTANCE_BASELINE_RELIGION_LARGE_MINORITY
+			}
+		}
+
+		# Majority religion of your culture is shared by a small minority of target culture
+		else_if = {
+			limit = {
+				exists = scope:our_religion
+				exists = scope:their_religion
+				scope:our_religion = scope:their_religion
+				root = {
+					any_culture_county = {
+						percent >= 0.5
+						religion = scope:our_religion
+					}
+				}
+				scope:culture = {
+					any_culture_county = {
+						percent >= 0.15
+						religion = scope:our_religion
+					}
+				}
+				NOT = {
+					scope:culture = {
+						any_culture_county = {
+							percent >= 0.35
+							religion = scope:our_religion
+						}
+					}
+				}
+			}
+			add = {
+				value = 2
+				desc = ACCEPTANCE_BASELINE_RELIGION_SMALL_MINORITY
+			}
+		}
+		########
+
 		if = { # Same exact Faith
 			limit = {
 				exists = scope:our_faith
@@ -404,11 +474,80 @@ culture_acceptance_baseline = {
 				}
 			}
 			add = {
-				value = 10
+				value = 9  # MODIFIED BY BTWK: 10 --> 9
 				desc = ACCEPTANCE_BASELINE_FAITH
 			}
 		}
-		else_if = {
+
+		# BTWK # 
+		# Majority faith of your culture is shared by a large minority of target culture
+		if = { 
+			limit = {
+				exists = scope:our_faith
+				exists = scope:their_faith
+				scope:our_faith = scope:their_faith
+				root = {
+					any_culture_county = {
+						percent >= 0.5
+						faith = scope:our_faith
+					}
+				}
+				scope:culture = {
+					any_culture_county = {
+						percent >= 0.35
+						faith = scope:our_faith
+					}
+				}
+				NOT = {
+					scope:culture = {
+						any_culture_county = {
+							percent >= 0.5
+							religion = scope:our_religion
+						}
+					}
+				}
+			}
+			add = {
+				value = 6
+				desc = ACCEPTANCE_BASELINE_FAITH_LARGE_MINORITY
+			}
+		}
+
+		# Majority faith of your culture is shared by a small minority of target culture
+		if = { 
+			limit = {
+				exists = scope:our_faith
+				exists = scope:their_faith
+				scope:our_faith = scope:their_faith
+				root = {
+					any_culture_county = {
+						percent >= 0.5
+						faith = scope:our_faith
+					}
+				}
+				scope:culture = {
+					any_culture_county = {
+						percent >= 0.15
+						faith = scope:our_faith
+					}
+				}
+				NOT = {
+					scope:culture = {
+						any_culture_county = {
+							percent >= 0.35
+							religion = scope:our_religion
+						}
+					}
+				}
+			}
+			add = {
+				value = 10
+				desc = ACCEPTANCE_BASELINE_FAITH_SMALL_MINORITY
+			}
+		}
+		########
+
+		else_if = {  # MODIFIED BY BTWK: else_if changed to if
 			limit = { 
 				AND = {
 					exists = scope:our_faith
@@ -432,7 +571,7 @@ culture_acceptance_baseline = {
 				}
 			}
 			add = {
-				value = -20
+				value = -10  # MODIFIED BY BTWK: -20 --> -10
 				desc = ACCEPTANCE_BASELINE_FAITH_EVIL
 			}
 		}
@@ -446,7 +585,7 @@ culture_acceptance_baseline = {
 				}
 			}
 			add = {
-				value = -10
+				value = -5  # MODIFIED BY BTWK: -10 --> -5
 				desc = ACCEPTANCE_BASELINE_FAITH_HOSTILE
 			}
 		}
