@@ -24,6 +24,13 @@ germanic_controlled_trigger = {
 	}
 }
 
+roman_controlled_trigger = {
+	custom_description = {
+		text = roman_controlled_trigger
+		holder.top_liege = { is_roman_ruler_trigger = yes }
+	}
+}
+
 # Checks if the scoped character can form TITLE, 
 # which is defined as controlling the titles defined by the creation_requirement_* variables
 # and the creation_requirement_title_unformed_* titles *not* being formed
@@ -113,6 +120,7 @@ can_create_formable_title = {
 
 # Checks if the scoped character can destroy TITLE
 # which is defined as the titles defined by the creation_requirement_* variables fulfilling the trigger COUNTY_TRIGGER
+# and the creation_requirement_title_unformed_* titles *not* being formed
 can_destroy_formable_title = {
 	completely_controls = $TITLE$.title_capital_county
 	trigger_if = {
@@ -138,5 +146,32 @@ can_destroy_formable_title = {
 	trigger_if = {
 		limit = { $TITLE$ = { has_variable = creation_requirement_3_alt } }
 		$TITLE$.var:creation_requirement_3_alt = { $COUNTY_TRIGGER$ }
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_1 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_1_trigger
+				NOT = { this.var:creation_requirement_title_unformed_1 = { has_variable = title_created_de_jure } }
+			}
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_2 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_2_trigger
+				NOT = { this.var:creation_requirement_title_unformed_2 = { has_variable = title_created_de_jure } }
+			}
+		}
+	}
+	trigger_if = {
+		limit = { $TITLE$ = { has_variable = creation_requirement_title_unformed_3 } }
+		$TITLE$ = {
+			custom_description = {
+				text = creation_requirement_title_unformed_3_trigger
+				NOT = { this.var:creation_requirement_title_unformed_3 = { has_variable = title_created_de_jure } }
+			}
+		}
 	}
 }

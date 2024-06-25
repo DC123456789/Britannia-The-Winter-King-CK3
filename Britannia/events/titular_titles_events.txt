@@ -186,6 +186,48 @@ titular_titles.0101 = {
 	}
 }
 
+# Destruction of duchy
+titular_titles.0102 = {
+	type = character_event
+	title = titular_titles.0102.t
+	desc = {
+		desc = titular_titles.0102.desc.intro
+		first_valid = {
+			desc = titular_titles.0102.desc.fallback
+		}
+		desc = titular_titles.0102.desc.outro
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				exists = scope:old_roman_duchy_title.holder 
+				scope:old_roman_duchy_title.holder = { top_liege_can_create_roman_title_trigger = yes }
+			}
+			destroy_title = scope:old_roman_duchy_title
+		}
+		show_as_tooltip = {
+			scope:old_roman_duchy_title = {
+				check_de_jure_liege_duchy_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_county_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = titular_titles.0002.a
+	}
+}
+
 ##################################################
 # Debug Test Events
 ##################################################

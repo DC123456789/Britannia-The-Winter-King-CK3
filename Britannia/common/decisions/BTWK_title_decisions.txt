@@ -324,3 +324,109 @@ create_roman_de_jure_duchies_decision = {
 		}
 	}
 }
+
+destroy_roman_de_jure_duchies_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	major = yes
+
+	ai_check_interval = 1
+
+	desc = destroy_roman_de_jure_duchies_decision_desc
+
+	is_shown = {
+		can_create_roman_title_show_trigger = no
+		can_create_germanic_title_culture_trigger = no
+		any_in_global_list = {
+			variable = roman_duchy_list
+			has_variable = roman_title_created_de_jure
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		NOT = { top_liege_can_create_roman_title_trigger = yes }
+		NOT = { top_liege_can_create_germanic_title_culture_trigger = yes }
+		custom_tooltip = {
+			text = destroy_roman_de_jure_duchies_decision_any_destroyable_tt
+			any_in_global_list = {
+				variable = roman_duchy_list
+				has_variable = roman_title_created_de_jure
+				ROOT = {
+					can_destroy_formable_title = { 
+						TITLE = PREV
+						COUNTY_TRIGGER = "NOT = { roman_controlled_trigger = yes }" 
+					}
+				}
+			}
+		}
+	}
+
+	effect = {
+		# This part is purely for display purposes
+		if = {
+			limit = {
+				is_ai = no
+				has_variable = selected_duchy
+			}
+			this.var:selected_duchy = {
+				save_scope_as = roman_title_created_de_jure_ignore
+				show_as_tooltip = {
+					check_de_jure_liege_duchy_effect = yes
+				}
+				every_in_list = {
+					variable = roman_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_county_effect = yes
+					}
+				}
+			}
+			show_as_tooltip = {
+				if = {
+					limit = {
+						exists = this.var:selected_duchy.holder
+						this.var:selected_duchy.holder = { top_liege_can_create_roman_title_trigger = yes }
+					}
+					show_as_tooltip = {
+						destroy_title = this.var:selected_duchy
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			every_in_global_list = {
+				variable = roman_duchy_list
+				limit = { 
+					ROOT = { 
+						can_destroy_formable_title = { 
+							TITLE = PREV
+							COUNTY_TRIGGER = "NOT = { roman_controlled_trigger = yes }" 
+						} 
+					}
+					has_variable = roman_title_created_de_jure
+				}
+				ROOT = { destroy_roman_duchy_effect = { TITLE = PREV } }
+			}
+			remove_variable = selected_duchy
+		}
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_destroy_roman_de_jure_duchies"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
