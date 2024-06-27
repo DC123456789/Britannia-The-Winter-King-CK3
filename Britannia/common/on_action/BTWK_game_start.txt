@@ -15,6 +15,74 @@ BTWK_culture_setup = {
 	effect = {
 		# TODO Set starting cultural acceptance
 		
+		# Set baseline language knowledge
+		# All Brythonic nobles and Christian clergy should know Latin
+		# Plus "assimilating" Irish (basically Demetia)
+		# Lowborn courtiers have a 75% chance as most of them are going to be minor nobility - still high 
+		# status enough to be probably Latin-speaking at this point
+		every_ruler = {
+			limit = {
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = culture:oldirish
+						top_liege = {
+							OR = {
+								has_cultural_pillar = heritage_brythonic
+								has_cultural_pillar = heritage_latin
+								has_court_language = language_latin
+								AND = {
+									NOT = { has_dlc_feature = royal_court }
+									has_title = title:k_demetia
+								}
+							}
+						}
+					}
+				}
+				# capital_province = { geographical_region = world_britannia }
+			}
+			learn_language = language_latin
+			if = {
+				limit = { NOT = { culture = { has_cultural_pillar = heritage_brythonic } } }
+				learn_language = language_brythonic
+			}
+			every_courtier_or_guest = {
+				limit = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						AND = {
+							NOT = { prev.culture = { has_cultural_pillar = heritage_brythonic } }
+							culture = prev.culture
+						}
+					}
+					NOT = { trait = peasant_leader }
+					NOT = { this = character:10 }
+				}
+				random = {
+					chance = 75
+					modifier = {
+						add = 25
+						OR = {
+							is_lowborn = no
+							AND = {
+								is_clergy = yes
+								religion = religion:christianity_religion
+							}
+						}
+					}
+					modifier = {
+						add = -100
+						this = character:10
+					}
+					learn_language = language_latin
+					if = {
+						limit = { NOT = { culture = { has_cultural_pillar = heritage_brythonic } } }
+						learn_language = language_brythonic
+					}
+				}
+			}
+		}
+		
 		# Custom Court Grandeur settings
 		if = {
 			limit = {
