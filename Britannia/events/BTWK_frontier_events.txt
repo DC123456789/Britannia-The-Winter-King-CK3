@@ -1,0 +1,272 @@
+﻿namespace = BTWK_frontier_event
+
+# OFFA'S DYKE # 
+BTWK_frontier_event.0001 = {
+	type = character_event
+	title = BTWK_frontier_event.0001
+	desc = BTWK_frontier_event.0001_desc
+	theme = war
+
+	immediate = {
+		set_global_variable = {
+			name = offas_dyke_builder_name
+			value = root
+		}
+	}
+
+	option = {
+		# Build the wall
+		name = BTWK_frontier_event.0001.a
+		custom_tooltip = BTWK_frontier_event.0001.a_tt_1
+		custom_tooltip = BTWK_frontier_event.0001.a_tt_2
+
+		# EFFECTS:
+		# 	Add special building slots for Offa's Dyke - Done & tested
+		# 	Remove CBs against Welsh rulers - NEEDS DOING; tie into 'Fall of Britannia'
+		#	Add truces with Welsh rulers - Done & tested
+		#	Character Modifier & Nickname related to building the ditch
+		#	Stress malus for vengeful/wrathful/ambitious/greedy characters. - Done & tested
+
+		hidden_effect = {
+			every_province = {
+				limit = {
+					geographical_region = custom_england_wales_border
+				}
+				add_special_building_slot = offas_dyke_01
+			}
+		}
+		
+ #			if = {
+ #				limit = {
+ #					OR = {
+ #						has_trait = ambitious
+ #						has_trait = greedy
+ #					}
+ #				}
+ #				add_stress = 100
+ #			}
+ #			else_if = {
+ #				limit = {
+ #					has_trait = brave
+ #				}
+ #				add_stress = 50
+ #			}
+ #	
+ #			if = {
+ #				limit = {
+ #					has_religion = religion:religion_christianity
+ #				}
+ #				add_piety = 250
+ #			}
+
+		every_independent_ruler = {
+			limit = {
+				capital_province = {
+					geographical_region = custom_wales
+				}
+				is_landed = yes
+				is_brythonic_cultural_trigger = yes  # This doesn't work.
+			}
+			hidden_effect = {
+				add_truce_both_ways = {
+					character = root
+ #					name = BTWK_frontier_event.0001.a_truce
+					years = 25
+					override = yes
+				}
+			}
+		}
+		give_nickname = nick_the_builder  # Requires a custom nick
+		add_prestige = 250 
+		add_character_modifier = {
+			modifier = built_offas_dyke_character_modifier # Need to create this
+			years = 50
+		}
+	}
+}
+
+# ANTONINE WALL # 
+BTWK_frontier_event.0101 = {
+	# UNFINISHED - WAIT FOR CALEDONIA TO BE ADDED
+	type = character_event
+	title = BTWK_frontier_event.0101
+	desc = BTWK_frontier_event.0101_desc
+	theme = war
+
+	option = {
+		# Rebuild Antonine Wall
+		name = BTWK_frontier_event.0101.a
+		hidden_effect = {
+			every_province = {
+				limit = {
+					geographical_region = custom_antonine_wall
+				}
+				add_special_building_slot = antonine_wall_01
+			}
+		}
+		add_prestige = 1000
+		#give_nickname = 'augustus'/'antoninus' - something to hark back to Antoninus Pius? 
+		# EFFECTS:
+		#	Transfer of de-jureprovinces beyond Antonine Wall to Caledonia
+		#	Character modifier related to restoring
+		# 	Truce with bordering realms
+	}
+
+	option = {
+		# Continue the Conquest Northwards - Finish what the original Legions could not.
+		name = BTWK_frontier_event.0101.b
+		trigger = {
+			AND = {
+				OR = {
+					has_trait = romanitas_trait
+					has_trait = ambitious
+				}
+				has_trait = brave
+			}
+
+			
+		}
+
+		# EFFECTS:
+		#	Unsure yet
+	}
+}
+
+# HADRIAN'S WALL # 
+BTWK_frontier_event.0201 = {
+	type = character_event
+	title = BTWK_frontier_event.0201
+	desc = BTWK_frontier_event.0201_desc
+	theme = realm
+
+	option = {
+		# Restore Hadrian's Wall
+		name = BTWK_frontier_event.0201.a
+		trigger = {
+			OR = {
+				is_imperial_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
+
+		hidden_effect = {
+			every_province = {
+				limit = {
+					geographical_region = custom_hadrians_wall
+				}
+				add_special_building_slot = hadrians_wall_03
+			}
+			set_global_variable = hadrians_wall_being_restored
+		}
+
+		give_nickname = nick_the_builder  # Nickname in reference to Hadrian?
+		add_character_modifier = {
+			modifier = rebuilt_hadrians_wall_character_modifier  # Need to create this
+			years = 50
+		} 
+
+		every_independent_ruler = {
+			limit = {
+				capital_province = {
+					# Add Caledonia later
+					geographical_region = custom_northern_hen_ogledd
+				}
+				is_landed = yes
+			}
+			hidden_effect = {
+				add_truce_both_ways = {
+					character = root
+					years = 25
+					override = yes
+				}
+			}
+		}
+
+		#if = {
+		#	limit = {
+		#		is_brythonic_culture_trigger = yes
+		#	}
+		#	random_county_in_region = {
+		#		region = custom_northern_hen_ogledd
+		#		limit = {
+		#			has_cultural_pillar = heritage_brythonic
+		#		}
+		#		culture = {
+		#		#	create_diverent_culture = yes
+		#		}
+		#	}
+		#}
+		#title:d_selgovae = {
+		#	set_de_jure_liege_title = title:k_strathclyde
+		#}
+		#title:d_bryneich = {
+		#	set_de_jure_liege_title = title:k_lothian
+		#}
+		#title:k_strathclyde = {
+		#	set_de_jure_liege_title = title:e_caledonia
+		#}
+		#title:k_lothian = {
+		#	set_de_jure_liege_title = title:e_caledonia
+		#}
+		# If Brythonic Heritage (+ Rom-Brit):
+		#	Brythonic Heritage culture North of the wall with most provinces diverges into scripted culture. Player given option on whether to trigger.
+		#	Base acceptance is low ('isolated us') between root culture & scripted culture.
+		#	Brythonic Heritage counties North of the wall begin to converge into this culture.
+		#	Create e_hen_ogledd title North of the Wall. South of Wall = Britannia.
+
+	}
+
+	option = {
+		# Raze Hadrian's Wall
+		name = BTWK_frontier_event.0201.b
+
+		#hidden_effect = {
+		#	every_province = {
+		#		limit = {
+		#			geographical_region = custom_hadrians_wall_provs
+		#		}
+		#		#
+		#		remove_building = hadrians_wall_02
+		#		add_special_building_slot = hadrians_wall_01
+		#		add_special_building = hadrians_wall_01
+		#	}
+		#	set_global_variable = hadrians_wall_being_destroyed
+		#}
+		# Effects on target cultures based on actor actions. 
+
+		# Imperials: major negative opinion modifier.
+		# Cumbrics: major positive opinion modifier, major CA gain if root is Imperial, minor CA gain elsewhise
+		# Britons & Picts: minor positive opinion modifier, minor CA gain if Imperial 
+
+		#if = {  # Imperials only, exc. RB - unsure on theme
+		#	limit = {
+		#		is_imperial_culture_trigger = yes
+		#		NOT = { has_culture = culture:romanobritish }
+		#	}
+		#	add_prestige = -2000
+		#}
+
+		#else_if = {  # RB only - theme: reproachment with Britons
+		#	limit = {
+		#		has_culture = culture:romanobritish
+		#	}
+		#}
+		#
+		#else_if = {  # Brythones only - theme: overcoming Roman influence once and for all
+		#	limit = {
+		#		is_imperial_culture_trigger = no
+		#		is_brythonic_culture_trigger = yes
+		#	}
+		#}
+
+		#else = {  # All others.
+
+		#}
+
+		# If Brythonic Heritage (+ Rom-Brit):
+		#	Nickname "Reunifier" or something. More symbolic in nature than actual, wall was probably going to shit anyway
+		#	Increased opinion ( / vassalisation acceptance) for rulers beyond the wall. 
+		#		OR ^Base increase of diplomacy? 
+		#	General opinion increase of Britons (for life)  
+	}
+}

@@ -1,0 +1,130 @@
+﻿# All decisions need to be made permanently unavailable once triggered.
+# Add stewardship or martial checks?
+
+begin_construction_offas_dyke_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	major = yes
+
+	ai_check_interval = 1
+
+	desc = begin_construction_offas_dyke_decision_desc
+	selection_tooltip = begin_construction_offas_dyke_decision_tooltip
+	confirm_text = begin_construction_offas_dyke_decision_confirm
+
+	is_shown = {
+		is_ingvaeonic_culture_trigger = yes
+		is_independent_ruler = yes
+		primary_title = {
+			tier >= 3
+		}
+		any_sub_realm_county = {
+			title_province = {
+				geographical_region = custom_britannia_midwest
+			}
+		}
+		NOT = { has_global_variable = offas_dyke_decision }
+#		has_global_variable = fall_of_britannia
+	}
+
+	is_valid =  {
+		completely_controls_region = custom_england_wales_border
+		prestige_level >= 3
+		primary_title = {
+			tier >= 4
+		}
+		realm_size >= 50
+	}
+
+	effect = {
+		trigger_event = BTWK_frontier_event.0001
+		set_global_variable = offas_dyke_decision
+	}
+}
+
+begin_restoration_antonine_wall_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	major = yes
+
+	ai_check_interval = 1
+
+	desc = begin_restoration_antonine_wall_decision_desc
+	selection_tooltip = begin_restoration_antonine_wall_decision_tooltip
+	confirm_text = begin_restoration_antonine_wall_decision_confirm
+
+	is_shown = {
+		is_imperial_culture_trigger = yes
+		is_independent_ruler = yes
+		primary_title = {
+			tier > 3
+		}
+		any_sub_realm_county = {
+			title_province = {
+				geographical_region = custom_northern_hen_ogledd
+			}
+				
+		}
+	}
+	
+	is_valid =  {
+		primary_title = {
+			tier >= 4
+		}
+		custom_description = {
+			text = "Holds all counties between Hadrian's Wall and the old Antonine Wall"
+		}
+		completely_controls_region = custom_northern_hen_ogledd_roman
+		prestige_level >= 3
+		realm_size >= 50  # PLACEHOLDER	
+		NOT = {
+			custom_description = {
+				text = "Does not hold any counties beyond the old Antonine Wall"			
+				any_county_in_region = {
+					region = custom_caledonia_lower
+					this.holder = root
+				}
+			}
+
+		}	
+	}
+
+	effect = {
+		trigger_event = BTWK_frontier_event.0101
+	}
+}
+
+fate_of_hadrians_wall_decision = {
+	
+	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	major = yes
+
+	ai_check_interval = 1
+
+	desc = fate_of_hadrians_wall_decision_desc
+	selection_tooltip = fate_of_hadrians_wall_decision_tooltip
+	confirm_text = fate_of_hadrians_wall_decision_confirm
+
+
+	is_shown = {
+		is_independent_ruler = yes
+		any_sub_realm_county = {
+			title_province = {
+				geographical_region = world_britannia_hen_ogledd
+			}
+			NOT = { has_global_variable = hadrians_wall_decision }
+		}
+	}
+	
+	is_valid = {
+		primary_title = {
+			tier >= 4
+		}
+		completely_controls_region = custom_hadrians_wall_duchies
+		prestige_level >= 3
+		realm_size >= 50
+	}
+
+	effect = {
+		trigger_event = BTWK_frontier_event.0201
+		set_global_variable = hadrians_wall_decision
+	}
+}
