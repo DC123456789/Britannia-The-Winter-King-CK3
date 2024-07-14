@@ -34,8 +34,6 @@
 
 # BTWK_story_event.0106 = UTHER'S DEATH: Summer 480 AD. Uther Pendragon's health is worsening...
 # BTWK_story_event.0107 = UTHER'S DEATH: Autumn 480 AD. If Uther is still alive, he becomes incapable...
-# BTWK_story_event.0108 = ID NOW FREE
-# BTWK_story_event.0109 = ID NOW FREE
 # BTWK_story_event.0110 = UTHER'S DEATH: Uther is Dead - Global Event
 # BTWK_story_event.0111 = UTHER'S DEATH: Tag Switch Event for Player Mordred
 
@@ -43,9 +41,16 @@
 
 ## AFTERMATH OF UTHER'S DEATH ##
 
+# BTWK_story_event.0108 = GUNDLEUS' BETRAYAL.
+# BTWK_story_event.0109 = GUNDLEUS WINS THE WAR
+# BTWK_story_event.0121 = ARTHUR WINS THE WAR
+# BTWK_story_event.0122 = NOTIFICATION EVENT FOR MORDRED
+# IDs 123 - x: Reserved for unqiue story chain for Gundleus on claiming Dumnonia by intrigue.
+
+
 ### PART 2 - THE PRINCESS BRIDE ###
 ## OWAIN/ARTHUR POWER STRUGGLE ##
-# BTWK_story_event.0201 = Some time after after Uther's death Cadwy sends offer to Owain
+# 
 
 ### PART 3 - THE RETURN OF MERLIN ###
 
@@ -80,6 +85,8 @@
 	# 	a window of time to try and seek vengeance (imprison/kill the murderer). If you can't avenge Mordred's death, you get a prestige malus for breaking the oath, 
 	# 	with increased opinion maluses with just/zealous (etc.) characters, and no opinion malus with deceitful characters. If a character is just and zealous, they may commit suicide.
 	#	add rival.
+
+### PART 1 ###
 BTWK_story_event.0101 = {  # Uther introductory event 
 	type = character_event
 	title = BTWK_story_event.0101.t
@@ -976,7 +983,7 @@ BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances;
 
 			# DELAYED TRIGGER OF CONCLUSION EVENTS TO ALLOW PLAYER OATH SELECTION TO HAVE TIME TO RUN
 			character:1 = { 
-				add_character_flag = uther_finished_glevum
+				set_variable = uther_finished_glevum
 				trigger_event = {
 					id = BTWK_story_event.0120
 					days = 2
@@ -996,7 +1003,7 @@ BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances;
 					}
 				}
 				character:14 = {
-					add_character_flag = tewdric_of_gwent
+					set_variable = tewdric_of_gwent
 					trigger_event = BTWK_story_event.0119
 				}	
 			}
@@ -1016,7 +1023,7 @@ BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances;
 					}
 				}
 				character:20 = {
-					add_character_flag = is_vassal_owain
+					set_variable = is_vassal_owain
 					trigger_event = BTWK_story_event.0119
 				}
 			}
@@ -1035,7 +1042,7 @@ BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances;
 			every_powerful_vassal = {
 				limit = {
 					is_ai = no
-					NOT = { has_character_flag = is_vassal_owain }
+					NOT = { has_variable = is_vassal_owain }
 				}
 				trigger_event = BTWK_story_event.0119
 			}
@@ -1052,14 +1059,14 @@ BTWK_story_event.0119 = {  # Event for Uther's Direct Vassals & Tewdric (players
 			# TEWDRIC
 			triggered_desc = {
 				trigger = {
-					has_character_flag = tewdric_of_gwent
+					has_variable = tewdric_of_gwent
 				}
 				desc = BTWK_story_event.0119.desc_tewdric
 			}
 			# DUMNONIAN VASSALS
 			triggered_desc = {
 				trigger = {
-					NOT = { has_character_flag = tewdric_of_gwent }
+					NOT = { has_variable = tewdric_of_gwent }
 				}
 				desc = BTWK_story_event.0119.desc_vassal
 			}
@@ -1152,7 +1159,7 @@ BTWK_story_event.0120 = {  # Trigger Event for Global Notifications
 				trigger_event = {
 					id = BTWK_story_event.0114	
 				}			
-			add_character_flag = attended_glevum
+			set_variable = attended_glevum
 			}
 		}	
 
@@ -1174,7 +1181,7 @@ BTWK_story_event.0120 = {  # Trigger Event for Global Notifications
 					}
 				}
 				NOT = {
-					has_character_flag = uther_finished_glevum
+					has_variable = uther_finished_glevum
 				}
 
 			}
@@ -1199,7 +1206,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 					is_spouse_of = character:19
 					has_trait = restricted_marriage
 				}
-				desc = BTWK_story_event.0114.desc.suitors_alliance
+				desc = BTWK_story_event.0114.desc_alliance_if_suitor_realm
 			}
 
 			# OTHER SUITORS
@@ -1208,7 +1215,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 					NOT = { is_spouse_of = character:19	}
 					has_trait = restricted_marriage
 				}
-				desc = BTWK_story_event.0114.desc.spouse_alliance
+				desc =  BTWK_story_event.0114.desc_alliance_else
 			}
 
 			# EVERYONE ELSE FROM GLEVUM BUT UTHER
@@ -1216,7 +1223,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 				trigger = {
 					NOT = { is_spouse_of = character:19 }
 					NOT = { has_trait = restricted_marriage }
-					NOT = { has_character_flag = uther_finished_glevum}
+					NOT = { has_variable = uther_finished_glevum}
 				}
 				desc = BTWK_story_event.0114.desc.others_alliance
 			}
@@ -1224,7 +1231,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 			# UTHER
 			triggered_desc = {
 				trigger = {
-					has_character_flag = uther_finished_glevum
+					has_variable = uther_finished_glevum
 				}
 				desc = BTWK_story_event.0114.desc.uther_alliance
 			}
@@ -1233,7 +1240,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 
 	immediate = {
 		character:40 = {
-			add_character_flag = owns_glevum
+			set_variable = owns_glevum
 		}
 	}
 	
@@ -1285,7 +1292,7 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 	option = {
 		name = BTWK_story_event.0114.d
 		trigger = {
-			has_character_flag = uther_finished_glevum
+			has_variable = uther_finished_glevum
 		}
 		character:1 = {
 			trigger_event = {
@@ -1554,11 +1561,14 @@ BTWK_story_event.0111 = {  # Event for Mordred: Player gets to choose to play Ar
 						}
 						war_keep_on_attacker_victory = yes
 						inheritable = no
-						location = province:12
-						origin = province:12
+						location = character:3.capital_province
+						origin = character:3.capital_province
 					}
 				}
 			}
+		}
+		character:18 = {
+			create_story = story_gundleus_claimant_scheme
 		}
 	}
 
@@ -1610,5 +1620,203 @@ BTWK_story_event.0112 = {  # Event for Arthur: Flavour text for the player.
 				location = province:12
 				origin = province:12
 		}
+	}
+}
+
+BTWK_story_event.0108 = { # Event for Gundleus (or generally Norwenna's Spouse): Declare claimant war on Dumnonia.
+	type = character_event
+	title = BTWK_story_event.0108.t
+	desc = BTWK_story_event.0108.desc
+	theme = dynasty
+	trigger = {
+		NOT = {
+			is_at_war_with = title:k_dumnonia.holder
+		}
+	}
+
+	immediate = {
+		set_global_variable = gundleus_non_canon_started
+	}
+
+	option = {  # Declare claimant war for Dumnonia (canon for Gundleus)
+		name = BTWK_story_event.0108.a
+
+		ai_chance = {
+			# Base is higher here as the trait checks for being deceitful & ambitious have already happened in the story cycle trigger
+			base = 75
+			modifier = {
+				add = -25
+				has_trait = craven
+			}
+			modifier = {
+				add = -25
+				has_trait = loyal
+			}
+			}
+
+		start_war = {
+			casus_belli = claim_cb
+			target = title:k_dumnonia.holder
+			claimant = root
+			target_title = title:k_dumnonia
+		}
+
+		set_global_variable = gundleus_dumnonia_war_started
+	}
+
+	option = {  # Stay “loyal” to your oath to Uther. (story divergence for Gundleus).
+		name = BTWK_story_event.0108.b
+
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				has_trait = just
+			}
+			modifier = {
+				add = 25
+				has_trait = loyal
+			}
+		}
+
+		trigger = {
+			character:5 = {
+				has_title = title:k_dumnonia
+			}
+		}
+		# Gundleus’ character would be such that not declaring war could just enable him to take Dumnonia via subterfuge. 
+		# May be an easier way to take Dumnonia for players, if Dumnonia is balanced to have a stronger professional army, the player is in harder difficulties, 
+		# or Gorfyddyd is no longer allied to Siluria.
+		# Defensive alliance forms with Mordred. Keep negotiated alliance with Gorfyddyd.
+		# Next event for Gundleus will trigger in a few months for Mordred’s coronation.
+	}
+}
+
+BTWK_story_event.0109 = {  # Event for Gundleus: Deal with the last Pendragons. (NON-CANON)
+	type = character_event
+	title = BTWK_story_event.0109.t
+	desc = BTWK_story_event.0109.desc
+	theme = dynasty
+
+	option = {  # Kill the Pendragons
+		name = BTWK_story_event.0109.a
+
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				has_trait = sadistic
+			}
+			modifier = {
+				add = 25
+				has_trait = paranoid
+			}
+		}
+		character:5 = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+		character:3 = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+		# Add prestige & opinion maluses
+	}
+
+	option = {  # Spare the Pendragons
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				has_trait = just
+			}
+			modifier = {
+				add = 25
+				has_trait = compassionate
+			}
+		}
+		name = BTWK_story_event.0109.b
+		imprison = {
+			target = character:5
+			type = dungeon
+		}
+		imprison = {
+			target = character:3
+			type = dungeon
+		}
+	}
+}
+
+BTWK_story_event.0121 = {  # Event for Arthur: Deal with the aggressors (if event.0108 triggers a war)
+	type = character_event
+	title = BTWK_story_event.0121.t
+	desc = BTWK_story_event.0121.desc
+	theme = dynasty
+	trigger = {
+		character:5 = {
+			NOT = { is_at_war_with = BTWK_story_gundleus_claimant_scheme.story_owner }
+		}
+	}
+
+	immediate = {
+		character:5 = {
+			trigger_event = {
+				days = 3
+				id = BTWK_story_event.0122
+			}
+		}
+	}
+	option = {  # Kill Norwenna's Spouse for the transgression
+		name = BTWK_story_event.0121.a
+		character:19.primary_spouse = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+	}
+
+	option = {  # Spare Norwenna's Spouse
+		name = BTWK_story_event.0121.b
+		imprison = {
+			target = character:19.primary_spouse
+			type = dungeon
+		}
+
+	}
+}
+
+BTWK_story_event.0122 = {  # Event for Mordred: Notification Event from previous
+	type = character_event
+	title = BTWK_story_event.0122.t
+	desc = {
+		desc = BTWK_story_event.0122.desc_header
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					character:19.primary_spouse = {
+						is_alive = yes
+					}
+				}
+				desc = BTWK_story_event.0122.desc_spared
+			}
+			triggered_desc = {
+				trigger = {
+					character:19.primary_spouse = {
+						is_alive = no
+					}
+				}
+				desc = BTWK_story_event.0122.desc_executed
+			}
+		}
+	}
+	theme = dynasty
+
+	option = {
+		name = BTWK_story_event.0122.a
 	}
 }

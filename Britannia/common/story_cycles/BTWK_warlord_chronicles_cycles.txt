@@ -1,12 +1,23 @@
-﻿story_uther_high_council = {
+﻿BTWK_story_uther_high_council = {
 
 	on_setup = {
-
+		story_owner = {
+			trigger_event = {
+				id = BTWK_story_event.0101
+				days = { 60 90 }
+			}
+		}
 	}
 
 	on_end = {
 		debug_log = "Uther's 'High Council' cycle ended on:"
 		debug_log_date = yes
+		character:18 = {
+			trigger_event = {
+				id = BTWK_story_event.0108
+				days = 20
+			} 
+		}
 	}
 
 	on_owner_death = {
@@ -48,10 +59,10 @@
 		# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
 		# Pendragon nickname should be added later, I think.
 		character:3 = {
-			add_character_flag = arthur_pendragon
+			set_variable = arthur_pendragon
 		}
 		character:5 = {
-			add_character_flag = mordred_pendragon
+			set_variable = mordred_pendragon
 		}
 		# ADD DEATH OATH MODIFIER TO ARTHUR IF MORDRED IS AI-CONTROLLED
 		if = {
@@ -78,22 +89,53 @@
 		}
 		character:19 = {
 			remove_trait = restricted_marriage
+			scope:spouse = {
+				if = {
+					limit = {
+						has_trait = deceitful
+						has_trait = ambitious
+						is_landed = yes
+						has_global_variable = glevum_finished
+					}
+					create_story = BTWK_story_gundleus_claimant_scheme
+				}
+			}
 		}
 		################################
 
 		# Mordred - Tewdric alliance #
-		character:14 = {
-			event_alliance_effect = {
-				TARGET = character:5 
-				ACTOR = character:14
+		if = {
+			limit = {
+				character:14 = {
+					is_alive = yes
+				}
+			}		
+			character:14 = {
+				event_alliance_effect = {
+					TARGET = character:5 
+					ACTOR = character:14
+				}
 			}
 		}
-		character:19.primary_spouse = {
-			event_alliance_effect = {
-				TARGET = character:5
-				ACTOR = character:19.primary_spouse
+
+		# Mordred - Foster Parent alliance #
+		if = {
+			limit = {
+				character:19 = {
+					is_married = yes
+					primary_spouse = {
+						is_landed = yes
+					}
+				}
+			}		
+			character:19.primary_spouse = {
+				event_alliance_effect = {
+					TARGET = character:5
+					ACTOR = character:19.primary_spouse
+				}
 			}
 		}
+
 
 		# Promise opinion modifier added to Mordred's guardians. #
 		# Unsure if Merlin and Owain should have the modifier as they didn't like him.
@@ -123,11 +165,11 @@
 		#  Fires "Uther is dead & Arthur returns" event 
 		every_ruler = {
 			limit = { 
-				NOT = { has_character_flag = mordred_pendragon }
-				NOT = { has_character_flag = arthur_pendragon }
+				NOT = { has_variable = mordred_pendragon }
+				NOT = { has_variable = arthur_pendragon }
 				OR = {
-					root.capital_province = { geographical_region = world_britannia_south }
-					root.capital_province = { geographical_region = world_britannia_hen_ogledd }
+					capital_province = { geographical_region = world_britannia_south }
+					capital_province = { geographical_region = world_britannia_hen_ogledd }
 						#geographical_region = world_hibernia
 						#geographical_region = world_caledonia
 						#geographical_region = world_gaul_armorica
@@ -149,18 +191,31 @@
 		}
 		end_story = yes
 	}
+}
 
-	# Trigger the High Council Event Chain
+
+BTWK_story_gundleus_claimant_scheme = {
+	# Named as 'Gundleus' claimant scheme as usually would only trigger for him.  
+
+	on_setup = {
+
+	}
+
+	on_end = {
+
+	}
+
+	on_owner_death = {
+		end_story = yes
+	}
+
+
 	effect_group = {
-		days = { 60 90 }
-
+		# After Uther's death, fire this event for Norwenna's Spouse to have option to launch a claimant war, given not already at war with Dumnonia
+		days = 30
 		trigger = {
-			story_owner = {
-				is_alive = yes
-				
-			} 
 			NOT = {
-				has_global_variable = glevum_finished
+				has_global_variable = gundleus_non_canon_started
 			}
 		}
 
@@ -169,10 +224,53 @@
 				always = yes
 			}
 			effect = {
-				debug_log = "Starting Uther High Council Cycle."
 				story_owner = {
-					trigger_event = BTWK_story_event.0101
+					trigger_event = {
+						id = BTWK_story_event.0108
+					}
 				}
+			}
+		}
+	}
+
+	# Norwenna's Spouse has claimed Dumnonia successfully
+	effect_group = {
+		days = 60
+		triggered_effect = {
+			trigger = {
+				has_global_variable = gundleus_dumnonia_war_started
+				story_owner = {
+					has_title = title:k_dumnonia
+				}
+			}
+			effect = {
+				story_owner = {
+					trigger_event = {
+						id = BTWK_story_event.0109
+					}
+				}
+				end_story = yes
+			}
+		}
+	}
+
+	# Norwenna's Spouse has not claimed Dumnonia 
+	effect_group = {
+		days = 60
+		triggered_effect = {
+			trigger = {
+				has_global_variable = gundleus_dumnonia_war_started
+				character:5 = {
+					has_title = title:k_dumnonia
+				}
+			}
+			effect = {
+				character:3 = {
+					trigger_event = {
+						id = BTWK_story_event.0121
+					}
+				}
+				end_story = yes
 			}
 		}
 	}
