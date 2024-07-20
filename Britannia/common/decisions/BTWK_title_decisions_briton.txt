@@ -21,6 +21,7 @@ create_deheubarth_decision = {
 	is_valid_showing_failures_only = {
 		NOT = { government_has_flag = government_is_tribal }
 		NOT = { has_title = title:k_gwynedd }
+		prestige_level >= medium_prestige_level
 		completely_controls_region = custom_deheubarth
 	}
 
@@ -54,6 +55,15 @@ create_deheubarth_decision = {
 		every_player = {
 			limit = { NOT = { this = PREV } }
 			trigger_event = { id = titular_titles.0201 }
+		}
+		hidden_effect = {
+			title:k_deheubarth = { 
+				set_variable = title_created_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
 		}
 	}
 	
