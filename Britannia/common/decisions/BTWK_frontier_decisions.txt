@@ -13,7 +13,6 @@ begin_construction_offas_dyke_decision = {
 
 	is_shown = {
 		is_ingvaeonic_culture_trigger = yes
-		is_independent_ruler = yes
 		primary_title = {
 			tier >= 3
 		}
@@ -27,14 +26,22 @@ begin_construction_offas_dyke_decision = {
 	}
 
 	is_valid =  {
+		is_independent_ruler = yes
 		completely_controls_region = custom_england_wales_border
 		prestige_level >= 3
 		primary_title = {
 			tier >= 4
 		}
-		realm_size >= 50
+		custom_description = {
+			text = "Controls more than 30 [counties|e] in Midwest Britannia. (you own X)"		
+			any_county_in_region = {
+				count >= 30
+				region >= custom_britannia_midwest
+				this.holder.top_liege = root
+			}
+		}
 	}
-
+	
 	effect = {
 		trigger_event = BTWK_frontier_event.0001
 		set_global_variable = offas_dyke_decision
@@ -52,6 +59,7 @@ begin_restoration_antonine_wall_decision = {
 	confirm_text = begin_restoration_antonine_wall_decision_confirm
 
 	is_shown = {
+		always = no  # REMOVE WHEN CALEDONIA ADDED!
 		is_imperial_culture_trigger = yes
 		is_independent_ruler = yes
 		primary_title = {
@@ -70,14 +78,14 @@ begin_restoration_antonine_wall_decision = {
 			tier >= 4
 		}
 		custom_description = {
-			text = "Holds all counties between Hadrian's Wall and the old Antonine Wall"
+			text = "Holds all counties between Hadrian's Wall and the old Antonine Wall."
+			completely_controls_region = custom_northern_hen_ogledd_roman
 		}
-		completely_controls_region = custom_northern_hen_ogledd_roman
 		prestige_level >= 3
 		realm_size >= 50  # PLACEHOLDER	
 		NOT = {
 			custom_description = {
-				text = "Does not hold any counties beyond the old Antonine Wall"			
+				text = "Does not hold any counties beyond the old Antonine Wall."			
 				any_county_in_region = {
 					region = custom_caledonia_lower
 					this.holder = root
@@ -92,39 +100,46 @@ begin_restoration_antonine_wall_decision = {
 	}
 }
 
-fate_of_hadrians_wall_decision = {
+ruin_hadrians_wall_decision = {
 	
 	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
 	major = yes
 
 	ai_check_interval = 1
 
-	desc = fate_of_hadrians_wall_decision_desc
-	selection_tooltip = fate_of_hadrians_wall_decision_tooltip
-	confirm_text = fate_of_hadrians_wall_decision_confirm
+	desc = ruin_hadrians_wall_decision_desc
+	selection_tooltip = ruin_hadrians_wall_decision_tooltip
+	confirm_text = ruin_hadrians_wall_decision_confirm
 
 
 	is_shown = {
-		is_independent_ruler = yes
 		any_sub_realm_county = {
 			title_province = {
 				geographical_region = world_britannia_hen_ogledd
 			}
-			NOT = { has_global_variable = hadrians_wall_decision }
+			NOT = { has_global_variable = ruin_hadrians_wall_decision }
 		}
 	}
 	
 	is_valid = {
+		is_independent_ruler = yes
 		primary_title = {
 			tier >= 4
 		}
 		completely_controls_region = custom_hadrians_wall_duchies
 		prestige_level >= 3
-		realm_size >= 50
+		custom_description = {
+			text = "Controls more than 50 [counties|e] in the Old North. (you own X)"		
+			any_county_in_region = {
+				count >= 50
+				region >= world_britannia_hen_ogledd
+				this.holder.top_liege = root
+			}
+		}
 	}
 
 	effect = {
 		trigger_event = BTWK_frontier_event.0201
-		set_global_variable = hadrians_wall_decision
+		set_global_variable = ruin_hadrians_wall_decision
 	}
 }

@@ -5,59 +5,87 @@ BTWK_frontier_event.0001 = {
 	type = character_event
 	title = BTWK_frontier_event.0001
 	desc = BTWK_frontier_event.0001_desc
-	theme = war
+	theme = martial
 
-	immediate = {
-		set_global_variable = {
-			name = offas_dyke_builder_name
-			value = root
-		}
-	}
+
+	right_portrait = {
+		character = root 
+		animation = personality_bold
+	}	
+
+	#immediate = {
+	#	title:k_mercia = {
+	#		set_variable = {
+	#			name = offas_dyke_builder_name
+	#			value = root
+	#		}
+	#	}
+	#}
 
 	option = {
 		# Build the wall
 		name = BTWK_frontier_event.0001.a
 		custom_tooltip = BTWK_frontier_event.0001.a_tt_1
 		custom_tooltip = BTWK_frontier_event.0001.a_tt_2
+		save_scope_as = offas_dyke_builder_char
 
 		# EFFECTS:
 		# 	Add special building slots for Offa's Dyke - Done & tested
 		# 	Remove CBs against Welsh rulers - NEEDS DOING; tie into 'Fall of Britannia'
 		#	Add truces with Welsh rulers - Done & tested
-		#	Character Modifier & Nickname related to building the ditch
-		#	Stress malus for vengeful/wrathful/ambitious/greedy characters. - Done & tested
+		#	Character Modifier related to building the ditch - Done. Might add nickname
+		#	Stress malus for vengeful/wrathful/ambitious/greedy characters. 
 
 		hidden_effect = {
+			
 			every_province = {
 				limit = {
 					geographical_region = custom_england_wales_border
 				}
 				add_special_building_slot = offas_dyke_01
 			}
+			every_ruler = {
+				limit = {
+					is_landed = yes
+					capital_province = {
+						OR = {
+							geographical_region = world_britannia_south
+							geographical_region = world_britannia_hen_ogledd
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						is_ai = no
+					}				
+					trigger_event = {
+						id = BTWK_frontier_event.0002
+						days = 1
+					}
+				}
+
+				# Possibly add opinions for 'every_courtier' as well?
+				if = {
+					limit = {
+						is_ingvaeonic_culture_trigger = yes
+					}
+					add_opinion = {
+						target = root
+						modifier = built_offas_dyke_anglo_saxon_opinion_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						is_brythonic_culture_trigger = yes
+					}
+					add_opinion = {
+						target = root
+						modifier = built_offas_dyke_briton_opinion_modifier
+					}
+				}
+			}
 		}
-		
- #			if = {
- #				limit = {
- #					OR = {
- #						has_trait = ambitious
- #						has_trait = greedy
- #					}
- #				}
- #				add_stress = 100
- #			}
- #			else_if = {
- #				limit = {
- #					has_trait = brave
- #				}
- #				add_stress = 50
- #			}
- #	
- #			if = {
- #				limit = {
- #					has_religion = religion:religion_christianity
- #				}
- #				add_piety = 250
- #			}
 
 		every_independent_ruler = {
 			limit = {
@@ -70,17 +98,122 @@ BTWK_frontier_event.0001 = {
 			hidden_effect = {
 				add_truce_both_ways = {
 					character = root
- #					name = BTWK_frontier_event.0001.a_truce
 					years = 25
 					override = yes
 				}
 			}
 		}
-		give_nickname = nick_the_builder  # Requires a custom nick
-		add_prestige = 250 
+
+		add_prestige = 500
 		add_character_modifier = {
-			modifier = built_offas_dyke_character_modifier # Need to create this
+			modifier = built_offas_dyke_character_modifier 
 			years = 50
+		}
+	}
+}
+
+BTWK_frontier_event.0002 = {
+	type = character_event
+	title = BTWK_frontier_event.0001
+	desc = {
+		# _vassal refers to vassal of Saxon King
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = {
+						is_vassal_or_below_of = scope:offas_dyke_builder_char
+						is_brythonic_culture_trigger = yes
+					}
+				}
+				desc = BTWK_frontier_event.0002_desc_welsh_vassal
+			}
+			triggered_desc = {
+				trigger = {
+					root = {
+						NOT = { is_vassal_or_below_of = scope:offas_dyke_builder_char }
+						is_brythonic_culture_trigger = yes
+					}
+				}
+				desc = BTWK_frontier_event.0002_desc_welsh
+			}
+			triggered_desc = {
+				trigger = {
+					root = {
+						NOT = {
+							is_vassal_or_below_of = scope:offas_dyke_builder_char
+							is_brythonic_culture_trigger = yes
+						}
+					}
+				}
+				desc = BTWK_frontier_event.0002_desc_other
+			}
+			triggered_desc = {
+				trigger = {
+					root = {
+						is_vassal_or_below_of = scope:offas_dyke_builder_char
+						is_brythonic_culture_trigger = no
+					}
+				}
+				desc = BTWK_frontier_event.0002_desc_other_vassal
+			}
+		}
+	}
+	theme = martial
+
+	right_portrait = {
+		character = root
+		triggered_animation = {
+			trigger = {
+				root = {
+					is_brythonic_culture_trigger = yes
+				}
+			}
+			animation = anger
+		}
+		animation = personality_rational
+	}
+
+	lower_left_portrait = {
+		character = scope:offas_dyke_builder_char
+		animation = no
+	}
+
+	option = {
+		name = {
+			trigger = {
+				root = {
+					is_brythonic_culture_trigger = yes
+					NOT = { is_vassal_or_below_of = scope:offas_dyke_builder_char }
+				}
+			}
+			text = BTWK_frontier_event.0002.a_welsh
+		}
+		name = {
+			trigger = {
+				root = {
+					is_brythonic_culture_trigger = yes
+					is_vassal_or_below_of = scope:offas_dyke_builder_char
+				}
+			}
+			text = BTWK_frontier_event.0002.a_welsh_vassal
+		}
+		name = {
+			trigger = {
+				root = {
+					is_brythonic_culture_trigger = no
+					is_vassal_or_below_of = scope:offas_dyke_builder_char
+				}
+			}
+			text = BTWK_frontier_event.0002.a_other_vassal
+		}
+		name = {
+			trigger = {
+				root = {
+					is_brythonic_culture_trigger = no
+					NOT = { is_vassal_or_below_of = scope:offas_dyke_builder_char }
+				}
+			}
+			text = BTWK_frontier_event.0002.a_other
 		}
 	}
 }
@@ -133,140 +266,318 @@ BTWK_frontier_event.0101 = {
 }
 
 # HADRIAN'S WALL # 
+# Ruin Hadrian's Wall
 BTWK_frontier_event.0201 = {
 	type = character_event
 	title = BTWK_frontier_event.0201
 	desc = BTWK_frontier_event.0201_desc
-	theme = realm
+	theme = stewardship_domain_focus
+	override_background = {
+		reference = courtyard
+	}
+
+	left_portrait = {
+		character = root 
+		animation = personality_rational
+	}	
 
 	option = {
-		# Restore Hadrian's Wall
 		name = BTWK_frontier_event.0201.a
-		trigger = {
-			OR = {
-				is_imperial_culture_trigger = yes
-				has_trait = romanitas_trait
-			}
+		custom_tooltip = BTWK_frontier_event.0201.a_tt
+		add_character_modifier = {
+			modifier = destroyed_hadrians_wall_character_modifier
 		}
 
 		hidden_effect = {
+			save_scope_as = destroyed_hadrians_wall_char
 			every_province = {
 				limit = {
-					geographical_region = custom_hadrians_wall
+					geographical_region = custom_hadrians_wall_provs
 				}
-				add_special_building_slot = hadrians_wall_03
+				if = {
+					limit = {
+						this = {
+							has_building = hadrians_wall_02
+						}
+					}
+					remove_building = hadrians_wall_02
+					add_special_building_slot = hadrians_wall_01
+					add_special_building = hadrians_wall_01
+				}
+				else_if = {
+					limit = {
+						this = {
+							has_building = hadrians_wall_03
+						}
+					}
+					remove_building = hadrians_wall_03
+					add_special_building_slot = hadrians_wall_01
+					add_special_building = hadrians_wall_01
+				}
+				every_county = {
+					limit = {
+							geographical_region = custom_hadrians_wall_provs
+						}
+					}				
+					add_county_modifier = {
+						modifier = destroyed_hadrians_wall_county_modifier
+						years = 20
+					}
+				}
+
+			every_ruler = {
+				limit = {
+					is_landed = yes
+					capital_province = {
+						OR = {
+							geographical_region = world_britannia
+							geographical_region = world_britannia_hen_ogledd
+						}
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							is_imperial_like_culture_trigger = yes
+							has_trait = romanitas_trait
+						}
+						NOT = {
+							has_trait = barbarian_trait
+						}
+					}	
+					add_opinion = {
+						target = root
+						modifier = destroyed_hadrians_wall_briton_opinion_modifier
+					}
+				}
+			
+				if = {
+					limit = {
+						is_ai = no
+						NOT = { this = root }
+					}			
+					trigger_event = {
+						id = BTWK_frontier_event.0202
+						days = 1
+					}
+				}
 			}
-			set_global_variable = hadrians_wall_being_restored
 		}
+	}
+}
 
-		give_nickname = nick_the_builder  # Nickname in reference to Hadrian?
-		add_character_modifier = {
-			modifier = rebuilt_hadrians_wall_character_modifier  # Need to create this
-			years = 50
-		} 
-
-		every_independent_ruler = {
-			limit = {
-				capital_province = {
-					# Add Caledonia later
-					geographical_region = custom_northern_hen_ogledd
+# Hadrian's Wall has been destroyed - global notification for players
+BTWK_frontier_event.0202 = {
+	type = character_event
+	title = BTWK_frontier_event.0202
+	desc = {
+		first_valid = {
+			triggered_desc = { 
+				trigger = {
+					is_vassal_or_below_of = scope:destroyed_hadrians_wall_char
 				}
-				is_landed = yes
+				desc = BTWK_frontier_event.0202_desc_header_vassal
 			}
-			hidden_effect = {
-				add_truce_both_ways = {
-					character = root
-					years = 25
-					override = yes
-				}
+			triggered_desc = {
+				desc = BTWK_frontier_event.0202_desc_header
 			}
 		}
+		desc = BTWK_frontier_event.0202_desc_main
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:destroyed_hadrians_wall_char = {
+						is_imperial_like_culture_trigger = yes
+					}
+				}
+				desc = BTWK_frontier_event.0202_desc_imperial_like_destroyer
+			}
+			triggered_desc = {
+				desc = BTWK_frontier_event.0202_desc_else_destroyer
+			}
+		}
+	}
+	theme = stewardship_domain_focus
 
-		#if = {
-		#	limit = {
-		#		is_brythonic_culture_trigger = yes
-		#	}
-		#	random_county_in_region = {
-		#		region = custom_northern_hen_ogledd
-		#		limit = {
-		#			has_cultural_pillar = heritage_brythonic
-		#		}
-		#		culture = {
-		#		#	create_diverent_culture = yes
-		#		}
-		#	}
-		#}
-		#title:d_selgovae = {
-		#	set_de_jure_liege_title = title:k_strathclyde
-		#}
-		#title:d_bryneich = {
-		#	set_de_jure_liege_title = title:k_lothian
-		#}
-		#title:k_strathclyde = {
-		#	set_de_jure_liege_title = title:e_caledonia
-		#}
-		#title:k_lothian = {
-		#	set_de_jure_liege_title = title:e_caledonia
-		#}
-		# If Brythonic Heritage (+ Rom-Brit):
-		#	Brythonic Heritage culture North of the wall with most provinces diverges into scripted culture. Player given option on whether to trigger.
-		#	Base acceptance is low ('isolated us') between root culture & scripted culture.
-		#	Brythonic Heritage counties North of the wall begin to converge into this culture.
-		#	Create e_hen_ogledd title North of the Wall. South of Wall = Britannia.
-
+	right_portrait = {
+		character = root
+		triggered_animation = {
+			trigger = {
+				root = {
+					is_imperial_like_culture_trigger = yes
+				}
+			}
+			animation = anger
+		}
+		triggered_animation = {
+			trigger = {
+				root = {
+					is_vassal_or_below_of = scope:destroyed_hadrians_wall_char
+					is_imperial_like_culture_trigger = no
+				}
+			}
+			animation = toast
+		}
+		triggered_animation = {
+			trigger = {
+				root = {
+					NOT = {
+						is_vassal_or_below_of = scope:destroyed_hadrians_wall_char
+						is_imperial_like_culture_trigger = no
+					}
+				}
+			}
+			animation = idle
+		}
 	}
 
+	lower_left_portrait = {
+		character = scope:destroyed_hadrians_wall_char
+		animation = no
+	}
 	option = {
-		# Raze Hadrian's Wall
-		name = BTWK_frontier_event.0201.b
+		name = {
+			trigger = {
+				root = {
+					is_imperial_like_culture_trigger = yes
+				}
+			}
+			text = BTWK_frontier_event.0202.a_imperial_like
+		}
+		name = {
+			trigger = {
+				root = {
+					is_vassal_or_below_of = scope:destroyed_hadrians_wall_char
+					is_imperial_like_culture_trigger = no
+				}
+			}
+			text = BTWK_frontier_event.0202.a_other_vassal
+		}
+		name = {
+			trigger = {
+				root = {
+					NOT = {
+						is_vassal_or_below_of = scope:destroyed_hadrians_wall_char
+						is_imperial_like_culture_trigger = yes
+					}
+				}
+			}
+		}
+	}
+}
 
-		#hidden_effect = {
-		#	every_province = {
-		#		limit = {
-		#			geographical_region = custom_hadrians_wall_provs
-		#		}
-		#		#
-		#		remove_building = hadrians_wall_02
-		#		add_special_building_slot = hadrians_wall_01
-		#		add_special_building = hadrians_wall_01
-		#	}
-		#	set_global_variable = hadrians_wall_being_destroyed
-		#}
-		# Effects on target cultures based on actor actions. 
+# Hadrian's Wall has been fully restored - effects for root
+BTWK_frontier_event.0203 = {
+	type = character_event
+	title = BTWK_frontier_event.0203
+	desc = BTWK_frontier_event.0203_desc
+	theme = realm
 
-		# Imperials: major negative opinion modifier.
-		# Cumbrics: major positive opinion modifier, major CA gain if root is Imperial, minor CA gain elsewhise
-		# Britons & Picts: minor positive opinion modifier, minor CA gain if Imperial 
+	right_portrait = {
+		character = root 
+		animation = personality_honorable
+	}	
 
-		#if = {  # Imperials only, exc. RB - unsure on theme
-		#	limit = {
-		#		is_imperial_culture_trigger = yes
-		#		NOT = { has_culture = culture:romanobritish }
-		#	}
-		#	add_prestige = -2000
-		#}
+	option = {
+		name = BTWK_frontier_event.0203.a
 
-		#else_if = {  # RB only - theme: reproachment with Britons
-		#	limit = {
-		#		has_culture = culture:romanobritish
-		#	}
-		#}
-		#
-		#else_if = {  # Brythones only - theme: overcoming Roman influence once and for all
-		#	limit = {
-		#		is_imperial_culture_trigger = no
-		#		is_brythonic_culture_trigger = yes
-		#	}
-		#}
+		give_nickname = nick_hadrianus
+		add_prestige = 2000
+		add_character_modifier = {
+			modifier = restored_hadrians_wall_major_character_modifier
+		}
+		hidden_effect = {
+			save_scope_as = restored_hadrians_wall_major_character
+			every_ruler = {
+				limit = {
+					is_landed = yes
+					capital_province = {
+						OR = {
+							geographical_region = world_britannia_south
+							geographical_region = world_britannia_hen_ogledd
+							geographical_region = world_caledonia
+						}
+					}
+					OR = {
+						is_imperial_like_culture_trigger = yes
+						has_trait = romanitas_trait
+					}
+					NOT = {
+						has_trait = barbarian_trait
+					}
+				}
 
-		#else = {  # All others.
+				add_opinion = {
+					target = root
+					modifier = restored_hadrians_wall_briton_opinion_modifier
+				}
+				if = {
+					limit = {
+						is_ai = no
+						NOT = { this = root }
+					}			
+					trigger_event = {
+						id = BTWK_frontier_event.0204
+						days = 1
+					}
+				}
+			}
+		}
+	}
+}
 
-		#}
+# Hadrian's Wall has been fully restored - global notification for players. Ensure notification for player vassals & for who own Hadrian's Wall provinces
+BTWK_frontier_event.0204 = {
+	type = character_event
+	title = BTWK_frontier_event.0204
+	desc = {
+		desc = BTWK_frontier_event.0204_desc
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_variable = var:hadrians_wall_holder_restored_wall_segment
+				}
+				desc = BTWK_frontier_event.0204_desc_contribution
+			}
+		}
+	}
+	theme = realm
 
-		# If Brythonic Heritage (+ Rom-Brit):
-		#	Nickname "Reunifier" or something. More symbolic in nature than actual, wall was probably going to shit anyway
-		#	Increased opinion ( / vassalisation acceptance) for rulers beyond the wall. 
-		#		OR ^Base increase of diplomacy? 
-		#	General opinion increase of Britons (for life)  
+	right_portrait = {
+		character = scope:restored_hadrians_wall_major_character
+		animation = personality_honorable
+	}	
+
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					is_imperial_like_culture_trigger = yes
+					has_trait = romanitas_trait
+				}
+			}
+			text = BTWK_frontier_event.0204.a_imperial_like
+		}
+
+		name = {
+			trigger = {
+				NOR = {
+					is_imperial_like_culture_trigger = yes
+					has_trait = romanitas_trait
+				}
+			}
+			text = BTWK_frontier_event.0204.a
+		}
+
+		if = {
+			limit = {
+				has_variable = var:hadrians_wall_holder_restored_wall_segment
+			}
+			add_prestige = 1000
+			add_character_modifier = {
+				modifier = restored_hadrians_wall_minor_character_modifier
+			} 
+		}
 	}
 }

@@ -7,21 +7,8 @@ hadrians_wall_01 = {
 	# Change province modifiers?
 	# Cannot be restored from here - totally ruined.
 	flag = fully_upgraded
-	construction_time = slow_construction_time
-	cost_gold = 250
 	type_icon = "icon_structure_hadrians_wall.dds"
 	
-	can_construct = {
-		scope:holder.top_liege = {
-			OR = {
-				is_imperial_culture_trigger = yes
-				has_trait = romanitas_trait
-			}
-			culture = {
-				has_innovation = innovation_crop_rotation
-			}
-		}
-	}
 
 	province_modifier = {
 		build_gold_cost = -0.1
@@ -55,32 +42,34 @@ hadrians_wall_02 = {
 hadrians_wall_03 = {
 	# Hadrian's Wall - Restored
 	flag = fully_upgraded
-	construction_time = very_slow_construction_time
+	construction_time = slow_construction_time
 	cost_gold = 500
 	type_icon = "icon_structure_hadrians_wall.dds"
 	
 	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation
+		}
 		scope:holder.top_liege = {
-			OR = {
-				is_imperial_culture_trigger = yes
-				has_trait = romanitas_trait
-			}
-			culture = {
-				has_innovation = innovation_crop_rotation
+			is_imperial_like_culture_trigger = yes 
+				completely_controls_region = custom_hadrians_wall_duchies
+				OR = {
+					is_imperial_like_culture_trigger = yes
+					has_trait = romanitas_trait
+				}
+				NOT = { has_trait = barbarian_trait }
 			}
 		}
-		has_global_variable = hadrians_wall_being_destroyed
-	}
 
 	can_construct_potential = {
-
+		
 	}
 	
 	province_modifier = {
 		fort_level = 2
-		hostile_raid_time = 0.5
-		defender_holding_advantage = 10
-		garrison_size = 0.5
+		hostile_raid_time = 0.4
+		defender_holding_advantage = 7
+		garrison_size = 0.2
 	}
 	
 	county_modifier = {
@@ -95,6 +84,21 @@ hadrians_wall_03 = {
 		}
 	}
 	type = special
+}
+
+arbeia_01 = {
+
+	type_icon = "icon_structure_hadrians_wall.dds"  # Change? 
+
+	province_modifier = {
+		fort_level = 1
+		supply_limit = 2000 
+		stationed_maa_toughness_add = 5 
+		levy_size = 0.15
+
+	}
+	type = special
+	flag = travel_point_of_interest_martial_major
 }
 
 ################
