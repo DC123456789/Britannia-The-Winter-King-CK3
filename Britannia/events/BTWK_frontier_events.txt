@@ -13,15 +13,6 @@ BTWK_frontier_event.0001 = {
 		animation = personality_bold
 	}	
 
-	#immediate = {
-	#	title:k_mercia = {
-	#		set_variable = {
-	#			name = offas_dyke_builder_name
-	#			value = root
-	#		}
-	#	}
-	#}
-
 	option = {
 		# Build the wall
 		name = BTWK_frontier_event.0001.a
@@ -30,12 +21,15 @@ BTWK_frontier_event.0001 = {
 		save_scope_as = offas_dyke_builder_char
 
 		# EFFECTS:
-		# 	Add special building slots for Offa's Dyke - Done & tested
 		# 	Remove CBs against Welsh rulers - NEEDS DOING; tie into 'Fall of Britannia'
-		#	Add truces with Welsh rulers - Done & tested
-		#	Character Modifier related to building the ditch - Done. Might add nickname
+		#	Might add nickname
 		#	Stress malus for vengeful/wrathful/ambitious/greedy characters. 
 
+		stress_impact = {
+			ambitious = minor_stress_impact_gain
+			greedy = minor_stress_impact_gain
+		}
+		
 		hidden_effect = {
 			
 			every_province = {
@@ -48,10 +42,7 @@ BTWK_frontier_event.0001 = {
 				limit = {
 					is_landed = yes
 					capital_province = {
-						OR = {
-							geographical_region = world_britannia_south
-							geographical_region = world_britannia_hen_ogledd
-						}
+						geographical_region = world_britannia
 					}
 				}
 				
@@ -65,7 +56,6 @@ BTWK_frontier_event.0001 = {
 					}
 				}
 
-				# Possibly add opinions for 'every_courtier' as well?
 				if = {
 					limit = {
 						is_ingvaeonic_culture_trigger = yes
@@ -105,6 +95,7 @@ BTWK_frontier_event.0001 = {
 		}
 
 		add_prestige = 500
+		add_legitimacy = major_legitimacy_gain
 		add_character_modifier = {
 			modifier = built_offas_dyke_character_modifier 
 			years = 50
@@ -288,6 +279,13 @@ BTWK_frontier_event.0201 = {
 			modifier = destroyed_hadrians_wall_character_modifier
 		}
 
+		if = {
+			limit = {
+				is_imperial_like_culture_trigger = yes
+			}
+			add_legitimacy = medium_legitimacy_loss
+		}
+
 		hidden_effect = {
 			save_scope_as = destroyed_hadrians_wall_char
 			every_province = {
@@ -317,22 +315,19 @@ BTWK_frontier_event.0201 = {
 				every_county = {
 					limit = {
 							geographical_region = custom_hadrians_wall_provs
-						}
-					}				
+						}			
 					add_county_modifier = {
 						modifier = destroyed_hadrians_wall_county_modifier
 						years = 20
 					}
 				}
+			}
 
 			every_ruler = {
 				limit = {
 					is_landed = yes
 					capital_province = {
-						OR = {
-							geographical_region = world_britannia
-							geographical_region = world_britannia_hen_ogledd
-						}
+						geographical_region = world_britannia
 					}
 				}
 				if = {
@@ -470,7 +465,31 @@ BTWK_frontier_event.0202 = {
 BTWK_frontier_event.0203 = {
 	type = character_event
 	title = BTWK_frontier_event.0203
-	desc = BTWK_frontier_event.0203_desc
+	desc = {
+		desc = BTWK_frontier_event.0203_desc
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_global_variable = fall_of_britannia
+				}
+				desc = BTWK_frontier_event.0203_desc_britannia_collapsed
+			}
+			triggered_desc = {
+				trigger = {
+					has_title = title:e_britannia
+				}
+				desc = BTWK_frontier_event.0203_desc_high_king
+			}
+			triggered_desc = {
+				trigger = {
+					NOT = {
+						has_title = title:e_britannia
+					}
+				}
+				desc = BTWK_frontier_event.0203_desc_not_high_king
+			}
+		}
+	} 
 	theme = realm
 
 	right_portrait = {
@@ -483,6 +502,7 @@ BTWK_frontier_event.0203 = {
 
 		give_nickname = nick_hadrianus
 		add_prestige = 2000
+		add_legitimacy = major_legitimacy_gain
 		add_character_modifier = {
 			modifier = restored_hadrians_wall_major_character_modifier
 		}
@@ -493,8 +513,7 @@ BTWK_frontier_event.0203 = {
 					is_landed = yes
 					capital_province = {
 						OR = {
-							geographical_region = world_britannia_south
-							geographical_region = world_britannia_hen_ogledd
+							geographical_region = world_britannia
 							geographical_region = world_caledonia
 						}
 					}
@@ -531,7 +550,69 @@ BTWK_frontier_event.0204 = {
 	type = character_event
 	title = BTWK_frontier_event.0204
 	desc = {
-		desc = BTWK_frontier_event.0204_desc
+		desc = BTWK_frontier_event.0204_desc_header
+		first_valid = {
+			triggered_desc = { 
+				trigger = {
+					has_global_variable = fall_of_britannia
+				}
+				desc = BTWK_frontier_event.0204_desc_britannia_collapsed
+			}
+			triggered_desc = {
+				trigger = {
+					NOT = { has_global_variable = fall_of_britannia }
+				}
+				desc = {
+					desc = BTWK_frontier_event.0204_desc_britannia_alive
+					first_valid = {
+
+						triggered_desc = {
+							trigger = {
+								scope:restored_hadrians_wall_major_character = {
+									NOT = {
+										has_title = title:e_britannia
+									}
+								}
+								NOT = {
+									capital_province = {
+										geographical_region = world_caledonia
+									}
+								}
+								is_imperial_like_culture_trigger = yes
+							}
+							desc = BTWK_frontier_event.0204_desc_not_high_king
+						}
+
+						triggered_desc = {
+							trigger = {
+								scope:restored_hadrians_wall_major_character = {
+									has_title = title:e_britannia
+								}
+								NOT = {
+									capital_province = {
+										geographical_region = world_caledonia
+									}
+								}
+								is_imperial_like_culture_trigger = yes
+
+							}
+							desc = BTWK_frontier_event.0204_desc_high_king
+						}
+
+						triggered_desc = {
+							trigger = {
+								capital_province = {
+									geographical_region = world_caledonia
+								}
+								is_imperial_like_culture_trigger = no
+							}
+							desc = BTWK_frontier_event.0204_desc_caledonian
+						}
+
+					}
+				}
+			}
+		}
 		first_valid = {
 			triggered_desc = {
 				trigger = {
@@ -568,6 +649,15 @@ BTWK_frontier_event.0204 = {
 				}
 			}
 			text = BTWK_frontier_event.0204.a
+		}
+		name = {
+			trigger = {
+				is_imperial_like_culture_trigger = no
+				capital_province = {
+					geographical_region = world_caledonia
+				}
+			}
+			text = BTWK_frontier_event.0204.a_caledonian
 		}
 
 		if = {
