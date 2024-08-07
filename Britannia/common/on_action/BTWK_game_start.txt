@@ -777,25 +777,29 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_2_alt value = title:c_dunoding }
 		}
 		
-		## Flag Anglia duchies
+		# FORMABLE KINGDOMS
 		title:k_anglia = {
-			title:d_norfolc = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_southfolc = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_grentbryce = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_gyrwas = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_eastseaxe = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_middleseaxe = { set_variable = { name = formable_kingdom value = PREV } }
-			title:d_hiccas = { set_variable = { name = expansion_kingdom value = PREV } }
-			title:d_middle_angles = { set_variable = { name = expansion_kingdom value = PREV } }
-			title:d_south_angles = { set_variable = { name = expansion_kingdom value = PREV } }
-			title:d_cilternsaete = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_norfolc = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_southfolc = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_grentbryce = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_gyrwas = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_eastseaxe = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_middleseaxe = { set_variable = { name = formable_kingdom_1 value = PREV } }
 		}
+		# TODO Middle Anglia?
 		
+		# KINGDOM EXPANSIONS (TODO Convert into the duchy integration system)
+		title:k_anglia = {
+			title:d_hiccas = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_middle_angles = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_south_angles = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_cilternsaete = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+		}		
 		## Flag Sussex expansion duchies
 		title:k_sussex = {
-			title:d_cantware = { set_variable = { name = expansion_kingdom value = PREV } }
-			title:d_westcantware = { set_variable = { name = expansion_kingdom value = PREV } }
-			title:d_surrey = { set_variable = { name = expansion_kingdom value = PREV } }
+			title:d_cantware = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_westcantware = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_surrey = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 		}
 		
 		### ROMAN TITLE SETUP ###
@@ -1494,6 +1498,58 @@ BTWK_de_jure_setup = {
 			}
 		}
 		
+		### BRITON TITLE SETUP ###
+		
+		# FORMABLE KINGDOMS
+		title:k_deheubarth = {
+			title:d_deheubarth = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_ystrad_tywi = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_brycheiniog = { set_variable = { name = formable_kingdom_1 value = PREV } }
+			title:d_westpowys = { set_variable = { name = formable_kingdom_1 value = PREV } }
+		}
+		# Formation of Cumbria?
+		
+		# EXPANDABLE KINGDOMS		
+		# - Assimilating Kernow into Dumnonia
+		
+		# FORMABLE EMPIRES
+		# - Formation of Hen Ogledd and Cymru
+		
+		### IRISH TITLE SETUP ###
+		
+		# FORMABLE KINGDOMS
+		# - Formation of Lleyn
+		
+		# EXPANDABLE EMPIRES
+		# - Expansion of Irish Cymru into Hen Ogledd (eventually will be Alba expanding intead?)
+		
+		### ROMANIZED GERMANIC TITLE SETUP ###
+		
+		# FORMABLE EMPIRES
+		# - Formation of Romanized Germanic empire in Britannia
+		
+		### OTHER TITLE SETUP - CURRENTLY NOT ON THE MAP ###
+		# Kingdom
+		# - Regional de jure drift in Gaul (groups of duchies)
+		#	- Can swap between Roman/Armorican (for some)/Frankish/Romanized Germanic kingdoms
+		# 	- For Roman, there is also a distinction between whether or not the Roman provinces have been restored
+		#	- For this, we probably want to point each duchy in the region to the somewhat arbitrary "capital duchy" of the region, and then store who controls the region in that single duchy
+		
+		# - Formation of In Fochla
+		# - k_jutland assimilating k_angeln
+		
+		# Empire
+		# - Formation of Alba
+		
+		# - Merging Ireland, Alba, and (Irish) Cymru into a single empire of "The Isles"?
+		# - e_scandinavia uniting the four starting Norse empires
+		
+		# - Expansion of Alba into Hen Ogledd
+		# - Assimilating Alba and Ireland into Britannia
+		# - Francia assimilating the Germanic kingdoms
+		# - Germania assimilating the Rhenish Franks
+		# - Germania assimilating Scandinavia
+		
 		# Get a list of provinces that can be under each duchy - we use this to determine which 
 		# provinces to recalculate when a de jure shift happens
 		every_county = {
@@ -1550,8 +1606,8 @@ BTWK_de_jure_setup = {
 		# Similar list for kingdoms
 		every_duchy = {
 			if = {
-				limit = { has_variable = formable_kingdom }
-				this.var:formable_kingdom = { 
+				limit = { has_variable = formable_kingdom_1 }
+				this.var:formable_kingdom_1 = { 
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
 						target = PREV
@@ -1559,8 +1615,8 @@ BTWK_de_jure_setup = {
 				}
 			}
 			if = {
-				limit = { has_variable = expansion_kingdom }
-				this.var:expansion_kingdom = { 
+				limit = { has_variable = expansion_kingdom_1 }
+				this.var:expansion_kingdom_1 = { 
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
 						target = PREV
