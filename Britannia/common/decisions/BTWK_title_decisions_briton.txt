@@ -18,7 +18,8 @@ create_deheubarth_decision = {
 		}
 	}
 
-	is_valid_showing_failures_only = {
+	is_valid = {
+		is_independent_ruler = yes
 		NOT = { government_has_flag = government_is_tribal }
 		NOT = { has_title = title:k_gwynedd }
 		prestige_level >= medium_prestige_level
@@ -75,3 +76,104 @@ create_deheubarth_decision = {
 		base = 100
 	}
 }
+
+reunite_dumnonia_decision = {
+	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	major = yes
+
+	ai_check_interval = 1
+
+	desc = reunite_dumnonia_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:k_dumnonia
+			has_title = title:k_kernow
+		}
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_brythonic
+				has_cultural_pillar = heritage_latin
+			}
+		}
+		highest_held_title_tier < tier_empire
+		title:k_dumnonia = {
+			NOT = { has_variable = title_expanded_de_jure }
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		NOT = { government_has_flag = government_is_tribal }
+		prestige_level >= medium_prestige_level
+		OR = {
+			AND = { 
+				has_title = title:k_dumnonia
+				custom_tooltip = {
+					text = controls_half_of_dumnonia_tt
+					any_county_in_region = {
+						percent > 0.5
+						region = custom_dumnonia
+						holder.top_liege = root
+					}
+				}
+			}
+			completely_controls_region = custom_dumnonia
+		}
+		OR = {
+			AND = { 
+				has_title = title:k_kernow 
+				custom_tooltip = {
+					text = controls_half_of_cornwall_tt
+					any_county_in_region = {
+						percent > 0.5
+						region = custom_cornwall
+						holder.top_liege = root
+					}
+				}
+			}
+			completely_controls_region = custom_cornwall
+		}
+	}
+
+	effect = {
+		destroy_title = title:k_kernow
+		title:k_dumnonia = { 
+			save_scope_as = title_expanded_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
+		}
+		save_scope_as = founder
+		trigger_event = { id = titular_titles.0202 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0202 }
+		}
+		hidden_effect = {
+			title:k_dumnonia = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
+		}
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+## TODO
+# create_strathclyde_decision = { }
+# create_hen_ogledd_decision = { }
+# reunite_the_britons_decision = { }

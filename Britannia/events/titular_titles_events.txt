@@ -345,9 +345,25 @@ titular_titles.0201 = {
 					holder = root
 					change = scope:title_change
 				}
+				copy_title_history = title:k_demetia
 			}
 			resolve_title_and_vassal_change = scope:title_change
 			destroy_title = title:k_demetia
+			title:k_demetia = {
+				hidden_effect = {
+					every_claimant = {
+						if = {
+							limit = { has_strong_claim_on = title:k_demetia }
+							remove_claim = title:k_demetia
+							add_pressed_claim = title:k_deheubarth
+						}
+						else = {
+							remove_claim = title:k_demetia
+							add_unpressed_claim = title:k_deheubarth
+						}
+					}
+				}
+			}
 		}
 		show_as_tooltip = {
 			title:k_deheubarth = { 
@@ -374,6 +390,52 @@ titular_titles.0201 = {
 		}
 		name = {
 			text = titular_titles.0201.a
+		}
+	}
+}
+
+# Reunification of Dumnonia
+titular_titles.0202 = {
+	type = character_event
+	title = titular_titles.0202.t
+	desc = titular_titles.0202.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			destroy_title = title:k_kernow
+		}
+		show_as_tooltip = {
+			title:k_dumnonia = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles.0202.a.founder
+		}
+		name = {
+			text = titular_titles.0202.a
 		}
 	}
 }
