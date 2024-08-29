@@ -1507,13 +1507,23 @@ BTWK_de_jure_setup = {
 			title:d_brycheiniog = { set_variable = { name = formable_kingdom_1 value = PREV } }
 			title:d_westpowys = { set_variable = { name = formable_kingdom_1 value = PREV } }
 		}
-		# Formation of Strathclyde/Cumbria
 		
 		# EXPANDABLE KINGDOMS
 		title:k_dumnonia = {
 			title:d_kernow = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 			title:d_penwith = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 			title:d_lyonesse = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+		}
+		title:k_strathclyde = {
+			title:d_westrheged = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_selgovae = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_eidyn = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+			title:d_tweeddale = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+			title:d_manaw = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+		}
+		title:k_pennines = {		# Triggered by formation of Strathclyde
+			title:d_argoed = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_maunguid = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 		}
 		
 		# FORMABLE EMPIRES
@@ -1621,6 +1631,15 @@ BTWK_de_jure_setup = {
 			if = {
 				limit = { has_variable = expansion_kingdom_1 }
 				this.var:expansion_kingdom_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_alt_kingdom_1 }
+				this.var:expansion_alt_kingdom_1 = { 
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
 						target = PREV
