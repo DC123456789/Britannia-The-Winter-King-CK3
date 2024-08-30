@@ -476,14 +476,18 @@ BTWK_frontier_event.0203 = {
 			}
 			triggered_desc = {
 				trigger = {
-					has_title = title:e_britannia
+					OR = {
+						has_title = title:e_britannia
+						has_title = title:e_roman_britannia
+					}
 				}
 				desc = BTWK_frontier_event.0203_desc_high_king
 			}
 			triggered_desc = {
 				trigger = {
-					NOT = {
+					NOR = {
 						has_title = title:e_britannia
+						has_title = title:e_roman_britannia
 					}
 				}
 				desc = BTWK_frontier_event.0203_desc_not_high_king
@@ -501,8 +505,8 @@ BTWK_frontier_event.0203 = {
 		name = BTWK_frontier_event.0203.a
 
 		give_nickname = nick_hadrianus
-		add_prestige = 2000
-		add_legitimacy = major_legitimacy_gain
+		add_prestige = 2500
+		add_legitimacy = 400
 		add_character_modifier = {
 			modifier = restored_hadrians_wall_major_character_modifier
 		}
@@ -513,7 +517,8 @@ BTWK_frontier_event.0203 = {
 					is_landed = yes
 					capital_province = {
 						OR = {
-							geographical_region = world_britannia
+							geographical_region = world_britannia_south
+							geographical_region = world_britannia_hen_ogledd
 							geographical_region = world_caledonia
 						}
 					}
@@ -569,16 +574,20 @@ BTWK_frontier_event.0204 = {
 						triggered_desc = {
 							trigger = {
 								scope:restored_hadrians_wall_major_character = {
-									NOT = {
+									NOR = {
 										has_title = title:e_britannia
+										has_title = title:e_roman_britannia
 									}
 								}
-								NOT = {
-									capital_province = {
-										geographical_region = world_caledonia
+								OR = {  # Can't receive this desc if not imperial-like culture in Caledonia
+									NOT = {
+										capital_province = {
+											geographical_region = world_caledonia
+										}
+										is_imperial_like_culture_trigger = no
 									}
+									is_imperial_like_culture_trigger = yes
 								}
-								is_imperial_like_culture_trigger = yes
 							}
 							desc = BTWK_frontier_event.0204_desc_not_high_king
 						}
@@ -586,14 +595,20 @@ BTWK_frontier_event.0204 = {
 						triggered_desc = {
 							trigger = {
 								scope:restored_hadrians_wall_major_character = {
-									has_title = title:e_britannia
+									OR = {
+										has_title = title:e_britannia
+										has_title = title:e_roman_britannia
+									}								
 								}
-								NOT = {
-									capital_province = {
-										geographical_region = world_caledonia
+								OR = {  # Can't receive this desc if not imperial-like culture in Caledonia
+									NOT = {
+										capital_province = {
+											geographical_region = world_caledonia
+										}
+										is_imperial_like_culture_trigger = no
 									}
+									is_imperial_like_culture_trigger = yes
 								}
-								is_imperial_like_culture_trigger = yes
 
 							}
 							desc = BTWK_frontier_event.0204_desc_high_king
