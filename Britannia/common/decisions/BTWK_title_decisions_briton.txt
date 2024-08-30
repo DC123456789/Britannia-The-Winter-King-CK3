@@ -19,7 +19,9 @@ create_deheubarth_decision = {
 	}
 
 	is_valid = {
+		has_title = title:k_demetia
 		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
 		NOT = { government_has_flag = government_is_tribal }
 		NOT = { has_title = title:k_gwynedd }
 		prestige_level >= medium_prestige_level
@@ -105,6 +107,7 @@ reunite_dumnonia_decision = {
 
 	is_valid = {
 		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
 		NOT = { government_has_flag = government_is_tribal }
 		prestige_level >= medium_prestige_level
 		OR = {
@@ -202,20 +205,38 @@ form_strathclyde_decision = {
 
 	is_valid = {
 		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		has_title = title:k_strathclyde
+		realm_size >= 35
+		OR = {
+			completely_controls = title:c_luguvalium
+			completely_controls = title:c_din_eidyn
+		}
+		custom_tooltip = {
+			text = last_cumbrian_king_tt
+			any_kingdom = {
+				count < 1
+				exists = holder
+				NOT = { holder = ROOT }
+				holder.culture = { has_cultural_pillar = heritage_brythonic }
+				title_capital_county.title_province = { geographical_region = world_britannia_hen_ogledd }
+			}
+		}
 	}
 
 	effect = {
 		add_prestige = 200
 		title:k_strathclyde = { 
+			custom_label = { text = rename_to_strathclyde subject = title:k_strathclyde }
 			set_title_name = STRATHCLYDE
 			set_variable = custom_name
 		}
-		root = {
-			custom_description_no_bullet = {
-				text = if_controls_c_luguvalium_effect
-				subject = this
-			}
+		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
+		custom_description_no_bullet = {
+			text = if_controls_c_luguvalium_effect
+			subject = title:k_rheged
 		}
+		show_as_tooltip = { destroy_title = title:k_rheged }
 		title:k_strathclyde = { 
 			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
@@ -241,12 +262,12 @@ form_strathclyde_decision = {
 			}
 			clear_saved_scope = title_expanded_de_jure_pretend
 		}
-		title:k_strathclyde = {		# By putting this in a different scope from the first custom description, it doesn't try to put them together
-			custom_description_no_bullet = {
-				text = if_controls_c_din_eidyn_effect
-				subject = this
-			}
+		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
+		custom_description_no_bullet = {
+			text = if_controls_c_din_eidyn_effect
+			subject = title:k_lothian
 		}
+		show_as_tooltip = { destroy_title = title:k_lothian }
 		title:k_strathclyde = { 
 			save_scope_as = title_expanded_alt_de_jure_pretend
 			every_in_list = {

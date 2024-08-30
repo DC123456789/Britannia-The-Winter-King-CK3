@@ -440,6 +440,87 @@ titular_titles.0202 = {
 	}
 }
 
+# Formation of Strathclyde
+titular_titles.0203 = {
+	type = character_event
+	title = titular_titles.0203.t
+	desc = titular_titles.0203.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			destroy_title = title:k_rheged
+			destroy_title = title:k_lothian
+		}
+		if = {
+			limit = { scope:founder = { completely_controls = title:c_luguvalium } }
+			title:k_strathclyde = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable = expansion_kingdom_1
+						this.var:expansion_kingdom_1 = prev
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_de_jure_pretend
+			}
+			title:k_pennines = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_de_jure_pretend
+			}
+		}
+		if = {
+			limit = { scope:founder = { completely_controls = title:c_din_eidyn } }
+			title:k_strathclyde = { 
+				save_scope_as = title_expanded_alt_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					limit = {
+						has_variable = expansion_alt_kingdom_1
+						this.var:expansion_alt_kingdom_1 = prev
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_de_jure_pretend
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles.0203.a.founder
+		}
+		name = {
+			text = titular_titles.0203.a
+		}
+	}
+}
+
 ##################################################
 # Debug Test Events
 ##################################################
