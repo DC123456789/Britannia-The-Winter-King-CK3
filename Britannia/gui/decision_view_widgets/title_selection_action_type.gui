@@ -1,0 +1,144 @@
+
+types TitleSelectionActionTypes
+{
+	type TitleSelectionActionBoxType vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		ignoreinvisible = yes
+
+		margin_top = 10
+		spacing = 10
+
+		vbox = {		
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				
+				size = { 400 200 }
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						block "box_datamodel" {
+						}
+						spacing = 6
+
+						item = {
+							TitleSelectionActionTitleType = {
+							}
+						}
+					}
+						
+					text_single = {
+						name = "no_titles_text_display"
+						alwaystransparent = yes
+						block "no_titles_text" {
+							text = no_title_shown_string
+						}
+						max_width = 350
+						align = center
+						block "no_titles_text_is_shown" {
+						}
+					}
+				}
+			}
+		}
+		
+		state = {
+			name = init_state
+			trigger_on_create = yes
+			block "box_create_state" {
+				on_start = "[GetScriptedGui('title_selection_decision_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			}
+		}
+	}
+	
+	type TitleSelectionActionTitleType = hbox {
+		#layoutpolicy_horizontal = expanding		# Causes slight alignment bug for some reason
+		layoutpolicy_vertical = expanding
+		spacing = 6
+		
+		block "title_visible" {
+		}
+		
+		button_standard = {
+			size = { 284 50 }
+			margin = { 10 10 }
+
+			block "title_button" {
+				onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				# enabled = "[GetScriptedGui('title_selection_decision_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				# tooltip = "[Entry.GetTooltip]"
+				down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+			}
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 10
+				margin_left = 10
+
+				coa_title_tiny = {
+					datacontext = "[Scope.Title]"
+				}
+
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						block "title_button_text" {
+							text = "[Title.GetName]"
+						}
+						max_width = 250
+						align = left
+					}
+				}
+				
+				expand = {}
+			}
+		}
+		
+		button_standard = {
+			size = { 70 50 }
+			margin = { 10 10 }
+
+			block "selection_button" {
+			}
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 10
+				block "selection_button_text_box" {
+					margin_left = 10
+				}
+
+				vbox = {
+					datacontext = "[Scope.Title]"
+					name = "title_info"
+					layoutpolicy_vertical = expanding
+					margin_bottom = 5
+
+					text_single = {
+						name = "title_name"
+						alwaystransparent = yes
+						block "selection_button_text" {
+							text = "Select"
+						}
+						max_width = 250
+						align = center
+					}
+				}
+				
+				expand = {}
+			}
+		}
+	}
+}

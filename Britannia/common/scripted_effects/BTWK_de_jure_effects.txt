@@ -72,7 +72,7 @@ check_de_jure_liege_duchy_effect = {
 		set_roman_duchy_name_effect = yes
 		if = {
 			limit = { has_variable = roman_title_capital }
-			set_capital_county = this.var:roman_title_capital
+			hidden_effect = { set_capital_county = this.var:roman_title_capital }
 		}
 	}
 	# No tooltip bypass/ignore for now as this is a bit more complicated
@@ -88,21 +88,21 @@ check_de_jure_liege_duchy_effect = {
 	}
 	else_if = {
 		limit = {
-			has_variable = expansion_kingdom
-			this.var:expansion_kingdom = {
+			has_variable = expansion_kingdom_1
+			this.var:expansion_kingdom_1 = {
 				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
 			}
 		}
-		set_de_jure_liege_title = this.var:expansion_kingdom
+		set_de_jure_liege_title = this.var:expansion_kingdom_1
 	}
 	else_if = {
 		limit = {
-			has_variable = formable_kingdom
-			this.var:formable_kingdom = {
+			has_variable = formable_kingdom_1
+			this.var:formable_kingdom_1 = {
 				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
 			}
 		}
-		set_de_jure_liege_title = this.var:formable_kingdom
+		set_de_jure_liege_title = this.var:formable_kingdom_1
 	}
 	else = {		
 		set_de_jure_liege_title = this.var:default_kingdom
@@ -117,162 +117,167 @@ check_de_jure_liege_duchy_effect = {
 	}
 }
 
+# If this is updated, the roman_name variable setup also needs to be updated!
 set_roman_duchy_name_effect = {
-	## MAXIMA CAESARIENSIS
-    if = {
-        limit = { this = title:d_lundein }
-        set_title_name = cn_londiniensia
-    }
-	else_if = {
-		limit = { this = title:d_mincip }
-		set_title_name = cn_catuvellaunia
-	}
-	else_if = {
-		limit = { this = title:d_trinovantia }
-		set_title_name = cn_trinovantia
-	}
-	else_if = {
-		limit = { this = title:d_cantuaria }
-		set_title_name = cn_cantiacia
-	}
-	else_if = {
-		limit = { this = title:d_rhegin }
-		set_title_name = cn_regnia
-	}
-	else_if = {
-		limit = { this = title:d_eastdumnonia }
-		set_title_name = cn_atrebatia
-	}
-	else_if = {
-		limit = { this = title:d_the_belgae }
-		set_title_name = cn_belgia
-	}
-	## FLAVIA CAESARIENSIS
-	else_if = {
-		limit = { this = title:d_lindum }
-		set_title_name = cn_lindinensia
-	}
-	else_if = {
-		limit = { this = title:d_the_fens }
-		set_title_name = cn_durobrivensia
-	}
-	else_if = {
-		limit = { this = title:d_went }
-		set_title_name = cn_icenia
-	}
-	else_if = {
-		limit = { this = title:d_eastgwent }
-		set_title_name = cn_lactodorensia
-	}
-	else_if = {
-		limit = { this = title:d_lerion }
-		set_title_name = cn_corieltauvia
-	}
-	## BRITANNIA PRIMA
-	else_if = {
-		limit = { this = title:d_corinium }
-		set_title_name = cn_dobunnia
-	}
-	else_if = {
-		limit = { this = title:d_centgwent }
-		set_title_name = cn_glevensia
-	}
-	else_if = {
-		limit = { this = title:d_avalon }
-		set_title_name = cn_lendeniensia
-	}
-	else_if = {
-		limit = { this = title:d_centdumnonia }
-		set_title_name = cn_durotrigia
-	}
-	else_if = {
-		limit = { this = title:d_westdumnonia }
-		set_title_name = cn_dumnonia
-	}
-	else_if = {
-		limit = { this = title:d_kernow }
-		set_title_name = cn_cornubia
-	}
-	else_if = {
-		limit = { this = title:d_gwent }
-		set_title_name = cn_siluria
-	}
-	else_if = {
-		limit = { this = title:d_deheubarth }
-		set_title_name = cn_demetia
-	}
-	else_if = {
-		limit = { this = title:d_eastpowys }
-		set_title_name = cn_cornovia
-	}
-	else_if = {
-		limit = { this = title:d_luitcoyt }
-		set_title_name = cn_letocetensia
-	}
-	else_if = {
-		limit = { this = title:d_deva }
-		set_title_name = cn_devensia
-	}
-	else_if = {
-		limit = { this = title:d_arfon }
-		set_title_name = cn_venedotia
-	}
-	## BRITANNIA SECUNDA
-	else_if = {
-		limit = { this = title:d_ebrauc }
-		set_title_name = cn_brigantia
-	}
-	else_if = {
-		limit = { this = title:d_deifr }
-		set_title_name = cn_parisia
-	}
-	else_if = {
-		limit = { this = title:d_the_peak }
-		set_title_name = cn_lutudarensia
-	}
-	else_if = {
-		limit = { this = title:d_westrheged }
-		set_title_name = cn_carvetia
-	}
-	else_if = {
-		limit = { this = title:d_argoed }
-		set_title_name = cn_setantia
-	}
-	else_if = {
-		limit = { this = title:d_eastrheged }
-		set_title_name = cn_textoverdia
-	}
-	## VALENTIA
-	else_if = {
-		limit = { this = title:d_bryneich }
-		set_title_name = cn_bremenensia
-	}
-	else_if = {
-		limit = { this = title:d_eidyn }
-		set_title_name = cn_votadinia
-	}
-	else_if = {
-		limit = { this = title:d_selgovae }
-		set_title_name = cn_selgovia
-	}
-	else_if = {
-		limit = { this = title:d_strathclyde }
-		set_title_name = cn_damnonia
-	}
-	else_if = {
-		limit = { this = title:d_galloway }
-		set_title_name = cn_novantia
-	}
-	else_if = {
-		limit = { this = title:d_ynys_man }
-		set_title_name = cn_monapia
-	}
-	else_if = {
-		limit = { this = title:d_manaw }
-		set_title_name = cn_maeatia
-	}
-	else_if = {
-		limit = { this = title:d_lennox }
-		set_title_name = cn_attacottia
+	custom_description = {
+		text = set_roman_duchy_name_effect
+		## MAXIMA CAESARIENSIS
+		if = {
+			limit = { this = title:d_lundein }
+			set_title_name = cn_londiniensia
+		}
+		else_if = {
+			limit = { this = title:d_mincip }
+			set_title_name = cn_catuvellaunia
+		}
+		else_if = {
+			limit = { this = title:d_trinovantia }
+			set_title_name = cn_trinovantia
+		}
+		else_if = {
+			limit = { this = title:d_cantuaria }
+			set_title_name = cn_cantiacia
+		}
+		else_if = {
+			limit = { this = title:d_rhegin }
+			set_title_name = cn_regnia
+		}
+		else_if = {
+			limit = { this = title:d_eastdumnonia }
+			set_title_name = cn_atrebatia
+		}
+		else_if = {
+			limit = { this = title:d_the_belgae }
+			set_title_name = cn_belgia
+		}
+		## FLAVIA CAESARIENSIS
+		else_if = {
+			limit = { this = title:d_lindum }
+			set_title_name = cn_lindinensia
+		}
+		else_if = {
+			limit = { this = title:d_the_fens }
+			set_title_name = cn_durobrivensia
+		}
+		else_if = {
+			limit = { this = title:d_went }
+			set_title_name = cn_icenia
+		}
+		else_if = {
+			limit = { this = title:d_eastgwent }
+			set_title_name = cn_lactodorensia
+		}
+		else_if = {
+			limit = { this = title:d_lerion }
+			set_title_name = cn_corieltauvia
+		}
+		## BRITANNIA PRIMA
+		else_if = {
+			limit = { this = title:d_corinium }
+			set_title_name = cn_dobunnia
+		}
+		else_if = {
+			limit = { this = title:d_centgwent }
+			set_title_name = cn_glevensia
+		}
+		else_if = {
+			limit = { this = title:d_avalon }
+			set_title_name = cn_lendeniensia
+		}
+		else_if = {
+			limit = { this = title:d_centdumnonia }
+			set_title_name = cn_durotrigia
+		}
+		else_if = {
+			limit = { this = title:d_westdumnonia }
+			set_title_name = cn_dumnonia
+		}
+		else_if = {
+			limit = { this = title:d_kernow }
+			set_title_name = cn_cornubia
+		}
+		else_if = {
+			limit = { this = title:d_gwent }
+			set_title_name = cn_siluria
+		}
+		else_if = {
+			limit = { this = title:d_deheubarth }
+			set_title_name = cn_demetia
+		}
+		else_if = {
+			limit = { this = title:d_eastpowys }
+			set_title_name = cn_cornovia
+		}
+		else_if = {
+			limit = { this = title:d_luitcoyt }
+			set_title_name = cn_letocetensia
+		}
+		else_if = {
+			limit = { this = title:d_deva }
+			set_title_name = cn_devensia
+		}
+		else_if = {
+			limit = { this = title:d_arfon }
+			set_title_name = cn_venedotia
+		}
+		## BRITANNIA SECUNDA
+		else_if = {
+			limit = { this = title:d_ebrauc }
+			set_title_name = cn_brigantia
+		}
+		else_if = {
+			limit = { this = title:d_deifr }
+			set_title_name = cn_parisia
+		}
+		else_if = {
+			limit = { this = title:d_the_peak }
+			set_title_name = cn_lutudarensia
+		}
+		else_if = {
+			limit = { this = title:d_argoed }
+			set_title_name = cn_setantia
+		}
+		## VALENTIA
+		else_if = {
+			limit = { this = title:d_westrheged }
+			set_title_name = cn_carvetia
+		}
+		else_if = {
+			limit = { this = title:d_eastrheged }
+			set_title_name = cn_textoverdia
+		}
+		else_if = {
+			limit = { this = title:d_bryneich }
+			set_title_name = cn_bremenensia
+		}
+		else_if = {
+			limit = { this = title:d_eidyn }
+			set_title_name = cn_votadinia
+		}
+		else_if = {
+			limit = { this = title:d_selgovae }
+			set_title_name = cn_selgovia
+		}
+		else_if = {
+			limit = { this = title:d_strathclyde }
+			set_title_name = cn_damnonia
+		}
+		else_if = {
+			limit = { this = title:d_galloway }
+			set_title_name = cn_novantia
+		}
+		else_if = {
+			limit = { this = title:d_ynys_man }
+			set_title_name = cn_monapia
+		}
+		# TO BE CALEDONIA
+		else_if = {
+			limit = { this = title:d_manaw }
+			set_title_name = cn_maeatia
+		}
+		else_if = {
+			limit = { this = title:d_lennox }
+			set_title_name = cn_attacottia
+		}
 	}
 }

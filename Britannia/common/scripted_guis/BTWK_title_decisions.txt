@@ -1,9 +1,58 @@
-﻿## Anglo-Saxon Duchy Formation
+﻿## Generic (for title selection)
+title_selection_decision_selection = {
+	scope = character
+	
+	effect = {
+		set_variable = { name = selected_duchy value = scope:scoped_duchy }
+	}
+}
+
+title_selection_decision_reset_selection = {
+	scope = character
+	
+	effect = {
+		if = {
+			limit = { has_variable = selected_duchy }
+			remove_variable = selected_duchy
+		}
+	}
+}
+
+title_selection_decision_is_selected = {
+	scope = character
+	
+	is_valid = {
+		has_variable = selected_duchy
+		this.var:selected_duchy = scope:scoped_duchy
+	}
+}
+
+## Anglo-Saxon Duchy Formation
+anglo_saxon_duchy_formation_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = anglo_saxon_duchy_list
+				NOT = { has_variable = title_created_de_jure }
+				any_in_list = {
+					variable = dynamic_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
 anglo_saxon_duchy_formation_show = {
 	scope = character
 	
 	is_shown = {
-		scope:anglo_saxon_duchy = {
+		scope:scoped_duchy = {
 			NOT = { has_variable = title_created_de_jure }
 			any_in_list = {
 				variable = dynamic_de_jure_territory
@@ -16,34 +65,6 @@ anglo_saxon_duchy_formation_show = {
 	}
 }
 
-anglo_saxon_duchy_formation_selection = {
-	scope = character
-	
-	effect = {
-		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
-	}
-}
-
-anglo_saxon_duchy_formation_reset_selection = {
-	scope = character
-	
-	effect = {
-		if = {
-			limit = { has_variable = selected_anglo_saxon_duchy }
-			remove_variable = selected_anglo_saxon_duchy
-		}
-	}
-}
-
-anglo_saxon_duchy_formation_is_selected = {
-	scope = character
-	
-	is_valid = {
-		has_variable = selected_anglo_saxon_duchy
-		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
-	}
-}
-
 anglo_saxon_duchy_formation_create = {
 	scope = character
 	
@@ -53,24 +74,45 @@ anglo_saxon_duchy_formation_create = {
 			limit = { is_independent_ruler = no }
 			liege = { highest_held_title_tier > tier_duchy }
 		}
-		can_create_formable_title = { TITLE = scope:anglo_saxon_duchy }
+		can_create_formable_title = { TITLE = scope:scoped_duchy }
 	}
 	
 	effect = {
-		create_anglo_saxon_duchy_effect = { TITLE = scope:anglo_saxon_duchy }
+		scope:scoped_duchy = { custom_tooltip = { text = create_anglo_saxon_de_jure_duchies_decision_button_tooltip } }
+		create_anglo_saxon_duchy_effect = { TITLE = scope:scoped_duchy }
 		if = {
-			limit = { has_variable = selected_anglo_saxon_duchy }
-			remove_variable = selected_anglo_saxon_duchy
+			limit = { has_variable = selected_duchy }
+			remove_variable = selected_duchy
 		}
 	}
 }
 
 ## Anglo-Saxon Duchy Destruction
+anglo_saxon_duchy_destruction_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = anglo_saxon_duchy_list
+				has_variable = title_created_de_jure
+				any_in_list = {
+					variable = dynamic_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
 anglo_saxon_duchy_destruction_show = {
 	scope = character
 	
 	is_shown = {
-		scope:anglo_saxon_duchy = {
+		scope:scoped_duchy = {
 			has_variable = title_created_de_jure
 			any_in_list = {
 				variable = dynamic_de_jure_territory
@@ -83,51 +125,143 @@ anglo_saxon_duchy_destruction_show = {
 	}
 }
 
-anglo_saxon_duchy_destruction_selection = {
-	scope = character
-	
-	effect = {
-		set_variable = { name = selected_anglo_saxon_duchy value = scope:anglo_saxon_duchy }
-	}
-}
-
-anglo_saxon_duchy_destruction_reset_selection = {
-	scope = character
-	
-	effect = {
-		if = {
-			limit = { has_variable = selected_anglo_saxon_duchy }
-			remove_variable = selected_anglo_saxon_duchy
-		}
-	}
-}
-
-anglo_saxon_duchy_destruction_is_selected = {
-	scope = character
-	
-	is_valid = {
-		has_variable = selected_anglo_saxon_duchy
-		this.var:selected_anglo_saxon_duchy = scope:anglo_saxon_duchy
-	}
-}
-
 anglo_saxon_duchy_destruction_destroy = {
 	scope = character
 	
 	is_valid = {
 		NOT = { top_liege_can_create_germanic_title_culture_trigger = yes }
-		NOT = { can_create_germanic_title_trigger = yes }
 		can_destroy_formable_title = { 
-			TITLE = scope:anglo_saxon_duchy 
+			TITLE = scope:scoped_duchy 
 			COUNTY_TRIGGER = "NOT = { germanic_controlled_trigger = yes }" 
 		}
 	}
 	
 	effect = {
-		destroy_anglo_saxon_duchy_effect = { TITLE = scope:anglo_saxon_duchy }
+		scope:scoped_duchy = { custom_tooltip = { text = destroy_anglo_saxon_de_jure_duchies_decision_button_tooltip } }
+		hidden_effect = { destroy_anglo_saxon_duchy_effect = { TITLE = scope:scoped_duchy } }
 		if = {
-			limit = { has_variable = selected_anglo_saxon_duchy }
-			remove_variable = selected_anglo_saxon_duchy
+			limit = { has_variable = selected_duchy }
+			remove_variable = selected_duchy
+		}
+	}
+}
+
+## Roman Duchy Formation
+roman_duchy_formation_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = roman_duchy_list
+				NOT = { has_variable = roman_title_created_de_jure }
+				any_in_list = {
+					variable = roman_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
+roman_duchy_formation_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_duchy = {
+			NOT = { has_variable = roman_title_created_de_jure }
+			any_in_list = {
+				variable = roman_de_jure_territory
+				OR = {
+					root = { completely_controls = prev }
+					is_neighbor_to_realm = root
+				}
+			}
+		}
+	}
+}
+
+roman_duchy_formation_create = {
+	scope = character
+	
+	is_valid = {
+		can_create_roman_title_trigger = yes
+		trigger_if = {
+			limit = { is_independent_ruler = no }
+			liege = { highest_held_title_tier > tier_duchy }
+		}
+		can_create_formable_title = { TITLE = scope:scoped_duchy }
+	}
+	
+	effect = {
+		scope:scoped_duchy = { custom_tooltip = { text = create_roman_de_jure_duchies_decision_button_tooltip } }
+		hidden_effect = { create_roman_duchy_effect = { TITLE = scope:scoped_duchy } }
+		if = {
+			limit = { has_variable = selected_duchy }
+			remove_variable = selected_duchy
+		}
+	}
+}
+
+## Roman Duchy Destruction
+roman_duchy_destruction_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = roman_duchy_list
+				has_variable = roman_title_created_de_jure
+				any_in_list = {
+					variable = roman_de_jure_territory
+					OR = {
+						root = { completely_controls = prev }
+						is_neighbor_to_realm = root
+					}
+				}
+			}
+		}
+	}
+}
+
+roman_duchy_destruction_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_duchy = {
+			has_variable = roman_title_created_de_jure
+			any_in_list = {
+				variable = roman_de_jure_territory
+				OR = {
+					root = { completely_controls = prev }
+					is_neighbor_to_realm = root
+				}
+			}
+		}
+	}
+}
+
+roman_duchy_destruction_destroy = {
+	scope = character
+	
+	is_valid = {
+		NOT = { top_liege_can_create_roman_title_trigger = yes }
+		NOT = { top_liege_can_create_germanic_title_culture_trigger = yes }
+		can_destroy_formable_title = { 
+			TITLE = scope:scoped_duchy 
+			COUNTY_TRIGGER = "NOT = { roman_controlled_trigger = yes }" 
+		}
+	}
+	
+	effect = {
+		scope:scoped_duchy = { custom_tooltip = { text = destroy_roman_de_jure_duchies_decision_button_tooltip } }
+		hidden_effect = { destroy_roman_duchy_effect = { TITLE = scope:scoped_duchy } }
+		if = {
+			limit = { has_variable = selected_duchy }
+			remove_variable = selected_duchy
 		}
 	}
 }

@@ -2,123 +2,29 @@
 
 vbox = {
 	name = "decision_view_widget_destroy_anglo_saxon_de_jure_duchies"
-	layoutpolicy_horizontal = expanding
-	layoutpolicy_vertical = expanding
-	ignoreinvisible = yes
-
-	margin_top = 10
-	spacing = 10
-
-	vbox = {		
-		layoutpolicy_horizontal = expanding
-		layoutpolicy_vertical = expanding
-
-		scrollbox = {
-			layoutpolicy_horizontal = expanding
-			layoutpolicy_vertical = expanding
-			
-			size = { 400 200 }
-
-			blockoverride "scrollbox_content" {
-				vbox = {
-					datamodel = "[GetGlobalList('anglo_saxon_duchy_list')]"
-					spacing = 6
-
-					item = {
-						DestroyAngloSaxonTitleType = {}
-					}
-				}
-			}
-
-			blockoverride "scrollbox_background_fade" {}
+	TitleSelectionActionBoxType = {
+		blockoverride "box_datamodel" {
+			datamodel = "[GetGlobalList('anglo_saxon_duchy_list')]"
 		}
-	}
-	
-	state = {
-		name = init_state
-		trigger_on_create = yes
-		on_start = "[GetScriptedGui('anglo_saxon_duchy_destruction_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
-	}
-}
-
-types DestroyAngloSaxonDuchyTitleTypes
-{
-	type DestroyAngloSaxonTitleType = hbox {
-		layoutpolicy_horizontal = expanding
-		layoutpolicy_vertical = expanding
-		spacing = 10
-		
-		visible = "[GetScriptedGui('anglo_saxon_duchy_destruction_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-
-		button_standard = {
-			size = { 280 50 }
-			margin = { 10 10 }
-
-			onclick = "[GetScriptedGui('anglo_saxon_duchy_destruction_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			# enabled = "[GetScriptedGui('anglo_saxon_duchy_destruction_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			# tooltip = "[Entry.GetTooltip]"
-			down = "[GetScriptedGui('anglo_saxon_duchy_destruction_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-				spacing = 10
-				margin_left = 10
-
-				coa_title_tiny = {
-					datacontext = "[Scope.Title]"
-				}
-
-				vbox = {
-					datacontext = "[Scope.Title]"
-					name = "title_info"
-					layoutpolicy_vertical = expanding
-					margin_bottom = 5
-
-					text_single = {
-						name = "title_name"
-						alwaystransparent = yes
-						text = "[Title.GetName]"
-						max_width = 250
-						align = left
-					}
-				}
-				
-				expand = {}
-			}
+		blockoverride "no_titles_text" {
+			text = destroy_anglo_saxon_de_jure_duchies_decision_no_title_shown_string
 		}
-		
-		button_standard = {
-			size = { 70 50 }
-			margin = { 10 10 }
-
-			onclick = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			enabled = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			tooltip = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('anglo_saxon_duchy', Scope.Title.MakeScope).End)]"
-			
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-				spacing = 10
-				margin_left = 10
-
-				vbox = {
-					datacontext = "[Scope.Title]"
-					name = "title_info"
-					layoutpolicy_vertical = expanding
-					margin_bottom = 5
-
-					text_single = {
-						name = "title_name"
-						alwaystransparent = yes
-						text = "Destroy"
-						max_width = 250
-						align = center
-					}
-				}
-				
-				expand = {}
-			}
+		blockoverride "no_titles_text_is_shown" {
+			visible = "[GetScriptedGui('anglo_saxon_duchy_destruction_none_shown').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+		blockoverride "title_visible" {
+			visible = "[GetScriptedGui('anglo_saxon_duchy_destruction_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+		}
+		blockoverride "selection_button" {
+			onclick = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+			enabled = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+			tooltip = "[GetScriptedGui('anglo_saxon_duchy_destruction_destroy').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+		}
+		blockoverride "selection_button_text_box" {
+			margin_left = 10
+		}
+		blockoverride "selection_button_text" {
+			text = "Destroy"
 		}
 	}
 }

@@ -5,7 +5,9 @@ namespace = titular_titles_test
 
 ### De Jure Title Creation, Expansion, and Restoration Events
 
-# 0001 - Anglo-Saxons
+# 0001 - 0099: Anglo-Saxons
+# 0101 - 0199: Romans
+# 0201 - 0299: Britons
 
 ##################################################
 
@@ -62,7 +64,28 @@ titular_titles.0001 = {
 	}
 
 	option = {
-		name = titular_titles.0001.a
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles.0001.a.anglosaxon
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					} 
+				}
+			}
+			text = titular_titles.0001.a.britonroman
+		}
+		name = {
+			text = titular_titles.0001.a
+		}
 	}
 }
 
@@ -104,7 +127,316 @@ titular_titles.0002 = {
 	}
 
 	option = {
-		name = titular_titles.0002.a
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					} 
+				}
+			}
+			text = titular_titles.0002.a.britonroman
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles.0002.a.anglosaxon
+		}
+		name = {
+			text = titular_titles.0001.a
+		}
+	}
+}
+
+##################################################
+# Romans
+##################################################
+
+# Creation of duchy
+titular_titles.0101 = {
+	type = character_event
+	title = titular_titles.0101.t
+	desc = {
+		desc = titular_titles.0101.desc.intro
+		first_valid = {
+			desc = titular_titles.0101.desc.fallback
+		}
+		desc = titular_titles.0101.desc.outro
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:conqueror }
+			if = {
+				limit = { 
+					exists = scope:new_roman_duchy_title.holder 
+					NOR = {
+						scope:new_roman_duchy_title.holder = ROOT
+						scope:new_roman_duchy_title.holder = { is_vassal_or_below_of = ROOT }
+					}
+				}
+				create_title_and_vassal_change = {
+					type = usurped
+					save_scope_as = title_change
+					add_claim_on_loss = yes
+				}
+				scope:new_roman_duchy_title = {
+					change_title_holder = {
+						holder = root
+						change = scope:title_change
+					}
+				}
+				resolve_title_and_vassal_change = scope:title_change
+			}
+			else_if = {
+				limit = { NOT = { exists = scope:new_roman_duchy_title.holder } }
+				create_title_and_vassal_change = {
+					type = created
+					save_scope_as = title_change
+					add_claim_on_loss = no
+				}
+				scope:new_roman_duchy_title = {
+					change_title_holder = {
+						holder = root
+						change = scope:title_change
+					}
+				}
+				resolve_title_and_vassal_change = scope:title_change
+			}
+		}
+		show_as_tooltip = {
+			scope:new_roman_duchy_title = {
+				check_de_jure_liege_duchy_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_county_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = titular_titles.0101.a.roman
+		}
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			text = titular_titles.0101.a.briton
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles.0101.a.anglosaxon
+		}
+		name = {
+			text = titular_titles.0101.a
+		}
+	}
+}
+
+# Destruction of duchy
+titular_titles.0102 = {
+	type = character_event
+	title = titular_titles.0102.t
+	desc = {
+		desc = titular_titles.0102.desc.intro
+		first_valid = {
+			desc = titular_titles.0102.desc.fallback
+		}
+		desc = titular_titles.0102.desc.outro
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				exists = scope:old_roman_duchy_title.holder 
+				scope:old_roman_duchy_title.holder = { top_liege_can_create_roman_title_trigger = yes }
+			}
+			destroy_title = scope:old_roman_duchy_title
+		}
+		show_as_tooltip = {
+			scope:old_roman_duchy_title = {
+				check_de_jure_liege_duchy_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_county_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = titular_titles.0102.a.roman
+		}
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			text = titular_titles.0102.a.briton
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles.0102.a.anglosaxon
+		}
+		name = {
+			text = titular_titles.0102.a
+		}
+	}
+}
+
+##################################################
+# Britons
+##################################################
+
+# Kingdom of Deheubarth
+titular_titles.0201 = {
+	type = character_event
+	title = titular_titles.0201.t
+	desc = titular_titles.0201.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:k_deheubarth = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+				copy_title_history = title:k_demetia
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			destroy_title = title:k_demetia
+			title:k_demetia = {
+				hidden_effect = {
+					every_claimant = {
+						if = {
+							limit = { has_strong_claim_on = title:k_demetia }
+							remove_claim = title:k_demetia
+							add_pressed_claim = title:k_deheubarth
+						}
+						else = {
+							remove_claim = title:k_demetia
+							add_unpressed_claim = title:k_deheubarth
+						}
+					}
+				}
+			}
+		}
+		show_as_tooltip = {
+			title:k_deheubarth = { 
+				save_scope_as = title_created_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles.0201.a.founder
+		}
+		name = {
+			text = titular_titles.0201.a
+		}
+	}
+}
+
+# Reunification of Dumnonia
+titular_titles.0202 = {
+	type = character_event
+	title = titular_titles.0202.t
+	desc = titular_titles.0202.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			destroy_title = title:k_kernow
+		}
+		show_as_tooltip = {
+			title:k_dumnonia = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles.0202.a.founder
+		}
+		name = {
+			text = titular_titles.0202.a
+		}
 	}
 }
 
