@@ -108,19 +108,15 @@ BTWK_story_event.0101 = {  # Uther introductory event
 		}
 
 		every_ruler = {
-			if = {
-				limit = {
-					AND = {
-						holds_kingdom_near_dumnonia = yes 
-						culture = {
-							culture_is_brythonic_culture_trigger = yes
-						}
-					}
+			limit = {
+				holds_kingdom_near_dumnonia = yes 
+				culture = {
+					culture_is_brythonic_culture_trigger = yes
 				}
-				trigger_event = {
-					id = BTWK_story_event.0102
-					days = 25
-				}
+			}
+			trigger_event = {
+				id = BTWK_story_event.0102
+				days = 25
 			}
 		}
 	}
@@ -130,6 +126,7 @@ BTWK_story_event.0102 = {  # Event for ai selection of whether they want to go t
 
 	# MAY WANT A SECOND GLOBAL VARIABLE LIST FOR ALL VALID KINGS, IN CASE WE MAKE GLEVUM INTO A RESKINNED FEAST ACTIVITY
 	# IN THIS CASE, PROBABLY WANT TO REFERENCE NEW FILE SO I DON'T HAVE TO KEEP CHANGING EVENT ID - "BTWK_storyline_activity_events", etc.
+	# Add separate tooltips for if you or your heir is elegible to become Mordred's guardian
 
 	type = character_event
 	title = BTWK_story_event.0102.t
@@ -142,7 +139,9 @@ BTWK_story_event.0102 = {  # Event for ai selection of whether they want to go t
 	}
 
 	trigger = {
-		character:1 = {is_alive = yes}
+		character:1 = {
+			is_alive = yes
+		}
 	}
 
 	option = {  # Go to the council
@@ -185,19 +184,19 @@ BTWK_story_event.0102 = {  # Event for ai selection of whether they want to go t
 				target = root.primary_heir
 			}
 		}
-	# IF CHAR = TEWDRIC OR AGRICOLA
-	else_if = {
-		limit = {
-			OR = {
-				this = character:14
-				this = character:40
+		# IF CHAR = TEWDRIC OR AGRICOLA
+		else_if = {
+			limit = {
+				OR = {
+					this = character:14
+					this = character:40
+				}
+			}
+			add_to_global_variable_list = {
+				name = attending_glevum
+				target = this
 			}
 		}
-		add_to_global_variable_list = {
-			name = attending_glevum
-			target = this
-		}
-	}
 	# AI CHANCE MUST STILL BE MODIFIED ACCORDINGLY
 	# ADD AN OPINION BASED MODIFIER TO AI CHANCE?
 		ai_chance = {
@@ -224,7 +223,7 @@ BTWK_story_event.0102 = {  # Event for ai selection of whether they want to go t
 	option = {  # Don't go to the council
 		name = BTWK_story_event.0102.b
 		trigger = {
-			NOT = {root.primary_title = title:k_gwent} #The council is being held in Gwent at Uther's demand, they can't NOT show up? 
+			NOT = {root.primary_title = title:k_gwent}   
 		}
 		ai_chance = {
 			base = 50
@@ -315,6 +314,12 @@ BTWK_story_event.0118 = { # Event for Tewdric: Fills player in on his opinions o
 	title = BTWK_story_event.0118.t
 	desc = BTWK_story_event.0118.desc
 	theme = realm
+
+	immediate = {
+		character:40 = {
+			save_scope_as = agricola_of_glevum
+		}
+	}
 	# Agricola's suggestion subchain
 	option = {
 		name = BTWK_story_event.0118.a
