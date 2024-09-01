@@ -68,7 +68,10 @@ check_de_jure_liege_duchy_effect = {
 			title_has_de_jure_variable_trigger = { FLAG = roman_title_created_de_jure }
 			has_variable = roman_kingdom
 		}
-		set_de_jure_liege_title = this.var:roman_kingdom
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:roman_kingdom } }
+			set_de_jure_liege_title = this.var:roman_kingdom
+		}
 		set_roman_duchy_name_effect = yes
 		if = {
 			limit = { has_variable = roman_title_capital }
@@ -84,7 +87,10 @@ check_de_jure_liege_duchy_effect = {
 				target = this.var:integration_kingdom
 			}
 		}
-		set_de_jure_liege_title = this.var:integration_kingdom
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:integration_kingdom } }
+			set_de_jure_liege_title = this.var:integration_kingdom
+		}
 	}
 	else_if = {
 		limit = {
@@ -93,7 +99,24 @@ check_de_jure_liege_duchy_effect = {
 				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
 			}
 		}
-		set_de_jure_liege_title = this.var:expansion_kingdom_1
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_kingdom_1 } }
+			set_de_jure_liege_title = this.var:expansion_kingdom_1
+		}
+	}
+	# Used for if a kingdom has multiple possible expansions it can get that are not covered by a
+	# more systematic framework
+	else_if = {
+		limit = {
+			has_variable = expansion_alt_kingdom_1
+			this.var:expansion_alt_kingdom_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_alt_kingdom_1 } }
+			set_de_jure_liege_title = this.var:expansion_alt_kingdom_1
+		}
 	}
 	else_if = {
 		limit = {
@@ -102,13 +125,74 @@ check_de_jure_liege_duchy_effect = {
 				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
 			}
 		}
-		set_de_jure_liege_title = this.var:formable_kingdom_1
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:formable_kingdom_1 } }
+			set_de_jure_liege_title = this.var:formable_kingdom_1
+		}
 	}
-	else = {		
-		set_de_jure_liege_title = this.var:default_kingdom
+	else = {
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:default_kingdom } }		
+			set_de_jure_liege_title = this.var:default_kingdom
+		}
 		if = {
 			limit = { NOT = { has_variable = custom_name } }
-			reset_title_name = yes
+			hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
+		}
+		if = {
+			limit = { NOT = { has_variable = custom_capital } }
+			set_capital_county = this.var:default_capital
+		}
+	}
+}
+
+check_de_jure_liege_kingdom_effect = {
+	if = {
+		limit = {
+			has_variable = expansion_empire_1
+			this.var:expansion_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_empire_1 } }
+			set_de_jure_liege_title = this.var:expansion_empire_1
+		}
+	}
+	# Used for if a empire has multiple possible expansions it can get that are not covered by a
+	# more systematic framework
+	else_if = {
+		limit = {
+			has_variable = expansion_alt_empire_1
+			this.var:expansion_alt_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_alt_empire_1 } }
+			set_de_jure_liege_title = this.var:expansion_alt_empire_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_variable = formable_empire_1
+			this.var:formable_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:formable_empire_1 } }
+			set_de_jure_liege_title = this.var:formable_empire_1
+		}
+	}
+	else = {
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:default_empire } }		
+			set_de_jure_liege_title = this.var:default_empire
+		}
+		if = {
+			limit = { NOT = { has_variable = custom_name } }
+			hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
 		}
 		if = {
 			limit = { NOT = { has_variable = custom_capital } }
