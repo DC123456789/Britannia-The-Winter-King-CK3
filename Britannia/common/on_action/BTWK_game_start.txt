@@ -1528,7 +1528,6 @@ BTWK_de_jure_setup = {
 			title:d_brycheiniog = { set_variable = { name = formable_kingdom_1 value = PREV } }
 			title:d_westpowys = { set_variable = { name = formable_kingdom_1 value = PREV } }
 		}
-		# Formation of Strathclyde/Cumbria
 		
 		# EXPANDABLE KINGDOMS
 		title:k_dumnonia = {
@@ -1536,8 +1535,47 @@ BTWK_de_jure_setup = {
 			title:d_penwith = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 			title:d_lyonesse = { set_variable = { name = expansion_kingdom_1 value = PREV } }
 		}
+		title:k_strathclyde = {
+			title:d_westrheged = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_selgovae = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_eidyn = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+			title:d_tweeddale = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+			title:d_manaw = { set_variable = { name = expansion_alt_kingdom_1 value = PREV } }
+		}
+		title:k_pennines = {		# Triggered by formation of Strathclyde
+			title:d_argoed = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+			title:d_maunguid = { set_variable = { name = expansion_kingdom_1 value = PREV } }
+		}
 		
 		# FORMABLE EMPIRES
+		title:e_cymru = {
+			title:k_dumnonia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_kernow = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_belgae = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_cantuaria = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_londinium = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_icenia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_cynwidion = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lindum = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_glevum = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_gwent = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_powys = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_siluria = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_demetia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_deheubarth = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_gwynedd = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lleyn = { set_variable = { name = formable_empire_1 value = PREV } }
+		}
+		title:e_hen_ogledd = {
+			title:k_ebrauc = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_elmet = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_pennines = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_rheged = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_bryneich = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lothian = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_strathclyde = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_ynys_man = { set_variable = { name = formable_empire_1 value = PREV } }
+		}
 		# - Formation of Hen Ogledd and Cymru
 		
 		### IRISH TITLE SETUP ###
@@ -1649,9 +1687,49 @@ BTWK_de_jure_setup = {
 				}
 			}
 			if = {
+				limit = { has_variable = expansion_alt_kingdom_1 }
+				this.var:expansion_alt_kingdom_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
 				limit = { has_variable_list = potential_integration_kingdoms }
 				ordered_in_list = {
 					variable = potential_integration_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+		}
+		
+		# Similar list for empires
+		every_kingdom = {
+			if = {
+				limit = { has_variable = formable_empire_1 }
+				this.var:formable_empire_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_empire_1 }
+				this.var:expansion_empire_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_alt_empire_1 }
+				this.var:expansion_alt_empire_1 = { 
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
 						target = PREV
@@ -1687,6 +1765,9 @@ BTWK_de_jure_setup = {
 		}
 		every_duchy = {
 			check_de_jure_liege_duchy_effect = yes
+		}
+		every_kingdom = {
+			check_de_jure_liege_kingdom_effect = yes
 		}
 	}
 }
