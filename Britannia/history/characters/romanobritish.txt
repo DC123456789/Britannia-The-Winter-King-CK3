@@ -24,7 +24,8 @@
 	#trait = war_hero
 	trait = arrogant
 	trait = just
-	trait = honest	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	trait = honest
+	trait = pneumonic
 	father = 1000	# Constantine
 	mother = 1003	# Anna
 	fertility = 0
@@ -32,7 +33,6 @@
 		birth = "427.5.10"
 		effect = {
 			add_character_flag = uther_pendragon
-			save_global_event_target_as = uther_pendragon
 		}
 	}
 	447.11.3 = {
@@ -71,7 +71,12 @@
 		}
 	}
 	479.5.1 = {
-		trait = pneumonic
+		#trait = pneumonic
+		designate_diarch = character:51  # Father Bedwin 
+		remove_generated_diarch_consequences_effect = {
+			NEW_DIARCH = character:51
+			LIEGE = character:1
+		}
 	}
 	480.10.20 = {
 		death = {
@@ -111,6 +116,7 @@
 	trait = education_martial_4
 	trait = open_terrain_expert
 	trait = brother_of_mithra
+	trait = restricted_marriage
 	# trait = inspiring_leader	# Add by Clay
 	trait = physique_good_2	# Add by Clay
 	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
@@ -122,10 +128,7 @@
 		birth = "455.12.3"
 		employer = 1
 		effect = {
-			save_global_event_target_as = arthur_pendragon
-		}
-		effect = {
-			add_character_flag = arthur
+			add_character_flag = arthur_pendragon
 		}
 	}
 	470.3.21 = {
@@ -183,10 +186,10 @@
 	480.10.20 = {
 		employer = 5
 		give_nickname = nick_pendragon
-		add_pressed_claim = k_dumnonia
+		# add_pressed_claim = title:k_dumnonia
 		effect = {
 			add_prestige = 600
-			add_character_flag = returned
+			add_character_flag = arthur_returned
 			# disband_event_forces = arthur_warrior_band
 			# spawn_unit = {
 			# 	earmark = arthur_warrior_band
@@ -246,11 +249,11 @@
 	trait = beauty_bad_1
 	trait = physique_good_1
 	trait = aggressive_attacker
-	trait = wrathful
-	trait = sadistic
-	trait = cynical
-	trait = deceitful
-	trait = lustful
+#	trait = wrathful
+#	trait = sadistic
+#	trait = cynical
+#	trait = deceitful
+#	trait = lustful
 	father = 7	#Mordred
 	mother = 19	#Norwenna
 	479.12.2 = {
@@ -369,7 +372,10 @@
 			#	who = 1		# Uther		
 			#	years = 1000
 			#}
-			create_alliance = character:1
+			event_alliance_effect = {
+				TARGET = character:1
+				ACTOR = character:14
+			}
 		}
 	}
 	490.1.1 = {
@@ -383,6 +389,7 @@
 19 = {
 	# Norwenna, book character
 	name = "Norwenna"
+	dna = 19_norwenna
 	female = yes
 	dynasty = 52
 	religion = "catholic"
@@ -391,13 +398,14 @@
 	intrigue = 3
 	stewardship = 7
 	learning = 6
-	health = 2
 	culture = "romanobritish"
 	trait = gluttonous
 	trait = arrogant
 	trait = family_first
 	trait = education_stewardship_1
 	trait = ambitious
+	trait = beauty_bad_1
+	trait = restricted_marriage
 	454.12.10 = {
 		birth = "454.12.10"
 	}
@@ -855,7 +863,11 @@
 		employer = 1
 		give_council_position = councillor_chancellor
 		effect = {
-			# give_minor_title = title_appointed_regent # No regencies
+			designate_diarch = character:51
+			remove_generated_diarch_consequences_effect = {
+				NEW_DIARCH = character:51
+				LIEGE = character:1
+			}
 			add_prestige = 490
 			add_piety = 550
 		}
@@ -1038,6 +1050,7 @@
 		death = "514.2.16"
 	}
 }
+
 
 74 = {
 	# Lord Decimus of Lindum, High Lord of The Wetlands (fictional)
@@ -1311,6 +1324,7 @@
 		death = "509.5.21"
 	}
 }
+
 
 108 = {
 	# Lord Mared of Verlucio (fictional)

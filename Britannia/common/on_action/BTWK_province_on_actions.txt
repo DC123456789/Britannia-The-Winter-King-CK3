@@ -1,0 +1,76 @@
+﻿on_building_starting = {
+	on_actions = {
+		hadrians_wall_segment_upgrading_on_action
+	}
+}
+
+on_building_completed = {
+	on_actions = {
+		is_hadrians_wall_restored_on_action
+	}
+}
+
+on_building_cancelled = {
+	on_actions = {
+		hadrians_wall_upgrade_canelled_on_action
+	}
+}
+
+hadrians_wall_segment_upgrading_on_action = {
+	effect = {
+		character = {
+			set_variable = hadrians_wall_holder_restored_wall_segment
+		}
+
+		if = {
+			limit = {
+				any_province = {
+					geographical_region = custom_hadrians_wall_provs
+					has_building = hadrians_wall_03
+					count = 9
+				}
+			}
+			set_global_variable = {
+				name = last_old_hadrians_wall_province
+				value = root
+			}
+		}				
+	}
+}
+
+is_hadrians_wall_restored_on_action = {
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_building = hadrians_wall_03
+				}				
+
+				if = {
+					limit = {
+						# May possibly need check to fire for the player if realm splinters around the Wall. 
+						any_province = {
+							geographical_region = custom_hadrians_wall_provs
+							has_building = hadrians_wall_03
+							count = 10
+						}
+					}
+					province_owner.top_liege = {
+						trigger_event = {
+							id = BTWK_frontier_event.0203
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+hadrians_wall_upgrade_canelled_on_action = {
+	effect = {
+		character = {
+			remove_variable = hadrians_wall_holder_restored_wall_segment
+		}
+		remove_global_variable = last_old_hadrians_wall_province
+	}
+}

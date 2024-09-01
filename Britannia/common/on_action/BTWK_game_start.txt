@@ -1,7 +1,12 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
-	on_actions = { BTWK_de_jure_setup BTWK_religion_setup }
+	on_actions = {
+		BTWK_de_jure_setup
+		BTWK_story_trigger_on_game_start_479
+		BTWK_culture_setup
+		BTWK_religion_setup
+	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
 
@@ -9,6 +14,22 @@ on_game_start = {
 on_game_start_after_lobby = {
 	on_actions = { BTWK_culture_setup }
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
+}
+
+BTWK_story_trigger_on_game_start_479 = {
+	effect = {
+		if = {
+			limit = { has_game_rule = BTWK_enabled }		
+			character:1 = {
+				add_character_modifier = {
+					modifier =  story_health_bonus_large_modifier
+				}
+				create_story = {
+					type = BTWK_story_uther_high_council	
+				}
+			}
+		}
+	}
 }
 
 BTWK_culture_setup = {
@@ -1750,3 +1771,4 @@ BTWK_de_jure_setup = {
 		}
 	}
 }
+

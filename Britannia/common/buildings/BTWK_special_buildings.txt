@@ -1,0 +1,174 @@
+﻿##########
+# Hadrian's Wall
+##########
+
+hadrians_wall_01 = {
+	# Hadrian's Wall - Ruined
+	# Change province modifiers?
+	# Cannot be restored from here - totally ruined.
+	flag = fully_upgraded
+	type_icon = "icon_structure_hadrians_wall.dds"
+	
+
+	province_modifier = {
+		build_gold_cost = -0.1
+	}
+
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+	type = special
+}
+
+hadrians_wall_02 = {
+	# Can't be constructed
+	# Hadrian's Wall 
+
+	type_icon = "icon_structure_hadrians_wall.dds"
+
+	province_modifier = {
+		fort_level = 1
+		defender_holding_advantage = 5
+		build_gold_cost = -0.025
+	}
+	next_building = hadrians_wall_03
+	type = special
+}
+
+hadrians_wall_03 = {
+	# Hadrian's Wall - Restored
+	flag = fully_upgraded
+	construction_time = slow_construction_time
+	cost_gold = 500
+	type_icon = "icon_structure_hadrians_wall.dds"
+	
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation
+		}
+		scope:holder.top_liege = {
+			completely_controls_region = custom_hadrians_wall_duchies
+			OR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+			NOT = { has_trait = barbarian_trait }
+			}
+		}
+
+	can_construct_potential = {
+		
+	}
+	
+	province_modifier = {
+		fort_level = 2
+		hostile_raid_time = 0.4
+		defender_holding_advantage = 7
+		garrison_size = 0.2
+	}
+	
+	county_modifier = {
+		monthly_county_control_growth_add = 0.1
+	}
+
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+	type = special
+}
+
+arbeia_01 = {
+
+	type_icon = "icon_structure_hadrians_wall.dds"  # Change? 
+
+	province_modifier = {
+		fort_level = 1
+		supply_limit = 2000 
+		stationed_maa_toughness_add = 5 
+		levy_size = 0.15
+
+	}
+	type = special
+	flag = travel_point_of_interest_martial_major
+}
+
+################
+# Offa's Dyke #
+################
+
+offas_dyke_01 = { 
+	flag = fully_upgraded
+	type_icon = "icon_building_palisades.dds"
+	construction_time = quick_construction_time
+	cost_gold = 75
+
+	can_construct = {
+		scope:holder.top_liege = {
+			is_ingvaeonic_culture_trigger = yes
+		}
+	}
+
+	can_construct_potential = {
+	}
+
+	province_modifier = {
+		defender_holding_advantage = 5
+		stationed_maa_toughness_mult = 0.05
+		hostile_raid_time = 0.2
+	}
+	
+	is_enabled = {
+		scope:holder.top_liege = {
+			is_brythonic_culture_trigger = no
+		}
+	}
+
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+	type = special
+}
+
+
+############################
+# Restored Antonine Wall  #
+############################
+
+#antonine_wall_01 = { 
+#	flag = fully_upgraded
+#	type_icon = "icon_building_palisades.dds"
+#	construction_time = slow_construction_time
+#	cost_gold = 400
+#	
+#	can_construct_potential = {
+#		building_requirement_tribal = no
+#		is_imperial_culture_trigger = yes
+#	}
+#
+#
+#	province_modifier = {
+#		defender_holding_advantage = 5
+#		stationed_maa_toughness_mult = 0.05
+#	}
+#	
+#	ai_value = {
+##		base = 100
+#		modifier = { # Fill all building slots before going for special buildings
+#			factor = 0
+#			free_building_slots > 0
+#		}
+#	}
+#	type = special
+#}
