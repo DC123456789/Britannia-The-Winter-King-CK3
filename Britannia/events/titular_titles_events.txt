@@ -319,12 +319,42 @@ titular_titles.0102 = {
 ##################################################
 # Britons
 ##################################################
+# 0201/0202 Kingdom of Deheubarth
+# 0203/0204 - Reunification of Dumnonia
+# 0205/0206 - Kingdom of Strathclyde
 
 # Kingdom of Deheubarth
 titular_titles.0201 = {
 	type = character_event
-	title = titular_titles.0201.t
-	desc = titular_titles.0201.desc
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles.0202 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0202 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_deheubarth = { 
+				set_variable = title_created_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles.0202 = {
+	type = character_event
+	title = titular_titles.0202.t
+	desc = titular_titles.0202.desc
 	theme = realm
 	
 	left_portrait = {
@@ -365,6 +395,7 @@ titular_titles.0201 = {
 				}
 			}
 		}
+		# This shows the de jure shift as a tooltip
 		show_as_tooltip = {
 			title:k_deheubarth = { 
 				save_scope_as = title_created_de_jure_pretend
@@ -386,19 +417,46 @@ titular_titles.0201 = {
 					any_liege_or_above = { this = scope:founder }
 				}
 			}
-			text = titular_titles.0201.a.founder
+			text = titular_titles.0202.a.founder
 		}
 		name = {
-			text = titular_titles.0201.a
+			text = titular_titles.0202.a
 		}
 	}
 }
 
 # Reunification of Dumnonia
-titular_titles.0202 = {
+titular_titles.0203 = {
 	type = character_event
-	title = titular_titles.0202.t
-	desc = titular_titles.0202.desc
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles.0204 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0204 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_dumnonia = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles.0204 = {
+	type = character_event
+	title = titular_titles.0204.t
+	desc = titular_titles.0204.desc
 	theme = realm
 	
 	left_portrait = {
@@ -432,19 +490,62 @@ titular_titles.0202 = {
 					any_liege_or_above = { this = scope:founder }
 				}
 			}
-			text = titular_titles.0202.a.founder
+			text = titular_titles.0204.a.founder
 		}
 		name = {
-			text = titular_titles.0202.a
+			text = titular_titles.0204.a
 		}
 	}
 }
 
 # Formation of Strathclyde
-titular_titles.0203 = {
+titular_titles.0205 = {
 	type = character_event
-	title = titular_titles.0203.t
-	desc = titular_titles.0203.desc
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles.0206 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0206 }
+		}
+		hidden_effect = {
+			if = {
+				limit = { completely_controls = title:c_luguvalium }
+				title:k_strathclyde = { 
+					set_variable = title_expanded_de_jure
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+				title:k_pennines = { 
+					set_variable = title_expanded_de_jure
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+			}
+			if = {
+				limit = { completely_controls = title:c_din_eidyn }
+				title:k_strathclyde = { 
+					set_variable = title_expanded_alt_de_jure
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						check_de_jure_liege_duchy_effect = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+titular_titles.0206 = {
+	type = character_event
+	title = titular_titles.0206.t
+	desc = titular_titles.0206.desc
 	theme = realm
 	
 	left_portrait = {
@@ -513,11 +614,92 @@ titular_titles.0203 = {
 					any_liege_or_above = { this = scope:founder }
 				}
 			}
-			text = titular_titles.0203.a.founder
+			text = titular_titles.0206.a.founder
 		}
 		name = {
-			text = titular_titles.0203.a
+			text = titular_titles.0206.a
 		}
+	}
+}
+
+# High Kingdom of Hen Ogledd
+titular_titles.0207 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles.0208 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0208 }
+		}
+		hidden_effect = {
+			title:e_hen_ogledd = { 
+				set_variable = title_created_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_kingdom_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles.0208 = {
+	type = character_event
+	title = titular_titles.0208.t
+	desc = titular_titles.0208.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_hen_ogledd = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+		}
+		show_as_tooltip = {
+			title:e_hen_ogledd = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					show_as_tooltip = {
+						check_de_jure_liege_kingdom_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = titular_titles.0208.a.founder
+		trigger = {
+			OR = {
+				this = scope:founder
+				any_liege_or_above = { this = scope:founder }
+			}
+		}
+	}
+	
+	option = {
+		name = titular_titles.0208.a
+		trigger = { always = no }
+		fallback = yes
 	}
 }
 

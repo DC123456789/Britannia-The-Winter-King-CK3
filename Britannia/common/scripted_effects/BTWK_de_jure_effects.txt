@@ -146,6 +146,61 @@ check_de_jure_liege_duchy_effect = {
 	}
 }
 
+check_de_jure_liege_kingdom_effect = {
+	if = {
+		limit = {
+			has_variable = expansion_empire_1
+			this.var:expansion_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_empire_1 } }
+			set_de_jure_liege_title = this.var:expansion_empire_1
+		}
+	}
+	# Used for if a empire has multiple possible expansions it can get that are not covered by a
+	# more systematic framework
+	else_if = {
+		limit = {
+			has_variable = expansion_alt_empire_1
+			this.var:expansion_alt_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_alt_empire_1 } }
+			set_de_jure_liege_title = this.var:expansion_alt_empire_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_variable = formable_empire_1
+			this.var:formable_empire_1 = {
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:formable_empire_1 } }
+			set_de_jure_liege_title = this.var:formable_empire_1
+		}
+	}
+	else = {
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:default_empire } }		
+			set_de_jure_liege_title = this.var:default_empire
+		}
+		if = {
+			limit = { NOT = { has_variable = custom_name } }
+			hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
+		}
+		if = {
+			limit = { NOT = { has_variable = custom_capital } }
+			set_capital_county = this.var:default_capital
+		}
+	}
+}
+
 # If this is updated, the roman_name variable setup also needs to be updated!
 set_roman_duchy_name_effect = {
 	custom_description = {

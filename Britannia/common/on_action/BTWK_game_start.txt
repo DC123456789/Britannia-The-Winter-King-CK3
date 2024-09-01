@@ -1527,6 +1527,34 @@ BTWK_de_jure_setup = {
 		}
 		
 		# FORMABLE EMPIRES
+		title:e_cymru = {
+			title:k_dumnonia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_kernow = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_belgae = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_cantuaria = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_londinium = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_icenia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_cynwidion = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lindum = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_glevum = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_gwent = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_powys = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_siluria = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_demetia = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_deheubarth = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_gwynedd = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lleyn = { set_variable = { name = formable_empire_1 value = PREV } }
+		}
+		title:e_hen_ogledd = {
+			title:k_ebrauc = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_elmet = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_pennines = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_rheged = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_bryneich = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_lothian = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_strathclyde = { set_variable = { name = formable_empire_1 value = PREV } }
+			title:k_ynys_man = { set_variable = { name = formable_empire_1 value = PREV } }
+		}
 		# - Formation of Hen Ogledd and Cymru
 		
 		### IRISH TITLE SETUP ###
@@ -1658,6 +1686,37 @@ BTWK_de_jure_setup = {
 			}
 		}
 		
+		# Similar list for empires
+		every_kingdom = {
+			if = {
+				limit = { has_variable = formable_empire_1 }
+				this.var:formable_empire_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_empire_1 }
+				this.var:expansion_empire_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_alt_empire_1 }
+				this.var:expansion_alt_empire_1 = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+				}
+			}
+		}
+		
 		# Get a list of what duchies are under what hierarchies
 		title:e_aengland = {
 			every_in_de_jure_hierarchy = {
@@ -1685,6 +1744,9 @@ BTWK_de_jure_setup = {
 		}
 		every_duchy = {
 			check_de_jure_liege_duchy_effect = yes
+		}
+		every_kingdom = {
+			check_de_jure_liege_kingdom_effect = yes
 		}
 	}
 }
