@@ -1,0 +1,391 @@
+﻿###############################
+# Standard Military Buildings #
+###############################
+
+# Shooting Ranges - Low Levy, Archers
+
+archery_range_01 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 01 }
+		scope:holder.culture = {
+			has_innovation = innovation_barracks
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_1_cost
+	
+	levy = normal_building_levy_tier_1
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_1 
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_1
+		stationed_archers_toughness_mult = high_maa_toughness_tier_1
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_1
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_1
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_1
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_1
+	}
+	
+	next_building = archery_range_02
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 10
+		ai_tier_1_building_modifier = yes
+		ai_general_building_modifier = yes
+		ai_stacking_bonus_outposts_modifier = yes
+		ai_anti_synergy_armored_infantry_modifier = yes
+		ai_anti_synergy_cavalry_modifier = yes
+		ai_archer_modifier = yes
+		modifier = {
+			add = non_stationed_maa_bonus
+			has_stationed_regiment = yes
+			NOR = {
+				has_stationed_regiment_of_base_type = archers
+			}
+		}
+		modifier = {
+			factor = 0
+			building_regimental_grounds_requirement_terrain = yes
+			NOT = {
+				has_building_or_higher = outposts_01
+			}
+		}
+		modifier = {
+			add = -3
+			OR = {
+				exists = barony.lessee
+				scope:holder = {
+					highest_held_title_tier <= tier_barony
+				}
+			}
+		}
+		modifier = {
+			add = -10
+			scope:holder = {
+				OR = {
+					AND = {
+						government_has_flag = government_is_theocracy
+						highest_held_title_tier <= tier_barony
+					}
+					is_theocratic_lessee = yes
+				}
+			}
+		}
+	}
+}
+
+archery_range_02 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 01 }
+		scope:holder.culture = {
+			has_innovation = innovation_barracks
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_2_cost
+	
+	levy = normal_building_levy_tier_2
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_2
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_2
+		stationed_archers_toughness_mult = high_maa_toughness_tier_2
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_2
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_2
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_2
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_2
+	}
+	
+	next_building = archery_range_03
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 9
+		ai_general_building_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0 years_from_game_start > 0.01
+		}
+	}
+}
+
+archery_range_03 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_burhs
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_3_cost
+	
+	levy = normal_building_levy_tier_3
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_3
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_3
+		stationed_archers_toughness_mult = high_maa_toughness_tier_3
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_3
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_3
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_3
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_3
+	}
+	
+	next_building = archery_range_04
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 8
+		ai_general_building_modifier = yes
+	}
+}
+
+archery_range_04 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_burhs
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_4_cost
+	
+	levy = normal_building_levy_tier_4
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_4
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_4
+		stationed_archers_toughness_mult = high_maa_toughness_tier_4
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_4
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_4
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_4
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_4
+	}
+	
+	next_building = archery_range_05
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 7
+		ai_general_building_modifier = yes
+	}
+}
+
+archery_range_05 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_castle_baileys
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_5_cost
+	
+	levy = normal_building_levy_tier_5
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_5
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_5
+		stationed_archers_toughness_mult = high_maa_toughness_tier_5
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_5
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_5
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_5
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_5
+	}
+	
+	next_building = archery_range_06
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 6
+		ai_general_building_modifier = yes
+	}
+}
+
+archery_range_06 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_castle_baileys
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_6_cost
+	
+	levy = normal_building_levy_tier_6
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_6
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_6
+		stationed_archers_toughness_mult = high_maa_toughness_tier_6
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_6
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_6
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_6
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_6
+	}
+	
+	next_building = archery_range_07
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 5
+		ai_general_building_modifier = yes
+	}
+}
+
+archery_range_07 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_royal_armory
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_7_cost
+	
+	levy = normal_building_levy_tier_7
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_7
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_7
+		stationed_archers_toughness_mult = high_maa_toughness_tier_7
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_7
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_7
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_7
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_7
+	}
+	
+	next_building = archery_range_08
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 4
+		ai_general_building_modifier = yes
+	}
+}
+
+archery_range_08 = {
+	construction_time = quick_construction_time
+
+	type = regular
+
+	can_construct_potential = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_royal_armory
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_8_cost
+	
+	levy = normal_building_levy_tier_8
+	
+	character_modifier = {
+		archers_maintenance_mult = good_building_maa_maintenance_tier_8
+	}
+	
+	province_modifier = {
+		stationed_archers_damage_mult = high_maa_damage_tier_8
+		stationed_archers_toughness_mult = high_maa_toughness_tier_8
+		stationed_archer_cavalry_screen_mult = normal_maa_screen_tier_8
+		stationed_archer_cavalry_damage_mult = normal_maa_damage_tier_8
+		stationed_archer_cavalry_toughness_mult = low_maa_toughness_tier_8
+		stationed_archer_cavalry_pursuit_mult = normal_maa_pursuit_tier_8
+	}
+
+	type_icon = "icon_building_archery_range.dds"
+	
+	ai_value = {
+		base = 3
+		ai_general_building_modifier = yes
+	}
+}
