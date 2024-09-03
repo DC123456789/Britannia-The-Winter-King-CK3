@@ -67,7 +67,7 @@ innovation_mangonel = { #Onagers
 	flag = early_medieval_era_regular
 }
 
-innovation_burhs = { #TODO: rename to more general or move
+innovation_burhs = { #Manufactories
 	group = culture_group_military
 	culture_era = culture_era_early_medieval
 	icon = @civil_construction_2
@@ -153,7 +153,7 @@ innovation_manorialism = {
 	flag = early_medieval_era_regular
 }
 
-innovation_development_02 = { #TODO: rename
+innovation_development_02 = { #Episcopal Administration
 	group = culture_group_civic
 	culture_era = culture_era_early_medieval
 	icon = @nobility_03
@@ -205,13 +205,14 @@ innovation_chronicle_writing = {
 	flag = early_medieval_era_regular
 }
 
-innovation_armilary_sphere = { #Carvel construction - maybe need something more general for Western Europe
+innovation_armilary_sphere = { #Framing-first construction
 	group = culture_group_civic
 	culture_era = culture_era_early_medieval
 	icon = @longboats
 
 	character_modifier = {
 		naval_movement_speed_mult = 0.25
+		embarkation_cost_mult = -0.35
 	}
 
 	flag = global_regular
@@ -237,21 +238,25 @@ innovation_baliffs = { #Seneschals
 }
 
 #culture_group_regional
-#innovation_reconquista = {
-#	group = culture_group_regional
-#	culture_era = culture_era_early_medieval
-#	region = world_europe_west_iberia
-#	icon = @leadership_2
-#
-#	custom = cb_discount_piety_10
-#	custom = more_zealot
-#	character_modifier = {
-#		monthly_piety_gain_mult = 0.1
-#	}
-#
-#	flag = global_regional
-#	flag = early_medieval_era_regional
-#}
+innovation_reconquista = {
+	group = culture_group_regional
+	culture_era = culture_era_early_medieval
+	region = world_europe_west_iberia
+	icon = @leadership_2
+
+	potential = {
+		always = no
+	}
+
+	custom = cb_discount_piety_10
+	custom = more_zealot
+	character_modifier = {
+		monthly_piety_gain_mult = 0.1
+	}
+
+	flag = global_regional
+	flag = early_medieval_era_regional
+}
 
 innovation_stem_duchies = {	#TODO: move to later era
 	group = culture_group_regional
@@ -268,16 +273,39 @@ innovation_stem_duchies = {	#TODO: move to later era
 	flag = early_medieval_era_regional
 }
 
-#innovation_ghilman = {
-#	group = culture_group_regional
-#	culture_era = culture_era_early_medieval
-#	region = world_middle_east_arabia
-#	icon = @maa_02
-#
-#	character_modifier = {
-#		men_at_arms_maintenance = -0.15
-#	}
-#
-#	flag = global_regional
-#	flag = early_medieval_era_regional
-#}
+innovation_foederati = {
+	group = culture_group_regional
+	culture_era = culture_era_early_medieval
+	icon = @raised_banner
+
+	potential = { 
+		OR = {
+			has_cultural_pillar = heritage_latin 
+			has_cultural_pillar = heritage_brythonic
+		}	
+	}
+
+	custom = enable_foederati #TODO: make a mechanic for this
+
+	flag = global_regional
+	flag = early_medieval_era_regional
+}
+
+innovation_ghilman = {
+	group = culture_group_regional	
+	culture_era = culture_era_early_medieval
+	region = world_middle_east_arabia
+	icon = @maa_02
+
+	potential = {
+		always = no
+	}
+
+
+	character_modifier = {
+		men_at_arms_maintenance = -0.15
+	}
+
+	flag = global_regional
+	flag = early_medieval_era_regional
+}
