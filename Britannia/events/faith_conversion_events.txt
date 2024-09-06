@@ -60,13 +60,18 @@ faith_conversion.0002 = {
 
 		if = {
 			limit = {
-				faith = {
-					OR = {
-						has_doctrine = tenet_bhakti
-						NOT = { religion = scope:old_faith.religion }
-					}
+			# MODIFIED BY BTWK #
+				NOT = {
+					religion = religion:germanic_religion
 				}
 			}
+			#		faith = {
+			#		OR = {
+			#			has_doctrine = tenet_bhakti
+			#			NOT = { religion =  scope:old_faith.religion }  
+			#		}
+			#	}
+			 
 			# remove_character_modifier = bhakti_hinduism_ganga
 			# remove_character_modifier = bhakti_hinduism_saraswati
 			# remove_character_modifier = bhakti_hinduism_kali
@@ -85,28 +90,215 @@ faith_conversion.0002 = {
 			# remove_character_modifier = bhakti_germanic_not_danish_ullr
 			# remove_character_modifier = bhakti_germanic_danish_tyr
 			# remove_character_modifier = bhakti_germanic_generic_thor
-			# remove_character_modifier = bhakti_germanic_generic_freyr
+			# remove_character_modifier = bhakti_germanic_generic_freyr	
 
-			# MODIFIED BY BTWK # 
-			remove_character_modifier = BTWK_deity_norse_odin_modifier
-			remove_character_modifier = BTWK_deity_norse_tyr_modifier
-			remove_character_modifier = BTWK_deity_norse_thor_modifier
-			remove_character_modifier = BTWK_deity_anglo_saxon_odin_modifier
-			remove_character_modifier = BTWK_deity_anglo_saxon_tyr_modifier
-			remove_character_modifier = BTWK_deity_anglo_saxon_thor_modifier
-			remove_character_modifier = BTWK_deity_frankish_odin_modifier
-			remove_character_modifier = BTWK_deity_frankish_tyr_modifier
-			remove_character_modifier = BTWK_deity_frankish_thor_modifier
-			remove_character_modifier = BTWK_deity_suebic_odin_modifier
-			remove_character_modifier = BTWK_deity_suebic_tyr_modifier
-			remove_character_modifier = BTWK_deity_suebic_thor_modifier
-			remove_character_modifier = BTWK_deity_gothic_odin_modifier
-			remove_character_modifier = BTWK_deity_gothic_tyr_modifier
-			remove_character_modifier = BTWK_deity_gothic_thor_modifier
+			remove_character_modifier = BTWK_norse_deity_odin_modifier
+			remove_character_modifier = BTWK_anglo_saxon_deity_odin_modifier
+			remove_character_modifier = BTWK_frankish_deity_odin_modifier
+			remove_character_modifier = BTWK_suebic_deity_odin_modifier
+			remove_character_modifier = BTWK_gothic_deity_odin_modifier
+
+			remove_character_modifier = BTWK_norse_deity_tyr_modifier
+			remove_character_modifier = BTWK_anglo_saxon_deity_tyr_modifier
+			remove_character_modifier = BTWK_frankish_deity_tyr_modifier
+			remove_character_modifier = BTWK_suebic_deity_tyr_modifier
+			remove_character_modifier = BTWK_gothic_deity_tyr_modifier
+
+			remove_character_modifier = BTWK_norse_deity_thor_modifier
+			remove_character_modifier = BTWK_anglo_saxon_deity_thor_modifier
+			remove_character_modifier = BTWK_frankish_deity_thor_modifier
+			remove_character_modifier = BTWK_suebic_deity_thor_modifier
+			remove_character_modifier = BTWK_gothic_deity_thor_modifier
+
 			remove_character_modifier = BTWK_deity_seaxneat_modifier
-			####################
 		}
 
+		else = { 
+#			limit = {
+#				faith.religion = religion:germanic_religion
+#			}
+			# ODIN
+			# Seaxneat shouldn't be removed while Saxon's religion is Germanic
+			if = {
+				limit = {
+					OR = {
+						has_character_modifier = BTWK_norse_deity_odin_modifier
+						has_character_modifier = BTWK_anglo_saxon_deity_odin_modifier
+						has_character_modifier = BTWK_frankish_deity_odin_modifier
+						has_character_modifier = BTWK_suebic_deity_odin_modifier
+						has_character_modifier = BTWK_gothic_deity_odin_modifier
+					}
+				}
+				
+				remove_character_modifier = BTWK_norse_deity_odin_modifier
+				remove_character_modifier = BTWK_anglo_saxon_deity_odin_modifier
+				remove_character_modifier = BTWK_frankish_deity_odin_modifier
+				remove_character_modifier = BTWK_suebic_deity_odin_modifier
+				remove_character_modifier = BTWK_gothic_deity_odin_modifier
+
+				if = {
+					limit = {
+						has_faith = faith:norse_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_norse_deity_odin_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:anglo_saxon_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_anglo_saxon_deity_odin_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:frankish_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_frankish_deity_odin_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:suebic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_suebic_deity_odin_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:gothic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_gothic_deity_odin_modifier
+					}
+				}
+			}
+			
+			# TYR
+			else_if = {
+				limit = {
+					OR = {
+						has_character_modifier = BTWK_norse_deity_tyr_modifier
+						has_character_modifier = BTWK_anglo_saxon_deity_tyr_modifier
+						has_character_modifier = BTWK_frankish_deity_tyr_modifier
+						has_character_modifier = BTWK_suebic_deity_tyr_modifier
+						has_character_modifier = BTWK_gothic_deity_tyr_modifier
+					}
+				}
+
+				remove_character_modifier = BTWK_norse_deity_tyr_modifier
+				remove_character_modifier = BTWK_anglo_saxon_deity_tyr_modifier
+				remove_character_modifier = BTWK_frankish_deity_tyr_modifier
+				remove_character_modifier = BTWK_suebic_deity_tyr_modifier
+				remove_character_modifier = BTWK_gothic_deity_tyr_modifier
+
+				if = {
+					limit = {
+						has_faith = faith:norse_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_norse_deity_tyr_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:anglo_saxon_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_anglo_saxon_deity_tyr_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:frankish_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_frankish_deity_tyr_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:suebic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_suebic_deity_tyr_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:gothic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_gothic_deity_tyr_modifier
+					}
+				}
+			} 
+
+			# THOR
+			else_if = {
+				limit = {
+					OR = {
+						has_character_modifier = BTWK_norse_deity_thor_modifier
+						has_character_modifier = BTWK_anglo_saxon_deity_thor_modifier
+						has_character_modifier = BTWK_frankish_deity_thor_modifier
+						has_character_modifier = BTWK_suebic_deity_thor_modifier
+						has_character_modifier = BTWK_gothic_deity_thor_modifier
+					}
+				}
+
+				remove_character_modifier = BTWK_norse_deity_thor_modifier
+				remove_character_modifier = BTWK_anglo_saxon_deity_thor_modifier
+				remove_character_modifier = BTWK_frankish_deity_thor_modifier
+				remove_character_modifier = BTWK_suebic_deity_thor_modifier
+				remove_character_modifier = BTWK_gothic_deity_thor_modifier
+
+				if = {
+					limit = {
+						has_faith = faith:norse_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_norse_deity_thor_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:anglo_saxon_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_anglo_saxon_deity_thor_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:frankish_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_frankish_deity_thor_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:suebic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_suebic_deity_thor_modifier
+					}
+				}
+				else_if = {
+					limit = {
+						has_faith = faith:gothic_pagan
+					}
+					add_character_modifier = {
+						modifier = BTWK_gothic_deity_thor_modifier
+					}
+				}
+			}
+		}
+		####################
 		bastard_to_wild_oat_conversion_effect = yes
 	}
 }
