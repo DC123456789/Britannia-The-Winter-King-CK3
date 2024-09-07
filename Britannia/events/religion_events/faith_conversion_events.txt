@@ -24,7 +24,6 @@ faith_conversion.0001 = {
 # Fired when you convert to a new faith. Remove obsolete character modifiers.
 faith_conversion.0002 = {
 	hidden = yes
-
 	immediate = {
 		if = {
 			limit = {
@@ -58,40 +57,44 @@ faith_conversion.0002 = {
 		}
 		else = { remove_character_modifier = fp2_champion_of_the_old_ways_modifier }
 
+		# MODIFIED BY BTWK # 
+		# if = {
+		# 	limit = {
+		# 		faith = {
+		# 			OR = {
+		# 				has_doctrine = tenet_bhakti
+		# 				NOT = { religion = scope:old_faith.religion }
+		# 			}
+		# 		}
+		# 	}
+		# 	remove_character_modifier = bhakti_hinduism_ganga
+		# 	remove_character_modifier = bhakti_hinduism_saraswati
+		# 	remove_character_modifier = bhakti_hinduism_kali
+		# 	remove_character_modifier = bhakti_hinduism_kubera
+		# 	remove_character_modifier = bhakti_vaishnavism_lakishmi
+		# 	remove_character_modifier = bhakti_vaishnavism_jagganath
+		# 	remove_character_modifier = bhakti_vaishnavism_hayagriva
+		# 	remove_character_modifier = bhakti_shaivism_parvati
+		# 	remove_character_modifier = bhakti_shaivism_virabhadra
+		# 	remove_character_modifier = bhakti_shaivism_munishwarar
+		# 	remove_character_modifier = bhakti_shaivism_dakshinamoorthy
+		# 	remove_character_modifier = bhakti_smartism_ganesha
+		# 	remove_character_modifier = bhakti_smartism_vishnu
+		# 	remove_character_modifier = bhakti_smartism_shiva
+		# 	remove_character_modifier = bhakti_germanic_generic_odin
+		# 	remove_character_modifier = bhakti_germanic_not_danish_ullr
+		# 	remove_character_modifier = bhakti_germanic_danish_tyr
+		# 	remove_character_modifier = bhakti_germanic_generic_thor
+		# 	remove_character_modifier = bhakti_germanic_generic_freyr
+		# }
+
 		if = {
 			limit = {
-			# MODIFIED BY BTWK #
 				NOT = {
-					religion = religion:germanic_religion
+					faith.religion = religion:germanic_religion
 				}
 			}
-			#		faith = {
-			#		OR = {
-			#			has_doctrine = tenet_bhakti
-			#			NOT = { religion =  scope:old_faith.religion }  
-			#		}
-			#	}
-			 
-			# remove_character_modifier = bhakti_hinduism_ganga
-			# remove_character_modifier = bhakti_hinduism_saraswati
-			# remove_character_modifier = bhakti_hinduism_kali
-			# remove_character_modifier = bhakti_hinduism_kubera
-			# remove_character_modifier = bhakti_vaishnavism_lakishmi
-			# remove_character_modifier = bhakti_vaishnavism_jagganath
-			# remove_character_modifier = bhakti_vaishnavism_hayagriva
-			# remove_character_modifier = bhakti_shaivism_parvati
-			# remove_character_modifier = bhakti_shaivism_virabhadra
-			# remove_character_modifier = bhakti_shaivism_munishwarar
-			# remove_character_modifier = bhakti_shaivism_dakshinamoorthy
-			# remove_character_modifier = bhakti_smartism_ganesha
-			# remove_character_modifier = bhakti_smartism_vishnu
-			# remove_character_modifier = bhakti_smartism_shiva
-			# remove_character_modifier = bhakti_germanic_generic_odin
-			# remove_character_modifier = bhakti_germanic_not_danish_ullr
-			# remove_character_modifier = bhakti_germanic_danish_tyr
-			# remove_character_modifier = bhakti_germanic_generic_thor
-			# remove_character_modifier = bhakti_germanic_generic_freyr	
-
+			
 			remove_character_modifier = BTWK_norse_deity_odin_modifier
 			remove_character_modifier = BTWK_anglo_saxon_deity_odin_modifier
 			remove_character_modifier = BTWK_frankish_deity_odin_modifier
@@ -111,12 +114,14 @@ faith_conversion.0002 = {
 			remove_character_modifier = BTWK_gothic_deity_thor_modifier
 
 			remove_character_modifier = BTWK_deity_seaxneat_modifier
+
 		}
 
-		else = { 
-#			limit = {
-#				faith.religion = religion:germanic_religion
-#			}
+		else_if = { 
+			limit = {
+				faith.religion = religion:germanic_religion
+			}
+			
 			# ODIN
 			# Seaxneat shouldn't be removed while Saxon's religion is Germanic
 			if = {
@@ -624,3 +629,4 @@ faith_conversion.1101 = {
 		}
 	}
 }
+
