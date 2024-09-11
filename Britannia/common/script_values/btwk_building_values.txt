@@ -1,0 +1,534 @@
+﻿###################
+# Building Values #
+###################
+
+# Beware, this file is full of MATH!
+
+###################
+# Values to edit! #
+###################
+
+# These values control things like how building modifiers scale.
+# You shouldn't have to change more than a few numbers to affect every single building in the game!
+
+#######
+# Tax #
+#######
+
+# Base
+@salt_mine_tax_base = 0.2
+@lead_mine_tax_base = 0.25  
+@tin_mine_tax_base = 0.25   
+@iron_mine_tax_base =  0.3   
+@gold_mine_tax_base = 0.5   
+@significant_mine_tax_base_bonus = 0.05   
+
+@salt_mine_tax_scale_addition_per_tier = 0.075
+@lead_mine_tax_scale_addition_per_tier = 0.10   
+@tin_mine_tax_scale_addition_per_tier = 0.10   
+@iron_mine_tax_scale_addition_per_tier = 0.15   
+@gold_mine_tax_scale_addition_per_tier = 0.20   
+@significant_mine_tax_scale_addition_per_tier = 0.015   
+
+# Mult   
+@salt_mine_tax_mult = 0.02
+@lead_mine_tax_mult = 0.025   
+@tin_mine_tax_mult = 0.025   
+@iron_mine_tax_mult = 0.03   
+@copper_mine_tax_mult = 0.03   
+@silver_mine_tax_mult = 0.05   
+@gold_mine_tax_mult = 0.035   
+@significant_mine_tax_mult_bonus = 0.01   
+
+@salt_mine_tax_mult_scale_addition_per_tier = 0.001
+@lead_mine_tax_mult_scale_addition_per_tier = 0.002   
+@tin_mine_tax_mult_scale_addition_per_tier = 0.002
+@iron_mine_tax_mult_scale_addition_per_tier = 0.003   
+@copper_mine_tax_mult_scale_addition_per_tier = 0.003
+@silver_mine_tax_mult_scale_addition_per_tier = 0.005
+@gold_mine_tax_mult_scale_addition_per_tier = 0.004  
+@significant_mine_tax_mult_scale_addition_per_tier = 0.002   
+
+###########################################################################################
+# Nothing below this line should need to be edited if you want to change building balance #
+###########################################################################################
+
+# BTWK - formulae for Copper & Silver mines as unchanged from vanilla. Additions are for new mine types added. 
+# Only upgradable to tier 4 as special building, but up to tier 8 has been provided to match vanilla foramtting  
+# Base
+@salt_mine_tax_tier_1 = @[salt_mine_tax_base]
+@salt_mine_tax_tier_2 = @[salt_mine_tax_tier_1 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_3 = @[salt_mine_tax_tier_2 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_4 = @[salt_mine_tax_tier_3 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_5 = @[salt_mine_tax_tier_4 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_6 = @[salt_mine_tax_tier_5 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_7 = @[salt_mine_tax_tier_6 + salt_mine_tax_scale_addition_per_tier]
+@salt_mine_tax_tier_8 = @[salt_mine_tax_tier_7 + salt_mine_tax_scale_addition_per_tier]
+
+@lead_mine_tax_tier_1 = @[lead_mine_tax_base]
+@lead_mine_tax_tier_2 = @[lead_mine_tax_tier_1 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_3 = @[lead_mine_tax_tier_2 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_4 = @[lead_mine_tax_tier_3 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_5 = @[lead_mine_tax_tier_4 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_6 = @[lead_mine_tax_tier_5 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_7 = @[lead_mine_tax_tier_6 + lead_mine_tax_scale_addition_per_tier]
+@lead_mine_tax_tier_8 = @[lead_mine_tax_tier_7 + lead_mine_tax_scale_addition_per_tier]
+
+@tin_mine_tax_tier_1 = @[tin_mine_tax_base]
+@tin_mine_tax_tier_2 = @[tin_mine_tax_tier_1 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_3 = @[tin_mine_tax_tier_2 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_4 = @[tin_mine_tax_tier_3 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_5 = @[tin_mine_tax_tier_4 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_6 = @[tin_mine_tax_tier_5 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_7 = @[tin_mine_tax_tier_6 + tin_mine_tax_scale_addition_per_tier]
+@tin_mine_tax_tier_8 = @[tin_mine_tax_tier_7 + tin_mine_tax_scale_addition_per_tier]
+
+@iron_mine_tax_tier_1 = @[iron_mine_tax_base]
+@iron_mine_tax_tier_2 = @[iron_mine_tax_tier_1 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_3 = @[iron_mine_tax_tier_2 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_4 = @[iron_mine_tax_tier_3 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_5 = @[iron_mine_tax_tier_4 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_6 = @[iron_mine_tax_tier_5 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_7 = @[iron_mine_tax_tier_6 + iron_mine_tax_scale_addition_per_tier]
+@iron_mine_tax_tier_8 = @[iron_mine_tax_tier_7 + iron_mine_tax_scale_addition_per_tier]
+
+@gold_mine_tax_tier_1 = @[gold_mine_tax_base]				
+@gold_mine_tax_tier_2 = @[gold_mine_tax_tier_1 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_3 = @[gold_mine_tax_tier_2 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_4 = @[gold_mine_tax_tier_3 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_5 = @[gold_mine_tax_tier_4 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_6 = @[gold_mine_tax_tier_5 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_7 = @[gold_mine_tax_tier_6 + gold_mine_tax_scale_addition_per_tier]
+@gold_mine_tax_tier_8 = @[gold_mine_tax_tier_7 + gold_mine_tax_scale_addition_per_tier]
+
+# To be used for mines with great historical significance, i.e. the tin mines in Cornwall. Preparations for use in later map expansions
+
+@significant_salt_mine_tax_tier_1 = @[salt_mine_tax_base + significant_mine_tax_base_bonus] 																	
+@significant_salt_mine_tax_tier_2 = @[significant_salt_mine_tax_tier_1 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]  
+@significant_salt_mine_tax_tier_3 = @[significant_salt_mine_tax_tier_2 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]	
+@significant_salt_mine_tax_tier_4 = @[significant_salt_mine_tax_tier_3 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_salt_mine_tax_tier_5 = @[significant_salt_mine_tax_tier_4 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_salt_mine_tax_tier_6 = @[significant_salt_mine_tax_tier_5 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_salt_mine_tax_tier_7 = @[significant_salt_mine_tax_tier_6 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_salt_mine_tax_tier_8 = @[significant_salt_mine_tax_tier_7 + salt_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_lead_mine_tax_tier_1 = @[lead_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_lead_mine_tax_tier_2 = @[significant_lead_mine_tax_tier_1 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_3 = @[significant_lead_mine_tax_tier_2 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_4 = @[significant_lead_mine_tax_tier_3 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_5 = @[significant_lead_mine_tax_tier_4 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_6 = @[significant_lead_mine_tax_tier_5 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_7 = @[significant_lead_mine_tax_tier_6 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_lead_mine_tax_tier_8 = @[significant_lead_mine_tax_tier_7 + lead_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_tin_mine_tax_tier_1 = @[tin_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_tin_mine_tax_tier_2 = @[significant_tin_mine_tax_tier_1 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_3 = @[significant_tin_mine_tax_tier_2 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_4 = @[significant_tin_mine_tax_tier_3 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_5 = @[significant_tin_mine_tax_tier_4 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_6 = @[significant_tin_mine_tax_tier_5 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_7 = @[significant_tin_mine_tax_tier_6 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_tin_mine_tax_tier_8 = @[significant_tin_mine_tax_tier_7 + tin_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_iron_mine_tax_tier_1 = @[iron_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_iron_mine_tax_tier_2 = @[significant_iron_mine_tax_tier_1 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_3 = @[significant_iron_mine_tax_tier_2 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_4 = @[significant_iron_mine_tax_tier_3 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_5 = @[significant_iron_mine_tax_tier_4 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_6 = @[significant_iron_mine_tax_tier_5 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_7 = @[significant_iron_mine_tax_tier_6 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_iron_mine_tax_tier_8 = @[significant_iron_mine_tax_tier_7 + iron_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_copper_mine_tax_tier_1 = @[copper_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_copper_mine_tax_tier_2 = @[significant_copper_mine_tax_tier_1 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_3 = @[significant_copper_mine_tax_tier_2 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_4 = @[significant_copper_mine_tax_tier_3 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_5 = @[significant_copper_mine_tax_tier_4 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_6 = @[significant_copper_mine_tax_tier_5 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_7 = @[significant_copper_mine_tax_tier_6 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_copper_mine_tax_tier_8 = @[significant_copper_mine_tax_tier_7 + copper_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_silver_mine_tax_tier_1 = @[silver_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_silver_mine_tax_tier_2 = @[significant_silver_mine_tax_tier_1 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_3 = @[significant_silver_mine_tax_tier_2 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_4 = @[significant_silver_mine_tax_tier_3 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_5 = @[significant_silver_mine_tax_tier_4 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_6 = @[significant_silver_mine_tax_tier_5 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_7 = @[significant_silver_mine_tax_tier_6 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_silver_mine_tax_tier_8 = @[significant_silver_mine_tax_tier_7 + silver_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+@significant_gold_mine_tax_tier_1 = @[gold_mine_tax_base + significant_mine_tax_base_bonus]
+@significant_gold_mine_tax_tier_2 = @[significant_gold_mine_tax_tier_1 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_3 = @[significant_gold_mine_tax_tier_2 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_4 = @[significant_gold_mine_tax_tier_3 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_5 = @[significant_gold_mine_tax_tier_4 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_6 = @[significant_gold_mine_tax_tier_5 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_7 = @[significant_gold_mine_tax_tier_6 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+@significant_gold_mine_tax_tier_8 = @[significant_gold_mine_tax_tier_7 + gold_mine_tax_scale_addition_per_tier + significant_mine_tax_scale_addition_per_tier]
+
+# Mult
+@salt_mine_tax_mult_tier_1 = @[salt_mine_tax_mult]
+@salt_mine_tax_mult_tier_2 = @[salt_mine_tax_mult_tier_1 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_3 = @[salt_mine_tax_mult_tier_2 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_4 = @[salt_mine_tax_mult_tier_3 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_5 = @[salt_mine_tax_mult_tier_4 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_6 = @[salt_mine_tax_mult_tier_5 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_7 = @[salt_mine_tax_mult_tier_6 + salt_mine_tax_mult_scale_addition_per_tier]
+@salt_mine_tax_mult_tier_8 = @[salt_mine_tax_mult_tier_7 + salt_mine_tax_mult_scale_addition_per_tier]
+
+@lead_mine_tax_mult_tier_1 = @[lead_mine_tax_mult]
+@lead_mine_tax_mult_tier_2 = @[lead_mine_tax_mult_tier_1 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_3 = @[lead_mine_tax_mult_tier_2 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_4 = @[lead_mine_tax_mult_tier_3 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_5 = @[lead_mine_tax_mult_tier_4 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_6 = @[lead_mine_tax_mult_tier_5 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_7 = @[lead_mine_tax_mult_tier_6 + lead_mine_tax_mult_scale_addition_per_tier]
+@lead_mine_tax_mult_tier_8 = @[lead_mine_tax_mult_tier_7 + lead_mine_tax_mult_scale_addition_per_tier]
+
+@tin_mine_tax_mult_tier_1 = @[tin_mine_tax_mult]
+@tin_mine_tax_mult_tier_2 = @[tin_mine_tax_mult_tier_1 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_3 = @[tin_mine_tax_mult_tier_2 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_4 = @[tin_mine_tax_mult_tier_3 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_5 = @[tin_mine_tax_mult_tier_4 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_6 = @[tin_mine_tax_mult_tier_5 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_7 = @[tin_mine_tax_mult_tier_6 + tin_mine_tax_mult_scale_addition_per_tier]
+@tin_mine_tax_mult_tier_8 = @[tin_mine_tax_mult_tier_7 + tin_mine_tax_mult_scale_addition_per_tier]
+
+@iron_mine_tax_mult_tier_1 = @[iron_mine_tax_mult]
+@iron_mine_tax_mult_tier_2 = @[iron_mine_tax_mult_tier_1 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_3 = @[iron_mine_tax_mult_tier_2 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_4 = @[iron_mine_tax_mult_tier_3 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_5 = @[iron_mine_tax_mult_tier_4 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_6 = @[iron_mine_tax_mult_tier_5 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_7 = @[iron_mine_tax_mult_tier_6 + iron_mine_tax_mult_scale_addition_per_tier]
+@iron_mine_tax_mult_tier_8 = @[iron_mine_tax_mult_tier_7 + iron_mine_tax_mult_scale_addition_per_tier]
+
+@copper_mine_tax_mult_tier_1 = @[copper_mine_tax_mult]
+@copper_mine_tax_mult_tier_2 = @[copper_mine_tax_mult_tier_1 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_3 = @[copper_mine_tax_mult_tier_2 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_4 = @[copper_mine_tax_mult_tier_3 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_5 = @[copper_mine_tax_mult_tier_4 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_6 = @[copper_mine_tax_mult_tier_5 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_7 = @[copper_mine_tax_mult_tier_6 + copper_mine_tax_mult_scale_addition_per_tier]
+@copper_mine_tax_mult_tier_8 = @[copper_mine_tax_mult_tier_7 + copper_mine_tax_mult_scale_addition_per_tier]
+
+@silver_mine_tax_mult_tier_1 = @[silver_mine_tax_mult]
+@silver_mine_tax_mult_tier_2 = @[silver_mine_tax_mult_tier_1 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_3 = @[silver_mine_tax_mult_tier_2 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_4 = @[silver_mine_tax_mult_tier_3 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_5 = @[silver_mine_tax_mult_tier_4 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_6 = @[silver_mine_tax_mult_tier_5 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_7 = @[silver_mine_tax_mult_tier_6 + silver_mine_tax_mult_scale_addition_per_tier]
+@silver_mine_tax_mult_tier_8 = @[silver_mine_tax_mult_tier_7 + silver_mine_tax_mult_scale_addition_per_tier]
+
+@gold_mine_tax_mult_tier_1 = @[gold_mine_tax_mult]
+@gold_mine_tax_mult_tier_2 = @[gold_mine_tax_mult_tier_1 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_3 = @[gold_mine_tax_mult_tier_2 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_4 = @[gold_mine_tax_mult_tier_3 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_5 = @[gold_mine_tax_mult_tier_4 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_6 = @[gold_mine_tax_mult_tier_5 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_7 = @[gold_mine_tax_mult_tier_6 + gold_mine_tax_mult_scale_addition_per_tier]
+@gold_mine_tax_mult_tier_8 = @[gold_mine_tax_mult_tier_7 + gold_mine_tax_mult_scale_addition_per_tier]
+
+@significant_salt_mine_tax_mult_tier_1 = @[salt_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_salt_mine_tax_mult_tier_2 = @[significant_salt_mine_tax_mult_tier_1 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_3 = @[significant_salt_mine_tax_mult_tier_2 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_4 = @[significant_salt_mine_tax_mult_tier_3 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_5 = @[significant_salt_mine_tax_mult_tier_4 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_6 = @[significant_salt_mine_tax_mult_tier_5 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_7 = @[significant_salt_mine_tax_mult_tier_6 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_salt_mine_tax_mult_tier_8 = @[significant_salt_mine_tax_mult_tier_7 + salt_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_lead_mine_tax_mult_tier_1 = @[lead_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_lead_mine_tax_mult_tier_2 = @[significant_lead_mine_tax_mult_tier_1 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_3 = @[significant_lead_mine_tax_mult_tier_2 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_4 = @[significant_lead_mine_tax_mult_tier_3 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_5 = @[significant_lead_mine_tax_mult_tier_4 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_6 = @[significant_lead_mine_tax_mult_tier_5 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_7 = @[significant_lead_mine_tax_mult_tier_6 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_lead_mine_tax_mult_tier_8 = @[significant_lead_mine_tax_mult_tier_7 + lead_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_tin_mine_tax_mult_tier_1 = @[tin_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_tin_mine_tax_mult_tier_2 = @[significant_tin_mine_tax_mult_tier_1 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_3 = @[significant_tin_mine_tax_mult_tier_2 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_4 = @[significant_tin_mine_tax_mult_tier_3 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_5 = @[significant_tin_mine_tax_mult_tier_4 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_6 = @[significant_tin_mine_tax_mult_tier_5 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_7 = @[significant_tin_mine_tax_mult_tier_6 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_tin_mine_tax_mult_tier_8 = @[significant_tin_mine_tax_mult_tier_7 + tin_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_iron_mine_tax_mult_tier_1 = @[iron_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_iron_mine_tax_mult_tier_2 = @[significant_iron_mine_tax_mult_tier_1 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_3 = @[significant_iron_mine_tax_mult_tier_2 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_4 = @[significant_iron_mine_tax_mult_tier_3 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_5 = @[significant_iron_mine_tax_mult_tier_4 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_6 = @[significant_iron_mine_tax_mult_tier_5 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_7 = @[significant_iron_mine_tax_mult_tier_6 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_iron_mine_tax_mult_tier_8 = @[significant_iron_mine_tax_mult_tier_7 + iron_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_copper_mine_tax_mult_tier_1 = @[copper_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_copper_mine_tax_mult_tier_2 = @[significant_copper_mine_tax_mult_tier_1 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_3 = @[significant_copper_mine_tax_mult_tier_2 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_4 = @[significant_copper_mine_tax_mult_tier_3 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_5 = @[significant_copper_mine_tax_mult_tier_4 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_6 = @[significant_copper_mine_tax_mult_tier_5 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_7 = @[significant_copper_mine_tax_mult_tier_6 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_copper_mine_tax_mult_tier_8 = @[significant_copper_mine_tax_mult_tier_7 + copper_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_silver_mine_tax_mult_tier_1 = @[silver_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_silver_mine_tax_mult_tier_2 = @[significant_silver_mine_tax_mult_tier_1 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_3 = @[significant_silver_mine_tax_mult_tier_2 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_4 = @[significant_silver_mine_tax_mult_tier_3 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_5 = @[significant_silver_mine_tax_mult_tier_4 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_6 = @[significant_silver_mine_tax_mult_tier_5 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_7 = @[significant_silver_mine_tax_mult_tier_6 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_silver_mine_tax_mult_tier_8 = @[significant_silver_mine_tax_mult_tier_7 + silver_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+@significant_gold_mine_tax_mult_tier_1 = @[gold_mine_tax_mult + significant_mine_tax_mult_bonus]
+@significant_gold_mine_tax_mult_tier_2 = @[significant_gold_mine_tax_mult_tier_1 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_3 = @[significant_gold_mine_tax_mult_tier_2 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_4 = @[significant_gold_mine_tax_mult_tier_3 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_5 = @[significant_gold_mine_tax_mult_tier_4 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_6 = @[significant_gold_mine_tax_mult_tier_5 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_7 = @[significant_gold_mine_tax_mult_tier_6 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+@significant_gold_mine_tax_mult_tier_8 = @[significant_gold_mine_tax_mult_tier_7 + gold_mine_tax_mult_scale_addition_per_tier + significant_mine_tax_mult_scale_addition_per_tier]
+
+##############
+# Tax Values #
+##############
+salt_mine_building_tax_tier_1 = @[salt_mine_tax_tier_1]
+salt_mine_building_tax_tier_2 = @[salt_mine_tax_tier_2]
+salt_mine_building_tax_tier_3 = @[salt_mine_tax_tier_3]
+salt_mine_building_tax_tier_4 = @[salt_mine_tax_tier_4]
+salt_mine_building_tax_tier_5 = @[salt_mine_tax_tier_5]
+salt_mine_building_tax_tier_6 = @[salt_mine_tax_tier_6]
+salt_mine_building_tax_tier_7 = @[salt_mine_tax_tier_7]
+salt_mine_building_tax_tier_8 = @[salt_mine_tax_tier_8]
+
+lead_mine_building_tax_tier_1 = @[lead_mine_tax_tier_1]
+lead_mine_building_tax_tier_2 = @[lead_mine_tax_tier_2]
+lead_mine_building_tax_tier_3 = @[lead_mine_tax_tier_3]
+lead_mine_building_tax_tier_4 = @[lead_mine_tax_tier_4]
+lead_mine_building_tax_tier_5 = @[lead_mine_tax_tier_5]
+lead_mine_building_tax_tier_6 = @[lead_mine_tax_tier_6]
+lead_mine_building_tax_tier_7 = @[lead_mine_tax_tier_7]
+lead_mine_building_tax_tier_8 = @[lead_mine_tax_tier_8]
+
+tin_mine_building_tax_tier_1 = @[tin_mine_tax_tier_1]
+tin_mine_building_tax_tier_2 = @[tin_mine_tax_tier_2]
+tin_mine_building_tax_tier_3 = @[tin_mine_tax_tier_3]
+tin_mine_building_tax_tier_4 = @[tin_mine_tax_tier_4]
+tin_mine_building_tax_tier_5 = @[tin_mine_tax_tier_5]
+tin_mine_building_tax_tier_6 = @[tin_mine_tax_tier_6]
+tin_mine_building_tax_tier_7 = @[tin_mine_tax_tier_7]
+tin_mine_building_tax_tier_8 = @[tin_mine_tax_tier_8]
+
+iron_mine_building_tax_tier_1 = @[iron_mine_tax_tier_1]
+iron_mine_building_tax_tier_2 = @[iron_mine_tax_tier_2]
+iron_mine_building_tax_tier_3 = @[iron_mine_tax_tier_3]
+iron_mine_building_tax_tier_4 = @[iron_mine_tax_tier_4]
+iron_mine_building_tax_tier_5 = @[iron_mine_tax_tier_5]
+iron_mine_building_tax_tier_6 = @[iron_mine_tax_tier_6]
+iron_mine_building_tax_tier_7 = @[iron_mine_tax_tier_7]
+iron_mine_building_tax_tier_8 = @[iron_mine_tax_tier_8]
+
+gold_mine_building_tax_tier_1 = @[gold_mine_tax_tier_1]
+gold_mine_building_tax_tier_2 = @[gold_mine_tax_tier_2]
+gold_mine_building_tax_tier_3 = @[gold_mine_tax_tier_3]
+gold_mine_building_tax_tier_4 = @[gold_mine_tax_tier_4]
+gold_mine_building_tax_tier_5 = @[gold_mine_tax_tier_5]
+gold_mine_building_tax_tier_6 = @[gold_mine_tax_tier_6]
+gold_mine_building_tax_tier_7 = @[gold_mine_tax_tier_7]
+gold_mine_building_tax_tier_8 = @[gold_mine_tax_tier_8]
+
+# Basic mine tax multipliers
+salt_mine_building_tax_mult_tier_1 = @[salt_mine_tax_mult_tier_1]
+salt_mine_building_tax_mult_tier_2 = @[salt_mine_tax_mult_tier_2]
+salt_mine_building_tax_mult_tier_3 = @[salt_mine_tax_mult_tier_3]
+salt_mine_building_tax_mult_tier_4 = @[salt_mine_tax_mult_tier_4]
+salt_mine_building_tax_mult_tier_5 = @[salt_mine_tax_mult_tier_5]
+salt_mine_building_tax_mult_tier_6 = @[salt_mine_tax_mult_tier_6]
+salt_mine_building_tax_mult_tier_7 = @[salt_mine_tax_mult_tier_7]
+salt_mine_building_tax_mult_tier_8 = @[salt_mine_tax_mult_tier_8]
+
+lead_mine_building_tax_mult_tier_1 = @[lead_mine_tax_mult_tier_1]
+lead_mine_building_tax_mult_tier_2 = @[lead_mine_tax_mult_tier_2]
+lead_mine_building_tax_mult_tier_3 = @[lead_mine_tax_mult_tier_3]
+lead_mine_building_tax_mult_tier_4 = @[lead_mine_tax_mult_tier_4]
+lead_mine_building_tax_mult_tier_5 = @[lead_mine_tax_mult_tier_5]
+lead_mine_building_tax_mult_tier_6 = @[lead_mine_tax_mult_tier_6]
+lead_mine_building_tax_mult_tier_7 = @[lead_mine_tax_mult_tier_7]
+lead_mine_building_tax_mult_tier_8 = @[lead_mine_tax_mult_tier_8]
+
+tin_mine_building_tax_mult_tier_1 = @[tin_mine_tax_mult_tier_1]
+tin_mine_building_tax_mult_tier_2 = @[tin_mine_tax_mult_tier_2]
+tin_mine_building_tax_mult_tier_3 = @[tin_mine_tax_mult_tier_3]
+tin_mine_building_tax_mult_tier_4 = @[tin_mine_tax_mult_tier_4]
+tin_mine_building_tax_mult_tier_5 = @[tin_mine_tax_mult_tier_5]
+tin_mine_building_tax_mult_tier_6 = @[tin_mine_tax_mult_tier_6]
+tin_mine_building_tax_mult_tier_7 = @[tin_mine_tax_mult_tier_7]
+tin_mine_building_tax_mult_tier_8 = @[tin_mine_tax_mult_tier_8]
+
+iron_mine_building_tax_mult_tier_1 = @[iron_mine_tax_mult_tier_1]
+iron_mine_building_tax_mult_tier_2 = @[iron_mine_tax_mult_tier_2]
+iron_mine_building_tax_mult_tier_3 = @[iron_mine_tax_mult_tier_3]
+iron_mine_building_tax_mult_tier_4 = @[iron_mine_tax_mult_tier_4]
+iron_mine_building_tax_mult_tier_5 = @[iron_mine_tax_mult_tier_5]
+iron_mine_building_tax_mult_tier_6 = @[iron_mine_tax_mult_tier_6]
+iron_mine_building_tax_mult_tier_7 = @[iron_mine_tax_mult_tier_7]
+iron_mine_building_tax_mult_tier_8 = @[iron_mine_tax_mult_tier_8]
+
+copper_mine_building_tax_mult_tier_1 = @[copper_mine_tax_mult_tier_1]
+copper_mine_building_tax_mult_tier_2 = @[copper_mine_tax_mult_tier_2]
+copper_mine_building_tax_mult_tier_3 = @[copper_mine_tax_mult_tier_3]
+copper_mine_building_tax_mult_tier_4 = @[copper_mine_tax_mult_tier_4]
+copper_mine_building_tax_mult_tier_5 = @[copper_mine_tax_mult_tier_5]
+copper_mine_building_tax_mult_tier_6 = @[copper_mine_tax_mult_tier_6]
+copper_mine_building_tax_mult_tier_7 = @[copper_mine_tax_mult_tier_7]
+copper_mine_building_tax_mult_tier_8 = @[copper_mine_tax_mult_tier_8]
+
+silver_mine_building_tax_mult_tier_1 = @[silver_mine_tax_mult_tier_1]
+silver_mine_building_tax_mult_tier_2 = @[silver_mine_tax_mult_tier_2]
+silver_mine_building_tax_mult_tier_3 = @[silver_mine_tax_mult_tier_3]
+silver_mine_building_tax_mult_tier_4 = @[silver_mine_tax_mult_tier_4]
+silver_mine_building_tax_mult_tier_5 = @[silver_mine_tax_mult_tier_5]
+silver_mine_building_tax_mult_tier_6 = @[silver_mine_tax_mult_tier_6]
+silver_mine_building_tax_mult_tier_7 = @[silver_mine_tax_mult_tier_7]
+silver_mine_building_tax_mult_tier_8 = @[silver_mine_tax_mult_tier_8]
+
+gold_mine_building_tax_mult_tier_1 = @[gold_mine_tax_mult_tier_1]
+gold_mine_building_tax_mult_tier_2 = @[gold_mine_tax_mult_tier_2]
+gold_mine_building_tax_mult_tier_3 = @[gold_mine_tax_mult_tier_3]
+gold_mine_building_tax_mult_tier_4 = @[gold_mine_tax_mult_tier_4]
+gold_mine_building_tax_mult_tier_5 = @[gold_mine_tax_mult_tier_5]
+gold_mine_building_tax_mult_tier_6 = @[gold_mine_tax_mult_tier_6]
+gold_mine_building_tax_mult_tier_7 = @[gold_mine_tax_mult_tier_7]
+gold_mine_building_tax_mult_tier_8 = @[gold_mine_tax_mult_tier_8]
+
+# Significant mine base tax
+significant_salt_mine_building_tax_tier_1 = @[significant_salt_mine_tax_tier_1]
+significant_salt_mine_building_tax_tier_2 = @[significant_salt_mine_tax_tier_2]
+significant_salt_mine_building_tax_tier_3 = @[significant_salt_mine_tax_tier_3]
+significant_salt_mine_building_tax_tier_4 = @[significant_salt_mine_tax_tier_4]
+significant_salt_mine_building_tax_tier_5 = @[significant_salt_mine_tax_tier_5]
+significant_salt_mine_building_tax_tier_6 = @[significant_salt_mine_tax_tier_6]
+significant_salt_mine_building_tax_tier_7 = @[significant_salt_mine_tax_tier_7]
+significant_salt_mine_building_tax_tier_8 = @[significant_salt_mine_tax_tier_8]
+
+significant_lead_mine_building_tax_tier_1 = @[significant_lead_mine_tax_tier_1]
+significant_lead_mine_building_tax_tier_2 = @[significant_lead_mine_tax_tier_2]
+significant_lead_mine_building_tax_tier_3 = @[significant_lead_mine_tax_tier_3]
+significant_lead_mine_building_tax_tier_4 = @[significant_lead_mine_tax_tier_4]
+significant_lead_mine_building_tax_tier_5 = @[significant_lead_mine_tax_tier_5]
+significant_lead_mine_building_tax_tier_6 = @[significant_lead_mine_tax_tier_6]
+significant_lead_mine_building_tax_tier_7 = @[significant_lead_mine_tax_tier_7]
+significant_lead_mine_building_tax_tier_8 = @[significant_lead_mine_tax_tier_8]
+
+significant_tin_mine_building_tax_tier_1 = @[significant_tin_mine_tax_tier_1]
+significant_tin_mine_building_tax_tier_2 = @[significant_tin_mine_tax_tier_2]
+significant_tin_mine_building_tax_tier_3 = @[significant_tin_mine_tax_tier_3]
+significant_tin_mine_building_tax_tier_4 = @[significant_tin_mine_tax_tier_4]
+significant_tin_mine_building_tax_tier_5 = @[significant_tin_mine_tax_tier_5]
+significant_tin_mine_building_tax_tier_6 = @[significant_tin_mine_tax_tier_6]
+significant_tin_mine_building_tax_tier_7 = @[significant_tin_mine_tax_tier_7]
+significant_tin_mine_building_tax_tier_8 = @[significant_tin_mine_tax_tier_8]
+
+significant_iron_mine_building_tax_tier_1 = @[significant_iron_mine_tax_tier_1]
+significant_iron_mine_building_tax_tier_2 = @[significant_iron_mine_tax_tier_2]
+significant_iron_mine_building_tax_tier_3 = @[significant_iron_mine_tax_tier_3]
+significant_iron_mine_building_tax_tier_4 = @[significant_iron_mine_tax_tier_4]
+significant_iron_mine_building_tax_tier_5 = @[significant_iron_mine_tax_tier_5]
+significant_iron_mine_building_tax_tier_6 = @[significant_iron_mine_tax_tier_6]
+significant_iron_mine_building_tax_tier_7 = @[significant_iron_mine_tax_tier_7]
+significant_iron_mine_building_tax_tier_8 = @[significant_iron_mine_tax_tier_8]
+
+significant_copper_mine_building_tax_tier_1 = @[significant_copper_mine_tax_tier_1]
+significant_copper_mine_building_tax_tier_2 = @[significant_copper_mine_tax_tier_2]
+significant_copper_mine_building_tax_tier_3 = @[significant_copper_mine_tax_tier_3]
+significant_copper_mine_building_tax_tier_4 = @[significant_copper_mine_tax_tier_4]
+significant_copper_mine_building_tax_tier_5 = @[significant_copper_mine_tax_tier_5]
+significant_copper_mine_building_tax_tier_6 = @[significant_copper_mine_tax_tier_6]
+significant_copper_mine_building_tax_tier_7 = @[significant_copper_mine_tax_tier_7]
+significant_copper_mine_building_tax_tier_8 = @[significant_copper_mine_tax_tier_8]
+
+significant_silver_mine_building_tax_tier_1 = @[significant_silver_mine_tax_tier_1]
+significant_silver_mine_building_tax_tier_2 = @[significant_silver_mine_tax_tier_2]
+significant_silver_mine_building_tax_tier_3 = @[significant_silver_mine_tax_tier_3]
+significant_silver_mine_building_tax_tier_4 = @[significant_silver_mine_tax_tier_4]
+significant_silver_mine_building_tax_tier_5 = @[significant_silver_mine_tax_tier_5]
+significant_silver_mine_building_tax_tier_6 = @[significant_silver_mine_tax_tier_6]
+significant_silver_mine_building_tax_tier_7 = @[significant_silver_mine_tax_tier_7]
+significant_silver_mine_building_tax_tier_8 = @[significant_silver_mine_tax_tier_8]
+
+significant_gold_mine_building_tax_tier_1 = @[significant_gold_mine_tax_tier_1]
+significant_gold_mine_building_tax_tier_2 = @[significant_gold_mine_tax_tier_2]
+significant_gold_mine_building_tax_tier_3 = @[significant_gold_mine_tax_tier_3]
+significant_gold_mine_building_tax_tier_4 = @[significant_gold_mine_tax_tier_4]
+significant_gold_mine_building_tax_tier_5 = @[significant_gold_mine_tax_tier_5]
+significant_gold_mine_building_tax_tier_6 = @[significant_gold_mine_tax_tier_6]
+significant_gold_mine_building_tax_tier_7 = @[significant_gold_mine_tax_tier_7]
+significant_gold_mine_building_tax_tier_8 = @[significant_gold_mine_tax_tier_8]
+
+# Significant mine tax multipliers
+significant_salt_mine_building_tax_mult_tier_1 = @[significant_salt_mine_tax_mult_tier_1]
+significant_salt_mine_building_tax_mult_tier_2 = @[significant_salt_mine_tax_mult_tier_2]
+significant_salt_mine_building_tax_mult_tier_3 = @[significant_salt_mine_tax_mult_tier_3]
+significant_salt_mine_building_tax_mult_tier_4 = @[significant_salt_mine_tax_mult_tier_4]
+significant_salt_mine_building_tax_mult_tier_5 = @[significant_salt_mine_tax_mult_tier_5]
+significant_salt_mine_building_tax_mult_tier_6 = @[significant_salt_mine_tax_mult_tier_6]
+significant_salt_mine_building_tax_mult_tier_7 = @[significant_salt_mine_tax_mult_tier_7]
+significant_salt_mine_building_tax_mult_tier_8 = @[significant_salt_mine_tax_mult_tier_8]
+
+significant_lead_mine_building_tax_mult_tier_1 = @[significant_lead_mine_tax_mult_tier_1]
+significant_lead_mine_building_tax_mult_tier_2 = @[significant_lead_mine_tax_mult_tier_2]
+significant_lead_mine_building_tax_mult_tier_3 = @[significant_lead_mine_tax_mult_tier_3]
+significant_lead_mine_building_tax_mult_tier_4 = @[significant_lead_mine_tax_mult_tier_4]
+significant_lead_mine_building_tax_mult_tier_5 = @[significant_lead_mine_tax_mult_tier_5]
+significant_lead_mine_building_tax_mult_tier_6 = @[significant_lead_mine_tax_mult_tier_6]
+significant_lead_mine_building_tax_mult_tier_7 = @[significant_lead_mine_tax_mult_tier_7]
+significant_lead_mine_building_tax_mult_tier_8 = @[significant_lead_mine_tax_mult_tier_8]
+
+significant_tin_mine_building_tax_mult_tier_1 = @[significant_tin_mine_tax_mult_tier_1]
+significant_tin_mine_building_tax_mult_tier_2 = @[significant_tin_mine_tax_mult_tier_2]
+significant_tin_mine_building_tax_mult_tier_3 = @[significant_tin_mine_tax_mult_tier_3]
+significant_tin_mine_building_tax_mult_tier_4 = @[significant_tin_mine_tax_mult_tier_4]
+significant_tin_mine_building_tax_mult_tier_5 = @[significant_tin_mine_tax_mult_tier_5]
+significant_tin_mine_building_tax_mult_tier_6 = @[significant_tin_mine_tax_mult_tier_6]
+significant_tin_mine_building_tax_mult_tier_7 = @[significant_tin_mine_tax_mult_tier_7]
+significant_tin_mine_building_tax_mult_tier_8 = @[significant_tin_mine_tax_mult_tier_8]
+
+significant_iron_mine_building_tax_mult_tier_1 = @[significant_iron_mine_tax_mult_tier_1]
+significant_iron_mine_building_tax_mult_tier_2 = @[significant_iron_mine_tax_mult_tier_2]
+significant_iron_mine_building_tax_mult_tier_3 = @[significant_iron_mine_tax_mult_tier_3]
+significant_iron_mine_building_tax_mult_tier_4 = @[significant_iron_mine_tax_mult_tier_4]
+significant_iron_mine_building_tax_mult_tier_5 = @[significant_iron_mine_tax_mult_tier_5]
+significant_iron_mine_building_tax_mult_tier_6 = @[significant_iron_mine_tax_mult_tier_6]
+significant_iron_mine_building_tax_mult_tier_7 = @[significant_iron_mine_tax_mult_tier_7]
+significant_iron_mine_building_tax_mult_tier_8 = @[significant_iron_mine_tax_mult_tier_8]
+
+significant_copper_mine_building_tax_mult_tier_1 = @[significant_copper_mine_tax_mult_tier_1]
+significant_copper_mine_building_tax_mult_tier_2 = @[significant_copper_mine_tax_mult_tier_2]
+significant_copper_mine_building_tax_mult_tier_3 = @[significant_copper_mine_tax_mult_tier_3]
+significant_copper_mine_building_tax_mult_tier_4 = @[significant_copper_mine_tax_mult_tier_4]
+significant_copper_mine_building_tax_mult_tier_5 = @[significant_copper_mine_tax_mult_tier_5]
+significant_copper_mine_building_tax_mult_tier_6 = @[significant_copper_mine_tax_mult_tier_6]
+significant_copper_mine_building_tax_mult_tier_7 = @[significant_copper_mine_tax_mult_tier_7]
+significant_copper_mine_building_tax_mult_tier_8 = @[significant_copper_mine_tax_mult_tier_8]
+
+significant_silver_mine_building_tax_mult_tier_1 = @[significant_silver_mine_tax_mult_tier_1]
+significant_silver_mine_building_tax_mult_tier_2 = @[significant_silver_mine_tax_mult_tier_2]
+significant_silver_mine_building_tax_mult_tier_3 = @[significant_silver_mine_tax_mult_tier_3]
+significant_silver_mine_building_tax_mult_tier_4 = @[significant_silver_mine_tax_mult_tier_4]
+significant_silver_mine_building_tax_mult_tier_5 = @[significant_silver_mine_tax_mult_tier_5]
+significant_silver_mine_building_tax_mult_tier_6 = @[significant_silver_mine_tax_mult_tier_6]
+significant_silver_mine_building_tax_mult_tier_7 = @[significant_silver_mine_tax_mult_tier_7]
+significant_silver_mine_building_tax_mult_tier_8 = @[significant_silver_mine_tax_mult_tier_8]
+
+significant_gold_mine_building_tax_mult_tier_1 = @[significant_gold_mine_tax_mult_tier_1]
+significant_gold_mine_building_tax_mult_tier_2 = @[significant_gold_mine_tax_mult_tier_2]
+significant_gold_mine_building_tax_mult_tier_3 = @[significant_gold_mine_tax_mult_tier_3]
+significant_gold_mine_building_tax_mult_tier_4 = @[significant_gold_mine_tax_mult_tier_4]
+significant_gold_mine_building_tax_mult_tier_5 = @[significant_gold_mine_tax_mult_tier_5]
+significant_gold_mine_building_tax_mult_tier_6 = @[significant_gold_mine_tax_mult_tier_6]
+significant_gold_mine_building_tax_mult_tier_7 = @[significant_gold_mine_tax_mult_tier_7]
+significant_gold_mine_building_tax_mult_tier_8 = @[significant_gold_mine_tax_mult_tier_8]

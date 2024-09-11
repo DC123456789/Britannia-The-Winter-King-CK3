@@ -1,8 +1,36 @@
-﻿####################################
-### CORNISH & DEVONIAN TIN MINES ###
-####################################
+﻿# If a mine is particularly notable, it should receive a unique mine with greater modifiers than the base "metal" mines
+# This allows for a custom description also to denote why a particular mine was so significant, i.e. the tin mines in Cornwall/Devon
 
-cornish_tin_mines_01 = {
+# Breakdown of bonuses (exc. income):
+# Salt Mines: 
+    # Doesn't look like salt was actually "mined" at all, but acquired by the standard process of evaporating seawater or naturall salty water
+    # Can keep it in as a "mine", but localisation will need to be modified to account.
+    # Salt would be used for preservation of food
+    # Popular opinion bonus, & small health modifier? 
+    # Small development modifier
+# Copper/Tin Mines:
+    # Alloy to make bronze - used to mint currency during times of inflation, decorative pieces.
+    # Alloy to make pewter - used in tableware, tools
+    # Copper > value than Tin I'd say. but tin is still required to smelt the alloys
+    # Copper: small prestige bonus, small popular opinion 
+    # Tin: small popular opinion, small construction modifier
+    # I wouldn't argue these materials are particularly useful for development, but they have their places - small development modifier 
+# Lead Mines:
+    # Used for construction pretty much, and alloying
+    # Give it a medium construction cost modifier, & good development modifier (irrigation is pretty useful, despite lead's toxicity)
+# Iron Mines:
+    # Obvious uses in toolmaking, weaponmaking, etc. 
+    # Good local construction costs & MAA maintenance modifiers
+    # Good development modifier.
+# Silver Mines:
+    # Silver was the standard currency for most of history, therefore we'll keep it purely as a large tax benefit w/ good development modifier (stable currency flow) 
+# Gold Mines:
+    # Used in the forging of regalia/church iconography/etc, not so much for currency as it isn't common. 
+    # Prestige/piety bonus.
+    # No development modifier
+
+# SPECIAL MINES
+btwk_cornish_tin_mines_01 = {
 	# Can't be upgraded, nor constructed - can't destroy a river.
 	effect_desc = mines_effect_desc  # Don't know what this does
 
@@ -18,4 +46,944 @@ cornish_tin_mines_01 = {
 	
 	type = special
 	flag = travel_point_of_interest_economic_minor
+}
+
+# BASE MINES
+btwk_salt_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = salt_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = salt_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.02
+        county_opinion_add = 4
+    }
+
+    character_modifier = {
+        health = 0.01
+    }
+
+    next_building = btwk_salt_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_salt_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = salt_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = salt_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.04
+        county_opinion_add = 8
+    }
+
+    character_modifier = {
+        health = 0.04
+    }
+
+    next_building = btwk_salt_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_salt_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = salt_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = salt_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.06
+        county_opinion_add = 13
+    }
+
+    character_modifier = {
+        health = 0.7
+    }
+
+    next_building = btwk_salt_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_salt_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = salt_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = salt_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.08
+        county_opinion_add = 20
+    }
+
+    character_modifier = {
+        health = 0.1
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_lead_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = lead_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = lead_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.04
+        build_gold_cost = -0.03
+    }
+
+    next_building = btwk_lead_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_lead_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = lead_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = lead_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.08
+        build_gold_cost = -0.06
+    }
+
+    next_building = btwk_lead_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_lead_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = lead_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = lead_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.12
+        build_gold_cost = -0.1
+    }
+
+    next_building = btwk_lead_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_lead_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = lead_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = lead_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.16
+        build_gold_cost = -0.15
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_tin_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = tin_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = tin_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.02
+        build_gold_cost = -0.02
+        county_opinion_add = 3
+    }
+
+    next_building = btwk_tin_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_tin_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = tin_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = tin_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.04
+        build_gold_cost = -0.04
+        county_opinion_add = 6
+    }
+
+    next_building = btwk_tin_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_tin_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = tin_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = tin_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.07
+        build_gold_cost = -0.07
+        county_opinion_add = 10
+    }
+
+    next_building = btwk_tin_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_tin_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = tin_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = tin_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.1
+        build_gold_cost = -0.1
+        county_opinion_add = 15
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_iron_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = iron_mine_building_tax_tier_1
+        defender_holding_advantage = 3
+    }
+
+    county_modifier = {
+        tax_mult = iron_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.05
+        build_gold_cost = -0.05
+    }
+
+    character_modifier = {
+        heavy_infantry_maintenance_cost_mult = -0.02
+        heavy_cavalry_maintenance_cost_mult = -0.02
+        pikemen_maintenance_cost_mult = -0.02
+    }
+
+    next_building = btwk_iron_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_iron_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = iron_mine_building_tax_tier_2
+        defender_advantage = 5
+    }
+
+    county_modifier = {
+        tax_mult = iron_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.1
+        build_gold_cost = -0.1
+    }
+
+    character_modifier = {
+        heavy_infantry_maintenance_cost_mult = -0.04
+        heavy_cavalry_maintenance_cost_mult = -0.04
+        pikemen_maintenance_cost_mult = -0.04
+    }
+
+    next_building = btwk_iron_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_iron_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = iron_mine_building_tax_tier_3
+        defender_holding_advantage = 7
+    }
+
+    county_modifier = {
+        tax_mult = iron_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.15
+        build_gold_cost = -0.15
+    }
+
+    character_modifier = {
+        heavy_infantry_maintenance_cost_mult = -0.07
+        heavy_cavalry_maintenance_cost_mult = -0.07
+        pikemen_maintenance_cost_mult = -0.07
+    }
+
+    next_building = btwk_iron_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_iron_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = iron_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = iron_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.2
+        build_gold_cost = -0.2
+    }
+
+    character_modifier = {
+        heavy_infantry_maintenance_cost_mult = -0.1
+        heavy_cavalry_maintenance_cost_mult = -0.1
+        pikemen_maintenance_cost_mult = -0.1
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_copper_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = copper_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = copper_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.02
+        county_opinion_add = 3
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.15
+    }
+
+    next_building = btwk_copper_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_copper_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = copper_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = copper_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.04
+        county_opinion_add = 6
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.3
+    }
+
+    next_building = btwk_copper_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_copper_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = copper_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = copper_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.07
+        county_opinion_add = 10
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.45
+    }
+
+    next_building = btwk_copper_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_copper_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = copper_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = copper_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.1
+        county_opinion_add = 15
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.6
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_silver_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = silver_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = silver_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.1
+    }
+
+    next_building = btwk_silver_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_silver_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = silver_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = silver_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.2
+    }
+
+    next_building = btwk_silver_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_silver_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = silver_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = silver_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.3
+    }
+
+    next_building = btwk_silver_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_silver_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = silver_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = silver_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.4
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_gold_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+        building_requirement_castle_city_church = { LEVEL = 01 }
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = gold_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = gold_mine_building_tax_mult_tier_1
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.4
+    }
+
+    next_building = btwk_gold_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_gold_mines_02 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 02 }
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = gold_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = gold_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.1
+        local_construction_cost_mult = -0.1
+    }
+
+    character_modifier = {
+        monthly_prestige = 0.8
+    }
+
+    next_building = btwk_gold_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_gold_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = gold_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = gold_mine_building_tax_mult_tier_3
+    }
+
+    character_modifier = {
+        monthly_prestige = 1.4
+    }
+
+    next_building = btwk_gold_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_gold_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = gold_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = gold_mine_build_tax_mult_tier_4
+        development_growth_factor = 0.2
+        local_construction_cost_mult = -0.2
+    }
+
+    character_modifier = {
+        monthly_prestige = 2
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
 }
