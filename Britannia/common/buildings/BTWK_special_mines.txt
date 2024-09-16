@@ -30,23 +30,129 @@
     # No development modifier
 
 # SPECIAL MINES
-btwk_cornish_tin_mines_01 = {
-	# Can't be upgraded, nor constructed - can't destroy a river.
-	effect_desc = mines_effect_desc  # Don't know what this does
 
-	type_icon = "icon_structure_mines.dds"
-	
-	province_modifier = {
-		monthly_income = 0.3
-	}
-	county_modifier = {
-		tax_mult = 0.03
-		development_growth_factor = 0.02
-	}
-	
-	type = special
-	flag = travel_point_of_interest_economic_minor
+btwk_cornish_tin_mines_01 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct = {
+        culture = { has_innovation = innovation_crop_rotation }
+    }
+
+    cost_gold = expensive_building_tier_3_cost
+    province_modifier = {
+        monthly_income = significant_tin_mine_building_tax_tier_1
+    }
+
+    county_modifier = {
+        tax_mult = significant_tin_mine_building_tax_mult_tier_1
+        development_growth_factor = 0.03
+        build_gold_cost = -0.03
+        county_opinion_add = 5
+    }
+
+    next_building = btwk_cornish_tin_mines_02
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic_minor
 }
+
+btwk_cornish_tin_mines_02 = {  # Focus on streaming for Cornish tin mines, allow early level 2 building for tribals, but not level 3 or 4
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct = {
+        
+        culture = { has_innovation = innovation_manorialism }
+    }
+
+    cost_gold = expensive_building_tier_4_cost
+    province_modifier = {
+        monthly_income = significant_tin_mine_building_tax_tier_2
+    }
+
+    county_modifier = {
+        tax_mult = significant_tin_mine_building_tax_mult_tier_2
+        development_growth_factor = 0.05
+        build_gold_cost = -0.05
+        county_opinion_add = 7
+    }
+
+    next_building = btwk_cornish_tin_mines_03
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_cornish_tin_mines_03 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 03 }
+        culture = { has_innovation = innovation_windmills }
+    }
+
+    cost_gold = expensive_building_tier_5_cost
+    province_modifier = {
+        monthly_income = tin_mine_building_tax_tier_3
+    }
+
+    county_modifier = {
+        tax_mult = significant_tin_mine_building_tax_mult_tier_3
+        development_growth_factor = 0.09
+        build_gold_cost = -0.09
+        county_opinion_add = 12
+    }
+
+    next_building = btwk_cornish_tin_mines_04
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
+btwk_cornish_tin_mines_04 = {
+    effect_desc = mines_effect_desc
+    asset = { type = pdxmesh name = "building_special_mines_mesh" }
+    construction_time = slow_construction_time
+    type_icon = "icon_structure_mines.dds"
+
+    can_construct_potential = {
+        building_requirement_tribal = no
+    }
+
+    can_construct = {
+        building_requirement_castle_city_church = { LEVEL = 04 }
+        culture = { has_innovation = innovation_cranes }
+    }
+
+    cost_gold = expensive_building_tier_6_cost
+    province_modifier = {
+        monthly_income = significant_tin_mine_building_tax_tier_4
+    }
+
+    county_modifier = {
+        tax_mult = significant_tin_mine_building_tax_mult_tier_4
+        development_growth_factor = 0.12
+        build_gold_cost = -0.12
+        county_opinion_add = 18
+    }
+
+    ai_value = { base = 100 }
+    type = special
+    flag = travel_point_of_interest_economic
+}
+
 
 # BASE MINES
 btwk_salt_mines_01 = {
@@ -55,9 +161,7 @@ btwk_salt_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -195,9 +299,7 @@ btwk_lead_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -319,9 +421,7 @@ btwk_tin_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -447,9 +547,7 @@ btwk_iron_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -598,9 +696,7 @@ btwk_copper_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -738,9 +834,7 @@ btwk_silver_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
@@ -858,9 +952,7 @@ btwk_gold_mines_01 = {
     construction_time = slow_construction_time
     type_icon = "icon_structure_mines.dds"
 
-    can_construct_potential = {
-        building_requirement_tribal = no
-        building_requirement_castle_city_church = { LEVEL = 01 }
+    can_construct = {
         culture = { has_innovation = innovation_crop_rotation }
     }
 
