@@ -92,7 +92,7 @@ btwk_arbeia_01 = {
 	province_modifier = {
 		fort_level = 1
 		supply_limit = 2000 
-		stationed_maa_toughness_add = 5 
+		stationed_maa_toughness_mult = 0.15 
 		levy_size = 0.15
 
 	}
@@ -179,25 +179,25 @@ offas_dyke_01 = {
 ##################
 btwk_dumbarton_rock_01 = {   # Could do with a hill-esque icon 
 	construction_time = slow_construction_time
-	type_icon = "icon_structure_stonehenge.dds"
+	type_icon = "gibraltar.dds"
 
 	can_construct = {
 		culture = { 
 			has_innovation = innovation_crop_rotation 
-			culture_is_brythonic_culture_trigger = yes
 		}
 	}
 
 	cost_gold = expensive_building_tier_3_cost
 
 	province_modifier = {
-		fort_level = 2
-		defender_holding_advantage = 10
-		station
+		fort_level = 3
+		defender_holding_advantage = 15
+		stationed_maa_toughness_mult = 0.4
 	}
 
 	character_modifier = {
 		legitimacy_gain_mult = 0.2
+		hostile_scheme_resistance_add = 15
 	}
 
 	ai_value = { base = 100 }
@@ -211,11 +211,9 @@ btwk_dumbarton_rock_01 = {   # Could do with a hill-esque icon
 btwk_glastonbury_tor_01 = {
 	construction_time = slow_construction_time
 	type_icon = "icon_structure_canterbury_cathedral.dds"  # Could do with a hill-esque icon
-
 	can_construct = {
 		culture = { 
 			has_innovation = innovation_crop_rotation 
-			culture_is_imperial_like_culture_trigger = yes
 		}
 	}
 
@@ -240,7 +238,7 @@ btwk_glastonbury_tor_01 = {
 ################
 btwk_aquae_sulis_baths_01 = {  # Disrepair
 	construction_time = slow_construction_time
-	type_icon = "icon_structure_colosseum.dds"  # Unsure on use of this symbol here
+	type_icon = "compostela.dds"  # Unsure on use of this symbol here
 
 	can_construct = {
 		culture = { 
@@ -252,11 +250,12 @@ btwk_aquae_sulis_baths_01 = {  # Disrepair
 	cost_gold = expensive_building_tier_3_cost
 
 	county_modifier = {
-		popular_opinion = 5
+		county_opinion_add = 5
 	}
 
 	character_modifier = {
-		monthly_prestige = 0.2
+		monthly_prestige_gain_mult = 0.05
+		stress_loss_mult = 0.05
 	}
 
 	next_building = btwk_aquae_sulis_baths_02
@@ -266,26 +265,29 @@ btwk_aquae_sulis_baths_01 = {  # Disrepair
 }
 
 btwk_aquae_sulis_baths_02 = {  # Restored
-	construction_time = slow_construction_time
-	type_icon = "icon_structure_colosseum.dds"
+	construction_time = very_slow_construction_time
+	type_icon = "icon_structure_palace_of_achen.dds"
+	# Add feast cost reduction effect - weaker than leisure palaces 
 
 	can_construct = {
 		culture = { 
 			has_innovation = innovation_manorialism
-			culture_is_imperial_like_culture_trigger = yes
 		}
 	}
 
-	cost_gold = expensive_building_tier_5_cost
+	cost_gold = expensive_building_tier_6_cost  # Bit cheaper than full leisure palaces upgrade, bit weaker but other bonuses
 
 	county_modifier = {
 		development_growth_factor = 0.1
-		popular_opinion = 15
+		tax_mult = 0.2
+		county_opinion_add = 20
 	}
 
 	character_modifier = {
-		monthly_prestige = 0.5
-		stress_loss_mult = 0.1
+		monthly_prestige_gain_mult = 0.15
+		stress_loss_mult = 0.25
+		owned_personal_scheme_success_chance_add = 15
+		owned_hostile_scheme_success_chance_add = 15
 	}
 
 	ai_value = { base = 100 }
