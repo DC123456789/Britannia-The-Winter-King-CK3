@@ -1,4 +1,30 @@
-﻿check_de_jure_liege_county_effect = {
+﻿# Sets the title's new de jure liege
+# FLAG - The flag/variable that is checked to determine if this de jure liege change is supposed to be in effect
+# FLAG_SCOPE - The title that the FLAG is checked on
+# NEW_DE_JURE_LIEGE - The new de jure liege (usually a variable)
+# If the [flag]_pretend scope is set to the scoped title, then the flag is considered set even if it isn't 
+# actually, and [flag]_pretend_target is set as the de jure liege if it exists 
+# (overriding NEW_DE_JURE_LIEGE) - this is used for tooltip purposes
+set_title_flagged_de_jure_liege_effect = {
+	if = {
+		limit = { 
+			scope:$FLAG$_pretend ?= $FLAG_SCOPE$
+			exists = scope:$FLAG$_pretend_target
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = scope:$FLAG$_pretend_target } }
+			set_de_jure_liege_title = scope:$FLAG$_pretend_target
+		}
+	}
+	else = {
+		if = {
+			limit = { NOT = { de_jure_liege = $NEW_DE_JURE_LIEGE$ } }
+			set_de_jure_liege_title = $NEW_DE_JURE_LIEGE$
+		}
+	}
+}
+
+check_de_jure_liege_county_effect = {
 	if = {
 		limit = {
 			has_variable = norse_duchy
@@ -183,6 +209,19 @@ check_de_jure_liege_kingdom_effect = {
 		if = {
 			limit = { NOT = { de_jure_liege = this.var:formable_empire_1 } }
 			set_de_jure_liege_title = this.var:formable_empire_1
+		}
+	}
+	else_if = {
+		limit = {
+			has_variable = kingdom_region
+			this.var:kingdom_region = {
+				title_has_de_jure_variable_trigger = { FLAG = kingdom_region_empire }
+			}
+		}
+		set_title_flagged_de_jure_liege_effect = {
+			FLAG = kingdom_region_empire
+			FLAG_SCOPE = this.var:kingdom_region
+			NEW_DE_JURE_LIEGE = this.var:kingdom_region.var:kingdom_region_empire
 		}
 	}
 	else = {
