@@ -4,7 +4,7 @@ tags={
 	"History"
 }
 name="The Winter King"
-supported_version="1.13.0.*"
+supported_version="1.13.1.*"
 replace_path = "common/achievements"
 replace_path = "common/culture/cultures"
 replace_path = "common/culture/name_lists"
