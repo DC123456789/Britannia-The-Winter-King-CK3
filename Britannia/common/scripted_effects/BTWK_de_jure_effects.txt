@@ -24,6 +24,32 @@ set_title_flagged_de_jure_liege_effect = {
 	}
 }
 
+set_kingdom_region_de_jure_liege_effect = {
+	$REGION_BASE$ = { 
+		set_variable = {
+			name = kingdom_region_empire
+			value = $NEW_DE_JURE_LIEGE$
+		}
+		every_in_list = {
+			variable = kingdom_region_titles
+			check_de_jure_liege_kingdom_effect = yes
+		}
+	}
+}
+
+set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+	$REGION_BASE$ = { save_scope_as = kingdom_region_empire_pretend }
+	$NEW_DE_JURE_LIEGE$ = { save_scope_as = kingdom_region_empire_pretend_target }
+	$REGION_BASE$ = {
+		every_in_list = {
+			variable = kingdom_region_titles
+			show_as_tooltip = {
+				check_de_jure_liege_kingdom_effect = yes
+			}
+		}
+	}
+}
+
 check_de_jure_liege_county_effect = {
 	if = {
 		limit = {

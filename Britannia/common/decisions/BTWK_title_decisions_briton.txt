@@ -285,8 +285,7 @@ create_hen_ogledd_decision = {
 
 	is_shown = {
 		any_held_title = {
-			has_variable = formable_empire_1
-			this.var:formable_empire_1 = title:e_hen_ogledd
+			this.var:kingdom_region ?= title:k_ebrauc
 		}
 		culture = {
 			OR = {
@@ -331,15 +330,9 @@ create_hen_ogledd_decision = {
 			}
 			resolve_title_and_vassal_change = scope:title_change
 		}
-		title:k_ebrauc = { save_scope_as = kingdom_region_empire_pretend }
-		title:e_hen_ogledd = { save_scope_as = kingdom_region_empire_pretend_target }
-		title:e_hen_ogledd = {
-			every_in_list = {
-				variable = dynamic_de_jure_territory
-				show_as_tooltip = {
-					check_de_jure_liege_kingdom_effect = yes
-				}
-			}
+		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+			REGION_BASE = title:k_ebrauc
+			NEW_DE_JURE_LIEGE = title:e_hen_ogledd
 		}
 		trigger_event = { id = titular_titles.0207 }
 	}

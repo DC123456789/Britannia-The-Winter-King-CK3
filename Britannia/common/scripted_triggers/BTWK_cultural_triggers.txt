@@ -111,12 +111,15 @@ can_create_roman_title_trigger = {
 }
 
 # Determines access to Romanized Germanic titles (= Roman titles, pretty much)
-is_romanized_germanic_culture_trigger = {
-	culture = { has_cultural_pillar = heritage_romanized_germanic }
+is_romanized_barbarian_culture_trigger = {
+	culture = { culture_is_romanized_barbarian_culture_trigger = yes }
 }
 
-culture_is_romanized_germanic_culture_trigger = {
-	has_cultural_pillar = heritage_romanized_germanic
+culture_is_romanized_barbarian_culture_trigger = {
+	OR = {
+		has_cultural_pillar = heritage_romanized_germanic
+		has_cultural_pillar = heritage_iranian		# Alan
+	}
 }
 
 # Determines access to Anglo-Saxon titles and mechanics
@@ -175,7 +178,7 @@ is_imperial_like_culture_trigger = {
 		OR = {
 			is_brythonic_culture_trigger = yes
 			is_imperial_culture_trigger = yes
-			is_romanized_germanic_culture_trigger = yes
+			is_romanized_barbarian_culture_trigger = yes
 		}
 	}
 }
