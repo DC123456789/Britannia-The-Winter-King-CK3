@@ -635,18 +635,9 @@ titular_titles.0207 = {
 			trigger_event = { id = titular_titles.0208 }
 		}
 		hidden_effect = {
-			title:k_ebrauc = { 
-				set_variable = {
-					name = kingdom_region_empire
-					value = title:e_hen_ogledd
-				}
-			}
-			title:e_hen_ogledd = { 
-				set_variable = title_created_de_jure
-				every_in_list = {
-					variable = dynamic_de_jure_territory
-					check_de_jure_liege_kingdom_effect = yes
-				}
+			set_kingdom_region_de_jure_liege_effect = {
+				REGION_BASE = title:k_ebrauc
+				NEW_DE_JURE_LIEGE = title:e_hen_ogledd
 			}
 		}
 	}
@@ -679,16 +670,9 @@ titular_titles.0208 = {
 			}
 			resolve_title_and_vassal_change = scope:title_change
 		}
-		show_as_tooltip = {
-			title:e_hen_ogledd = { 
-				save_scope_as = title_expanded_de_jure_pretend
-				every_in_list = {
-					variable = dynamic_de_jure_territory
-					show_as_tooltip = {
-						check_de_jure_liege_kingdom_effect = yes
-					}
-				}
-			}
+		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+			REGION_BASE = title:k_ebrauc
+			NEW_DE_JURE_LIEGE = title:e_hen_ogledd
 		}
 	}
 
@@ -704,6 +688,247 @@ titular_titles.0208 = {
 	
 	option = {
 		name = titular_titles.0208.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+# Fall of Britannia
+titular_titles.0250 = {
+	type = none
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			NOT = { exists = struggle:britannia_struggle }
+			struggle:britannia_struggle = { is_struggle_phase = struggle_britannia_phase_consolidation }
+			struggle:britannia_struggle = { is_struggle_phase = struggle_britannia_phase_unification }	
+		}
+		NOT = { has_global_variable = end_of_britannia }
+	}
+	
+	immediate = {
+		# Only triggers if < 40% of Britannia is controlled by an Imperial-adjacent culture
+		if = {
+			limit = {
+				any_county_in_region = {
+					percent < 0.40
+					region = world_britannia
+					holder.top_liege = { is_imperial_like_culture_trigger = yes }
+				} 
+			}
+			if = {
+				limit = { NOT = { has_global_variable = end_of_britannia_timer_started } }
+				set_global_variable = end_of_britannia_timer_started
+				set_global_variable = { name = end_of_britannia_timer days = 3650 }
+			}
+			else_if = {
+				limit = { 
+					has_global_variable = end_of_britannia_timer_started
+					NOT = { has_global_variable = end_of_britannia_timer }
+				}
+				remove_global_variable = end_of_britannia_timer_started
+				remove_global_variable = end_of_britannia_timer
+				trigger_event = { id = titular_titles.0251 }
+			}
+		}
+		else = {
+			if = {
+				limit = { has_global_variable = end_of_britannia_timer_started }
+				remove_global_variable = end_of_britannia_timer_started
+				remove_global_variable = end_of_britannia_timer
+			}
+		}
+	}
+}
+
+titular_titles.0251 = {
+	type = none
+	hidden = yes
+	
+	immediate = {
+		set_global_variable = end_of_britannia
+	
+		# Try to choose the most relevant/powerful Briton king
+		if = {
+			limit = { exists = title:e_britannia.holder }
+			title:e_britannia.holder = { save_scope_as = briton_king }
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					is_brythonic_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia_south }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					is_brythonic_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia_south }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					is_brythonic_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					is_brythonic_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		else = {
+			ordered_ruler = {
+				limit = {
+					is_brythonic_culture_trigger = yes
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		
+		# Try to choose the most relevant/powerful Anglo-Saxon king
+		if = {
+			limit = { exists = title:e_aengland.holder }
+			title:e_aengland.holder = { save_scope_as = anglo_saxon_king }
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					can_create_germanic_title_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					can_create_germanic_title_culture_trigger = yes
+					capital_province = { geographical_region = world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = anglo_saxon_king
+			}
+		}
+		else = {
+			ordered_independent_ruler = {
+				limit = {
+					can_create_germanic_title_culture_trigger = yes
+					any_realm_province = { geographical_region = world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = anglo_saxon_king
+			}
+		}
+		
+		trigger_event = { id = titular_titles.0252 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0252 }
+		}
+		if = {
+			limit = { 
+				exists = title:e_britannia.holder
+				title:e_britannia.holder = { is_ai = yes }
+			}
+			title:e_britannia.holder = { trigger_event = { id = titular_titles.0252 } }
+		}
+		hidden_effect = {
+			set_kingdom_region_de_jure_liege_effect = {
+				REGION_BASE = title:k_londinium
+				NEW_DE_JURE_LIEGE = title:e_cymru
+			}
+			set_kingdom_region_de_jure_liege_effect = {
+				REGION_BASE = title:k_gwynedd
+				NEW_DE_JURE_LIEGE = title:e_cymru
+			}
+			set_kingdom_region_de_jure_liege_effect = {
+				REGION_BASE = title:k_ebrauc
+				NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+			}
+		}
+	}
+}
+
+titular_titles.0252 = {
+	type = character_event
+	title = titular_titles.0252.t
+	desc = titular_titles.0252.desc
+	theme = war
+	
+	left_portrait = {
+		character = scope:briton_king
+		animation = war_over_loss
+	}
+	
+	right_portrait = {
+		character = scope:anglo_saxon_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_title = title:e_britannia }
+			destroy_title = title:e_britannia
+		}
+		custom_tooltip = {
+			text = britannia_mechanics_disabled_tt
+		}
+		custom_tooltip = {
+			text = cymru_de_jure_shift_tt
+		}
+		custom_tooltip = {
+			text = hen_ogledd_de_jure_shift_tt
+		}
+	}
+
+	option = {
+		name = titular_titles.0252.a.briton
+		trigger = {
+			is_brythonic_culture_trigger = yes
+			NOT = { culture = { has_cultural_pillar = heritage_latin } }
+		}
+	}
+
+	option = {
+		name = titular_titles.0252.a.roman
+		trigger = {
+			culture = { has_cultural_pillar = heritage_latin }
+			any_realm_province = { geographical_region = world_britannia }
+		}
+	}
+
+	option = {
+		name = titular_titles.0252.a.anglosaxon
+		trigger = {
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			any_realm_province = { geographical_region = world_britannia }
+		}
+	}
+
+	option = {
+		name = titular_titles.0252.a.other_germanic
+		trigger = {
+			can_create_germanic_title_culture_trigger = yes
+			NOT = { culture = { has_cultural_pillar = heritage_west_germanic } }
+			any_realm_province = { geographical_region = world_britannia }
+		}
+	}
+	
+	option = {
+		name = titular_titles.0252.a
 		trigger = { always = no }
 		fallback = yes
 	}
