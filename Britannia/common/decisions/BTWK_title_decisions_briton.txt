@@ -294,9 +294,10 @@ create_hen_ogledd_decision = {
 			}
 		}
 		highest_held_title_tier < tier_empire
-		title:k_ebrauc = {
-			NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
-		}
+		# title:k_ebrauc = {
+			# NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
+		# }
+		title:e_hen_ogledd = { is_title_created = no }
 	}
 
 	is_valid = {
@@ -326,9 +327,14 @@ create_hen_ogledd_decision = {
 			}
 			resolve_title_and_vassal_change = scope:title_change
 		}
-		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
-			REGION_BASE = title:k_ebrauc
-			NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+		title:e_hen_ogledd = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = this
+					NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+				}
+			}
 		}
 		trigger_event = { id = titular_titles.0207 }
 	}
@@ -353,9 +359,12 @@ reunite_the_britons_decision = {
 	desc = reunite_the_britons_decision_desc
 
 	is_shown = {
-		OR = {
-			has_title = title:e_cymru
-			has_title = title:e_hen_ogledd
+		any_held_title = {
+			OR = {
+				this.var:kingdom_region ?= title:k_ebrauc
+				this.var:kingdom_region ?= title:k_gwynedd
+				this.var:kingdom_region ?= title:k_londinium
+			}
 		}
 		has_global_variable = end_of_britannia
 		culture = {
@@ -401,9 +410,22 @@ reunite_the_britons_decision = {
 			resolve_title_and_vassal_change = scope:title_change
 			destroy_title = title:e_cymru
 			destroy_title = title:e_hen_ogledd
+			give_nickname = nick_y_mab_darogan
 		}
 		custom_tooltip = {
 			text = britannia_de_jure_shift_tt
+		}
+		show_as_tooltip = {
+			if = {
+				limit = { primary_title.capital_province = { geographical_region = world_britannia_hen_ogledd } }
+				custom_description_no_bullet = {
+					text = if_has_e_hen_ogledd_as_primary_title_effect
+					subject = title:e_hen_ogledd		# Some trickery to make the game render tooltips in order
+				}
+				title:e_britannia = { 
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:e_hen_ogledd.title_capital_county }
+				}
+			}
 		}
 		trigger_event = { id = titular_titles.0209 }
 	}

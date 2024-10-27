@@ -25,10 +25,11 @@ set_title_flagged_de_jure_liege_effect = {
 }
 
 set_kingdom_region_de_jure_liege_effect = {
+	$NEW_DE_JURE_LIEGE$ = { save_temporary_scope_as = new_liege }
 	$REGION_BASE$ = { 
 		set_variable = {
 			name = kingdom_region_empire
-			value = $NEW_DE_JURE_LIEGE$
+			value = scope:new_liege
 		}
 		every_in_list = {
 			variable = kingdom_region_titles
@@ -428,5 +429,14 @@ set_roman_duchy_name_effect = {
 			limit = { this = title:d_lennox }
 			set_title_name = cn_attacottia
 		}
+	}
+}
+
+set_capital_county_w_tooltip_effect = {
+	custom_description = {
+		text = set_capital_county_w_tooltip_effect
+		subject = THIS
+		object = $CAPITAL$
+		set_capital_county = $CAPITAL$
 	}
 }

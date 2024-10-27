@@ -634,10 +634,13 @@ titular_titles.0207 = {
 			limit = { NOT = { this = PREV } }
 			trigger_event = { id = titular_titles.0208 }
 		}
-		hidden_effect = {
-			set_kingdom_region_de_jure_liege_effect = {
-				REGION_BASE = title:k_ebrauc
-				NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+		title:e_hen_ogledd = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
 			}
 		}
 	}
@@ -669,10 +672,18 @@ titular_titles.0208 = {
 				}
 			}
 			resolve_title_and_vassal_change = scope:title_change
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:world_britannia
+			}
 		}
-		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
-			REGION_BASE = title:k_ebrauc
-			NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+		title:e_hen_ogledd = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
 		}
 	}
 
@@ -688,6 +699,103 @@ titular_titles.0208 = {
 	
 	option = {
 		name = titular_titles.0208.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+# High Kingdom of Britannia (reunification)
+titular_titles.0209 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		primary_title = { save_scope_as = founder_old_primary }
+		trigger_event = { id = titular_titles.0210 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0210 }
+		}
+		title:e_britannia = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = prev
+				}
+			}
+		}
+	}
+}
+
+titular_titles.0210 = {
+	type = character_event
+	title = titular_titles.0210.t
+	desc = titular_titles.0210.desc
+	theme = war
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_britannia = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			if = {
+				limit = { has_primary_title = title:e_hen_ogledd }
+				title:e_britannia = { 
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:e_hen_ogledd.title_capital_county }
+				}
+			}
+			if = {
+				limit = { has_title = title:e_cymru }
+				destroy_title = title:e_cymru
+			}
+			if = {
+				limit = { has_title = title:e_hen_ogledd }
+				destroy_title = title:e_hen_ogledd
+			}
+			give_nickname = nick_y_mab_darogan
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:world_britannia
+			}
+		}
+		custom_tooltip = {
+			text = britannia_de_jure_shift_happened_tt
+		}
+	}
+
+	option = {
+		name = titular_titles.0210.a.founder
+		trigger = {
+			this = scope:founder
+		}
+	}
+
+	option = {
+		name = titular_titles.0210.a.briton
+		trigger = {
+			NOT = { this = scope:founder }
+			is_brythonic_culture_trigger = yes
+		}
+	}
+	
+	option = {
+		name = titular_titles.0210.a
 		trigger = { always = no }
 		fallback = yes
 	}
@@ -846,17 +954,23 @@ titular_titles.0251 = {
 			title:e_britannia.holder = { trigger_event = { id = titular_titles.0252 } }
 		}
 		hidden_effect = {
-			set_kingdom_region_de_jure_liege_effect = {
-				REGION_BASE = title:k_londinium
-				NEW_DE_JURE_LIEGE = title:e_cymru
+			title:e_cymru = {
+				every_in_list = {
+					variable = base_kingdom_regions
+					set_kingdom_region_de_jure_liege_effect = {
+						REGION_BASE = THIS
+						NEW_DE_JURE_LIEGE = PREV
+					}
+				}
 			}
-			set_kingdom_region_de_jure_liege_effect = {
-				REGION_BASE = title:k_gwynedd
-				NEW_DE_JURE_LIEGE = title:e_cymru
-			}
-			set_kingdom_region_de_jure_liege_effect = {
-				REGION_BASE = title:k_ebrauc
-				NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+			title:e_hen_ogledd = {
+				every_in_list = {
+					variable = base_kingdom_regions
+					set_kingdom_region_de_jure_liege_effect = {
+						REGION_BASE = THIS
+						NEW_DE_JURE_LIEGE = PREV
+					}
+				}
 			}
 		}
 	}
@@ -887,10 +1001,10 @@ titular_titles.0252 = {
 			text = britannia_mechanics_disabled_tt
 		}
 		custom_tooltip = {
-			text = cymru_de_jure_shift_tt
+			text = cymru_de_jure_shift_happened_tt
 		}
 		custom_tooltip = {
-			text = hen_ogledd_de_jure_shift_tt
+			text = hen_ogledd_de_jure_shift_happened_tt
 		}
 	}
 
