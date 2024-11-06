@@ -262,6 +262,7 @@ potential_integrate_kingdom_region_trigger = {
 }
 
 can_integrate_kingdom_region_trigger = {
+	save_temporary_scope_as = scoped_character
 	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
 	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
 	switch = {
@@ -288,6 +289,22 @@ can_integrate_kingdom_region_trigger = {
 			custom_tooltip = {
 				text = error_tt
 				always = no
+			}
+		}
+	}
+	scope:kingdom_region_scope = {
+		custom_description = {
+			text = current_kingdom_liege_is_held_or_holds_no_territory_in_region_trigger
+			this.var:kingdom_region_empire = {
+				OR = {
+					holder = scope:scoped_character
+					NOT = {
+						any_county_in_region = {
+							region = $REGION$
+							root = { completely_controls = prev }
+						}
+					}
+				}
 			}
 		}
 	}

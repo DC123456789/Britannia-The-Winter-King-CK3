@@ -49,6 +49,8 @@ portrait_wear_no_headgear_trigger = {
 		portrait_prisoner_trigger = yes
 		has_character_modifier = hajj_halq_modifier # To show shaved hair
 
+		has_character_flag = roaming_character
+
 		AND = { # No headgear for characters who sold their crown
 			exists = this
 			has_character_flag = sold_crown_charmod
@@ -116,6 +118,7 @@ portrait_wear_armor_trigger = {
 			NOR = {
 				has_activity_type = activity_hunt
 				has_activity_type = activity_pilgrimage
+				has_activity_type = activity_roaming
 			}
 		}
 	}
@@ -205,6 +208,10 @@ portrait_wear_armor_trigger = {
 		has_character_flag = forced_knight_armor
 		# In a Tournament
 		activity_tournament_armor_trigger = yes
+		AND = { # In case these characters become landed they should stop wearing armor
+			has_character_flag = military_outfit
+			is_ruler = no
+		}
 	}
 }
 
@@ -265,6 +272,7 @@ portrait_wear_helmet_trigger = { # Different from Armor, as Kings and Emperors s
 			NOR = {
 				has_activity_type = activity_hunt
 				has_activity_type = activity_pilgrimage
+				has_activity_type = activity_roaming
 			}
 		}
 	}
@@ -336,6 +344,10 @@ portrait_wear_helmet_trigger = { # Different from Armor, as Kings and Emperors s
 		has_character_flag = single_combat_duel_armor
 		# In a Tournament
 		activity_tournament_armor_trigger = yes
+		AND = { # In case these characters become landed they should stop wearing armor
+			has_character_flag = military_outfit
+			is_ruler = no
+		}
 	}
 	NOR = {
 		activity_tournament_shirtless_trigger = yes
