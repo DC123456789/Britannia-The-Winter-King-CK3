@@ -1,0 +1,898 @@
+councillor_chancellor = {
+	skill = diplomacy
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_jute }
+							culture = { has_name_list = name_list_angle }
+							culture = { has_name_list = name_list_old_saxon }
+							culture = { has_name_list = name_list_oldfrisian }
+							culture = { has_name_list = name_list_anglo_saxon }
+						}
+					}
+				}
+				desc = councillor_chancellor_aerendraca
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_saxon }
+					}
+				}
+				desc = councillor_chancellor_eosago
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_frisian }
+					}
+				}
+				desc = councillor_chancellor_asega
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldfrankish }
+							culture = { has_name_list = name_list_frankish }
+						}
+					}
+				}
+				desc = councillor_chancellor_aiwasago
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_dutch }
+					}
+				}
+				desc = councillor_chancellor_ewaseggo
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_franconian }
+							culture = { has_name_list = name_list_oldalemannic }
+							culture = { has_name_list = name_list_alemannic }
+							culture = { has_name_list = name_list_oldbavarian}
+							culture = { has_name_list = name_list_bavarian }
+							culture = { has_name_list = name_list_oldthuringian }
+							culture = { has_name_list = name_list_thuringian }
+						}
+					}
+				}
+				desc = councillor_chancellor_ewasago
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_proto_norse }
+					}
+				}
+				desc = councillor_chancellor_lagamannr
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_norse }
+							culture = { has_name_list = name_list_norse_gael }
+						}
+					}
+				}
+				desc = councillor_chancellor_logmadr
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_briton }
+							culture = { has_name_list = name_list_cumbrian }
+						}
+					}
+				}
+				desc = councillor_chancellor_brodgwur_llis
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_pictish }
+					}
+				}
+				desc = councillor_chancellor_braduur
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_armorican }
+							culture = { has_name_list = name_list_breton }
+						}
+					}
+				}
+				desc = councillor_chancellor_master_of_laws
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldirish }
+							culture = { has_name_list = name_list_gaelic }
+						}
+					}
+				}
+				desc = councillor_chancellor_brithem
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_cultural_pillar = heritage_latin }
+							culture = { has_cultural_pillar = heritage_romanized_germanic }
+						}
+					}
+				}
+				desc = councillor_chancellor_magister_officiorum
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_cultural_pillar = heritage_romance }
+					}
+				}
+				desc = councillor_chancellor_chancelier
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_basque }
+					}
+				}
+				desc = councillor_chancellor_heresrale
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = councillor_generic_chancellor
+			}
+		}
+	}
+
+	valid_position = {
+		NOT = { government_has_flag = government_is_landless_adventurer }
+	}
+
+	tooltip = game_concept_chancellor_desc
+
+	modifier = {
+		name = councillor_chancellor_modifier
+		fellow_vassal_opinion = 5
+		monthly_diplomacy_lifestyle_xp_gain_mult = 0.05
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_chancellor_modifier
+		monthly_prestige = 1
+		scale = council_scaled_monthly_income
+	}
+
+	modifier = {
+		name = councillor_chancellor_modifier
+		monthly_influence = 1
+		enemy_political_scheme_success_chance_max_add = -5
+		scale = council_scaled_admin_value
+	}
+
+	council_owner_modifier = {
+		name = learn_on_the_job_modifier
+		diplomacy = 1
+		scale = chancellor_learn_on_the_job_scale
+	}
+
+	council_owner_modifier = {
+		name = reliable_house_modifier
+		diplomacy = 1
+		scale = chancellor_reliable_house_scale
+	}
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		can_be_chancellor_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		NOT = { this = character:528 }
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+
+	portrait_animation = chancellor
+
+	barbershop_data = {
+		position = { 918.0 172.0 }
+		click_to_front = no
+	}
+}
+
+councillor_steward = {
+	skill = stewardship
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_jute }
+							culture = { has_name_list = name_list_angle }
+							culture = { has_name_list = name_list_old_saxon }
+							culture = { has_name_list = name_list_oldfrisian }
+							culture = { has_name_list = name_list_anglo_saxon }
+						}
+					}
+				}
+				desc = councillor_steward_discthegn
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_saxon }
+					}
+				}
+				desc = councillor_steward_druhtseti
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_frisian }
+					}
+				}
+				desc = councillor_steward_stiwerd
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldfrankish }
+							culture = { has_name_list = name_list_frankish }
+							culture = { has_name_list = name_list_dutch }
+						}
+					}
+				}
+				desc = councillor_steward_siniskalk
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_franconian }
+							culture = { has_name_list = name_list_oldalemannic }
+							culture = { has_name_list = name_list_alemannic }	
+							culture = { has_name_list = name_list_oldbavarian}
+							culture = { has_name_list = name_list_bavarian }
+							culture = { has_name_list = name_list_oldthuringian }
+							culture = { has_name_list = name_list_thuringian }
+						}
+					}
+				}
+				desc = councillor_steward_siniskalh
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_proto_norse }
+					}
+				}
+				desc = councillor_steward_stijawardur
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_norse }
+							culture = { has_name_list = name_list_norse_gael }
+						}
+					}
+				}
+				desc = councillor_steward_stivardr
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_briton }
+							culture = { has_name_list = name_list_cumbrian }
+							culture = { has_name_list = name_list_pictish }
+						}
+					}
+				}
+				desc = councillor_steward_disctain
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_armorican }
+							culture = { has_name_list = name_list_breton }
+						}
+					}
+				}
+				desc = councillor_steward_master_of_coin
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldirish }
+							culture = { has_name_list = name_list_gaelic }
+						}
+					}
+				}
+				desc = councillor_steward_rechtaire
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_cultural_pillar = heritage_latin }
+							culture = { has_cultural_pillar = heritage_romanized_germanic }
+						}
+					}
+				}
+				desc = councillor_steward_rationalis
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_cultural_pillar = heritage_romance }
+					}
+				}
+				desc = councillor_steward_seneschal
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_basque }
+					}
+				}
+				desc = councillor_steward_dinaruzani
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = councillor_generic_steward
+			}
+		}
+	}
+	
+	tooltip = game_concept_steward_desc
+	
+	valid_position = {
+		NOT = { government_has_flag = government_is_landless_adventurer }
+	}
+
+	modifier = {
+		name = councillor_steward_modifier
+		monthly_income = 1
+		scale = council_scaled_monthly_income
+	}
+
+	modifier = {
+		name = councillor_steward_modifier
+		build_gold_cost = -0.025
+		monthly_stewardship_lifestyle_xp_gain_mult = 0.05
+		domain_tax_mult = 0.025
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_steward_modifier
+		monthly_influence = 1
+		domicile_build_gold_cost = -0.05
+		scale = council_scaled_admin_value
+	}
+
+	council_owner_modifier = {
+		name = learn_on_the_job_modifier
+		stewardship = 1
+		scale = steward_learn_on_the_job_scale
+	}
+
+	council_owner_modifier = {
+		name = reliable_house_modifier
+		stewardship = 1
+		scale = steward_reliable_house_scale
+	}
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		can_be_steward_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		NOT = { this = character:528 }
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+
+	portrait_animation = steward
+
+	barbershop_data = {
+		position = { 1268.0 172.0 }
+		click_to_front = no
+	}
+}
+
+councillor_marshal = {
+	skill = martial
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_jute }
+							culture = { has_name_list = name_list_angle }
+							culture = { has_name_list = name_list_old_saxon }
+							culture = { has_name_list = name_list_oldfrisian }
+							culture = { has_name_list = name_list_anglo_saxon }
+						}
+					}
+				}
+				desc = councillor_marshal_horsthegn
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_saxon }
+					}
+				}
+				desc = councillor_marshal_maraskalk
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_frisian }
+					}
+				}
+				desc = councillor_marshal_marskalk
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldfrankish }
+							culture = { has_name_list = name_list_frankish }
+						}
+					}
+				}
+				desc = councillor_marshal_marhaskalk
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_dutch }
+					}
+				}
+				desc = councillor_marshal_mariskalk
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_franconian }
+							culture = { has_name_list = name_list_oldalemannic }
+							culture = { has_name_list = name_list_alemannic }							
+							culture = { has_name_list = name_list_oldbavarian}	
+							culture = { has_name_list = name_list_bavarian }							
+							culture = { has_name_list = name_list_oldthuringian }
+							culture = { has_name_list = name_list_thuringian }
+						}
+					}
+				}
+				desc = councillor_marshal_marhskalh
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_proto_norse }
+					}
+				}
+				desc = councillor_marshal_druhtinar
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_norse }
+							culture = { has_name_list = name_list_norse_gael }
+						}
+					}
+				}
+				desc = councillor_marshal_drottinn
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_briton }
+							culture = { has_name_list = name_list_cumbrian }
+						}
+					}
+				}
+				desc = councillor_marshal_pennteglug
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_pictish }
+					}
+				}
+				desc = councillor_marshal_pennteglog
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_armorican }
+							culture = { has_name_list = name_list_breton }
+						}
+					}
+				}
+				desc = councillor_marshal_master_of_arms
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldirish }
+							culture = { has_name_list = name_list_gaelic }
+						}
+					}
+				}
+				desc = councillor_marshal_trenfer
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_cultural_pillar = heritage_latin }
+							culture = { has_cultural_pillar = heritage_romanized_germanic }
+						}
+					}
+				}
+				desc = councillor_marshal_magister_militum
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_cultural_pillar = heritage_romance }
+					}
+				}
+				desc = councillor_marshal_mareschal
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_basque }
+					}
+				}
+				desc = councillor_marshal_buruzagi
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = councillor_generic_marshal
+			}
+		}
+	}
+	
+	tooltip = game_concept_marshal_desc
+
+	valid_position = {
+		NOT = { government_has_flag = government_is_landless_adventurer }
+	}
+
+	modifier = {
+		name = councillor_marshal_modifier
+		prowess = 1
+		army_maintenance_mult = -0.05
+		monthly_martial_lifestyle_xp_gain_mult = 0.05
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_marshal_modifier
+		levy_size = 0.05
+		scale = council_scaled_by_liege_tier_not_admin
+	}
+
+	modifier = {
+		name = councillor_marshal_modifier
+		monthly_influence = 1
+		maa_toughness_mult = 0.04
+		scale = council_scaled_admin_value
+	}
+
+	council_owner_modifier = {
+		name = learn_on_the_job_modifier
+		martial = 1
+		scale = marshal_learn_on_the_job_scale
+	}
+
+	council_owner_modifier = {
+		name = reliable_house_modifier
+		martial = 1
+		scale = marshal_reliable_house_scale
+	}
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		can_be_marshal_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		NOT = { this = character:528 }
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+
+	portrait_animation = marshal
+
+	barbershop_data = {
+		position = { 558.0 172.0 }
+		click_to_front = no
+	}
+}
+
+councillor_spymaster = {
+	skill = intrigue
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_jute }
+							culture = { has_name_list = name_list_angle }
+							culture = { has_name_list = name_list_old_saxon }
+							culture = { has_name_list = name_list_oldfrisian }
+							culture = { has_name_list = name_list_anglo_saxon }
+						}
+					}
+				}
+				desc = councillor_spymaster_heafodsceawere
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_saxon }
+					}
+				}
+				desc = councillor_spymaster_hovidspehari
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_frisian }
+					}
+				}
+				desc = councillor_spymaster_havedspehere
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldfrankish }
+							culture = { has_name_list = name_list_frankish }
+						}
+					}
+				}
+				desc = councillor_spymaster_haubidspehari
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_dutch }
+					}
+				}
+				desc = councillor_spymaster_hovitspiari
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldalemannic }
+							culture = { has_name_list = name_list_oldbavarian}
+							culture = { has_name_list = name_list_oldthuringian }
+							culture = { has_name_list = name_list_thuringian }
+						}
+					}
+				}
+				desc = councillor_spymaster_houbidspihari
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_franconian }
+							culture = { has_name_list = name_list_alemannic }						
+							culture = { has_name_list = name_list_bavarian }
+						}
+					}
+				}
+				desc = councillor_spymaster_houbitspihari
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_proto_norse }
+					}
+				}
+				desc = councillor_spymaster_athalaradar
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_norse }
+							culture = { has_name_list = name_list_norse_gael }
+						}
+					}
+				}
+				desc = councillor_spymaster_adalrad
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_briton }
+							culture = { has_name_list = name_list_cumbrian }
+							culture = { has_name_list = name_list_pictish }
+						}
+					}
+				}
+				desc = councillor_spymaster_drusor
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_armorican }
+							culture = { has_name_list = name_list_breton }
+						}
+					}
+				}
+				desc = councillor_spymaster_master_of_whisperers
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_name_list = name_list_oldirish }
+							culture = { has_name_list = name_list_gaelic }
+						}
+					}
+				}
+				desc = councillor_spymaster_doirseor
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						OR = {
+							culture = { has_cultural_pillar = heritage_latin }
+							culture = { has_cultural_pillar = heritage_romanized_germanic }
+						}
+					}
+				}
+				desc = councillor_spymaster_speculator
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_cultural_pillar = heritage_romance }
+					}
+				}
+				desc = councillor_spymaster_maistre_espies
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						culture = { has_name_list = name_list_basque }
+					}
+				}
+				desc = councillor_spymaster_gezuresrale
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = councillor_generic_spymaster
+			}
+		}
+	}
+	
+	tooltip = game_concept_spymaster_desc
+
+	valid_position = {
+		NOT = { government_has_flag = government_is_landless_adventurer }
+	}
+
+	# Scaled modifiers.
+	modifier = {
+		name = councillor_spymaster_modifier
+		scale = council_scaled_by_liege_tier
+		monthly_intrigue_lifestyle_xp_gain_mult = 0.05
+		dread_baseline_add = 10
+	}
+
+	# Unscaled modifiers.
+	modifier = {
+		name = councillor_spymaster_modifier
+		hostile_scheme_phase_duration_add = -10
+		owned_hostile_scheme_success_chance_max_add = 10
+	}
+
+	modifier = {
+		name = councillor_spymaster_modifier
+		monthly_influence = 1
+		owned_scheme_secrecy_add = 5
+		scale = council_scaled_admin_value
+	}
+
+	council_owner_modifier = {
+		name = learn_on_the_job_modifier
+		intrigue = 1
+		scale = spymaster_learn_on_the_job_scale
+	}
+
+	council_owner_modifier = {
+		name = reliable_house_modifier
+		intrigue = 1
+		scale = spymaster_reliable_house_scale
+	}
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		can_be_spymaster_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		NOT = { this = character:528 }
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+	
+	use_for_scheme_phase_duration = yes
+	use_for_scheme_resistance = yes
+
+	portrait_animation = spymaster
+
+	barbershop_data = {
+		position = { 1433.0 261.0 }
+		click_to_front = yes
+	}
+}
