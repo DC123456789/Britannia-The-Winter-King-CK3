@@ -75,3 +75,49 @@ destroy_roman_duchy_effect = {
 		}
 	}
 }
+
+generate_integrate_kingdom_region_list = {
+	if = {
+		limit = { has_variable_list = integrate_kingdom_region_list }
+		every_in_list = {
+			variable = integrate_kingdom_region_list
+			end_story = THIS
+		}
+		clear_variable_list = integrate_kingdom_region_list
+	}
+	every_held_title = {
+		limit = { tier = tier_empire }
+		save_temporary_scope_as = new_liege_scope
+		every_in_list = {
+			variable = base_and_expansion_kingdom_regions
+			save_temporary_scope_as = kingdom_region_scope
+			ROOT = {
+				create_story = {
+					type = integrable_region_struct_story
+					save_temporary_scope_as = new_integrable_region_struct_story
+				}
+				scope:new_integrable_region_struct_story = {
+					set_variable = { name = kingdom_region value = scope:kingdom_region_scope }
+					set_variable = { name = new_liege value = scope:new_liege_scope }
+				}
+				add_to_variable_list = {
+					name = integrate_kingdom_region_list
+					target = scope:new_integrable_region_struct_story
+				}
+			}
+		}
+	}
+}
+
+integrate_kingdom_region_effect = {
+	save_scope_as = conqueror
+	trigger_event = { id = titular_titles.9000 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles.9000 }
+	}
+	set_kingdom_region_de_jure_liege_effect = {
+		REGION_BASE = $REGION_BASE$
+		NEW_DE_JURE_LIEGE = $NEW_DE_JURE_LIEGE$
+	}
+}

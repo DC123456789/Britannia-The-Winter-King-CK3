@@ -3,8 +3,10 @@
 #########################################################################
 
 create_roman_de_jure_duchies_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
-	major = yes
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
 
 	ai_check_interval = 1
 
@@ -39,9 +41,9 @@ create_roman_de_jure_duchies_decision = {
 		if = {
 			limit = {
 				is_ai = no
-				has_variable = selected_duchy
+				has_variable = selected_title
 			}
-			this.var:selected_duchy = {
+			this.var:selected_title = {
 				save_scope_as = roman_title_created_de_jure_pretend
 				show_as_tooltip = {
 					check_de_jure_liege_duchy_effect = yes
@@ -56,10 +58,10 @@ create_roman_de_jure_duchies_decision = {
 			show_as_tooltip = {
 				if = {
 					limit = {
-						exists = this.var:selected_duchy.holder
+						exists = this.var:selected_title.holder
 						NOR = {
-							this.var:selected_duchy.holder = ROOT
-							this.var:selected_duchy.holder = { is_vassal_or_below_of = ROOT }
+							this.var:selected_title.holder = ROOT
+							this.var:selected_title.holder = { is_vassal_or_below_of = ROOT }
 						}
 					}			
 					create_title_and_vassal_change = {
@@ -67,7 +69,7 @@ create_roman_de_jure_duchies_decision = {
 						save_scope_as = title_change
 						add_claim_on_loss = yes
 					}
-					this.var:selected_duchy = {
+					this.var:selected_title = {
 						change_title_holder = {
 							holder = root
 							change = scope:title_change
@@ -76,13 +78,13 @@ create_roman_de_jure_duchies_decision = {
 					resolve_title_and_vassal_change = scope:title_change
 				}
 				else_if = {
-					limit = { NOT = { exists = this.var:selected_duchy.holder } }
+					limit = { NOT = { exists = this.var:selected_title.holder } }
 					create_title_and_vassal_change = {
 						type = created
 						save_scope_as = title_change
 						add_claim_on_loss = no
 					}
-					this.var:selected_duchy = {
+					this.var:selected_title = {
 						change_title_holder = {
 							holder = root
 							change = scope:title_change
@@ -101,7 +103,7 @@ create_roman_de_jure_duchies_decision = {
 				}
 				ROOT = { create_roman_duchy_effect = { TITLE = PREV } }
 			}
-			remove_variable = selected_duchy
+			remove_variable = selected_title
 		}
 	}
 	
@@ -128,8 +130,10 @@ create_roman_de_jure_duchies_decision = {
 }
 
 destroy_roman_de_jure_duchies_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
-	major = yes
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
 
 	ai_check_interval = 1
 
@@ -167,9 +171,9 @@ destroy_roman_de_jure_duchies_decision = {
 		if = {
 			limit = {
 				is_ai = no
-				has_variable = selected_duchy
+				has_variable = selected_title
 			}
-			this.var:selected_duchy = {
+			this.var:selected_title = {
 				save_scope_as = roman_title_created_de_jure_ignore
 				show_as_tooltip = {
 					check_de_jure_liege_duchy_effect = yes
@@ -184,11 +188,11 @@ destroy_roman_de_jure_duchies_decision = {
 			show_as_tooltip = {
 				if = {
 					limit = {
-						exists = this.var:selected_duchy.holder
-						this.var:selected_duchy.holder = { top_liege_can_create_roman_title_trigger = yes }
+						exists = this.var:selected_title.holder
+						this.var:selected_title.holder = { top_liege_can_create_roman_title_trigger = yes }
 					}
 					show_as_tooltip = {
-						destroy_title = this.var:selected_duchy
+						destroy_title = this.var:selected_title
 					}
 				}
 			}
@@ -207,7 +211,7 @@ destroy_roman_de_jure_duchies_decision = {
 				}
 				ROOT = { destroy_roman_duchy_effect = { TITLE = PREV } }
 			}
-			remove_variable = selected_duchy
+			remove_variable = selected_title
 		}
 	}
 	

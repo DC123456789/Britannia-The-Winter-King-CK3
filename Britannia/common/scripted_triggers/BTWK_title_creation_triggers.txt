@@ -12,6 +12,85 @@ title_has_de_jure_variable_trigger = {
 	}
 }
 
+check_kingdom_region_de_jure_liege_trigger = {
+	has_variable = kingdom_region
+	this.var:kingdom_region.var:kingdom_region_empire ?= $DE_JURE_LIEGE$
+}
+
+control_region_fraction_trigger = {
+	trigger_if = {
+		limit = { is_ai = no }
+		save_temporary_scope_as = current_scope
+		save_temporary_scope_value_as = { 
+			name = percent_required 
+			value = {
+				value = $FRACTION_REQUIRED$
+				multiply = 100
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_total_counties 
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_required_counties 
+			value = {
+				value = scope:region_total_counties
+				multiply = $FRACTION_REQUIRED$
+				ceiling = yes
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_counties
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					limit = { scope:current_scope = { completely_controls = prev } }
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_percent
+			value = {
+				value = scope:region_controlled_counties
+				divide = scope:region_total_counties
+				multiply = 100
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_name 
+			value = flag:$REGION$
+		}
+		custom_tooltip = {
+			text = control_region_fraction_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+	trigger_if = {		# Avoid having to calculate all the variables unless necessary (does this actually matter?)
+		limit = { is_ai = yes }
+		custom_tooltip = {
+			text = control_region_fraction_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+}
+
 # TODO Allow for Roman characters, but only if they are under the empire
 can_create_briton_kingdom_trigger = {
 	is_celtic_culture_trigger = yes
@@ -171,6 +250,61 @@ can_destroy_formable_title = {
 			custom_description = {
 				text = creation_requirement_title_unformed_3_trigger
 				NOT = { this.var:creation_requirement_title_unformed_3 = { has_variable = title_created_de_jure } }
+			}
+		}
+	}
+}
+
+potential_integrate_kingdom_region_trigger = {
+	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	NOT = { scope:kingdom_region_scope = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = scope:new_liege_scope } } }
+}
+
+can_integrate_kingdom_region_trigger = {
+	save_temporary_scope_as = scoped_character
+	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	switch = {
+		trigger = scope:kingdom_region_scope
+		title:k_londinium = {
+			control_region_fraction_trigger = {
+				FRACTION_REQUIRED = 0.80
+				REGION = world_britannia_south_lloegyr
+			}
+		}
+		title:k_gwynedd = {
+			control_region_fraction_trigger = {
+				FRACTION_REQUIRED = 0.80
+				REGION = world_britannia_south_cymry
+			}
+		}
+		title:k_ebrauc = {
+			control_region_fraction_trigger = {
+				FRACTION_REQUIRED = 0.80
+				REGION = world_britannia_hen_ogledd
+			}
+		}
+		fallback = {
+			custom_tooltip = {
+				text = error_tt
+				always = no
+			}
+		}
+	}
+	scope:kingdom_region_scope = {
+		custom_description = {
+			text = current_kingdom_liege_is_held_or_holds_no_territory_in_region_trigger
+			this.var:kingdom_region_empire = {
+				OR = {
+					holder = scope:scoped_character
+					NOT = {
+						any_county_in_region = {
+							region = $REGION$
+							root = { completely_controls = prev }
+						}
+					}
+				}
 			}
 		}
 	}
