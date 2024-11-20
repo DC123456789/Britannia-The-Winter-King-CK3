@@ -268,20 +268,20 @@ can_integrate_kingdom_region_trigger = {
 	switch = {
 		trigger = scope:kingdom_region_scope
 		title:k_londinium = {
-			control_region_fraction_trigger = {
-				FRACTION_REQUIRED = 0.80
+			can_integrate_kingdom_region_region_controlled_trigger = {
+				KINGDOM_REGION = title:k_londinium
 				REGION = world_britannia_south_lloegyr
 			}
 		}
 		title:k_gwynedd = {
-			control_region_fraction_trigger = {
-				FRACTION_REQUIRED = 0.80
+			can_integrate_kingdom_region_region_controlled_trigger = {
+				KINGDOM_REGION = title:k_gwynedd
 				REGION = world_britannia_south_cymry
 			}
 		}
 		title:k_ebrauc = {
-			control_region_fraction_trigger = {
-				FRACTION_REQUIRED = 0.80
+			can_integrate_kingdom_region_region_controlled_trigger = {
+				KINGDOM_REGION = title:k_ebrauc
 				REGION = world_britannia_hen_ogledd
 			}
 		}
@@ -292,17 +292,27 @@ can_integrate_kingdom_region_trigger = {
 			}
 		}
 	}
-	scope:kingdom_region_scope = {
-		custom_description = {
-			text = current_kingdom_liege_is_held_or_holds_no_territory_in_region_trigger
-			this.var:kingdom_region_empire = {
-				OR = {
-					holder = scope:scoped_character
-					NOT = {
-						any_county_in_region = {
-							region = $REGION$
-							root = { completely_controls = prev }
-						}
+}
+
+can_integrate_kingdom_region_region_controlled_trigger = {
+	control_region_fraction_trigger = {
+		FRACTION_REQUIRED = 0.80
+		REGION = $REGION$
+	}
+	save_temporary_scope_value_as = { 
+		name = region_name 
+		value = flag:$REGION$
+	}
+	custom_description = {
+		text = current_kingdom_region_empire_is_held_or_holds_no_territory_in_region_trigger
+		object = $KINGDOM_REGION$
+		$KINGDOM_REGION$.var:kingdom_region_empire = {
+			OR = {
+				holder ?= prev
+				NOT = {
+					any_county_in_region = {
+						region = $REGION$
+						prev.holder = { completely_controls = prev }
 					}
 				}
 			}

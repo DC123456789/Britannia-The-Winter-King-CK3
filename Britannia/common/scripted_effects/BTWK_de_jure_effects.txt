@@ -27,6 +27,7 @@ set_title_flagged_de_jure_liege_effect = {
 set_kingdom_region_de_jure_liege_effect = {
 	$NEW_DE_JURE_LIEGE$ = { save_temporary_scope_as = new_liege }
 	$REGION_BASE$ = { 
+		this.var:kingdom_region_empire = { save_temporary_scope_as = old_liege }
 		set_variable = {
 			name = kingdom_region_empire
 			value = scope:new_liege
@@ -34,6 +35,19 @@ set_kingdom_region_de_jure_liege_effect = {
 		every_in_list = {
 			variable = kingdom_region_titles
 			check_de_jure_liege_kingdom_effect = yes
+		}
+	}
+	scope:old_liege = {
+		if = {
+			limit = {
+				NOT = {
+					any_in_global_list = {
+						name = kingdom_region_list
+						this.var:kingdom_region_empire = scope:old_liege
+					}
+				}
+			}
+			destroy_title = THIS
 		}
 	}
 }
@@ -46,6 +60,20 @@ set_kingdom_region_de_jure_liege_tooltip_only_effect = {
 			variable = kingdom_region_titles
 			show_as_tooltip = {
 				check_de_jure_liege_kingdom_effect = yes
+			}
+		}
+		this.var:kingdom_region_empire = {
+			if = {
+				limit = {
+					NOT = {
+						any_in_global_list = {
+							name = kingdom_region_list
+							this.var:kingdom_region_empire = prev
+							NOT = { this = $REGION_BASE$ }
+						}
+					}
+				}
+				show_as_tooltip = { destroy_title = THIS }
 			}
 		}
 	}
