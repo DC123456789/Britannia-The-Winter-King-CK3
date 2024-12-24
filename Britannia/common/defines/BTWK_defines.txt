@@ -83,6 +83,42 @@ NMercenary = {
 
 	COUNTY_REMOVAL_FACTOR = 1.2				# When removing mercenaries from shrinking cultures, first multiply culture size with this
 }
+NHolyOrder = {
+	# In addition to the holding levies, a holy order has levies according to this formula:
+	# NUM_LEVIES_BASE + <num holdings> * NUM_LEVIES_PER_HOLDING
+	NUM_LEVIES_BASE = 50
+	NUM_LEVIES_PER_HOLDING = 25
+
+	# The holy order starts out with NUM_MAA_BASE Men-At-Arms sub-regiments. These will always try to use the holy_order_maa defined in the religion, if any are available.
+	NUM_MAA_BASE = 50
+
+	# The holy order also gets NUM_MAA_PER_HOLDING additional Men-At-Arms sub-regiments for each holding leased to it.
+	NUM_MAA_PER_HOLDING = 1
+	# The MaA from this many holdings will all go into the same regiment
+	NUM_HOLDINGS_PER_MAA_REGIMENT = 3
+	# The regiment type of these additional Men-At-Arms has a chance of RELIGION_MAA_RATIO % (multiplied by 100) to use a religious type, like NUM_MAA_BASE.
+	# Otherwise it will use a random type with the holy_order_fallback = yes flag.
+	RELIGION_MAA_RATIO = 0.7
+
+	PATRON_MIN_TIER = 4						# minimum tier for a ruler to be a patron of a holy order
+
+	LEVY_COST_PER_100_SOLDIERS = 200		# The piety cost of the levy regiment part of holy orders, per 100 soldiers for better precision
+	MAA_COST_RATIO = 1.0					# The piety cost of the MAA regiments of holy orders as a fraction of what those regiments cost when buying them
+	REALM_SIZE_MULT = 0.05					# The cost will increase by this many percent multiplied by the square root of the hirer's realm size (# of counties)
+	PATRON_HIRE_COST_MULT = 0				# The patron pays only a fraction for hiring a holy order. Set to 0 to make it free.
+	PATRON_STEAL_COST_MULT = 1				# But if someone's already hired it, they do have to pay still
+
+	# One character can hire up to this many holy orders. Set to -1 to disable the limit.
+	HIRE_LIMIT = 1
+
+	# Must be at war with someone with at least this hostility level to be able to hire holy orders. Once hired hey can be used against all enemies, though.
+	ENEMY_MIN_HOSTILITY_LEVEL = 2
+
+	BASE_NUM_KNIGHTS = 0					# How many knights do holy orders have?
+	EXTRA_KNIGHTS_PER_HOLDING = 0.5			# How many knights do holy orders get for each holding? Rounds down
+
+	COAT_OF_ARMS_LIST = "religious_title"
+}
 
 NRoyalCourt = {
 	COURT_GRANDEUR_STARTING_DEFAULT = 20 # Default starting current grandeur
