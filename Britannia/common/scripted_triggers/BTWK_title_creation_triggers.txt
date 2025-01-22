@@ -17,6 +17,34 @@ check_kingdom_region_de_jure_liege_trigger = {
 	this.var:kingdom_region.var:kingdom_region_empire ?= $DE_JURE_LIEGE$
 }
 
+# DUCHY is the Anglo-Saxon duchy to check if the capital is in
+is_capital_in_anglo_saxon_duchy_trigger = {
+	title_capital_county = {
+		OR = {
+			AND = {
+				this.var:anglo_saxon_duchy ?= $DUCHY$
+				OR = {
+					NOT = { has_variable = anglo_saxon_duchy_dependency }
+					this.var:anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				}
+			}
+			AND = {
+				this.var:secondary_anglo_saxon_duchy ?= $DUCHY$
+				OR = {
+					NOT = { has_variable = secondary_anglo_saxon_duchy_dependency }
+					this.var:secondary_anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				}
+			}
+		}
+	}
+}
+
+is_capital_in_roman_duchy_trigger = {
+	title_capital_county = {
+		this.var:roman_duchy ?= $DUCHY$
+	}
+}
+
 control_region_fraction_trigger = {
 	trigger_if = {
 		limit = { is_ai = no }

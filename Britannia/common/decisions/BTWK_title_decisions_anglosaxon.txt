@@ -52,6 +52,21 @@ create_anglo_saxon_de_jure_duchies_decision = {
 					}
 				}
 			}
+			every_in_global_list = {
+				variable = celtic_duchy_list
+				if = {
+					limit = {
+						is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:title_created_de_jure_pretend }
+					}
+					if = {
+						limit = { exists = holder }
+						show_as_tooltip = {
+							# destroy_title must be in character scope to work
+							holder = { destroy_title = prev }
+						}
+					}
+				}
+			}
 			show_as_tooltip = {
 				create_title_and_vassal_change = {
 					type = created

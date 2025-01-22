@@ -54,6 +54,19 @@ titular_titles.0001 = {
 			}
 			resolve_title_and_vassal_change = scope:title_change
 		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:new_duchy_title }
+				}
+				if = {
+					limit = { exists = holder }
+					# destroy_title must be in character scope to work
+					holder = { destroy_title = prev }
+				}
+			}
+		}
 		show_as_tooltip = {
 			scope:new_duchy_title = {
 				every_in_list = {
@@ -213,6 +226,20 @@ titular_titles.0101 = {
 					}
 				}
 				resolve_title_and_vassal_change = scope:title_change
+			}
+		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_roman_duchy_trigger = { DUCHY = scope:new_roman_duchy_title }
+					NOT = { has_variable_list = roman_de_jure_territory }
+				}
+				if = {
+					limit = { exists = holder }
+					# destroy_title must be in character scope to work
+					holder = { destroy_title = prev }
+				}
 			}
 		}
 		show_as_tooltip = {

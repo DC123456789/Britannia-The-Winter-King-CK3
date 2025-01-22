@@ -55,6 +55,22 @@ create_roman_de_jure_duchies_decision = {
 					}
 				}
 			}
+			every_in_global_list = {
+				variable = celtic_duchy_list
+				if = {
+					limit = {
+						is_capital_in_roman_duchy_trigger = { DUCHY = scope:roman_title_created_de_jure_pretend }
+						NOT = { has_variable_list = roman_de_jure_territory }
+					}
+					if = {
+						limit = { exists = holder }
+						show_as_tooltip = {
+							# destroy_title must be in character scope to work
+							holder = { destroy_title = prev }
+						}
+					}
+				}
+			}
 			show_as_tooltip = {
 				if = {
 					limit = {
