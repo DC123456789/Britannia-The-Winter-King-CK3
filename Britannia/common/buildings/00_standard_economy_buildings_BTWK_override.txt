@@ -419,6 +419,594 @@ peat_quarries_08 = {
 	}
 }
 
+#Watermills
+
+watermills_01 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		OR = {
+			building_watermills_requirement_terrain = yes
+			AND = {
+				has_building_or_higher = logging_camps_04
+				culture = {
+					has_cultural_parameter = watermills_forestries_unlock
+				}
+			}
+		}
+		building_requirement_castle_city_church = { LEVEL = 01 }
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			scope:holder.culture = {
+				has_innovation = innovation_crop_rotation
+			}
+		}
+		trigger_else = {
+			OR = {
+				scope:holder.culture = {
+					has_cultural_parameter = next_level_w_mills
+					has_innovation = innovation_manorialism
+				}
+				AND = {
+					has_building_or_higher = logging_camps_04
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	is_enabled = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+					has_cultural_parameter = watermills_windmills_cities
+					}
+				}
+			}
+			is_county_capital = yes
+		}
+		trigger_else = {
+			scope:holder.culture = {
+				has_cultural_parameter = watermills_windmills_cities
+			}
+			OR = {
+				is_county_capital = yes
+				AND = {
+					NOR = {
+						has_building_or_higher = windmills_01
+						has_building_or_higher = caravanserai_01
+					}
+					has_building_or_higher = city_01
+				}
+				
+			}
+		}	
+	}
+	show_disabled = yes
+	
+	can_construct = {
+	}
+
+	cost_gold = expensive_building_tier_1_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_1
+		supply_limit_mult = 0.1
+		holding_build_gold_cost = -0.05
+		build_gold_cost = -0.05
+	}
+	
+	county_modifier = {
+		development_growth = good_building_development_growth_tier_1
+	}
+	
+	next_building = watermills_02
+
+	type_icon = "icon_building_watermills.dds"
+	
+	ai_value = {
+		base = 20
+		ai_tier_1_building_modifier = yes
+		ai_tier_1_economical_building_preference_modifier = yes
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+
+		modifier = {
+			factor = 10
+			has_building_or_higher = windmills_01
+		}
+		modifier = {
+			factor = 2
+			AND = {
+				building_watermills_requirement_terrain = yes
+				building_windmills_requirement_terrain = yes
+			}
+		}
+	}
+}
+
+watermills_02 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		OR = {
+			building_watermills_requirement_terrain = yes
+			AND = {
+				has_building_or_higher = logging_camps_04
+				culture = {
+					has_cultural_parameter = watermills_forestries_unlock
+				}
+			}
+		}
+		building_requirement_castle_city_church = { LEVEL = 01 }
+	}
+	
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			scope:holder.culture = {
+				has_innovation = innovation_crop_rotation
+			}
+		}
+		trigger_else = {
+			OR = {
+				scope:holder.culture = {
+					has_cultural_parameter = next_level_w_mills
+					has_innovation = innovation_manorialism
+				}
+				AND = {
+					has_building_or_higher = logging_camps_04
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_2_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_2
+		supply_limit_mult = 0.2
+		holding_build_gold_cost = -0.10
+		build_gold_cost = -0.10
+	}
+	
+	county_modifier = {
+		development_growth = good_building_development_growth_tier_2
+	}
+	
+	next_building = watermills_03
+	ai_value = {
+		base = 9
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+watermills_03 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		OR = {
+			building_watermills_requirement_terrain = yes
+			AND = {
+				has_building_or_higher = logging_camps_04
+				culture = {
+					has_cultural_parameter = watermills_forestries_unlock
+				}
+			}
+		}
+	}
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			scope:holder.culture = {
+				has_innovation = innovation_manorialism
+			}
+			building_requirement_castle_city_church = { LEVEL = 02 }
+		}
+		trigger_else = {
+			OR = {
+				AND = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+						has_innovation = innovation_manorialism
+					}
+				}
+				AND = {
+					has_building_or_higher = logging_camps_04
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 01 }
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_3_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_3
+		supply_limit_mult = 0.3
+		holding_build_gold_cost = -0.14
+		build_gold_cost = -0.14
+	}
+	
+	county_modifier = {
+		development_growth = good_building_development_growth_tier_3
+		development_growth_factor = normal_building_development_growth_factor_tier_1
+		tax_mult = normal_building_tax_mult_tier_1
+	}
+	
+	next_building = watermills_04
+	ai_value = {
+		base = 8
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+watermills_04 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		OR = {
+			building_watermills_requirement_terrain = yes
+			AND = {
+				has_building_or_higher = logging_camps_04
+				culture = {
+					has_cultural_parameter = watermills_forestries_unlock
+				}
+			}
+		}
+	}
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			scope:holder.culture = {
+				has_innovation = innovation_manorialism
+			}
+			building_requirement_castle_city_church = { LEVEL = 02 }
+		}
+		trigger_else = {
+			OR = {
+				AND = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+						has_innovation = innovation_manorialism
+					}
+				}
+				AND = {
+					has_building_or_higher = logging_camps_04
+					culture = {
+						has_cultural_parameter = watermills_forestries_unlock
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 01 }
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_4_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_4
+		supply_limit_mult = 0.4
+		holding_build_gold_cost = -0.18
+		build_gold_cost = -0.18
+	}
+	
+	county_modifier = {
+		development_growth_factor = normal_building_development_growth_factor_tier_2
+		development_growth = good_building_development_growth_tier_4
+		tax_mult = normal_building_tax_mult_tier_2
+	}
+	
+	next_building = watermills_05
+	ai_value = {
+		base = 7
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+watermills_05 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		building_watermills_requirement_terrain = yes
+	}
+	can_construct = {
+		scope:holder.culture = {
+			has_innovation = innovation_windmills
+		}
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 03 }
+		}
+		trigger_else = {
+			scope:holder.culture = {
+				has_cultural_parameter = next_level_w_mills
+			}
+			building_requirement_castle_city_church = { LEVEL = 02 }
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_5_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_5
+		supply_limit_mult = 0.5
+		holding_build_gold_cost = -0.22
+		build_gold_cost = -0.22
+	}
+	
+	county_modifier = {
+		development_growth_factor = normal_building_development_growth_factor_tier_3
+		development_growth = good_building_development_growth_tier_5
+		tax_mult = normal_building_tax_mult_tier_3
+	}
+	
+	next_building = watermills_06
+	ai_value = {
+		base = 6
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+watermills_06 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		building_watermills_requirement_terrain = yes
+	}
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 03 }
+			scope:holder.culture = {
+			has_innovation = innovation_guilds
+			}
+		}
+		trigger_else = {
+			scope:holder.culture = {
+				has_cultural_parameter = next_level_w_mills
+			}
+			building_requirement_castle_city_church = { LEVEL = 02 }
+			scope:holder.culture = {
+			has_innovation = innovation_windmills
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_6_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_6
+		supply_limit_mult = 0.6
+		holding_build_gold_cost = -0.24
+		build_gold_cost = -0.24
+	}
+	
+	county_modifier = {
+		development_growth_factor = normal_building_development_growth_factor_tier_4
+		development_growth = good_building_development_growth_tier_6
+		tax_mult = normal_building_tax_mult_tier_4
+	}
+	
+	next_building = watermills_07
+	ai_value = {
+		base = 5
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+watermills_07 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		building_watermills_requirement_terrain = yes
+	}
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 04 }
+			scope:holder.culture = {
+			has_innovation = innovation_cranes
+			}
+		}
+		trigger_else = {
+			scope:holder.culture = {
+				has_cultural_parameter = next_level_w_mills
+			}
+			building_requirement_castle_city_church = { LEVEL = 03 }
+			scope:holder.culture = {
+			has_innovation = innovation_windmills
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = expensive_building_tier_7_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_7
+		supply_limit_mult = 0.7
+		holding_build_gold_cost = -0.26
+		build_gold_cost = -0.26
+	}
+	
+	county_modifier = {
+		development_growth_factor = normal_building_development_growth_factor_tier_5
+		development_growth = good_building_development_growth_tier_7
+		tax_mult = normal_building_tax_mult_tier_5
+	}
+	
+	next_building = watermills_08
+	ai_value = {
+		base = 4
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+watermills_08 = {
+	construction_time = slow_construction_time
+
+	can_construct_potential = {
+		building_watermills_requirement_terrain = yes
+	}
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					scope:holder.culture = {
+						has_cultural_parameter = next_level_w_mills
+					}
+				}
+			}
+			building_requirement_castle_city_church = { LEVEL = 04 }
+			scope:holder.culture = {
+			has_innovation = innovation_cranes
+			}
+		}
+		trigger_else = {
+			scope:holder.culture = {
+				has_cultural_parameter = next_level_w_mills
+			}
+			building_requirement_castle_city_church = { LEVEL = 03 }
+			scope:holder.culture = {
+			has_innovation = innovation_windmills
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = expensive_building_tier_8_cost
+	
+	province_modifier = {
+		monthly_income = excellent_building_tax_tier_8
+		supply_limit_mult = 0.8
+		holding_build_gold_cost = -0.30
+		build_gold_cost = -0.30
+	}
+	
+	county_modifier = {
+		development_growth_factor = normal_building_development_growth_factor_tier_6
+		development_growth = good_building_development_growth_tier_8
+		tax_mult = normal_building_tax_mult_tier_6
+	}
+	
+	ai_value = {
+		base = 3
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
 ### Windmills
 
 windmills_01 = {
