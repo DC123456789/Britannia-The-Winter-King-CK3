@@ -1,0 +1,195 @@
+window = {
+	name = "high_king_window"
+	widgetid = "high_king_window"
+	visible = "[GetVariableSystem.Exists('show_high_king_window')]"
+	
+	size = { 1200 750 }
+	layer = middle
+
+	position = { 620 100 }
+	
+	using = Window_Movable
+	using = Window_Background
+	using = Window_Decoration_Spike
+	
+	// datacontext = "[GetVariableSystem]"
+	datacontext = "[GetTitleByKey('e_britannia')]"
+	
+	state = {
+		name = _show
+		using = Animation_FadeIn_Standard
+		using = Sound_WindowShow_Standard
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Standard
+		using = Sound_WindowHide_Standard
+	}
+	
+	vbox = {
+		using = Window_Margins
+		
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text"
+			{
+				text = "High Kingdom of Britannia"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[GetVariableSystem.Toggle('show_high_king_window')]"
+			}
+		}
+		
+		background = {
+			texture = "gfx/interface/icons/high_king/high_king_bg.dds"
+			fittype = centercrop
+			alpha = 1.0
+			margin_bottom = -18
+			margin_left = -40
+			margin_right = -40
+			margin_top = -65
+		}
+		
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			###LEFT SIDE
+			widget = {
+				name = "left side"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				size = { 550 0 }
+				
+				text_label_center = {
+					text = "Current High King"
+					scale = 1.5
+					parentanchor = top|hcenter
+					margin_left = 0
+					margin_right = 0
+				}
+				
+				background = {
+					texture = "gfx/interface/icons/high_king/high_king_bg_left.dds"
+					fittype = centercrop
+					alpha = 0.5
+					margin_bottom = -60
+					margin_left = -5
+					margin_right = -5
+					margin_top = -50
+				}
+				
+				portrait_council = {
+					name = "high_king_portrait"
+					datacontext = "[Scope.Title.GetHolder]"
+					parentanchor = bottom|hcenter
+					scale = 3.0
+					margin_bottom = 50
+				}
+				
+				text_label_center = {
+					text = "There is no current High King"
+					datacontext = "[Scope.Title.GetHolder]"
+					visible = "[Not( Scope.Title.HasHolder )]"
+					scale = 1.5
+					parentanchor = bottom|hcenter
+					margin_bottom = 50
+				}
+				
+				text_label_center = {
+					text = "Name Here"
+					datacontext = "[Scope.Title.GetHolder]"
+					visible = "[Scope.Title.HasHolder]"
+					scale = 1.5
+					parentanchor = bottom|hcenter
+					margin_bottom = 50
+				}
+			}
+			
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+			
+				###RIGHT SIDE
+				widget = {
+					name = "decisions view"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					size = { 550 0 }
+					
+					text_label_center = {
+						text = "Decisions"
+						scale = 1.5
+						parentanchor = top|hcenter
+					}
+					
+					background = {
+						texture = "gfx/interface/icons/high_king/high_king_bg_dec.dds"
+						fittype = centercrop
+						alpha = 0.5
+						margin_bottom = -100
+						margin_left = -5
+						margin_right = -5
+						margin_top = -50
+					}
+				}
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					
+					widget = {
+						name = "vassal kingdom view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 0 }
+						
+						text_label_center = {
+							text = "Vassal Kingdoms"
+							scale = 1.5
+							parentanchor = top|hcenter
+							margin_top = -105
+						}
+						
+						background = {
+							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+							fittype = centercrop
+							alpha = 0.5
+							margin_bottom = -60
+							margin_left = -5
+							margin_right = -5
+							margin_top = 50
+						}
+					}
+					
+					widget = {
+						name = "independent kingdom view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 0 }
+						
+						text_label_center = {
+							text = "Independent Kingdoms"
+							scale = 1.5
+							parentanchor = top|hcenter
+							margin_top = -105
+						}
+						
+						background = {
+							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+							fittype = centercrop
+							alpha = 0.5
+							margin_bottom = -60
+							margin_left = -5
+							margin_right = -5
+							margin_top = 50
+						}
+					}
+				}
+			}
+		}
+	}
+}
