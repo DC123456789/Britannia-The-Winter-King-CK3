@@ -6,6 +6,7 @@ on_game_start = {
 		BTWK_story_trigger_on_game_start_479
 		BTWK_culture_setup
 		BTWK_religion_setup
+		BTWK_roman_walls_upgrade
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
@@ -1882,6 +1883,31 @@ BTWK_de_jure_setup = {
 		}
 		every_kingdom = {
 			check_de_jure_liege_kingdom_effect = yes
+		}
+	}
+}
+
+#Make sure Roman castles start with at least wall upgrade 3
+
+BTWK_roman_walls_upgrade = {
+	effect = {
+		every_province = {
+			limit = { 
+				culture = { has_cultural_pillar = heritage_latin }
+				has_holding_type = castle_holding
+				OR = {
+					terrain = farmlands
+					terrain = plains
+					terrain = wetlands
+					terrain = floodplains
+				}
+			}
+			add_building = curtain_walls_03
+			random = {
+				chance = 50
+					add_building = curtain_walls_04
+				}
+			}
 		}
 	}
 }
