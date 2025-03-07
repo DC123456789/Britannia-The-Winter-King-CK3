@@ -1,0 +1,596 @@
+monastic_schools_01 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		has_building_or_higher = temple_01
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		#building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_1_cost
+	
+	character_modifier = {
+		monthly_piety = 0.1	
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.1		
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_1
+		epidemic_resistance = 4
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.1
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 1
+	}
+	
+	next_building = monastic_schools_02
+
+	type_icon = "icon_building_monastic_schools.dds"
+	
+	ai_value = {
+		base = 10
+		ai_tier_1_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = {
+			add = 500
+			scope:holder = {
+				OR = {
+					highest_held_title_tier = tier_barony
+					government_has_flag = government_is_theocracy
+					is_theocratic_lessee = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			free_building_slots <= 1
+		}
+	}
+}
+
+monastic_schools_02 = {
+	construction_time = standard_construction_time
+
+	can_construct_potential = {
+		has_building_or_higher = temple_01
+		culture = {
+			OR = {
+				has_innovation = innovation_city_planning
+				has_cultural_parameter = next_level_monasteries
+			}
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_2_cost
+	
+	character_modifier = {
+		monthly_piety = 0.2
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.2	
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_2
+		epidemic_resistance = 6
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.1
+		learning = 1
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 1
+		martial = 1
+	}
+	
+	next_building = monastic_schools_03
+	ai_value = {
+		base = 9
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_03 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_manorialism
+			}
+			has_building_or_higher = temple_02
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_city_planning
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_01
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_3_cost
+	
+	character_modifier = {
+		monthly_piety = 0.3
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.3		
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_3
+		epidemic_resistance = 8
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.2
+		learning = 1
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 2
+		martial = 1
+	}
+	
+	next_building = monastic_schools_04
+	ai_value = {
+		base = 8
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_04 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_manorialism
+			}
+			has_building_or_higher = temple_02
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_city_planning
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_01
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_4_cost
+	
+	character_modifier = {
+		monthly_piety = 0.4
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.4		
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_4
+		epidemic_resistance = 10
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.2
+		learning = 2
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 2
+		martial = 2
+	}
+	
+	next_building = monastic_schools_05
+	ai_value = {
+		base = 7
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_05 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_windmills
+			}
+			has_building_or_higher = temple_03
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_city_planning
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_02
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_5_cost
+	
+	character_modifier = {
+		monthly_piety = 0.5
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.5	
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_5
+		epidemic_resistance = 12
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.3
+		learning = 2
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 3
+		martial = 2
+	}
+	
+	next_building = monastic_schools_06
+	ai_value = {
+		base = 6
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_06 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_windmills
+			}
+			has_building_or_higher = temple_03
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_manorialism
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_02
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_6_cost
+	
+	character_modifier = {
+		monthly_piety = 0.6
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.6		
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_6
+		epidemic_resistance = 14
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.3
+		learning = 3
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 3
+		martial = 3
+	}
+	
+	next_building = monastic_schools_07
+	ai_value = {
+		base = 5
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_07 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_cranes
+			}
+			has_building_or_higher = temple_04
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_windmills
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_03
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+
+	cost_gold = normal_building_tier_7_cost
+	
+	character_modifier = {
+		monthly_piety = 0.7
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.7	
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_7
+		epidemic_resistance = 16
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.4
+		learning = 3
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 4
+		martial = 3
+	}
+	
+	next_building = monastic_schools_08
+	ai_value = {
+		base = 4
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+monastic_schools_08 = {
+	construction_time = standard_construction_time
+
+	can_construct = {
+		trigger_if = {
+			limit = {
+				NOT = {
+					culture = {
+						has_cultural_parameter = next_level_monasteries
+					}
+				}
+			}
+			culture = {
+				has_innovation = innovation_cranes
+			}
+			has_building_or_higher = temple_04
+		}
+		trigger_else = {
+			culture = {
+				has_innovation = innovation_windmills
+			}
+			culture = {
+				has_cultural_parameter = next_level_monasteries
+			}
+			has_building_or_higher = temple_03
+		}
+		OR = {
+			scope:holder = {
+				has_religion = religion:christianity_religion
+			}
+			scope:holder = {
+				has_faith = faith:manichean
+			}
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_8_cost
+	
+	character_modifier = {
+		monthly_piety = 0.8
+	}
+	county_modifier = {
+		monthly_county_control_growth_add = 0.8		
+	}
+	province_modifier = {
+		monthly_income = poor_building_tax_tier_8
+		epidemic_resistance = 18
+	}
+
+	character_culture_modifier = {
+		parameter = monastic_monastery_learning_bonus
+		monthly_learning_lifestyle_xp_gain_mult = 0.4
+		learning = 4
+	}
+
+	character_culture_modifier = {
+		parameter = monastery_prowess_martial_bonus
+		prowess = 4
+		martial = 4
+	}
+	
+	ai_value = {
+		base = 3
+		ai_general_building_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
