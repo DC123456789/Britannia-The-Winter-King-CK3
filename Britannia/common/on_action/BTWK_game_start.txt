@@ -13,7 +13,10 @@ on_game_start = {
 
 # Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
 on_game_start_after_lobby = {
-	on_actions = { BTWK_culture_setup }
+	on_actions = { 
+		BTWK_culture_setup 
+		BTWK_laamp_setup
+	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
 
@@ -1954,6 +1957,40 @@ BTWK_roman_walls_upgrade = {
 			random = {
 				chance = 50
 				add_building = hill_forts_02
+			}
+		}
+	}
+}
+
+BTWK_laamp_setup = {
+	effect = {
+		# Starting camp purposes.
+		## Arthur
+		character:3 ?= {
+			if = {
+				limit = { 
+					is_alive = yes
+					is_landless_adventurer = yes
+				}
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				add_courtier = character:708		# Amhar
+				add_courtier = character:709		# Loholt
+				add_courtier = character:220		# Taliesin
+				add_courtier = character:1641		# Sir Cei/Kay
+				add_courtier = character:269		# Sir Gawain
+				add_courtier = character:271		# Sir Agravain
+				add_courtier = character:707		# Ailleann
+				add_courtier = character:1006		# Culhwch
+				add_courtier = character:1007		# Sir Dagonet
+				add_courtier = character:1008		# Sir Aglaval
+				add_courtier = character:1009		# Sir Lanval
+				add_courtier = character:1011		# Sir Balan
+				add_courtier = character:1012		# Sir Balin
+				add_courtier = character:1013		# Blaise
+				add_courtier = character:1014		# St. Illtyd
+				add_courtier = character:1017		# Eiddilig
+				add_courtier = character:1018		# Sir Bedivere
+				add_courtier = character:1019		# Morfans the Ugly
 			}
 		}
 	}
