@@ -419,6 +419,457 @@ peat_quarries_08 = {
 	}
 }
 
+#Orchards
+orchards_01 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+		building_requirement_castle_city_church = { LEVEL = 01 }
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_1_cost
+	
+	levy = small_building_levy_tier_1
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_1
+	}
+	county_modifier = {
+		development_growth_factor = 0.05
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.01
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.02
+		build_gold_cost = -0.01
+		tax_mult = 0.02
+		levy_size = 0.02
+	}
+	
+	next_building = orchards_02
+
+	type_icon = "icon_building_orchards.dds"
+	
+	ai_value = {
+		base = 15 # Significantly higher than normal, they're just that good
+		ai_tier_1_building_modifier = yes
+		ai_tier_1_economical_building_preference_modifier = yes
+		ai_orchard_improvement_from_culture_modifier = yes
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		modifier = {
+			factor = 2
+			AND = {
+				building_watermills_requirement_terrain = yes
+				building_windmills_requirement_terrain = yes
+			}
+		}
+		modifier = {
+			factor = 2
+			culture = {
+				has_cultural_parameter = vegetarian_fruit_orchard_allowed
+			}
+		}
+	}
+}
+
+orchards_02 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+		building_requirement_castle_city_church = { LEVEL = 01 }
+		scope:holder.culture = {
+			has_innovation = innovation_crop_rotation
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_2_cost
+	
+	levy = small_building_levy_tier_2
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_2
+		levy_reinforcement_rate = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.1
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.02
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.04
+		build_gold_cost = -0.02
+		tax_mult = 0.03
+		levy_size = 0.03
+	}
+	
+	next_building = orchards_03
+	
+	ai_value = {
+		base = 9
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+		modifier = { # Fill all building slots before going for upgrades
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+}
+
+orchards_03 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_manorialism
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_3_cost
+	
+	levy = small_building_levy_tier_3
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_3
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.15
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.03
+		supply_limit_mult = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.06
+		build_gold_cost = -0.03
+		tax_mult = 0.04
+		levy_size = 0.04
+	}
+	
+	next_building = orchards_04
+	
+	ai_value = {
+		base = 8
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+orchards_04 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 02 }
+		scope:holder.culture = {
+			has_innovation = innovation_manorialism
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_4_cost
+	
+	levy = small_building_levy_tier_4
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_4
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.2
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.04
+		supply_limit_mult = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.08
+		build_gold_cost = -0.04
+		tax_mult = 0.05
+		levy_size = 0.05
+	}
+	
+	next_building = orchards_05
+	
+	ai_value = {
+		base = 7
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+orchards_05 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_guilds
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_5_cost
+	
+	levy = small_building_levy_tier_5
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_5
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.25
+		levy_size = 0.02
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.05
+		supply_limit_mult = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.1
+		build_gold_cost = -0.05
+		tax_mult = 0.06
+		levy_size = 0.06
+	}
+	
+	next_building = orchards_06
+	
+	ai_value = {
+		base = 6
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+orchards_06 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 03 }
+		scope:holder.culture = {
+			has_innovation = innovation_guilds
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_6_cost
+	
+	levy = small_building_levy_tier_6
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_6
+		supply_limit = 1000
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.3
+		levy_size = 0.02
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.06
+		supply_limit_mult = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.12
+		build_gold_cost = -0.06
+		tax_mult = 0.07
+		levy_size = 0.07
+	}
+	
+	next_building = orchards_07
+	
+	ai_value = {
+		base = 5
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+orchards_07 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_cranes
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_7_cost
+	
+	levy = small_building_levy_tier_7
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_7
+		supply_limit = 1000
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.35
+		levy_size = 0.02
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.07
+		supply_limit_mult = 0.1
+	}
+	character_modifier = {
+		monthly_prestige = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.14
+		build_gold_cost = -0.07
+		tax_mult = 0.08
+		levy_size = 0.08
+	}
+	
+	next_building = orchards_08
+	
+	ai_value = {
+		base = 4
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
+orchards_08 = {
+	construction_time = standard_construction_time
+	effect_desc = orchards_effect_desc
+
+	can_construct_potential = {
+		building_orchards_requirement_terrain = yes
+	}
+
+	can_construct = {
+		building_requirement_castle_city_church = { LEVEL = 04 }
+		scope:holder.culture = {
+			has_innovation = innovation_cranes
+		}
+	}
+
+	can_construct_showing_failures_only = {
+		building_requirement_tribal = no
+	}
+	
+	cost_gold = normal_building_tier_8_cost
+	
+	levy = small_building_levy_tier_8
+	province_modifier = {
+		monthly_income = normal_building_tax_tier_8
+		supply_limit = 1000
+		levy_reinforcement_rate = 0.1
+		supply_limit_mult = 0.1
+	}
+	county_modifier = {
+		development_growth_factor = 0.4
+		levy_size = 0.02
+	}
+	province_terrain_modifier = {
+		parameter = coastal_agriculture_building_bonuses
+		is_coastal = yes
+		tax_mult = 0.08
+		supply_limit_mult = 0.1
+	}
+	character_modifier = {
+		monthly_prestige = 0.1
+	}
+	county_culture_modifier = {
+		parameter = orchards_building_bonuses
+		build_speed = -0.16
+		build_gold_cost = -0.08
+		tax_mult = 0.09
+		levy_size = 0.09
+	}
+	
+	ai_value = {
+		base = 3
+		ai_general_building_modifier = yes
+		directive_to_build_economy_modifier = yes
+		ai_economical_building_preference_modifier = yes
+	}
+}
+
 #Watermills
 
 watermills_01 = {

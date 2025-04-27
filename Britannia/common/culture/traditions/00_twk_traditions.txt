@@ -3,7 +3,7 @@
 
 	layers = {
 		0 = steward
-		1 = mena
+		1 = indian
 		4 = svamp.dds
 	}
 
@@ -59,7 +59,7 @@
 				limit = {
 					NOT = {
 						any_culture_county = {
-							percent >= 0.3
+							count >= 3
 							any_county_province = {
 								terrain = wetlands
 							}
@@ -93,6 +93,158 @@
 				}
 			}
 			multiply = 0
+		}
+	}
+}
+
+tradition_winegrowers = {
+	category = realm
+
+	layers = {
+		0 = steward
+		1 = western
+		4 = food.dds
+	}
+
+	can_pick = {
+		custom_tooltip = {
+			text = culture_in_farmlands_or_hills_terrain_desc
+			any_culture_county = {
+				any_county_province = {
+					OR = {
+						terrain = farmlands
+						terrain = hills
+					}
+				}
+			}
+		}
+	}
+	
+	parameters = {
+		orchards_building_bonuses = yes
+		refined_feasts = yes
+	}
+	county_modifier = {
+		farmlands_development_growth_factor = 0.15
+		hills_development_growth_factor = 0.05
+	}
+	province_modifier = {
+		farmlands_construction_gold_cost = -0.05
+		farmlands_supply_limit_mult = 0.15
+		hills_construction_gold_cost = -0.05
+		hills_supply_limit_mult = 0.05
+	}
+
+	cost = {
+		prestige = {
+			add = {
+				value = tradition_base_cost
+				desc = BASE
+				format = "BASE_VALUE_FORMAT"
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_culture_county = {
+							percent >= 0.15
+							any_county_province = {
+								OR = {
+									terrain = farmlands
+									terrain = hills
+								}
+							}
+						}
+					}
+				}
+				add = {
+					value = tradition_unfulfilled_criteria_penalty
+					desc = culture_in_farmlands_or_hills_count_desc
+				}
+			}
+			
+			multiply = tradition_replacement_cost_if_relevant
+		}
+	}
+	
+	ai_will_do = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					scope:character = {
+						any_sub_realm_county = {
+							count >= 3
+							culture = scope:character.culture
+							OR = {
+								any_county_province = {
+									OR = {
+										terrain = farmlands
+										terrain = hills
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+tradition_hempsmokers = {
+	category = societal
+
+	layers = {
+		0 = diplo
+		1 = indian
+		3 = 1.dds
+		4 = smoke.dds
+	}
+	
+	parameters = {
+		hashishiyah_trait_gives_bonuses = yes
+	}
+	character_modifier = {
+		stress_gain_mult = -0.1
+		stress_loss_mult = 0.1
+	}
+
+	cost = {
+		prestige = {
+			add = {
+				value = tradition_base_cost
+				desc = BASE
+				format = "BASE_VALUE_FORMAT"
+			}
+			if = {
+				limit = {
+					NOR = {
+						culture_pillar:ethos_communal = { is_in_list = traits }
+						culture_pillar:ethos_courtly = { is_in_list = traits }
+						culture_pillar:ethos_spiritual = { is_in_list = traits }
+					}
+				}
+				add = {
+					value = tradition_incompatible_ethos_penalty
+					desc = not_communal_courtly_or_spiritual_desc
+				}
+			}
+			multiply = tradition_replacement_cost_if_relevant
+		}
+	}
+	
+	ai_will_do = {
+		value = 50
+		if = {
+			limit = {
+				NOR = {
+					culture_pillar:ethos_communal = { is_in_list = traits }
+					culture_pillar:ethos_courtly = { is_in_list = traits }
+					culture_pillar:ethos_spiritual = { is_in_list = traits }
+				}
+			}
+			multiply = 0.5
 		}
 	}
 }
