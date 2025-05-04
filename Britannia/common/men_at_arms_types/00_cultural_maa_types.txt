@@ -546,9 +546,14 @@ horse_archers = {
 	}
 
 	can_recruit = {
-		valid_for_maa_trigger = { PARAMETER = unlock_maa_horse_archers }
-		culture = {
-			has_innovation = innovation_sahel_horsemen
+		OR = {
+			AND = {
+				is_landless_adventurer = yes
+				has_perk = planned_cultivation_perk
+				location.county.culture ?= { culture_has_archer_cavalry_maa = yes }
+			}
+			culture = { has_cultural_parameter = unlock_maa_horse_archers }
+			mpo_can_recruit_nomad_maa_trigger = yes
 		}
 	}
 

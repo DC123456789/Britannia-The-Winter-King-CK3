@@ -4,14 +4,16 @@ e_aengland = {
 	}
 	496.3.4 = {
 		holder = 80			# Aelle of Anglia
-		effect={
+		effect = {
 			set_global_variable = first_bretwalda
+			set_capital_county = title:c_elmham
 		}
-		set_capital_county = c_elmham
 	}
 	497.4.16={
 		holder = 0
-		set_capital_county = c_venta		# Winchester
+		effect = {
+			set_capital_county = title:c_venta		# Winchester
+		}
 	}
 }
 
@@ -32,7 +34,7 @@ k_anglia = {
 	496.3.4 = {
 		liege = e_aengland
 		effect = {
-			set_title_flag = aengland_primary_kingdom
+			set_variable = aengland_primary_kingdom
 		}
 	}
 	497.4.16={
@@ -43,7 +45,7 @@ k_anglia = {
 			remove_variable = title_created_de_jure
 			remove_variable = title_expanded_de_jure
 			set_global_variable = anglia_collapsed
-			clr_title_flag = aengland_primary_kingdom
+			remove_variable = aengland_primary_kingdom
 		}
 	#	active = no
 	}
@@ -357,6 +359,7 @@ d_middleseaxe = {
 k_cantia = {
 	436.1.1={
 		holder=810		# Hengist
+		liege = 0
 		effect={
 			set_global_variable = cantia_created
 		}
@@ -376,10 +379,10 @@ k_cantia = {
 		}
 	}
 	514.5.10={
+		insert_title_history = d_cantware # Will add all history entries in d_cantware earlier than the earliest entry here
 		holder=1253		# King Octa
 		effect={
 			set_global_variable = cantia_created
-			insert_title_history = d_cantware # Will add all history entries in d_cantware earlier than the earliest entry here
 		}
 	}
 	540.1.1={
@@ -402,15 +405,15 @@ d_cantware = {
 	}
 	436.1.1={
 		holder=810		# Hengist
+		liege = k_cantia
 		effect = {
 			set_variable = title_created_de_jure
 		}
-		liege = k_cantia
 	}
 	464.6.20={
 		holder=1252		# Æsc of Cantware
 	}
-	477.6.24={
+	477.6.25={		# Having this on the same day as k_cantia being destroyed breaks this
 		liege = k_sussex
 	}
 	512.1.1={

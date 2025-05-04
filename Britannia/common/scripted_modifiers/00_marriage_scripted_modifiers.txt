@@ -393,6 +393,23 @@
 
 		desc = VASSAL_CONTRACT_MARRIAGE_FAVOR_BONUS
 	}
+	#You're in a confederation together
+	modifier = {
+		add = 25
+		scope:recipient = {
+			is_confederation_member = yes
+			yields_alliance = {
+				candidate = scope:secondary_recipient
+				target = scope:actor
+				target_candidate = scope:secondary_actor
+			}
+		}
+		scope:actor = {
+			is_member_of_confederation = scope:recipient.confederation
+		}
+
+		desc = FELLOW_CONFEDERATION_MEMBERS_MARRIAGE_BONUS
+	}
 
 	####################
 	# TIER DIFFERENCES #
@@ -977,87 +994,6 @@
 		desc = MATRILINEAL_PATRILINEAL_REASON
 	}
 
-	##############
-	# BTWK FAITH #
-	##############
-	
-	# ASTRAY
-	modifier = {
-		add = -10
-		desc = MARRIAGE_FAITH_IS_ASTRAY
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
-				}
-			}
-		}
-	}
-	# HOSTILE 
-	modifier = {
-		add = -20
-		desc = MARRIAGE_FAITH_IS_HOSTILE
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 2  # 2 = HOSTILE
-				}
-			}
-		}
-	}
-	# EVIL 
-	modifier = {
-		add = -25
-		desc = MARRIAGE_FAITH_IS_EVIL
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 3  # 3 = EVIL
-				}
-			}
-		}
-	}
-
-	# ZEALOUS RECIPIENT #
-	modifier = {		
-		add = -15
-		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
-		trigger = {
-			AND = {
-				scope:recipient.faith = {
-					faith_hostility_level = {
-						target = scope:actor.faith
-						value > 0 
-					}
-				}
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}	
-		}
-	}
-	# TOLERANT RECIPIENT # 
-	modifier = {		
-		add = 10
-		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
-		trigger = {
-			AND = {
-				scope:recipient.faith = {
-					faith_hostility_level = {
-						target = scope:actor.faith
-						value > 0 
-					}
-				}
-				scope:recipient = {
-					has_trait = tolerant
-				}
-			}	
-		}
-	}
-
 	################
 	# BTWK CULTURE #
 	################
@@ -1176,12 +1112,269 @@
 		desc = MARRIAGE_CULTURAL_ACCEPTANCE_MODIFIER	
 	}
 
+	##############
+	# BTWK FAITH #
+	##############
+		
+	# ASTRAY
+	modifier = {
+		add = -10
+		desc = MARRIAGE_FAITH_IS_ASTRAY
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	# HOSTILE 
+	modifier = {
+		add = -20
+		desc = MARRIAGE_FAITH_IS_HOSTILE
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 2  # 2 = HOSTILE
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	# EVIL 
+	modifier = {
+		add = -25
+		desc = MARRIAGE_FAITH_IS_EVIL
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 3  # 3 = EVIL
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# ZEALOUS RECIPIENT #
+	modifier = {		
+		add = -15
+		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = zealous
+				}
+			}	
+		}
+	}
+	# TOLERANT RECIPIENT # 
+	modifier = {		
+		add = 10
+		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = tolerant
+				}
+			}
+			NOT = {
+				AND = {
+					# Otherwise we would get a bonus for marrying outside the faith for nomads and nomad tributaries
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
+	}
+
 	###########################
 	# VANILLA FAITH MODIFIERS #
 	###########################
 	modifier = { # Polygamy not supported
 		add = -1000
 		desc = DIVORCE_POLYGAMY
+		
+		# Nomads don't care about polygamy.
+		trigger_if = {
+			limit = {
+				scope:actor = {
+					OR = {
+						government_has_flag = government_is_nomadic
+						government_has_flag = government_is_herder
+					}
+				}
+			}
+			scope:recipient = {
+				NOR = {
+					government_has_flag = government_is_nomadic
+					government_has_flag = government_is_herder
+					is_tributary_of = scope:actor
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				scope:recipient = {
+					OR = {
+						government_has_flag = government_is_nomadic
+						government_has_flag = government_is_herder
+					}
+				}
+			}
+			scope:actor = {
+				NOR = {
+					government_has_flag = government_is_nomadic
+					government_has_flag = government_is_herder
+					is_tributary_of = scope:recipient
+				}
+			}
+		}
 
 		scope:secondary_actor = { 
 			is_married = yes 
@@ -1830,6 +2023,18 @@
 			court_grandeur_current_level < court_grandeur_minimum_expected_level
 		}
 	}
+
+	################
+	#     YURTS    #
+	################
+
+	modifier = { # Court grandeur level below expected level gives a penalty 
+		add = mpo_domicile_yurt_marriage_acceptance_value
+		desc = YURT_DOMICILE_MARRIAGE_ACCEPTANCE_MODIFIER
+		scope:actor.domicile ?= {
+			has_domicile_building_or_higher = marriage_yurt_01
+		}
+	}
 	
 	################
 	#  TRADITIONS  #
@@ -2018,6 +2223,13 @@
 		scope:influence_send_option = yes
 	}
 	
+	# Herd
+	modifier = {
+		add = 10
+		desc = HERD_INTERACTION_ACCEPTANCE_SEND_OPTION
+		scope:herd_send_option = yes
+	}
+	
 	################
 	#  DIARCHIES   #
 	################
@@ -2061,6 +2273,70 @@
 			existing_feud_against_target_trigger = { TARGET = scope:actor }
 		}
 		desc = MARRY_FAMILY_FEUD_REASON
+	}
+
+	######################
+	#  NOMAD/TRIBUTARY   #
+	######################
+	modifier = {
+		add = 50
+		scope:recipient = {
+			is_tributary_of_suzerain_or_above = scope:actor
+		}
+		desc = AI_TRIBUTARY_REASON
+	}
+	modifier = {
+		add = 100
+		scope:recipient = {
+			is_obedient_to = scope:actor
+		}
+		desc = AI_OBEDIENT_REASON
+	}
+	modifier = {
+		add = -100
+		scope:actor = {
+			government_has_flag = government_is_nomadic
+		}
+		scope:recipient = {
+			NOR = { 
+				government_has_flag = government_is_nomadic
+				government_has_flag = government_is_tribal
+			}
+			NAND = {
+				is_vassal_or_below_of = scope:actor
+				is_obedient_to = scope:actor
+			}
+		}
+		desc = AI_FILTHY_HORSE_LORD_REASON
+	}
+	#Smaller prejudicial malus for tribals, vassals and obedient tributaries
+	modifier = {
+		add = -50
+		scope:actor = {
+			government_has_flag = government_is_nomadic
+		}
+		scope:recipient = {
+			NOT = { government_has_flag = government_is_nomadic }
+			OR = {
+				government_has_flag = government_is_tribal
+				is_vassal_or_below_of = scope:actor
+				is_obedient_to = scope:actor
+			}
+			NAND = {
+				is_vassal_or_below_of = scope:actor
+				is_obedient_to = scope:actor
+			}
+		}
+		desc = AI_FILTHY_HORSE_LORD_REASON
+	}
+
+	#Nomadic base malus
+	modifier = {
+		desc = NOMADIC_BASE_MALUS
+		scope:actor = {
+			government_has_flag = government_is_nomadic
+		}
+		add = -20
 	}
 
 	#################
@@ -2207,6 +2483,32 @@
 			}
 		}
 	}
+
+	# A little extra challenge for latin empire players
+	#Want to keep AI latin empire strengthened by allies though
+	# modifier = {
+		# desc = "LATIN_EMPIRE_REASON"
+		# scope:actor = {
+			# has_trait = despoiler_of_byzantium
+			# top_liege ?= {
+				# has_title = title:e_latin_empire
+			# }
+			# OR = {
+				# is_ai = no
+				# top_liege = { is_ai = no }
+				# top_liege = {
+					# any_vassal_or_below = {
+						# is_ai = no
+					# }
+				# }
+			# }
+		# }
+		# scope:recipient = {
+			# NOT = { has_trait = despoiler_of_byzantium }
+			# faith.religion = religion:christianity_religion
+		# }
+		# add = -20
+	# }
 }
 
 elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on relevant points, note: there are no secondary targets
@@ -2299,89 +2601,6 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 			subtract = 5 #At 0 dynasty prestige level, there should be a penalty
 		}
 		desc = AI_DYNASTY_PRESTIGE_REASON
-	}
-
-
-
-	##############
-	# BTWK FAITH #
-	##############
-	
-	# ASTRAY
-	modifier = {
-		add = -10
-		desc = MARRIAGE_FAITH_IS_ASTRAY
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
-				}
-			}
-		}
-	}
-	# HOSTILE 
-	modifier = {
-		add = -20
-		desc = MARRIAGE_FAITH_IS_HOSTILE
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 2  # 2 = HOSTILE
-				}
-			}
-		}
-	}
-	# EVIL 
-	modifier = {
-		add = -25
-		desc = MARRIAGE_FAITH_IS_EVIL
-		trigger = {
-			scope:recipient.faith = {
-				faith_hostility_level = {
-					target = scope:actor.faith
-					value = 3  # 3 = EVIL
-				}
-			}
-		}
-	}
-
-	# ZEALOUS RECIPIENT #
-	modifier = {		
-		add = -15
-		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
-		trigger = {
-			AND = {
-				scope:recipient.faith = {
-					faith_hostility_level = {
-						target = scope:actor.faith
-						value > 0 
-					}
-				}
-				scope:recipient = {
-					has_trait = zealous
-				}
-			}	
-		}
-	}
-	# TOLERANT RECIPIENT # 
-	modifier = {		
-		add = 10
-		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
-		trigger = {
-			AND = {
-				scope:recipient.faith = {
-					faith_hostility_level = {
-						target = scope:actor.faith
-						value > 0 
-					}
-				}
-				scope:recipient = {
-					has_trait = tolerant
-				}
-			}	
-		}
 	}
 
 	################
@@ -2500,6 +2719,227 @@ elopment_ai_accept_modifier = { #Should copy marriage_ai_accept_modifier on rele
 			}
 		}
 		desc = MARRIAGE_CULTURAL_ACCEPTANCE_MODIFIER	
+	}
+
+	##############
+	# BTWK FAITH #
+	##############
+		
+	# ASTRAY
+	modifier = {
+		add = -10
+		desc = MARRIAGE_FAITH_IS_ASTRAY
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 1  # 0 = RIGHTEOUS, 1 = ASTRAY
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	# HOSTILE 
+	modifier = {
+		add = -20
+		desc = MARRIAGE_FAITH_IS_HOSTILE
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 2  # 2 = HOSTILE
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	# EVIL 
+	modifier = {
+		add = -25
+		desc = MARRIAGE_FAITH_IS_EVIL
+		trigger = {
+			scope:recipient.faith = {
+				faith_hostility_level = {
+					target = scope:actor.faith
+					value = 3  # 3 = EVIL
+				}
+			}
+			NOT = {
+				AND = {
+					# Nomads care little of Faith within the Steppe, and Tributaries are willing to marry them, too.
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# ZEALOUS RECIPIENT #
+	modifier = {		
+		add = -15
+		desc = MARRIAGE_DIFFERENT_FAITH_AND_ZEALOUS
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = zealous
+				}
+			}	
+		}
+	}
+	# TOLERANT RECIPIENT # 
+	modifier = {		
+		add = 10
+		desc = MARRIAGE_DIFFERENT_FAITH_BUT_TOLERANT 
+		trigger = {
+			AND = {
+				scope:recipient.faith = {
+					faith_hostility_level = {
+						target = scope:actor.faith
+						value > 0 
+					}
+				}
+				scope:recipient = {
+					has_trait = tolerant
+				}
+			}
+			NOT = {
+				AND = {
+					# Otherwise we would get a bonus for marrying outside the faith for nomads and nomad tributaries
+					scope:actor = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:recipient
+								scope:recipient = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+					scope:recipient = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							government_has_flag = government_is_herder
+							AND = {
+								is_tributary_of = scope:actor
+								scope:actor = {
+									OR = {
+										government_has_flag = government_is_nomadic
+										government_has_flag = government_is_herder
+									}
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
 	}
 	
 	##################

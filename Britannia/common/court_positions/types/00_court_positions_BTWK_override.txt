@@ -198,6 +198,7 @@ doorkeeper_royal_hall_court_position = {
 
 	valid_position = {
 		is_landed_or_landless_administrative = yes
+		NOT = { government_has_flag = government_is_nomadic }
 		highest_held_title_tier >= tier_duchy
 		culture = {
 			has_cultural_pillar = heritage_brythonic
@@ -821,11 +822,28 @@ antiquarian_court_position = {
 
 #MASTER OF THE HUNT
 master_of_hunt_court_position = {
-	sort_order = 275
+	sort_order = {
+		value = 275
+		if = {
+			limit = {
+				has_mpo_dlc_trigger = yes
+				government_has_flag = government_is_nomadic
+			}
+			add = 100
+		}
+	}
 	max_available_positions = 1
 	minimum_rank = county
 	skill = prowess
 
+	court_position_asset = {
+		trigger = {
+			government_has_flag = government_is_nomadic
+		}
+		animation = hunting_falcon
+		background = "gfx/interface/illustrations/event_scenes/ep2_hunt_poachers_camp.dds"
+		localization_key = master_of_hunt_court_position_nomadic
+	}
 	court_position_asset = {
 		trigger = {
 			root.culture ?= {
@@ -1753,6 +1771,7 @@ keeper_of_swans_court_position = {
 
 	is_shown = {
 		is_landed_or_landless_administrative = yes
+		NOT = { government_has_flag = government_is_nomadic }
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -2115,6 +2134,7 @@ court_jester_court_position = {
 
 	is_shown = {
 		is_landed_or_landless_administrative = yes
+		NOT = { government_has_flag = government_is_nomadic }
 		trigger_if = {
 			limit = {
 				is_ai = yes
