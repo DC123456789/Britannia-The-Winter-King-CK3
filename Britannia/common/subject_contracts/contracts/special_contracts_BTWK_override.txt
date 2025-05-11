@@ -205,6 +205,7 @@ special_contract = {
 					has_innovation = innovation_bannus
 				}
 			}
+			
 			parent = special_contract_none
 			position = { 1 0 }
 			score = 0
@@ -288,6 +289,32 @@ special_contract = {
 					add = @ai_standard_liege_desire
 				}
 			}
+		}
+	}
+}
+
+suzerain_war_participation_guarantee = {
+	display_mode = checkbox
+	obligation_levels = {
+		suzerain_war_participation_guarantee_none = {
+			position = { 0 0 }
+
+			ai_liege_desire = @ai_standard_liege_desire
+			ai_subject_desire = 0
+			score = -2
+		}
+		suzerain_war_participation_guarantee_available = {
+			parent = suzerain_war_participation_guarantee_none
+			default = yes
+			position = { 1 0 }
+
+			subject_opinion = 25
+
+			flag = tributary_contract_suzerain_guarantee_override
+
+			ai_liege_desire = 0
+			ai_subject_desire = @ai_standard_vassal_desire
+			score = 2
 		}
 	}
 }

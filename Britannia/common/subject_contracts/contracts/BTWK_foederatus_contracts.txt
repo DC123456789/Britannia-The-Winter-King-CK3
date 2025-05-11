@@ -1,0 +1,226 @@
+#Visible for foederati only
+tributary_foederatus_contract_foederatus = {
+	display_mode = radiobutton
+	obligation_levels = {
+		tributary_foederatus_contract_available_foederatus = {
+			is_shown = {
+				scope:liege.culture = {
+					has_innovation = innovation_foederati
+				}
+			}
+			is_valid = {
+				always = yes
+			}
+			
+			position = { 0 0 }
+			default = yes
+			
+			tax = exempt_feudal_tax
+			levies = 0.6
+
+			liege_modifier = {
+				monthly_prestige = -1
+			}
+
+			subject_modifier = {
+				levy_size = 1.0
+				army_maintenance_mult = -0.2
+				garrison_size = 1.0
+				levy_reinforcement_rate = 0.5
+				monthly_prestige = 1
+			}
+
+			flag = tributary_contract_foederatus_forced_war_override
+			flag = is_foederatus
+
+			ai_liege_desire = 1
+			ai_subject_desire = 2
+			score = 1
+		}
+		tributary_foederatus_contract_none_foederatus = {
+			is_shown = {
+				scope:liege.culture = {
+					has_innovation = innovation_foederati
+				}
+			}
+			is_valid = {
+				custom_tooltip = {
+					text = revoke_foederatus_interaction_only
+					always = no
+				}
+			}
+			
+			parent = tributary_foederatus_contract_available_foederatus
+			position = { 1 0 }
+
+			ai_liege_desire = 1
+			ai_subject_desire = 1
+			score = 0
+		}
+	}
+}
+
+#Visible for non-foederati only
+tributary_foederatus_contract_non_foederatus = {
+	display_mode = radiobutton
+	obligation_levels = {
+		tributary_foederatus_contract_none_non_foederatus = {
+			is_shown = {
+				scope:liege.culture = {
+					has_innovation = innovation_foederati
+				}
+			}
+			is_valid = {
+				always = yes
+			}
+			
+			default = yes
+			position = { 0 0 }
+
+			ai_liege_desire = 1
+			ai_subject_desire = 1
+			score = 0
+		}
+		tributary_foederatus_contract_available_non_foederatus = {
+			is_shown = {
+				scope:liege.culture = {
+					has_innovation = innovation_foederati
+				}
+			}
+			is_valid = {
+				custom_tooltip = {
+					text = foederatus_interaction_only
+					always = no
+				}
+				scope:subject = {
+					has_government = tribal_government
+				}
+			}
+			
+			parent = tributary_foederatus_contract_none_non_foederatus
+			position = { 1 0 }
+
+			tax = exempt_feudal_tax
+			levies = 0.6
+			
+			liege_modifier = {
+				monthly_prestige = -1
+			}
+
+			subject_modifier = {
+				levy_size = 1.0
+				army_maintenance_mult = -0.2
+				garrison_size = 1.0
+				levy_reinforcement_rate = 0.5
+				monthly_prestige = 1
+			}
+			
+			flag = tributary_contract_foederatus_forced_war_override
+			flag = is_foederatus
+
+			ai_liege_desire = 1
+			ai_subject_desire = 2
+			score = 1
+		}
+	}
+}
+
+foederatus_subsidies = {
+	display_mode = tree
+	icon = gold_icon
+	obligation_levels = {
+		foederatus_no_subsidies = {
+			position = { 0 0 }
+
+			subject_opinion = -10
+
+			ai_liege_desire = 5
+			ai_subject_desire = 1
+			score = 0
+		}
+		foederatus_small_subsidies = {
+			parent = foederatus_no_subsidies
+			default = yes
+			position = { 1 0 }
+			
+			subject_opinion = 10
+			
+			levies = 0.1
+			
+			liege_modifier = {
+				monthly_income = -0.5
+			}
+
+			subject_modifier = {
+				monthly_income = 0.5
+				monthly_prestige = 0.25
+				levy_size = 0.25
+				levy_reinforcement_rate = 0.25
+			}
+
+			ai_liege_desire = 3
+			ai_subject_desire = 3
+			score = 1
+		}
+		foederatus_large_subsidies = {
+			parent = foederatus_small_subsidies
+			position = { 2 0 }
+
+			levies = 0.2
+
+			liege_modifier = {
+				monthly_income = -1
+			}
+
+			subject_modifier = {
+				monthly_income = 1
+				monthly_prestige = 0.5
+				levy_size = 0.5
+				levy_reinforcement_rate = 0.5
+			}
+			
+			subject_opinion = 25
+
+			ai_liege_desire = 1
+			ai_subject_desire = 5
+			score = 2
+		}
+	}
+}
+
+foederatus_war_subsidies = {
+	display_mode = checkbox
+	obligation_levels = {
+		foederatus_no_war_subsidies = {
+			default = yes
+			position = { 0 0 }
+
+			subject_opinion = 0
+
+			ai_liege_desire = 5
+			ai_subject_desire = 1
+			score = 0
+		}
+		foederatus_full_war_subsidies = {
+			parent = foederatus_no_war_subsidies
+			position = { 1 0 }
+			
+			subject_opinion = 20
+			
+			levies = 0.1
+			
+			liege_modifier = {
+				monthly_war_income_add = -0.5
+			}
+
+			subject_modifier = {
+				monthly_war_income_add = 0.5
+				levy_size = 0.25
+			}
+
+			ai_liege_desire = 1
+			ai_subject_desire = 5
+			score = 1
+		}
+	}
+}
