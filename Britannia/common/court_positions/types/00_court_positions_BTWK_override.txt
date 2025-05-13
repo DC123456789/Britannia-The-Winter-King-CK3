@@ -183,6 +183,18 @@ doorkeeper_royal_hall_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	is_shown = {
@@ -585,10 +597,25 @@ antiquarian_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -600,7 +627,10 @@ antiquarian_court_position = {
 
 	# Is this an available position for this court? (root is court owner)
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -977,10 +1007,25 @@ master_of_hunt_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -992,7 +1037,10 @@ master_of_hunt_court_position = {
 
 	# Is this an available position for this court? (root is court owner)
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 	}
 
 	is_shown_character = {
@@ -1360,10 +1408,25 @@ court_musician_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -1374,8 +1437,35 @@ court_musician_court_position = {
 	}
 
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		trigger_if = {
+			limit = {
+				government_has_flag = government_is_nomadic
+				root.culture ?= {
+					has_cultural_parameter = better_court_musicians
+				}
+			}
+			OR = {
+				has_realm_law = nomadic_authority_5
+				has_realm_law = nomadic_authority_4
+				has_realm_law = nomadic_authority_3
+				has_realm_law = nomadic_authority_2
+			}
+		}
+		trigger_else_if = {
+			limit = {
+				government_has_flag = government_is_nomadic
+			}
+			OR = {
+				has_realm_law = nomadic_authority_5
+				has_realm_law = nomadic_authority_4
+				has_realm_law = nomadic_authority_3
+			}
+		}
+		trigger_else_if = {
 			limit = {
 				root.culture ?= {
 					has_cultural_parameter = better_court_musicians
@@ -1767,6 +1857,18 @@ keeper_of_swans_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	is_shown = {
@@ -2128,6 +2230,18 @@ court_jester_court_position = {
 			add = {
 				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
 				desc = seneschal_improve_court_aptitude_desc
+			}
+		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
 			}
 		}
 	}
@@ -2558,6 +2672,18 @@ garuda_court_position = {
 				desc = seneschal_improve_court_aptitude_desc
 			}
 		}
+		# Yeke Jarquchi
+		if = {
+			limit = {
+				liege.court_position:yeke_jarquchi_court_position ?= {
+					has_variable = performing_improve_court
+				}
+			}
+			add = {
+				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
+				desc = yeke_jarquchi_improve_court_aptitude_desc
+			}
+		}
 	}
 
 	# Is this an available position for this court? (root is court owner)
@@ -2566,7 +2692,10 @@ garuda_court_position = {
 	}
 
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		OR = {
+			is_landed_or_landless_administrative = yes
+			government_has_flag = government_is_nomadic
+		}
 		highest_held_title_tier >= tier_kingdom
 		culture = { has_cultural_tradition = tradition_garuda_warriors }
 	}
