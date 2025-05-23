@@ -13,7 +13,7 @@ special_contract = {
 			default = yes
 			score = 0
 
-			ai_subject_desire =  {
+			ai_subject_desire = {
 				value = 0
 				if = {
 					limit = {
@@ -33,7 +33,7 @@ special_contract = {
 			}
 
 
-			ai_liege_desire =  {
+			ai_liege_desire = {
 				value = 0
 				if = {
 					limit = {
@@ -109,8 +109,8 @@ special_contract = {
 			flag = has_scutage_contract
 			flag = obligation_high_taxes
 
-			ai_liege_desire =  {
-				value = 0
+			ai_liege_desire = {
+				value = @ai_standard_liege_desire
 				if = {
 					limit = {
 						scope:subject = {
@@ -118,13 +118,12 @@ special_contract = {
 								government_has_flag = government_is_clan
 								AND = {
 									government_has_flag = government_is_feudal
-									vassal_contract_obligation_level:feudal_government_taxes > feudal_tax_normal_level
-									vassal_contract_obligation_level:feudal_government_levies < feudal_levies_normal_level
+									vassal_contract_obligation_level:feudal_government_taxes >= feudal_tax_normal_level
 								}
 							}
 						}
 					}
-					add = @ai_standard_liege_desire
+					add = 5
 				}
 				if = {
 					limit = {
@@ -135,6 +134,7 @@ special_contract = {
 					add = 10
 				}
 			}
+			ai_subject_desire = -2
 		}
 		special_contract_march = {
 			is_shown = {
@@ -175,7 +175,7 @@ special_contract = {
 
 			flag = has_march_contract
 
-			ai_liege_desire =  {
+			ai_liege_desire = {
 				value = 0
 				if = {
 					limit = {
@@ -195,6 +195,7 @@ special_contract = {
 					add = @ai_standard_liege_desire
 				}
 			}
+			ai_subject_desire = @ai_standard_vassal_desire
 		}
 		special_contract_castellan = {
 			is_shown = {
@@ -224,7 +225,7 @@ special_contract = {
 			flag = has_castellan_contract
 			flag = obligation_high_levies
 
-			ai_liege_desire =  {
+			ai_liege_desire = {
 				value = 0
 				if = {
 					limit = {
@@ -244,6 +245,7 @@ special_contract = {
 					add = @ai_standard_liege_desire
 				}
 			}
+			ai_subject_desire = @ai_standard_vassal_desire
 		}
 		special_contract_palatinate = {
 			is_shown = { #disabled
@@ -276,7 +278,7 @@ special_contract = {
 
 			flag = has_palatinate_contract
 
-			ai_liege_desire =  {
+			ai_liege_desire = {
 				value = 0
 				if = {
 					limit = {
@@ -289,6 +291,7 @@ special_contract = {
 					add = @ai_standard_liege_desire
 				}
 			}
+			ai_subject_desire = @ai_standard_vassal_desire
 		}
 	}
 }
