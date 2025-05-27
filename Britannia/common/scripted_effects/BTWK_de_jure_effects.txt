@@ -42,7 +42,7 @@ set_kingdom_region_de_jure_liege_effect = {
 			limit = {
 				NOT = {
 					any_in_global_list = {
-						name = kingdom_region_list
+						variable = kingdom_region_list
 						this.var:kingdom_region_empire = scope:old_liege
 					}
 				}
@@ -56,6 +56,7 @@ set_kingdom_region_de_jure_liege_tooltip_only_effect = {
 	$REGION_BASE$ = { save_scope_as = kingdom_region_empire_pretend }
 	$NEW_DE_JURE_LIEGE$ = { save_scope_as = kingdom_region_empire_pretend_target }
 	$REGION_BASE$ = {
+		save_scope_as = region_base_title
 		every_in_list = {
 			variable = kingdom_region_titles
 			show_as_tooltip = {
@@ -67,9 +68,9 @@ set_kingdom_region_de_jure_liege_tooltip_only_effect = {
 				limit = {
 					NOT = {
 						any_in_global_list = {
-							name = kingdom_region_list
+							variable = kingdom_region_list
 							this.var:kingdom_region_empire = prev
-							NOT = { this = $REGION_BASE$ }
+							NOT = { this = scope:region_base_title }
 						}
 					}
 				}
