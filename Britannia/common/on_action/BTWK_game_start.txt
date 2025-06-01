@@ -8,6 +8,7 @@ on_game_start = {
 		BTWK_religion_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_settlement_placement
+		BTWK_high_king_electors_setup
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
@@ -2041,6 +2042,38 @@ BTWK_laeti_settlement_placement = {
 				add_province_modifier = { 
 					modifier = laeti_settlement 
 					years = 50 
+				}
+			}
+		}
+	}
+}
+
+BTWK_high_king_electors_setup = {
+	effect = {
+		title:e_britannia = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_kingdom }
+				add_to_global_variable_list = {
+					name = high_king_electors_list
+					target = THIS
+				}
+			}
+		}
+		title:e_britannia = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_duchy }
+				add_to_global_variable_list = {
+					name = high_king_electors_list
+					target = THIS
+				}
+			}
+		}
+		title:e_roman_britannia = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_kingdom }
+				add_to_global_variable_list = {
+					name = high_king_electors_list
+					target = THIS
 				}
 			}
 		}

@@ -67,6 +67,16 @@ window = {
 				
 				text_label_center = {
 					text = "CURRENT_HIGH_KING"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					parentanchor = top|hcenter
+					margin_left = 0
+					margin_right = 0
+				}
+				
+				text_label_center = {
+					text = "HIGH_KING_CLAIMANT"
+					visible = "[Not(Title.HasHolder)]"
 					scale = 1.5
 					parentanchor = top|hcenter
 					margin_left = 0
@@ -77,6 +87,7 @@ window = {
 					texture = "gfx/interface/icons/high_king/high_king_bg_left.dds"
 					fittype = centercrop
 					alpha = 0.5
+					
 					margin_bottom = -60
 					margin_left = -5
 					margin_right = -5
@@ -86,6 +97,7 @@ window = {
 				portrait_body = {
 					name = "high_king_portrait"
 					datacontext = "[Title.GetHolder]"
+					visible = "[Title.HasHolder]"
 					parentanchor = bottom|hcenter
 					scale = 1.9
 					
@@ -94,21 +106,103 @@ window = {
 					blockoverride "opinion_box" {}
 				}
 				
-				text_label_center = {
-					text = "NO_HIGH_KING"
+				portrait_body = {
+					name = "my_claim_portrait"
+					datacontext = "[GetPlayer]"
 					visible = "[Not(Title.HasHolder)]"
+					parentanchor = bottom|hcenter
+					scale = 1.9
+					
+					blockoverride "status_icons" {}
+					blockoverride "coa" {}
+					blockoverride "opinion_box" {}
+				}
+				
+				container = {
+					name = "heir_high_king"
+					datacontext = "[Title.GetHeir]"
+					visible = "[Title.HasHolder]"
+					parentanchor = top|right
+					position = { 0 45 }
 					scale = 1.5
+
+					using = Animation_Character_Window_Refresh
+
+					portrait_head_small = {
+						parentanchor = right
+
+						blockoverride "portrait_transformation"
+						{
+							portrait_scale = { -1 1 }
+							portrait_offset = { 1 0 }
+						}
+					}
+
+					text_single = {
+						parentanchor = top|hcenter
+						position = { 0 85 }
+						scale = 0.8
+						text = "Current [heir|E]"
+					}
+				}
+				
+				text_single = {
+					text = "HIGH_KING_NAME"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					max_width = 350
 					parentanchor = bottom|hcenter
 					margin_bottom = 50
 				}
 				
-				text_label_center = {
-					text = "HIGH_KING_NAME"
-					visible = "[Title.HasHolder]"
+				text_single = {
+					text = "CLAIMANT_NAME"
+					visible = "[Not(Title.HasHolder)]"
 					scale = 1.5
+					max_width = 350
 					parentanchor = bottom|hcenter
 					margin_bottom = 50
 				}
+				
+				text_single = {
+					text = "CURRENT_AUTHORITY"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					parentanchor = top|left
+					position = { 15 50 }
+				}
+				
+				text_single = {
+					text = "CLAIMANT_SUPPORTER_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 15 50 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_OPPONENT_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 15 85 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRAL_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 15 120 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				#text_single = {
+				#	text = "NOT_HK_CLAIMANT"
+				#	visible = "[...]" #so that you cannot see this if you are not an independent elector
+				#	position = { 0 50 }
+				#	scale = 1.5
+				#	parentanchor = top|hcenter
+				#}
 			}
 			
 			vbox = {
@@ -150,6 +244,15 @@ window = {
 						
 						text_label_center = {
 							text = "HIGH_KING_VASSALS"
+							visible = "[Title.HasHolder]"
+							scale = 1.5
+							parentanchor = top|hcenter
+							margin_top = -105
+						}
+						
+						text_label_center = {
+							text = "HIGH_KING_SUPPORTERS"
+							visible = "[Not(Title.HasHolder)]"
 							scale = 1.5
 							parentanchor = top|hcenter
 							margin_top = -105
@@ -163,6 +266,105 @@ window = {
 							margin_left = -5
 							margin_right = -5
 							margin_top = 50
+						}
+						
+						scrollbox = {
+							name = "high_king_vassal_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Title.HasHolder]"
+
+							position = { 0 -50 }
+							
+							blockoverride "scrollbox_content"
+							{
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								
+								vbox = {
+									name = "high_king_vassal_list_vbox"
+									spacing = 25
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									
+									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									
+									item = {
+										hbox = {
+											#layoutpolicy_horizontal = expanding
+											#layoutpolicy_vertical = expanding
+											size = { 275 50 }
+											
+											coa_title_tiny = {
+												parentanchor = left|vcenter
+												block "title_button_coa" {
+													datacontext = "[Scope.Title]"
+												}
+											}
+											
+											text_single = {
+												text = "[Title.GetName]"
+												parentanchor = center
+												max_width = 175
+											}
+										}
+									}
+								}
+							}
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
+						}
+						
+						scrollbox = {
+							name = "high_king_support_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Not(Title.HasHolder)]"
+
+							position = { 0 -50 }
+							
+							blockoverride "scrollbox_content"
+							{
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								
+								vbox = {
+									name = "high_king_support_list_vbox"
+									spacing = 35
+									#layoutpolicy_horizontal = expanding
+									#layoutpolicy_vertical = expanding
+									
+									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									
+									item = {
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											size = { 275 50 }
+											
+											coa_title_tiny = {
+												parentanchor = left|vcenter
+												block "title_button_coa" {
+													datacontext = "[Scope.Title]"
+												}
+											}
+											
+											text_single = {
+												datacontext = "[Scope.Title]"
+												text = "ELECTORNAME"
+												parentanchor = center
+												max_width = 175
+											}
+										}
+									}
+								}
+							}
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
 						}
 					}
 					
@@ -174,6 +376,15 @@ window = {
 						
 						text_label_center = {
 							text = "HIGH_KING_INDEPENDENT"
+							visible = "[Title.HasHolder]"
+							scale = 1.5
+							parentanchor = top|hcenter
+							margin_top = -105
+						}
+						
+						text_label_center = {
+							text = "HIGH_KING_OPPONENTS"
+							visible = "[Not(Title.HasHolder)]"
 							scale = 1.5
 							parentanchor = top|hcenter
 							margin_top = -105
@@ -187,6 +398,69 @@ window = {
 							margin_left = -5
 							margin_right = -5
 							margin_top = 50
+						}
+						
+						scrollbox = {
+							name = "high_king_independent_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Title.HasHolder]"
+
+							position = { 0 -50 }
+							
+							blockoverride "scrollbox_content"
+							{
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								
+								vbox = {
+									name = "high_king_independent_list_vbox"
+									spacing = 25
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									
+									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									
+									item = {
+										
+									}
+								}
+							}
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
+						}
+						
+						scrollbox = {
+							name = "high_king_oppose_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Not(Title.HasHolder)]"
+
+							position = { 0 -50 }
+							
+							blockoverride "scrollbox_content"
+							{
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								
+								vbox = {
+									name = "high_king_oppose_list_vbox"
+									spacing = 25
+									layoutpolicy_horizontal = expanding
+									
+									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									
+									item = {
+										
+									}
+								}
+							}
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
 						}
 					}
 				}
