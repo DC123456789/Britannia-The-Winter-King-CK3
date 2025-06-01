@@ -52,6 +52,18 @@ window = {
 			margin_left = -40
 			margin_right = -40
 			margin_top = -65
+			visible = "[Title.HasHolder]"
+		}
+		
+		background = {
+			texture = "gfx/interface/icons/high_king/high_king_claimant_bg.dds"
+			fittype = centercrop
+			alpha = 1.0
+			margin_bottom = -18
+			margin_left = -40
+			margin_right = -40
+			margin_top = -65
+			visible = "[Not(Title.HasHolder)]"
 		}
 		
 		hbox = {
@@ -235,9 +247,10 @@ window = {
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
+					visible = "[Title.HasHolder]"
 					
 					widget = {
-						name = "vassal kingdom view"
+						name = "vassal_kingdom_view"
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
 						size = { 275 0 }
@@ -245,14 +258,6 @@ window = {
 						text_label_center = {
 							text = "HIGH_KING_VASSALS"
 							visible = "[Title.HasHolder]"
-							scale = 1.5
-							parentanchor = top|hcenter
-							margin_top = -105
-						}
-						
-						text_label_center = {
-							text = "HIGH_KING_SUPPORTERS"
-							visible = "[Not(Title.HasHolder)]"
 							scale = 1.5
 							parentanchor = top|hcenter
 							margin_top = -105
@@ -278,90 +283,30 @@ window = {
 							position = { 0 -50 }
 							
 							blockoverride "scrollbox_content"
-							{
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-								
-								vbox = {
-									name = "high_king_vassal_list_vbox"
-									spacing = 25
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
+							{								
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 3
+									flipdirection = yes
+									# ignoreinvisible = yes		# Doesn't work
 									
 									datamodel = "[GetGlobalList('high_king_electors_list')]"
 									
-									item = {
-										hbox = {
-											#layoutpolicy_horizontal = expanding
-											#layoutpolicy_vertical = expanding
-											size = { 275 50 }
-											
-											coa_title_tiny = {
-												parentanchor = left|vcenter
-												block "title_button_coa" {
-													datacontext = "[Scope.Title]"
-												}
-											}
-											
-											text_single = {
-												text = "[Title.GetName]"
-												parentanchor = center
-												max_width = 175
-											}
+									item = {											
+										portrait_head_small = {
+											margin = { 0 0 }
+											spacing = 0
+											name = "support_king_portrait"
+											datacontext = "[Scope.Title.GetHolder]"
+											# visible = "[Scope.Title.HasHolder]"
 										}
 									}
 								}
 							}
-							blockoverride "scrollbox_expand" {
-								expand = {}
-							}
-						}
-						
-						scrollbox = {
-							name = "high_king_support_list"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-							size = { 275 325 }
-							visible = "[Not(Title.HasHolder)]"
-
-							position = { 0 -50 }
-							
-							blockoverride "scrollbox_content"
-							{
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-								
-								vbox = {
-									name = "high_king_support_list_vbox"
-									spacing = 35
-									#layoutpolicy_horizontal = expanding
-									#layoutpolicy_vertical = expanding
-									
-									datamodel = "[GetGlobalList('high_king_electors_list')]"
-									
-									item = {
-										hbox = {
-											layoutpolicy_horizontal = expanding
-											layoutpolicy_vertical = expanding
-											size = { 275 50 }
-											
-											coa_title_tiny = {
-												parentanchor = left|vcenter
-												block "title_button_coa" {
-													datacontext = "[Scope.Title]"
-												}
-											}
-											
-											text_single = {
-												datacontext = "[Scope.Title]"
-												text = "ELECTORNAME"
-												parentanchor = center
-												max_width = 175
-											}
-										}
-									}
-								}
-							}
+                            blockoverride "scrollbox_margins"
+                            {
+                                margin_left = -6
+                            }
 							blockoverride "scrollbox_expand" {
 								expand = {}
 							}
@@ -369,7 +314,7 @@ window = {
 					}
 					
 					widget = {
-						name = "independent kingdom view"
+						name = "independent_kingdom_view"
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
 						size = { 275 0 }
@@ -377,14 +322,6 @@ window = {
 						text_label_center = {
 							text = "HIGH_KING_INDEPENDENT"
 							visible = "[Title.HasHolder]"
-							scale = 1.5
-							parentanchor = top|hcenter
-							margin_top = -105
-						}
-						
-						text_label_center = {
-							text = "HIGH_KING_OPPONENTS"
-							visible = "[Not(Title.HasHolder)]"
 							scale = 1.5
 							parentanchor = top|hcenter
 							margin_top = -105
@@ -431,35 +368,202 @@ window = {
 								expand = {}
 							}
 						}
+					}
+				}
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[Not(Title.HasHolder)]"
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin_top = -95
 						
-						scrollbox = {
-							name = "high_king_oppose_list"
+						widget = {
+							name = "supporter_kingdom_view"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 325 }
-							visible = "[Not(Title.HasHolder)]"
-
-							position = { 0 -50 }
+							size = { 275 0 }
 							
-							blockoverride "scrollbox_content"
-							{
+							text_label_center = {
+								text = "HIGH_KING_SUPPORTERS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							# background = {
+								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+								# fittype = centercrop
+								# alpha = 0.5
+								# margin_bottom = -60
+								# margin_left = -5
+								# margin_right = -5
+								# margin_top = 50
+							# }
+							
+							scrollbox = {
+								name = "high_king_support_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
+								size = { 275 185 }
+								margin = { 5 5 }
+
+								position = { 0 45 }
 								
-								vbox = {
-									name = "high_king_oppose_list_vbox"
-									spacing = 25
-									layoutpolicy_horizontal = expanding
-									
-									datamodel = "[GetGlobalList('high_king_electors_list')]"
-									
-									item = {
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_supporters_gridbox"
+										datamodel_wrap = 3
+										flipdirection = yes
+										# ignoreinvisible = yes		# Doesn't work
 										
+										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										
+										item = {		
+											portrait_head_small = {
+												margin = { 0 0 }
+												spacing = 0
+												name = "support_king_portrait"
+												datacontext = "[Scope.Title.GetHolder]"
+												# visible = "[Scope.Title.HasHolder]"
+											}
+										}
 									}
 								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
 							}
-							blockoverride "scrollbox_expand" {
-								expand = {}
+						}
+						
+						widget = {
+							name = "opponent_kingdom_view"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 0 }
+							
+							text_label_center = {
+								text = "HIGH_KING_OPPONENTS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							# background = {
+								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+								# fittype = centercrop
+								# alpha = 0.5
+								# margin_bottom = -60
+								# margin_left = -5
+								# margin_right = -5
+								# margin_top = 50
+							# }
+							
+							scrollbox = {
+								name = "high_king_oppose_list"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								size = { 275 185 }
+								margin = { 5 5 }
+
+								position = { 0 45 }
+								
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_opponents_gridbox"
+										datamodel_wrap = 3
+										flipdirection = yes
+										# ignoreinvisible = yes		# Doesn't work
+										
+										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										
+										item = {		
+											portrait_head_small = {
+												margin = { 0 0 }
+												spacing = 0
+												name = "support_king_portrait"
+												datacontext = "[Scope.Title.GetHolder]"
+												# visible = "[Scope.Title.HasHolder]"
+											}
+										}
+									}
+								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
+							}
+						}
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 550 100 }
+						margin_top = -22
+						
+						widget = {
+							name = "neutral_kingdom_view"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 550 0 }
+							
+							text_label_center = {
+								text = "HIGH_KING_NEUTRALS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							# background = {
+								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+								# fittype = centercrop
+								# alpha = 0.5
+								# margin_bottom = -60
+								# margin_left = -5
+								# margin_right = -5
+								# margin_top = 50
+							# }
+							
+							scrollbox = {
+								name = "high_king_neutrals_list"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								size = { 550 92 }
+
+								position = { 0 40 }
+								
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_neutrals_gridbox"
+										datamodel_wrap = 6
+										flipdirection = yes
+										# ignoreinvisible = yes		# Doesn't work
+										
+										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										
+										item = {
+											portrait_head_small = {
+												margin = { 0 0 }
+												spacing = 0
+												name = "support_king_portrait"
+												datacontext = "[Scope.Title.GetHolder]"
+												# visible = "[Scope.Title.HasHolder]"
+											}
+										}
+									}
+								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
 							}
 						}
 					}
