@@ -1,0 +1,93 @@
+﻿namespace = britannia_high_king
+namespace = britannia_high_king_test
+
+##################################################
+
+### Events for the High Kingship of Britannia
+
+##################################################
+
+##################################################
+# Debug Test Events
+##################################################
+
+# Give Britannia to Dumnonia and make Gwent, Powys, Siluria, Stronggore, Demetia their subject kings (i.e. book scenario)
+britannia_high_king_test.0001 = {
+	hidden = yes
+
+	immediate = {
+		title:k_dumnonia.holder = {
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_britannia = {
+				change_title_holder = {
+					holder = prev
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+		}
+		title:k_powys.holder = {
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = title:e_britannia.holder 
+			}
+		}
+		title:k_gwent.holder = {
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = title:e_britannia.holder 
+			}
+		}
+		title:k_siluria.holder = {
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = title:e_britannia.holder 
+			}
+		}
+		title:k_demetia.holder = {
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = title:e_britannia.holder 
+			}
+		}
+		title:d_eastgwent.holder = {
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = title:e_britannia.holder 
+			}
+		}
+	}
+}
+
+# Dumnonia + Gwent + Stronggore vs. Powys + Siluria + Demetia + Kernow (book scenario)
+britannia_high_king_test.0002 = {
+	hidden = yes
+
+	immediate = {
+		title:k_dumnonia.holder = {
+			set_variable = HK_britannia_supporter
+		}
+		title:k_gwent.holder = {
+			set_variable = HK_britannia_supporter
+		}
+		title:d_eastgwent.holder = {
+			set_variable = HK_britannia_supporter
+		}
+		title:k_powys.holder = {
+			set_variable = HK_britannia_opponent
+		}
+		title:k_siluria.holder = {
+			set_variable = HK_britannia_opponent
+		}
+		title:k_demetia.holder = {
+			set_variable = HK_britannia_opponent
+		}
+		title:k_kernow.holder = {
+			set_variable = HK_britannia_opponent
+		}
+	}
+}

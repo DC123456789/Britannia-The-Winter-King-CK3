@@ -19,6 +19,7 @@ window = {
 		name = _show
 		using = Animation_FadeIn_Standard
 		using = Sound_WindowShow_Standard
+		on_start = "[GetScriptedGui('BTWK_window_high_king_init').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 	}
 
 	state = {
@@ -224,9 +225,9 @@ window = {
 				###RIGHT SIDE
 				widget = {
 					name = "decisions view"
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-					size = { 550 0 }
+					# layoutpolicy_horizontal = expanding
+					# layoutpolicy_vertical = expanding
+					size = { 550 233 }
 					
 					text_label_center = {
 						text = "HIGH_KING_DECISIONS"
@@ -234,14 +235,179 @@ window = {
 						parentanchor = top|hcenter
 					}
 					
-					background = {
-						texture = "gfx/interface/icons/high_king/high_king_bg_dec.dds"
-						fittype = centercrop
-						alpha = 0.5
-						margin_bottom = -100
-						margin_left = -5
-						margin_right = -5
-						margin_top = -50
+					# background = {
+						# texture = "gfx/interface/icons/high_king/high_king_bg_dec.dds"
+						# fittype = centercrop
+						# alpha = 0.5
+						# margin_bottom = -100
+						# margin_left = -5
+						# margin_right = -5
+						# margin_top = -50
+					# }
+					
+					hbox = {
+						# layoutpolicy_horizontal = expanding
+						# layoutpolicy_vertical = expanding
+						margin_top = 42
+						# margin_bottom = 70
+						margin_left = -3
+						
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 7
+							
+							button_standard = {
+								size = { 175 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_1"
+										fontsize = 15
+										max_width = 260
+									}
+								}
+							}
+							button_standard = {
+								size = { 175 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_2"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 175 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_3"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 7
+							
+							button_standard = {
+								size = { 180 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_4A"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 180 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_5"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 180 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_6"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 6
+							
+							button_primary = {
+								size = { 180 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_7A"
+										default_format = "#bold;color_green"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_primary = {
+								size = { 180 50 }
+								enabled = [Not(Always)]
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -9
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_7B"
+										default_format = "#bold;color_porple"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
 					}
 				}
 				hbox = {
@@ -253,58 +419,55 @@ window = {
 						name = "vassal_kingdom_view"
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
-						size = { 275 0 }
+						size = { 275 200 }
 						
 						text_label_center = {
 							text = "HIGH_KING_VASSALS"
 							visible = "[Title.HasHolder]"
 							scale = 1.5
 							parentanchor = top|hcenter
-							margin_top = -105
 						}
 						
-						background = {
-							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							fittype = centercrop
-							alpha = 0.5
-							margin_bottom = -60
-							margin_left = -5
-							margin_right = -5
-							margin_top = 50
-						}
+						# background = {
+							# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+							# fittype = centercrop
+							# alpha = 0.5
+							# margin_bottom = -60
+							# margin_left = -5
+							# margin_right = -5
+							# margin_top = 50
+						# }
 						
 						scrollbox = {
 							name = "high_king_vassal_list"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 325 }
+							size = { 275 318 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 -50 }
+							position = { 0 45 }
 							
 							blockoverride "scrollbox_content"
-							{								
+							{
 								dynamicgridbox = {
 									name = "high_king_subjects_gridbox"
 									datamodel_wrap = 3
 									flipdirection = yes
 									# ignoreinvisible = yes		# Doesn't work
 									
-									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									datamodel = "[GetGlobalList('britannia_subject_kings_list')]"
 									
 									item = {											
 										portrait_head_small = {
 											margin = { 0 0 }
 											spacing = 0
 											name = "support_king_portrait"
-											datacontext = "[Scope.Title.GetHolder]"
-											# visible = "[Scope.Title.HasHolder]"
+											datacontext = "[Scope.Char]"
 										}
 									}
 								}
 							}
-                            blockoverride "scrollbox_margins"
-                            {
+                            blockoverride "scrollbox_margins" {
                                 margin_left = -6
                             }
 							blockoverride "scrollbox_expand" {
@@ -324,46 +487,50 @@ window = {
 							visible = "[Title.HasHolder]"
 							scale = 1.5
 							parentanchor = top|hcenter
-							margin_top = -105
 						}
 						
-						background = {
-							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							fittype = centercrop
-							alpha = 0.5
-							margin_bottom = -60
-							margin_left = -5
-							margin_right = -5
-							margin_top = 50
-						}
+						# background = {
+							# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
+							# fittype = centercrop
+							# alpha = 0.5
+							# margin_bottom = -60
+							# margin_left = -5
+							# margin_right = -5
+							# margin_top = 50
+						# }
 						
 						scrollbox = {
 							name = "high_king_independent_list"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 325 }
+							size = { 275 318 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 -50 }
+							position = { 0 45 }
 							
 							blockoverride "scrollbox_content"
 							{
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-								
-								vbox = {
-									name = "high_king_independent_list_vbox"
-									spacing = 25
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 3
+									flipdirection = yes
+									# ignoreinvisible = yes		# Doesn't work
 									
-									datamodel = "[GetGlobalList('high_king_electors_list')]"
+									datamodel = "[GetGlobalList('britannia_independent_kings_list')]"
 									
-									item = {
-										
+									item = {											
+										portrait_head_small = {
+											margin = { 0 0 }
+											spacing = 0
+											name = "support_king_portrait"
+											datacontext = "[Scope.Char]"
+										}
 									}
 								}
 							}
+                            blockoverride "scrollbox_margins" {
+                                margin_left = -6
+                            }
 							blockoverride "scrollbox_expand" {
 								expand = {}
 							}
@@ -377,13 +544,12 @@ window = {
 					hbox = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
-						margin_top = -95
 						
 						widget = {
 							name = "supporter_kingdom_view"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 0 }
+							size = { 275 150 }
 							
 							text_label_center = {
 								text = "HIGH_KING_SUPPORTERS"
@@ -418,15 +584,14 @@ window = {
 										flipdirection = yes
 										# ignoreinvisible = yes		# Doesn't work
 										
-										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										datamodel = "[GetGlobalList('britannia_supporter_kings_list')]"
 										
 										item = {		
 											portrait_head_small = {
 												margin = { 0 0 }
 												spacing = 0
 												name = "support_king_portrait"
-												datacontext = "[Scope.Title.GetHolder]"
-												# visible = "[Scope.Title.HasHolder]"
+												datacontext = "[Scope.Char]"
 											}
 										}
 									}
@@ -444,7 +609,7 @@ window = {
 							name = "opponent_kingdom_view"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 0 }
+							size = { 275 150 }
 							
 							text_label_center = {
 								text = "HIGH_KING_OPPONENTS"
@@ -479,15 +644,14 @@ window = {
 										flipdirection = yes
 										# ignoreinvisible = yes		# Doesn't work
 										
-										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										datamodel = "[GetGlobalList('britannia_opponent_kings_list')]"
 										
 										item = {		
 											portrait_head_small = {
 												margin = { 0 0 }
 												spacing = 0
 												name = "support_king_portrait"
-												datacontext = "[Scope.Title.GetHolder]"
-												# visible = "[Scope.Title.HasHolder]"
+												datacontext = "[Scope.Char]"
 											}
 										}
 									}
@@ -505,13 +669,13 @@ window = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
 						size = { 550 100 }
-						margin_top = -22
+						# margin_top = -22
 						
 						widget = {
 							name = "neutral_kingdom_view"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 550 0 }
+							size = { 550 100 }
 							
 							text_label_center = {
 								text = "HIGH_KING_NEUTRALS"
@@ -543,17 +707,15 @@ window = {
 										name = "high_king_neutrals_gridbox"
 										datamodel_wrap = 6
 										flipdirection = yes
-										# ignoreinvisible = yes		# Doesn't work
 										
-										datamodel = "[GetGlobalList('high_king_electors_list')]"
+										datamodel = "[GetGlobalList('britannia_neutral_kings_list')]"
 										
 										item = {
 											portrait_head_small = {
 												margin = { 0 0 }
 												spacing = 0
 												name = "support_king_portrait"
-												datacontext = "[Scope.Title.GetHolder]"
-												# visible = "[Scope.Title.HasHolder]"
+												datacontext = "[Scope.Char]"
 											}
 										}
 									}
