@@ -106,12 +106,27 @@ window = {
 					margin_top = -50
 				}
 				
+				coat_of_arms_icon = {
+					parentanchor = vcenter|hcenter
+					size = { 560 540 }
+					alpha = 0.5
+					coat_of_arms = "[GetTitleByKey('e_britannia').GetTitleCoA.GetTexture('(int32)256','(int32)256')]"
+					coat_of_arms_slot = "[GetTitleByKey('e_britannia').GetTitleCoA.GetSlot('(int32)256','(int32)256')]"
+					coat_of_arms_mask = "gfx/interface/frontend/mask_coa_flag.dds"
+
+					modify_texture = {
+						texture = "gfx/interface/coat_of_arms/coa_overlay.dds"
+						blend_mode = overlay
+						spritetype = corneredTiled
+					}
+				}
+				
 				portrait_body = {
 					name = "high_king_portrait"
 					datacontext = "[Title.GetHolder]"
 					visible = "[Title.HasHolder]"
 					parentanchor = bottom|hcenter
-					scale = 1.9
+					scale = 1.75
 					
 					blockoverride "status_icons" {}
 					blockoverride "coa" {}
@@ -123,11 +138,32 @@ window = {
 					datacontext = "[GetPlayer]"
 					visible = "[Not(Title.HasHolder)]"
 					parentanchor = bottom|hcenter
-					scale = 1.9
+					scale = 1.75
 					
 					blockoverride "status_icons" {}
 					blockoverride "coa" {}
 					blockoverride "opinion_box" {}
+				}
+				
+				button_primary = {
+					#visible = "[...]" #TODO: disable if player is High King
+					enabled = "[Not(Title.HasHolder)]" #TODO
+					#onclick = "[...]" #TODO
+					#tooltip = "[...]" #TODO
+					
+					parentanchor = top|hcenter
+					position = { 0 75 }
+					scale = 1.0
+					
+					text_single = {
+						text = "CREATE_TITLE_HK"
+						align = center
+						
+						parentanchor = vcenter|hcenter
+						position = { 0 -3 }
+					}
+					
+					expand = {}
 				}
 				
 				container = {
@@ -181,13 +217,13 @@ window = {
 					visible = "[Title.HasHolder]"
 					scale = 1.5
 					parentanchor = top|left
-					position = { 15 50 }
+					position = { 30 65 }
 				}
 				
 				text_single = {
 					text = "CLAIMANT_SUPPORTER_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 50 }
+					position = { 30 65 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -195,7 +231,7 @@ window = {
 				text_single = {
 					text = "CLAIMANT_OPPONENT_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 85 }
+					position = { 30 100 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -203,7 +239,7 @@ window = {
 				text_single = {
 					text = "CLAIMANT_NEUTRAL_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 120 }
+					position = { 30 135 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -233,21 +269,12 @@ window = {
 						scale = 1.5
 						parentanchor = top|hcenter
 					}
-					
-					background = {
-						texture = "gfx/interface/icons/high_king/high_king_bg_dec.dds"
-						fittype = centercrop
-						alpha = 0.5
-						margin_bottom = -100
-						margin_left = -5
-						margin_right = -5
-						margin_top = -50
-					}
 				}
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
 					visible = "[Title.HasHolder]"
+					margin_top = -95
 					
 					widget = {
 						name = "vassal_kingdom_view"
@@ -260,17 +287,6 @@ window = {
 							visible = "[Title.HasHolder]"
 							scale = 1.5
 							parentanchor = top|hcenter
-							margin_top = -105
-						}
-						
-						background = {
-							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							fittype = centercrop
-							alpha = 0.5
-							margin_bottom = -60
-							margin_left = -5
-							margin_right = -5
-							margin_top = 50
 						}
 						
 						scrollbox = {
@@ -280,7 +296,7 @@ window = {
 							size = { 275 325 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 -50 }
+							position = { 0 46 }
 							
 							blockoverride "scrollbox_content"
 							{								
@@ -324,17 +340,6 @@ window = {
 							visible = "[Title.HasHolder]"
 							scale = 1.5
 							parentanchor = top|hcenter
-							margin_top = -105
-						}
-						
-						background = {
-							texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							fittype = centercrop
-							alpha = 0.5
-							margin_bottom = -60
-							margin_left = -5
-							margin_right = -5
-							margin_top = 50
 						}
 						
 						scrollbox = {
@@ -344,23 +349,26 @@ window = {
 							size = { 275 325 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 -50 }
+							position = { 0 46 }
 							
 							blockoverride "scrollbox_content"
-							{
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-								
-								vbox = {
-									name = "high_king_independent_list_vbox"
-									spacing = 25
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
+							{								
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 3
+									flipdirection = yes
+									# ignoreinvisible = yes		# Doesn't work
 									
 									datamodel = "[GetGlobalList('high_king_electors_list')]"
 									
-									item = {
-										
+									item = {											
+										portrait_head_small = {
+											margin = { 0 0 }
+											spacing = 0
+											name = "support_king_portrait"
+											datacontext = "[Scope.Title.GetHolder]"
+											# visible = "[Scope.Title.HasHolder]"
+										}
 									}
 								}
 							}
@@ -391,21 +399,11 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_support_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
-								size = { 275 185 }
+								size = { 275 182 }
 								margin = { 5 5 }
 
 								position = { 0 45 }
@@ -452,21 +450,11 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_oppose_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
-								size = { 275 185 }
+								size = { 275 182 }
 								margin = { 5 5 }
 
 								position = { 0 45 }
@@ -505,7 +493,7 @@ window = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
 						size = { 550 100 }
-						margin_top = -22
+						margin_top = -24
 						
 						widget = {
 							name = "neutral_kingdom_view"
@@ -519,23 +507,13 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_neutrals_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
 								size = { 550 92 }
 
-								position = { 0 40 }
+								position = { 0 44 }
 								
 								blockoverride "scrollbox_content"
 								{
