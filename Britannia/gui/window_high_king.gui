@@ -107,12 +107,27 @@ window = {
 					margin_top = -50
 				}
 				
+				coat_of_arms_icon = {
+					parentanchor = vcenter|hcenter
+					size = { 560 540 }
+					alpha = 0.5
+					coat_of_arms = "[GetTitleByKey('e_britannia').GetTitleCoA.GetTexture('(int32)256','(int32)256')]"
+					coat_of_arms_slot = "[GetTitleByKey('e_britannia').GetTitleCoA.GetSlot('(int32)256','(int32)256')]"
+					coat_of_arms_mask = "gfx/interface/frontend/mask_coa_flag.dds"
+
+					modify_texture = {
+						texture = "gfx/interface/coat_of_arms/coa_overlay.dds"
+						blend_mode = overlay
+						spritetype = corneredTiled
+					}
+				}
+				
 				portrait_body = {
 					name = "high_king_portrait"
 					datacontext = "[Title.GetHolder]"
 					visible = "[Title.HasHolder]"
 					parentanchor = bottom|hcenter
-					scale = 1.9
+					scale = 1.70
 					
 					blockoverride "status_icons" {}
 					blockoverride "coa" {}
@@ -124,11 +139,33 @@ window = {
 					datacontext = "[GetPlayer]"
 					visible = "[Not(Title.HasHolder)]"
 					parentanchor = bottom|hcenter
-					scale = 1.9
+					scale = 1.75
 					
 					blockoverride "status_icons" {}
 					blockoverride "coa" {}
 					blockoverride "opinion_box" {}
+				}
+				
+				button_primary = {
+					#visible = "[...]" #TODO: disable if player is High King
+					enabled = "[Not(Title.HasHolder)]" #TODO
+					#onclick = "[...]" #TODO
+					#tooltip = "[...]" #TODO
+					
+					parentanchor = top|hcenter
+					position = { 0 70 }
+					size = { 150 70 }
+					
+					text_single = {
+						text = "CREATE_TITLE_HK"
+						align = center
+						
+						parentanchor = vcenter|hcenter
+						position = { 0 -5 }
+						fontsize = 20
+					}
+					
+					expand = {}
 				}
 				
 				container = {
@@ -182,13 +219,13 @@ window = {
 					visible = "[Title.HasHolder]"
 					scale = 1.5
 					parentanchor = top|left
-					position = { 15 50 }
+					position = { 30 75 }
 				}
 				
 				text_single = {
 					text = "CLAIMANT_SUPPORTER_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 50 }
+					position = { 30 65 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -196,7 +233,7 @@ window = {
 				text_single = {
 					text = "CLAIMANT_OPPONENT_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 85 }
+					position = { 30 100 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -204,7 +241,7 @@ window = {
 				text_single = {
 					text = "CLAIMANT_NEUTRAL_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
-					position = { 15 120 }
+					position = { 30 135 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -235,16 +272,6 @@ window = {
 						parentanchor = top|hcenter
 					}
 					
-					# background = {
-						# texture = "gfx/interface/icons/high_king/high_king_bg_dec.dds"
-						# fittype = centercrop
-						# alpha = 0.5
-						# margin_bottom = -100
-						# margin_left = -5
-						# margin_right = -5
-						# margin_top = -50
-					# }
-					
 					hbox = {
 						# layoutpolicy_horizontal = expanding
 						# layoutpolicy_vertical = expanding
@@ -263,7 +290,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -280,7 +307,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -297,7 +324,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -320,7 +347,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -337,7 +364,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -354,7 +381,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -377,7 +404,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -395,7 +422,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									layoutpolicy_vertical = expanding
-									margin_top = -9
+									margin_top = -8
 								
 									text_single = {
 										name = "title_name"
@@ -428,27 +455,16 @@ window = {
 							parentanchor = top|hcenter
 						}
 						
-						# background = {
-							# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							# fittype = centercrop
-							# alpha = 0.5
-							# margin_bottom = -60
-							# margin_left = -5
-							# margin_right = -5
-							# margin_top = 50
-						# }
-						
 						scrollbox = {
 							name = "high_king_vassal_list"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 318 }
+							size = { 275 325 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 45 }
+							position = { 0 46 }
 							
-							blockoverride "scrollbox_content"
-							{
+							blockoverride "scrollbox_content" {
 								dynamicgridbox = {
 									name = "high_king_subjects_gridbox"
 									datamodel_wrap = 3
@@ -459,8 +475,6 @@ window = {
 									
 									item = {											
 										portrait_head_small = {
-											margin = { 0 0 }
-											spacing = 0
 											name = "support_king_portrait"
 											datacontext = "[Scope.Char]"
 										}
@@ -489,39 +503,25 @@ window = {
 							parentanchor = top|hcenter
 						}
 						
-						# background = {
-							# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-							# fittype = centercrop
-							# alpha = 0.5
-							# margin_bottom = -60
-							# margin_left = -5
-							# margin_right = -5
-							# margin_top = 50
-						# }
-						
 						scrollbox = {
 							name = "high_king_independent_list"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
-							size = { 275 318 }
+							size = { 275 325 }
 							visible = "[Title.HasHolder]"
 
-							position = { 0 45 }
+							position = { 0 46 }
 							
-							blockoverride "scrollbox_content"
-							{
+							blockoverride "scrollbox_content" {
 								dynamicgridbox = {
 									name = "high_king_subjects_gridbox"
 									datamodel_wrap = 3
 									flipdirection = yes
-									# ignoreinvisible = yes		# Doesn't work
 									
 									datamodel = "[GetGlobalList('britannia_independent_kings_list')]"
 									
 									item = {											
 										portrait_head_small = {
-											margin = { 0 0 }
-											spacing = 0
 											name = "support_king_portrait"
 											datacontext = "[Scope.Char]"
 										}
@@ -557,21 +557,11 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_support_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
-								size = { 275 185 }
+								size = { 275 182 }
 								margin = { 5 5 }
 
 								position = { 0 45 }
@@ -588,8 +578,6 @@ window = {
 										
 										item = {		
 											portrait_head_small = {
-												margin = { 0 0 }
-												spacing = 0
 												name = "support_king_portrait"
 												datacontext = "[Scope.Char]"
 											}
@@ -617,21 +605,11 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_oppose_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
-								size = { 275 185 }
+								size = { 275 182 }
 								margin = { 5 5 }
 
 								position = { 0 45 }
@@ -648,8 +626,6 @@ window = {
 										
 										item = {		
 											portrait_head_small = {
-												margin = { 0 0 }
-												spacing = 0
 												name = "support_king_portrait"
 												datacontext = "[Scope.Char]"
 											}
@@ -669,7 +645,7 @@ window = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
 						size = { 550 100 }
-						# margin_top = -22
+						margin_top = -5
 						
 						widget = {
 							name = "neutral_kingdom_view"
@@ -683,23 +659,13 @@ window = {
 								parentanchor = top|hcenter
 							}
 							
-							# background = {
-								# texture = "gfx/interface/icons/high_king/high_king_bg_kingdoms.dds"
-								# fittype = centercrop
-								# alpha = 0.5
-								# margin_bottom = -60
-								# margin_left = -5
-								# margin_right = -5
-								# margin_top = 50
-							# }
-							
 							scrollbox = {
 								name = "high_king_neutrals_list"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
 								size = { 550 92 }
 
-								position = { 0 40 }
+								position = { 0 44 }
 								
 								blockoverride "scrollbox_content"
 								{
@@ -712,8 +678,6 @@ window = {
 										
 										item = {
 											portrait_head_small = {
-												margin = { 0 0 }
-												spacing = 0
 												name = "support_king_portrait"
 												datacontext = "[Scope.Char]"
 											}
