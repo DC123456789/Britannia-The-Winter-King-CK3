@@ -335,12 +335,13 @@ can_integrate_kingdom_region_region_controlled_trigger = {
 		text = current_kingdom_region_empire_is_held_or_holds_no_territory_in_region_trigger
 		object = $KINGDOM_REGION$
 		$KINGDOM_REGION$.var:kingdom_region_empire = {
+			save_temporary_scope_as = old_liege_title
 			OR = {
 				holder ?= prev
 				NOT = {
 					any_county_in_region = {
 						region = $REGION$
-						prev.holder = { completely_controls = prev }
+						scope:old_liege_title.holder = { completely_controls = prev }
 					}
 				}
 			}

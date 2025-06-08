@@ -32,6 +32,7 @@ titular_titles.0001 = {
 		desc = titular_titles.0001.desc.outro
 	}
 	theme = realm
+	override_background = terrain
 	
 	left_portrait = {
 		character = scope:conqueror
@@ -119,6 +120,7 @@ titular_titles.0002 = {
 		desc = titular_titles.0002.desc.outro
 	}
 	theme = realm
+	override_background = terrain
 	
 	left_portrait = {
 		character = scope:conqueror
@@ -182,6 +184,7 @@ titular_titles.0101 = {
 		desc = titular_titles.0101.desc.outro
 	}
 	theme = realm
+	override_background = terrain
 	
 	left_portrait = {
 		character = scope:conqueror
@@ -292,6 +295,7 @@ titular_titles.0102 = {
 		desc = titular_titles.0102.desc.outro
 	}
 	theme = realm
+	override_background = terrain
 	
 	left_portrait = {
 		character = scope:conqueror
@@ -347,9 +351,12 @@ titular_titles.0102 = {
 ##################################################
 # Britons
 ##################################################
-# 0201/0202 Kingdom of Deheubarth
+# 0201/0202 - Kingdom of Deheubarth
 # 0203/0204 - Reunification of Dumnonia
 # 0205/0206 - Kingdom of Strathclyde
+# 0207/0208 - High Kingdom of Yr Hen Ogledd
+# 0209/0210 - High Kingdom of Britannia (reunification)
+# 0250-0252 - Fall of Britannia
 
 # Kingdom of Deheubarth
 titular_titles.0201 = {
@@ -1073,6 +1080,64 @@ titular_titles.0252 = {
 		name = titular_titles.0252.a
 		trigger = { always = no }
 		fallback = yes
+	}
+}
+
+##################################################
+# Generic
+##################################################
+
+# Notify kingdom region integration
+titular_titles.9000 = {
+	type = character_event
+	title = titular_titles.9000.t
+	desc = {
+		desc = titular_titles.9000.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_gwynedd }
+				desc = titular_titles.9000.desc.cymru
+			}
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_londinium }
+				desc = titular_titles.9000.desc.lloegyr
+			}
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_ebrauc }
+				desc = titular_titles.9000.desc.hen_ogledd
+			}
+			desc = titular_titles.9000.desc.fallback
+		}
+		desc = titular_titles.9000.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+			REGION_BASE = scope:region_base_title
+			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles.9000.a.conqueror
+		}
+		name = {
+			text = titular_titles.9000.a
+		}
 	}
 }
 

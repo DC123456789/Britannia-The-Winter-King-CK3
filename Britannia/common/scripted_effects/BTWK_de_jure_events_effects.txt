@@ -111,15 +111,17 @@ generate_integrate_kingdom_region_list = {
 
 integrate_kingdom_region_effect = {
 	save_scope_as = conqueror
+	$REGION_BASE$ = { save_scope_as = region_base_title }
+	$NEW_DE_JURE_LIEGE$ = { save_scope_as = new_de_jure_liege_title }
 	trigger_event = { id = titular_titles.9000 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
 		trigger_event = { id = titular_titles.9000 }
 	}
-	hidden_tooltip = {
+	hidden_effect = {
 		set_kingdom_region_de_jure_liege_effect = {
-			REGION_BASE = $REGION_BASE$
-			NEW_DE_JURE_LIEGE = $NEW_DE_JURE_LIEGE$
+			REGION_BASE = scope:region_base_title
+			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
 		}
 	}
 }
