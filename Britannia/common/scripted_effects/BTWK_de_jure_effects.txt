@@ -80,6 +80,67 @@ set_kingdom_region_de_jure_liege_tooltip_only_effect = {
 	}
 }
 
+# Scope is the kingdom to set as formed or expanded
+# SHIFT_TYPE should be a flag that is one of formable/expanded/expanded_alt
+set_formable_or_expandable_kingdom_flag_effect = {
+	if = {
+		limit = { $SHIFT_TYPE$ = flag:formable }
+		set_variable = title_created_de_jure
+	}
+	else_if = {
+		limit = { $SHIFT_TYPE$ = flag:expanded }
+		set_variable = title_expanded_de_jure
+	}
+	else_if = {
+		limit = { $SHIFT_TYPE$ = flag:expanded_alt }
+		set_variable = title_expanded_alt_de_jure
+	}
+	save_temporary_scope_as = current_kingdom
+	if = {
+		limit = {
+			has_variable_list = dynamic_de_jure_territory
+		}
+		ordered_in_list = {
+			variable = dynamic_de_jure_territory
+			limit = {
+				has_variable_list = formable_and_expansion_kingdoms
+			}
+			# Find any formation entry for the scoped kingdom in the duchy's formable_and_expansion_kingdoms list
+			# and move it to the end
+			ordered_in_list = {
+				variable = formable_and_expansion_kingdoms
+				limit = {
+					this.var:kingdom = scope:current_kingdom
+					this.var:shift_type = $SHIFT_TYPE$
+				}
+				save_temporary_scope_as = current_kingdom_de_jure_shift_struct
+				prev = { 
+					remove_list_variable = {
+						name = formable_and_expansion_kingdoms
+						target = scope:current_kingdom_de_jure_shift_struct
+					}
+					add_to_variable_list = {
+						name = formable_and_expansion_kingdoms
+						target = scope:current_kingdom_de_jure_shift_struct
+					}
+				}
+			}
+		}
+	}
+}
+
+set_kingdom_formed_effect = {
+	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:formable }
+}
+
+set_kingdom_expanded_effect = {
+	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:expanded }
+}
+
+set_kingdom_expanded_alt_effect = {
+	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:expanded_alt }
+}
+
 check_de_jure_liege_county_effect = {
 	if = {
 		limit = {
@@ -174,44 +235,171 @@ check_de_jure_liege_duchy_effect = {
 			set_de_jure_liege_title = this.var:integration_kingdom
 		}
 	}
+	# In the case of the formable_and_expansion_kingdoms list, the normal tooltipping doesn't *quite* work in case of
+	# overlapping titles as the newest formed/expanded title gets moved to the end of the list, which won't be caught
+	# by the usual methods
+	# So instead we grant higher priority to any title that induces a de jure shift by the tooltip-creating scopes
 	else_if = {
 		limit = {
-			has_variable = expansion_kingdom_1
-			this.var:expansion_kingdom_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			has_variable_list = formable_and_expansion_kingdoms
+			any_in_list = {
+				variable = formable_and_expansion_kingdoms
+				OR = {
+					AND = {
+						this.var:shift_type = flag:formable
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
+					}
+				}
 			}
 		}
+		ordered_in_list = {
+			variable = formable_and_expansion_kingdoms
+			limit = {
+				OR = {
+					AND = {
+						this.var:shift_type = flag:formable
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt
+						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
+					}
+				}
+			}
+			position = {
+				value = variable_list_size:formable_and_expansion_kingdoms
+				subtract = 1
+			}
+			this.var:kingdom = { save_temporary_scope_as = new_de_jure_liege }
+		}
 		if = {
-			limit = { NOT = { de_jure_liege = this.var:expansion_kingdom_1 } }
-			set_de_jure_liege_title = this.var:expansion_kingdom_1
+			limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
+			set_de_jure_liege_title = scope:new_de_jure_liege
 		}
 	}
-	# Used for if a kingdom has multiple possible expansions it can get that are not covered by a
-	# more systematic framework
 	else_if = {
 		limit = {
-			has_variable = expansion_alt_kingdom_1
-			this.var:expansion_alt_kingdom_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			has_variable_list = formable_and_expansion_kingdoms
+			any_in_list = {
+				variable = formable_and_expansion_kingdoms
+				OR = {
+					AND = {
+						this.var:shift_type = flag:formable
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+					}
+					# Used for if a kingdom has multiple possible expansions it can get that are not covered by a
+					# more systematic framework
+					AND = {
+						this.var:shift_type = flag:expansion_alt
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+					}
+				}
 			}
 		}
-		if = {
-			limit = { NOT = { de_jure_liege = this.var:expansion_alt_kingdom_1 } }
-			set_de_jure_liege_title = this.var:expansion_alt_kingdom_1
-		}
-	}
-	else_if = {
-		limit = {
-			has_variable = formable_kingdom_1
-			this.var:formable_kingdom_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+		ordered_in_list = {
+			variable = formable_and_expansion_kingdoms
+			limit = {
+				OR = {
+					AND = {
+						this.var:shift_type = flag:formable
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt
+						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+					}
+				}
 			}
+			position = {
+				value = variable_list_size:formable_and_expansion_kingdoms
+				subtract = 1
+			}
+			this.var:kingdom = { save_temporary_scope_as = new_de_jure_liege }
 		}
 		if = {
-			limit = { NOT = { de_jure_liege = this.var:formable_kingdom_1 } }
-			set_de_jure_liege_title = this.var:formable_kingdom_1
+			limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
+			set_de_jure_liege_title = scope:new_de_jure_liege
 		}
 	}
+	# else_if = {
+		# limit = {
+			# has_variable_list = expansion_kingdoms
+			# any_in_list = {
+				# variable = expansion_kingdoms
+				# title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			# }
+		# }
+		# ordered_in_list = {
+			# variable = expansion_kingdoms
+			# limit = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+			# position = 0
+			# save_temporary_scope_as = new_de_jure_liege
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
+			# set_de_jure_liege_title = scope:new_de_jure_liege
+		# }
+	# }
+	# # Used for if a kingdom has multiple possible expansions it can get that are not covered by a
+	# # more systematic framework
+	# else_if = {
+		# limit = {
+			# has_variable_list = expansion_alt_kingdoms
+			# any_in_list = {
+				# variable = expansion_alt_kingdoms
+				# title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			# }
+		# }
+		# ordered_in_list = {
+			# variable = expansion_alt_kingdoms
+			# limit = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+			# position = 0
+			# save_temporary_scope_as = new_de_jure_liege
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
+			# set_de_jure_liege_title = scope:new_de_jure_liege
+		# }
+	# }
+	# else_if = {
+		# limit = {
+			# has_variable_list = formable_kingdoms
+			# any_in_list = {
+				# variable = formable_kingdoms
+				# title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			# }
+		# }
+		# ordered_in_list = {
+			# variable = formable_kingdoms
+			# limit = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+			# position = 0
+			# save_temporary_scope_as = new_de_jure_liege
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
+			# set_de_jure_liege_title = scope:new_de_jure_liege
+		# }
+	# }
 	else = {
 		if = {
 			limit = { NOT = { de_jure_liege = this.var:default_kingdom } }		
@@ -229,45 +417,46 @@ check_de_jure_liege_duchy_effect = {
 }
 
 check_de_jure_liege_kingdom_effect = {
+	# Possibly obsolete, but may bring back if needed
+	# if = {
+		# limit = {
+			# has_variable = expansion_empire_1
+			# this.var:expansion_empire_1 = {
+				# title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
+			# }
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = this.var:expansion_empire_1 } }
+			# set_de_jure_liege_title = this.var:expansion_empire_1
+		# }
+	# }
+	# # Used for if a empire has multiple possible expansions it can get that are not covered by a
+	# # more systematic framework
+	# else_if = {
+		# limit = {
+			# has_variable = expansion_alt_empire_1
+			# this.var:expansion_alt_empire_1 = {
+				# title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
+			# }
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = this.var:expansion_alt_empire_1 } }
+			# set_de_jure_liege_title = this.var:expansion_alt_empire_1
+		# }
+	# }
+	# else_if = {
+		# limit = {
+			# has_variable = formable_empire_1
+			# this.var:formable_empire_1 = {
+				# title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			# }
+		# }
+		# if = {
+			# limit = { NOT = { de_jure_liege = this.var:formable_empire_1 } }
+			# set_de_jure_liege_title = this.var:formable_empire_1
+		# }
+	# }
 	if = {
-		limit = {
-			has_variable = expansion_empire_1
-			this.var:expansion_empire_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure }
-			}
-		}
-		if = {
-			limit = { NOT = { de_jure_liege = this.var:expansion_empire_1 } }
-			set_de_jure_liege_title = this.var:expansion_empire_1
-		}
-	}
-	# Used for if a empire has multiple possible expansions it can get that are not covered by a
-	# more systematic framework
-	else_if = {
-		limit = {
-			has_variable = expansion_alt_empire_1
-			this.var:expansion_alt_empire_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure }
-			}
-		}
-		if = {
-			limit = { NOT = { de_jure_liege = this.var:expansion_alt_empire_1 } }
-			set_de_jure_liege_title = this.var:expansion_alt_empire_1
-		}
-	}
-	else_if = {
-		limit = {
-			has_variable = formable_empire_1
-			this.var:formable_empire_1 = {
-				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
-			}
-		}
-		if = {
-			limit = { NOT = { de_jure_liege = this.var:formable_empire_1 } }
-			set_de_jure_liege_title = this.var:formable_empire_1
-		}
-	}
-	else_if = {
 		limit = {
 			has_variable = kingdom_region
 			this.var:kingdom_region = {

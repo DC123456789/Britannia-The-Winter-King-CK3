@@ -183,24 +183,6 @@ form_strathclyde_decision = {
 	}
 
 	is_valid = {
-		is_independent_ruler = yes
-		highest_held_title_tier < tier_empire
-		has_title = title:k_strathclyde
-		realm_size >= 35
-		OR = {
-			completely_controls = title:c_luguvalium
-			completely_controls = title:c_din_eidyn
-		}
-		custom_tooltip = {
-			text = last_cumbrian_king_tt
-			any_kingdom = {
-				count < 1
-				exists = holder
-				NOT = { holder = ROOT }
-				holder.culture = { has_cultural_pillar = heritage_brythonic }
-				title_capital_county.title_province = { geographical_region = world_britannia_hen_ogledd }
-			}
-		}
 	}
 
 	effect = {
@@ -222,8 +204,11 @@ form_strathclyde_decision = {
 				variable = dynamic_de_jure_territory
 				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
 				limit = {
-					has_variable = expansion_kingdom_1
-					this.var:expansion_kingdom_1 = prev
+					has_variable_list = expansion_kingdoms
+					any_in_list = {
+						variable = expansion_kingdoms
+						this = title:k_strathclyde
+					}
 				}
 				show_as_tooltip = {
 					check_de_jure_liege_duchy_effect = yes
@@ -252,8 +237,11 @@ form_strathclyde_decision = {
 			every_in_list = {
 				variable = dynamic_de_jure_territory
 				limit = {
-					has_variable = expansion_alt_kingdom_1
-					this.var:expansion_alt_kingdom_1 = prev
+					has_variable_list = expansion_alt_kingdoms
+					any_in_list = {
+						variable = expansion_alt_kingdoms
+						this = title:k_strathclyde
+					}
 				}
 				show_as_tooltip = {
 					check_de_jure_liege_duchy_effect = yes

@@ -1,0 +1,145 @@
+﻿#########################################################################
+# Irish/Gaelic Title Decisions											#
+#########################################################################
+
+create_lleyn_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = create_lleyn_decision_desc
+
+	is_shown = {
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = custom_lleyn }
+		}
+		# highest_held_title_tier < tier_kingdom
+		title:k_lleyn = {
+			NOT = { has_variable = title_created_de_jure }
+		}
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_kingdom
+		prestige_level >= medium_prestige_level
+		completely_controls_region = custom_lleyn
+	}
+
+	effect = {
+		add_prestige = 200
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:k_lleyn = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+		}
+		title:k_lleyn = { 
+			save_scope_as = title_created_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_duchy_effect = yes
+				}
+			}
+		}
+		trigger_event = { id = titular_titles.0301 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+# create_irish_cymru_decision = {
+	# picture = {
+		# reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	# }
+	# decision_group_type = major
+
+	# ai_check_interval = 1
+
+	# desc = create_hen_ogledd_decision_desc
+
+	# is_shown = {
+		# any_held_title = {
+			# this.var:kingdom_region ?= title:k_ebrauc
+		# }
+		# culture = {
+			# OR = {
+				# has_cultural_pillar = heritage_brythonic
+				# has_cultural_pillar = heritage_latin
+			# }
+		# }
+		# highest_held_title_tier < tier_empire
+		# # title:k_ebrauc = {
+			# # NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
+		# # }
+		# title:e_hen_ogledd = { is_title_created = no }
+	# }
+
+	# is_valid = {
+		# is_independent_ruler = yes
+		# highest_held_title_tier < tier_empire
+		# prestige_level >= high_prestige_level
+		# control_region_fraction_trigger = {
+			# FRACTION_REQUIRED = 0.75
+			# REGION = world_britannia_hen_ogledd
+		# }
+	# }
+
+	# effect = {
+		# add_prestige = 500
+		# # This makes the de jure change show up in the decision window, but doesn't actually do anything
+		# show_as_tooltip = {
+			# create_title_and_vassal_change = {
+				# type = created
+				# save_scope_as = title_change
+				# add_claim_on_loss = no
+			# }
+			# title:e_hen_ogledd = {
+				# change_title_holder = {
+					# holder = root
+					# change = scope:title_change
+				# }
+			# }
+			# resolve_title_and_vassal_change = scope:title_change
+		# }
+		# title:e_hen_ogledd = {
+			# every_in_list = {
+				# variable = base_kingdom_regions
+				# set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					# REGION_BASE = this
+					# NEW_DE_JURE_LIEGE = title:e_hen_ogledd
+				# }
+			# }
+		# }
+		# trigger_event = { id = titular_titles.0207 }
+	# }
+	
+	# ai_potential = {
+		# always = yes
+	# }
+
+	# ai_will_do = {
+		# base = 100
+	# }
+# }

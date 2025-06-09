@@ -8,6 +8,7 @@ namespace = titular_titles_test
 # 0001 - 0099: Anglo-Saxons
 # 0101 - 0199: Romans
 # 0201 - 0299: Britons
+# 0301 - 0399: Irish/Gaelic
 # 9000 - 9999: Generic
 
 ##################################################
@@ -376,7 +377,7 @@ titular_titles.0201 = {
 		# has already occured by the time the players actually see it
 		hidden_effect = {
 			title:k_deheubarth = { 
-				set_variable = title_created_de_jure
+				set_kingdom_formed_effect = yes
 				every_in_list = {
 					variable = dynamic_de_jure_territory
 					check_de_jure_liege_duchy_effect = yes
@@ -478,7 +479,7 @@ titular_titles.0203 = {
 		# has already occured by the time the players actually see it
 		hidden_effect = {
 			title:k_dumnonia = { 
-				set_variable = title_expanded_de_jure
+				set_kingdom_expanded_effect = yes
 				every_in_list = {
 					variable = dynamic_de_jure_territory
 					check_de_jure_liege_duchy_effect = yes
@@ -549,14 +550,14 @@ titular_titles.0205 = {
 			if = {
 				limit = { completely_controls = title:c_luguvalium }
 				title:k_strathclyde = { 
-					set_variable = title_expanded_de_jure
+					set_kingdom_expanded_effect = yes
 					every_in_list = {
 						variable = dynamic_de_jure_territory
 						check_de_jure_liege_duchy_effect = yes
 					}
 				}
 				title:k_pennines = { 
-					set_variable = title_expanded_de_jure
+					set_kingdom_expanded_effect = yes
 					every_in_list = {
 						variable = dynamic_de_jure_territory
 						check_de_jure_liege_duchy_effect = yes
@@ -566,7 +567,7 @@ titular_titles.0205 = {
 			if = {
 				limit = { completely_controls = title:c_din_eidyn }
 				title:k_strathclyde = { 
-					set_variable = title_expanded_alt_de_jure
+					set_kingdom_expanded_alt_effect = yes
 					every_in_list = {
 						variable = dynamic_de_jure_territory
 						check_de_jure_liege_duchy_effect = yes
@@ -602,8 +603,11 @@ titular_titles.0206 = {
 					variable = dynamic_de_jure_territory
 					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
 					limit = {
-						has_variable = expansion_kingdom_1
-						this.var:expansion_kingdom_1 = prev
+						has_variable_list = expansion_kingdoms
+						any_in_list = {
+							variable = expansion_kingdoms
+							this = title:k_strathclyde
+						}
 					}
 					show_as_tooltip = {
 						check_de_jure_liege_duchy_effect = yes
@@ -629,8 +633,11 @@ titular_titles.0206 = {
 				every_in_list = {
 					variable = dynamic_de_jure_territory
 					limit = {
-						has_variable = expansion_alt_kingdom_1
-						this.var:expansion_alt_kingdom_1 = prev
+						has_variable_list = expansion_alt_kingdoms
+						any_in_list = {
+							variable = expansion_alt_kingdoms
+							this = title:k_strathclyde
+						}
 					}
 					show_as_tooltip = {
 						check_de_jure_liege_duchy_effect = yes
@@ -1084,6 +1091,11 @@ titular_titles.0252 = {
 }
 
 ##################################################
+# Britons
+##################################################
+# 0301/0302 - Kingdom of Lleyn
+
+##################################################
 # Generic
 ##################################################
 
@@ -1241,11 +1253,11 @@ titular_titles_test.1003 = {
 		if = {
 			limit = { title:k_anglia = { NOT = { has_variable = title_created_de_jure } } }
 			title:k_anglia = { 
-				set_variable = title_created_de_jure
-				set_variable = title_expanded_de_jure
+				set_kingdom_formed_effect = yes
+				set_kingdom_expanded_effect = yes
 			}
 			title:k_sussex = { 
-				set_variable = title_expanded_de_jure
+				set_kingdom_expanded_effect = yes
 			}
 		}
 		else = {

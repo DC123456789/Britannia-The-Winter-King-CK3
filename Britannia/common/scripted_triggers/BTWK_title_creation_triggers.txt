@@ -12,6 +12,15 @@ title_has_de_jure_variable_trigger = {
 	}
 }
 
+# Same as title_has_de_jure_variable_trigger, but is only true for tooltip purposes, not for the actual variales
+# I.e. it only checks if the [flag]_pretend scope is set to the scoped title (and the [flag]_ignore scope is not)
+title_has_de_jure_variable_tooltip_trigger = {
+	scope:$FLAG$_pretend ?= this
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
 check_kingdom_region_de_jure_liege_trigger = {
 	has_variable = kingdom_region
 	this.var:kingdom_region.var:kingdom_region_empire ?= $DE_JURE_LIEGE$
