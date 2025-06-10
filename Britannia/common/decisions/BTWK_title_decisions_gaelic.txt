@@ -4,7 +4,7 @@
 
 create_lleyn_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/mpo_decision_confederation.dds"
 	}
 	decision_group_type = major
 
@@ -25,10 +25,6 @@ create_lleyn_decision = {
 	}
 
 	is_valid = {
-		is_independent_ruler = yes
-		highest_held_title_tier < tier_kingdom
-		prestige_level >= medium_prestige_level
-		completely_controls_region = custom_lleyn
 	}
 
 	effect = {
@@ -51,10 +47,20 @@ create_lleyn_decision = {
 		title:k_lleyn = { 
 			save_scope_as = title_created_de_jure_pretend
 			every_in_list = {
-				variable = dynamic_de_jure_territory
+				variable = de_jure_affected_territory
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
+			}
+		}
+		show_as_tooltip = {
+			if = {
+				limit = {
+					government_is_not_tribal_trigger = no
+					NOT = { has_trait = reaver }
+					number_of_commander_traits < 3
+				}
+				add_trait = reaver
 			}
 		}
 		trigger_event = { id = titular_titles.0301 }

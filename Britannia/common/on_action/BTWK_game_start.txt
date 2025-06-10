@@ -136,7 +136,10 @@ BTWK_religion_setup = {
 }
 
 BTWK_de_jure_setup = {
-	effect = {
+	effect = {		
+		# Arbitary character for convenience purposes
+		title:k_papal_state.holder = { save_temporary_scope_as = story_holder }
+		
 		### DEFAULT SETUP ###
 		every_county = {
 			set_variable = {
@@ -1640,21 +1643,19 @@ BTWK_de_jure_setup = {
 			title:d_arfon = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
 			title:d_osmaeliog = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
 		}
-		title:d_arfon = {		# Associated de jure shifts
+		title:d_arfon = {		# Associated duchy-level de jure shifts
 			title:c_eifionydd = {
-				set_variable = { name = dependent_expansion_duchy value = PREV } 
-				set_variable = { name = dependent_expansion_duchy_dependency value = title:k_lleyn } 
+				set_dependent_expansion_effect = { NEW_LIEGE = prev DEPENDENT_TITLE = title:k_lleyn DEPENDENT_TITLE_FLAG = flag:formable }
 			}
 		}
-		title:d_arfon = {
-			title:d_northgwynedd = { 
-				set_variable = { name = dependent_expansion_duchy value = PREV } 
-				set_variable = { name = dependent_expansion_duchy_dependency value = title:k_lleyn } 
+		title:d_northgwynedd = {
+			title:c_arllechwedd = { 
+				set_dependent_expansion_effect = { NEW_LIEGE = prev DEPENDENT_TITLE = title:k_lleyn DEPENDENT_TITLE_FLAG = flag:formable }
 			}
 		}
 		
 		# EXPANDABLE EMPIRES
-		# For Irish variant ony
+		# For Irish variant only
 		# Eventually we want this to be Alba annexing Hen Ogledd
 		title:e_cymru = {
 			add_to_variable_list = { name = expansion_kingdom_regions target = title:k_ebrauc }
@@ -1691,7 +1692,6 @@ BTWK_de_jure_setup = {
 		
 		# Collect all formable/expandable kingdoms for each duchy - in case of conflicts, the kingdom that was formed/expanded most recently gets priority
 		# We do this by moving the specific kingdom to the bottom of the list, which is the one that is checked in check_de_jure_liege_duchy_effect
-		title:k_papal_state.holder = { save_temporary_scope_as = story_holder }
 		every_duchy = {
 			save_temporary_scope_as = current_duchy
 			if = {
@@ -1768,6 +1768,9 @@ BTWK_de_jure_setup = {
 		
 		# Get a list of provinces that can be under each duchy - we use this to determine which 
 		# provinces to recalculate when a de jure shift happens
+		# dynamic_de_jure_territory is the list of all titles that can be directly under the scope
+		# de_jure_affected_territory is the list of all titles whose de jure liege can be affected by variables on/associated with the scope
+		# - by definition, de_jure_affected_territory is a superset of dynamic_de_jure_territory
 		every_county = {
 			if = {
 				limit = { has_variable = anglo_saxon_duchy }
@@ -1817,6 +1820,25 @@ BTWK_de_jure_setup = {
 					}
 				}
 			}
+			if = {
+				limit = { has_variable = dependent_expansion }
+				this.var:dependent_expansion.var:new_liege = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+				this.var:dependent_expansion.var:dependent_title = { 
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
 		}
 		
 		# Similar list for kingdoms
@@ -1829,6 +1851,10 @@ BTWK_de_jure_setup = {
 						name = dynamic_de_jure_territory
 						target = PREV
 					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
 				}
 			}
 			if = {
@@ -1839,6 +1865,10 @@ BTWK_de_jure_setup = {
 						name = dynamic_de_jure_territory
 						target = PREV
 					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
 				}
 			}
 			if = {
@@ -1847,6 +1877,10 @@ BTWK_de_jure_setup = {
 					variable = expansion_alt_kingdoms
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
 						target = PREV
 					}
 				}
@@ -1896,6 +1930,10 @@ BTWK_de_jure_setup = {
 								name = dynamic_de_jure_territory
 								target = PREV
 							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
+								target = PREV
+							}
 						}
 					}
 				}
@@ -1909,6 +1947,10 @@ BTWK_de_jure_setup = {
 						scope:current_empire = {
 							add_to_variable_list = {
 								name = dynamic_de_jure_territory
+								target = PREV
+							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
 								target = PREV
 							}
 						}

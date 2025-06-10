@@ -98,10 +98,10 @@ set_formable_or_expandable_kingdom_flag_effect = {
 	save_temporary_scope_as = current_kingdom
 	if = {
 		limit = {
-			has_variable_list = dynamic_de_jure_territory
+			has_variable_list = de_jure_affected_territory
 		}
 		ordered_in_list = {
-			variable = dynamic_de_jure_territory
+			variable = de_jure_affected_territory
 			limit = {
 				has_variable_list = formable_and_expansion_kingdoms
 			}
@@ -139,6 +139,24 @@ set_kingdom_expanded_effect = {
 
 set_kingdom_expanded_alt_effect = {
 	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:expanded_alt }
+}
+
+# Requires that scope:story_holder be set to any arbitrary character
+set_dependent_expansion_effect = {
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege }
+	$DEPENDENT_TITLE$ = { save_temporary_scope_as = dependent_title }
+	scope:story_holder = {
+		create_story = {
+			type = dependent_expansion_struct_story
+			save_temporary_scope_as = new_dependent_expansion_struct_story
+		}
+	}
+	scope:new_dependent_expansion_struct_story = {
+		set_variable = { name = new_liege value = scope:new_liege }
+		set_variable = { name = dependent_title value = scope:dependent_title }
+		set_variable = { name = dependent_title_flag value = $DEPENDENT_TITLE_FLAG$ }
+	}
+	set_variable = { name = dependent_expansion value = scope:new_dependent_expansion_struct_story }
 }
 
 check_de_jure_liege_county_effect = {
@@ -195,6 +213,31 @@ check_de_jure_liege_county_effect = {
 		if = {
 			limit = { NOT = { de_jure_liege = this.var:roman_duchy } }
 			set_de_jure_liege_title = this.var:roman_duchy
+		}
+	}
+	else_if = {
+		limit = {
+			has_variable = dependent_expansion
+			this.var:dependent_expansion = {
+				OR = {
+					AND = {
+						this.var:dependent_title_flag = flag:formable
+						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+					}
+					AND = {
+						this.var:dependent_title_flag = flag:expansion
+						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+					}
+					AND = {
+						this.var:dependent_title_flag = flag:expansion_alt
+						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+					}
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:dependent_expansion.var:new_liege } }
+			set_de_jure_liege_title = this.var:dependent_expansion.var:new_liege
 		}
 	}
 	else = {
@@ -482,6 +525,21 @@ check_de_jure_liege_kingdom_effect = {
 			limit = { NOT = { has_variable = custom_capital } }
 			set_capital_county = this.var:default_capital
 		}
+	}
+}
+
+check_de_jure_liege_effect = {
+	if = {
+		limit = { tier = tier_county }
+		check_de_jure_liege_county_effect = yes
+	}
+	else_if = {
+		limit = { tier = tier_duchy }
+		check_de_jure_liege_duchy_effect = yes
+	}
+	if = {
+		limit = { tier = tier_kingdom }
+		check_de_jure_liege_kingdom_effect = yes
 	}
 }
 
