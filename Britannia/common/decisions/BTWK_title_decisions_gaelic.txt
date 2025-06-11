@@ -17,7 +17,7 @@ create_lleyn_decision = {
 			tier = root.primary_title.tier
 			title_capital_county.title_province = { geographical_region = custom_lleyn }
 		}
-		# highest_held_title_tier < tier_kingdom
+		highest_held_title_tier < tier_kingdom
 		title:k_lleyn = {
 			NOT = { has_variable = title_created_de_jure }
 		}
@@ -25,6 +25,10 @@ create_lleyn_decision = {
 	}
 
 	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_kingdom
+		prestige_level >= medium_prestige_level
+		completely_controls_region = custom_lleyn
 	}
 
 	effect = {
@@ -64,6 +68,72 @@ create_lleyn_decision = {
 			}
 		}
 		trigger_event = { id = titular_titles.0301 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+destroy_lleyn_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_levy_outcasts.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = destroy_lleyn_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:k_gwynedd
+			any_realm_county = {
+				title_province = { geographical_region = custom_northern_wales }
+			}
+		}
+		title:k_lleyn = { has_variable = title_created_de_jure }
+		OR = {
+			culture = { has_cultural_pillar = heritage_brythonic }
+			culture = { has_cultural_pillar = heritage_latin }
+		}
+		top_liege_can_create_roman_title_trigger = no
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		custom_tooltip = {
+			text = lleyn_controlled_by_non_gaelic_tt
+			NOT = {
+				any_county_in_region = {
+					region = custom_lleyn
+					holder.top_liege = { culture = { has_cultural_pillar = heritage_goidelic } }
+				}
+			}
+		}
+		completely_controls = title:c_henis_wyren
+	}
+
+	effect = {
+		add_prestige = 100
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			destroy_title = title:k_lleyn
+		}
+		title:k_lleyn = { 
+			save_scope_as = title_created_de_jure_ignore
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		trigger_event = { id = titular_titles.0303 }
 	}
 	
 	ai_potential = {

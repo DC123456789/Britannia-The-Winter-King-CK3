@@ -453,7 +453,10 @@ check_de_jure_liege_duchy_effect = {
 			hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
 		}
 		if = {
-			limit = { NOT = { has_variable = custom_capital } }
+			limit = { 
+				NOT = { has_variable = custom_capital }
+				NOT = { title_capital_county = this.var:default_capital }
+			}
 			set_capital_county = this.var:default_capital
 		}
 	}

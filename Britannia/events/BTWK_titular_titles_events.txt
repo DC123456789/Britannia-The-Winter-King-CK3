@@ -1094,6 +1094,7 @@ titular_titles.0252 = {
 # Irish/Gaels
 ##################################################
 # 0301/0302 - Kingdom of Lleyn
+# 0303/0304 - Reconquest of Lleyn
 
 # Kingdom of Lleyn
 titular_titles.0301 = {
@@ -1184,6 +1185,86 @@ titular_titles.0302 = {
 		}
 		name = {
 			text = titular_titles.0302.a
+		}
+	}
+}
+
+# Reconquest of Lleyn
+titular_titles.0303 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles.0304 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles.0304 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_lleyn = { 
+				remove_variable = title_created_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			destroy_title = title:k_lleyn
+		}
+	}
+}
+
+titular_titles.0304 = {
+	type = character_event
+	title = titular_titles.0304.t
+	desc = titular_titles.0304.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				OR = {
+					this = scope:conqueror
+					has_title = title:k_lleyn
+				}
+			}
+			show_as_tooltip = { destroy_title = title:k_lleyn }
+		}
+		# This shows the de jure shift as a tooltip
+		show_as_tooltip = {
+			title:k_lleyn = { 
+				save_scope_as = title_created_de_jure_ignore
+				every_in_list = {
+					variable = de_jure_affected_territory
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles.0304.a.conqueror
+		}
+		name = {
+			text = titular_titles.0304.a
 		}
 	}
 }
