@@ -54,6 +54,7 @@ is_capital_in_roman_duchy_trigger = {
 	}
 }
 
+# Mostly for the custom tooltip
 control_region_fraction_trigger = {
 	trigger_if = {
 		limit = { is_ai = no }
@@ -102,10 +103,7 @@ control_region_fraction_trigger = {
 				multiply = 100
 			}
 		}
-		save_temporary_scope_value_as = { 
-			name = region_name 
-			value = flag:$REGION$
-		}
+		$REGION$ = { save_temporary_scope_as = region_scope }
 		custom_tooltip = {
 			text = control_region_fraction_trigger_tt
 			any_county_in_region = {
@@ -296,60 +294,33 @@ potential_integrate_kingdom_region_trigger = {
 	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
 	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
 	NOT = { scope:kingdom_region_scope = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = scope:new_liege_scope } } }
+	NOT = {
+		AND = {
+			scope:kingdom_region_scope = title:k_ebrauc
+			scope:new_liege_scope = title:e_cymru
+			scope:new_liege_scope.holder.culture = { NOT = { has_cultural_pillar = heritage_goidelic } }
+		}
+	}
 }
 
 can_integrate_kingdom_region_trigger = {
 	save_temporary_scope_as = scoped_character
 	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
 	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
-	switch = {
-		trigger = scope:kingdom_region_scope
-		title:k_londinium = {
-			can_integrate_kingdom_region_region_controlled_trigger = {
-				KINGDOM_REGION = title:k_londinium
-				REGION = world_britannia_south_lloegyr
-			}
-		}
-		title:k_gwynedd = {
-			can_integrate_kingdom_region_region_controlled_trigger = {
-				KINGDOM_REGION = title:k_gwynedd
-				REGION = world_britannia_south_cymry
-			}
-		}
-		title:k_ebrauc = {
-			can_integrate_kingdom_region_region_controlled_trigger = {
-				KINGDOM_REGION = title:k_ebrauc
-				REGION = world_britannia_hen_ogledd
-			}
-		}
-		fallback = {
-			custom_tooltip = {
-				text = error_tt
-				always = no
-			}
-		}
-	}
-}
-
-can_integrate_kingdom_region_region_controlled_trigger = {
 	control_region_fraction_trigger = {
 		FRACTION_REQUIRED = 0.80
-		REGION = $REGION$
-	}
-	save_temporary_scope_value_as = { 
-		name = region_name 
-		value = flag:$REGION$
+		REGION = scope:kingdom_region_scope.var:kingdom_geographical_region_var
 	}
 	custom_description = {
 		text = current_kingdom_region_empire_is_held_or_holds_no_territory_in_region_trigger
-		object = $KINGDOM_REGION$
-		$KINGDOM_REGION$.var:kingdom_region_empire = {
+		object = scope:kingdom_region_scope
+		scope:kingdom_region_scope.var:kingdom_region_empire = {
 			save_temporary_scope_as = old_liege_title
 			OR = {
 				holder ?= prev
 				NOT = {
 					any_county_in_region = {
-						region = $REGION$
+						region = scope:kingdom_region_scope.var:kingdom_geographical_region_var
 						scope:old_liege_title.holder = { completely_controls = prev }
 					}
 				}
