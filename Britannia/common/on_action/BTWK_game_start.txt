@@ -1654,7 +1654,11 @@ BTWK_de_jure_setup = {
 			}
 		}
 		
-		# EXPANDABLE EMPIRES
+		# FORMABLE EMPIRES
+		# Irish variant only gets Cymry when formed, not Lloegyr
+		title:e_cymru = {
+			add_to_variable_list = { name = base_kingdom_regions_alt target = title:k_gwynedd }
+		}
 		# For Irish variant only
 		# Eventually we want this to be Alba annexing Hen Ogledd
 		title:e_cymru = {
@@ -1939,6 +1943,25 @@ BTWK_de_jure_setup = {
 				}
 			}
 			if = {
+				limit = { has_variable_list = base_kingdom_regions_alt }
+				every_in_list = {
+					variable = base_kingdom_regions_alt
+					every_in_list = {
+						variable = kingdom_region_titles
+						scope:current_empire = {
+							add_to_variable_list = {
+								name = dynamic_de_jure_territory
+								target = PREV
+							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			if = {
 				limit = { has_variable_list = expansion_kingdom_regions }
 				every_in_list = {
 					variable = expansion_kingdom_regions
@@ -1966,6 +1989,18 @@ BTWK_de_jure_setup = {
 				limit = { has_variable_list = base_kingdom_regions }
 				every_in_list = {
 					variable = base_kingdom_regions
+					scope:current_empire = {
+						add_to_variable_list = {
+							name = base_and_expansion_kingdom_regions
+							target = PREV
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = base_kingdom_regions_alt }
+				every_in_list = {
+					variable = base_kingdom_regions_alt
 					scope:current_empire = {
 						add_to_variable_list = {
 							name = base_and_expansion_kingdom_regions

@@ -509,24 +509,67 @@ check_de_jure_liege_kingdom_effect = {
 				title_has_de_jure_variable_trigger = { FLAG = kingdom_region_empire }
 			}
 		}
-		set_title_flagged_de_jure_liege_effect = {
-			FLAG = kingdom_region_empire
-			FLAG_SCOPE = this.var:kingdom_region
-			NEW_DE_JURE_LIEGE = this.var:kingdom_region.var:kingdom_region_empire
+		# Don't show tooltip if the kingdom is titular AND has no holder
+		if = {
+			limit = {
+				OR = {
+					exists = this.holder
+					is_titular = no
+				}
+			}
+			set_title_flagged_de_jure_liege_effect = {
+				FLAG = kingdom_region_empire
+				FLAG_SCOPE = this.var:kingdom_region
+				NEW_DE_JURE_LIEGE = this.var:kingdom_region.var:kingdom_region_empire
+			}
+		}
+		else = {
+			hidden_effect = {
+				set_title_flagged_de_jure_liege_effect = {
+					FLAG = kingdom_region_empire
+					FLAG_SCOPE = this.var:kingdom_region
+					NEW_DE_JURE_LIEGE = this.var:kingdom_region.var:kingdom_region_empire
+				}
+			}
 		}
 	}
 	else = {
+		# Don't show tooltip if the kingdom is titular AND has no holder
 		if = {
-			limit = { NOT = { de_jure_liege = this.var:default_empire } }		
-			set_de_jure_liege_title = this.var:default_empire
+			limit = {
+				OR = {
+					exists = this.holder
+					is_titular = no
+				}
+			}
+			if = {
+				limit = { NOT = { de_jure_liege = this.var:default_empire } }		
+				set_de_jure_liege_title = this.var:default_empire
+			}
+			if = {
+				limit = { NOT = { has_variable = custom_name } }
+				hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
+			}
+			if = {
+				limit = { NOT = { has_variable = custom_capital } }
+				set_capital_county = this.var:default_capital
+			}
 		}
-		if = {
-			limit = { NOT = { has_variable = custom_name } }
-			hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
-		}
-		if = {
-			limit = { NOT = { has_variable = custom_capital } }
-			set_capital_county = this.var:default_capital
+		else = {
+			hidden_effect = {
+				if = {
+					limit = { NOT = { de_jure_liege = this.var:default_empire } }		
+					set_de_jure_liege_title = this.var:default_empire
+				}
+				if = {
+					limit = { NOT = { has_variable = custom_name } }
+					hidden_effect = { reset_title_name = yes }		# No way of checking if a custom name has been applied
+				}
+				if = {
+					limit = { NOT = { has_variable = custom_capital } }
+					set_capital_county = this.var:default_capital
+				}
+			}
 		}
 	}
 }
