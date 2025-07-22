@@ -8,6 +8,7 @@ on_game_start = {
 		BTWK_religion_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_settlement_placement
+		BTWK_laeti_trait_distribution
 		BTWK_high_king_electors_setup
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
@@ -2122,6 +2123,9 @@ BTWK_laeti_settlement_placement = {
 					years = 50 
 				}
 			}
+			overlord = {
+				add_trait = foederati_employment_costs_1
+			}
 		}
 		title:c_jarrow.holder = {
 			every_directly_owned_province = {
@@ -2133,6 +2137,9 @@ BTWK_laeti_settlement_placement = {
 					years = 50 
 				}
 			}
+			overlord = {
+				add_trait = foederati_employment_costs_1
+			}
 		}
 		title:c_ad_abum.holder = {
 			every_directly_owned_province = {
@@ -2143,6 +2150,9 @@ BTWK_laeti_settlement_placement = {
 					modifier = laeti_settlement 
 					years = 50 
 				}
+			}
+			overlord = {
+				add_trait = foederati_employment_costs_3
 			}
 		}
 		title:c_luda.holder = {
@@ -2177,6 +2187,9 @@ BTWK_laeti_settlement_placement = {
 					years = 50 
 				}
 			}
+			overlord = {
+				add_trait = foederati_employment_costs_2
+			}
 		}
 		title:c_chiltern_hills.holder = {
 			every_directly_owned_province = {
@@ -2187,6 +2200,21 @@ BTWK_laeti_settlement_placement = {
 					modifier = laeti_settlement 
 					years = 50 
 				}
+			}
+		}
+	}
+}
+
+BTWK_laeti_trait_distribution = {
+	effect = {
+		every_ruler = {
+			limit = {
+				is_tributary = yes
+				has_subject_contract_group = tributary_foederatus
+			}
+			add_trait = foederati_leader
+			overlord = {
+				add_trait = foederati_employer
 			}
 		}
 	}
