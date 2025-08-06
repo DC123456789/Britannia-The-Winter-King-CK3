@@ -68,7 +68,7 @@ BTWK_culture_setup = {
 						}
 					}
 				}
-				# capital_province = { geographical_region = world_britannia }
+				# capital_province = { geographical_region = btwk_world_britannia }
 			}
 			learn_language = language_latin
 			if = {
@@ -128,12 +128,89 @@ BTWK_culture_setup = {
 }
 
 BTWK_religion_setup = {
-	effect = {
-		# Mark some faiths to block conversion till specific decisions are taken.
-		# TODO Block all Muslim faiths until it appears
-		# religion:islam_religion = {
-			# set_variable = { name = block_conversion_till_decision_taken }
-		# }
+	effect = {		
+		# Block all irrelevant vanilla faiths permanently
+		every_religion_global = {
+			limit = {
+				NOR = {
+					this = religion:basque_religion
+					this = religion:celtic_religion
+					this = religion:christianity_religion
+					this = religion:dualism_religion
+					this = religion:germanic_religion
+					this = religion:hellenism_religion
+					this = religion:islam_religion
+					this = religion:judaism_religion
+					this = religion:paganism_religion
+					this = religion:scythian_religion
+				}
+			}
+			every_faith = { set_variable = { name = block_conversion } }
+		}
+		religion:christianity_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:catholic
+						this = faith:pelagian
+						this = faith:arian
+						this = faith:priscillianism
+						this = faith:novatianist
+						this = faith:adoptionist
+						this = faith:valentinianism
+					}
+				}
+				set_variable = { name = block_conversion } 
+			}
+		}
+		religion:dualism_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:manichean
+					}
+				}
+				set_variable = { name = block_conversion } 
+			}
+		}
+		religion:islam_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:ashari
+						this = faith:muwalladi
+						this = faith:maturidi
+						this = faith:mutazila
+						this = faith:ismaili
+						this = faith:zayidi
+						this = faith:ibadi
+						this = faith:sufri
+						this = faith:barghawata
+					}
+				}
+				set_variable = { name = block_conversion } 
+			}
+		}
+		religion:judaism_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:rabbinism
+					}
+				}
+				set_variable = { name = block_conversion } 
+			}
+		}
+		
+		# Block all relevant Muslim faiths until it appears
+		religion:islam_religion = {
+			every_faith = {
+				limit = {
+					NOT = { has_variable = block_conversion }
+				}
+				set_variable = { name = block_conversion_till_founded }
+			}
+		}
 	}
 }
 
@@ -170,7 +247,7 @@ BTWK_de_jure_setup = {
 		## geographical regions cannot hold variables and so we need to associate them with a title instead
 		## If you add a new one, you need to edit titular_titles.9000 in BTWK_titular_titles_events.txt
 		title:k_londinium = {
-			set_variable = { name = kingdom_geographical_region_var value = geographical_region:world_britannia_south_lloegyr }
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_south_lloegyr }
 			title:k_belgae = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_cantuaria = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_londinium = { set_variable = { name = kingdom_region value = PREV } }
@@ -180,7 +257,7 @@ BTWK_de_jure_setup = {
 			title:k_glevum = { set_variable = { name = kingdom_region value = PREV } }
 		}
 		title:k_gwynedd = {
-			set_variable = { name = kingdom_geographical_region_var value = geographical_region:world_britannia_south_cymry }
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_south_cymry }
 			title:k_dumnonia = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_kernow = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_gwent = { set_variable = { name = kingdom_region value = PREV } }
@@ -192,7 +269,7 @@ BTWK_de_jure_setup = {
 			title:k_lleyn = { set_variable = { name = kingdom_region value = PREV } }
 		}
 		title:k_ebrauc = {
-			set_variable = { name = kingdom_geographical_region_var value = geographical_region:world_britannia_hen_ogledd }
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_hen_ogledd }
 			title:k_ebrauc = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_elmet = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_pennines = { set_variable = { name = kingdom_region value = PREV } }
