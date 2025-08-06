@@ -5,3 +5,95 @@ negated_sub_realm_size_value = {
 	value = sub_realm_size
 	multiply = -1
 }
+
+##Tribal fame
+
+tribal_fame_value = {
+	value = 0
+	
+	add = {
+		value = prestige
+		subtract = 500
+		divide = 125
+		if = {
+			limit = { 
+				prestige_level = 0
+			}
+			multiply = 0.80
+		}
+		if = {
+			limit = { 
+				prestige_level = 1
+			}
+			multiply = 1.0
+		}
+		if = {
+			limit = { 
+				prestige_level = 2
+			}
+			multiply = 1.2
+		}
+		if = {
+			limit = { 
+				prestige_level = 3
+			}
+			multiply = 1.4
+		}
+		if = {
+			limit = { 
+				prestige_level = 4
+			}
+			multiply = 1.6
+		}
+		if = {
+			limit = { 
+				prestige_level = 5
+			}
+			multiply = 1.8
+		}
+	}
+	add = {
+		value = martial
+		subtract = 6
+		divide = 4
+	}
+	add = {
+		value = prowess
+		subtract = 6
+		divide = 4
+	}
+	subtract = {
+		value = realm_size
+		subtract = 4
+		divide = 2
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_0
+			}
+			multiply = 0.85
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_1
+			}
+			multiply = 1.0
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_2
+			}
+			multiply = 1.1
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_3
+			}
+			multiply = 1.2
+		}
+	}
+	
+	divide = 5
+	
+	max = 40
+	min = -40
+}
