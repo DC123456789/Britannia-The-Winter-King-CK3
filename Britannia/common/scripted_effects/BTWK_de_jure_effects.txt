@@ -100,14 +100,14 @@ set_formable_or_expandable_kingdom_flag_effect = {
 		limit = {
 			has_variable_list = de_jure_affected_territory
 		}
-		ordered_in_list = {
+		every_in_list = {
 			variable = de_jure_affected_territory
 			limit = {
 				has_variable_list = formable_and_expansion_kingdoms
 			}
 			# Find any formation entry for the scoped kingdom in the duchy's formable_and_expansion_kingdoms list
 			# and move it to the end
-			ordered_in_list = {
+			every_in_list = {
 				variable = formable_and_expansion_kingdoms
 				limit = {
 					this.var:kingdom = scope:current_kingdom
@@ -249,6 +249,7 @@ check_de_jure_liege_county_effect = {
 }
 
 check_de_jure_liege_duchy_effect = {
+	save_temporary_scope_as = current_duchy
 	if = {
 		limit = {
 			title_has_de_jure_variable_trigger = { FLAG = roman_title_created_de_jure }
@@ -289,6 +290,15 @@ check_de_jure_liege_duchy_effect = {
 				variable = formable_and_expansion_kingdoms
 				OR = {
 					AND = {
+						this.var:shift_type = flag:integration
+						scope:current_duchy = {
+							title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
+								FLAG = integrated_kingdom
+								FLAG_VALUE = prev.var:kingdom
+							} 
+						}
+					}
+					AND = {
 						this.var:shift_type = flag:formable
 						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
 					}
@@ -307,6 +317,15 @@ check_de_jure_liege_duchy_effect = {
 			variable = formable_and_expansion_kingdoms
 			limit = {
 				OR = {
+					AND = {
+						this.var:shift_type = flag:integration
+						scope:current_duchy = {
+							title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
+								FLAG = integrated_kingdom
+								FLAG_VALUE = prev.var:kingdom
+							} 
+						}
+					}
 					AND = {
 						this.var:shift_type = flag:formable
 						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
@@ -338,6 +357,17 @@ check_de_jure_liege_duchy_effect = {
 			any_in_list = {
 				variable = formable_and_expansion_kingdoms
 				OR = {
+					# Duchies are integrated individually
+					AND = {
+						this.var:shift_type = flag:integration
+						scope:current_duchy = {
+							title_has_de_jure_variable_with_scope_value_trigger = {
+								FLAG = integrated_kingdom
+								FLAG_VALUE = prev.var:kingdom
+							} 
+						}
+					}
+					# For formations/expansions, a single flag on the kingdom shifts all the duchies
 					AND = {
 						this.var:shift_type = flag:formable
 						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
@@ -359,6 +389,15 @@ check_de_jure_liege_duchy_effect = {
 			variable = formable_and_expansion_kingdoms
 			limit = {
 				OR = {
+					AND = {
+						this.var:shift_type = flag:integration
+						scope:current_duchy = {
+							title_has_de_jure_variable_with_scope_value_trigger = {
+								FLAG = integrated_kingdom
+								FLAG_VALUE = prev.var:kingdom
+							} 
+						}
+					}
 					AND = {
 						this.var:shift_type = flag:formable
 						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }

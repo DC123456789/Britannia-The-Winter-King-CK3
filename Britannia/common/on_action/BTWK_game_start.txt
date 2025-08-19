@@ -59,7 +59,10 @@ BTWK_culture_setup = {
 							OR = {
 								has_cultural_pillar = heritage_brythonic
 								has_cultural_pillar = heritage_latin
-								has_court_language = language_latin
+								AND = {
+									has_royal_court = yes
+									has_court_language = language_latin
+								}
 								AND = {
 									NOT = { has_dlc_feature = royal_court }
 									has_title = title:k_demetia
@@ -70,9 +73,15 @@ BTWK_culture_setup = {
 				}
 				# capital_province = { geographical_region = btwk_world_britannia }
 			}
-			learn_language = language_latin
 			if = {
-				limit = { NOT = { culture = { has_cultural_pillar = heritage_brythonic } } }
+				limit = { NOT = { knows_language = language_latin } }
+				learn_language = language_latin
+			}
+			if = {
+				limit = { 
+					NOT = { culture = { has_cultural_pillar = heritage_brythonic } } 
+					NOT = { knows_language = language_brythonic }
+				}
 				learn_language = language_brythonic
 			}
 			every_courtier_or_guest = {
@@ -103,9 +112,15 @@ BTWK_culture_setup = {
 						add = -100
 						this = character:10
 					}
-					learn_language = language_latin
 					if = {
-						limit = { NOT = { culture = { has_cultural_pillar = heritage_brythonic } } }
+						limit = { NOT = { knows_language = language_latin } }
+						learn_language = language_latin
+					}
+					if = {
+						limit = { 
+							NOT = { culture = { has_cultural_pillar = heritage_brythonic } } 
+							NOT = { knows_language = language_brythonic }
+						}
 						learn_language = language_brythonic
 					}
 				}
@@ -241,6 +256,10 @@ BTWK_de_jure_setup = {
 				name = default_empire
 				value = this.empire
 			}
+			set_variable = {
+				name = default_capital
+				value = this.title_capital_county
+			}
 		}
 		
 		### DEFINE KINGDOM REGIONS ###
@@ -338,6 +357,13 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_2_alt value = title:c_godalming }
 		}
 		
+		title:k_cantia = {
+			title:d_eastseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_the_weald = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
 		## ESSEX
 		title:d_eastseaxe = {
 			title:c_camulodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
@@ -367,6 +393,14 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_2_alt value = title:c_brinavis }
 		}
 		
+		title:k_eastseaxe = {
+			title:d_westcantware = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
 		## SUSSEX
 		title:d_the_weald = {
 			title:c_regentium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
@@ -379,6 +413,16 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_1 value = title:c_regentium }
 			set_variable = { name = creation_requirement_2 value = title:c_arundel }
 			set_variable = { name = creation_requirement_2_alt value = title:c_novus_portus }
+		}
+		
+		title:k_sussex = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_hampshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_winchestershire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wiltshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## WESSEX
@@ -491,6 +535,14 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_2 value = title:c_bodmin }
 		}
 		
+		title:k_wessex = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_the_weald = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_hwicce = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
 		## EAST ANGLIA
 		title:d_norfolc = {
 			title:c_nortwic = { set_variable = { name = anglo_saxon_duchy value = PREV } }
@@ -534,6 +586,14 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_1_alt value = title:c_durobrivae }
 			set_variable = { name = creation_requirement_2 value = title:c_wisbech }
 			set_variable = { name = creation_requirement_2_alt value = title:c_the_fens }
+		}
+		
+		title:k_east_anglia = {
+			title:d_hiccas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middle_angles = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_south_angles = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_lindsey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## MERCIA
@@ -657,6 +717,15 @@ BTWK_de_jure_setup = {
 			set_variable = { name = creation_requirement_1_alt value = title:c_glevum }
 			set_variable = { name = creation_requirement_2 value = title:c_corinium }
 			set_variable = { name = creation_requirement_2_alt value = title:c_aquae_sulis }
+		}
+		
+		title:k_mercia = {
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_grentbryce = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_gyrwas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_lindsey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## NORTHUMBRIA
@@ -837,6 +906,12 @@ BTWK_de_jure_setup = {
 			title:c_manann = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_german = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_german }
+		}
+		
+		title:k_northumbria = {
+			title:d_pecsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wrocensaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## WALES
@@ -1749,8 +1824,38 @@ BTWK_de_jure_setup = {
 		every_duchy = {
 			save_temporary_scope_as = current_duchy
 			if = {
+				limit = { has_variable_list = integration_kingdoms }
+				every_in_list = {
+					variable = integration_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_kingdom_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = kingdom value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:integration }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_kingdoms
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+					# Also want a list of integratable duchies for each kingdom
+					scope:current_kingdom = {
+						add_to_variable_list = {
+							name = integratable_duchies
+							target = scope:current_duchy
+						}
+					}
+				}
+			}
+			if = {
 				limit = { has_variable_list = formable_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = formable_kingdoms
 					save_temporary_scope_as = current_kingdom
 					scope:story_holder = {
@@ -1773,7 +1878,7 @@ BTWK_de_jure_setup = {
 			}
 			if = {
 				limit = { has_variable_list = expansion_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = expansion_kingdoms
 					save_temporary_scope_as = current_kingdom
 					scope:story_holder = {
@@ -1796,7 +1901,7 @@ BTWK_de_jure_setup = {
 			}
 			if = {
 				limit = { has_variable_list = expansion_alt_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = expansion_alt_kingdoms
 					save_temporary_scope_as = current_kingdom
 					scope:story_holder = {
@@ -1898,8 +2003,22 @@ BTWK_de_jure_setup = {
 		# Similar list for kingdoms
 		every_duchy = {
 			if = {
+				limit = { has_variable_list = integration_kingdoms }
+				every_in_list = {
+					variable = integration_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
 				limit = { has_variable_list = formable_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = formable_kingdoms
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
@@ -1913,7 +2032,7 @@ BTWK_de_jure_setup = {
 			}
 			if = {
 				limit = { has_variable_list = expansion_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = expansion_kingdoms
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
@@ -1927,7 +2046,7 @@ BTWK_de_jure_setup = {
 			}
 			if = {
 				limit = { has_variable_list = expansion_alt_kingdoms }
-				ordered_in_list = {
+				every_in_list = {
 					variable = expansion_alt_kingdoms
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory

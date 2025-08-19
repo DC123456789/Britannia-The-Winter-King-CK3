@@ -93,16 +93,16 @@ generate_integrate_kingdom_region_list = {
 			save_temporary_scope_as = kingdom_region_scope
 			ROOT = {
 				create_story = {
-					type = integrable_region_struct_story
-					save_temporary_scope_as = new_integrable_region_struct_story
+					type = integratable_region_struct_story
+					save_temporary_scope_as = new_integratable_region_struct_story
 				}
-				scope:new_integrable_region_struct_story = {
+				scope:new_integratable_region_struct_story = {
 					set_variable = { name = kingdom_region value = scope:kingdom_region_scope }
 					set_variable = { name = new_liege value = scope:new_liege_scope }
 				}
 				add_to_variable_list = {
 					name = integrate_kingdom_region_list
-					target = scope:new_integrable_region_struct_story
+					target = scope:new_integratable_region_struct_story
 				}
 			}
 		}
@@ -122,6 +122,42 @@ integrate_kingdom_region_effect = {
 		set_kingdom_region_de_jure_liege_effect = {
 			REGION_BASE = scope:region_base_title
 			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
+		}
+	}
+}
+
+generate_integrate_duchy_anglo_saxon_list = {
+	if = {
+		limit = { has_variable_list = integrate_duchy_anglo_saxon_list }
+		every_in_list = {
+			variable = integrate_duchy_anglo_saxon_list
+			end_story = THIS
+		}
+		clear_variable_list = integrate_duchy_anglo_saxon_list
+	}
+	every_held_title = {
+		limit = {
+			is_anglo_saxon_kingdom_trigger = yes
+			has_variable_list = integratable_duchies
+		}
+		save_temporary_scope_as = new_liege_scope
+		every_in_list = {
+			variable = integratable_duchies
+			save_temporary_scope_as = duchy_scope
+			ROOT = {
+				create_story = {
+					type = integratable_duchy_struct_story
+					save_temporary_scope_as = new_integratable_duchy_struct_story
+				}
+				scope:new_integratable_duchy_struct_story = {
+					set_variable = { name = duchy value = scope:duchy_scope }
+					set_variable = { name = new_liege value = scope:new_liege_scope }
+				}
+				add_to_variable_list = {
+					name = integrate_duchy_anglo_saxon_list
+					target = scope:new_integratable_duchy_struct_story
+				}
+			}
 		}
 	}
 }

@@ -1,0 +1,43 @@
+# Required controller: decision_option_list_controller
+
+vbox = {
+	name = "decision_view_widget_integrate_duchy_anglo_saxon"
+	TitleSelectionActionBoxType = {
+		blockoverride "box_datamodel" {
+			datamodel = "[GetPlayer.MakeScope.GetList('integrate_duchy_anglo_saxon_list')]"
+		}
+		blockoverride "no_titles_text_is_shown" {
+			visible = "[GetScriptedGui('integrate_duchy_anglo_saxon_none_shown').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+		blockoverride "box_create_state_secondary" {
+			on_start = "[GetScriptedGui('integrate_duchy_anglo_saxon_list_init').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+		blockoverride "title_visible" {
+			visible = "[GetScriptedGui('integrate_duchy_anglo_saxon_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		}
+		blockoverride "title_button" {
+			onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		}
+		blockoverride "title_button_coa" {
+			datacontext = "[Scope.Var('new_liege').Title]"
+		}
+		blockoverride "title_button_box_datacontext" {
+			datacontext = "[Scope.Var('duchy').Title]"
+		}
+		blockoverride "title_select_button_box_datacontext" {
+			datacontext = "[Scope.Var('duchy').Title]"
+		}
+		# blockoverride "selection_button" {
+			# onclick = "[GetScriptedGui('integrate_kingdom_region_integrate').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			# enabled = "[GetScriptedGui('integrate_kingdom_region_integrate').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			# tooltip = "[GetScriptedGui('integrate_kingdom_region_integrate').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		# }
+		blockoverride "selection_button_text_box" {
+			margin_left = 6
+		}
+		blockoverride "selection_button_text" {
+			text = "Integrate"
+		}
+	}
+}

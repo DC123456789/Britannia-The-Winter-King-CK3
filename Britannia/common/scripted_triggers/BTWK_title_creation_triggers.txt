@@ -21,6 +21,32 @@ title_has_de_jure_variable_tooltip_trigger = {
 	}
 }
 
+# Similar to above, except that it checks if a title has a certain flag/variable set to a certain scope value
+# If the [flag]_pretend scope is set to the scoped title AND the [flag]_pretend_value scope is set to the scope value,
+# then the flag is considered set to the scope value even if it isn't actually - this is used for tooltip purposes
+# On the same lines, if the [flag]_ignore scope is set to the scoped title, then this will always return false
+title_has_de_jure_variable_with_scope_value_trigger = {
+	OR = {
+		this.var:$FLAG$ ?= $FLAG_VALUE$
+		AND = {
+			scope:$FLAG$_pretend ?= this
+			scope:$FLAG$_pretend_value ?= $FLAG_VALUE$
+		}
+	}
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
+# Same as title_has_de_jure_variable_with_scope_value_trigger, but ture only for tooltip purposes
+title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
+	scope:$FLAG$_pretend ?= this
+	scope:$FLAG$_pretend_value ?= $FLAG_VALUE$
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
 check_kingdom_region_de_jure_liege_trigger = {
 	has_variable = kingdom_region
 	this.var:kingdom_region.var:kingdom_region_empire ?= $DE_JURE_LIEGE$
@@ -327,4 +353,10 @@ can_integrate_kingdom_region_trigger = {
 			}
 		}
 	}
+}
+
+potential_integrate_duchy_anglo_saxon_trigger = {
+	$DUCHY$ = { save_temporary_scope_as = duchy_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	NOT = { scope:duchy_scope.kingdom = scope:new_liege_scope }
 }
