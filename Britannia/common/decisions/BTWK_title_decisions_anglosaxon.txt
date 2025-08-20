@@ -246,6 +246,7 @@ integrate_duchy_anglo_saxon_decision = {
 	is_valid_showing_failures_only = {
 		can_create_germanic_title_trigger = yes
 		government_is_not_tribal_trigger = yes
+		can_integrate_duchy_anglo_saxon_cost_trigger = yes
 		custom_tooltip = {
 			text = integrate_duchy_anglo_saxon_any_integratable_tt
 			any_held_title = {
@@ -257,11 +258,11 @@ integrate_duchy_anglo_saxon_decision = {
 					ROOT = {
 						potential_integrate_duchy_anglo_saxon_trigger = {
 							DUCHY = prev
-							NEW_LIEGE = scope:current_empire
+							NEW_LIEGE = scope:current_kingdom
 						}
 						can_integrate_duchy_anglo_saxon_trigger = {
 							DUCHY = prev
-							NEW_LIEGE = scope:current_empire
+							NEW_LIEGE = scope:current_kingdom
 						}
 					}
 				}
@@ -276,32 +277,34 @@ integrate_duchy_anglo_saxon_decision = {
 				is_ai = no
 				has_variable = selected_title
 			}
-			this.var:selected_title.var:kingdom_region = {
-				save_scope_as = title_created_de_jure_pretend
-				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
-					REGION_BASE = this
-					NEW_DE_JURE_LIEGE = prev.var:selected_title.var:new_liege
+			this.var:selected_title.var:duchy = { save_scope_as = integrated_kingdom_pretend }
+			this.var:selected_title.var:new_liege = { save_scope_as = integrated_kingdom_pretend_value }
+			show_as_tooltip = {
+				this.var:selected_title.var:duchy = {
+					check_de_jure_liege_effect = yes
 				}
+				integrate_duchy_anglo_saxon_cost_effect = yes
 			}
 		}
 		hidden_effect = {
+			generate_integrate_kingdom_region_list = yes
 			every_in_list = {
-				variable = integrate_kingdom_region_list
+				variable = generate_integrate_duchy_anglo_saxon_list
 				limit = {
 					ROOT = {
-						potential_integrate_kingdom_region_trigger = {
-							KINGDOM_REGION = prev.var:kingdom_region
+						potential_integrate_duchy_anglo_saxon_trigger = {
+							DUCHY = prev.var:duchy
 							NEW_LIEGE = prev.var:new_liege
 						}
-						can_integrate_kingdom_region_trigger = {
-							KINGDOM_REGION = prev.var:kingdom_region
+						can_integrate_duchy_anglo_saxon_trigger = {
+							DUCHY = prev.var:duchy
 							NEW_LIEGE = prev.var:new_liege
 						}
 					}
 				}
 				ROOT = {
-					integrate_kingdom_region_effect = {
-						REGION_BASE = prev.var:kingdom_region
+					integrate_duchy_anglo_saxon_effect = {
+						DUCHY = prev.var:duchy
 						NEW_DE_JURE_LIEGE = prev.var:new_liege
 					}
 				}

@@ -257,32 +257,35 @@ integrate_duchy_anglo_saxon_show = {
 	}
 }
 
-# integrate_kingdom_region_integrate = {
-	# scope = character
+integrate_duchy_anglo_saxon_integrate = {
+	scope = character
 	
-	# is_valid = {
-		# scope:scoped_title = {
-			# ROOT = {
-				# can_integrate_kingdom_region_trigger = {
-					# KINGDOM_REGION = prev.var:kingdom_region
-					# NEW_LIEGE = prev.var:new_liege
-				# }
-			# }
-		# }
-	# }
+	is_valid = {
+		can_integrate_duchy_anglo_saxon_cost_trigger = yes
+		scope:scoped_title = {
+			ROOT = {
+				can_integrate_duchy_anglo_saxon_trigger = {
+					DUCHY = prev.var:duchy
+					NEW_LIEGE = prev.var:new_liege
+				}
+			}
+		}
+	}
 	
-	# effect = {
-		# integrate_kingdom_region_effect = {
-			# REGION_BASE = scope:scoped_title.var:kingdom_region
-			# NEW_DE_JURE_LIEGE = scope:scoped_title.var:new_liege
-		# }
-		# if = {
-			# limit = { has_variable = selected_title }
-			# remove_variable = selected_title
-		# }
-		# generate_integrate_kingdom_region_list = yes
-	# }
-# }
+	effect = {
+		custom_tooltip = { text = integrate_duchy_anglo_saxon_decision_button_tooltip }
+		integrate_duchy_anglo_saxon_cost_effect = yes
+		integrate_duchy_anglo_saxon_effect = {
+			REGION_BASE = scope:scoped_title.var:duchy
+			NEW_DE_JURE_LIEGE = scope:scoped_title.var:new_liege
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+		generate_integrate_duchy_anglo_saxon_list = yes
+	}
+}
 
 ## Roman Duchy Formation
 roman_duchy_formation_none_shown = {

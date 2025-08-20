@@ -80,9 +80,40 @@ set_kingdom_region_de_jure_liege_tooltip_only_effect = {
 	}
 }
 
+set_title_integrated_flag_effect = {
+	$FLAG_VALUE$ = { save_temporary_scope_as = new_liege }
+	if = {
+		limit = { $SHIFT_TYPE$ = flag:integration }
+		set_variable = {
+			name = integrated_kingdom
+			value = $FLAG_VALUE$
+		}
+	}
+	# Find any integration entry for the new liege in the current title's formable_and_expansion_liege_title_shifts 
+	# list and move it to the end
+	every_in_list = {
+		variable = formable_and_expansion_liege_title_shifts
+		limit = {
+			this.var:liege_title = scope:new_liege
+			this.var:shift_type = $SHIFT_TYPE$
+		}
+		save_temporary_scope_as = current_new_liege_de_jure_shift_struct
+		prev = { 
+			remove_list_variable = {
+				name = formable_and_expansion_liege_title_shifts
+				target = scope:current_new_liege_de_jure_shift_struct
+			}
+			add_to_variable_list = {
+				name = formable_and_expansion_liege_title_shifts
+				target = scope:current_new_liege_de_jure_shift_struct
+			}
+		}
+	}
+}
+
 # Scope is the kingdom to set as formed or expanded
 # SHIFT_TYPE should be a flag that is one of formable/expanded/expanded_alt
-set_formable_or_expandable_kingdom_flag_effect = {
+set_formable_or_expandable_liege_title_flag_effect = {
 	if = {
 		limit = { $SHIFT_TYPE$ = flag:formable }
 		set_variable = title_created_de_jure
@@ -95,7 +126,7 @@ set_formable_or_expandable_kingdom_flag_effect = {
 		limit = { $SHIFT_TYPE$ = flag:expanded_alt }
 		set_variable = title_expanded_alt_de_jure
 	}
-	save_temporary_scope_as = current_kingdom
+	save_temporary_scope_as = current_title
 	if = {
 		limit = {
 			has_variable_list = de_jure_affected_territory
@@ -103,25 +134,25 @@ set_formable_or_expandable_kingdom_flag_effect = {
 		every_in_list = {
 			variable = de_jure_affected_territory
 			limit = {
-				has_variable_list = formable_and_expansion_kingdoms
+				has_variable_list = formable_and_expansion_liege_title_shifts
 			}
-			# Find any formation entry for the scoped kingdom in the duchy's formable_and_expansion_kingdoms list
+			# Find any formation entry for the scoped kingdom in the duchy's formable_and_expansion_liege_title_shifts list
 			# and move it to the end
 			every_in_list = {
-				variable = formable_and_expansion_kingdoms
+				variable = formable_and_expansion_liege_title_shifts
 				limit = {
-					this.var:kingdom = scope:current_kingdom
+					this.var:liege_title = scope:current_title
 					this.var:shift_type = $SHIFT_TYPE$
 				}
-				save_temporary_scope_as = current_kingdom_de_jure_shift_struct
+				save_temporary_scope_as = current_title_de_jure_shift_struct
 				prev = { 
 					remove_list_variable = {
-						name = formable_and_expansion_kingdoms
-						target = scope:current_kingdom_de_jure_shift_struct
+						name = formable_and_expansion_liege_title_shifts
+						target = scope:current_title_de_jure_shift_struct
 					}
 					add_to_variable_list = {
-						name = formable_and_expansion_kingdoms
-						target = scope:current_kingdom_de_jure_shift_struct
+						name = formable_and_expansion_liege_title_shifts
+						target = scope:current_title_de_jure_shift_struct
 					}
 				}
 			}
@@ -129,16 +160,23 @@ set_formable_or_expandable_kingdom_flag_effect = {
 	}
 }
 
+set_duchy_integrated_effect = {
+	set_title_integrated_flag_effect = {
+		SHIFT_TYPE = flag:integration
+		FLAG_VALUE = $INTEGRATION_KINGDOM$
+	}
+}
+
 set_kingdom_formed_effect = {
-	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:formable }
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:formable }
 }
 
 set_kingdom_expanded_effect = {
-	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:expanded }
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expanded }
 }
 
 set_kingdom_expanded_alt_effect = {
-	set_formable_or_expandable_kingdom_flag_effect = { SHIFT_TYPE = flag:expanded_alt }
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expanded_alt }
 }
 
 # Requires that scope:story_holder be set to any arbitrary character
@@ -279,42 +317,42 @@ check_de_jure_liege_duchy_effect = {
 			set_de_jure_liege_title = this.var:integration_kingdom
 		}
 	}
-	# In the case of the formable_and_expansion_kingdoms list, the normal tooltipping doesn't *quite* work in case of
+	# In the case of the formable_and_expansion_liege_title_shifts list, the normal tooltipping doesn't *quite* work in case of
 	# overlapping titles as the newest formed/expanded title gets moved to the end of the list, which won't be caught
 	# by the usual methods
 	# So instead we grant higher priority to any title that induces a de jure shift by the tooltip-creating scopes
 	else_if = {
 		limit = {
-			has_variable_list = formable_and_expansion_kingdoms
+			has_variable_list = formable_and_expansion_liege_title_shifts
 			any_in_list = {
-				variable = formable_and_expansion_kingdoms
+				variable = formable_and_expansion_liege_title_shifts
 				OR = {
 					AND = {
 						this.var:shift_type = flag:integration
 						scope:current_duchy = {
 							title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
 								FLAG = integrated_kingdom
-								FLAG_VALUE = prev.var:kingdom
+								FLAG_VALUE = prev.var:liege_title
 							} 
 						}
 					}
 					AND = {
 						this.var:shift_type = flag:formable
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion_alt
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
 				}
 			}
 		}
 		ordered_in_list = {
-			variable = formable_and_expansion_kingdoms
+			variable = formable_and_expansion_liege_title_shifts
 			limit = {
 				OR = {
 					AND = {
@@ -322,29 +360,29 @@ check_de_jure_liege_duchy_effect = {
 						scope:current_duchy = {
 							title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
 								FLAG = integrated_kingdom
-								FLAG_VALUE = prev.var:kingdom
+								FLAG_VALUE = prev.var:liege_title
 							} 
 						}
 					}
 					AND = {
 						this.var:shift_type = flag:formable
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_created_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion_alt
-						this.var:kingdom = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
 				}
 			}
 			position = {
-				value = variable_list_size:formable_and_expansion_kingdoms
+				value = variable_list_size:formable_and_expansion_liege_title_shifts
 				subtract = 1
 			}
-			this.var:kingdom = { save_temporary_scope_as = new_de_jure_liege }
+			this.var:liege_title = { save_temporary_scope_as = new_de_jure_liege }
 		}
 		if = {
 			limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
@@ -353,9 +391,9 @@ check_de_jure_liege_duchy_effect = {
 	}
 	else_if = {
 		limit = {
-			has_variable_list = formable_and_expansion_kingdoms
+			has_variable_list = formable_and_expansion_liege_title_shifts
 			any_in_list = {
-				variable = formable_and_expansion_kingdoms
+				variable = formable_and_expansion_liege_title_shifts
 				OR = {
 					# Duchies are integrated individually
 					AND = {
@@ -363,30 +401,30 @@ check_de_jure_liege_duchy_effect = {
 						scope:current_duchy = {
 							title_has_de_jure_variable_with_scope_value_trigger = {
 								FLAG = integrated_kingdom
-								FLAG_VALUE = prev.var:kingdom
+								FLAG_VALUE = prev.var:liege_title
 							} 
 						}
 					}
 					# For formations/expansions, a single flag on the kingdom shifts all the duchies
 					AND = {
 						this.var:shift_type = flag:formable
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
 					}
 					# Used for if a kingdom has multiple possible expansions it can get that are not covered by a
 					# more systematic framework
 					AND = {
 						this.var:shift_type = flag:expansion_alt
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
 				}
 			}
 		}
 		ordered_in_list = {
-			variable = formable_and_expansion_kingdoms
+			variable = formable_and_expansion_liege_title_shifts
 			limit = {
 				OR = {
 					AND = {
@@ -394,29 +432,29 @@ check_de_jure_liege_duchy_effect = {
 						scope:current_duchy = {
 							title_has_de_jure_variable_with_scope_value_trigger = {
 								FLAG = integrated_kingdom
-								FLAG_VALUE = prev.var:kingdom
+								FLAG_VALUE = prev.var:liege_title
 							} 
 						}
 					}
 					AND = {
 						this.var:shift_type = flag:formable
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } }
 					}
 					AND = {
 						this.var:shift_type = flag:expansion_alt
-						this.var:kingdom = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
 				}
 			}
 			position = {
-				value = variable_list_size:formable_and_expansion_kingdoms
+				value = variable_list_size:formable_and_expansion_liege_title_shifts
 				subtract = 1
 			}
-			this.var:kingdom = { save_temporary_scope_as = new_de_jure_liege }
+			this.var:liege_title = { save_temporary_scope_as = new_de_jure_liege }
 		}
 		if = {
 			limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }

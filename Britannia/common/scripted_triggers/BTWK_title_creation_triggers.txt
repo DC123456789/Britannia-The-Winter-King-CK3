@@ -129,7 +129,7 @@ control_region_fraction_trigger = {
 				multiply = 100
 			}
 		}
-		geographical_region:$REGION$ = { save_temporary_scope_as = region_scope }
+		$REGION$ = { save_temporary_scope_as = region_scope }
 		custom_tooltip = {
 			text = control_region_fraction_trigger_tt
 			any_county_in_region = {
@@ -355,8 +355,26 @@ can_integrate_kingdom_region_trigger = {
 	}
 }
 
+can_integrate_duchy_anglo_saxon_cost_trigger = {
+	prestige_level >= 3
+	piety >= 300
+	gold >= 250
+}
+
 potential_integrate_duchy_anglo_saxon_trigger = {
 	$DUCHY$ = { save_temporary_scope_as = duchy_scope }
 	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
 	NOT = { scope:duchy_scope.kingdom = scope:new_liege_scope }
+}
+
+can_integrate_duchy_anglo_saxon_trigger = {
+	$DUCHY$ = { save_temporary_scope_as = duchy_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	custom_description = {
+		text = current_duchy_is_created_de_jure_trigger
+		object = scope:duchy_scope
+		scope:duchy_scope = { has_variable = title_created_de_jure }
+	}
+	NOT = { has_title = scope:duchy_scope.de_jure_liege }
+	completely_controls = scope:duchy_scope		# Temporary
 }

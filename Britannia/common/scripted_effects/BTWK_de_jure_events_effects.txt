@@ -161,3 +161,26 @@ generate_integrate_duchy_anglo_saxon_list = {
 		}
 	}
 }
+
+integrate_duchy_anglo_saxon_effect = {
+	save_scope_as = conqueror
+	$DUCHY$ = { save_scope_as = current_duchy }
+	$NEW_DE_JURE_LIEGE$ = { save_scope_as = new_de_jure_liege_title }
+	trigger_event = { id = titular_titles_anglosaxon.0003 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles_anglosaxon.0003 }
+	}
+	hidden_effect = {
+		set_duchy_integrated_effect = {
+			DUCHY = scope:current_duchy
+			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
+		}
+	}
+}
+
+integrate_duchy_anglo_saxon_cost_effect = {
+	add_prestige = 100
+	add_piety = -150
+	remove_short_term_gold = 250
+}
