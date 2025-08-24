@@ -184,3 +184,79 @@ integrate_duchy_anglo_saxon_cost_effect = {
 	add_piety = -150
 	remove_short_term_gold = 250
 }
+
+integrate_duchy_anglo_saxon_change_controlled_years_effect = {
+	$KINGDOM$ = { save_temporary_scope_as = current_kingdom }
+	if = {
+		limit = { scope:current_kingdom = title:k_east_anglia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_east_anglia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_eastseaxe }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_eastseaxe
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_cantia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_cantia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_sussex }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_sussex
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_wessex }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_wessex
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_mercia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_mercia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_northumbria }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_northumbria
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+}
+
+integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+	if = {
+		limit = { NOT = { has_variable = $KINGDOM$_integration_years } }
+		set_variable = { name = $KINGDOM$_integration_years value = 0 }
+	}
+	change_variable = {
+		name = $KINGDOM$_integration_years
+		$OPERATION$ = $VALUE$
+	}
+	clamp_variable = {
+		name = $KINGDOM$_integration_years
+		min = 0
+		max = 40
+	}
+}

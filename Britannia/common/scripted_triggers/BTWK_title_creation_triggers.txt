@@ -376,5 +376,99 @@ can_integrate_duchy_anglo_saxon_trigger = {
 		scope:duchy_scope = { has_variable = title_created_de_jure }
 	}
 	NOT = { has_title = scope:duchy_scope.de_jure_liege }
-	completely_controls = scope:duchy_scope		# Temporary - want to make into controlled for ~40 years
+	completely_controls = scope:duchy_scope
+	scope:duchy_scope = {
+		integrate_duchy_anglo_saxon_check_controlled_years_trigger = {
+			KINGDOM = scope:new_liege_scope
+		}
+	}
+}
+
+anglo_saxon_kingdom_injector_trigger = {
+	$KINGDOM$ = { save_temporary_scope_as = current_kingdom }
+	trigger_if = {
+		limit = { scope:current_kingdom = title:k_east_anglia }
+		$TRIGGER$ = {
+			KINGDOM = k_east_anglia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_eastseaxe }
+		$TRIGGER$ = {
+			KINGDOM = k_eastseaxe
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_cantia }
+		$TRIGGER$ = {
+			KINGDOM = k_cantia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_sussex }
+		$TRIGGER$ = {
+			KINGDOM = k_sussex
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_wessex }
+		$TRIGGER$ = {
+			KINGDOM = k_wessex
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_mercia }
+		$TRIGGER$ = {
+			KINGDOM = k_mercia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_northumbria }
+		$TRIGGER$ = {
+			KINGDOM = k_northumbria
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else = {
+		always = no
+	}
+}
+
+integrate_duchy_anglo_saxon_check_controlled_years_trigger = {
+	anglo_saxon_kingdom_injector_trigger = {
+		KINGDOM = $KINGDOM$
+		TRIGGER = integrate_duchy_anglo_saxon_check_controlled_years_helper_trigger
+		OTHER_ARGUMENTS = "OPERATION = >= VALUE = 40"
+	}
+}
+
+integrate_duchy_anglo_saxon_check_controlled_years_helper_trigger = {
+	save_temporary_scope_value_as = { 
+		name = controlled_years
+		value = {
+			if = {
+				limit = {
+					has_variable = $KINGDOM$_integration_years
+				}
+				value = this.var:$KINGDOM$_integration_years
+			}
+			else = {
+				value = 0
+			}
+		}
+	}
+	custom_description = {
+		text = current_duchy_has_been_controlled_for_40_years_trigger
+		subject = this
+		object = title:$KINGDOM$
+		value = scope:controlled_years
+		has_variable = $KINGDOM$_integration_years
+		this.var:$KINGDOM$_integration_years $OPERATION$ $VALUE$
+	}
 }
