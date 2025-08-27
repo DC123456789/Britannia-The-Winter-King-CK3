@@ -166,17 +166,18 @@ integrate_duchy_anglo_saxon_effect = {
 	save_scope_as = conqueror
 	$DUCHY$ = { save_scope_as = current_duchy }
 	$NEW_DE_JURE_LIEGE$ = { save_scope_as = new_de_jure_liege_title }
+	scope:current_duchy = {
+		set_duchy_integrated_effect = {
+			INTEGRATION_KINGDOM = scope:new_de_jure_liege_title
+		}
+	}
 	trigger_event = { id = titular_titles_anglosaxon.0003 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
 		trigger_event = { id = titular_titles_anglosaxon.0003 }
 	}
 	hidden_effect = {
-		scope:current_duchy = {
-			set_duchy_integrated_effect = {
-				INTEGRATION_KINGDOM = scope:new_de_jure_liege_title
-			}
-		}
+		scope:current_duchy = { check_de_jure_liege_effect = yes }
 	}
 }
 

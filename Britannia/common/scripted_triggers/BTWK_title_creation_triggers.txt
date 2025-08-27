@@ -376,6 +376,15 @@ can_integrate_duchy_anglo_saxon_trigger = {
 		scope:duchy_scope = { has_variable = title_created_de_jure }
 	}
 	NOT = { has_title = scope:duchy_scope.de_jure_liege }
+	custom_description = {
+		text = current_duchy_de_jure_neighbours_new_liege_or_is_capital
+		subject = scope:duchy_scope
+		object = scope:new_liege_scope
+		OR = {
+			scope:duchy_scope = { any_title_to_title_neighboring_duchy = { de_jure_liege = scope:new_liege_scope } }
+			scope:new_liege_scope.title_capital_county.duchy = scope:duchy_scope
+		}
+	}
 	completely_controls = scope:duchy_scope
 	scope:duchy_scope = {
 		integrate_duchy_anglo_saxon_check_controlled_years_trigger = {

@@ -199,6 +199,50 @@ titular_titles_anglosaxon.0002 = {
 	}
 }
 
+# Integration of duchy
+titular_titles_anglosaxon.0003 = {
+	type = character_event
+	title = titular_titles_anglosaxon.0003.t
+	desc = titular_titles_anglosaxon.0003.desc
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:current_duchy = { de_jure_liege = { save_scope_as = former_liege_kingdom } }
+		show_as_tooltip = {
+			scope:current_duchy = {
+				check_de_jure_liege_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				always = yes
+			}
+			text = titular_titles_anglosaxon.0003.new_liege
+		}
+		name = {
+			trigger = {
+				has_title = scope:former_liege_kingdom
+			}
+			text = titular_titles_anglosaxon.0003.former_liege
+		}
+		name = {
+			trigger = { 
+				always = yes
+			}
+			text = titular_titles_anglosaxon.0003.a
+		}
+	}
+}
+
 ##################################################
 # Romans
 ##################################################
@@ -1505,7 +1549,7 @@ titular_titles_test.1002 = {
 			variable = norse_duchy_list
 			if = {
 				limit = {
-					NOT = { title_capital_county = { title_province = { geographical_region = btwk_world_britannia_wales } } }
+					NOT = { title_capital_county = { title_province = { geographical_region = btwk_custom_wales } } }
 				}
 				remove_variable = title_created_de_jure
 			}

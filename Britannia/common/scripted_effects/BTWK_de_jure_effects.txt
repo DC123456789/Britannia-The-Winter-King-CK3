@@ -537,6 +537,21 @@ check_de_jure_liege_duchy_effect = {
 			set_capital_county = this.var:default_capital
 		}
 	}
+	
+	# Special rule for The Weald getting renamed to Sussex
+	if = {
+		limit = { 
+			this = title:d_the_weald 
+			NOT = { has_variable = custom_name }
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = title:k_sussex } }
+			set_title_name = SUSSEX_duchy
+		}
+		else = {
+			hidden_effect = { reset_title_name = yes }
+		}
+	}
 }
 
 check_de_jure_liege_kingdom_effect = {
