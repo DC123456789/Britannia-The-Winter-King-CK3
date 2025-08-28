@@ -211,6 +211,19 @@ check_de_jure_liege_county_effect = {
 	}
 	else_if = {
 		limit = {
+			has_variable = expansion_anglo_saxon_duchy
+			this.var:expansion_anglo_saxon_duchy = { 
+				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+				title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } 
+			}
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:expansion_anglo_saxon_duchy } }
+			set_de_jure_liege_title = this.var:expansion_anglo_saxon_duchy
+		}
+	}
+	else_if = {
+		limit = {
 			has_variable = anglo_saxon_duchy
 			this.var:anglo_saxon_duchy = {
 				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
@@ -221,6 +234,15 @@ check_de_jure_liege_county_effect = {
 				NOT = { has_variable = anglo_saxon_duchy_dependency }
 				this.var:anglo_saxon_duchy_dependency = { 
 					title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
+				}
+			}
+			NAND = {
+				has_variable = expansion_anglo_saxon_duchy
+				# If the expansion_anglo_saxon_duchy title was expanded but subsequently destroyed,
+				# then DO NOT use the base Anglo-Saxon duchy, this province should be considered part
+				# of the expansion Anglo-Saxon duchy for duchy destruction purposes as well
+				this.var:expansion_anglo_saxon_duchy = {
+					title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } 
 				}
 			}
 		}
@@ -234,6 +256,15 @@ check_de_jure_liege_county_effect = {
 			has_variable = secondary_anglo_saxon_duchy
 			this.var:secondary_anglo_saxon_duchy = { 
 				title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure } 
+			}
+			NAND = {
+				has_variable = expansion_anglo_saxon_duchy
+				# If the expansion_anglo_saxon_duchy title was expanded but subsequently destroyed,
+				# then DO NOT use the base Anglo-Saxon duchy, this province should be considered part
+				# of the expansion Anglo-Saxon duchy for duchy destruction purposes as well
+				this.var:expansion_anglo_saxon_duchy = {
+					title_has_de_jure_variable_trigger = { FLAG = title_expanded_de_jure } 
+				}
 			}
 		}
 		if = {

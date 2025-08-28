@@ -243,6 +243,129 @@ titular_titles_anglosaxon.0003 = {
 	}
 }
 
+# Annex the North Bank (Mercia)
+titular_titles_anglosaxon.0004 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0005 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0005 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_cilternsaete = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_south_angles = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_hwicce = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					title:d_berkshire.title_capital_county = title:c_dorchester
+				}
+				title:d_berkshire = {
+					set_variable = custom_capital
+					set_capital_county = title:c_vedonium
+				}
+			}
+			if = {
+				limit = {
+					title:k_wessex.title_capital_county = title:c_dorchester
+				}
+				title:k_wessex = {
+					set_variable = custom_capital
+					set_capital_county = title:c_venta
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0005 = {
+	type = character_event
+	title = titular_titles_anglosaxon.0005.t
+	desc = titular_titles_anglosaxon.0005.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:d_berkshire.de_jure_liege = { save_scope_as = former_kingdom }
+		show_as_tooltip = {
+			title:d_cilternsaete = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_south_angles = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_hwicce = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0005.a.conqueror
+		}
+		name = {
+			trigger = {
+				OR = {
+					has_title = former_kingdom
+					any_liege_or_above = { has_title = former_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0005.a.former_liege
+		}
+		name = {
+			text = titular_titles_anglosaxon.0005.a
+		}
+	}
+}
+
 ##################################################
 # Romans
 ##################################################
