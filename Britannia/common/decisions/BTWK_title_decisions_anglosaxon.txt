@@ -369,22 +369,15 @@ mercia_annex_north_bank_decision = {
 
 	is_shown = {
 		has_title = title:k_mercia
-		title:d_cilternsaete = {
-			NOT = { has_variable = title_expanded_de_jure }
-		}
+		NOT = { title:k_mercia = { has_variable = annexed_north_bank } }
 	}
 
 	is_valid = {
 		is_independent_ruler = yes
-		# government_is_not_tribal_trigger = yes
+		government_is_not_tribal_trigger = yes
 		prestige_level >= medium_prestige_level
 		piety >= 150
 		gold >= 100
-		custom_description = {
-			text = current_duchy_is_created_de_jure_trigger
-			object = title:d_berkshire
-			title:d_berkshire = { has_variable = title_created_de_jure }
-		}
 		completely_controls = title:c_dorchester
 		completely_controls = title:c_alchester
 		completely_controls = title:c_lechlade
@@ -473,6 +466,90 @@ mercia_annex_north_bank_decision = {
 			}
 		}
 		trigger_event = { id = titular_titles_anglosaxon.0004 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+create_berkshire_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = create_berkshire_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:d_berkshire.de_jure_liege
+			has_title = title:k_mercia
+		}
+		title:k_mercia = {
+			has_variable = annexed_north_bank
+		}
+		title:d_berkshire = {
+			NOT = { has_variable = title_expanded_de_jure }
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		government_is_not_tribal_trigger = yes
+		custom_description = {
+			text = current_duchy_is_created_de_jure_trigger
+			object = title:d_berkshire
+			title:d_berkshire = { has_variable = title_created_de_jure }
+		}
+		completely_controls = title:c_vedonium
+		OR = {
+			completely_controls = title:c_abingdon
+			completely_controls = title:c_wantage
+		}
+		completely_controls = title:c_reading
+		completely_controls = title:c_alaunodunum
+	}
+
+	effect = {
+		show_as_tooltip = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_title = title:k_mercia }
+			custom_tooltip = {
+				text = create_berkshire_decision_integration_allowed_effect_tt
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0006 }
 	}
 	
 	ai_potential = {

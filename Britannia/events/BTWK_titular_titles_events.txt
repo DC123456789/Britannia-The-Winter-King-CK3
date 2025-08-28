@@ -224,20 +224,23 @@ titular_titles_anglosaxon.0003 = {
 	option = {
 		name = {
 			trigger = { 
-				always = yes
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
 			}
-			text = titular_titles_anglosaxon.0003.new_liege
+			text = titular_titles_anglosaxon.0003.a.new_liege
 		}
 		name = {
 			trigger = {
-				has_title = scope:former_liege_kingdom
+				OR = {
+					has_title = scope:former_liege_kingdom
+					any_liege_or_above = { has_title = scope:former_liege_kingdom }
+				}
 			}
-			text = titular_titles_anglosaxon.0003.former_liege
+			text = titular_titles_anglosaxon.0003.a.former_liege
 		}
 		name = {
-			trigger = { 
-				always = yes
-			}
 			text = titular_titles_anglosaxon.0003.a
 		}
 	}
@@ -255,6 +258,7 @@ titular_titles_anglosaxon.0004 = {
 			limit = { NOT = { this = PREV } }
 			trigger_event = { id = titular_titles_anglosaxon.0005 }
 		}
+		title:k_mercia = { set_variable = annexed_north_bank }
 		# This is where the actual de jure shift happens
 		# It happens immediately after the notification events are fired,
 		# so that the correct tooltips are generated but the de jure shift 
@@ -338,6 +342,22 @@ titular_titles_anglosaxon.0005 = {
 					check_de_jure_liege_effect = yes
 				}
 			}
+			if = {
+				limit = {
+					title:d_berkshire.title_capital_county = title:c_dorchester
+				}
+				title:d_berkshire = {
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:c_vedonium }
+				}
+			}
+			if = {
+				limit = {
+					title:k_wessex.title_capital_county = title:c_dorchester
+				}
+				title:k_wessex = {
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:c_venta }
+				}
+			}
 		}
 	}
 
@@ -354,14 +374,114 @@ titular_titles_anglosaxon.0005 = {
 		name = {
 			trigger = {
 				OR = {
-					has_title = former_kingdom
-					any_liege_or_above = { has_title = former_kingdom }
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
 				}
 			}
 			text = titular_titles_anglosaxon.0005.a.former_liege
 		}
 		name = {
 			text = titular_titles_anglosaxon.0005.a
+		}
+	}
+}
+
+# Create Berkshire
+titular_titles_anglosaxon.0006 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0007 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0007 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0007 = {
+	type = character_event
+	title = titular_titles_anglosaxon.0007.t
+	desc = titular_titles_anglosaxon.0007.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:d_berkshire.de_jure_liege = { save_scope_as = former_kingdom }
+		show_as_tooltip = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0007.a.conqueror
+		}
+		name = {
+			text = titular_titles_anglosaxon.0007.a
 		}
 	}
 }
