@@ -352,6 +352,9 @@ BTWK_de_jure_setup = {
 			title:c_alaunodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_woking = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_godalming = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_noviomagus_cantiacorum = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_kingston = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_the_downs = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_woking }
 			set_variable = { name = creation_requirement_2 value = title:c_alaunodunum }
 			set_variable = { name = creation_requirement_2_alt value = title:c_godalming }
@@ -446,6 +449,7 @@ BTWK_de_jure_setup = {
 			title:c_andover = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_reading = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_spinae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_crondall = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_venta }
 			set_variable = { name = creation_requirement_2 value = title:c_andover }
 			set_variable = { name = creation_requirement_2_alt value = title:c_basing }
@@ -459,6 +463,9 @@ BTWK_de_jure_setup = {
 			title:c_dorchester = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_lechlade = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_wychwood = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_reading = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_spinae = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_alaunodunum = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_dorchester }
 			set_variable = { name = creation_requirement_1_alt value = title:c_vedonium }
 			set_variable = { name = creation_requirement_2 value = title:c_abingdon }
@@ -468,6 +475,7 @@ BTWK_de_jure_setup = {
 			title:c_aylesbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_chiltern_hills = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_bensington = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dorchester = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_aylesbury }
 			set_variable = { name = creation_requirement_1_alt value = title:c_bensington }
 		}
@@ -480,6 +488,7 @@ BTWK_de_jure_setup = {
 			title:c_barbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_malmesbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_chippenham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_durocornovium = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_sorviodunum }
 			set_variable = { name = creation_requirement_2 value = title:c_ambra }
 			set_variable = { name = creation_requirement_2_alt value = title:c_barbury }
@@ -631,6 +640,7 @@ BTWK_de_jure_setup = {
 			title:c_bannaventa = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_bedford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_brinavae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_alchester = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_bannaventa }
 			set_variable = { name = creation_requirement_2 value = title:c_lactodorum }
 		}
@@ -715,6 +725,8 @@ BTWK_de_jure_setup = {
 			title:c_husmerae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_alcester = { set_variable = { name = anglo_saxon_duchy value = PREV } }
 			title:c_warwick = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lechlade = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_wychwood = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
 			set_variable = { name = creation_requirement_1 value = title:c_avona }
 			set_variable = { name = creation_requirement_1_alt value = title:c_glevum }
 			set_variable = { name = creation_requirement_2 value = title:c_corinium }
@@ -722,7 +734,9 @@ BTWK_de_jure_setup = {
 		}
 		
 		title:k_mercia = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }		# Only after reorganization
 			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 			title:d_grentbryce = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 			title:d_gyrwas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
@@ -1958,6 +1972,19 @@ BTWK_de_jure_setup = {
 			if = {
 				limit = { has_variable = secondary_anglo_saxon_duchy }
 				this.var:secondary_anglo_saxon_duchy = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_anglo_saxon_duchy }
+				this.var:expansion_anglo_saxon_duchy = { 
 					add_to_variable_list = {
 						name = dynamic_de_jure_territory
 						target = PREV

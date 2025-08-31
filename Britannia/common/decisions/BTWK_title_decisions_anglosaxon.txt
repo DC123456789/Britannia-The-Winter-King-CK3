@@ -288,25 +288,47 @@ integrate_duchy_anglo_saxon_decision = {
 		}
 		hidden_effect = {
 			generate_integrate_kingdom_region_list = yes
-			every_in_list = {
-				variable = generate_integrate_duchy_anglo_saxon_list
+			while = {
 				limit = {
-					ROOT = {
-						potential_integrate_duchy_anglo_saxon_trigger = {
-							DUCHY = prev.var:duchy
-							NEW_LIEGE = prev.var:new_liege
-						}
-						can_integrate_duchy_anglo_saxon_trigger = {
-							DUCHY = prev.var:duchy
-							NEW_LIEGE = prev.var:new_liege
+					any_in_list = {
+						variable = integrate_duchy_anglo_saxon_list
+						ROOT = {
+							can_integrate_duchy_anglo_saxon_cost_trigger = yes
+							potential_integrate_duchy_anglo_saxon_trigger = {
+								DUCHY = prev.var:duchy
+								NEW_LIEGE = prev.var:new_liege
+							}
+							can_integrate_duchy_anglo_saxon_trigger = {
+								DUCHY = prev.var:duchy
+								NEW_LIEGE = prev.var:new_liege
+							}
 						}
 					}
 				}
-				ROOT = {
-					integrate_duchy_anglo_saxon_effect = {
-						DUCHY = prev.var:duchy
-						NEW_DE_JURE_LIEGE = prev.var:new_liege
+				set_variable = in_while
+				random_in_list = {
+					variable = integrate_duchy_anglo_saxon_list
+					limit = {
+						ROOT = {
+							can_integrate_duchy_anglo_saxon_cost_trigger = yes
+							potential_integrate_duchy_anglo_saxon_trigger = {
+								DUCHY = prev.var:duchy
+								NEW_LIEGE = prev.var:new_liege
+							}
+							can_integrate_duchy_anglo_saxon_trigger = {
+								DUCHY = prev.var:duchy
+								NEW_LIEGE = prev.var:new_liege
+							}
+						}
 					}
+					ROOT = {
+						integrate_duchy_anglo_saxon_cost_effect = yes
+						integrate_duchy_anglo_saxon_effect = {
+							DUCHY = prev.var:duchy
+							NEW_DE_JURE_LIEGE = prev.var:new_liege
+						}
+					}
+					generate_integrate_kingdom_region_list = yes
 				}
 			}
 			remove_variable = selected_title
@@ -334,3 +356,218 @@ integrate_duchy_anglo_saxon_decision = {
 		}
 	}
 }
+
+mercia_annex_north_bank_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = mercia_annex_north_bank_decision_desc
+
+	is_shown = {
+		has_title = title:k_mercia
+		NOT = { title:k_mercia = { has_variable = annexed_north_bank } }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		government_is_not_tribal_trigger = yes
+		prestige_level >= medium_prestige_level
+		piety >= 150
+		gold >= 100
+		completely_controls = title:c_dorchester
+		completely_controls = title:c_alchester
+		completely_controls = title:c_lechlade
+		completely_controls = title:c_wychwood
+		NOT = { has_title = title:d_berkshire.de_jure_liege }
+	}
+
+	effect = {
+		add_prestige = 100
+		add_piety = -75
+		remove_short_term_gold = 100
+		if = {
+			limit = {
+				NOR = {
+					title:d_cilternsaete = { has_variable = title_created_de_jure }
+					title:d_south_angles = { has_variable = title_created_de_jure }
+					title:d_hwicce = { has_variable = title_created_de_jure }
+				}
+			}
+			custom_tooltip = {
+				text = mercia_annex_north_bank_decision_effect_tt2
+			}
+		}
+		else = {
+			if = {
+				limit = {
+					title:d_cilternsaete = { has_variable = title_created_de_jure }
+				}
+				show_as_tooltip = {
+					title:d_cilternsaete = { 
+						save_scope_as = title_expanded_de_jure_pretend
+						every_in_list = {
+							variable = de_jure_affected_territory
+							show_as_tooltip = {
+								check_de_jure_liege_effect = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					title:d_south_angles = { has_variable = title_created_de_jure }
+				}
+				show_as_tooltip = {
+					title:d_south_angles = { 
+						save_scope_as = title_expanded_de_jure_pretend
+						every_in_list = {
+							variable = de_jure_affected_territory
+							show_as_tooltip = {
+								check_de_jure_liege_effect = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					title:d_hwicce = { has_variable = title_created_de_jure }
+				}
+				show_as_tooltip = {
+					title:d_hwicce = { 
+						save_scope_as = title_expanded_de_jure_pretend
+						every_in_list = {
+							variable = de_jure_affected_territory
+							show_as_tooltip = {
+								check_de_jure_liege_effect = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						NOT = { title:d_cilternsaete = { has_variable = title_created_de_jure } }
+						NOT = { title:d_south_angles = { has_variable = title_created_de_jure } }
+						NOT = { title:d_hwicce = { has_variable = title_created_de_jure } }
+					}
+				}
+				title:d_hwicce = { 		# Hack to make this show up at the bottom
+					custom_tooltip = {
+						text = mercia_annex_north_bank_decision_effect_tt
+					}
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0004 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+create_berkshire_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = create_berkshire_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:d_berkshire.de_jure_liege
+			has_title = title:k_mercia
+		}
+		title:k_mercia = {
+			has_variable = annexed_north_bank
+		}
+		title:d_berkshire = {
+			NOT = { has_variable = title_expanded_de_jure }
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		government_is_not_tribal_trigger = yes
+		custom_description = {
+			text = current_duchy_is_created_de_jure_trigger
+			object = title:d_berkshire
+			title:d_berkshire = { has_variable = title_created_de_jure }
+		}
+		completely_controls = title:c_vedonium
+		OR = {
+			completely_controls = title:c_abingdon
+			completely_controls = title:c_wantage
+		}
+		completely_controls = title:c_reading
+		completely_controls = title:c_alaunodunum
+	}
+
+	effect = {
+		show_as_tooltip = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_title = title:k_mercia }
+			custom_tooltip = {
+				text = create_berkshire_decision_integration_allowed_effect_tt
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0006 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+# TODO
+# create_berkshire_decision
+# Available for de jure liege of Dorcicscir after mercia_annex_north_bank_decision has been taken
+# And also possible Mercia? Probably want different loc for each at least
+
+# expand_surrey_decision
+# If duchy tier and holds Surrey but not East Cantware, or holds the de jure liege of Surrey
+# but not that of East Cantware
+
+# create_hampshire_decision (maybe)
