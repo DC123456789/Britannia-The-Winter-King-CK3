@@ -30,6 +30,7 @@ integrate_kingdom_region_decision = {
 	}
 
 	is_valid_showing_failures_only = {
+		can_integrate_kingdom_region_cost_trigger = yes
 		custom_tooltip = {
 			text = integrate_kingdom_region_decision_any_integratable_tt
 			any_held_title = {
@@ -67,28 +68,51 @@ integrate_kingdom_region_decision = {
 					NEW_DE_JURE_LIEGE = prev.var:selected_title.var:new_liege
 				}
 			}
+			integrate_kingdom_region_cost_effect = yes
 		}
 		hidden_effect = {
 			generate_integrate_kingdom_region_list = yes
-			every_in_list = {
-				variable = integrate_kingdom_region_list
+			while = {
 				limit = {
-					ROOT = {
-						potential_integrate_kingdom_region_trigger = {
-							KINGDOM_REGION = prev.var:kingdom_region
-							NEW_LIEGE = prev.var:new_liege
-						}
-						can_integrate_kingdom_region_trigger = {
-							KINGDOM_REGION = prev.var:kingdom_region
-							NEW_LIEGE = prev.var:new_liege
+					any_in_list = {
+						variable = integrate_kingdom_region_list
+						ROOT = {
+							can_integrate_kingdom_region_cost_trigger = yes
+							potential_integrate_kingdom_region_trigger = {
+								KINGDOM_REGION = prev.var:kingdom_region
+								NEW_LIEGE = prev.var:new_liege
+							}
+							can_integrate_kingdom_region_trigger = {
+								KINGDOM_REGION = prev.var:kingdom_region
+								NEW_LIEGE = prev.var:new_liege
+							}
 						}
 					}
 				}
-				ROOT = {
-					integrate_kingdom_region_effect = {
-						REGION_BASE = prev.var:kingdom_region
-						NEW_DE_JURE_LIEGE = prev.var:new_liege
+				set_variable = in_while
+				random_in_list = {
+					variable = integrate_kingdom_region_list
+					limit = {
+						ROOT = {
+							can_integrate_kingdom_region_cost_trigger = yes
+							potential_integrate_kingdom_region_trigger = {
+								KINGDOM_REGION = prev.var:kingdom_region
+								NEW_LIEGE = prev.var:new_liege
+							}
+							can_integrate_kingdom_region_trigger = {
+								KINGDOM_REGION = prev.var:kingdom_region
+								NEW_LIEGE = prev.var:new_liege
+							}
+						}
 					}
+					ROOT = {
+						integrate_kingdom_region_cost_effect = yes
+						integrate_kingdom_region_effect = {
+							REGION_BASE = prev.var:kingdom_region
+							NEW_DE_JURE_LIEGE = prev.var:new_liege
+						}
+					}
+					generate_integrate_kingdom_region_list = yes
 				}
 			}
 			remove_variable = selected_title
