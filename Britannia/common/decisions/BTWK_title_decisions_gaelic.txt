@@ -33,20 +33,10 @@ create_lleyn_decision = {
 
 	effect = {
 		add_prestige = 200
+		add_legitimacy = 50
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
-			create_title_and_vassal_change = {
-				type = created
-				save_scope_as = title_change
-				add_claim_on_loss = no
-			}
-			title:k_lleyn = {
-				change_title_holder = {
-					holder = root
-					change = scope:title_change
-				}
-			}
-			resolve_title_and_vassal_change = scope:title_change
+			get_title = title:k_lleyn
 		}
 		title:k_lleyn = { 
 			save_scope_as = title_created_de_jure_pretend
@@ -68,6 +58,11 @@ create_lleyn_decision = {
 			}
 		}
 		trigger_event = { id = titular_titles_irish.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
 	}
 	
 	ai_potential = {
@@ -120,6 +115,7 @@ destroy_lleyn_decision = {
 
 	effect = {
 		add_prestige = 100
+		add_legitimacy = 25
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
 			destroy_title = title:k_lleyn
@@ -186,20 +182,10 @@ create_irish_cymru_decision = {
 
 	effect = {
 		add_prestige = 500
+		add_legitimacy = 75
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
-			create_title_and_vassal_change = {
-				type = created
-				save_scope_as = title_change
-				add_claim_on_loss = no
-			}
-			title:e_cymru = {
-				change_title_holder = {
-					holder = root
-					change = scope:title_change
-				}
-			}
-			resolve_title_and_vassal_change = scope:title_change
+			get_title = title:e_cymru
 		}
 		title:e_cymru = {
 			every_in_list = {
@@ -215,6 +201,11 @@ create_irish_cymru_decision = {
 			name = unavailable_unique_decisions
 			target = flag:create_irish_cymru_decision
 		}
+	}
+	
+	cost = {
+		gold = { value = 300 }
+		piety = { value = 150 }
 	}
 	
 	ai_potential = {

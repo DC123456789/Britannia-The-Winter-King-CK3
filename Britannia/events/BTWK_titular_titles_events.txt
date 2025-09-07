@@ -58,6 +58,19 @@ titular_titles_anglosaxon.0001 = {
 				trigger = { scope:new_duchy_title = title:d_berkshire }
 				desc = titular_titles_anglosaxon.0001.desc.d_berkshire
 			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_hwicce }
+				desc = titular_titles_anglosaxon.0001.desc.d_hwicce
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_south_angles }
+				desc = titular_titles_anglosaxon.0001.desc.d_south_angles
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_hiccas }
+				desc = titular_titles_anglosaxon.0001.desc.d_hiccas
+			}
+			desc = t
 			desc = titular_titles_anglosaxon.0001.desc.fallback
 		}
 		desc = titular_titles_anglosaxon.0001.desc.outro
@@ -442,7 +455,6 @@ titular_titles_anglosaxon.0007 = {
 	}
 	
 	immediate = {
-		title:d_berkshire.de_jure_liege = { save_scope_as = former_kingdom }
 		show_as_tooltip = {
 			title:d_berkshire = {
 				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
@@ -482,6 +494,83 @@ titular_titles_anglosaxon.0007 = {
 		}
 		name = {
 			text = titular_titles_anglosaxon.0007.a
+		}
+	}
+}
+
+# Expand Surrey
+titular_titles_anglosaxon.0008 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0009 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0009 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_surrey = {
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0009 = {
+	type = character_event
+	title = titular_titles_anglosaxon.0009.t
+	desc = titular_titles_anglosaxon.0009.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:d_westcantware.de_jure_liege = { save_scope_as = former_kingdom }
+		show_as_tooltip = {
+			title:d_surrey = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0009.a.conqueror
+		}
+		name = {
+			trigger = {
+				OR = {
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0009.a.former_liege
+		}
+		name = {
+			text = titular_titles_anglosaxon.0009.a
 		}
 	}
 }

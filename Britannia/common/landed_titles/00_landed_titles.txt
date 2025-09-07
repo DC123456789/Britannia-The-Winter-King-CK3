@@ -13585,7 +13585,7 @@ e_britannia = {
 				}
 			}
 			
-			cultural_names = {
+			cultural_names = {
 				name_list_roman = cn_mediolensia
 				name_list_romanogallic = cn_mediolensia
 				name_list_romanobritish = cn_mediolensia
@@ -35081,7 +35081,7 @@ e_britannia = {
 		
 		can_create = {
 			can_create_briton_kingdom_trigger = yes
-			highest_held_title_tier < tier_king
+			highest_held_title_tier < tier_kingdom
 			has_primary_title = title:d_ynys_man
 			realm_size >= 6
 		}
@@ -36666,6 +36666,29 @@ e_aengland = {
 	}
 }
 
+k_taifals_britannia = {
+	color={ 140 120 115 }
+	
+	capital = c_lindum		# Placeholder, will tend to get moved around
+
+	de_jure_drift_disabled = yes
+	can_be_named_after_dynasty = no
+
+	ai_primary_priority = {
+		if = {
+			limit = {
+				is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+			}
+			add = @correct_culture_primary_score
+		}
+	}
+
+	can_create = {
+		save_temporary_scope_as = current_culture
+		is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+	}
+}
+
 e_western_roman_empire = {
 	color = { 167 10 100 }
 	landless = yes
@@ -36728,12 +36751,12 @@ e_roman_britannia = {
 	ai_primary_priority = {
 		if = {
 			limit = {
-				has_cultural_pillar = heritage_latin
+				culture = { has_cultural_pillar = heritage_latin }
 			}
 			add = @always_primary_score
 		}
 	}
-			
+	
 	cultural_names = {
 		name_list_french = cn_britannia_french
 		name_list_norman = cn_britannia_norman
@@ -36753,7 +36776,7 @@ e_roman_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					has_cultural_pillar = heritage_latin
+					culture = { has_cultural_pillar = heritage_latin }
 				}
 				add = @correct_culture_primary_score
 			}
@@ -36775,7 +36798,7 @@ e_roman_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					has_cultural_pillar = heritage_latin
+					culture = { has_cultural_pillar = heritage_latin }
 				}
 				add = @better_than_the_alternatives_score
 			}
@@ -36797,7 +36820,7 @@ e_roman_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					has_cultural_pillar = heritage_latin
+					culture = { has_cultural_pillar = heritage_latin }
 				}
 				add = @better_than_the_alternatives_score
 			}
@@ -36819,7 +36842,7 @@ e_roman_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					has_cultural_pillar = heritage_latin
+					culture = { has_cultural_pillar = heritage_latin }
 				}
 				add = @better_than_the_alternatives_score
 			}
@@ -36841,7 +36864,7 @@ e_roman_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					has_cultural_pillar = heritage_latin
+					culture = { has_cultural_pillar = heritage_latin }
 				}
 				add = @better_than_the_alternatives_score
 			}

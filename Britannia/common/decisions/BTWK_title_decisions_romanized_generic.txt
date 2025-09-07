@@ -1,0 +1,142 @@
+﻿#########################################################################
+# Romanized Generic Title Decisions										#
+#########################################################################
+
+found_romanized_germanic_kingdom_britannia_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = found_romanized_germanic_kingdom_britannia_decision_desc
+
+	is_shown = {
+		is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+		NOT = { title:k_taifals_britannia = { has_variable = title_created_de_jure } }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		is_culture_or_descendant_including_romance_w_tooltip_trigger = { CULTURE = culture:taifal }
+		custom_tooltip = {
+			text = holds_no_kingdoms_outside_of_britannia_tt
+			any_held_title = {
+				OR = {
+					tier < tier_kingdom
+					title_capital_county.title_province = { geographical_region = geographical_region:btwk_world_britannia }
+				}
+			}
+		}
+		sub_realm_size >= 6
+		custom_tooltip = {
+			text = primary_title_is_in_britannia_tt
+			primary_title.title_capital_county.title_province = {
+				geographical_region = geographical_region:btwk_world_britannia
+			}
+		}
+		trigger_if = {
+			limit = {
+				primary_title.title_capital_county.title_province = {
+					geographical_region = geographical_region:btwk_world_britannia
+				}
+			}
+			primary_title.title_capital_county.var:default_duchy.var:default_kingdom = {
+				save_temporary_scope_as = capital_briton_kingdom
+			}
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_tt
+				completely_controls = scope:capital_briton_kingdom.title_capital_county
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_tt
+					has_title = scope:capital_briton_kingdom
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_tt
+					scope:capital_briton_kingdom = {
+						any_de_jure_county = { count > 1 }
+						any_de_jure_county = { 
+							percent >= 0.75
+							root = { completely_controls = prev }
+						}
+					}
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_tt
+						scope:capital_briton_kingdom = { any_de_jure_county = { count < 1 } }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_placeholder_tt
+				always = no
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_placeholder_tt
+					always = no
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_placeholder_tt
+					always = no
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_placeholder_tt
+						always = no
+					}
+				}
+			}
+		}
+	}
+
+	effect = {
+		add_prestige = 400
+		add_legitimacy = 50
+		get_title = title:k_taifals_britannia
+		custom_tooltip = {
+			text = found_romanized_germanic_kingdom_britannia_decision_tt
+		}
+		show_as_tooltip = {
+			primary_title.title_capital_county = {
+				if = {
+					limit = { title_province = { geographical_region = geographical_region:btwk_world_britannia } }
+					this.var:default_duchy.var:default_kingdom = {
+						every_direct_de_jure_vassal_title = {
+							save_scope_as = integrated_kingdom_pretend
+							title:k_taifals_britannia = { save_scope_as = integrated_kingdom_pretend_value }
+							check_de_jure_liege_effect = yes
+						}
+						if = {
+							limit = { is_title_created = yes }
+							destroy_title = this
+						}
+					}
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0001 }
+	}
+	
+	cost = {
+		gold = { value = 200 }
+		piety = { value = 100 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
