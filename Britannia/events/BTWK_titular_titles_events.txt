@@ -3,6 +3,7 @@ namespace = titular_titles_anglosaxon
 namespace = titular_titles_roman
 namespace = titular_titles_briton
 namespace = titular_titles_irish
+namespace = titular_titles_romanized_germanic
 namespace = titular_titles_test
 
 ##################################################
@@ -70,7 +71,6 @@ titular_titles_anglosaxon.0001 = {
 				trigger = { scope:new_duchy_title = title:d_hiccas }
 				desc = titular_titles_anglosaxon.0001.desc.d_hiccas
 			}
-			desc = t
 			desc = titular_titles_anglosaxon.0001.desc.fallback
 		}
 		desc = titular_titles_anglosaxon.0001.desc.outro
@@ -1758,6 +1758,132 @@ titular_titles_irish.0006 = {
 		name = titular_titles_irish.0006.a
 		trigger = { always = no }
 		fallback = yes
+	}
+}
+
+##################################################
+# Romanized Germanic
+##################################################
+
+# Kingdom of the Taifals (British)
+titular_titles_romanized_germanic.0001 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_romanized_germanic.0002 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_romanized_germanic.0002 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			scope:capital_kingdom = {
+				set_global_variable = {
+					name = current_romanized_germanic_kingdom_culture
+					value = scope:founder.culture.var:ancestral_non_roman_culture
+				}
+				# Scopes don't play well with title localization so we use global variables as a workaround
+				set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME }
+				set_variable = custom_name
+				if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
+					set_coa = k_taifals_britannia
+				}
+				if = {
+					limit = {
+						NOT = { holder ?= scope:founder }
+					}
+					create_title_and_vassal_change = {
+						type = usurped
+						save_scope_as = title_change
+						add_claim_on_loss = yes
+					}
+					change_title_holder = {
+						holder = scope:founder
+						change = scope:title_change
+					}
+					resolve_title_and_vassal_change = scope:title_change
+				}
+			}
+			scope:founder.culture.var:ancestral_non_roman_culture = { 
+				set_variable = { name = britannia_cultural_kingdom_title value = scope:capital_kingdom }
+				scope:capital_kingdom = {
+					set_variable = { name = romanized_germanic_kingdom_culture value = prev }
+				}
+			}
+		}
+	}
+}
+
+titular_titles_romanized_germanic.0002 = {
+	type = character_event
+	title = titular_titles_romanized_germanic.0002.t
+	desc = titular_titles_romanized_germanic.0002.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		show_as_tooltip = {
+			scope:capital_kingdom = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME }
+				if = {
+					limit = {
+						NOT = { holder ?= scope:founder }
+					}
+					create_title_and_vassal_change = {
+						type = usurped
+						save_scope_as = title_change
+						add_claim_on_loss = yes
+					}
+					change_title_holder = {
+						holder = scope:founder
+						change = scope:title_change
+					}
+					resolve_title_and_vassal_change = scope:title_change
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_romanized_germanic.0002.a.founder
+		}
+		name = {
+			trigger = {
+				OR = {
+					AND = {
+						has_title = scope:capital_kingdom
+						NOT = { this = scope:founder }
+					}
+					any_liege_or_above = {
+						AND = {
+							has_title = scope:capital_kingdom
+							NOT = { this = scope:founder }
+						}
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0002.a.former_holder
+		}
+		name = {
+			text = titular_titles_romanized_germanic.0002.a
+		}
 	}
 }
 

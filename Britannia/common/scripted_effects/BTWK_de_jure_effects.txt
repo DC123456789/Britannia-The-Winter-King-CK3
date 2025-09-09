@@ -478,6 +478,16 @@ check_de_jure_liege_duchy_effect = {
 			set_de_jure_liege_title = scope:new_de_jure_liege
 		}
 	}
+	else_if = {
+		limit = {
+			title_has_de_jure_variable_trigger = { FLAG = title_created_de_jure }
+			has_variable = title_formed_liege
+		}
+		if = {
+			limit = { NOT = { de_jure_liege = this.var:title_formed_liege } }
+			set_de_jure_liege_title = this.var:title_formed_liege
+		}
+	}
 	# else_if = {
 		# limit = {
 			# has_variable_list = expansion_kingdoms
