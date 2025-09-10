@@ -33,6 +33,85 @@ found_romanized_germanic_kingdom_britannia_decision = {
 	}
 
 	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		is_culture_or_descendant_including_romance_w_tooltip_trigger = { CULTURE = culture:taifal }
+		custom_tooltip = {
+			text = holds_no_kingdoms_outside_of_britannia_tt
+			any_held_title = {
+				OR = {
+					tier < tier_kingdom
+					title_capital_county.title_province = { geographical_region = geographical_region:btwk_world_britannia }
+				}
+			}
+		}
+		sub_realm_size >= 6
+		custom_tooltip = {
+			text = primary_title_is_in_britannia_tt
+			primary_title.title_capital_county.title_province = {
+				geographical_region = geographical_region:btwk_world_britannia
+			}
+		}
+		trigger_if = {
+			limit = {
+				primary_title.title_capital_county.title_province = {
+					geographical_region = geographical_region:btwk_world_britannia
+				}
+			}
+			primary_title.title_capital_county.var:default_duchy.var:default_kingdom = {
+				save_temporary_scope_as = capital_briton_kingdom
+			}
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_tt
+				completely_controls = scope:capital_briton_kingdom.title_capital_county
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_tt
+					has_title = scope:capital_briton_kingdom
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_tt
+					scope:capital_briton_kingdom = {
+						any_de_jure_county = { count > 1 }
+						any_de_jure_county = { 
+							percent >= 0.75
+							root = { completely_controls = prev }
+						}
+					}
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_tt
+						scope:capital_briton_kingdom = { any_de_jure_county = { count < 1 } }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_placeholder_tt
+				always = no
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_placeholder_tt
+					always = no
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_placeholder_tt
+					always = no
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_placeholder_tt
+						always = no
+					}
+				}
+			}
+		}
 	}
 
 	effect = {
