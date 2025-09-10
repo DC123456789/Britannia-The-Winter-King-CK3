@@ -4,7 +4,7 @@
 
 found_romanized_germanic_kingdom_britannia_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
 	}
 	decision_group_type = major
 
@@ -20,8 +20,8 @@ found_romanized_germanic_kingdom_britannia_decision = {
 					has_cultural_pillar = heritage_romanized_germanic
 					has_cultural_pillar = heritage_iranian
 				}
+				NOT = { has_variable = britannia_cultural_kingdom_title }
 			}
-			NOT = { has_variable = britannia_cultural_kingdom_title }
 		}
 		highest_held_title_tier < tier_empire
 		any_held_title = {
@@ -35,7 +35,7 @@ found_romanized_germanic_kingdom_britannia_decision = {
 	is_valid = {
 		is_independent_ruler = yes
 		highest_held_title_tier < tier_empire
-		is_culture_or_descendant_including_romance_w_tooltip_trigger = { CULTURE = culture:taifal }
+		prestige_level >= medium_prestige_level
 		custom_tooltip = {
 			text = holds_no_kingdoms_outside_of_britannia_tt
 			any_held_title = {
@@ -167,4 +167,87 @@ found_romanized_germanic_kingdom_britannia_decision = {
 	}
 }
 
-# found_romanized_germanic_empire_britannia_decision
+found_romanized_germanic_empire_britannia_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = found_romanized_germanic_empire_britannia_decision_desc
+
+	is_shown = {
+		culture = {
+			has_variable = ancestral_non_roman_culture
+			this.var:ancestral_non_roman_culture = {
+				OR = {
+					has_cultural_pillar = heritage_romanized_germanic
+					has_cultural_pillar = heritage_iranian
+				}
+			}
+		}
+		highest_held_title_tier < tier_empire
+		NOT = { e_romanized_germanic_britannia.var:romanized_germanic_empire_culture ?= root.var:ancestral_non_roman_culture }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		custom_tooltip = {
+			NOT = { exists = title:e_western_roman_empire.holder }
+			text = no_wre_emp_exists_tt
+		}
+		trigger_if = {
+			limit = { exists = title:e_romanized_germanic_britannia.holder }
+			custom_tooltip = {
+				NOT = { exists = title:e_romanized_germanic_britannia.holder }
+				text = no_romanized_germanic_britannia_emp_exists_tt
+			}
+		}
+		prestige_level >= high_prestige_level
+		sub_realm_size >= 220
+		save_temporary_scope_as = founder
+		custom_tooltip = {
+			text = has_created_romanized_germanic_kingdom_britannia_for_culture_tt
+			culture = {
+				has_variable = ancestral_non_roman_culture
+				this.var:ancestral_non_roman_culture = {
+					has_variable = britannia_cultural_kingdom_title
+				}
+			}
+		}
+		completely_controls = title:c_londinium
+		completely_controls = title:c_corinium
+		completely_controls = title:c_lindum
+		completely_controls = title:c_eburacum
+	}
+
+	effect = {
+		add_prestige = 1000
+		add_legitimacy = 100
+		save_scope_as = founder
+		show_as_tooltip = {
+			custom_tooltip = {
+				text = found_romanized_germanic_empire_britannia_decision_tt
+			}
+			custom_tooltip = {
+				text = romanized_germanic_britannia_de_jure_shift_tt
+			}
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0003 }
+	}
+	
+	cost = {
+		gold = { value = 500 }
+		piety = { value = 300 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

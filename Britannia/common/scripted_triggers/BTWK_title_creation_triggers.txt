@@ -344,17 +344,14 @@ can_integrate_kingdom_region_trigger = {
 		REGION = scope:kingdom_region_scope.var:kingdom_geographical_region_var
 	}
 	custom_description = {
-		text = current_kingdom_region_empire_is_held_or_holds_no_territory_in_region_trigger
+		text = current_kingdom_region_empire_is_holds_no_territory_in_region_trigger
 		object = scope:kingdom_region_scope
 		scope:kingdom_region_scope.var:kingdom_region_empire = {
 			save_temporary_scope_as = old_liege_title
-			OR = {
-				holder ?= prev
-				NOT = {
-					any_county_in_region = {
-						region = scope:kingdom_region_scope.var:kingdom_geographical_region_var
-						scope:old_liege_title.holder = { completely_controls = prev }
-					}
+			NOT = {
+				any_county_in_region = {
+					region = scope:kingdom_region_scope.var:kingdom_geographical_region_var
+					scope:old_liege_title.holder ?= { completely_controls = prev }
 				}
 			}
 		}

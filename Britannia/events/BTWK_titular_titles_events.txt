@@ -1765,7 +1765,7 @@ titular_titles_irish.0006 = {
 # Romanized Germanic
 ##################################################
 
-# Kingdom of the Taifals (British)
+# Romanized Germanic Kingdom (Britannia)
 titular_titles_romanized_germanic.0001 = {
 	type = character_event
 	hidden = yes
@@ -1783,10 +1783,6 @@ titular_titles_romanized_germanic.0001 = {
 		# has already occured by the time the players actually see it
 		hidden_effect = {
 			scope:capital_kingdom = {
-				set_global_variable = {
-					name = current_romanized_germanic_kingdom_culture
-					value = scope:founder.culture.var:ancestral_non_roman_culture
-				}
 				# Scopes don't play well with title localization so we have to make different keys for each culture
 				if = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
@@ -1839,7 +1835,7 @@ titular_titles_romanized_germanic.0001 = {
 					else_if = {
 						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_1 } }
 						set_global_variable = {
-							name = romanized_germanic_kingdom_britannia_culture_0
+							name = romanized_germanic_kingdom_britannia_culture_1
 							value = scope:founder.culture.var:ancestral_non_roman_culture
 						}
 						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_1 }
@@ -1848,7 +1844,7 @@ titular_titles_romanized_germanic.0001 = {
 					else_if = {
 						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_2 } }
 						set_global_variable = {
-							name = romanized_germanic_kingdom_britannia_culture_0
+							name = romanized_germanic_kingdom_britannia_culture_2
 							value = scope:founder.culture.var:ancestral_non_roman_culture
 						}
 						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_2 }
@@ -1857,27 +1853,12 @@ titular_titles_romanized_germanic.0001 = {
 					else_if = {
 						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_3 } }
 						set_global_variable = {
-							name = romanized_germanic_kingdom_britannia_culture_0
+							name = romanized_germanic_kingdom_britannia_culture_3
 							value = scope:founder.culture.var:ancestral_non_roman_culture
 						}
 						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_3 }
 						set_variable = custom_name
 					}
-				}
-				if = {
-					limit = {
-						NOT = { holder ?= scope:founder }
-					}
-					create_title_and_vassal_change = {
-						type = usurped
-						save_scope_as = title_change
-						add_claim_on_loss = yes
-					}
-					change_title_holder = {
-						holder = scope:founder
-						change = scope:title_change
-					}
-					resolve_title_and_vassal_change = scope:title_change
 				}
 			}
 			scope:founder.culture.var:ancestral_non_roman_culture = { 
@@ -1905,6 +1886,11 @@ titular_titles_romanized_germanic.0002 = {
 		show_as_tooltip = {
 			scope:capital_kingdom = {
 				set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TOOLTIP }
+			}
+		}
+		if = {
+			limit = { this = scope:founder }
+			scope:capital_kingdom = {
 				if = {
 					limit = {
 						NOT = { holder ?= scope:founder }
@@ -1953,6 +1939,234 @@ titular_titles_romanized_germanic.0002 = {
 		}
 		name = {
 			text = titular_titles_romanized_germanic.0002.a
+		}
+	}
+}
+
+scripted_effect rename_britannia_cultural_kingdom_title_effect = {
+	# Scopes don't play well with title localization so we have to make different keys for each culture
+	if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
+		if = {		# If there is already a Gothia, than rename the kingdom to Visigothis
+			limit = { culture:ostrogoth = { has_variable = britannia_cultural_empire_title_founded } }
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH_empire_formed_alt }
+			set_variable = custom_name
+		}
+		else = {
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH_empire_formed }
+			set_variable = custom_name
+		}
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:ostrogoth }
+		if = {		# If there is already a Gothia, than rename the kingdom to Ostrogothia
+			limit = { culture:ostrogoth = { has_variable = britannia_cultural_empire_title_founded } }
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH_empire_formed_alt }
+			set_variable = custom_name
+		}
+		else = {
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH_empire_formed }
+			set_variable = custom_name
+		}
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:burgundian }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_BURGUNDIAN_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TAIFAL_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:vandal }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VANDAL_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:suebic }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_SUEBIC_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:alan }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_ALAN_empire_formed }
+		set_variable = custom_name
+	}
+	else = {
+		# We reserve a few generic keys in case we forget to update this - in any case it's *very* unlikely
+		# that there will ever be more than 1 kingdom (the player kingdom)
+		if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_0 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_0_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_1 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_1_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_2 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_2_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_3 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_3_empire_formed }
+			set_variable = custom_name
+		}
+	}
+}
+
+# Romanized Germanic Empire (Britannia)
+titular_titles_romanized_germanic.0003 = {
+	type = character_event
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Do rename and variables here so it appears in the notification event
+		scope:founder.culture.var:ancestral_non_roman_culture = {
+			set_variable = britannia_cultural_empire_title_founded
+			this.var:britannia_cultural_kingdom_title = {
+				save_scope_as = britannia_cultural_kingdom_title
+			}
+		}
+		title:e_romanized_germanic_britannia = {
+			set_variable = { 
+				name = romanized_germanic_empire_culture
+				value = scope:founder.culture.var:ancestral_non_roman_culture 
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = e_romanized_germanic_britannia_FORMED }
+			if = {
+				limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
+				set_coa = e_romanized_germanic_britannia_taifals
+			}
+			set_capital_county_w_tooltip_effect = { CAPITAL = scope:britannia_cultural_kingdom_title.title_capital_county }
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_romanized_germanic.0004 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		title:e_romanized_germanic_britannia = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = prev
+				}
+			}
+		}
+		hidden_effect = {
+			scope:britannia_cultural_kingdom_title = {
+				rename_britannia_cultural_kingdom_title_effect = yes
+			}
+		}
+	}
+}
+
+titular_titles_romanized_germanic.0004 = {
+	type = character_event
+	title = titular_titles_romanized_germanic.0004.t
+	desc = titular_titles_romanized_germanic.0004.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_romanized_germanic_britannia = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:btwk_world_britannia
+			}
+		}
+		custom_tooltip = {
+			text = romanized_germanic_britannia_de_jure_shift_happened_tt
+		}
+		show_as_tooltip = {
+			scope:britannia_cultural_kingdom_title = {
+				rename_britannia_cultural_kingdom_title_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					AND = {
+						any_liege_or_above = { this = scope:founder }
+						culture = {
+							NOR = {
+								has_cultural_pillar = heritage_latin
+								has_cultural_pillar = heritage_brythonic
+							}
+						}
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.founder
+		}
+		name = {
+			trigger = {
+				any_liege_or_above = { this = scope:founder }
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_brythonic
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.founder_roman_briton
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_brythonic
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.roman_briton
+		}
+		name = {
+			text = titular_titles_romanized_germanic.0004.a
 		}
 	}
 }
