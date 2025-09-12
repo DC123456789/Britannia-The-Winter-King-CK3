@@ -15,8 +15,22 @@ coa_pictish_trigger = {
 }
 
 coa_taifal_trigger = {
-	OR = {
-		scope:culture = { has_name_list = name_list_taifal }
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_taifal
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+		}
+	}
+}
+
+coa_gothic_trigger = {
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_visigoth
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:visigoth }
+			has_name_list = name_list_ostrogoth
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:ostrogoth }
+		}
 	}
 }
 
@@ -29,5 +43,11 @@ coa_high_german_trigger = {
 coa_switch_to_christian_trigger = {
 	holder = {
 		faith.religion = religion:christianity_religion
+	}
+}
+
+coa_switch_to_non_christian_trigger = {
+	holder = {
+		NOT = { faith.religion = religion:christianity_religion }
 	}
 }

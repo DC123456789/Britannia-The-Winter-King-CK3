@@ -1788,11 +1788,13 @@ titular_titles_romanized_germanic.0001 = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
 					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH }
 					set_variable = custom_name
+					set_coa = k_visigoths_britannia
 				}
 				else_if = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:ostrogoth }
 					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH }
 					set_variable = custom_name
+					set_coa = k_ostrogoths_britannia
 				}
 				else_if = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:burgundian }
@@ -1947,7 +1949,7 @@ scripted_effect rename_britannia_cultural_kingdom_title_effect = {
 	# Scopes don't play well with title localization so we have to make different keys for each culture
 	if = {
 		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
-		if = {		# If there is already a Gothia, than rename the kingdom to Visigothis
+		if = {		# If there is already a Gothia, than rename the kingdom to Visigothia
 			limit = { culture:ostrogoth = { has_variable = britannia_cultural_empire_title_founded } }
 			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH_empire_formed_alt }
 			set_variable = custom_name
@@ -2048,10 +2050,8 @@ titular_titles_romanized_germanic.0003 = {
 				value = scope:founder.culture.var:ancestral_non_roman_culture 
 			}
 			set_title_name_w_tooltip_effect = { NEW_NAME = e_romanized_germanic_britannia_FORMED }
-			if = {
-				limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
-				set_coa = e_romanized_germanic_britannia_taifals
-			}
+			# COA is set in common/coat_of_arms/dynamic_definitions/BTWK_e_romanized_germanic_britannia_coas
+			# to handle religion switches better
 			set_capital_county_w_tooltip_effect = { CAPITAL = scope:britannia_cultural_kingdom_title.title_capital_county }
 		}
 		trigger_event = { id = titular_titles_romanized_germanic.0004 }
