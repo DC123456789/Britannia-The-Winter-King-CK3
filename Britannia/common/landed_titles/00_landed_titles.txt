@@ -36669,10 +36669,11 @@ e_aengland = {
 	}
 }
 
-k_taifals_britannia = {
+e_romanized_germanic_britannia = {
 	color={ 140 120 115 }
+	definite_form = yes
 	
-	capital = c_lindum		# Placeholder, will tend to get moved around
+	capital = c_londinium		# Placeholder, will tend to get moved around
 
 	de_jure_drift_disabled = yes
 	can_be_named_after_dynasty = no
@@ -36687,8 +36688,19 @@ k_taifals_britannia = {
 	}
 
 	can_create = {
-		save_temporary_scope_as = current_culture
-		is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
+		trigger_if = {
+			limit = { title:e_romanized_germanic_britannia = { has_variable = romanized_germanic_empire_culture } }
+			is_culture_or_descendant_including_romance_trigger = { 
+				CULTURE = title:e_romanized_germanic_britannia.var:romanized_germanic_empire_culture
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = need_to_take_found_romanized_germanic_empire_britannia_decision_tt
+				always = no
+			}
+		}
 	}
 }
 

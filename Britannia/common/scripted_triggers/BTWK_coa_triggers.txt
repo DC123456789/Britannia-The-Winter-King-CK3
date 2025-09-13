@@ -15,8 +15,55 @@ coa_pictish_trigger = {
 }
 
 coa_taifal_trigger = {
-	OR = {
-		scope:culture = { has_name_list = name_list_taifal }
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_taifal
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:taifal }
+		}
+	}
+}
+
+coa_alan_trigger = {
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_alan
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:alan }
+		}
+	}
+}
+
+coa_gothic_trigger = {
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_visigoth
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:visigoth }
+			has_name_list = name_list_ostrogoth
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:ostrogoth }
+		}
+	}
+}
+
+coa_burgundian_trigger = {
+	scope:culture = {
+		OR = { 
+			has_name_list = name_list_burgundian
+			culture_is_culture_or_descendant_including_romance_trigger = { CULTURE = culture:burgundian }
+		}
+	}
+}
+
+coa_pan_germanic_trigger = {
+	scope:culture = {
+		OR = {
+			has_name_list = name_list_romanogermanic
+			has_coa_gfx = anglo_saxon_coa_gfx
+			has_coa_gfx = german_group_coa_gfx
+			has_coa_gfx = frankish_group_coa_gfx
+			has_coa_gfx = frisian_coa_gfx
+			has_coa_gfx = high_german_coa_gfx
+			has_coa_gfx = norse_coa_gfx
+			# Romanized Germanic has no unique coa gfx... do we want to add one? Or just exclude them?
+		}
 	}
 }
 
@@ -29,5 +76,11 @@ coa_high_german_trigger = {
 coa_switch_to_christian_trigger = {
 	holder = {
 		faith.religion = religion:christianity_religion
+	}
+}
+
+coa_switch_to_non_christian_trigger = {
+	holder = {
+		NOT = { faith.religion = religion:christianity_religion }
 	}
 }

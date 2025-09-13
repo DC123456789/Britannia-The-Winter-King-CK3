@@ -1,0 +1,108 @@
+﻿# Used on initialization
+# Saves the ancestral-most non-Latin culture that a culture is "primarily descended" from
+# This is the most ancestral culture that the culture is descended from through a series of only other 
+# cultures of the same heritage
+# Can also be used on a Romance culture that is descended at least partly from non-Romance/Imperial cultures,
+# possibly through other Romance cultures (but not through Imperial cultures)
+save_ancestral_non_roman_culture_effect = {
+	if = {
+		limit = {
+			NOT = { has_cultural_pillar = heritage_latin }
+		}
+		save_scope_as = current_culture
+		save_ancestral_non_roman_culture_helper_effect = yes
+	}
+}
+
+save_ancestral_non_roman_culture_helper_effect = {
+	if = {
+		limit = { has_cultural_pillar = heritage_latin }
+		# Pass
+	}
+	else_if = {
+		limit = {
+			NOT = { has_cultural_pillar = heritage_romance }
+		}
+		if = {
+			limit = { 
+				NOT = { any_parent_culture = { has_same_culture_heritage = prev } }
+			}
+			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
+		}
+		else = {
+			random_parent_culture = { 
+				limit = { has_same_culture_heritage = prev }
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { 
+				any_parent_culture = { 
+					NOR = { 
+						has_cultural_pillar = heritage_romance
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			random_parent_culture = { 
+				limit = {
+					NOR = { 
+						has_cultural_pillar = heritage_romance
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else_if = {
+			any_parent_culture = { 
+				has_cultural_pillar = heritage_romance
+			}
+			random_parent_culture = { 
+				limit = {
+					has_cultural_pillar = heritage_romance
+				}
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+	}
+}
+
+	if = {
+		limit = { 
+			NOT = { any_parent_culture = { count = 1 } }
+		}
+		if = {
+			limit = {
+				NOR = {
+					has_cultural_pillar = heritage_romance
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { has_cultural_pillar = heritage_romance }
+			any_parent_culture = { has_same_culture_heritage = prev }
+		}
+		random_parent_culture = { 
+			limit = { has_same_culture_heritage = prev }
+			save_ancestral_non_roman_culture_helper_effect = yes
+		}
+	}
+	else_if = {
+		limit = {
+			has_cultural_pillar = heritage_romance
+			any_parent_culture = { has_cultural_pillar = heritage_romance }
+		}
+		# Can be an intermediate node but not the top
+		random_parent_culture = { 
+			limit = { has_cultural_pillar = heritage_romance }
+			save_ancestral_non_roman_culture_helper_effect = yes
+		}
+	}
+}
