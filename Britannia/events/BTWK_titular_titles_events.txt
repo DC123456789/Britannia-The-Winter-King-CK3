@@ -15,6 +15,13 @@ namespace = titular_titles_test
 ##################################################
 # Anglo-Saxons
 ##################################################
+# 0001	    - Creation of duchy
+# 0002      - Destruction of duchy
+# 0003      - Integration of duchy
+# 0004/0005 - Annex the North Bank (Mercia)
+# 0006/0007 - Create Berkshire
+# 0008/0009 - Expand Surrey
+# 0100/0101	- Creation of kingdom
 
 # Creation of duchy
 titular_titles_anglosaxon.0001 = {
@@ -575,6 +582,106 @@ titular_titles_anglosaxon.0009 = {
 	}
 }
 
+# Creation of kingdom
+titular_titles_anglosaxon.0100 = {
+	type = character_event
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			is_anglo_saxon_kingdom_trigger = yes
+			NOT = { has_variable = title_has_been_created }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		hidden_effect = {
+			# Rename Jutish Wessex to Westeotas ("West Jutes")
+			if = {
+				limit = {
+					scope:title = title:k_wessex
+					scope:founder = { is_culture_or_descendant_trigger = { CULTURE = culture:jute } }
+				}
+				title:k_wessex = {
+					set_title_name = WESTEOTAS
+					set_capital_county = title:c_clausentum
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0101 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0101 }
+		}
+	}
+}
+
+titular_titles_anglosaxon.0101 = {
+	type = character_event
+	title = titular_titles_anglosaxon.0101.t
+	desc = {
+		first_valid = {
+			# TODO Want special loc for each kingdom
+			desc = titular_titles_anglosaxon.0101.desc.fallback
+		}
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_title = scope:title
+			}
+			text = titular_titles_anglosaxon.0101.a.new_king
+		}
+		name = {
+			trigger = { 
+				NOT = { has_title = scope:title }
+				any_liege = { has_title = scope:title }
+			}
+			text = titular_titles_anglosaxon.0101.a.new_king_vassal
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_anglosaxon.0101.a.anglosaxon
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_anglosaxon.0101.a.britonroman
+		}
+		name = {
+			text = titular_titles_anglosaxon.0101.a
+		}
+	}
+}
+
 ##################################################
 # Romans
 ##################################################
@@ -763,6 +870,7 @@ titular_titles_roman.0002 = {
 # 0005/0006 - Kingdom of Strathclyde
 # 0007/0008 - High Kingdom of Yr Hen Ogledd
 # 0009/0010 - High Kingdom of Britannia (reunification)
+# 0011 		- Glywyssing rename (hidden)
 # 0050-0052 - Fall of Britannia
 
 # Kingdom of Deheubarth
@@ -1249,9 +1357,48 @@ titular_titles_briton.0010 = {
 	}
 }
 
+titular_titles_briton.0011 = {
+	scope = none
+	hidden = yes
+	
+	trigger = {
+		title:k_siluria = { has_variable = use_siluria_name }
+		OR = {
+			NOT = { exists = title:k_siluria.holder }
+			title:k_siluria.holder ?= {
+				culture = {
+					NOR = {
+						this = culture:briton
+						this = culture:armorican
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			title:k_siluria.holder = { 			
+				sub_realm_size <= 11		# k_siluria starts with 13 counties
+				# If you control at least one of the main Silurian cities (it controls Isca Siluria at start),
+				# your threshold is lower
+				NOR = {
+					completely_controls = title:c_isca_siluria
+					completely_controls = title:c_venta_siluria
+				}
+			}	
+			title:k_siluria.holder = { sub_realm_size <= 8 }		# Base de jure territory is 6
+		}
+	}
+	
+	immediate = {
+		title:k_siluria = {
+			remove_variable = use_siluria_name
+			remove_variable = custom_name
+			reset_title_name = yes
+		}
+	}
+}
+
 # Fall of Britannia
 titular_titles_briton.0050 = {
-	type = none
+	scope = none
 	hidden = yes
 	
 	trigger = {
@@ -1299,7 +1446,7 @@ titular_titles_briton.0050 = {
 }
 
 titular_titles_briton.0051 = {
-	type = none
+	scope = none
 	hidden = yes
 	
 	immediate = {
