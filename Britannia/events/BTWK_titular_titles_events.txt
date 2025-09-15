@@ -590,7 +590,10 @@ titular_titles_anglosaxon.0100 = {
 	trigger = {
 		# scope:transfer_type = flag:created
 		scope:title = {
-			is_anglo_saxon_kingdom_trigger = yes
+			OR = {
+				is_anglo_saxon_kingdom_trigger = yes
+				this = title:k_wales
+			}
 			NOT = { has_variable = title_has_been_created }
 		}
 	}
@@ -615,6 +618,7 @@ titular_titles_anglosaxon.0100 = {
 			limit = { NOT = { this = PREV } }
 			trigger_event = { id = titular_titles_anglosaxon.0101 }
 		}
+		scope:title = { set_variable = title_has_been_created }
 	}
 }
 
@@ -633,6 +637,10 @@ titular_titles_anglosaxon.0101 = {
 	left_portrait = {
 		character = scope:conqueror
 		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
 	}
 
 	option = {
@@ -871,6 +879,7 @@ titular_titles_roman.0002 = {
 # 0007/0008 - High Kingdom of Yr Hen Ogledd
 # 0009/0010 - High Kingdom of Britannia (reunification)
 # 0011 		- Glywyssing rename (hidden)
+# 0012/0013	- High Kingdom of Cymru
 # 0050-0052 - Fall of Britannia
 
 # Kingdom of Deheubarth
@@ -1396,6 +1405,111 @@ titular_titles_briton.0011 = {
 	}
 }
 
+# High Kingdom of Cymru
+titular_titles_briton.0012 = {
+	type = character_event
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			this = title:e_cymru
+			NOT = { has_variable = title_has_been_created }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0013 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0013 }
+		}
+		title:e_cymru = {
+			set_variable = title_has_been_created
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0013 = {
+	type = character_event
+	title = titular_titles_briton.0013.t
+	desc = titular_titles_briton.0013.desc
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
+		title:e_cymru = {
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_title = scope:title
+			}
+			text = titular_titles_briton.0013.a.founder
+		}
+		name = {
+			trigger = { 
+				NOT = { has_title = scope:title }
+				any_liege = { has_title = scope:title }
+			}
+			text = titular_titles_briton.0013.a.founder_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_briton.0013.a.britonroman
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_briton.0013.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_briton.0013.a
+		}
+	}
+}
+
 # Fall of Britannia
 titular_titles_briton.0050 = {
 	scope = none
@@ -1864,6 +1978,8 @@ titular_titles_irish.0006 = {
 	immediate = {
 		if = {
 			limit = { this = scope:founder }
+			# Don't trigger the Welsh version of the event
+			title:e_cymru = { set_variable = title_has_been_created }
 			create_title_and_vassal_change = {
 				type = created
 				save_scope_as = title_change

@@ -1,0 +1,231 @@
+﻿namespace = conquest_flavour_anglosaxon
+namespace = conquest_flavour_roman
+namespace = conquest_flavour_briton
+namespace = conquest_flavour_irish
+namespace = conquest_flavour_romanized_germanic
+
+##################################################
+
+### Flavour Events for conquering important locations and regions
+
+##################################################
+
+##################################################
+# Anglo-Saxons
+##################################################
+
+# Master controller event
+conquest_flavour_anglosaxon.0001 = {
+	scope = none
+	hidden = yes
+	
+	immediate = {
+		title:e_aengland.holder ?= { save_scope_as = conqueror }
+		if = {
+			limit = {
+				title:e_aengland = { NOT = { has_variable = all_aengland_conquered } }
+				title:e_aengland.holder ?= {
+					completely_controls_region = btwk_custom_aengland
+				}
+			}
+			title:e_aengland = { set_variable = all_aengland_conquered }
+			trigger_event = { id = conquest_flavour_anglosaxon.0002 }
+			every_player = {
+				limit = { NOT = { this = PREV } }
+				trigger_event = { id = conquest_flavour_anglosaxon.0002 }
+			}
+		}
+		if = {
+			limit = {
+				title:e_aengland = { NOT = { has_variable = all_wales_conquered } }
+				title:e_aengland.holder ?= {
+					completely_controls_region = btwk_custom_wales
+				}
+			}
+			title:e_aengland = { set_variable = all_wales_conquered }
+			trigger_event = { id = conquest_flavour_anglosaxon.0003 }
+			every_player = {
+				limit = { NOT = { this = PREV } }
+				trigger_event = { id = conquest_flavour_anglosaxon.0003 }
+			}
+		}
+		if = {
+			limit = {
+				title:e_aengland = { NOT = { has_variable = all_britannia_conquered } }
+				title:e_aengland.holder ?= {
+					completely_controls_region = btwk_world_britannia
+				}
+			}
+			title:e_aengland = { set_variable = all_britannia_conquered }
+			trigger_event = { id = conquest_flavour_anglosaxon.0004 }
+			every_player = {
+				limit = { NOT = { this = PREV } }
+				trigger_event = { id = conquest_flavour_anglosaxon.0004 }
+			}
+		}
+	}
+}
+
+# Unification of Aengland
+conquest_flavour_anglosaxon.0002 = {
+	type = character_event
+	title = conquest_flavour_anglosaxon.0002.t
+	desc = conquest_flavour_anglosaxon.0002.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_anglosaxon.0002.a.conqueror
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				any_liege = { this = scope:conqueror }
+			}
+			text = conquest_flavour_anglosaxon.0002.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+					any_liege = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_anglosaxon.0002.a.britonroman
+		}
+		name = {
+			text = conquest_flavour_anglosaxon.0002.a
+		}
+	}
+}
+
+# Conquest of Wales
+conquest_flavour_anglosaxon.0003 = {
+	type = character_event
+	title = conquest_flavour_anglosaxon.0003.t
+	desc = conquest_flavour_anglosaxon.0003.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_anglosaxon.0003.a.conqueror
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				any_liege = { this = scope:conqueror }
+			}
+			text = conquest_flavour_anglosaxon.0003.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+					any_liege = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_anglosaxon.0003.a.britonroman
+		}
+		name = {
+			text = conquest_flavour_anglosaxon.0003.a
+		}
+	}
+}
+
+# Conquest of Britannia
+conquest_flavour_anglosaxon.0004 = {
+	type = character_event
+	title = conquest_flavour_anglosaxon.0004.t
+	desc = conquest_flavour_anglosaxon.0004.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_anglosaxon.0004.a.conqueror
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				any_liege = { this = scope:conqueror }
+			}
+			text = conquest_flavour_anglosaxon.0004.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+					any_liege = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_anglosaxon.0004.a.britonroman
+		}
+		name = {
+			text = conquest_flavour_anglosaxon.0004.a
+		}
+	}
+}
+
+##################################################
+# Romans
+##################################################
+
+
+##################################################
+# Britons
+##################################################
+
+
+##################################################
+# Irish/Gaels
+##################################################
+
+
+##################################################
+# Romanized Germanic
+##################################################
+
