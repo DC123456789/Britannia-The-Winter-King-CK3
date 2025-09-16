@@ -3986,19 +3986,35 @@ types GameSetupTypes
 		}
 	}
 
-
-	type dlc_button = button {
+	type dlc_button = vbox {
 		datacontext = "[DlcItem.GetDlc]"
-		size = "[Dlc.GetIconSize]"
-		texture = "[Dlc.GetIcon]"
-		onclick = "[DlcItem.ShowInStore]"
-		tooltip = "DLC_BUTTON_TOOLTIP"
+		
+		button = {
+			size = "[Dlc.GetIconSize]"
+			texture = "[Dlc.GetIcon]"
+			visible = "[Not(IsFakeDlc)]"
+			onclick = "[DlcItem.ShowInStore]"
+			tooltip = "DLC_BUTTON_TOOLTIP"
 
-		modify_texture = {
-			visible = "[Not( Dlc.IsEnabled )]"
-			texture = "gfx/interface/colors/black.dds"
-			blend_mode = normal
-			alpha = 0.4
+			modify_texture = {
+				visible = "[DlcIconDisabled]"
+				texture = "gfx/interface/colors/black.dds"
+				blend_mode = normal
+				alpha = 0.4
+			}
+		}
+		button = {		# This icon is used for mod "DLCs" and can't be clicked
+			size = "[Dlc.GetIconSize]"
+			texture = "[Dlc.GetIcon]"
+			visible = "[IsFakeDlc]"
+			tooltip = "DLC_BUTTON_TOOLTIP"
+
+			modify_texture = {
+				visible = "[DlcIconDisabled]"
+				texture = "gfx/interface/colors/black.dds"
+				blend_mode = normal
+				alpha = 0.4
+			}
 		}
 	}
 
@@ -4028,7 +4044,7 @@ types GameSetupTypes
 					parentanchor = hcenter
 
 					modify_texture = {
-						visible = "[Not( Dlc.IsEnabled )]"
+						visible = "[DlcIconDisabled]"
 						texture = "gfx/interface/colors/black.dds"
 						blend_mode = normal
 						alpha = 0.4
@@ -4042,7 +4058,7 @@ types GameSetupTypes
 				using = Font_Size_Medium
 				using = Font_Type_Flavor
 				align = nobaseline
-				alpha = "[Select_float(Dlc.IsEnabled,'(float)1.0','(float)0.5')]"
+				alpha = "[Select_float(Not(DlcIconDisabled),'(float)1.0','(float)0.5')]"
 			}
 
 			text_single = {
@@ -4052,6 +4068,7 @@ types GameSetupTypes
 
 			button_standard = {
 				text =  "DLC_VISIT_STORE"
+				visible = "[Not(IsFakeDlc)]"
 				onclick = "[DlcItem.ShowInStore]"
 			}
 		}
