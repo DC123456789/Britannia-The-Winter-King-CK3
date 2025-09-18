@@ -148,7 +148,7 @@ titular_titles_anglosaxon.0001 = {
 					} 
 				}
 			}
-			text = titular_titles_anglosaxon.0001.a.britonroman
+			text = titular_titles_anglosaxon.0001.a.briton_roman
 		}
 		name = {
 			text = titular_titles_anglosaxon.0001.a
@@ -205,7 +205,7 @@ titular_titles_anglosaxon.0002 = {
 					} 
 				}
 			}
-			text = titular_titles_anglosaxon.0002.a.britonroman
+			text = titular_titles_anglosaxon.0002.a.briton_roman
 		}
 		name = {
 			trigger = { 
@@ -646,7 +646,7 @@ titular_titles_anglosaxon.0101 = {
 	override_background = terrain
 	
 	left_portrait = {
-		character = scope:conqueror
+		character = scope:founder
 		animation = personality_honorable
 	}
 	
@@ -693,7 +693,7 @@ titular_titles_anglosaxon.0101 = {
 					any_liege_or_above = { has_title = scope:title }
 				}
 			}
-			text = titular_titles_anglosaxon.0101.a.britonroman
+			text = titular_titles_anglosaxon.0101.a.briton_roman
 		}
 		name = {
 			text = titular_titles_anglosaxon.0101.a
@@ -879,6 +879,93 @@ titular_titles_roman.0002 = {
 		}
 		name = {
 			text = titular_titles_roman.0002.a
+		}
+	}
+}
+
+# Creation of kingdom
+titular_titles_roman.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			has_variable = is_roman_province_title
+			NOT = { has_variable = title_has_been_created }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_roman.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_roman.0004 }
+		}
+		scope:title = { set_variable = title_has_been_created }
+	}
+}
+
+titular_titles_roman.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_roman.0004.t
+	desc = {
+		first_valid = {
+			# TODO Want special loc for each province
+			desc = titular_titles_roman.0004.desc.fallback
+		}
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_title = scope:title
+			}
+			text = titular_titles_roman.0004.a.founder
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			text = titular_titles_roman.0004.a.roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+			text = titular_titles_roman.0004.a.briton
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = titular_titles_roman.0004.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_roman.0004.a
 		}
 	}
 }
@@ -1516,7 +1603,7 @@ titular_titles_briton.0013 = {
 					any_liege_or_above = { has_title = scope:title }
 				}
 			}
-			text = titular_titles_briton.0013.a.britonroman
+			text = titular_titles_briton.0013.a.briton_roman
 		}
 		name = {
 			trigger = { 
