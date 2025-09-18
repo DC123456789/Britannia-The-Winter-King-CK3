@@ -90,6 +90,12 @@ conquest_flavour_anglosaxon.0002 = {
 		}
 		name = {
 			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
 				NOT = { this = scope:conqueror }
 				any_liege_or_above = { this = scope:conqueror }
 			}
@@ -105,10 +111,9 @@ conquest_flavour_anglosaxon.0002 = {
 				}
 				NOR = { 
 					NOT = { this = scope:conqueror }
-					any_liege_or_above = { this = scope:conqueror }
 				}
 			}
-			text = conquest_flavour_anglosaxon.0002.a.britonroman
+			text = conquest_flavour_anglosaxon.0002.a.briton_roman
 		}
 		name = {
 			text = conquest_flavour_anglosaxon.0002.a
@@ -139,6 +144,12 @@ conquest_flavour_anglosaxon.0003 = {
 		}
 		name = {
 			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
 				NOT = { this = scope:conqueror }
 				any_liege_or_above = { this = scope:conqueror }
 			}
@@ -154,10 +165,9 @@ conquest_flavour_anglosaxon.0003 = {
 				}
 				NOR = { 
 					NOT = { this = scope:conqueror }
-					any_liege_or_above = { this = scope:conqueror }
 				}
 			}
-			text = conquest_flavour_anglosaxon.0003.a.britonroman
+			text = conquest_flavour_anglosaxon.0003.a.briton_roman
 		}
 		name = {
 			text = conquest_flavour_anglosaxon.0003.a
@@ -188,6 +198,12 @@ conquest_flavour_anglosaxon.0004 = {
 		}
 		name = {
 			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
 				NOT = { this = scope:conqueror }
 				any_liege_or_above = { this = scope:conqueror }
 			}
@@ -203,10 +219,9 @@ conquest_flavour_anglosaxon.0004 = {
 				}
 				NOR = { 
 					NOT = { this = scope:conqueror }
-					any_liege_or_above = { this = scope:conqueror }
 				}
 			}
-			text = conquest_flavour_anglosaxon.0004.a.britonroman
+			text = conquest_flavour_anglosaxon.0004.a.briton_roman
 		}
 		name = {
 			text = conquest_flavour_anglosaxon.0004.a
@@ -217,6 +232,164 @@ conquest_flavour_anglosaxon.0004 = {
 ##################################################
 # Romans
 ##################################################
+
+# Master controller event
+conquest_flavour_roman.0001 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		title:e_roman_britannia.holder ?= { save_scope_as = conqueror }
+		if = {
+			limit = {
+				title:e_roman_britannia = { NOT = { has_variable = all_roman_britain_conquered } }
+				title:e_roman_britannia.holder ?= {
+					completely_controls_region = btwk_custom_roman_britain
+				}
+			}
+			title:e_aengland = { set_variable = all_roman_britain_conquered }
+			trigger_event = { id = conquest_flavour_roman.0002 }
+			every_player = {
+				limit = { NOT = { this = PREV } }
+				trigger_event = { id = conquest_flavour_roman.0002 }
+			}
+		}
+		if = {
+			limit = {
+				title:e_roman_britannia = { NOT = { has_variable = northern_hen_ogledd_roman_conquered } }
+				title:e_roman_britannia.holder ?= {
+					completely_controls_region = btwk_custom_northern_hen_ogledd_roman
+				}
+			}
+			title:e_roman_britannia = { set_variable = northern_hen_ogledd_roman_conquered }
+			trigger_event = { id = conquest_flavour_roman.0003 }
+			every_player = {
+				limit = { NOT = { this = PREV } }
+				trigger_event = { id = conquest_flavour_roman.0003 }
+			}
+		}
+	}
+}
+
+# Reconquest of Roman Britain
+conquest_flavour_roman.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = conquest_flavour_roman.0002.t
+	desc = conquest_flavour_roman.0002.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_roman.0002.a.conqueror
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			text = conquest_flavour_roman.0002.a.roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+			text = conquest_flavour_roman.0002.a.briton
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_roman.0002.a.anglosaxon
+		}
+		name = {
+			text = conquest_flavour_roman.0002.a
+		}
+	}
+}
+
+# Reconquest up to the Antonine Wall
+conquest_flavour_roman.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = conquest_flavour_roman.0003.t
+	desc = conquest_flavour_roman.0003.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_roman.0003.a.conqueror
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			text = conquest_flavour_roman.0003.a.roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+			text = conquest_flavour_roman.0003.a.briton
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_pictish
+						has_cultural_pillar = heritage_goidelic
+					}
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_roman.0003.a.pictish_gaelic
+		}
+		name = {
+			text = conquest_flavour_roman.0003.a
+		}
+	}
+}
 
 
 ##################################################
