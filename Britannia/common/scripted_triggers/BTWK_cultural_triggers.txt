@@ -310,3 +310,28 @@ bg_game_type_region_pachisi_trigger = { #Off-map
 bg_game_type_region_go_trigger = { #Off-map
 	always = no
 }
+
+culture_has_coronations_trigger = {
+	trigger_if = {
+		limit = { NOT = { culture = { has_innovation = innovation_coronations } } }
+		culture = { has_innovation = innovation_coronations }
+	}
+	trigger_else_if = {
+		limit = { 
+			culture = { 
+				has_innovation = innovation_coronations
+				NOT = { has_variable = coronations_enabled }
+			}
+		}
+		custom_tooltip = {
+			text = wait_for_coronations_to_be_enabled
+			culture = { 
+				has_innovation = innovation_coronations
+				has_variable = coronations_enabled
+			}
+		}
+	}
+	trigger_else = {
+		culture = { has_innovation = innovation_coronations }
+	}
+}
