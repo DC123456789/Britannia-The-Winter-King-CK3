@@ -1335,6 +1335,7 @@ titular_titles_briton.0007 = {
 titular_titles_briton.0008 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = titular_titles_briton.0008.t
 	desc = titular_titles_briton.0008.desc
 	theme = realm
@@ -1412,6 +1413,7 @@ titular_titles_briton.0009 = {
 titular_titles_briton.0010 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = fullscreen_event
 	title = titular_titles_briton.0010.t
 	desc = titular_titles_briton.0010.desc
 	theme = war
@@ -1534,6 +1536,7 @@ titular_titles_briton.0012 = {
 			this = title:e_cymru
 			NOT = { has_variable = title_has_been_created }
 		}
+		NOT = { culture = { has_cultural_pillar = heritage_goidelic } }
 	}
 	
 	immediate = {
@@ -1559,6 +1562,7 @@ titular_titles_briton.0012 = {
 titular_titles_briton.0013 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = titular_titles_briton.0013.t
 	desc = titular_titles_briton.0013.desc
 	theme = realm
@@ -2073,8 +2077,24 @@ titular_titles_irish.0005 = {
 	content_source = dlc_BTWK
 	hidden = yes
 	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			this = title:e_cymru
+			OR = {
+				NOT = { has_variable = title_has_been_created_irish }
+				has_variable = force_creation_event
+			}
+		}
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+	
 	immediate = {
 		save_scope_as = founder
+		title:e_cymru = { 
+			remove_variable = force_creation_event 
+			set_variable = title_has_been_created_irish
+		}
 		trigger_event = { id = titular_titles_irish.0006 }
 		every_player = {
 			limit = { NOT = { this = PREV } }
@@ -2095,6 +2115,7 @@ titular_titles_irish.0005 = {
 titular_titles_irish.0006 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = titular_titles_irish.0006.t
 	desc = titular_titles_irish.0006.desc
 	theme = realm
@@ -2107,8 +2128,6 @@ titular_titles_irish.0006 = {
 	immediate = {
 		if = {
 			limit = { this = scope:founder }
-			# Don't trigger the Welsh version of the event
-			title:e_cymru = { set_variable = title_has_been_created }
 			create_title_and_vassal_change = {
 				type = created
 				save_scope_as = title_change
@@ -2481,6 +2500,7 @@ titular_titles_romanized_germanic.0003 = {
 titular_titles_romanized_germanic.0004 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = fullscreen_event
 	title = titular_titles_romanized_germanic.0004.t
 	desc = titular_titles_romanized_germanic.0004.desc
 	theme = realm

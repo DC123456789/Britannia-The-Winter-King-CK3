@@ -21,47 +21,43 @@ conquest_flavour_anglosaxon.0001 = {
 	hidden = yes
 	
 	immediate = {
-		title:e_aengland.holder ?= { save_scope_as = conqueror }
-		if = {
-			limit = {
-				title:e_aengland = { NOT = { has_variable = all_aengland_conquered } }
-				title:e_aengland.holder ?= {
+		title:e_aengland.holder ?= { 
+			save_scope_as = conqueror
+			if = {
+				limit = {
+					title:e_aengland = { NOT = { has_variable = aengland_conquered } }
 					completely_controls_region = btwk_custom_aengland
 				}
-			}
-			title:e_aengland = { set_variable = all_aengland_conquered }
-			trigger_event = { id = conquest_flavour_anglosaxon.0002 }
-			every_player = {
-				limit = { NOT = { this = PREV } }
+				title:e_aengland = { set_variable = aengland_conquered }
 				trigger_event = { id = conquest_flavour_anglosaxon.0002 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_anglosaxon.0002 }
+				}
 			}
-		}
-		if = {
-			limit = {
-				title:e_aengland = { NOT = { has_variable = all_wales_conquered } }
-				title:e_aengland.holder ?= {
+			if = {
+				limit = {
+					title:e_aengland = { NOT = { has_variable = wales_conquered } }
 					completely_controls_region = btwk_custom_wales
 				}
-			}
-			title:e_aengland = { set_variable = all_wales_conquered }
-			trigger_event = { id = conquest_flavour_anglosaxon.0003 }
-			every_player = {
-				limit = { NOT = { this = PREV } }
+				title:e_aengland = { set_variable = wales_conquered }
 				trigger_event = { id = conquest_flavour_anglosaxon.0003 }
-			}
-		}
-		if = {
-			limit = {
-				title:e_aengland = { NOT = { has_variable = all_britannia_conquered } }
-				title:e_aengland.holder ?= {
-					completely_controls_region = btwk_world_britannia
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_anglosaxon.0003 }
 				}
 			}
-			title:e_aengland = { set_variable = all_britannia_conquered }
-			trigger_event = { id = conquest_flavour_anglosaxon.0004 }
-			every_player = {
-				limit = { NOT = { this = PREV } }
+			if = {
+				limit = {
+					title:e_aengland = { NOT = { has_variable = britannia_conquered } }
+					completely_controls_region = btwk_world_britannia
+				}
+				title:e_aengland = { set_variable = britannia_conquered }
 				trigger_event = { id = conquest_flavour_anglosaxon.0004 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_anglosaxon.0004 }
+				}
 			}
 		}
 	}
@@ -71,6 +67,7 @@ conquest_flavour_anglosaxon.0001 = {
 conquest_flavour_anglosaxon.0002 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = conquest_flavour_anglosaxon.0002.t
 	desc = conquest_flavour_anglosaxon.0002.desc
 	theme = war
@@ -118,6 +115,11 @@ conquest_flavour_anglosaxon.0002 = {
 		name = {
 			text = conquest_flavour_anglosaxon.0002.a
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
 	}
 }
 
@@ -125,6 +127,7 @@ conquest_flavour_anglosaxon.0002 = {
 conquest_flavour_anglosaxon.0003 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = conquest_flavour_anglosaxon.0003.t
 	desc = conquest_flavour_anglosaxon.0003.desc
 	theme = war
@@ -172,6 +175,11 @@ conquest_flavour_anglosaxon.0003 = {
 		name = {
 			text = conquest_flavour_anglosaxon.0003.a
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 300
+			add_legitimacy = 50
+		}
 	}
 }
 
@@ -179,6 +187,7 @@ conquest_flavour_anglosaxon.0003 = {
 conquest_flavour_anglosaxon.0004 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = conquest_flavour_anglosaxon.0004.t
 	desc = conquest_flavour_anglosaxon.0004.desc
 	theme = war
@@ -226,6 +235,11 @@ conquest_flavour_anglosaxon.0004 = {
 		name = {
 			text = conquest_flavour_anglosaxon.0004.a
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
 	}
 }
 
@@ -240,33 +254,31 @@ conquest_flavour_roman.0001 = {
 	hidden = yes
 	
 	immediate = {
-		title:e_roman_britannia.holder ?= { save_scope_as = conqueror }
-		if = {
-			limit = {
-				title:e_roman_britannia = { NOT = { has_variable = all_roman_britain_conquered } }
-				title:e_roman_britannia.holder ?= {
+		title:e_roman_britannia.holder ?= { 
+			save_scope_as = conqueror
+			if = {
+				limit = {
+					title:e_roman_britannia = { NOT = { has_variable = roman_britain_conquered } }
 					completely_controls_region = btwk_custom_roman_britain
 				}
-			}
-			title:e_aengland = { set_variable = all_roman_britain_conquered }
-			trigger_event = { id = conquest_flavour_roman.0002 }
-			every_player = {
-				limit = { NOT = { this = PREV } }
+				title:e_roman_britannia = { set_variable = roman_britain_conquered }
 				trigger_event = { id = conquest_flavour_roman.0002 }
-			}
-		}
-		if = {
-			limit = {
-				title:e_roman_britannia = { NOT = { has_variable = northern_hen_ogledd_roman_conquered } }
-				title:e_roman_britannia.holder ?= {
-					completely_controls_region = btwk_custom_northern_hen_ogledd_roman
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_roman.0002 }
 				}
 			}
-			title:e_roman_britannia = { set_variable = northern_hen_ogledd_roman_conquered }
-			trigger_event = { id = conquest_flavour_roman.0003 }
-			every_player = {
-				limit = { NOT = { this = PREV } }
+			if = {
+				limit = {
+					title:e_roman_britannia = { NOT = { has_variable = northern_hen_ogledd_roman_conquered } }
+					completely_controls_region = btwk_custom_northern_hen_ogledd_roman
+				}
+				title:e_roman_britannia = { set_variable = northern_hen_ogledd_roman_conquered }
 				trigger_event = { id = conquest_flavour_roman.0003 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_roman.0003 }
+				}
 			}
 		}
 	}
@@ -276,6 +288,7 @@ conquest_flavour_roman.0001 = {
 conquest_flavour_roman.0002 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = conquest_flavour_roman.0002.t
 	desc = conquest_flavour_roman.0002.desc
 	theme = war
@@ -327,6 +340,11 @@ conquest_flavour_roman.0002 = {
 		name = {
 			text = conquest_flavour_roman.0002.a
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
 	}
 }
 
@@ -334,6 +352,7 @@ conquest_flavour_roman.0002 = {
 conquest_flavour_roman.0003 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = big_event_window
 	title = conquest_flavour_roman.0003.t
 	desc = conquest_flavour_roman.0003.desc
 	theme = war
@@ -388,6 +407,11 @@ conquest_flavour_roman.0003 = {
 		name = {
 			text = conquest_flavour_roman.0003.a
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 200
+			add_legitimacy = 25
+		}
 	}
 }
 
@@ -396,13 +420,627 @@ conquest_flavour_roman.0003 = {
 # Britons
 ##################################################
 
+# Master controller event
+conquest_flavour_briton.0001 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		title:c_londinium.holder.top_liege = {
+			save_scope_as = conqueror
+			if = {
+				limit = {
+					title:e_britannia = { NOT = { has_variable = anglo_saxons_defeated_south } }
+					NOT = {
+						any_county_in_region = {
+							region = btwk_world_britannia_south
+							holder.top_liege = {
+								OR = {
+									is_unromanized_germanic_culture_trigger = yes
+									primary_title.empire = title:e_aengland
+								}
+							}
+						}
+					}
+					# TODO Need to wait until all relevant Anglo-Saxon invasions have been triggered and defeated
+				}
+				title:e_britannia = { set_variable = anglo_saxons_defeated_south }
+				# Done here to make sure that no weirdness happens if both events are triggered at once
+				if = {
+					limit = { title:e_britannia = { has_variable = anglo_saxons_defeated_north } }
+					title:e_britannia = { set_variable = anglo_saxons_defeated_all }
+				}
+				trigger_event = { id = conquest_flavour_briton.0002 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_briton.0002 }
+				}
+			}
+		}
+		title:c_eburacum.holder.top_liege = {
+			if = {
+				limit = {
+					title:e_britannia = { NOT = { has_variable = anglo_saxons_defeated_north } }
+					NOT = {
+						any_county_in_region = {
+							region = btwk_world_britannia_hen_ogledd
+							holder.top_liege = {
+								OR = {
+									is_unromanized_germanic_culture_trigger = yes
+									primary_title.empire = title:e_aengland
+								}
+							}
+						}
+					}
+					# TODO Need to wait until all relevant Anglo-Saxon invasions have been triggered and defeated
+				}
+				title:e_britannia = { set_variable = anglo_saxons_defeated_north }
+				if = {
+					limit = { title:e_britannia = { has_variable = anglo_saxons_defeated_south } }
+					title:e_britannia = { set_variable = anglo_saxons_defeated_all }
+				}
+				trigger_event = { id = conquest_flavour_briton.0003 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_briton.0003 }
+				}
+			}
+		}
+		title:e_britannia.holder ?= {
+			save_scope_as = conqueror
+			if = {
+				limit = {
+					title:e_britannia = { NOT = { has_variable = britannia_conquered } }
+					completely_controls_region = btwk_world_britannia
+				}
+				title:e_britannia = { set_variable = britannia_conquered }
+				trigger_event = { id = conquest_flavour_briton.0004 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_briton.0004 }
+				}
+			}
+		}
+	}
+}
+
+# Anglo-Saxons defeated in the South
+conquest_flavour_briton.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = anglo_saxons_defeated_all } }
+				desc = conquest_flavour_briton.0002.t.total_defeat
+			}
+			desc = conquest_flavour_briton.0002.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = anglo_saxons_defeated_all } }
+				desc = conquest_flavour_briton.0002.desc.total_defeat
+			}
+			desc = conquest_flavour_briton.0002.desc
+		}
+	}
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = {
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_brythonic
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			text = conquest_flavour_briton.0002.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_briton.0002.a.anglosaxon
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_north_germanic
+				}
+				title:e_britannia = { has_variable = anglo_saxons_defeated_south }
+			}
+			text = conquest_flavour_briton.0002.a.norse_total_defeat
+		}
+		name = {
+			text = conquest_flavour_briton.0002.a
+		}
+	}
+}
+
+# Anglo-Saxons defeated in the North
+conquest_flavour_briton.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = anglo_saxons_defeated_all } }
+				desc = conquest_flavour_briton.0003.t.total_defeat
+			}
+			desc = conquest_flavour_briton.0003.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = anglo_saxons_defeated_all } }
+				desc = conquest_flavour_briton.0003.desc.total_defeat
+			}
+			desc = conquest_flavour_briton.0003.desc
+		}
+	}
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = {
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_brythonic
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			text = conquest_flavour_briton.0003.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_briton.0003.a.anglosaxon
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_north_germanic
+				}
+				title:e_britannia = { has_variable = anglo_saxons_defeated_south }
+			}
+			text = conquest_flavour_briton.0003.a.norse_total_defeat
+		}
+		name = {
+			text = conquest_flavour_briton.0003.a
+		}
+	}
+}
+
+# Reunification of Britannia
+conquest_flavour_briton.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = conquest_flavour_briton.0004.t
+	desc = conquest_flavour_briton.0004.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_briton.0004.a.conqueror
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+			text = conquest_flavour_briton.0004.a.briton
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			text = conquest_flavour_briton.0004.a.roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_briton.0004.a.anglosaxon
+		}
+		name = {
+			text = conquest_flavour_briton.0004.a
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
+	}
+}
 
 ##################################################
 # Irish/Gaels
 ##################################################
 
+# Master controller event
+conquest_flavour_irish.0001 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		title:e_cymru.holder ?= {
+			if = {
+				limit = { culture = { has_cultural_pillar = heritage_goidelic } }
+				save_scope_as = conqueror
+				if = {
+					limit = {
+						title:e_cymru = { NOT = { has_variable = cymry_conquered_irish } }
+						completely_controls_region = btwk_world_britannia_south_cymry
+					}
+					title:e_cymru = { set_variable = cymry_conquered_irish }
+					trigger_event = { id = conquest_flavour_irish.0002 }
+					every_player = {
+						limit = { NOT = { this = PREV } }
+						trigger_event = { id = conquest_flavour_irish.0002 }
+					}
+				}
+				if = {
+					limit = {
+						title:e_cymru = { NOT = { has_variable = britannia_conquered_irish } }
+						completely_controls_region = btwk_world_britannia
+					}
+					title:e_cymru = { set_variable = britannia_conquered_irish }
+					trigger_event = { id = conquest_flavour_irish.0003 }
+					every_player = {
+						limit = { NOT = { this = PREV } }
+						trigger_event = { id = conquest_flavour_irish.0003 }
+					}
+				}
+			}
+		}
+	}
+}
+
+# Conquest of Cymry
+conquest_flavour_irish.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = conquest_flavour_irish.0002.t
+	desc = conquest_flavour_irish.0002.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_irish.0002.a.conqueror
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_west_germanic
+					}
+				}
+				NOT = { this = scope:conqueror }
+				any_liege_or_above = { this = scope:conqueror }
+			}
+			text = conquest_flavour_irish.0002.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					has_cultural_pillar = heritage_goidelic
+				}
+				NOR = { 
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_irish.0002.a.irish
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_irish.0002.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_irish.0002.a.anglosaxon
+		}
+		name = {
+			text = conquest_flavour_irish.0002.a
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 300
+			add_legitimacy = 50
+		}
+	}
+}
+
+# Conquest of Britannia
+conquest_flavour_irish.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = conquest_flavour_irish.0003.t
+	desc = conquest_flavour_irish.0003.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_irish.0003.a.conqueror
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_west_germanic
+					}
+				}
+				NOT = { this = scope:conqueror }
+				any_liege_or_above = { this = scope:conqueror }
+			}
+			text = conquest_flavour_irish.0003.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					has_cultural_pillar = heritage_goidelic
+				}
+				NOR = { 
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_irish.0003.a.irish
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_irish.0003.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_irish.0003.a.anglosaxon
+		}
+		name = {
+			text = conquest_flavour_irish.0003.a
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
+	}
+}
 
 ##################################################
 # Romanized Germanic
 ##################################################
 
+# Master controller event
+conquest_flavour_romanized_germanic.0001 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		title:e_romanized_germanic_britannia.holder ?= {
+			save_scope_as = conqueror
+			if = {
+				limit = {
+					title:e_romanized_germanic_britannia = { NOT = { has_variable = britannia_conquered } }
+					completely_controls_region = btwk_world_britannia
+				}
+				title:e_romanized_germanic_britannia = { set_variable = britannia_conquered }
+				trigger_event = { id = conquest_flavour_romanized_germanic.0002 }
+				every_player = {
+					limit = { NOT = { this = PREV } }
+					trigger_event = { id = conquest_flavour_romanized_germanic.0002 }
+				}
+			}
+		}
+	}
+}
+
+# Conquest of Britannia
+conquest_flavour_romanized_germanic.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = conquest_flavour_romanized_germanic.0002.t
+	desc = conquest_flavour_romanized_germanic.0002.desc
+	theme = war
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:conqueror
+			}
+			text = conquest_flavour_romanized_germanic.0002.a.conqueror
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_west_germanic
+					}
+				}
+				NOT = { this = scope:conqueror }
+				any_liege_or_above = { this = scope:conqueror }
+			}
+			text = conquest_flavour_romanized_germanic.0002.a.conqueror_vassal
+		}
+		name = {
+			trigger = { 
+				scope:conqueror.culture = { NOT = { has_cultural_pillar = heritage_latin } }
+				is_culture_or_descendant_including_romance_trigger = {
+					CULTURE = scope:conqueror.culture.var:ancestral_non_roman_culture
+				}
+				NOR = { 
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_romanized_germanic.0002.a.same_culture
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					NOT = { this = scope:conqueror }
+				}
+			}
+			text = conquest_flavour_irish.0002.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:conqueror }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = conquest_flavour_irish.0002.a.anglosaxon
+		}
+		name = {
+			text = conquest_flavour_irish.0002.a
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			add_prestige = 500
+			add_legitimacy = 75
+		}
+	}
+}

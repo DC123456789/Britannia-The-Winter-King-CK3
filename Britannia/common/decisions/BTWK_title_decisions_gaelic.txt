@@ -32,7 +32,7 @@ create_lleyn_decision = {
 	}
 
 	effect = {
-		add_prestige = 200
+		add_prestige = 300
 		add_legitimacy = 50
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
@@ -160,12 +160,6 @@ create_irish_cymru_decision = {
 		}
 		NOT = { has_title = title:e_cymru }
 		culture = { has_cultural_pillar = heritage_goidelic }
-		NOT = {
-			is_target_in_global_variable_list = {
-				name = unavailable_unique_decisions
-				target = flag:create_irish_cymru_decision
-			}
-		}
 	}
 
 	is_valid = {
@@ -195,6 +189,10 @@ create_irish_cymru_decision = {
 					NEW_DE_JURE_LIEGE = title:e_cymru
 				}
 			}
+		}
+		title:e_cymru = { 
+			set_variable = { name = force_creation_event days = 1 }
+			save_scope_as = title
 		}
 		trigger_event = { id = titular_titles_irish.0005 }
 		add_to_global_variable_list = {
