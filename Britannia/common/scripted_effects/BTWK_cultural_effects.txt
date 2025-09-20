@@ -70,39 +70,33 @@ save_ancestral_non_roman_culture_helper_effect = {
 	}
 }
 
+get_briton_successor_culture_for_province_effect = {
 	if = {
-		limit = { 
-			NOT = { any_parent_culture = { count = 1 } }
-		}
-		if = {
-			limit = {
-				NOR = {
-					has_cultural_pillar = heritage_romance
-					has_cultural_pillar = heritage_latin
-				}
+		limit = {
+			OR = {
+				geographical_region = btwk_world_britannia_hen_ogledd
+				geographical_region = btwk_world_caledonia
+				geographical_region = btwk_world_ireland_ulaid
 			}
-			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
 		}
+		culture:cumbrian = { save_scope_as = briton_successor_culture }
 	}
 	else_if = {
 		limit = {
-			NOT = { has_cultural_pillar = heritage_romance }
-			any_parent_culture = { has_same_culture_heritage = prev }
+			geographical_region = btwk_custom_britannia_south_coast
 		}
-		random_parent_culture = { 
-			limit = { has_same_culture_heritage = prev }
-			save_ancestral_non_roman_culture_helper_effect = yes
-		}
+		culture:cornish = { save_scope_as = briton_successor_culture }
 	}
 	else_if = {
 		limit = {
-			has_cultural_pillar = heritage_romance
-			any_parent_culture = { has_cultural_pillar = heritage_romance }
+			OR = {
+				geographical_region = btwk_world_britannia
+				geographical_region = btwk_world_ireland
+			}
 		}
-		# Can be an intermediate node but not the top
-		random_parent_culture = { 
-			limit = { has_cultural_pillar = heritage_romance }
-			save_ancestral_non_roman_culture_helper_effect = yes
-		}
+		culture:welsh = { save_scope_as = briton_successor_culture }
+	}
+	else = {		# On the continent
+		culture:breton = { save_scope_as = briton_successor_culture }
 	}
 }
