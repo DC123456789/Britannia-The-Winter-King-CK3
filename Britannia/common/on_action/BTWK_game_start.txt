@@ -144,6 +144,41 @@ BTWK_culture_setup = {
 				set_current_court_grandeur = 30
 			}
 		}
+		
+		# Block some cultures in the ruler designer (mostly those that appear over the course of the game)
+		every_culture_global = {
+			limit = {
+				OR = {
+					has_cultural_pillar = heritage_romance
+					has_cultural_pillar = heritage_arabic
+					has_cultural_pillar = heritage_berber
+					AND = {
+						has_cultural_pillar = heritage_west_germanic
+						NOR = {
+							this = culture:angle
+							this = culture:old_saxon
+							this = culture:jute
+							this = culture:frisian
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_frankish
+						NOT = {
+							this = culture:frankish
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_brythonic
+						NOR = {
+							this = culture:briton
+							this = culture:armorican
+						}
+					}
+					this = culture:norse_gael
+				}
+			}
+			set_variable = block_start_with
+		}
 	}
 }
 
@@ -2286,6 +2321,13 @@ BTWK_de_jure_setup = {
 					name = anglo_saxon_kingdom_list
 					target = THIS
 				}
+				if = {
+					limit = { is_anglo_saxon_kingdom_trigger = yes }
+					add_to_global_variable_list = {
+						name = anglo_saxon_heptarchy_kingdom_list
+						target = THIS
+					}
+				}
 			}
 		}
 		title:e_britannia = {
@@ -2316,7 +2358,7 @@ BTWK_de_jure_setup = {
 			check_de_jure_liege_kingdom_effect = yes
 		}
 		
-		# Set other related flags here
+		# Initialize other related flags and lists here
 		title:e_roman_britannia = {
 			every_in_de_jure_hierarchy = {
 				limit = { tier = tier_kingdom }

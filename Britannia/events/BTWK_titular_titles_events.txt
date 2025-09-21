@@ -612,6 +612,8 @@ titular_titles_anglosaxon.0100 = {
 		save_scope_as = founder
 		hidden_effect = {
 			# Rename Jutish Wessex to Westeotas ("West Jutes")
+			# Note that this can also happen if the cultural divergence event hits Wessex
+			# before it forms and Jutish culture is dominant in the area
 			if = {
 				limit = {
 					scope:title = title:k_wessex
@@ -620,6 +622,7 @@ titular_titles_anglosaxon.0100 = {
 				title:k_wessex = {
 					set_title_name = WESTEOTAS
 					set_capital_county = title:c_clausentum
+					set_variable = jutish_wessex
 				}
 			}
 		}
@@ -1775,143 +1778,16 @@ titular_titles_briton.0051 = {
 			}
 		}
 		
-		# Break up Briton culture
-		culture:welsh = {
-			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
-			reset_culture_creation_date = yes
-			get_all_innovations_from = culture:briton
-			save_scope_as = welsh
-		}
-		culture:cumbrian = {
-			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
-			reset_culture_creation_date = yes
-			get_all_innovations_from = culture:briton
-			save_scope_as = cumbrian
-		}
-		culture:cornish = {
-			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
-			reset_culture_creation_date = yes
-			get_all_innovations_from = culture:briton
-			save_scope_as = cornish
-		}
-		culture:romanobritish = {
-			save_scope_as = briton
-			# Convert counties based on region
-			every_culture_county = {
-				title_province = { get_briton_successor_culture_for_province_effect = yes }
-				set_county_culture = scope:briton_successor_culture
-			}
-			# Convert unlanded family based on region of capital
-			every_ruler = {
-				limit = { culture = culture:briton }
-				capital_province = {
-					get_briton_successor_culture_for_province_effect = yes
-				}
-				every_close_family_member = {
-					limit = { 
-						is_landed = no 			# Includes courtiers and landless rulers!
-						culture = culture:briton
-					}
-					if = {
-						limit = {
-							exists = domicile.domicile_culture
-							culture = domicile.domicile_culture
-						}
-						domicile = { set_domicile_culture = scope:briton_successor_culture }
-					}
-					set_culture = scope:briton_successor_culture
-				}
-			}
-			# Then convert rulers + courts - do this second so that family members in other courts
-			# match the culture of their family
-			every_ruler = {
-				limit = { culture = culture:briton }
-				capital_province = {
-					get_briton_successor_culture_for_province_effect = yes
-				}
-				set_culture = scope:briton_successor_culture
-				every_courtier_or_guest = {
-					limit = {
-						culture = culture:briton
-					}
-					if = {
-						limit = {
-							exists = domicile.domicile_culture
-							culture = domicile.domicile_culture
-						}
-						domicile = { set_domicile_culture = scope:briton_successor_culture }
-					}
-					set_culture = scope:briton_successor_culture
-				}
-			}
-			# Convert any remaining adventurer camps
-			every_domicile = {
-				limit = { owner.culture = culture:briton }
-				domicile_location = { get_briton_successor_culture_for_province_effect = yes }
-				owner = {
-					if = {
-						limit = {
-							exists = domicile.domicile_culture
-							culture = domicile.domicile_culture
-						}
-						domicile = { set_domicile_culture = scope:briton_successor_culture }
-					}
-					set_culture = scope:briton_successor_culture
-					every_courtier_or_guest = {
-						limit = {
-							culture = culture:briton
-						}
-						if = {
-							limit = {
-								exists = domicile.domicile_culture
-								culture = domicile.domicile_culture
-							}
-							domicile = { set_domicile_culture = scope:briton_successor_culture }
-						}
-						set_culture = scope:briton_successor_culture
-					}
-				}
-			}
-			# Then convert straggler characters (mostly random courtiers or distant relatives)
-			every_living_character = {
-				limit = { culture = culture:briton }
-				location = { get_briton_successor_culture_for_province_effect = yes }
-				if = {
-					limit = {
-						exists = domicile.domicile_culture
-						culture = domicile.domicile_culture
-					}
-					domicile = { set_domicile_culture = set_culture = scope:briton_successor_culture }
-				}
-				set_culture = scope:briton_successor_culture
-			}
-		}
+		# Breakup of Briton and Armorican shift to Breton
+		trigger_event = { id = culture_shifts.0001 }
 		
-		# Armorican becomes Breton
-		culture:breton = {
-			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
-			reset_culture_creation_date = yes
-			get_all_innovations_from = culture:armorican
-			save_scope_as = breton
-		}
-		culture:armorican = {
-			save_scope_as = armorican
-			every_culture_county = {
-				set_county_culture = culture:breton
-			}
-		}
-		every_living_character = {
-			limit = { culture = culture:armorican }
-			set_culture = culture:breton
-			if = {
-				limit = {
-					exists = domicile.domicile_culture
-					culture = domicile.domicile_culture
-				}
-				domicile = { set_domicile_culture = culture:breton }
-			}
-		}
-			
+		# Notification event
+		culture:briton = { save_scope_as = briton }
+		culture:welsh = { save_scope_as = welsh }
+		culture:cornish = { save_scope_as = cornish }
+		culture:cumbrian = { save_scope_as = cumbrian }
+		culture:armorican = { save_scope_as = armorican }
+		culture:breton = { save_scope_as = breton }
 		trigger_event = { id = titular_titles_briton.0052 }
 		every_player = {
 			limit = { NOT = { this = PREV } }
