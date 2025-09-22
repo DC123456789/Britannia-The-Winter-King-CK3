@@ -458,7 +458,7 @@ culture_shifts.0001 = {
 	}
 }
 
-# Anglo-Saxon regional/kingdom culture emergence
+# Anglo-Saxon regional/kingdom culture counter and emergence
 culture_shifts.0002 = {
 	scope = none
 	content_source = dlc_BTWK
@@ -478,9 +478,11 @@ culture_shifts.0002 = {
 			
 			save_scope_as = current_kingdom
 			if = {
-				limit = { NOT = { has_variable = regional_culture_progress_change } }
-				set_variable = { name = regional_culture_progress_change value = 0 }
+				limit = { NOT = { has_variable = regional_culture_progress } }
+				set_variable = { name = regional_culture_progress value = 0 }
 			}
+			
+			set_variable = { name = regional_culture_progress_change value = 0 }
 			if = {
 				limit = { exists = this.holder }
 				# Each kingdom gets yearly progress towards the emergence of the associated culture
@@ -506,9 +508,56 @@ culture_shifts.0002 = {
 			
 			# Get a small amount of progress if any other regional cultures already exist,
 			# even if the kingdom title doesn't actually exist yet
-			# But only for kingdoms with a minimum number of West Germanic non-regional culture provinces
+			if = {
+				limit = {
+					any_in_global_list = {
+						variable = anglo_saxon_heptarchy_kingdom_list
+						has_variable = anglo_saxon_regional_culture
+					}
+				}
+				# But only for kingdoms with a minimum number of non-Romanized Germanic non-regional culture provinces
+				set_local_variable = { name = num_non_regional_germanic_provinces value = 0 }
+				every_direct_de_jure_vassal_title = {
+					every_in_list = {
+						variable = baseline_dynamic_de_jure_territory
+						if = {
+							limit = { 
+								is_unromanized_germanic_culture_trigger = yes
+								NOT = { has_variable = anglo_saxon_regional_culture_kingdom }
+								NOT = { has_variable = is_anglo_saxon_unified_culture }
+							}
+							change_local_variable = { name = num_non_regional_germanic_provinces add = 1 }
+						}
+					}
+				}
+				# Baseline of 1 if any culture exists, and then another 0.5 for every existing regional cultures
+				if = {
+					limit = { local_var:num_non_regional_germanic_provinces > 5 }
+					change_variable = { name = regional_culture_progress_change add = 1 }
+					every_in_global_list = {
+						variable = anglo_saxon_heptarchy_kingdom_list
+						limit = { has_variable = anglo_saxon_regional_culture }
+						prev = { change_variable = { name = regional_culture_progress_change add = 0.5 } }
+					}
+				}
+			}
+			
+			# Actually apply the change
+			change_variable = { 
+				name = regional_culture_progress 
+				add = this.var:regional_culture_progress_change 
+			}
 			
 			# Capped at 60% progress before the consolidation/unification phase
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+					NOT = { 
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+				}
+				clamp_variable = { name = regional_culture_progress max = 60 }
+			}
 			
 			# If you reach 100% progress, then the new culture is created	
 			if = {
@@ -516,8 +565,7 @@ culture_shifts.0002 = {
 					this.var:regional_culture_progress >= 100
 					OR = {
 						NOT = { exists = struggle:britannia_struggle }
-						struggle:britannia_struggle = { is_struggle_phase = struggle_britannia_phase_consolidation }
-						struggle:britannia_struggle = { is_struggle_phase = struggle_britannia_phase_unification }	
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }	
 					}
 				}				
 				# If the kingdom has a holder, than diverge from the holder's culture
@@ -525,7 +573,14 @@ culture_shifts.0002 = {
 				if = {
 					limit = { 
 						exists = this.holder
-						NOT = { culture = { has_variable = is_anglo_saxon_regional_culture } }
+						NOT = { 
+							culture = { 
+								OR = {
+									has_variable = anglo_saxon_regional_culture_kingdom 
+									has_variable = is_anglo_saxon_unified_culture
+								} 
+							}
+						}
 					}
 					this.holder.culture = { save_scope_as = old_culture }
 				}
@@ -543,7 +598,8 @@ culture_shifts.0002 = {
 					every_culture_global = {
 						limit = { 
 							has_cultural_pillar = heritage_west_germanic
-							NOT = { has_variable = is_anglo_saxon_regional_culture }
+							NOT = { has_variable = anglo_saxon_regional_culture_kingdom }
+							NOT = { has_variable = is_anglo_saxon_unified_culture }
 						}
 						set_local_variable = { name = num_culture_provinces value = 0 }
 						every_culture_county = {
@@ -596,7 +652,7 @@ culture_shifts.0002 = {
 							culture:jute = { save_scope_as = dominant_west_germanic_culture }
 						}
 						else = {
-							culture:old_saxon = { save_scope_as = dominant_west_germanic_culture }
+							culture:angle = { save_scope_as = dominant_west_germanic_culture }
 						}
 					}
 				}
@@ -699,9 +755,13 @@ culture_shifts.0002 = {
 							gender = male
 							save_scope_as = culture_creator
 						}
+						if = {
+							limit = { exists = this.holder }
+							holder = { save_scope_as = culture_creator }
+						}
 						scope:culture_creator = {
 							create_divergent_culture = yes
-							death = natural
+							# death = natural
 						}
 					}
 					else = {
