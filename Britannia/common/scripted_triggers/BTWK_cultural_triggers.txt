@@ -143,6 +143,10 @@ is_unromanized_germanic_culture_trigger = {
 	}
 }
 
+is_germanic_culture_trigger = {
+	culture = { has_same_heritage_group_as = { TARGET = culture:angle } }
+}
+
 # For creating Germanic (= Anglo-Saxon, for now) titles
 can_create_germanic_title_culture_trigger = {
 	custom_description = {
@@ -162,6 +166,85 @@ can_create_germanic_title_trigger = {
 	top_liege_can_create_germanic_title_culture_trigger = yes
 	can_create_germanic_title_culture_trigger = yes
 	NOT = { is_roman_ruler_trigger = yes }
+}
+
+# Character can adopt an Anglo-Saxon regional culture
+character_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			is_independent_ruler = no
+			liege = { is_unromanized_germanic_culture_trigger = yes }
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - culture check only
+county_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			holder = {
+				OR = {
+					NOT = { culture = prev }
+					AND = {
+						is_independent_ruler = no
+						liege = { is_unromanized_germanic_culture_trigger = yes }
+					}
+				}
+			}
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - location/kingdom check only
+county_is_in_anglo_saxon_regional_culture_kingdom = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		AND = {
+			var:anglo_saxon_duchy.kingdom ?= $KINGDOM$
+			OR = {
+				NOT = { $KINGDOM$ = title:k_wales }
+				title_province = { geographical_region = btwk_custom_wales } 
+			}
+		}
+		kingdom = $KINGDOM$
+		holder = {
+			save_temporary_scope_as = county_holder
+			AND = {
+				OR = {
+					has_title = $KINGDOM$
+					any_liege_or_above = { has_title = $KINGDOM$ }
+				}
+				NOT = {
+					prev.kingdom = {
+						save_temporary_scope_as = county_kingdom
+						NOT = { this = $KINGDOM$ }
+						is_anglo_saxon_kingdom_trigger = yes
+						scope:county_holder = {
+							OR = {
+								has_title = scope:county_kingdom
+								any_liege_or_above = { has_title = scope:county_kingdom }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 is_old_saxon_culture_trigger = { 
