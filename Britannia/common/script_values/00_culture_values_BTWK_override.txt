@@ -1,4 +1,42 @@
-﻿# Score for a given court language
+﻿
+tradition_replacement_cost_factor = 1.5
+tradition_replacement_cost_factor_tooltip = {
+	value = tradition_replacement_cost_factor
+	subtract = 1
+	multiply = 100
+}
+
+new_culture_tradition_discount_factor = 0.75
+new_culture_tradition_discount_factor_tooltip = {
+	value = new_culture_tradition_discount_factor
+	subtract = 1
+	multiply = 100
+}
+
+# We're using this as a general purpose tradition cost multiplier
+tradition_replacement_cost_if_relevant = {
+	value = 1
+	if = {
+		limit = {
+			scope:replacing = yes
+		}
+		multiply = {
+			value = tradition_replacement_cost_factor
+			desc = replacing_tradition_cost_penalty_desc
+		}
+	}
+	if = {
+		limit = {
+			has_variable = new_culture_tradition_discount
+		}
+		multiply = {
+			value = new_culture_tradition_discount_factor
+			desc = new_culture_tradition_desc
+		}
+	}
+}
+
+# Score for a given court language
 # Referenced by code!
 # Only used by the AI
 # Numbers get truncated; 10.3 and 10.4 is the same score
