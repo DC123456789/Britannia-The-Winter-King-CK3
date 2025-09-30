@@ -312,10 +312,10 @@ name_lists.012 = { #visible event for Norsemen
 # Culture shifts
 ##################################################
 
-# 0001 - 0010	- Briton split
-# 0010 - 0020	- Anglo-Saxon regional cultures
-# 0021 - 0030	- Anglo-Saxon unified culture
-# 0031 - 0040	- Romano-British Romance culture shift
+# 0001 - 0009	- Briton split
+# 0010 - 0019	- Anglo-Saxon regional cultures
+# 0020 - 0029	- Anglo-Saxon unified culture
+# 0030 - 0039	- Romano-British Romance culture shift
 
 # Breakup of Briton and Armorican shift to Breton - called and notified by the Fall of Britannia event
 culture_shifts.0001 = {
@@ -845,15 +845,11 @@ culture_shifts.0010 = {
 							gender = male
 							save_scope_as = culture_creator
 						}
-						if = {
-							limit = { exists = this.holder }
-							holder = { save_scope_as = culture_creator }
-						}
 						scope:culture_creator = {
 							# Stops normal notifications from creating new cultures
 							add_character_flag = suppress_culture_notifications_and_achievements
 							create_divergent_culture = yes
-							# death = natural
+							death = natural
 						}
 					}
 					else = {
@@ -945,6 +941,12 @@ culture_shifts.0010 = {
 				scope:new_culture = {
 					set_variable = { name = anglo_saxon_regional_culture_kingdom value = scope:current_kingdom }
 					set_variable = { name = new_culture_tradition_discount days = 9125 }
+				}
+				if = {
+					limit = {
+						exists = struggle:britannia_struggle
+					}
+					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
 				}
 				
 				# Copy acceptances
@@ -1910,6 +1912,10 @@ culture_shifts.0012 = {
 			
 			clear_saved_scope = regional_culture_spread_progress_story
 		}
+		
+		# TODO Need to implement spreading to rulers and landless adventurers whose capital/location have 
+		# already flipped, but they haven't for some reason
+		# TODO Need to figure out spreading to rulers in the kingdom without a West Germanic capital province
 	}
 }
 
@@ -1947,3 +1953,254 @@ culture_shifts.0014 = {
 		}
 	}
 }
+
+# Anglo-Saxon culture spawns
+culture_shifts.0020 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		
+		# Diverge from the Bretwalda's culture
+		root.culture = { save_scope_as = old_culture }
+		
+		# Stops normal notifications from creating new cultures
+		add_character_flag = suppress_culture_notifications_and_achievements
+		create_divergent_culture = yes
+		remove_character_flag = suppress_culture_notifications_and_achievements
+		
+		# Set flags and culture name/properties
+		title:e_aengland = { set_variable = { name = anglo_saxon_unified_culture value = scope:new_culture } }
+		scope:new_culture = {
+			set_culture_name = {
+				noun = anglo_saxon
+				collective_noun = anglo_saxon_collective_noun
+				prefix = anglo_saxon_prefix
+			}
+			if = {
+				limit = {
+					OR = {
+						has_primary_name_list = name_list_angle
+						has_primary_name_list = name_list_jute
+						has_primary_name_list = name_list_old_saxon
+						has_primary_name_list = name_list_oldfrisian
+					}
+				}
+				set_name_list = name_list_anglo_saxon		# Shift to "late" Anglo-Saxon names
+			}
+			set_variable = { name = new_culture_tradition_discount days = 9125 }
+		}
+		if = {
+			limit = {
+				exists = struggle:britannia_struggle
+			}
+			struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
+		}
+				
+		# New culture spawns at capital if possible
+		if = {
+			limit = {
+				capital_county.title_province = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+				}
+			}
+			capital_county = { 
+				save_scope_as = new_culture_spawn_county
+			}
+		}
+		# Next, try any directly held county in the capital kingdom
+		if = {
+			limit = { 
+				NOT = { exists = scope:new_culture_spawn_county }
+			}
+			random_held_title = {
+				limit = {
+					tier = tier_county
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+					kingdom = root.capital_county.kingdom
+				}
+				save_scope_as = new_culture_spawn_county
+			}
+		}
+		# Next, any West Germanic province in the capital kingdom
+		if = {
+			limit = { 
+				NOT = { exists = scope:new_culture_spawn_county }
+			}
+			random_sub_realm_county = {
+				limit = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+					kingdom = root.capital_county.kingdom
+				}
+				save_scope_as = new_culture_spawn_county
+			}
+		}
+		# Next, any directly held county West Germanic province in Britannia
+		if = {
+			limit = { 
+				NOT = { exists = scope:new_culture_spawn_county }
+			}
+			random_held_title = {
+				limit = {
+					tier = tier_county
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+				}
+				save_scope_as = new_culture_spawn_county
+			}
+		}
+		# Fallback to any West Germanic province under the realm in Britannia
+		if = {
+			limit = { 
+				NOT = { exists = scope:new_culture_spawn_county }
+			}
+			random_sub_realm_county = {
+				limit = {
+					tier = tier_county
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+				}
+				save_scope_as = new_culture_spawn_county
+			}
+		}
+		# If somehow you still don't have any then you just don't get the culture spawning in any provinces		
+		
+		# Convert all West Germanic characters and counties in the spawn point and neighbouring counties
+		scope:new_culture_spawn_county ?= {
+			convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+				COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+				COUNTY_CULTURE_CONDITION_OP = "="
+				COUNTY_CULTURE_CONDITION_RHS = "yes"
+				CHAR_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+				CHAR_CULTURE_CONDITION_OP = "="
+				CHAR_CULTURE_CONDITION_RHS = "yes"
+				NEW_CULTURE = scope:new_culture
+			}
+			every_neighboring_county = {
+				limit = { county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom } }
+				convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+					COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+					COUNTY_CULTURE_CONDITION_OP = "="
+					COUNTY_CULTURE_CONDITION_RHS = "yes"
+					CHAR_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+					CHAR_CULTURE_CONDITION_OP = "="
+					CHAR_CULTURE_CONDITION_RHS = "yes"
+					NEW_CULTURE = scope:new_culture
+				}
+			}
+		}
+		
+		# Notify everyone
+		trigger_event = { id = culture_shifts.0021 }
+		every_player = {
+			limit = { NOT = { this = root } }
+			trigger_event = { id = culture_shifts.0021 }
+		}
+	}
+}
+
+# Notify creation of Anglo-Saxon culture
+culture_shifts.0021 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = culture_shifts.0021.t
+	desc = culture_shifts.0021.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:old_culture = { save_scope_as = parent_1 }
+		custom_tooltip = culture_notification_tooltip
+		custom_tooltip = culture_shifts.0021.culture_spread_tooltip
+		if = {
+			limit = { culture = scope:new_culture }
+			custom_tooltip = culture_shifts.0021.culture_spread_to_us_tooltip
+			custom_tooltip = culture_shifts.0021.culture_tradition_discount_tooltip
+		}
+	}
+
+	option = {
+		trigger = { 
+			culture = scope:new_culture
+		}
+		name = culture_shifts.0021.a
+	}
+	
+	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			capital_county = {
+				OR = {
+					geographical_region = btwk_world_britannia
+					geographical_region = btwk_world_caledonia
+				}
+			}
+		}
+		name = culture_shifts.0021.b
+		custom_tooltip = culture_shifts.0021.b.tt
+	}
+	
+	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			NAND = {
+				culture = { has_cultural_pillar = heritage_west_germanic }
+				capital_county = {
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
+				}
+			}
+			any_sub_realm_county = {
+				culture = { has_cultural_pillar = heritage_west_germanic }
+				OR = {
+					geographical_region = btwk_world_britannia
+					geographical_region = btwk_world_caledonia
+				}
+			}
+		}
+		name = culture_shifts.0021.c
+		custom_tooltip = culture_shifts.0021.c.tt
+	}
+	
+	option = {
+		trigger = { always = no }
+		fallback = yes
+		name = culture_shifts.0021.d
+	}
+}
+
+# TODO Anglo-Saxon culture spreads over time
+# culture_shifts.0022
+
+# TODO Notification event for flipped characters
+# culture_shifts.0023
+
+# TODO Toast for flipped provinces
+# culture_shifts.0024
