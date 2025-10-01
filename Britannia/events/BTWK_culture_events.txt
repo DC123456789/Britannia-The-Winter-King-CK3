@@ -632,6 +632,11 @@ culture_shifts.0010 = {
 			# If you reach 100% progress, then the new culture is created	
 			if = {
 				limit = {
+					this.var:regional_culture_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
 				}
 				# If the kingdom has a holder, than diverge from the holder's culture
 				# Unless they are already a regional culture
