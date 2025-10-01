@@ -79,6 +79,18 @@ titular_titles_anglosaxon.0001 = {
 				trigger = { scope:new_duchy_title = title:d_hiccas }
 				desc = titular_titles_anglosaxon.0001.desc.d_hiccas
 			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_middleseaxe }
+				desc = titular_titles_anglosaxon.0001.desc.d_middleseaxe
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_middle_angles }
+				desc = titular_titles_anglosaxon.0001.desc.d_middle_angles
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_mercia }
+				desc = titular_titles_anglosaxon.0001.desc.d_mercia
+			}
 			desc = titular_titles_anglosaxon.0001.desc.fallback
 		}
 		desc = titular_titles_anglosaxon.0001.desc.outro
@@ -600,10 +612,7 @@ titular_titles_anglosaxon.0100 = {
 	trigger = {
 		# scope:transfer_type = flag:created
 		scope:title = {
-			OR = {
-				is_anglo_saxon_kingdom_trigger = yes
-				this = title:k_wales
-			}
+			is_anglo_saxon_kingdom_trigger = yes
 			NOT = { has_variable = title_has_been_created }
 		}
 	}
@@ -623,6 +632,32 @@ titular_titles_anglosaxon.0100 = {
 					set_title_name = WESTEOTAS
 					set_capital_county = title:c_clausentum
 					set_variable = jutish_wessex
+				}
+			}
+			# Rename Wales to Westerne if it is created by a "Westernian" culture character,
+			# or if it is the creator's first kingdom title
+			if = {
+				limit = { 
+					NOT = { has_variable = title_has_been_created }
+					scope:founder = {
+						OR = {
+							culture.var:anglo_saxon_regional_culture_kingdom ?= title:k_wales
+							AND = {
+								is_independent_ruler = yes
+								highest_held_title_tier = tier_kingdom
+								NOT = { 
+									any_held_title = {
+										count >= 2
+										tier >= tier_kingdom
+									}
+								}
+							}
+						}
+					}
+				}
+				title:k_wales = {
+					set_title_name = WESTERNE
+					set_variable = wales_renamed_westerne
 				}
 			}
 		}
@@ -962,7 +997,7 @@ titular_titles_roman.0004 = {
 				}
 				any_held_title = {
 					tier = prev.primary_title.tier
-					title_capital_county = { geographical_region = btwk_world_britannia }
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 				}
 			}
 			text = titular_titles_roman.0004.a.anglosaxon

@@ -100,3 +100,192 @@ get_briton_successor_culture_for_province_effect = {
 		culture:breton = { save_scope_as = briton_successor_culture }
 	}
 }
+
+# Note - includes barons
+convert_unlanded_close_family_members_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_close_family_member = {
+		limit = {
+			$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+			OR = {
+				is_landed = no 			# Includes courtiers and landless rulers!
+				highest_held_title_tier = tier_barony
+			}
+		}
+		if = {
+			limit = {
+				exists = domicile
+			}
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			convert_unlanded_courtiers_and_guests_of_culture_effect = {
+				CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+				CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+				CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+				NEW_CULTURE = scope:effect_new_culture
+			}
+		}
+		set_culture = scope:effect_new_culture
+	}
+}
+
+convert_unlanded_courtiers_and_guests_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_courtier_or_guest = {
+		limit = {
+			$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+		}
+		if = {
+			limit = {
+				exists = domicile
+			}
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			# Need to avoid recursion here
+			every_courtier_or_guest = {
+				limit = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+				}
+				set_culture = scope:effect_new_culture
+			}
+		}
+		set_culture = scope:effect_new_culture
+	}
+}
+
+# We separate the condition into individual words to let us pass it down to other effects
+# If you need a complex condition, wrap it in a scripted trigger
+convert_character_with_family_and_courtiers_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	if = {
+		limit = { $CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$ }
+		culture = { save_scope_as = old_char_culture }
+		if = {
+			limit = {
+				exists = domicile.domicile_culture
+				culture = domicile.domicile_culture
+			}
+			domicile = { set_domicile_culture = scope:effect_new_culture }
+		}
+		set_culture = scope:effect_new_culture
+		convert_unlanded_close_family_members_of_culture_effect = { 
+			CULTURE_CONDITION_LHS = "culture"
+			CULTURE_CONDITION_OP = "="
+			CULTURE_CONDITION_RHS = "scope:old_char_culture"
+			NEW_CULTURE = scope:effect_new_culture
+		}
+		convert_unlanded_courtiers_and_guests_of_culture_effect = {
+			CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+			CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+			CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+			NEW_CULTURE = scope:effect_new_culture
+		} 
+	}
+}
+
+convert_county_barons_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_direct_de_jure_vassal_title = {
+		holder ?= {
+			if = {
+				limit = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+					highest_held_title_tier = tier_barony
+				}
+				set_culture = scope:effect_new_culture
+				every_courtier_or_guest = {
+					limit = {
+						$CULTURE_CONDITION$
+					}
+					if = {
+						limit = {
+							exists = domicile.domicile_culture
+							culture = domicile.domicile_culture
+						}
+						domicile = { set_domicile_culture = scope:effect_new_culture }
+					}
+					set_culture = scope:effect_new_culture
+				}
+			}
+		}
+	}
+}
+
+convert_county_unlanded_domiciles_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_county_province = {
+		every_province_domicile = {
+			limit = {
+				owner = {
+					$CHAR_CULTURE_CONDITION_LHS$ $CHAR_CULTURE_CONDITION_OP$ $CHAR_CULTURE_CONDITION_RHS$
+					is_landed = no
+					# Doesn't have a close family member whose culture will take precedence
+					NOT = {
+						any_close_family_member = {
+							is_landed = yes
+							culture = prev.culture
+						}
+					}
+				}
+			}
+			owner = {
+				convert_character_with_family_and_courtiers_effect = {
+					CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+					CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+					CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+					NEW_CULTURE = scope:effect_new_culture
+				}
+				$DOMICILE_OWNER_EFFECT$
+			}
+		}
+	}
+}
+
+convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	# Flip county if applicable
+	if = {
+		limit = { 
+			$COUNTY_CULTURE_CONDITION_LHS$ $COUNTY_CULTURE_CONDITION_OP$ $COUNTY_CULTURE_CONDITION_RHS$ 
+			NOT = { culture = scope:effect_new_culture }
+		}
+		set_county_culture = scope:effect_new_culture
+	}
+	# Flip barons if applicable
+	convert_county_barons_of_culture_effect = { 
+		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+		NEW_CULTURE = scope:effect_new_culture
+	}
+	# Flip holder and court if applicable and this is the holder's capital
+	holder = {
+		if = {
+			limit = { capital_county = prev }
+			convert_character_with_family_and_courtiers_effect = {
+				CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+				CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+				CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+				NEW_CULTURE = scope:effect_new_culture
+			}
+		}
+	}
+	# Flip domiciles in the area and their courts if applicable
+	convert_county_unlanded_domiciles_effect = {
+		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+		NEW_CULTURE = scope:effect_new_culture
+		DOMICILE_OWNER_EFFECT = ""
+	}
+}
