@@ -114,10 +114,21 @@ convert_unlanded_close_family_members_of_culture_effect = {
 		}
 		if = {
 			limit = {
-				exists = domicile.domicile_culture
-				culture = domicile.domicile_culture
+				exists = domicile
 			}
-			domicile = { set_domicile_culture = scope:effect_new_culture }
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			convert_unlanded_courtiers_and_guests_of_culture_effect = {
+				CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+				CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+				CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+				NEW_CULTURE = scope:effect_new_culture
+			}
 		}
 		set_culture = scope:effect_new_culture
 	}
@@ -131,10 +142,22 @@ convert_unlanded_courtiers_and_guests_of_culture_effect = {
 		}
 		if = {
 			limit = {
-				exists = domicile.domicile_culture
-				culture = domicile.domicile_culture
+				exists = domicile
 			}
-			domicile = { set_domicile_culture = scope:effect_new_culture }
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			# Need to avoid recursion here
+			every_courtier_or_guest = {
+				limit = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+				}
+				set_culture = scope:effect_new_culture
+			}
 		}
 		set_culture = scope:effect_new_culture
 	}
@@ -147,6 +170,13 @@ convert_character_with_family_and_courtiers_effect = {
 	if = {
 		limit = { $CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$ }
 		culture = { save_scope_as = old_char_culture }
+		if = {
+			limit = {
+				exists = domicile.domicile_culture
+				culture = domicile.domicile_culture
+			}
+			domicile = { set_domicile_culture = scope:effect_new_culture }
+		}
 		set_culture = scope:effect_new_culture
 		convert_unlanded_close_family_members_of_culture_effect = { 
 			CULTURE_CONDITION_LHS = "culture"
@@ -191,18 +221,54 @@ convert_county_barons_of_culture_effect = {
 	}
 }
 
-convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+convert_county_unlanded_domiciles_effect = {
 	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_county_province = {
+		every_province_domicile = {
+			limit = {
+				owner = {
+					$CHAR_CULTURE_CONDITION_LHS$ $CHAR_CULTURE_CONDITION_OP$ $CHAR_CULTURE_CONDITION_RHS$
+					is_landed = no
+					# Doesn't have a close family member whose culture will take precedence
+					NOT = {
+						any_close_family_member = {
+							is_landed = yes
+							culture = prev.culture
+						}
+					}
+				}
+			}
+			owner = {
+				convert_character_with_family_and_courtiers_effect = {
+					CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+					CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+					CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+					NEW_CULTURE = scope:effect_new_culture
+				}
+				$DOMICILE_OWNER_EFFECT$
+			}
+		}
+	}
+}
+
+convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	# Flip county if applicable
 	if = {
-		limit = { $COUNTY_CULTURE_CONDITION_LHS$ $COUNTY_CULTURE_CONDITION_OP$ $COUNTY_CULTURE_CONDITION_RHS$ }
+		limit = { 
+			$COUNTY_CULTURE_CONDITION_LHS$ $COUNTY_CULTURE_CONDITION_OP$ $COUNTY_CULTURE_CONDITION_RHS$ 
+			NOT = { culture = scope:effect_new_culture }
+		}
 		set_county_culture = scope:effect_new_culture
 	}
+	# Flip barons if applicable
 	convert_county_barons_of_culture_effect = { 
 		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
 		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
 		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
 		NEW_CULTURE = scope:effect_new_culture
 	}
+	# Flip holder and court if applicable and this is the holder's capital
 	holder = {
 		if = {
 			limit = { capital_county = prev }
@@ -213,5 +279,13 @@ convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
 				NEW_CULTURE = scope:effect_new_culture
 			}
 		}
+	}
+	# Flip domiciles in the area and their courts if applicable
+	convert_county_unlanded_domiciles_effect = {
+		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+		NEW_CULTURE = scope:effect_new_culture
+		DOMICILE_OWNER_EFFECT = ""
 	}
 }

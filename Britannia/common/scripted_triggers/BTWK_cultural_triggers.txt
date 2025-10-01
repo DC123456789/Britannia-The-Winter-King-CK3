@@ -179,8 +179,14 @@ character_can_convert_to_anglo_saxon_regional_culture = {
 		is_unromanized_germanic_culture_trigger = yes
 		AND = {
 			culture = { has_cultural_pillar = heritage_romanized_germanic }
-			is_independent_ruler = no
-			liege = { is_unromanized_germanic_culture_trigger = yes }
+			OR = {
+				AND = {
+					is_ruler = yes
+					is_independent_ruler = no
+				}
+				is_ruler = no
+			}
+			liege_or_court_owner = { is_unromanized_germanic_culture_trigger = yes }
 		}		
 	}
 	NOR = { 

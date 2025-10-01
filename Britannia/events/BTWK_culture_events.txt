@@ -632,11 +632,6 @@ culture_shifts.0010 = {
 			# If you reach 100% progress, then the new culture is created	
 			if = {
 				limit = {
-					this.var:regional_culture_progress >= 100
-					OR = {
-						NOT = { exists = struggle:britannia_struggle }
-						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
-					}
 				}
 				# If the kingdom has a holder, than diverge from the holder's culture
 				# Unless they are already a regional culture
@@ -1214,7 +1209,7 @@ culture_shifts.0010 = {
 				# Convert all characters and counties in the spawn point, as well as in
 				# neighbouring counties inside the kingdom
 				scope:new_culture_spawn_county ?= {
-					convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+					convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 						COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
 						COUNTY_CULTURE_CONDITION_OP = "="
 						COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -1225,7 +1220,7 @@ culture_shifts.0010 = {
 					}
 					every_neighboring_county = {
 						limit = { county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom } }
-						convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+						convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 							COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
 							COUNTY_CULTURE_CONDITION_OP = "="
 							COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -1420,7 +1415,7 @@ culture_shifts.0010 = {
 					if = {
 						limit = { exists = scope:new_culture_county }
 						scope:new_culture_county = {
-							convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+							convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 								COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
 								COUNTY_CULTURE_CONDITION_OP = "="
 								COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -1887,7 +1882,7 @@ culture_shifts.0012 = {
 				save_scope_as = current_county
 				culture = { save_scope_as = old_culture }
 				root = { save_scope_as = new_culture }
-				convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+				convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 					COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
 					COUNTY_CULTURE_CONDITION_OP = "="
 					COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -1913,9 +1908,40 @@ culture_shifts.0012 = {
 			clear_saved_scope = regional_culture_spread_progress_story
 		}
 		
-		# TODO Need to implement spreading to rulers and landless adventurers whose capital/location have 
-		# already flipped, but they haven't for some reason
-		# TODO Need to figure out spreading to rulers in the kingdom without a West Germanic capital province
+		# Culture also spreads to rulers whose capital have 
+		# already flipped, but they themselves haven't for some reason
+		every_culture_county = {
+			holder = {
+				if = {
+					limit = {
+						character_can_convert_to_anglo_saxon_regional_culture = yes
+						capital_county = prev
+					}
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0013 }
+				}
+			}
+			
+			# And also adventurers in a already-flipped county location
+			convert_county_unlanded_domiciles_effect = {
+				CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+				CULTURE_CONDITION_OP = "="
+				CULTURE_CONDITION_RHS = "yes"
+				NEW_CULTURE = root
+				DOMICILE_OWNER_EFFECT = "trigger_event = { id = culture_shifts.0013 }"
+			}
+		}
+		
+		# Rulers in the kingdom without a West Germanic capital province can flip if *any* of their
+		# held or subrealm provinces or lieges have flipped to a regional culture
+		
+		# Rulers in the kingdom without any West Germanic provinces at all can also slowly flip if
+		# their liege is not West Germanic
 	}
 }
 
@@ -2024,8 +2050,8 @@ culture_shifts.0020 = {
 					tier = tier_county
 					culture = { has_cultural_pillar = heritage_west_germanic }
 					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
+						title_province = { geographical_region = btwk_world_britannia }
+						title_province = { geographical_region = btwk_world_caledonia }
 					}
 					kingdom = root.capital_county.kingdom
 				}
@@ -2041,8 +2067,8 @@ culture_shifts.0020 = {
 				limit = {
 					culture = { has_cultural_pillar = heritage_west_germanic }
 					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
+						title_province = { geographical_region = btwk_world_britannia }
+						title_province = { geographical_region = btwk_world_caledonia }
 					}
 					kingdom = root.capital_county.kingdom
 				}
@@ -2059,8 +2085,8 @@ culture_shifts.0020 = {
 					tier = tier_county
 					culture = { has_cultural_pillar = heritage_west_germanic }
 					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
+						title_province = { geographical_region = btwk_world_britannia }
+						title_province = { geographical_region = btwk_world_caledonia }
 					}
 				}
 				save_scope_as = new_culture_spawn_county
@@ -2076,8 +2102,8 @@ culture_shifts.0020 = {
 					tier = tier_county
 					culture = { has_cultural_pillar = heritage_west_germanic }
 					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
+						title_province = { geographical_region = btwk_world_britannia }
+						title_province = { geographical_region = btwk_world_caledonia }
 					}
 				}
 				save_scope_as = new_culture_spawn_county
@@ -2087,7 +2113,7 @@ culture_shifts.0020 = {
 		
 		# Convert all West Germanic characters and counties in the spawn point and neighbouring counties
 		scope:new_culture_spawn_county ?= {
-			convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+			convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 				COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
 				COUNTY_CULTURE_CONDITION_OP = "="
 				COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -2098,7 +2124,7 @@ culture_shifts.0020 = {
 			}
 			every_neighboring_county = {
 				limit = { county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom } }
-				convert_county_and_holder_if_capital_with_family_and_courtiers_effect = {
+				convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 					COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
 					COUNTY_CULTURE_CONDITION_OP = "="
 					COUNTY_CULTURE_CONDITION_RHS = "yes"
@@ -2154,7 +2180,7 @@ culture_shifts.0021 = {
 		trigger = {
 			NOT = { culture = scope:new_culture }
 			culture = { has_cultural_pillar = heritage_west_germanic }
-			capital_county = {
+			capital_county.title_province = {
 				OR = {
 					geographical_region = btwk_world_britannia
 					geographical_region = btwk_world_caledonia
@@ -2170,7 +2196,7 @@ culture_shifts.0021 = {
 			NOT = { culture = scope:new_culture }
 			NAND = {
 				culture = { has_cultural_pillar = heritage_west_germanic }
-				capital_county = {
+				capital_county.title_province = {
 					OR = {
 						geographical_region = btwk_world_britannia
 						geographical_region = btwk_world_caledonia
@@ -2179,9 +2205,11 @@ culture_shifts.0021 = {
 			}
 			any_sub_realm_county = {
 				culture = { has_cultural_pillar = heritage_west_germanic }
-				OR = {
-					geographical_region = btwk_world_britannia
-					geographical_region = btwk_world_caledonia
+				title_province = {
+					OR = {
+						geographical_region = btwk_world_britannia
+						geographical_region = btwk_world_caledonia
+					}
 				}
 			}
 		}
