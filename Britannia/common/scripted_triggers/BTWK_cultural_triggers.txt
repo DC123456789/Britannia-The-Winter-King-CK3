@@ -191,7 +191,7 @@ character_can_convert_to_anglo_saxon_regional_culture = {
 	}
 	NOR = { 
 		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
-		culture = { has_variable = anglo_saxon_unified_culture }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
 	}
 }
 
@@ -214,7 +214,7 @@ county_can_convert_to_anglo_saxon_regional_culture = {
 	}
 	NOR = { 
 		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
-		culture = { has_variable = anglo_saxon_unified_culture }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
 	}
 }
 
@@ -254,6 +254,28 @@ county_is_in_anglo_saxon_regional_culture_kingdom = {
 					}
 				}
 			}
+		}
+	}
+}
+
+can_convert_to_anglo_saxon_unified_culture = {
+	culture = {
+		has_cultural_pillar = heritage_west_germanic
+		NOT = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+county_is_in_anglo_saxon_unified_culture_area = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	holder = {
+		OR = {
+			has_title = title:e_aengland
+			any_liege_or_above = { has_title = title:e_aengland }
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			any_liege_or_above = { culture = { has_variable = is_anglo_saxon_unified_culture } }
 		}
 	}
 }

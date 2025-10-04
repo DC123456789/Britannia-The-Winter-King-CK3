@@ -282,3 +282,83 @@ convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 		DOMICILE_OWNER_EFFECT = ""
 	}
 }
+
+# Saves the relevant story as culture_spread_progress_story
+get_culture_spread_success_story_effect = {
+	$CULTURE$ = { save_temporary_scope_as = current_culture }
+	if = {
+		limit = { exists = scope:culture_spread_progress_story }
+		clear_saved_scope = culture_spread_progress_story
+	}
+	random_in_list = {
+		variable = scripted_culture_spread_progress_list
+		limit = {
+			this.var:culture = scope:current_culture
+		}
+		save_scope_as = culture_spread_progress_story
+	}
+	if = {
+		limit = { NOT = { exists = scope:culture_spread_progress_story } }
+		holder = {
+			create_story = {
+				type = culture_spread_progress_story
+				save_scope_as = culture_spread_progress_story
+			}
+			scope:culture_spread_progress_story = {
+				set_variable = { name = culture value = scope:current_culture }
+				set_variable = { name = progress value = 0 }
+			}
+		}
+		add_to_variable_list = {
+			name = scripted_culture_spread_progress_list
+			target = scope:culture_spread_progress_story
+		}
+	}
+}
+
+apply_culture_spread_progress_terrain_modifiers = {
+	if = {
+		limit = {
+			OR = {
+				title_province = { terrain = farmlands }
+				title_province = { terrain = plains }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 1.1 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = hills }
+				title_province = { terrain = desert }
+				title_province = { terrain = oasis }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.8 }
+	}
+	else_if = {
+		limit = {
+			title_province = { terrain = forest }
+		}
+		change_local_variable = { name = progress_change multiply = 0.75 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = jungle }
+				title_province = { terrain = taiga }
+				title_province = { terrain = wetlands }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.67 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = mountains }
+				title_province = { terrain = desert_mountains }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.5 }
+	}
+}

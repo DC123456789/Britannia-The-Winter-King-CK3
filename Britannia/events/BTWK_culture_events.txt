@@ -1234,6 +1234,21 @@ culture_shifts.0010 = {
 							CHAR_CULTURE_CONDITION_RHS = "yes"
 							NEW_CULTURE = scope:new_culture
 						}
+						# Seed some progress in surroundings to get more organic spread in the first few years
+						every_neighboring_county = {
+							limit = { 
+								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_can_convert_to_anglo_saxon_regional_culture = yes
+							}
+							get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+							scope:culture_spread_progress_story = {
+								random_list = {
+									1 = { set_variable = { name = progress value = 20 } }
+									1 = { set_variable = { name = progress value = 40 } }
+									1 = { set_variable = { name = progress value = 60 } }
+								}
+							}
+						}
 					}
 				}
 				
@@ -1666,30 +1681,7 @@ culture_shifts.0012 = {
 				county_can_convert_to_anglo_saxon_regional_culture = yes
 			}
 			# Fetch the culture progress story struct
-			random_in_list = {
-				variable = anglo_saxon_regional_culture_spread_progress
-				limit = {
-					this.var:culture = root
-				}
-				save_scope_as = regional_culture_spread_progress_story
-			}
-			if = {
-				limit = { NOT = { exists = scope:regional_culture_spread_progress_story } }
-				holder = {
-					create_story = {
-						type = culture_spread_progress_story
-						save_scope_as = regional_culture_spread_progress_story
-					}
-					scope:regional_culture_spread_progress_story = {
-						set_variable = { name = culture value = root }
-						set_variable = { name = progress value = 0 }
-					}
-				}
-				add_to_variable_list = {
-					name = anglo_saxon_regional_culture_spread_progress
-					target = scope:regional_culture_spread_progress_story
-				}
-			}
+			get_culture_spread_success_story_effect = { CULTURE = root }
 			
 			# Calculate progress
 			set_local_variable = { name = progress_change value = 0 }
@@ -1874,7 +1866,7 @@ culture_shifts.0012 = {
 				1 = { change_local_variable = { name = progress_change multiply = 1.30 } }
 			}
 			
-			scope:regional_culture_spread_progress_story = {
+			scope:culture_spread_progress_story = {
 				change_variable = { 
 					name = progress 
 					add = local_var:progress_change 
@@ -1883,7 +1875,7 @@ culture_shifts.0012 = {
 			
 			# If progress hits 100, flip the county and its holder, if this is the holder's capital
 			if = {
-				limit = { scope:regional_culture_spread_progress_story.var:progress >= 100 }
+				limit = { scope:culture_spread_progress_story.var:progress >= 100 }
 				save_scope_as = current_county
 				culture = { save_scope_as = old_culture }
 				root = { save_scope_as = new_culture }
@@ -1910,7 +1902,7 @@ culture_shifts.0012 = {
 				}
 			}
 			
-			clear_saved_scope = regional_culture_spread_progress_story
+			clear_saved_scope = culture_spread_progress_story
 		}
 		
 		# Culture also spreads to rulers whose capital have 
@@ -1954,7 +1946,7 @@ culture_shifts.0012 = {
 						culture = {
 							OR = {
 								has_variable = anglo_saxon_regional_culture_kingdom
-								has_variable = anglo_saxon_unified_culture
+								has_variable = is_anglo_saxon_unified_culture
 							}
 						}
 					}
@@ -2016,7 +2008,7 @@ culture_shifts.0012 = {
 						culture = {
 							OR = {
 								has_variable = anglo_saxon_regional_culture_kingdom
-								has_variable = anglo_saxon_unified_culture
+								has_variable = is_anglo_saxon_unified_culture
 							}
 						}
 					}
@@ -2076,7 +2068,7 @@ culture_shifts.0014 = {
 
 # Anglo-Saxon culture spawns
 culture_shifts.0020 = {
-	scope = none
+	scope = character
 	content_source = dlc_BTWK
 	hidden = yes
 	
@@ -2086,14 +2078,26 @@ culture_shifts.0020 = {
 		# Diverge from the Bretwalda's culture
 		root.culture = { save_scope_as = old_culture }
 		
-		# Stops normal notifications from creating new cultures
-		add_character_flag = suppress_culture_notifications_and_achievements
-		create_divergent_culture = yes
-		remove_character_flag = suppress_culture_notifications_and_achievements
+		# Use a new unlanded character so we have complete control over the cultures shifts
+		create_character = {
+			dynasty = none
+			location = this.capital_province
+			culture = scope:old_culture
+			faith = this.faith
+			gender = male
+			save_scope_as = culture_creator
+		}
+		scope:culture_creator = {
+			# Stops normal notifications from creating new cultures
+			add_character_flag = suppress_culture_notifications_and_achievements
+			create_divergent_culture = yes
+			death = natural
+		}
 		
 		# Set flags and culture name/properties
 		title:e_aengland = { set_variable = { name = anglo_saxon_unified_culture value = scope:new_culture } }
 		scope:new_culture = {
+			set_variable = is_anglo_saxon_unified_culture
 			set_culture_name = {
 				noun = anglo_saxon
 				collective_noun = anglo_saxon_collective_noun
@@ -2122,12 +2126,9 @@ culture_shifts.0020 = {
 		# New culture spawns at capital if possible
 		if = {
 			limit = {
-				capital_county.title_province = {
-					culture = { has_cultural_pillar = heritage_west_germanic }
-					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
-					}
+				capital_county = {
+					can_convert_to_anglo_saxon_unified_culture = yes
+					county_is_in_anglo_saxon_unified_culture_area = yes
 				}
 			}
 			capital_county = { 
@@ -2142,11 +2143,8 @@ culture_shifts.0020 = {
 			random_held_title = {
 				limit = {
 					tier = tier_county
-					culture = { has_cultural_pillar = heritage_west_germanic }
-					OR = {
-						title_province = { geographical_region = btwk_world_britannia }
-						title_province = { geographical_region = btwk_world_caledonia }
-					}
+					can_convert_to_anglo_saxon_unified_culture = yes
+					county_is_in_anglo_saxon_unified_culture_area = yes
 					kingdom = root.capital_county.kingdom
 				}
 				save_scope_as = new_culture_spawn_county
@@ -2159,11 +2157,8 @@ culture_shifts.0020 = {
 			}
 			random_sub_realm_county = {
 				limit = {
-					culture = { has_cultural_pillar = heritage_west_germanic }
-					OR = {
-						title_province = { geographical_region = btwk_world_britannia }
-						title_province = { geographical_region = btwk_world_caledonia }
-					}
+					can_convert_to_anglo_saxon_unified_culture = yes
+					county_is_in_anglo_saxon_unified_culture_area = yes
 					kingdom = root.capital_county.kingdom
 				}
 				save_scope_as = new_culture_spawn_county
@@ -2177,11 +2172,8 @@ culture_shifts.0020 = {
 			random_held_title = {
 				limit = {
 					tier = tier_county
-					culture = { has_cultural_pillar = heritage_west_germanic }
-					OR = {
-						title_province = { geographical_region = btwk_world_britannia }
-						title_province = { geographical_region = btwk_world_caledonia }
-					}
+					can_convert_to_anglo_saxon_unified_culture = yes
+					county_is_in_anglo_saxon_unified_culture_area = yes
 				}
 				save_scope_as = new_culture_spawn_county
 			}
@@ -2194,11 +2186,8 @@ culture_shifts.0020 = {
 			random_sub_realm_county = {
 				limit = {
 					tier = tier_county
-					culture = { has_cultural_pillar = heritage_west_germanic }
-					OR = {
-						title_province = { geographical_region = btwk_world_britannia }
-						title_province = { geographical_region = btwk_world_caledonia }
-					}
+					can_convert_to_anglo_saxon_unified_culture = yes
+					county_is_in_anglo_saxon_unified_culture_area = yes
 				}
 				save_scope_as = new_culture_spawn_county
 			}
@@ -2208,24 +2197,40 @@ culture_shifts.0020 = {
 		# Convert all West Germanic characters and counties in the spawn point and neighbouring counties
 		scope:new_culture_spawn_county ?= {
 			convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
-				COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+				COUNTY_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
 				COUNTY_CULTURE_CONDITION_OP = "="
 				COUNTY_CULTURE_CONDITION_RHS = "yes"
-				CHAR_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+				CHAR_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
 				CHAR_CULTURE_CONDITION_OP = "="
 				CHAR_CULTURE_CONDITION_RHS = "yes"
 				NEW_CULTURE = scope:new_culture
 			}
 			every_neighboring_county = {
-				limit = { county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom } }
+				limit = { county_is_in_anglo_saxon_unified_culture_area = yes }
 				convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
-					COUNTY_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+					COUNTY_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
 					COUNTY_CULTURE_CONDITION_OP = "="
 					COUNTY_CULTURE_CONDITION_RHS = "yes"
-					CHAR_CULTURE_CONDITION_LHS = "is_ingvaeonic_culture_trigger"
+					CHAR_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
 					CHAR_CULTURE_CONDITION_OP = "="
 					CHAR_CULTURE_CONDITION_RHS = "yes"
 					NEW_CULTURE = scope:new_culture
+				}
+				# Seed some progress in surroundings to get more organic spread in the first few years
+				every_neighboring_county = {
+					limit = { 
+						county_is_in_anglo_saxon_unified_culture_area = yes
+						can_convert_to_anglo_saxon_unified_culture = yes
+					}
+					set_variable = is_neighbouring_neighbouring_county
+					get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+					scope:culture_spread_progress_story = {
+						random_list = {
+							1 = { set_variable = { name = progress value = 20 } }
+							1 = { set_variable = { name = progress value = 40 } }
+							1 = { set_variable = { name = progress value = 60 } }
+						}
+					}
 				}
 			}
 		}
@@ -2273,7 +2278,7 @@ culture_shifts.0021 = {
 	option = {
 		trigger = {
 			NOT = { culture = scope:new_culture }
-			culture = { has_cultural_pillar = heritage_west_germanic }
+			can_convert_to_anglo_saxon_unified_culture = yes
 			capital_county.title_province = {
 				OR = {
 					geographical_region = btwk_world_britannia
@@ -2289,7 +2294,7 @@ culture_shifts.0021 = {
 		trigger = {
 			NOT = { culture = scope:new_culture }
 			NAND = {
-				culture = { has_cultural_pillar = heritage_west_germanic }
+				can_convert_to_anglo_saxon_unified_culture = yes
 				capital_county.title_province = {
 					OR = {
 						geographical_region = btwk_world_britannia
@@ -2298,7 +2303,7 @@ culture_shifts.0021 = {
 				}
 			}
 			any_sub_realm_county = {
-				culture = { has_cultural_pillar = heritage_west_germanic }
+				can_convert_to_anglo_saxon_unified_culture = yes
 				title_province = {
 					OR = {
 						geographical_region = btwk_world_britannia
@@ -2318,11 +2323,333 @@ culture_shifts.0021 = {
 	}
 }
 
-# TODO Anglo-Saxon culture spreads over time
-# culture_shifts.0022
+# Unified Anglo-Saxon culture spreads over time
+culture_shifts.0022 = {
+	scope = culture
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		has_variable = is_anglo_saxon_unified_culture
+		culture_age < 50		# Only spreads for the first 50 years
+	}
+	
+	immediate = {
+		every_county = {
+			limit = {
+				county_is_in_anglo_saxon_unified_culture_area = yes
+				can_convert_to_anglo_saxon_unified_culture = yes
+			}
+			# Fetch the culture progress story struct
+			get_culture_spread_success_story_effect = { CULTURE = root }
+			
+			# Calculate progress
+			set_local_variable = { name = progress_change value = 0 }
+			
+			# Additive modifiers start here
+			# Base spread from neighbouring county of new culture, modified by same faith/religion
+			if = {
+				limit = { 
+					any_neighboring_county = { 
+						culture = root 
+						faith = prev.faith
+					} 
+				}
+				change_local_variable = { name = progress_change add = 5 }
+			}
+			else_if = {
+				limit = { 
+					any_neighboring_county = { 
+						culture = root 
+						faith = prev.faith
+					} 
+				}
+				change_local_variable = { name = progress_change add = 3.5 }
+			}
+			else_if = {
+				limit = { any_neighboring_county = { culture = root } }
+				change_local_variable = { name = progress_change add = 2 }
+			}
+			# Base spread from being a parent culture
+			if = {
+				limit = { root = { is_child_culture_of_trigger = { TARGET = prev.culture } } }
+				change_local_variable = { name = progress_change add = 5 }
+			}
+			# Base spread from being controlled by e_aengland, 
+			# modified by holder's faith/religion 
+			if = {
+				limit = {
+					holder = {
+						OR = {
+							has_title = title:e_aengland
+							any_liege_or_above = { has_title = title:e_aengland }
+						}
+					}
+				}
+				change_local_variable = { name = progress_change add = 1 }
+				if = {
+					limit = { title:e_aengland.holder.culture = root }
+					change_local_variable = { name = progress_change add = 1 }
+				}
+				if = {
+					limit = { title:e_aengland.holder.faith = this.faith }
+					change_local_variable = { name = progress_change add = 1 }
+				}
+				else_if = {
+					limit = { title:e_aengland.holder.religion = this.religion }
+					change_local_variable = { name = progress_change add = 0.5 }
+				}
+			}
+			# Base spread from being directly held by Aengland
+			if = {
+				limit = { 
+					title:e_aengland.holder.capital_county = this 
+					title:e_aengland.holder.culture = root
+				}
+				change_local_variable = { name = progress_change add = 5 }
+			}
+			else_if = {
+				limit = { 
+					this.holder = title:e_aengland.holder
+					title:e_aengland.holder.culture = root
+				}
+				change_local_variable = { name = progress_change add = 2 }
+			}
+			# Multiplicative modifiers start here
+			# Being controlled by the new culture
+			if = {
+				limit = {
+					holder = { culture = root }
+				}
+				change_local_variable = { name = progress_change multiply = 1.2 }
+			}
+			if = {
+				limit = {
+					holder = { top_liege = { culture = root } }
+				}
+				change_local_variable = { name = progress_change multiply = 1.2 }
+			}
+			# Penalty if e_aengland has no holder
+			if = {
+				limit = {
+					NOT = { exists = title:e_aengland.holder }
+				}
+				change_local_variable = { name = progress_change multiply = 0.5 }
+			}
+			# Terrain modifiers
+			apply_culture_spread_progress_terrain_modifiers = yes
+			# Spread along major rivers
+			if = {
+				limit = {
+					any_county_province = {
+						any_neighboring_province = {
+							is_river_province = yes
+							any_neighboring_province = {
+								culture = root
+							}
+						}
+					}
+				}	
+				change_local_variable = { name = progress_change multiply = 1.25 }
+			}
+			
+			# Randomness factor
+			random_list = {
+				1 = { change_local_variable = { name = progress_change multiply = 0.70 } }
+				1 = { change_local_variable = { name = progress_change multiply = 0.80 } }
+				1 = { change_local_variable = { name = progress_change multiply = 0.90 } }
+				1 = { change_local_variable = { name = progress_change multiply = 1.00 } }
+				1 = { change_local_variable = { name = progress_change multiply = 1.10 } }
+				1 = { change_local_variable = { name = progress_change multiply = 1.20 } }
+				1 = { change_local_variable = { name = progress_change multiply = 1.30 } }
+			}
+			
+			scope:culture_spread_progress_story = {
+				change_variable = { 
+					name = progress 
+					add = local_var:progress_change 
+				}
+			}
+			
+			# If progress hits 100, flip the county and its holder, if this is the holder's capital
+			if = {
+				limit = { scope:culture_spread_progress_story.var:progress >= 100 }
+				save_scope_as = current_county
+				culture = { save_scope_as = old_culture }
+				root = { save_scope_as = new_culture }
+				convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+					COUNTY_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+					COUNTY_CULTURE_CONDITION_OP = "="
+					COUNTY_CULTURE_CONDITION_RHS = "yes"
+					CHAR_CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+					CHAR_CULTURE_CONDITION_OP = "="
+					CHAR_CULTURE_CONDITION_RHS = "yes"
+					NEW_CULTURE = root
+				}
+				
+				# If this was the capital, send a notification to the ruler that they have been converted
+				holder = {
+					if = {
+						limit = { capital_county = prev }
+						trigger_event = { id = culture_shifts.0023 }
+					}
+					
+					# Also send toast to holder and all lieges
+					trigger_event = { id = culture_shifts.0014 }
+					every_liege_or_above = { trigger_event = { id = culture_shifts.0024 } }
+				}
+			}
+			
+			clear_saved_scope = culture_spread_progress_story
+		}
+		
+		# Culture also spreads to rulers whose capital have 
+		# already flipped, but they themselves haven't for some reason
+		every_culture_county = {
+			holder = {
+				if = {
+					limit = {
+						can_convert_to_anglo_saxon_unified_culture = yes
+						capital_county = prev
+					}
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0023 }
+				}
+			}
+			
+			# And also adventurers in a already-flipped county location
+			convert_county_unlanded_domiciles_effect = {
+				CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+				CULTURE_CONDITION_OP = "="
+				CULTURE_CONDITION_RHS = "yes"
+				NEW_CULTURE = root
+				DOMICILE_OWNER_EFFECT = "trigger_event = { id = culture_shifts.0023 }"
+			}
+		}
+		
+		# Rulers in the kingdom without a West Germanic capital province can flip if any of their
+		# held or subrealm provinces or lieges have flipped to the unified Anglo-Saxon culture
+		every_ruler = {
+			limit = {
+				can_convert_to_anglo_saxon_unified_culture = yes
+				capital_county = {
+					NOR = { 
+						can_convert_to_anglo_saxon_unified_culture = yes
+						culture = {
+							has_variable = is_anglo_saxon_unified_culture
+						}
+					}
+					county_is_in_anglo_saxon_unified_culture_area = yes
+				}
+			}
+			if = {
+				limit = {
+					any_sub_realm_county = { culture = root }
+				}
+				random = {
+					chance = 25
+					modifier = {
+						factor = 2
+						any_held_title = {
+							tier = tier_county
+							culture = root
+						}
+					}
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0023 }
+				}
+			}
+			else_if = {
+				limit = {
+					any_liege_or_above = { culture = root }
+				}
+				random = {
+					chance = 10
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0023 }
+				}
+			}
+		}
+		
+		# Domicile holders in the region may also similarly flip if not in a West Germanic province
+		every_domicile = {
+			limit = {
+				owner = { 
+					can_convert_to_anglo_saxon_unified_culture = yes
+					is_independent_domicile_holder_for_culture_shift_trigger = yes
+				}
+				domicile_location.county = {
+					NOR = { 
+						can_convert_to_anglo_saxon_unified_culture = yes
+						culture = {
+							has_variable = is_anglo_saxon_unified_culture
+						}
+					}
+					county_is_in_anglo_saxon_unified_culture_area = yes
+				}
+			}
+			owner = { 
+				random = {
+					chance = 10
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "can_convert_to_anglo_saxon_unified_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0023 }
+				}
+			}
+		}
+	}
+}
 
-# TODO Notification event for flipped characters
-# culture_shifts.0023
+# Notification event for flipped characters
+culture_shifts.0023 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = culture_shifts.0023.t
+	desc = culture_shifts.0023.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		custom_tooltip = culture_shifts.0023.culture_spread_to_us_tooltip
+	}
 
-# TODO Toast for flipped provinces
-# culture_shifts.0024
+	option = {
+		name = culture_shifts.0023.a
+	}
+}
+
+# Toast for flipped provinces
+culture_shifts.0024 = {
+	hidden = yes
+
+	immediate = {
+		send_interface_toast = {
+			type = msg_culture_conversion
+			title = culture_shifts.0024.t
+			custom_tooltip = culture_shifts.0024.desc
+		}
+	}
+}
