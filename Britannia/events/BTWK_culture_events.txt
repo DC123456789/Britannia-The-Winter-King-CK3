@@ -1942,11 +1942,100 @@ culture_shifts.0012 = {
 			}
 		}
 		
-		# Rulers in the kingdom without a West Germanic capital province can flip if *any* of their
+		# Rulers in the kingdom without a West Germanic capital province can flip if any of their
 		# held or subrealm provinces or lieges have flipped to a regional culture
+		# Or (slowly) if their liege is not West Germanic
+		every_ruler = {
+			limit = {
+				character_can_convert_to_anglo_saxon_regional_culture = yes
+				capital_county = {
+					NOR = { 
+						county_can_convert_to_anglo_saxon_regional_culture = yes
+						culture = {
+							OR = {
+								has_variable = anglo_saxon_regional_culture_kingdom
+								has_variable = anglo_saxon_unified_culture
+							}
+						}
+					}
+					county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:culture_kingdom }
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						any_liege_or_above = { culture = root }
+						any_sub_realm_county = { culture = root }
+					}
+				}
+				random = {
+					chance = 25
+					modifier = {
+						factor = 2
+						any_held_title = {
+							tier = tier_county
+							culture = root
+						}
+					}
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0013 }
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { any_liege_or_above = { culture = { has_cultural_pillar = heritage_west_germanic } } }
+				}
+				random = {
+					chance = 10
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0013 }
+				}
+			}
+		}
 		
-		# Rulers in the kingdom without any West Germanic provinces at all can also slowly flip if
-		# their liege is not West Germanic
+		# Domicile holders in the region may also similarly flip if not in a West Germanic province
+		every_domicile = {
+			limit = {
+				owner = { 
+					character_can_convert_to_anglo_saxon_regional_culture = yes
+					is_independent_domicile_holder_for_culture_shift_trigger = yes
+				}
+				domicile_location.county = {
+					NOR = { 
+						county_can_convert_to_anglo_saxon_regional_culture = yes
+						culture = {
+							OR = {
+								has_variable = anglo_saxon_regional_culture_kingdom
+								has_variable = anglo_saxon_unified_culture
+							}
+						}
+					}
+					county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:culture_kingdom }
+				}
+			}
+			owner = { 
+				random = {
+					chance = 10
+					convert_character_with_family_and_courtiers_effect = {
+						CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+						CULTURE_CONDITION_OP = "="
+						CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = root
+					}
+					trigger_event = { id = culture_shifts.0013 }
+				}
+			}
+		}
 	}
 }
 

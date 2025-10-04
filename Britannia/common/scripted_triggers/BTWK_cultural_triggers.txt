@@ -203,7 +203,7 @@ county_can_convert_to_anglo_saxon_regional_culture = {
 			culture = { has_cultural_pillar = heritage_romanized_germanic }
 			holder = {
 				OR = {
-					NOT = { culture = prev }
+					NOT = { culture = prev.culture }
 					AND = {
 						is_independent_ruler = no
 						liege = { is_unromanized_germanic_culture_trigger = yes }
@@ -371,6 +371,20 @@ is_culture_or_descendant_including_romance_w_tooltip_trigger = {
 	custom_tooltip = {
 		text = is_culture_or_descendant_including_romance_tt
 		is_culture_or_descendant_including_romance_trigger = { CULTURE = scope:current_culture }
+	}
+}
+
+# Determines if whether or not the domicile holder participates in a culture shift is primarily
+# determined by the domicile holder, and if they should be treated as a domicile holder rather
+# than an ordinary landed ruler
+is_independent_domicile_holder_for_culture_shift_trigger = {					
+	is_landed = no
+	# Doesn't have a close family member whose culture will take precedence
+	NOT = {
+		any_close_family_member = {
+			is_landed = yes
+			culture = prev.culture
+		}
 	}
 }
 
