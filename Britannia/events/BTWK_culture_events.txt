@@ -441,6 +441,7 @@ culture_shifts.0001 = {
 	}
 }
 
+### ANGLO-SAXON REGIONAL CULTURE EMERGENCE ###
 # Anglo-Saxon regional/kingdom culture counter and emergence
 culture_shifts.0010 = {
 	scope = none
@@ -950,51 +951,7 @@ culture_shifts.0010 = {
 				}
 				
 				# Copy acceptances
-				every_culture_global = {
-					limit = {
-						NOT = { this = scope:new_culture }
-					}
-					# Since the pre-scripted cultures aren't actually divergences, we need to set 
-					# the 100% acceptance with the parent culture manually
-					if = {
-						limit = { scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev } } }
-						scope:new_culture = {
-							set_cultural_acceptance = {
-								target = prev
-								value = 100 
-							}
-						}
-					}
-					else_if = {
-						limit = { scope:new_culture = { is_hybrid_culture = yes } }
-						# Get the higher of the two parental acceptances
-						if = {
-							limit = { "scope:old_culture.cultural_acceptance(this)" > "scope:dominant_west_germanic_culture.cultural_acceptance(this)" }
-							scope:new_culture = {
-								set_cultural_acceptance = {
-									target = prev
-									value = "scope:old_culture.cultural_acceptance(prev)"
-								}
-							}
-						}
-						else = {
-							scope:new_culture = {
-								set_cultural_acceptance = {
-									target = prev
-									value = "scope:dominant_west_germanic_culture.cultural_acceptance(prev)"
-								}
-							}
-						}
-					}
-					else = {
-						scope:new_culture = {
-							set_cultural_acceptance = {
-								target = prev
-								value = "scope:old_culture.cultural_acceptance(prev)"
-							}
-						}
-					}
-				}
+				scope:new_culture = { copy_acceptances_from_parent_cultures_effect = yes }
 				
 				# New culture spawns at capital of kingdom holder if possible
 				if = {
@@ -2066,6 +2023,7 @@ culture_shifts.0014 = {
 	}
 }
 
+### ANGLO-SAXON UNIFIED CULTURE EMERGENCE ###
 # Anglo-Saxon culture spawns
 culture_shifts.0020 = {
 	scope = character
@@ -2650,6 +2608,820 @@ culture_shifts.0024 = {
 			type = msg_culture_conversion
 			title = culture_shifts.0024.t
 			custom_tooltip = culture_shifts.0024.desc
+		}
+	}
+}
+
+### ROMANO-BRITISH CULTURE EMERGENCE ###
+# Culture counter and emergence
+culture_shifts.0030 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# While there are still Romano-British counties
+		culture:romanobritish = { any_culture_county = { count >= 1 } }
+	}
+	
+	immediate = {
+		culture:romanobritish = {
+			# Check for Britannic culture emergence progress
+			if = {
+				limit = { NOT = { has_variable = britannic_emergence_progress } }
+				set_variable = { name = britannic_emergence_progress value = 0 }
+			}			
+			set_variable = { name = britannic_emergence_progress_change value = 0 }
+			
+			# If there is an Imperial heritage realm that rules at least 40 Romano-British counties,
+			# then Britannic culture gets no emergence progress
+			# Alternatively, if there is an Imperial heritage realm that rules at least 5 Romano-British counties,
+			# and at least 80 total Imperial heritage provinces, that also stops Britannic emergence
+			if = {
+				limit = {
+					NOT = {
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 40
+									culture = culture:romanobritish
+								}
+								AND = {
+									any_realm_county = {
+										count >= 5
+										culture = culture:romanobritish
+									}
+									any_realm_county = {
+										count >= 80
+										culture = { has_cultural_pillar = heritage_latin }
+									}
+								}
+							}
+						}
+					}
+				}
+				# If there is a realm close to the limit, the emergence is somewhat slower
+				if = {
+					limit = {
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 35
+									culture = culture:romanobritish
+								}
+							}
+						}
+						change_variable = { name = britannic_emergence_progress_change value = 1.5 }
+					}
+				}
+				else_if = {
+					limit = {
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 30
+									culture = culture:romanobritish
+								}
+							}
+						}
+						change_variable = { name = britannic_emergence_progress_change value = 2.25 }
+					}
+				}
+				else = {
+					change_variable = { name = britannic_emergence_progress_change value = 3 }
+				}
+			}			
+			
+			# Randomness factor
+			random_list = {
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.70 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.80 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.90 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.00 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.10 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.20 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.30 } }
+			}
+			
+			# In order to get any progress at all, there must be at least one Romano-British provinces
+			# that is not going to be prioritized for another British Romance culture
+			if = {
+				limit = {
+					NOT = {
+						any_culture_county = {
+							county_can_convert_to_britannic_culture = yes
+						}
+					}
+				}
+				set_variable = { name = britannic_emergence_progress_change value = 0 }
+			}
+			
+			# Actually apply the change
+			change_variable = { 
+				name = britannic_emergence_progress 
+				add = this.var:britannic_emergence_progress_change 
+			}
+			
+			# Capped at 60% progress before the consolidation/unification phase
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+					NOT = { 
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_romanobritish_culture_shifts }
+					}
+				}
+				clamp_variable = { name = britannic_emergence_progress max = 60 }
+			}
+		
+			# If you reach 100% progress, then the new culture is created	
+			if = {
+				limit = {
+					this.var:britannic_emergence_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+					NOT = { culture:britannic = { has_variable = culture_has_emerged } }
+				}			
+				culture:romanobritish = { save_scope_as = old_culture }
+				culture:britannic = {
+					save_scope_as = new_culture
+					reset_culture_creation_date = yes
+					set_variable = culture_has_emerged
+					get_all_innovations_from = scope:old_culture
+					copy_all_traditions_from = scope:old_culture
+					set_ethos_from = scope:old_culture
+					set_martial_custom_from = scope:old_culture
+					
+					# Clear out the Roman-specific traditions, and add in one to compensate
+					remove_roman_traditions_effect = yes
+					# TODO Need to choose which one we really want
+					add_culture_tradition = tradition_monastic_communities
+					# add_culture_tradition = tradition_parochialism
+					# add_culture_tradition = tradition_hereditary_hierarchy
+					
+					# Copy acceptances
+					copy_acceptances_from_parent_cultures_effect = yes
+				}
+				if = {
+					limit = {
+						exists = struggle:britannia_struggle
+					}
+					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
+				}
+				
+				# TODO New culture spawns at capital of random independent Romano-British kingdom 
+				random_independent_ruler = {
+					limit = {
+						character_can_convert_to_britannic_culture = yes
+						capital_county = {
+							county_can_convert_to_britannic_culture = yes
+							county_is_in_britannic_culture_area = yes
+						}
+					}
+					capital_county = { save_scope_as = new_culture_spawn_county }
+				}
+				
+				# Convert all characters and counties in the spawn point, as well as in
+				# neighbouring eligible counties
+				scope:new_culture_spawn_county ?= {
+					convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+						COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
+						COUNTY_CULTURE_CONDITION_OP = "="
+						COUNTY_CULTURE_CONDITION_RHS = "yes"
+						CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
+						CHAR_CULTURE_CONDITION_OP = "="
+						CHAR_CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = scope:new_culture
+					}
+					every_neighboring_county = {
+						limit = { county_is_in_britannic_culture_area = yes }
+						convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+							COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
+							COUNTY_CULTURE_CONDITION_OP = "="
+							COUNTY_CULTURE_CONDITION_RHS = "yes"
+							CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
+							CHAR_CULTURE_CONDITION_OP = "="
+							CHAR_CULTURE_CONDITION_RHS = "yes"
+							NEW_CULTURE = scope:new_culture
+						}
+						# Seed some progress in surroundings to get more organic spread in the first few years
+						every_neighboring_county = {
+							limit = { 
+								county_is_in_britannic_culture_area = yes
+								county_can_convert_to_britannic_culture = yes
+							}
+							get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+							scope:culture_spread_progress_story = {
+								random_list = {
+									1 = { set_variable = { name = progress value = 20 } }
+									1 = { set_variable = { name = progress value = 40 } }
+									1 = { set_variable = { name = progress value = 60 } }
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					this.var:brithenig_emergence_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+					NOT = { culture:brithenig = { has_variable = culture_has_emerged } }
+				}			
+				culture:romanobritish = { save_scope_as = old_culture }
+				culture:brithenig = {
+					save_scope_as = new_culture
+					reset_culture_creation_date = yes
+					set_variable = culture_has_emerged
+					get_all_innovations_from = scope:old_culture
+					copy_all_traditions_from = scope:old_culture
+					set_ethos_from = scope:old_culture
+					set_martial_custom_from = scope:old_culture
+					
+					# TODO Also gets some influence from most dominant Brythonic culture
+					
+					# Clear out the Roman-specific traditions, and add in one to compensate
+					remove_roman_traditions_effect = yes
+					# TODO Need to choose which one we really want
+					add_culture_tradition = tradition_monastic_communities
+					# add_culture_tradition = tradition_parochialism
+					# add_culture_tradition = tradition_hereditary_hierarchy
+					
+					# Copy acceptances
+					copy_acceptances_from_parent_cultures_effect = yes
+				}
+				if = {
+					limit = {
+						exists = struggle:britannia_struggle
+					}
+					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
+				}
+				
+				# TODO New culture spawns at random Romano-British province under Briton rule
+				random_county = {
+					limit = {
+						county_can_convert_to_brithenig_culture = yes
+						county_is_in_brithenig_culture_area = yes
+					}
+					save_scope_as = new_culture_spawn_county
+				}
+				
+				# Convert all characters and counties in the spawn point, as well as in
+				# neighbouring eligible counties
+				scope:new_culture_spawn_county ?= {
+					convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+						COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_brithenig_culture"
+						COUNTY_CULTURE_CONDITION_OP = "="
+						COUNTY_CULTURE_CONDITION_RHS = "yes"
+						CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_brithenig_culture"
+						CHAR_CULTURE_CONDITION_OP = "="
+						CHAR_CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = scope:new_culture
+					}
+					every_neighboring_county = {
+						limit = { county_is_in_brithenig_culture_area = yes }
+						convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+							COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_brithenig_culture"
+							COUNTY_CULTURE_CONDITION_OP = "="
+							COUNTY_CULTURE_CONDITION_RHS = "yes"
+							CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_brithenig_culture"
+							CHAR_CULTURE_CONDITION_OP = "="
+							CHAR_CULTURE_CONDITION_RHS = "yes"
+							NEW_CULTURE = scope:new_culture
+						}
+						# Seed some progress in surroundings to get more organic spread in the first few years
+						every_neighboring_county = {
+							limit = { 
+								county_is_in_brithenig_culture_area = yes
+								county_can_convert_to_brithenig_culture = yes
+							}
+							get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+							scope:culture_spread_progress_story = {
+								random_list = {
+									1 = { set_variable = { name = progress value = 20 } }
+									1 = { set_variable = { name = progress value = 40 } }
+									1 = { set_variable = { name = progress value = 60 } }
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					# TODO Actually do this
+					this.var:romanized_germanic_hybrid_emergence_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+				}			
+				culture:romanobritish = { save_scope_as = old_culture }
+				# Use a new unlanded character so we have complete control over the cultures shifts
+				create_character = {
+					dynasty = none
+					location = scope:target_romanized_germanic_culture_ruler.capital_province
+					culture = scope:old_culture
+					faith = faith:catholic
+					gender = male
+					save_scope_as = culture_creator
+				}
+				scope:culture_creator = {
+					# Stops normal notifications from creating new cultures
+					add_character_flag = suppress_culture_notifications_and_achievements
+					create_hybrid_culture = scope:target_romanized_germanic_culture
+					death = natural
+				}				
+				scope:new_culture = {
+					set_heritage_from = culture:britannic		# Can't set directly for some reason
+					set_language_from = culture:britannic
+					set_name_list = name_list_britannic
+					set_culture_name = {
+						noun = british_romance_romanized_germanic_hybrid_culture_noun
+						collective_noun = british_romance_romanized_germanic_hybrid_collective_noun
+						prefix = british_romance_romanized_germanic_hybrid_prefix
+					}
+				}
+			}
+		}
+		
+				# # New culture spawns at capital of kingdom holder if possible
+				# if = {
+					# limit = {
+						# holder ?= {
+							# OR = {
+								# capital_county = { 
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# } 
+								# # If the holder holds multiple kingdom or higher titles, only do this if the
+								# # capital is actually in the kingdom
+								# NOT = {
+									# any_held_title = {
+										# tier >= tier_kingdom
+										# NOT = { this = scope:current_kingdom }
+										# NAND = {
+											# this = title:e_aengland
+											# title:e_aengland.var:aengland_primary_kingdom = scope:current_kingdom
+										# }
+									# }
+								# }
+							# }
+						# }
+					# }
+					# holder.capital_county = { 
+						# save_scope_as = new_culture_spawn_county
+					# }
+				# }
+				# # Next, try any county held directly by the holder
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# holder ?= {
+						# random_held_title = {
+							# limit = {
+								# tier = tier_county
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county
+						# }
+					# }
+				# }
+				# # Next, any non-regional culture West Germanic province in the de facto kingdom
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# holder ?= {
+						# random_sub_realm_county = {
+							# limit = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county
+						# }
+					# }
+				# }
+				# # Next, the capital of any independent parent culture ruler in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_independent_ruler = {
+						# limit = {
+							# character_can_convert_to_anglo_saxon_regional_culture = yes
+							# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+							# capital_county = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+						# }
+						# capital_county = { save_scope_as = new_culture_spawn_county }
+					# }
+				# }
+				# # Next, any parent culture province under any independent parent culture ruler in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_independent_ruler = {
+						# limit = {
+							# character_can_convert_to_anglo_saxon_regional_culture = yes
+							# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+							# any_sub_realm_county = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+						# }
+						# random_sub_realm_county = { 
+							# limit = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county 
+						# }
+					# }
+				# }
+				# # Next, any parent culture province under any parent culture ruler in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_ruler = {
+						# limit = {
+							# character_can_convert_to_anglo_saxon_regional_culture = yes
+							# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+							# any_sub_realm_county = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+						# }
+						# random_sub_realm_county = { 
+							# limit = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county 
+						# }
+					# }
+				# }
+				# # Next, any arbitary parent culture province in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_county = {
+						# limit = {
+							# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+							# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+							# county_can_convert_to_anglo_saxon_regional_culture = yes
+						# }
+						# save_scope_as = new_culture_spawn_county						
+					# }
+				# }
+				# # Should never get here, but:
+				# # Next, any non-regional culture West Germanic province under
+				# # any independent non-regional culture West Germanic ruler in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_independent_ruler = {
+						# limit = {
+							# character_can_convert_to_anglo_saxon_regional_culture = yes
+							# any_sub_realm_county = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+						# }
+						# random_sub_realm_county = { 
+							# limit = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county 
+						# }
+					# }
+				# }
+				# # Next, any non-regional culture West Germanic province under
+				# # any non-regional culture West Germanic ruler in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_ruler = {
+						# limit = {
+							# character_can_convert_to_anglo_saxon_regional_culture = yes
+							# any_sub_realm_county = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+						# }
+						# random_sub_realm_county = { 
+							# limit = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_spawn_county 
+						# }
+					# }
+				# }
+				# # Any arbitary non-regional culture West Germanic province in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_county = {
+						# limit = {
+							# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+							# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# culture = { has_cultural_pillar = heritage_west_germanic }
+						# }
+						# save_scope_as = new_culture_spawn_county						
+					# }
+				# }
+				# # And finally if all else fails, any arbitary convertable province in the kingdom 
+				# if = {
+					# limit = { 
+						# NOT = { exists = scope:new_culture_spawn_county }
+					# }
+					# random_county = {
+						# limit = {
+							# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+							# county_can_convert_to_anglo_saxon_regional_culture = yes
+						# }
+						# save_scope_as = new_culture_spawn_county						
+					# }
+				# }				
+				
+				# # Convert all characters and counties in the spawn point, as well as in
+				# # neighbouring counties inside the kingdom
+				# scope:new_culture_spawn_county ?= {
+					# convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+						# COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
+						# COUNTY_CULTURE_CONDITION_OP = "="
+						# COUNTY_CULTURE_CONDITION_RHS = "yes"
+						# CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+						# CHAR_CULTURE_CONDITION_OP = "="
+						# CHAR_CULTURE_CONDITION_RHS = "yes"
+						# NEW_CULTURE = scope:new_culture
+					# }
+					# every_neighboring_county = {
+						# limit = { county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom } }
+						# convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+							# COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
+							# COUNTY_CULTURE_CONDITION_OP = "="
+							# COUNTY_CULTURE_CONDITION_RHS = "yes"
+							# CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+							# CHAR_CULTURE_CONDITION_OP = "="
+							# CHAR_CULTURE_CONDITION_RHS = "yes"
+							# NEW_CULTURE = scope:new_culture
+						# }
+						# # Seed some progress in surroundings to get more organic spread in the first few years
+						# every_neighboring_county = {
+							# limit = { 
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+							# scope:culture_spread_progress_story = {
+								# random_list = {
+									# 1 = { set_variable = { name = progress value = 20 } }
+									# 1 = { set_variable = { name = progress value = 40 } }
+									# 1 = { set_variable = { name = progress value = 60 } }
+								# }
+							# }
+						# }
+					# }
+				# }
+				
+				# # If less than 6 counties were converted, try to look for other counties to spawn the culture in
+				# if = {
+					# limit = { has_local_variable = no_more_possible_culture_counties }
+					# remove_local_variable = no_more_possible_culture_counties
+				# }
+				# while = {
+					# limit = {
+						# scope:new_culture = { 
+							# OR = {
+								# any_culture_county = { count < 4 }
+								# AND = {		# Sussex only gets to grow to 4 counties because of how small it is
+									# any_culture_county = { count < 6 }
+									# NOT = { this.var:anglo_saxon_regional_culture_kingdom = title:k_sussex }
+								# }
+							# }
+						# }
+						# NOT = { has_local_variable = no_more_possible_culture_counties }
+					# }
+					# if = {
+						# limit = { exists = scope:new_culture_county }
+						# clear_saved_scope = new_culture_county
+					# }
+					# # First, try to just find adjacent convertable parent culture provinces
+					# scope:new_culture = { 
+						# random_culture_county = {
+							# limit = {
+								# any_neighboring_county = {
+									# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# }
+							# }
+							# random_neighboring_county = {
+								# limit = {
+									# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# }
+								# save_scope_as = new_culture_county
+							# }
+						# }
+					# }
+					# # Then, try to find convertable parent provinces in the kingdom if it exists
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }
+						# holder ?= {
+							# random_sub_realm_county = {
+								# limit = {
+									# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# }
+								# save_scope_as = new_culture_county
+							# }
+						# }
+					# }
+					# # Then, try to just find adjacent convertable provinces
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }
+						# scope:new_culture = { 
+							# random_culture_county = {
+								# limit = {
+									# any_neighboring_county = {
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+									# }
+								# }
+								# random_neighboring_county = {
+									# limit = {
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+									# }
+									# save_scope_as = new_culture_county
+								# }
+							# }
+						# }
+					# }
+					# # Then, try to find convertable provinces in the kingdom if it exists
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }
+						# holder ?= {
+							# random_sub_realm_county = {
+								# limit = {
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# }
+								# save_scope_as = new_culture_county
+							# }
+						# }
+					# }
+					# # Then, try to find convertable provinces under any independent parent culture convertable ruler in the kingdom
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }							
+						# random_independent_ruler = {
+							# limit = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# character_can_convert_to_anglo_saxon_regional_culture = yes
+								# any_sub_realm_county = {
+									# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+								# }
+							# }
+							# if = {
+								# limit = {
+									# capital_county = {
+										# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# }
+								# }
+								# capital_county = { save_scope_as = new_culture_county }
+							# }
+							# else = {
+								# random_sub_realm_county = {
+									# limit = {
+										# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# }
+									# save_scope_as = new_culture_county
+								# }
+							# }
+						# }
+					# }
+					# # Then, just straight up parent culture province
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }
+						# random_county = {
+							# limit = {
+								# scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_county
+						# }
+					# }
+					# # Then, try to find convertable provinces under any independent convertable ruler in the kingdom
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }							
+						# random_independent_ruler = {
+							# limit = {
+								# character_can_convert_to_anglo_saxon_regional_culture = yes
+								# any_sub_realm_county = {
+									# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+									# county_can_convert_to_anglo_saxon_regional_culture = yes
+								# }
+							# }
+							# if = {
+								# limit = {
+									# capital_county = {
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# }
+								# }
+								# capital_county = { save_scope_as = new_culture_county }
+							# }
+							# else = {
+								# random_sub_realm_county = {
+									# limit = {
+										# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+										# county_can_convert_to_anglo_saxon_regional_culture = yes
+									# }
+									# save_scope_as = new_culture_county
+								# }
+							# }
+						# }
+					# }
+					# # Then, just straight up any convertable province
+					# if = {
+						# limit = { NOT = { exists = scope:new_culture_county } }
+						# random_county = {
+							# limit = {
+								# county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								# county_can_convert_to_anglo_saxon_regional_culture = yes
+							# }
+							# save_scope_as = new_culture_county
+						# }
+					# }
+					# # Convert county if we found one, otherwise end the loop
+					# if = {
+						# limit = { exists = scope:new_culture_county }
+						# scope:new_culture_county = {
+							# convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+								# COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_anglo_saxon_regional_culture"
+								# COUNTY_CULTURE_CONDITION_OP = "="
+								# COUNTY_CULTURE_CONDITION_RHS = "yes"
+								# CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_anglo_saxon_regional_culture"
+								# CHAR_CULTURE_CONDITION_OP = "="
+								# CHAR_CULTURE_CONDITION_RHS = "yes"
+								# NEW_CULTURE = scope:new_culture
+							# }
+						# }
+					# }
+					# else = {
+						# set_local_variable = no_more_possible_culture_counties
+					# }
+				# }
+				
+				# # Notify everyone
+				# this.holder ?= { trigger_event = { id = culture_shifts.0011 } }
+				# every_player = {
+					# limit = { NOT = { prev.holder ?= this } }
+					# trigger_event = { id = culture_shifts.0011 }
+				# }
+				
+				# # Clear scopes in case multiple regional cultures spawn simultaneously
+				# clear_saved_scope = old_culture
+				# clear_saved_scope = new_culture
+				# clear_saved_scope = dominant_west_germanic_culture
+				# clear_saved_scope = new_culture_spawn_county
+			}
 		}
 	}
 }

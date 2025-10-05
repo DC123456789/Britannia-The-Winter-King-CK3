@@ -283,6 +283,67 @@ convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
 	}
 }
 
+copy_acceptances_from_parent_cultures_effect = {
+	save_temporary_scope_as = effect_new_culture
+	every_parent_culture = {
+		if = {
+			limit = { NOT = { exists = scope:effect_new_culture_parent_1 } }
+			save_temporary_scope_as = effect_new_culture_parent_1
+		}
+		else = {
+			save_temporary_scope_as = effect_new_culture_parent_2
+		}
+	}
+	
+	# Copy acceptances
+	every_culture_global = {
+		limit = {
+			NOT = { this = scope:effect_new_culture }
+		}
+		# Since the pre-scripted cultures aren't actually divergences, we need to set 
+		# the 100% acceptance with the parent culture manually
+		if = {
+			limit = { scope:effect_new_culture = { is_child_culture_of_trigger = { TARGET = prev } } }
+			scope:effect_new_culture = {
+				set_cultural_acceptance = {
+					target = prev
+					value = 100 
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:effect_new_culture = { is_hybrid_culture = yes } }
+			
+			# Get the higher of the two parental acceptances
+			if = {
+				limit = { "scope:effect_new_culture_parent_1.cultural_acceptance(this)" > "scope:effect_new_culture_parent_2.cultural_acceptance(this)" }
+				scope:effect_new_culture = {
+					set_cultural_acceptance = {
+						target = prev
+						value = "scope:effect_new_culture_parent_1.cultural_acceptance(prev)"
+					}
+				}
+			}
+			else = {
+				scope:effect_new_culture = {
+					set_cultural_acceptance = {
+						target = prev
+						value = "scope:effect_new_culture_parent_2.cultural_acceptance(prev)"
+					}
+				}
+			}
+		}
+		else = {
+			scope:effect_new_culture = {
+				set_cultural_acceptance = {
+					target = prev
+					value = "scope:effect_new_culture_parent_1.cultural_acceptance(prev)"
+				}
+			}
+		}
+	}
+}
+
 # Saves the relevant story as culture_spread_progress_story
 get_culture_spread_success_story_effect = {
 	$CULTURE$ = { save_temporary_scope_as = current_culture }
@@ -360,5 +421,32 @@ apply_culture_spread_progress_terrain_modifiers = {
 			}
 		}
 		change_local_variable = { name = progress_change multiply = 0.5 }
+	}
+}
+
+remove_roman_traditions_effect = {
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_imperial_tagmata }
+		remove_culture_tradition = tradition_ep3_imperial_tagmata
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_roman_legacy }
+		remove_culture_tradition = tradition_roman_legacy
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_roman_ceremonies }
+		remove_culture_tradition = tradition_ep3_roman_ceremonies
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_legalistic }
+		remove_culture_tradition = tradition_legalistic
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+		remove_culture_tradition = tradition_ep3_cultivated_sophistication
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_noble_adoption }
+		remove_culture_tradition = tradition_noble_adoption
 	}
 }

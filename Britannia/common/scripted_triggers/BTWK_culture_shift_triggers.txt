@@ -1,0 +1,153 @@
+﻿# Notes:
+# - character_can_convert_to_X_culture: Character's culture is eligible to convert to the culture
+# - county_can_convert_to_X_culture: County's culture is eligible to convert to the culture
+# - county_is_in_X_culture_area: County's location is eligible to convert to the culture
+# In general, a character will convert only if their culture trigger and their capital/location's 
+# area trigger are both true
+# And a county will convert only if their culture trigger and their area's trigger are both true
+
+## ANGLO-SAXON REGIONAL CULTURE
+# Character can adopt an Anglo-Saxon regional culture
+character_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			OR = {
+				AND = {
+					is_ruler = yes
+					is_independent_ruler = no
+				}
+				is_ruler = no
+			}
+			liege_or_court_owner = { is_unromanized_germanic_culture_trigger = yes }
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - culture check only
+county_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			holder = {
+				OR = {
+					NOT = { culture = prev.culture }
+					AND = {
+						is_independent_ruler = no
+						liege = { is_unromanized_germanic_culture_trigger = yes }
+					}
+				}
+			}
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - location/kingdom check only
+county_is_in_anglo_saxon_regional_culture_kingdom = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		AND = {
+			var:anglo_saxon_duchy.kingdom ?= $KINGDOM$
+			OR = {
+				NOT = { $KINGDOM$ = title:k_wales }
+				title_province = { geographical_region = btwk_custom_wales } 
+			}
+		}
+		kingdom = $KINGDOM$
+		holder = {
+			save_temporary_scope_as = county_holder
+			AND = {
+				OR = {
+					has_title = $KINGDOM$
+					any_liege_or_above = { has_title = $KINGDOM$ }
+				}
+				NOT = {
+					prev.kingdom = {
+						save_temporary_scope_as = county_kingdom
+						NOT = { this = $KINGDOM$ }
+						is_anglo_saxon_kingdom_trigger = yes
+						scope:county_holder = {
+							OR = {
+								has_title = scope:county_kingdom
+								any_liege_or_above = { has_title = scope:county_kingdom }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+## ANGLO-SAXON UNIFIED CULTURE
+can_convert_to_anglo_saxon_unified_culture = {
+	culture = {
+		has_cultural_pillar = heritage_west_germanic
+		NOT = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+county_is_in_anglo_saxon_unified_culture_area = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	holder = {
+		OR = {
+			has_title = title:e_aengland
+			any_liege_or_above = { has_title = title:e_aengland }
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			any_liege_or_above = { culture = { has_variable = is_anglo_saxon_unified_culture } }
+		}
+	}
+}
+
+## BRITANNIC CULTURE
+character_can_convert_to_britannic_culture = {
+	culture = culture:romanobritish
+}
+
+county_can_convert_to_britannic_culture = {
+	culture = culture:romanobritish
+}
+
+county_is_in_britannic_culture_area = {
+	# TODO Need to block if under Brythonic / Britanno-Romanized Germanic, and
+	# those cultures have appeared/are eligible to appear
+	always = yes	# Can appear anywhere
+}
+
+## BRITHENIG CULTURE
+character_can_convert_to_brithenig_culture = {
+	# TODO Need to block if under Britanno-Romanized Germanic, and
+	# that cultures has appeared/is eligible to appear
+	culture = culture:romanobritish
+}
+
+county_can_convert_to_brithenig_culture = {
+	# TODO Need to block if under Britanno-Romanized Germanic, and
+	# that cultures has appeared/is eligible to appear
+	culture = culture:romanobritish
+}
+
+county_is_in_brithenig_culture_area = {
+	OR = {
+		holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }	# Includes Brithenig itself
+		any_neighboring_county = { culture = { has_cultural_pillar = heritage_brythonic } }
+	}
+}
+
+## BRITANNO-ROMANIZED GERMANIC CULTURE
