@@ -2634,12 +2634,14 @@ culture_shifts.0030 = {
 			set_variable = { name = britannic_emergence_progress_change value = 0 }
 			
 			# If there is an Imperial heritage realm that rules at least 40 Romano-British counties,
+			# Or if there is an Imperial heritage High King of Britannia,
 			# then Britannic culture gets no emergence progress
 			# Alternatively, if there is an Imperial heritage realm that rules at least 5 Romano-British counties,
 			# and at least 80 total Imperial heritage provinces, that also stops Britannic emergence
 			if = {
 				limit = {
-					NOT = {
+					NOR = {
+						title:e_britannia.holder ?= { culture = { has_cultural_pillar = heritage_latin } }
 						any_independent_ruler = {
 							culture = { has_cultural_pillar = heritage_latin }
 							OR = {
@@ -2673,7 +2675,7 @@ culture_shifts.0030 = {
 								}
 							}
 						}
-						change_variable = { name = britannic_emergence_progress_change value = 1.5 }
+						change_variable = { name = britannic_emergence_progress_change add = 1.5 }
 					}
 				}
 				else_if = {
@@ -2687,13 +2689,16 @@ culture_shifts.0030 = {
 								}
 							}
 						}
-						change_variable = { name = britannic_emergence_progress_change value = 2.25 }
+						change_variable = { name = britannic_emergence_progress_change add = 2.25 }
 					}
 				}
 				else = {
-					change_variable = { name = britannic_emergence_progress_change value = 3 }
+					change_variable = { name = britannic_emergence_progress_change add = 3 }
 				}
-			}			
+			}
+			else = {		# Progress decays if there is a strong enough Imperial realm
+				change_variable = { name = britannic_emergence_progress_change subtract = 2 }
+			}
 			
 			# Randomness factor
 			random_list = {
@@ -2759,8 +2764,8 @@ culture_shifts.0030 = {
 					# Clear out the Roman-specific traditions, and add in one to compensate
 					remove_roman_traditions_effect = yes
 					# TODO Need to choose which one we really want
-					add_culture_tradition = tradition_monastic_communities
-					# add_culture_tradition = tradition_parochialism
+					# add_culture_tradition = tradition_monastic_communities
+					add_culture_tradition = tradition_parochialism
 					# add_culture_tradition = tradition_hereditary_hierarchy
 					
 					# Copy acceptances
@@ -2773,7 +2778,7 @@ culture_shifts.0030 = {
 					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
 				}
 				
-				# TODO New culture spawns at capital of random independent Romano-British kingdom 
+				# TODO New culture spawns at capitals of random independent Romano-British realms
 				random_independent_ruler = {
 					limit = {
 						character_can_convert_to_britannic_culture = yes
@@ -2837,6 +2842,33 @@ culture_shifts.0030 = {
 					NOT = { culture:brithenig = { has_variable = culture_has_emerged } }
 				}			
 				culture:romanobritish = { save_scope_as = old_culture }
+				# If e_britannia has a Brythonic culture holder, their culture is automatically
+				# considered the "parent"
+				if = {
+					limit = {
+						exists = title:e_britannia.holder
+						title:e_britannia.holder.culture = { has_cultural_pillar = heritage_brythonic }
+					}
+					title:e_britannia.holder.culture = { save_scope_as = parent_briton_culture }
+				}
+				else = {
+					ordered_culture_global = {
+						limit = { has_cultural_pillar = heritage_brythonic }
+						order_by = {
+							save_temporary_scope_as = current_cultrue
+							culture:romanobritish = {
+								every_culture_county = {
+									if = {
+										limit = { holder.top_liege.culture = scope:current_cultrue }
+										add = 1
+									}
+								}
+							}
+						}
+						position = 0
+						save_scope_as = parent_briton_culture
+					}
+				}
 				culture:brithenig = {
 					save_scope_as = new_culture
 					reset_culture_creation_date = yes
@@ -2846,14 +2878,21 @@ culture_shifts.0030 = {
 					set_ethos_from = scope:old_culture
 					set_martial_custom_from = scope:old_culture
 					
-					# TODO Also gets some influence from most dominant Brythonic culture
-					
 					# Clear out the Roman-specific traditions, and add in one to compensate
 					remove_roman_traditions_effect = yes
 					# TODO Need to choose which one we really want
-					add_culture_tradition = tradition_monastic_communities
-					# add_culture_tradition = tradition_parochialism
+					# add_culture_tradition = tradition_monastic_communities
+					add_culture_tradition = tradition_parochialism
 					# add_culture_tradition = tradition_hereditary_hierarchy
+					
+					# Also gets some influence from most dominant Brythonic culture (the "parent")
+					get_all_innovations_from = scope:parent_briton_culture
+					scope:parent_briton_culture = {
+						random_tradition = {
+							limit = { NOT = { scope:new_culture = { has_cultural_tradition = prev } } }
+							scope:new_culture = { add_culture_tradition = prev }
+						}
+					}
 					
 					# Copy acceptances
 					copy_acceptances_from_parent_cultures_effect = yes
@@ -2865,11 +2904,18 @@ culture_shifts.0030 = {
 					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
 				}
 				
-				# TODO New culture spawns at random Romano-British province under Briton rule
-				random_county = {
+				# If e_britannia is Brythonic and has a Romano-British capital, spawn there 
+				# and neighbouring counties
+				if = {
 					limit = {
-						county_can_convert_to_brithenig_culture = yes
-						county_is_in_brithenig_culture_area = yes
+						exists = title:e_britannia.holder
+						title:e_britannia.holder = {
+							culture = { has_cultural_pillar = heritage_brythonic }
+							capital_county = { 
+								county_can_convert_to_brithenig_culture = yes
+								county_is_in_brithenig_culture_area = yes
+							}
+						}
 					}
 					save_scope_as = new_culture_spawn_county
 				}
@@ -2912,6 +2958,77 @@ culture_shifts.0030 = {
 								}
 							}
 						}
+					}
+				}
+				
+				# Otherwise, try to spawn in random counties under Brythonic control that are 
+				#  neighbouring Brythonic counties
+				# Otherwise, just spawn in random counties under Brythonic control
+				random_county = {
+					limit = {
+						county_can_convert_to_brithenig_culture = yes
+						county_is_in_brithenig_culture_area = yes
+					}
+					save_scope_as = new_culture_spawn_county
+				}
+				
+				# If less than 6 counties were converted, try to look for other counties to spawn the culture in
+				if = {
+					limit = { has_local_variable = no_more_possible_culture_counties }
+					remove_local_variable = no_more_possible_culture_counties
+				}
+				while = {
+					limit = {
+						scope:new_culture = { 
+							any_culture_county = { count < 6 }
+						}
+						NOT = { has_local_variable = no_more_possible_culture_counties }
+					}
+					if = {
+						limit = { exists = scope:new_culture_county }
+						clear_saved_scope = new_culture_county
+					}
+					# First, try to find counties under Brythonic control that are neighbouring Brythonic counties
+					random_county = {
+						limit = {
+							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							county_can_convert_to_brithenig_culture = yes
+							county_is_in_brithenig_culture_area = yes
+							any_neighboring_county = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+							}
+						}
+						save_scope_as = new_culture_county
+					}
+					# Then, just straight up any counties under Brythonic control
+					if = {
+						limit = { NOT = { exists = scope:new_culture_county } }
+						random_county = {
+							limit = {
+								holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+								county_can_convert_to_brithenig_culture = yes
+								county_is_in_brithenig_culture_area = yes
+							}
+							save_scope_as = new_culture_county
+						}
+					}
+					# Convert county if we found one, otherwise end the loop
+					if = {
+						limit = { exists = scope:new_culture_county }
+						scope:new_culture_county = {
+							convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+								COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_brithenig_culture"
+								COUNTY_CULTURE_CONDITION_OP = "="
+								COUNTY_CULTURE_CONDITION_RHS = "yes"
+								CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_brithenig_culture"
+								CHAR_CULTURE_CONDITION_OP = "="
+								CHAR_CULTURE_CONDITION_RHS = "yes"
+								NEW_CULTURE = scope:new_culture
+							}
+						}
+					}
+					else = {
+						set_local_variable = no_more_possible_culture_counties
 					}
 				}
 			}
