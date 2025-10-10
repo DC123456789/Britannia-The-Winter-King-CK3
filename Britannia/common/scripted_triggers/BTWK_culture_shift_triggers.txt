@@ -153,3 +153,61 @@ county_is_in_brithenig_culture_area = {
 }
 
 ## BRITANNO-ROMANIZED GERMANIC CULTURE
+character_can_convert_to_britannic_hybrid_culture = {
+	OR = {
+		culture = $BARBARIAN_CULTURE$
+		culture = culture:romanobritish
+		AND = {
+			has_cultural_pillar = heritage_romance
+			culture_is_culture_or_descendant_including_romance_trigger = {
+				CULTURE = culture:romanobritish
+			}
+			OR = {
+				NOT = { has_variable = ancestral_non_roman_culture }
+				this.var:ancestral_non_roman_culture = {
+					culture_is_romanized_barbarian_culture_trigger = no
+				}
+			}
+		}
+	}
+}
+
+county_can_convert_to_britannic_hybrid_culture = {
+	OR = {
+		culture = $BARBARIAN_CULTURE$
+		culture = culture:romanobritish
+		AND = {
+			has_cultural_pillar = heritage_romance
+			culture_is_culture_or_descendant_including_romance_trigger = {
+				CULTURE = culture:romanobritish
+			}
+			OR = {
+				NOT = { has_variable = ancestral_non_roman_culture }
+				this.var:ancestral_non_roman_culture = {
+					culture_is_romanized_barbarian_culture_trigger = no
+				}
+			}
+		}
+	}
+}
+
+county_is_in_britannic_hybrid_culture_area = {
+	OR = {
+		holder.top_liege.culture = {
+			OR = {
+				this = $BARBARIAN_CULTURE$
+				AND = {
+					has_cultural_pillar = heritage_romance
+					this.var:ancestral_non_roman_culture = $BARBARIAN_CULTURE$
+				}
+			}
+		}
+		AND = {
+			exists = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture
+			any_neighboring_county = { culture = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture }
+		}
+		# TODO Need to block if under Britanno-Romanized Germanic, and
+		# that culture has appeared/is eligible to appear
+		# Also need to block if under Imperial control and there is a sufficiently strong Imperial realm
+	}
+}

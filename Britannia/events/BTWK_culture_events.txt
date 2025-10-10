@@ -2237,11 +2237,8 @@ culture_shifts.0021 = {
 		trigger = {
 			NOT = { culture = scope:new_culture }
 			can_convert_to_anglo_saxon_unified_culture = yes
-			capital_county.title_province = {
-				OR = {
-					geographical_region = btwk_world_britannia
-					geographical_region = btwk_world_caledonia
-				}
+			capital_county = {
+				county_is_in_anglo_saxon_unified_culture_area = yes
 			}
 		}
 		name = culture_shifts.0021.b
@@ -2253,21 +2250,13 @@ culture_shifts.0021 = {
 			NOT = { culture = scope:new_culture }
 			NAND = {
 				can_convert_to_anglo_saxon_unified_culture = yes
-				capital_county.title_province = {
-					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
-					}
+				capital_county = {
+					county_is_in_anglo_saxon_unified_culture_area = yes
 				}
 			}
 			any_sub_realm_county = {
 				can_convert_to_anglo_saxon_unified_culture = yes
-				title_province = {
-					OR = {
-						geographical_region = btwk_world_britannia
-						geographical_region = btwk_world_caledonia
-					}
-				}
+				county_is_in_anglo_saxon_unified_culture_area = yes
 			}
 		}
 		name = culture_shifts.0021.c
@@ -2612,8 +2601,8 @@ culture_shifts.0024 = {
 	}
 }
 
-### ROMANO-BRITISH CULTURE EMERGENCE ###
-# Culture counter and emergence
+### ROMANO-BRITISH CULTURE EMERGENCES ###
+# Brithenig Culture counter and emergence
 culture_shifts.0030 = {
 	scope = none
 	content_source = dlc_BTWK
@@ -2622,113 +2611,80 @@ culture_shifts.0030 = {
 	trigger = {
 		# While there are still Romano-British counties
 		culture:romanobritish = { any_culture_county = { count >= 1 } }
+		NOT = { culture:brithenig = { has_variable = culture_has_emerged } }
 	}
 	
 	immediate = {
 		culture:romanobritish = {
-			# Check for Britannic culture emergence progress
+			# Check for Brithineg culture emergence
 			if = {
-				limit = { NOT = { has_variable = britannic_emergence_progress } }
-				set_variable = { name = britannic_emergence_progress value = 0 }
-			}			
-			set_variable = { name = britannic_emergence_progress_change value = 0 }
+				limit = { NOT = { has_variable = brithenig_emergence_progress } }
+				set_variable = { name = brithenig_emergence_progress value = 0 }
+			}
+			set_variable = { name = brithenig_emergence_progress_change value = 0 }
 			
-			# If there is an Imperial heritage realm that rules at least 40 Romano-British counties,
-			# Or if there is an Imperial heritage High King of Britannia,
-			# then Britannic culture gets no emergence progress
-			# Alternatively, if there is an Imperial heritage realm that rules at least 5 Romano-British counties,
-			# and at least 80 total Imperial heritage provinces, that also stops Britannic emergence
+			# If at least 20 Romano-British provinces have a Brythonic culture 
+			# top liege, then Brithineg culture progresses
 			if = {
 				limit = {
-					NOR = {
-						title:e_britannia.holder ?= { culture = { has_cultural_pillar = heritage_latin } }
-						any_independent_ruler = {
-							culture = { has_cultural_pillar = heritage_latin }
-							OR = {
-								any_realm_county = {
-									count >= 40
-									culture = culture:romanobritish
-								}
-								AND = {
-									any_realm_county = {
-										count >= 5
-										culture = culture:romanobritish
-									}
-									any_realm_county = {
-										count >= 80
-										culture = { has_cultural_pillar = heritage_latin }
-									}
-								}
-							}
-						}
+					any_culture_county = {
+						count >= 20
+						holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
 					}
 				}
-				# If there is a realm close to the limit, the emergence is somewhat slower
+				change_variable = { name = brithenig_emergence_progress_change add = 2 }
+				
+				# If there is a Brythonic heritage high king, happens faster
 				if = {
 					limit = {
-						any_independent_ruler = {
-							culture = { has_cultural_pillar = heritage_latin }
-							OR = {
-								any_realm_county = {
-									count >= 35
-									culture = culture:romanobritish
-								}
-							}
-						}
-						change_variable = { name = britannic_emergence_progress_change add = 1.5 }
+						exists = title:e_britannia.holder
+						title:e_britannia.holder.culture = { has_cultural_pillar = heritage_brythonic }
 					}
+					change_variable = { name = brithenig_emergence_progress_change add = 1 }
+				}
+				# If there are a lot of Brythonic-controlled provinces, happens faster
+				if = {
+					limit = {
+						any_culture_county = {
+							count >= 60
+							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+						}
+					}
+					change_variable = { name = brithenig_emergence_progress_change add = 1 }
 				}
 				else_if = {
 					limit = {
-						any_independent_ruler = {
-							culture = { has_cultural_pillar = heritage_latin }
-							OR = {
-								any_realm_county = {
-									count >= 30
-									culture = culture:romanobritish
-								}
-							}
+						any_culture_county = {
+							count >= 40
+							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
 						}
-						change_variable = { name = britannic_emergence_progress_change add = 2.25 }
 					}
-				}
-				else = {
-					change_variable = { name = britannic_emergence_progress_change add = 3 }
+					change_variable = { name = brithenig_emergence_progress_change add = 0.5 }
 				}
 			}
-			else = {		# Progress decays if there is a strong enough Imperial realm
-				change_variable = { name = britannic_emergence_progress_change subtract = 2 }
+			else = {		# Progress decays if there is not enough Brythonic control
+				change_variable = { name = brithenig_emergence_progress_change subtract = 1 }
 			}
 			
 			# Randomness factor
 			random_list = {
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.70 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.80 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.90 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.00 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.10 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.20 } }
-				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.30 } }
-			}
-			
-			# In order to get any progress at all, there must be at least one Romano-British provinces
-			# that is not going to be prioritized for another British Romance culture
-			if = {
-				limit = {
-					NOT = {
-						any_culture_county = {
-							county_can_convert_to_britannic_culture = yes
-						}
-					}
-				}
-				set_variable = { name = britannic_emergence_progress_change value = 0 }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.70 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.80 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.90 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.00 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.10 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.20 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.30 } }
 			}
 			
 			# Actually apply the change
 			change_variable = { 
-				name = britannic_emergence_progress 
-				add = this.var:britannic_emergence_progress_change 
+				name = brithenig_emergence_progress 
+				add = this.var:brithenig_emergence_progress_change 
 			}
+			
+			# Progress can't be negative
+			clamp_variable = { name = brithenig_emergence_progress max = 100 min = 0 }
 			
 			# Capped at 60% progress before the consolidation/unification phase
 			if = {
@@ -2738,98 +2694,7 @@ culture_shifts.0030 = {
 						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_romanobritish_culture_shifts }
 					}
 				}
-				clamp_variable = { name = britannic_emergence_progress max = 60 }
-			}
-		
-			# If you reach 100% progress, then the new culture is created	
-			if = {
-				limit = {
-					this.var:britannic_emergence_progress >= 100
-					OR = {
-						NOT = { exists = struggle:britannia_struggle }
-						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
-					}
-					NOT = { culture:britannic = { has_variable = culture_has_emerged } }
-				}			
-				culture:romanobritish = { save_scope_as = old_culture }
-				culture:britannic = {
-					save_scope_as = new_culture
-					reset_culture_creation_date = yes
-					set_variable = culture_has_emerged
-					get_all_innovations_from = scope:old_culture
-					copy_all_traditions_from = scope:old_culture
-					set_ethos_from = scope:old_culture
-					set_martial_custom_from = scope:old_culture
-					
-					# Clear out the Roman-specific traditions, and add in one to compensate
-					remove_roman_traditions_effect = yes
-					# TODO Need to choose which one we really want
-					# add_culture_tradition = tradition_monastic_communities
-					add_culture_tradition = tradition_parochialism
-					# add_culture_tradition = tradition_hereditary_hierarchy
-					
-					# Copy acceptances
-					copy_acceptances_from_parent_cultures_effect = yes
-				}
-				if = {
-					limit = {
-						exists = struggle:britannia_struggle
-					}
-					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
-				}
-				
-				# TODO New culture spawns at capitals of random independent Romano-British realms
-				random_independent_ruler = {
-					limit = {
-						character_can_convert_to_britannic_culture = yes
-						capital_county = {
-							county_can_convert_to_britannic_culture = yes
-							county_is_in_britannic_culture_area = yes
-						}
-					}
-					capital_county = { save_scope_as = new_culture_spawn_county }
-				}
-				
-				# Convert all characters and counties in the spawn point, as well as in
-				# neighbouring eligible counties
-				scope:new_culture_spawn_county ?= {
-					convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
-						COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
-						COUNTY_CULTURE_CONDITION_OP = "="
-						COUNTY_CULTURE_CONDITION_RHS = "yes"
-						CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
-						CHAR_CULTURE_CONDITION_OP = "="
-						CHAR_CULTURE_CONDITION_RHS = "yes"
-						NEW_CULTURE = scope:new_culture
-					}
-					every_neighboring_county = {
-						limit = { county_is_in_britannic_culture_area = yes }
-						convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
-							COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
-							COUNTY_CULTURE_CONDITION_OP = "="
-							COUNTY_CULTURE_CONDITION_RHS = "yes"
-							CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
-							CHAR_CULTURE_CONDITION_OP = "="
-							CHAR_CULTURE_CONDITION_RHS = "yes"
-							NEW_CULTURE = scope:new_culture
-						}
-						# Seed some progress in surroundings to get more organic spread in the first few years
-						every_neighboring_county = {
-							limit = { 
-								county_is_in_britannic_culture_area = yes
-								county_can_convert_to_britannic_culture = yes
-							}
-							get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
-							scope:culture_spread_progress_story = {
-								random_list = {
-									1 = { set_variable = { name = progress value = 20 } }
-									1 = { set_variable = { name = progress value = 40 } }
-									1 = { set_variable = { name = progress value = 60 } }
-								}
-							}
-						}
-					}
-				}
+				clamp_variable = { name = brithenig_emergence_progress max = 60 }
 			}
 			
 			if = {
@@ -2855,11 +2720,11 @@ culture_shifts.0030 = {
 					ordered_culture_global = {
 						limit = { has_cultural_pillar = heritage_brythonic }
 						order_by = {
-							save_temporary_scope_as = current_cultrue
+							save_temporary_scope_as = current_culture
 							culture:romanobritish = {
 								every_culture_county = {
 									if = {
-										limit = { holder.top_liege.culture = scope:current_cultrue }
+										limit = { holder.top_liege.culture = scope:current_culture }
 										add = 1
 									}
 								}
@@ -2961,17 +2826,6 @@ culture_shifts.0030 = {
 					}
 				}
 				
-				# Otherwise, try to spawn in random counties under Brythonic control that are 
-				#  neighbouring Brythonic counties
-				# Otherwise, just spawn in random counties under Brythonic control
-				random_county = {
-					limit = {
-						county_can_convert_to_brithenig_culture = yes
-						county_is_in_brithenig_culture_area = yes
-					}
-					save_scope_as = new_culture_spawn_county
-				}
-				
 				# If less than 6 counties were converted, try to look for other counties to spawn the culture in
 				if = {
 					limit = { has_local_variable = no_more_possible_culture_counties }
@@ -3031,45 +2885,282 @@ culture_shifts.0030 = {
 						set_local_variable = no_more_possible_culture_counties
 					}
 				}
-			}
-			
-			if = {
-				limit = {
-					# TODO Actually do this
-					this.var:romanized_germanic_hybrid_emergence_progress >= 100
-					OR = {
-						NOT = { exists = struggle:britannia_struggle }
-						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
-					}
-				}			
-				culture:romanobritish = { save_scope_as = old_culture }
-				# Use a new unlanded character so we have complete control over the cultures shifts
-				create_character = {
-					dynasty = none
-					location = scope:target_romanized_germanic_culture_ruler.capital_province
-					culture = scope:old_culture
-					faith = faith:catholic
-					gender = male
-					save_scope_as = culture_creator
-				}
-				scope:culture_creator = {
-					# Stops normal notifications from creating new cultures
-					add_character_flag = suppress_culture_notifications_and_achievements
-					create_hybrid_culture = scope:target_romanized_germanic_culture
-					death = natural
-				}				
-				scope:new_culture = {
-					set_heritage_from = culture:britannic		# Can't set directly for some reason
-					set_language_from = culture:britannic
-					set_name_list = name_list_britannic
-					set_culture_name = {
-						noun = british_romance_romanized_germanic_hybrid_culture_noun
-						collective_noun = british_romance_romanized_germanic_hybrid_collective_noun
-						prefix = british_romance_romanized_germanic_hybrid_prefix
-					}
+				
+				# Notify everyone
+				trigger_event = { id = culture_shifts.0031 }
+				every_player = {
+					limit = { NOT = { this = root } }
+					trigger_event = { id = culture_shifts.0031 }
 				}
 			}
 		}
+	}
+}
+
+# Notify appearance of Brithenig culture
+culture_shifts.0031 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = culture_shifts.0031.t
+	desc = culture_shifts.0031.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				exists = title:e_britannia.holder
+				title:e_britannia.holder = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+			}
+			title:e_britannia.holder = { save_scope_as = founder }
+		}
+		else = {
+			ordered_independent_ruler = {
+				limit = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				order_by = {
+					every_realm_county = {
+						if = {
+							limit = {
+								OR = {
+									culture = culture:romanobritish
+									culture = culture:brithenig
+								}
+							}
+							add = 1
+						}
+					}
+				}
+				position = 0
+				save_scope_as = founder
+			}
+		}
+		scope:old_culture = { save_scope_as = parent_1 }
+		custom_tooltip = culture_notification_tooltip
+		custom_tooltip = culture_shifts.0021.culture_spread_tooltip
+		if = {
+			limit = { culture = scope:new_culture }
+			custom_tooltip = culture_shifts.0021.culture_spread_to_us_tooltip
+		}
+	}
+
+	option = {
+		trigger = { 
+			culture = scope:new_culture
+		}
+		name = culture_shifts.0031.a
+	}
+	
+	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			character_can_convert_to_brithenig_culture = yes
+			capital_county = {
+				county_is_in_brithenig_culture_area = yes
+			}
+		}
+		name = culture_shifts.0031.b
+		custom_tooltip = culture_shifts.0031.b.tt
+	}
+	
+	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			NAND = {
+				character_can_convert_to_brithenig_culture = yes
+				capital_county = {
+					county_is_in_brithenig_culture_area = yes
+				}
+			}
+			any_sub_realm_county = {
+				county_can_convert_to_brithenig_culture = yes
+				county_is_in_brithenig_culture_area = yes
+			}
+		}
+		name = culture_shifts.0031.c
+		custom_tooltip = culture_shifts.0031.c.tt
+	}
+	
+	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			NAND = {
+				character_can_convert_to_brithenig_culture = yes
+				capital_county = {
+					county_is_in_brithenig_culture_area = yes
+				}
+			}
+			NOT = {
+				any_sub_realm_county = {
+					county_can_convert_to_brithenig_culture = yes
+					county_is_in_brithenig_culture_area = yes
+				}
+			}
+			culture = { has_cultural_pillar = heritage_latin }
+		}
+		name = culture_shifts.0031.d
+	}
+	
+	option = {
+		trigger = { always = no }
+		fallback = yes
+		name = culture_shifts.0031.e
+	}
+}
+
+# Britanno-[Romanized Germanic] hybrid culture emergence
+culture_shifts.0032 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# While there are still Romano-British counties
+		culture:romanobritish = { any_culture_county = { count >= 1 } }
+	}
+	
+	immediate = {	
+		# TODO Check for Romanized Germanic/Sarmatian hybridization progress
+		every_culture_global = {
+			limit = { 
+				culture_is_romanized_barbarian_culture_trigger = yes
+				NOT = { has_variable = britannic_hybrid_culture_has_emerged }
+			}
+			save_scope_as = current_barbarian_culture
+			
+			# Check for Britannic hybrid culture emergence
+			if = {
+				limit = { NOT = { has_variable = britannic_hybrid_emergence_progress } }
+				set_variable = { name = britannic_hybrid_emergence_progress value = 0 }
+			}
+			set_variable = { name = britannic_hybrid_emergence_progress_change value = 0 }
+			
+			# If at least 20 Romano-British or Britannic Romance provinces have a top liege of this culture,
+			# then hybrid culture emergence progresses
+			if = {
+				limit = {
+					any_county = {
+						count >= 20
+						county_can_convert_to_britannic_hybrid_culture = {
+							BARBARIAN_CULTURE = scope:current_barbarian_culture
+						}
+						NOT = { culture = scope:current_barbarian_culture }
+						holder.top_liege.culture = {
+							OR = {
+								this = scope:current_barbarian_culture
+								AND = {
+									has_cultural_pillar = heritage_romance
+									this.var:ancestral_non_roman_culture = scope:current_barbarian_culture
+								}
+							}
+						}
+					}
+				}
+				change_variable = { name = britannic_hybrid_emergence_progress_change add = 2 }
+				
+				# If there is a local high king of this culture, happens faster
+				if = {
+					limit = {
+						exists = title:e_romanized_germanic_britannia.holder
+						title:e_romanized_germanic_britannia.holder.culture = {
+							OR = {
+								this = scope:current_barbarian_culture
+								AND = {
+									has_cultural_pillar = heritage_romance
+									this.var:ancestral_non_roman_culture = scope:current_barbarian_culture
+								}
+							}
+						}
+					}
+					change_variable = { name = britannic_hybrid_emergence_progress_change add = 1 }
+				}
+				# If there are a lot of controlled provinces, happens faster
+				if = {
+					limit = {
+						any_county = {
+							count >= 60
+							county_can_convert_to_britannic_hybrid_culture = {
+								BARBARIAN_CULTURE = scope:current_barbarian_culture
+							}
+							NOT = { culture = scope:current_barbarian_culture }
+							holder.top_liege.culture = {
+								OR = {
+									this = scope:current_barbarian_culture
+									AND = {
+										has_cultural_pillar = heritage_romance
+										this.var:ancestral_non_roman_culture = scope:current_barbarian_culture
+									}
+								}
+							}
+						}
+					}
+					change_variable = { name = britannic_hybrid_emergence_progress_change add = 1 }
+				}
+				else_if = {
+					limit = {
+						any_county = {
+							count >= 40
+							county_can_convert_to_britannic_hybrid_culture = {
+								BARBARIAN_CULTURE = scope:current_barbarian_culture
+							}
+							NOT = { culture = scope:current_barbarian_culture }
+							holder.top_liege.culture = {
+								OR = {
+									this = scope:current_barbarian_culture
+									AND = {
+										has_cultural_pillar = heritage_romance
+										this.var:ancestral_non_roman_culture = scope:current_barbarian_culture
+									}
+								}
+							}
+						}
+					}
+					change_variable = { name = britannic_hybrid_emergence_progress_change add = 0.5 }
+				}
+			}
+			else = {		# Progress decays if there is not enough Brythonic control
+				change_variable = { name = britannic_hybrid_emergence_progress_change subtract = 1 }
+			}
+			
+			# Randomness factor
+			random_list = {
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.70 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.80 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.90 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.00 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.10 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.20 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.30 } }
+			}
+			
+			# Actually apply the change
+			change_variable = { 
+				name = britannic_hybrid_emergence_progress 
+				add = this.var:britannic_hybrid_emergence_progress_change 
+			}
+			
+			# Progress can't be negative
+			clamp_variable = { name = britannic_hybrid_emergence_progress max = 100 min = 0 }
+			
+			# Capped at 60% progress before the consolidation/unification phase
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+					NOT = { 
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_romanobritish_culture_shifts }
+					}
+				}
+				clamp_variable = { name = britannic_hybrid_emergence_progress max = 60 }
+			}
+		}
+		
 		
 				# # New culture spawns at capital of kingdom holder if possible
 				# if = {
@@ -3326,6 +3417,260 @@ culture_shifts.0030 = {
 						# }
 					# }
 				# }
+	}
+}
+
+culture_shifts.0032 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# While there are still Romano-British counties
+		culture:romanobritish = { any_culture_county = { count >= 1 } }
+		NOT = { culture:britannic = { has_variable = culture_has_emerged } }
+	}
+	
+	immediate = {
+		culture:romanobritish = {
+			# Check for Britannic culture emergence progress
+			if = {
+				limit = { NOT = { has_variable = britannic_emergence_progress } }
+				set_variable = { name = britannic_emergence_progress value = 0 }
+			}
+			set_variable = { name = britannic_emergence_progress_change value = 0 }
+			
+			# If there is an Imperial heritage realm that rules at least 40 Romano-British counties,
+			# Or if there is an Imperial heritage High King of Britannia,
+			# then Britannic culture gets no emergence progress
+			# Alternatively, if there is an Imperial heritage realm that rules at least 5 Romano-British counties,
+			# and at least 80 total Imperial heritage provinces, that also stops Britannic emergence
+			if = {
+				limit = {
+					# In order to get any progress at all, there must be at least one Romano-British provinces
+					# that is not going to be prioritized for another British Romance culture
+					any_culture_county = {
+						county_can_convert_to_britannic_culture = yes
+					}
+					NOR = {
+						title:e_britannia.holder ?= { culture = { has_cultural_pillar = heritage_latin } }
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 40
+									culture = culture:romanobritish
+								}
+								AND = {
+									any_realm_county = {
+										count >= 5
+										culture = culture:romanobritish
+									}
+									any_realm_county = {
+										count >= 80
+										culture = { has_cultural_pillar = heritage_latin }
+									}
+								}
+							}
+						}
+					}
+				}
+				# If there is a realm close to the limit, the emergence is somewhat slower
+				if = {
+					limit = {
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 35
+									culture = culture:romanobritish
+								}
+							}
+						}
+					}
+					change_variable = { name = britannic_emergence_progress_change add = 1.5 }
+				}
+				else_if = {
+					limit = {
+						any_independent_ruler = {
+							culture = { has_cultural_pillar = heritage_latin }
+							OR = {
+								any_realm_county = {
+									count >= 30
+									culture = culture:romanobritish
+								}
+							}
+						}
+					}
+					change_variable = { name = britannic_emergence_progress_change add = 2.25 }
+				}
+				else = {
+					change_variable = { name = britannic_emergence_progress_change add = 3 }
+				}
+			}
+			else = {		# Progress decays if there is a strong enough Imperial realm
+				change_variable = { name = britannic_emergence_progress_change subtract = 2 }
+			}
+			
+			# Randomness factor
+			random_list = {
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.70 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.80 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.90 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.00 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.10 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.20 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.30 } }
+			}
+			
+			# Actually apply the change
+			change_variable = { 
+				name = britannic_emergence_progress 
+				add = this.var:britannic_emergence_progress_change 
+			}
+			
+			# Progress can't be negative
+			clamp_variable = { name = britannic_emergence_progress min = 0 }
+			
+			# Capped at 60% progress before the consolidation/unification phase
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+					NOT = { 
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_romanobritish_culture_shifts }
+					}
+				}
+				clamp_variable = { name = britannic_emergence_progress max = 60 }
+			}
+		
+			# If you reach 100% progress, then the new culture is created	
+			if = {
+				limit = {
+					this.var:britannic_emergence_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+					NOT = { culture:britannic = { has_variable = culture_has_emerged } }
+				}			
+				culture:romanobritish = { save_scope_as = old_culture }
+				culture:britannic = {
+					save_scope_as = new_culture
+					reset_culture_creation_date = yes
+					set_variable = culture_has_emerged
+					get_all_innovations_from = scope:old_culture
+					copy_all_traditions_from = scope:old_culture
+					set_ethos_from = scope:old_culture
+					set_martial_custom_from = scope:old_culture
+					
+					# Clear out the Roman-specific traditions, and add in one to compensate
+					remove_roman_traditions_effect = yes
+					# TODO Need to choose which one we really want
+					# add_culture_tradition = tradition_monastic_communities
+					add_culture_tradition = tradition_parochialism
+					# add_culture_tradition = tradition_hereditary_hierarchy
+					
+					# Copy acceptances
+					copy_acceptances_from_parent_cultures_effect = yes
+				}
+				if = {
+					limit = {
+						exists = struggle:britannia_struggle
+					}
+					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
+				}
+				
+				# TODO New culture spawns at capitals of random independent Romano-British realms
+				random_independent_ruler = {
+					limit = {
+						character_can_convert_to_britannic_culture = yes
+						capital_county = {
+							county_can_convert_to_britannic_culture = yes
+							county_is_in_britannic_culture_area = yes
+						}
+					}
+					capital_county = { save_scope_as = new_culture_spawn_county }
+				}
+				
+				# Convert all characters and counties in the spawn point, as well as in
+				# neighbouring eligible counties
+				scope:new_culture_spawn_county ?= {
+					convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+						COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
+						COUNTY_CULTURE_CONDITION_OP = "="
+						COUNTY_CULTURE_CONDITION_RHS = "yes"
+						CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
+						CHAR_CULTURE_CONDITION_OP = "="
+						CHAR_CULTURE_CONDITION_RHS = "yes"
+						NEW_CULTURE = scope:new_culture
+					}
+					every_neighboring_county = {
+						limit = { county_is_in_britannic_culture_area = yes }
+						convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+							COUNTY_CULTURE_CONDITION_LHS = "county_can_convert_to_britannic_culture"
+							COUNTY_CULTURE_CONDITION_OP = "="
+							COUNTY_CULTURE_CONDITION_RHS = "yes"
+							CHAR_CULTURE_CONDITION_LHS = "character_can_convert_to_britannic_culture"
+							CHAR_CULTURE_CONDITION_OP = "="
+							CHAR_CULTURE_CONDITION_RHS = "yes"
+							NEW_CULTURE = scope:new_culture
+						}
+						# Seed some progress in surroundings to get more organic spread in the first few years
+						every_neighboring_county = {
+							limit = { 
+								county_is_in_britannic_culture_area = yes
+								county_can_convert_to_britannic_culture = yes
+							}
+							get_culture_spread_success_story_effect = { CULTURE = scope:new_culture }
+							scope:culture_spread_progress_story = {
+								random_list = {
+									1 = { set_variable = { name = progress value = 20 } }
+									1 = { set_variable = { name = progress value = 40 } }
+									1 = { set_variable = { name = progress value = 60 } }
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					# TODO Actually do this
+					this.var:romanized_germanic_hybrid_emergence_progress >= 100
+					OR = {
+						NOT = { exists = struggle:britannia_struggle }
+						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
+					}
+				}			
+				culture:romanobritish = { save_scope_as = old_culture }
+				# Use a new unlanded character so we have complete control over the cultures shifts
+				create_character = {
+					dynasty = none
+					location = scope:target_romanized_germanic_culture_ruler.capital_province
+					culture = scope:old_culture
+					faith = faith:catholic
+					gender = male
+					save_scope_as = culture_creator
+				}
+				scope:culture_creator = {
+					# Stops normal notifications from creating new cultures
+					add_character_flag = suppress_culture_notifications_and_achievements
+					create_hybrid_culture = scope:target_romanized_germanic_culture
+					death = natural
+				}				
+				scope:new_culture = {
+					set_heritage_from = culture:britannic		# Can't set directly for some reason
+					set_language_from = culture:britannic
+					set_name_list = name_list_britannic
+					set_culture_name = {
+						noun = british_romance_romanized_germanic_hybrid_culture_noun
+						collective_noun = british_romance_romanized_germanic_hybrid_collective_noun
+						prefix = british_romance_romanized_germanic_hybrid_prefix
+					}
+				}
+			}
+		}
 				
 				# # If less than 6 counties were converted, try to look for other counties to spawn the culture in
 				# if = {
@@ -3538,7 +3883,5 @@ culture_shifts.0030 = {
 				# clear_saved_scope = new_culture
 				# clear_saved_scope = dominant_west_germanic_culture
 				# clear_saved_scope = new_culture_spawn_county
-			}
-		}
 	}
 }
