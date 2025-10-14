@@ -176,10 +176,7 @@ form_strathclyde_decision = {
 		}
 		highest_held_title_tier < tier_empire
 		title:k_strathclyde = {
-			NOR = { 
-				has_variable = title_expanded_de_jure 
-				has_variable = title_expanded_alt_de_jure 
-			}
+			NOT = { has_variable = formed_strathclyde }
 		}
 	}
 
@@ -207,17 +204,20 @@ form_strathclyde_decision = {
 	effect = {
 		add_prestige = 300
 		add_legitimacy = 50
-		title:k_strathclyde = { 
-			set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE }
+		title:k_strathclyde = {		
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
 			set_variable = custom_name
 		}
 		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
 		custom_description_no_bullet = {
 			text = if_controls_c_luguvalium_effect
+			subject = title:c_luguvalium
+		}
+		custom_description = { 			# Needs to be a custom description to keep its place here
+			text = destroy_title_tooltip_effect
 			subject = title:k_rheged
 		}
-		show_as_tooltip = { destroy_title = title:k_rheged }
-		title:k_strathclyde = { 
+		title:k_strathclyde = {
 			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
 				variable = de_jure_affected_territory
@@ -248,9 +248,12 @@ form_strathclyde_decision = {
 		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
 		custom_description_no_bullet = {
 			text = if_controls_c_din_eidyn_effect
+			subject = title:c_din_eidyn
+		}
+		custom_description = { 			# Needs to be a custom description to keep its place here
+			text = destroy_title_tooltip_effect
 			subject = title:k_lothian
 		}
-		show_as_tooltip = { destroy_title = title:k_lothian }
 		title:k_strathclyde = { 
 			save_scope_as = title_expanded_alt_de_jure_pretend
 			every_in_list = {
