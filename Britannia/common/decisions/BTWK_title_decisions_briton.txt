@@ -234,6 +234,25 @@ form_strathclyde_decision = {
 				}
 			}
 			clear_saved_scope = title_expanded_de_jure_pretend
+			if = {
+				limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_de_jure_pretend
+			}
 		}
 		title:k_pennines = { 
 			save_scope_as = title_expanded_de_jure_pretend
@@ -244,6 +263,53 @@ form_strathclyde_decision = {
 				}
 			}
 			clear_saved_scope = title_expanded_de_jure_pretend
+		}
+		if = {
+			limit = {
+				NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+			}
+			# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
+			custom_description_no_bullet = {
+				text = if_controls_c_desnes_mor_effect
+				subject = title:c_desnes_mor
+			}
+			title:k_strathclyde = {
+				save_scope_as = title_expanded_alt_2_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_2_kingdoms
+						any_in_list = {
+							variable = expansion_alt_2_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_2_de_jure_pretend
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_3_de_jure_pretend
+				title:k_ynys_man = {
+					show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+				}
+			}
 		}
 		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
 		custom_description_no_bullet = {
@@ -272,6 +338,153 @@ form_strathclyde_decision = {
 			clear_saved_scope = title_expanded_alt_de_jure_pretend
 		}
 		trigger_event = { id = titular_titles_briton.0005 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+rheged_annex_novant_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = rheged_annex_novant_decision_desc
+
+	is_shown = {
+		has_title = title:k_rheged
+		highest_held_title_tier < tier_empire
+		title:k_rheged = {
+			NOT = { has_variable = title_expanded_de_jure }
+		}
+		NOT = {
+			title:k_strathclyde = { 
+				has_variable = formed_strathclyde 
+				has_variable = title_expanded_de_jure
+			}
+		}
+	}
+
+	is_valid = {
+		has_title = title:k_rheged
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		government_is_not_tribal_trigger = yes
+		NOT = { has_title = title:k_ynys_man }
+		prestige_level >= medium_prestige_level
+		completely_controls = title:c_desnes_mor
+		completely_controls = title:c_novantia
+	}
+
+	effect = {
+		add_prestige = 200
+		add_legitimacy = 25	
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		title:k_rheged = { 
+			save_scope_as = title_expanded_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+				limit = {
+					has_variable_list = expansion_alt_2_kingdoms
+					any_in_list = {
+						variable = expansion_alt_2_kingdoms
+						this = title:k_strathclyde
+					}
+				}
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		title:k_ynys_man = {
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+		}
+		trigger_event = { id = titular_titles_briton.0014 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+strathclyde_annex_aeron_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval = 1
+
+	desc = strathclyde_annex_aeron_decision_desc
+
+	is_shown = {
+		has_title = title:k_strathclyde
+		highest_held_title_tier < tier_empire
+		title:k_strathclyde = {
+			NOT = { has_variable = title_expanded_alt_2_de_jure }
+		}
+	}
+
+	is_valid = {
+		has_title = title:k_strathclyde
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		government_is_not_tribal_trigger = yes
+		NOT = { has_title = title:k_ynys_man }
+		prestige_level >= medium_prestige_level
+		completely_controls = title:c_ayr
+		OR = {
+			completely_controls = title:c_cunninghame
+			completely_controls = title:c_southayr
+		}
+	}
+
+	effect = {
+		add_prestige = 200
+		add_legitimacy = 25	
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_3_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_briton.0016 }
 	}
 	
 	cost = {

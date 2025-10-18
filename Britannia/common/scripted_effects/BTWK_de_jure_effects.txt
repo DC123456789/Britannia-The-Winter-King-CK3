@@ -112,19 +112,27 @@ set_title_integrated_flag_effect = {
 }
 
 # Scope is the kingdom to set as formed or expanded
-# SHIFT_TYPE should be a flag that is one of formable/expanded/expanded_alt
+# SHIFT_TYPE should be a flag that is one of formable/expansion/expansion_alt/expansion_alt_2/expansion_alt_3
 set_formable_or_expandable_liege_title_flag_effect = {
 	if = {
 		limit = { $SHIFT_TYPE$ = flag:formable }
 		set_variable = title_created_de_jure
 	}
 	else_if = {
-		limit = { $SHIFT_TYPE$ = flag:expanded }
+		limit = { $SHIFT_TYPE$ = flag:expansion }
 		set_variable = title_expanded_de_jure
 	}
 	else_if = {
-		limit = { $SHIFT_TYPE$ = flag:expanded_alt }
+		limit = { $SHIFT_TYPE$ = flag:expansion_alt }
 		set_variable = title_expanded_alt_de_jure
+	}
+	else_if = {
+		limit = { $SHIFT_TYPE$ = flag:expansion_alt_2 }
+		set_variable = title_expanded_alt_2_de_jure
+	}
+	else_if = {
+		limit = { $SHIFT_TYPE$ = flag:expansion_alt_3 }
+		set_variable = title_expanded_alt_3_de_jure
 	}
 	save_temporary_scope_as = current_title
 	if = {
@@ -172,11 +180,19 @@ set_kingdom_formed_effect = {
 }
 
 set_kingdom_expanded_effect = {
-	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expanded }
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expansion }
 }
 
 set_kingdom_expanded_alt_effect = {
-	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expanded_alt }
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expansion_alt }
+}
+
+set_kingdom_expanded_alt_2_effect = {
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expansion_alt_2 }
+}
+
+set_kingdom_expanded_alt_3_effect = {
+	set_formable_or_expandable_liege_title_flag_effect = { SHIFT_TYPE = flag:expansion_alt_3 }
 }
 
 # Requires that scope:story_holder be set to any arbitrary character
@@ -301,6 +317,14 @@ check_de_jure_liege_county_effect = {
 						this.var:dependent_title_flag = flag:expansion_alt
 						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
+					AND = {
+						this.var:dependent_title_flag = flag:expansion_alt_2
+						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_2_de_jure } }
+					}
+					AND = {
+						this.var:dependent_title_flag = flag:expansion_alt_3
+						this.var:dependent_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_3_de_jure } }
+					}
 				}
 			}
 		}
@@ -365,10 +389,24 @@ check_de_jure_liege_duchy_effect = {
 						this.var:shift_type = flag:expansion_alt
 						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_2
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_2_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_3
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_3_de_jure } }
+					}
 				}
 			}
 		}
-		ordered_in_list = {
+		# variable_list_size doesn't seem to work right so we copy the list we want into a local list and 
+		# get the size of *that*
+		every_in_list = {
+			list = enabled_formable_and_expansion_liege_title_shifts
+			remove_from_list = enabled_formable_and_expansion_liege_title_shifts
+		}
+		every_in_list = {
 			variable = formable_and_expansion_liege_title_shifts
 			limit = {
 				OR = {
@@ -393,14 +431,26 @@ check_de_jure_liege_duchy_effect = {
 						this.var:shift_type = flag:expansion_alt
 						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_2
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_2_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_3
+						this.var:liege_title = { title_has_de_jure_variable_tooltip_trigger = { FLAG = title_expanded_alt_3_de_jure } }
+					}
 				}
 			}
+			add_to_temporary_list = enabled_formable_and_expansion_liege_title_shifts
+		}
+		ordered_in_list = {
+			list = enabled_formable_and_expansion_liege_title_shifts
 			position = {
-				value = variable_list_size:formable_and_expansion_liege_title_shifts
+				value = list_size:enabled_formable_and_expansion_liege_title_shifts
 				subtract = 1
 			}
 			this.var:liege_title = { save_temporary_scope_as = new_de_jure_liege }
-		}
+		}		
 		if = {
 			limit = { NOT = { de_jure_liege = scope:new_de_jure_liege } }
 			set_de_jure_liege_title = scope:new_de_jure_liege
@@ -437,10 +487,24 @@ check_de_jure_liege_duchy_effect = {
 						this.var:shift_type = flag:expansion_alt
 						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_2
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_2_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_3
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_3_de_jure } }
+					}
 				}
 			}
 		}
-		ordered_in_list = {
+		# variable_list_size doesn't seem to work right so we copy the list we want into a local list and 
+		# get the size of *that*
+		every_in_list = {
+			list = enabled_formable_and_expansion_liege_title_shifts
+			remove_from_list = enabled_formable_and_expansion_liege_title_shifts
+		}
+		every_in_list = {
 			variable = formable_and_expansion_liege_title_shifts
 			limit = {
 				OR = {
@@ -465,10 +529,22 @@ check_de_jure_liege_duchy_effect = {
 						this.var:shift_type = flag:expansion_alt
 						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_de_jure } }
 					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_2
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_2_de_jure } }
+					}
+					AND = {
+						this.var:shift_type = flag:expansion_alt_3
+						this.var:liege_title = { title_has_de_jure_variable_trigger = { FLAG = title_expanded_alt_3_de_jure } }
+					}
 				}
 			}
+			add_to_temporary_list = enabled_formable_and_expansion_liege_title_shifts
+		}
+		ordered_in_list = {
+			list = enabled_formable_and_expansion_liege_title_shifts
 			position = {
-				value = variable_list_size:formable_and_expansion_liege_title_shifts
+				value = list_size:enabled_formable_and_expansion_liege_title_shifts
 				subtract = 1
 			}
 			this.var:liege_title = { save_temporary_scope_as = new_de_jure_liege }

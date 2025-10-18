@@ -1018,6 +1018,8 @@ titular_titles_roman.0004 = {
 # 0009/0010 - High Kingdom of Britannia (reunification)
 # 0011 		- Glywyssing rename (hidden)
 # 0012/0013	- High Kingdom of Cymru
+# 0014/0015	- Fall of Novant
+# 0016/0017	- Conquest of Aeron
 # 0050-0052 - Fall of Britannia
 
 # Kingdom of Deheubarth
@@ -1215,12 +1217,16 @@ titular_titles_briton.0005 = {
 		hidden_effect = {
 			title:k_strathclyde = { 
 				set_variable = formed_strathclyde
-				reset_title_name = yes
+				set_title_name = STRATHCLYDE
 			}
 			if = {
 				limit = { completely_controls = title:c_luguvalium }
 				title:k_strathclyde = { 
 					set_kingdom_expanded_effect = yes
+					if = {
+						limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+						set_kingdom_expanded_alt_3_effect = yes
+					}
 					every_in_list = {
 						variable = de_jure_affected_territory
 						check_de_jure_liege_effect = yes
@@ -1232,6 +1238,27 @@ titular_titles_briton.0005 = {
 						variable = de_jure_affected_territory
 						check_de_jure_liege_effect = yes
 					}
+				}
+			}
+			if = {
+				limit = { 
+					completely_controls = title:c_desnes_mor 
+					NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				}
+				title:k_strathclyde = { 
+					set_kingdom_expanded_alt_2_effect = yes
+					set_kingdom_expanded_alt_3_effect = yes
+					every_in_list = {
+						variable = de_jure_affected_territory
+						check_de_jure_liege_effect = yes
+					}
+				}
+				title:k_ynys_man = {
+					set_variable = formed_ynys_man
+					set_variable = custom_name
+					set_title_name = MANAW
+					set_variable = custom_capital
+					set_capital_county = title:c_german
 				}
 			}
 			if = {
@@ -1263,8 +1290,14 @@ titular_titles_briton.0006 = {
 	immediate = {
 		if = {
 			limit = { this = scope:founder }
-			destroy_title = title:k_rheged
-			destroy_title = title:k_lothian
+			if = {
+				limit = { completely_controls = title:c_luguvalium }
+				destroy_title = title:k_rheged
+			}
+			if = {
+				limit = { completely_controls = title:c_din_eidyn }
+				destroy_title = title:k_lothian
+			}
 		}
 		title:k_strathclyde = { 
 			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
@@ -1288,6 +1321,25 @@ titular_titles_briton.0006 = {
 					}
 				}
 				clear_saved_scope = title_expanded_de_jure_pretend
+				if = {
+					limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+					save_scope_as = title_expanded_alt_3_de_jure_pretend
+					every_in_list = {
+						variable = de_jure_affected_territory
+						# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+						limit = {
+							has_variable_list = expansion_alt_3_kingdoms
+							any_in_list = {
+								variable = expansion_alt_3_kingdoms
+								this = title:k_strathclyde
+							}
+						}
+						show_as_tooltip = {
+							check_de_jure_liege_effect = yes
+						}
+					}
+					clear_saved_scope = title_expanded_de_jure_pretend
+				}
 			}
 			title:k_pennines = { 
 				save_scope_as = title_expanded_de_jure_pretend
@@ -1298,6 +1350,49 @@ titular_titles_briton.0006 = {
 					}
 				}
 				clear_saved_scope = title_expanded_de_jure_pretend
+			}
+		}
+		if = {
+			limit = {
+				NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				scope:founder = { completely_controls = title:c_desnes_mor }
+			}
+			title:k_strathclyde = {
+				save_scope_as = title_expanded_alt_2_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_2_kingdoms
+						any_in_list = {
+							variable = expansion_alt_2_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_2_de_jure_pretend
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_3_de_jure_pretend
+				title:k_ynys_man = {
+					show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+				}
 			}
 		}
 		if = {
@@ -1674,6 +1769,184 @@ titular_titles_briton.0013 = {
 		}
 		name = {
 			text = titular_titles_briton.0013.a
+		}
+	}
+}
+
+# Fall of Novant
+titular_titles_briton.0014 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_briton.0015 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0015 }
+		}
+		hidden_effect = {
+			title:k_ynys_man = {
+				set_variable = formed_ynys_man
+				set_variable = custom_name
+				set_title_name = MANAW
+				set_variable = custom_capital
+				set_capital_county = title:c_german
+			}
+			title:k_rheged = { 
+				set_kingdom_expanded_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:k_strathclyde = { 
+				set_kingdom_expanded_alt_2_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0015 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0015.t
+	desc = titular_titles_briton.0015.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:k_rheged = { 
+			save_scope_as = title_expanded_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+			clear_saved_scope = title_expanded_de_jure_pretend
+		}
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+				limit = {
+					has_variable_list = expansion_alt_2_kingdoms
+					any_in_list = {
+						variable = expansion_alt_2_kingdoms
+						this = title:k_strathclyde
+					}
+				}
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+			clear_saved_scope = title_expanded_de_jure_pretend
+		}
+		title:k_ynys_man = { 
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_briton.0015.a.conqueror
+		}
+		name = {
+			trigger = {
+				has_title = title:k_ynys_man
+			}
+			text = titular_titles_briton.0015.a.novant
+		}
+		name = {
+			text = titular_titles_briton.0015.a
+		}
+	}
+}
+
+# Conquest of Aeron
+titular_titles_briton.0016 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_briton.0017 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0017 }
+		}
+		hidden_effect = {
+			title:k_strathclyde = { 
+				set_kingdom_expanded_alt_2_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0017 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0015.t
+	desc = titular_titles_briton.0015.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_briton.0017.a.conqueror
+		}
+		name = {
+			trigger = {
+				has_title = title:k_ynys_man
+			}
+			text = titular_titles_briton.0017.a.novant
+		}
+		name = {
+			text = titular_titles_briton.0017.a
 		}
 	}
 }
