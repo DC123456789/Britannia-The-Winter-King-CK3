@@ -6,6 +6,7 @@ BTWK_on_game_start = {
 		BTWK_story_trigger_on_game_start_479
 		BTWK_culture_setup
 		BTWK_religion_setup
+		BTWK_government_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_settlement_placement
 		BTWK_laeti_trait_distribution
@@ -277,6 +278,23 @@ BTWK_religion_setup = {
 					NOT = { has_variable = block_conversion }
 				}
 				set_variable = { name = block_conversion_till_founded }
+			}
+		}
+	}
+}
+
+BTWK_government_setup = {
+	effect = {
+		if = {
+			limit = { game_start_date < 600.1.1 }
+			# Make sure all Anglo-Saxon rulers start tribal
+			every_ruler = {
+				limit = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					government_has_flag = government_is_feudal
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				change_government = tribal_government
 			}
 		}
 	}
@@ -1721,6 +1739,9 @@ BTWK_de_jure_setup = {
 				title:c_coquet = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_tynemouth = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_redesdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_jedburgh = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_teviotdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_selkirk = { set_variable = { name = roman_duchy value = PREV } }
 				set_variable = { name = creation_requirement_1 value = title:c_redesdale }
 				set_variable = { name = creation_requirement_2 value = title:c_bernicia }
 				set_variable = { name = creation_requirement_2_alt value = title:c_medcaut }
@@ -1735,13 +1756,8 @@ BTWK_de_jure_setup = {
 				title:c_lammermuirs = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_din_eidyn = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_abercorn = { set_variable = { name = roman_duchy value = PREV } }
-				title:c_jedburgh = { set_variable = { name = roman_duchy value = PREV } }
-				title:c_teviotdale = { set_variable = { name = roman_duchy value = PREV } }
-				title:c_selkirk = { set_variable = { name = roman_duchy value = PREV } }
-				title:c_peebles = { set_variable = { name = roman_duchy value = PREV } }
 				set_variable = { name = creation_requirement_1 value = title:c_dunpelder }
 				set_variable = { name = creation_requirement_2 value = title:c_din_eidyn }
-				set_variable = { name = creation_requirement_3 value = title:c_jedburgh }
 				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_anglelothian }
 			}
 			title:d_selgovae = {		# Selgovia
@@ -1766,6 +1782,7 @@ BTWK_de_jure_setup = {
 				set_variable = { name = roman_kingdom value = PREV }
 				set_variable = { name = roman_title_capital value = title:c_cadzow }
 				set_variable = { name = roman_name value = flag:cn_damnonia }
+				title:c_peebles = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_kirkintilloch = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_govan = { set_variable = { name = roman_duchy value = PREV } }
 				title:c_cadzow = { set_variable = { name = roman_duchy value = PREV } }
