@@ -5,19 +5,28 @@
 # Can also be used on a Romance culture that is descended at least partly from non-Romance/Imperial cultures,
 # possibly through other Romance cultures (but not through Imperial cultures)
 save_ancestral_non_roman_culture_effect = {
-	if = {
-		limit = {
-			NOT = { has_cultural_pillar = heritage_latin }
-		}
-		save_scope_as = current_culture
-		save_ancestral_non_roman_culture_helper_effect = yes
-	}
+	save_scope_as = current_culture
+	save_ancestral_non_roman_culture_helper_effect = yes
 }
 
 save_ancestral_non_roman_culture_helper_effect = {
+	# Even though it's not *really* relevant, we still calculate it for Imperial heritage cultures anyways
+	# This also helps cover dynamically generated Romance cultures, which may be Imperial heritage on the
+	# first tick depending on how it is generated
 	if = {
 		limit = { has_cultural_pillar = heritage_latin }
-		# Pass
+		if = {
+			limit = { 
+				any_parent_culture = { NOT = { has_same_culture_heritage = prev } }
+			}
+			random_parent_culture = { 
+				limit = { NOT = { has_same_culture_heritage = prev } }
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else = {
+			# Pass
+		}
 	}
 	else_if = {
 		limit = {
