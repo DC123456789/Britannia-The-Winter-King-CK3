@@ -27,7 +27,16 @@
 @nobility_02 = "gfx/interface/icons/culture_innovations/innovation_nobility_02.dds"
 @nobility_03 = "gfx/interface/icons/culture_innovations/innovation_nobility_03.dds"
 @nobility_04 = "gfx/interface/icons/culture_innovations/innovation_nobility_04.dds"
+@gunpowder = "gfx/interface/icons/culture_innovations/innovation_gunpowder.dds"
+@innovation_farm = "gfx/interface/icons/culture_innovations/innovation_farm.dds"
+@coins = "gfx/interface/icons/culture_innovations/innovation_welfare_01.dds"
 @misc_inventions = "gfx/interface/icons/culture_innovations/innovation_misc_inventions.dds"
+@quilted_armor = "gfx/interface/icons/culture_innovations/innovation_quilted_armor.dds"
+@currency = "gfx/interface/icons/culture_innovations/innovation_currency.dds"
+@farm = "gfx/interface/icons/culture_innovations/innovation_farm.dds"
+@plenary_assemblies = "gfx/interface/icons/culture_innovations/innovation_plenary_assemblies.dds"
+@siege_crossbow = "gfx/interface/icons/culture_innovations/innovation_auh_ballista.dds"
+
 
 @camel = "gfx/interface/icons/culture_innovations/innovation_camel.dds"
 @elephant = "gfx/interface/icons/culture_innovations/innovation_elephant.dds"
@@ -37,29 +46,35 @@
 
 #culture_group_military
 innovation_motte = { #Walled Towns
+	skill = stewardship
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @fortifications
 
 	custom = unlock_tribal_fortification_buildings
-	custom = nomad_motte_innovation_bonus
+
+	parameters = {
+		nomad_motte_innovation_bonus = yes
+	}
 
 	flag = global_regular
 	flag = tribal_era_regular
 }
 
 innovation_catapult = {
+	skill = learning
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @battering_ram
 
-	custom = unlock_maa_onager
+	custom = unlock_siege_maa_first_level
 
 	flag = global_regular
 	flag = tribal_era_regular
 }
 
 innovation_barracks = {
+	skill = martial
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @levy_building
@@ -75,6 +90,7 @@ innovation_barracks = {
 }
 
 innovation_mustering_grounds = {
+	skill = martial
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @leadership_2
@@ -89,6 +105,7 @@ innovation_mustering_grounds = {
 }
 
 innovation_bannus = {
+	skill = martial
 	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @raised_banner
@@ -107,9 +124,10 @@ innovation_bannus = {
 }
 
 innovation_quilted_armor = {
+	skill = martial
 	group = culture_group_military
 	culture_era = culture_era_tribal
-	icon = @weapons_and_armor_02
+	icon = @quilted_armor
 	
 	character_modifier = {
 		prowess = 2
@@ -133,6 +151,7 @@ innovation_quilted_armor = {
 }
 
 innovation_development_01 = {
+	skill = stewardship
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @civil_construction_1
@@ -148,6 +167,7 @@ innovation_development_01 = {
 }
 
 innovation_currency_01 = {
+	skill = stewardship
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @currency_1
@@ -163,6 +183,7 @@ innovation_currency_01 = {
 
 #culture_group_civic
 innovation_gavelkind = {
+	skill = diplomacy
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @administration_3
@@ -178,6 +199,7 @@ innovation_gavelkind = {
 }
 
 innovation_crop_rotation = {
+	skill = stewardship
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @levy_building
@@ -193,6 +215,7 @@ innovation_crop_rotation = {
 }
 
 innovation_city_planning = {
+	skill = stewardship
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @civil_construction_2
@@ -213,6 +236,7 @@ innovation_city_planning = {
 }
 
 innovation_casus_belli = {
+	skill = diplomacy
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @administration_1
@@ -225,9 +249,10 @@ innovation_casus_belli = {
 }
 
 innovation_plenary_assemblies = {
+	skill = diplomacy
 	group = culture_group_civic
 	culture_era = culture_era_tribal
-	icon = @leadership_1
+	icon = @plenary_assemblies
 
 	unlock_law = crown_authority_1
 
@@ -242,6 +267,7 @@ innovation_plenary_assemblies = {
 }
 
 innovation_ledger = {
+	skill = stewardship
 	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @administration_2
@@ -258,7 +284,8 @@ innovation_ledger = {
 }
 
 innovation_longboats = { #Sails
-	group = culture_group_civic
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @longboats
 
@@ -276,7 +303,8 @@ innovation_longboats = { #Sails
 
 #culture_group_regional
 innovation_table_of_princes = {
-	group = culture_group_regional
+	skill = diplomacy
+	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @nobility_01
 	
@@ -293,7 +321,8 @@ innovation_table_of_princes = {
 }
 
 innovation_elephantry = {
-	group = culture_group_regional
+	skill = stewardship
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	region = world_innovation_elephants
 	icon = @elephant
@@ -313,7 +342,8 @@ innovation_elephantry = {
 }
 
 innovation_war_camels = {
-	group = culture_group_regional
+	skill = stewardship
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	region = world_innovation_camels
 	icon = @camel
@@ -332,7 +362,8 @@ innovation_war_camels = {
 }
 
 innovation_wootz_steel = {
-	group = culture_group_regional
+	skill = learning
+	group = culture_group_civic
 	culture_era = culture_era_tribal
 	region = world_india_deccan
 	icon = @weapons_and_armor_01
@@ -351,7 +382,8 @@ innovation_wootz_steel = {
 }
 
 innovation_african_canoes = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	region = world_africa_west
 	icon = @majesty_01
@@ -373,7 +405,8 @@ innovation_african_canoes = {
 }
 
 innovation_crannogs = {
-	group = culture_group_regional	
+	skill = stewardship
+	group = culture_group_civic	
 	culture_era = culture_era_tribal
 	icon = @fortifications
 
@@ -395,7 +428,8 @@ innovation_crannogs = {
 }
 
 innovation_roman_primogeniture = {
-	group = culture_group_regional	
+	skill = diplomacy
+	group = culture_group_civic
 	culture_era = culture_era_tribal
 	icon = @majesty_01
 

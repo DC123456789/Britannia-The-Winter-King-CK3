@@ -5,6 +5,49 @@ councillor_chancellor = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
+					highest_held_title_tier >= tier_hegemony
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_chancellor_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						highest_held_title_tier = tier_empire
+						highest_held_title_tier = tier_kingdom
+					}
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_chancellor_non_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_hegemony
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = yes
+				}
+				desc = councillor_chancellor_celestial_government_non_imperial
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_administrative }
+				desc = councillor_chancellor_japan_administrative
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_feudal }
+				desc = councillor_chancellor_japan_feudal
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_kingdom
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = no
+				}
+				desc = councillor_chancellor_celestial_family_head
+			}
+			triggered_desc = {
+				trigger = {
 					scope:councillor_liege = {
 						OR = {
 							culture = { has_name_list = name_list_jute }
@@ -188,7 +231,20 @@ councillor_chancellor = {
 		}
 	}
 
-	tooltip = game_concept_chancellor_desc
+	tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = { tgp_has_access_to_ministry_trigger = yes }
+				}
+				desc = game_concept_minister_grand_chancellor_desc
+			}
+			desc = game_concept_chancellor_desc
+		}
+	}
+	
+	auto_fill = {
+	}
 
 	modifier = {
 		name = councillor_chancellor_modifier
@@ -224,16 +280,27 @@ councillor_chancellor = {
 
 	valid_character = {
 		exists = root.liege_or_court_owner
-		can_be_chancellor_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		trigger_if = { # If the liege has a ministry, we check a separate minister trigger
+			limit = {
+				root.liege_or_court_owner = { tgp_has_access_to_ministry_trigger = yes }
+			}
+			tgp_can_be_a_minister_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		trigger_else = {
+			can_be_chancellor_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
 		NOT = { this = character:528 }
+		tgp_is_ceremonial_liege_trigger = no
 	}
 
 	on_get_position = {
 		got_council_position_effect = yes
+		got_minister_position_effect = { MINISTER_TITLE = e_minister_chancellor MINISTER_POSITION = councillor_chancellor }
 	}
 
 	on_fired_from_position = {
 		fired_from_council_position_effect = yes
+		fired_minister_position_effect = yes
 	}
 
 	portrait_animation = chancellor
@@ -248,6 +315,50 @@ councillor_steward = {
 	skill = stewardship
 	
 	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier >= tier_hegemony
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_steward_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						highest_held_title_tier = tier_empire
+						highest_held_title_tier = tier_kingdom
+					}
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_steward_non_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_hegemony
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = yes
+				}
+				desc = councillor_steward_celestial_government_non_imperial
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_administrative }
+				desc = councillor_steward_japan_administrative
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_feudal }
+				desc = councillor_steward_japan_feudal
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_kingdom
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = no
+				}
+				desc = councillor_steward_celestial_family_head
+			}
 		first_valid = {
 			triggered_desc = {
 				trigger = {
@@ -405,8 +516,21 @@ councillor_steward = {
 			}
 		}
 	}
+
+	tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = { tgp_has_access_to_ministry_trigger = yes }
+				}
+				desc = game_concept_minister_of_revenue_desc
+			}
+			desc = game_concept_steward_desc
+		}
+	}
 	
-	tooltip = game_concept_steward_desc
+	auto_fill = {
+	}
 	
 	valid_position = {
 		NOR = { 
@@ -450,16 +574,27 @@ councillor_steward = {
 
 	valid_character = {
 		exists = root.liege_or_court_owner
-		can_be_steward_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		trigger_if = { # If the liege has a ministry, we check a separate minister trigger
+			limit = {
+				root.liege_or_court_owner = { tgp_has_access_to_ministry_trigger = yes }
+			}
+			tgp_can_be_a_minister_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		trigger_else = {
+			can_be_steward_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
 		NOT = { this = character:528 }
+		tgp_is_ceremonial_liege_trigger = no
 	}
 
 	on_get_position = {
 		got_council_position_effect = yes
+		got_minister_position_effect = { MINISTER_TITLE = e_minister_of_revenue MINISTER_POSITION = councillor_steward }
 	}
 
 	on_fired_from_position = {
 		fired_from_council_position_effect = yes
+		fired_minister_position_effect = yes
 	}
 
 	portrait_animation = steward
@@ -475,6 +610,49 @@ councillor_marshal = {
 	
 	name = {
 		first_valid = {
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier >= tier_hegemony
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = minister_war
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						highest_held_title_tier = tier_empire
+						highest_held_title_tier = tier_kingdom
+					}
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_marshal_non_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_hegemony
+					government_has_flag = government_has_merit
+					is_governor = yes
+				}
+				desc = councillor_marshal_celestial_government_non_imperial
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_administrative }
+				desc = councillor_marshal_japan_administrative
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_feudal }
+				desc = councillor_marshal_japan_feudal
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_kingdom
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = no
+				}
+				desc = councillor_marshal_celestial_family_head
+			}
 			triggered_desc = {
 				trigger = {
 					scope:councillor_liege = {
@@ -645,8 +823,21 @@ councillor_marshal = {
 			}
 		}
 	}
+
+	tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = { tgp_has_access_to_ministry_trigger = yes }
+				}
+				desc = game_concept_minister_of_war_desc
+			}
+			desc = game_concept_marshal_desc
+		}
+	}
 	
-	tooltip = game_concept_marshal_desc
+	auto_fill = {
+	}
 
 	valid_position = {
 		NOR = { 
@@ -676,6 +867,12 @@ councillor_marshal = {
 		scale = council_scaled_admin_value
 	}
 
+	modifier = { # Minister modifiers
+		name = minister_war_modifier
+		monthly_merit = 1
+		scale = council_scaled_celestial_ministry_value
+	}
+
 	council_owner_modifier = {
 		name = learn_on_the_job_modifier
 		martial = 1
@@ -690,16 +887,27 @@ councillor_marshal = {
 
 	valid_character = {
 		exists = root.liege_or_court_owner
-		can_be_marshal_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		trigger_if = { # If the liege has a ministry, we check a separate minister trigger
+			limit = {
+				root.liege_or_court_owner = { tgp_has_access_to_ministry_trigger = yes }
+			}
+			tgp_can_be_a_minister_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		trigger_else = {
+			can_be_marshal_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
 		NOT = { this = character:528 }
+		tgp_is_ceremonial_liege_trigger = no
 	}
 
 	on_get_position = {
 		got_council_position_effect = yes
+		got_minister_position_effect = { MINISTER_TITLE = e_minister_of_war MINISTER_POSITION = councillor_marshal }
 	}
 
 	on_fired_from_position = {
 		fired_from_council_position_effect = yes
+		fired_minister_position_effect = yes
 	}
 
 	portrait_animation = marshal
@@ -715,6 +923,49 @@ councillor_spymaster = {
 	
 	name = {
 		first_valid = {
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier >= tier_hegemony
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_spymaster_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						highest_held_title_tier = tier_empire
+						highest_held_title_tier = tier_kingdom
+					}
+					government_has_flag = government_has_merit
+					is_independent_ruler = yes
+				}
+				desc = councillor_spymaster_non_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_hegemony
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = yes
+				}
+				desc = councillor_spymaster_celestial_government_non_imperial
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_administrative }
+				desc = councillor_spymaster_japan_administrative
+			}
+			triggered_desc = {
+				trigger = { government_has_flag = government_is_japan_feudal }
+				desc = councillor_spymaster_japan_feudal
+			}
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier < tier_kingdom
+					government_has_flag = government_has_merit
+					is_governor_or_admin_count = no
+				}
+				desc = councillor_spymaster_celestial_family_head
+			}
 			triggered_desc = {
 				trigger = {
 					scope:councillor_liege = {
@@ -894,8 +1145,21 @@ councillor_spymaster = {
 			}
 		}
 	}
+
+	tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = { tgp_has_access_to_ministry_trigger = yes }
+				}
+				desc = game_concept_minister_censor_desc
+			}
+			desc = game_concept_spymaster_desc
+		}
+	}
 	
-	tooltip = game_concept_spymaster_desc
+	auto_fill = {
+	}
 
 	valid_position = {
 		NOT = { government_has_flag = government_is_landless_adventurer }
@@ -937,16 +1201,58 @@ councillor_spymaster = {
 
 	valid_character = {
 		exists = root.liege_or_court_owner
-		can_be_spymaster_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		trigger_if = { # If the liege has a ministry, we check a separate minister trigger
+			limit = {
+				root.liege_or_court_owner = { tgp_has_access_to_ministry_trigger = yes }
+			}
+			tgp_can_be_a_minister_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		trigger_else = {
+			can_be_spymaster_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		# Gender must follow laws in merit based realms
+		trigger_if = {
+			limit = {
+				root.liege_or_court_owner = {
+					is_landed = yes
+					government_has_flag = government_has_merit
+				}
+			}
+			trigger_if = {
+				limit = {
+					root.liege_or_court_owner = {
+						OR = {
+							has_realm_law = male_only_law
+							has_realm_law = male_preference_law
+						}
+					}
+				}
+				is_male = yes
+			}
+			trigger_if = {
+				limit = {
+					root.liege_or_court_owner = {
+						OR = {
+							has_realm_law = female_only_law
+							has_realm_law = female_preference_law
+						}
+					}
+				}
+				is_female = yes
+			}
+		}
 		NOT = { this = character:528 }
+		tgp_is_ceremonial_liege_trigger = no
 	}
 
 	on_get_position = {
 		got_council_position_effect = yes
+		got_minister_position_effect = { MINISTER_TITLE = e_minister_censor MINISTER_POSITION = councillor_spymaster }
 	}
 
 	on_fired_from_position = {
 		fired_from_council_position_effect = yes
+		fired_minister_position_effect = yes
 	}
 	
 	use_for_scheme_phase_duration = yes
@@ -957,5 +1263,380 @@ councillor_spymaster = {
 	barbershop_data = {
 		position = { 1433.0 261.0 }
 		click_to_front = yes
+	}
+}
+
+councillor_court_chaplain = {
+	skill = learning
+
+	auto_fill = {
+		trigger_if = {
+			limit = {
+				is_ai = yes
+				tgp_has_access_to_ministry_trigger = no
+			}
+			always = yes
+		}
+		trigger_else_if = {
+			limit = {
+				tgp_has_access_to_ministry_trigger = yes
+			}
+			always = no
+		}
+		trigger_else = {
+			faith = {
+				NOT = { has_doctrine_parameter = clerical_appointment_ruler }
+			}
+		}
+	}
+
+	fill_from_pool = yes
+
+	can_fire = {
+		trigger_if = {
+			limit = {
+				tgp_has_access_to_ministry_trigger = no
+			}
+			custom_description = {
+				text = "court_chaplain_cant_fire_doctrines"
+				faith = {
+					NOT = { has_doctrine_parameter = clerical_appointment_fixed }
+				}
+			}
+		}
+	}
+	
+	can_reassign = {
+		trigger_if = {
+			limit = {
+				NAND = {
+					government_has_flag = government_has_merit
+					highest_held_title_tier >= tier_hegemony
+				}
+			}
+			custom_description = {
+				text = "court_chaplain_cant_reassign_doctrines"
+				OR = {
+					faith = {
+						NOT = { has_doctrine_parameter = clerical_appointment_fixed }
+					}
+					NOT = { exists = cp:councillor_court_chaplain }
+				}
+			}
+		}
+	}
+	
+	can_change_once = {
+		faith = {
+			has_doctrine_parameter = clerical_appointment_fixed
+		}
+		NAND = {
+			government_has_flag = government_has_merit
+			highest_held_title_tier >= tier_hegemony
+		}
+		exists = cp:councillor_court_chaplain
+	}
+	
+	inherit = no
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					highest_held_title_tier >= tier_hegemony
+					government_has_flag = government_has_merit 
+				}
+				desc = councillor_court_chaplain_celestial_government_imperial
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_chinese }
+						culture = { has_cultural_pillar = heritage_tungusic }
+					}
+					religion = religion:buddhism_religion
+				}
+				desc = councillor_court_chaplain_buddhist_chinese
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_chinese }
+						culture = { has_cultural_pillar = heritage_tungusic }
+					}
+					religion = religion:taoism_religion
+				}
+				desc = councillor_court_chaplain_daoist_chinese
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_chinese }
+						culture = { has_cultural_pillar = heritage_tungusic }
+					}
+					religion = religion:confucianism_religion
+				}
+				desc = councillor_court_chaplain_confucian_chinese
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_tibetan }
+					}
+					religion = religion:buddhism_religion
+				}
+				desc = councillor_court_chaplain_buddhist_tibetan
+			}
+			triggered_desc = {
+				trigger = {
+					government_has_flag = government_is_mandala
+				}
+				desc = councillor_court_chaplain_mandala_government
+			}
+			triggered_desc = {
+				trigger = {
+					faith = {
+						OR = {
+							has_doctrine = doctrine_theocracy_temporal
+							religion = { is_in_family = rf_pagan }
+						}
+					}
+				}
+				desc = actual_bishop_title
+			}
+			triggered_desc = {
+				trigger = {
+					faith = {
+						NOR = {
+							has_doctrine = doctrine_theocracy_temporal
+							religion = { is_in_family = rf_pagan }
+						}
+					}
+				}
+				desc = {
+					first_valid = {
+						#Shia
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_empire faith = faith:ismaili }
+							desc = councillor_court_chaplain_ismaili_empire
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_kingdom faith = faith:ismaili }
+							desc = councillor_court_chaplain_ismaili_kingdom
+						}
+						#Islam
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_empire faith.religion = faith:ashari.religion }
+							desc = councillor_court_chaplain_islam_empire
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_kingdom faith.religion = faith:ashari.religion }
+							desc = councillor_court_chaplain_islam_kingdom
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_duchy faith.religion = faith:ashari.religion }
+							desc = councillor_court_chaplain_islam_duchy
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier < tier_duchy faith.religion = faith:ashari.religion }
+							desc = councillor_court_chaplain_islam_county
+						}
+						#Yazidi
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_empire faith.religion = faith:yazidi.religion }
+							desc = councillor_court_chaplain_yazidi_empire
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_kingdom faith.religion = faith:yazidi.religion }
+							desc = councillor_court_chaplain_yazidi_kingdom
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier >= tier_duchy faith.religion = faith:yazidi.religion }
+							desc = councillor_court_chaplain_yazidi_duchy
+						}
+						triggered_desc = {
+							trigger = { highest_held_title_tier < tier_duchy faith.religion = faith:yazidi.religion }
+							desc = councillor_court_chaplain_yazidi_county
+						}
+						desc = councillor_court_chaplain
+					}
+				}
+			}
+			desc = councillor_court_chaplain
+		}
+	}
+
+	tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = { tgp_has_access_to_ministry_trigger = yes }
+				}
+				desc = game_concept_minister_of_rites_desc
+			}
+			triggered_desc = {
+				trigger = {
+					faith = { has_doctrine = doctrine_theocracy_temporal }
+				}
+				desc = game_concept_realm_priest_desc
+			}
+			desc = game_concept_court_chaplain_desc
+		}
+	}
+
+	modifier = {
+		name = councillor_court_chaplain_modifier
+		county_opinion_add = 5
+		monthly_learning_lifestyle_xp_gain_mult = 0.05
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_court_chaplain_modifier
+		monthly_piety = 1
+		scale = council_scaled_monthly_income
+	}
+
+	council_owner_modifier = {
+		name = learn_on_the_job_modifier
+		learning = 1
+		scale = court_chaplain_learn_on_the_job_scale
+	}
+
+	council_owner_modifier = {
+		name = reliable_house_modifier
+		learning = 1
+		scale = court_chaplain_reliable_house_scale
+	}
+
+	pool_character_config = pool_court_chaplain
+	
+	valid_character = {
+		exists = root.liege_or_court_owner
+		trigger_if = { # If the liege has a ministry, we check a separate minister trigger
+			limit = {
+				root.liege_or_court_owner = { tgp_has_access_to_ministry_trigger = yes }
+			}
+			tgp_can_be_a_minister_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		trigger_else = {
+			can_be_court_chaplain_trigger = { COURT_OWNER = root.liege_or_court_owner }
+		}
+		tgp_is_ceremonial_liege_trigger = no
+	}
+	
+	valid_position = {
+		NOR = { 
+			government_has_flag = government_is_landless_adventurer 
+			government_has_flag = government_is_nomadic
+		}
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+		got_minister_position_effect = { MINISTER_TITLE = e_minister_of_rites MINISTER_POSITION = councillor_court_chaplain }
+		if = {
+			limit = {
+				years_from_game_start >= 1
+			}
+			if = {
+				limit = {
+					is_ruler = no
+					liege = {
+						faith = { has_doctrine = doctrine_clerical_succession_spiritual_fixed_appointment }
+						any_vassal = {
+							is_physically_able_adult = yes
+							is_councillor = no
+							government_has_flag = government_is_theocracy
+							can_be_court_chaplain_trigger = { COURT_OWNER = liege }
+							faith = liege.faith
+						}
+					}
+				}
+				liege = {
+					random_vassal = {
+						limit = {
+							is_physically_able_adult = yes
+							is_councillor = no
+							government_has_flag = government_is_theocracy
+							can_be_court_chaplain_trigger = { COURT_OWNER = liege }
+							faith = liege.faith
+						}
+						weight = {
+							base = 1
+							modifier = {
+								add = 1000
+								faith.religious_head ?= this
+							}
+							modifier = {
+								add = learning
+							}
+							modifier = {
+								add = primary_title.tier
+							}
+						}
+						liege = {
+							assign_councillor_type = {
+								type = councillor_court_chaplain
+								remove_existing_councillor = yes
+								target = prev
+							}
+						}
+					}
+				}
+				move_to_pool = yes
+			}
+			if = {
+				limit = {
+					exists = this
+					exists = liege.culture
+					NOT = {
+						knows_language_of_culture = liege.culture
+					}
+				}
+				random_list = {
+					10 = {
+						modifier = {
+							add = learning
+						}
+						learn_language_of_culture = liege.culture
+					}
+					5 = {
+						trigger = {
+							can_start_scheme = { 
+								type = learn_language 
+								target_character = liege 
+							}
+						}
+						start_scheme = {
+							type = learn_language
+							target_character = liege
+						}
+					}
+					5 = {
+						trigger = {
+							OR = {
+								has_trait = arrogant
+								has_trait = arbitrary
+								has_trait = lazy
+								has_trait = fickle
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+		fired_minister_position_effect = yes
+	}
+
+	portrait_animation = chaplain
+
+	barbershop_data = {
+		position = { 1618.0 172.0  }
+		click_to_front = no
 	}
 }
