@@ -60,6 +60,7 @@ court_language_ai_score = {
 	if = {
 		limit = { scope:checking_native_language = no }
 		subtract = scope:my_language_counties
+		min = 1
 	}
 
 	#Adjust for Court Grandeur.
@@ -75,7 +76,7 @@ court_language_ai_score = {
 				value = scope:target.court_grandeur_current
 				if = { #Reduce further if not same faith
 					limit = {
-						NOT = { faith = scope:target.faith }
+						faith != scope:target.faith
 					}
 					divide = 2
 				}
@@ -90,7 +91,7 @@ court_language_ai_score = {
 				value = scope:target.court_grandeur_current
 				if = { #Reduce further if not same faith
 					limit = {
-						NOT = { faith = scope:target.faith }
+						faith != scope:target.faith
 					}
 					divide = 3
 				}
@@ -113,7 +114,7 @@ court_language_ai_score = {
 				value = scope:target.court_grandeur_current
 				if = { #Reduce further if not same Religion
 					limit = {
-						NOT = { faith.religion = scope:target.faith.religion }
+						faith.religion != scope:target.faith.religion
 					}
 					divide = 2
 				}
@@ -125,7 +126,7 @@ court_language_ai_score = {
 					faith.religion = religion:islam_religion
 					faith.religion = religion:christianity_religion
 				}
-				NOT = { faith.religion = scope:target.faith.religion }
+				faith.religion != scope:target.faith.religion
 			}
 			#Add nothing
 		}
@@ -246,6 +247,22 @@ court_language_ai_score = {
 						capital_province = { geographical_region = world_tibet }
 						NOT = { scope:target.capital_province = { geographical_region = world_tibet } }
 					}
+					AND = {
+						capital_province = { geographical_region = world_asia_china }
+						NOT = { scope:target.capital_province = { geographical_region = world_asia_china } }
+					}
+					AND = {
+						capital_province = { geographical_region = world_asia_japan }
+						NOT = { scope:target.capital_province = { geographical_region = world_asia_japan } }
+					}
+					AND = {
+						capital_province = { geographical_region = world_asia_korea }
+						NOT = { scope:target.capital_province = { geographical_region = world_asia_korea } }
+					}
+					AND = {
+						capital_province = { geographical_region = world_asia_southeast }
+						NOT = { scope:target.capital_province = { geographical_region = world_asia_southeast } }
+					}
 				}
 			}
 			add = 1
@@ -290,4 +307,5 @@ court_language_ai_score = {
 		}
 		multiply = 1.2
 	}
+	min = 1
 }

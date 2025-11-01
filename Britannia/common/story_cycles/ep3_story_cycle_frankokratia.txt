@@ -23,27 +23,102 @@
 	}
 
 	on_owner_death = {
+		# story_owner = {
+			# save_scope_as = dead_owner
+		# }
 		# if = {
-		# 	limit = {
-		# 		exists = story_owner.player_heir
-		# 	}
-		# 	set_global_variable = {
-		# 		name = byz_claimant_champion
-		# 		value = story_owner.player_heir
-		# 	}
-		# 	remove_list_variable = {
-		# 		name = frankokratia_leaders
-		# 		target = story_owner
-		# 	}
-		# 	add_to_variable_list = {
-		# 		name = frankokratia_leaders
-		# 		target = story_owner.player_heir
-		# 	}
-		# 	make_story_owner = story_owner.player_heir
+			# limit = {
+				# exists = story_owner.player_heir
+				# story_owner.player_heir = {
+					# faith = faith:catholic
+				# }
+			# }
+			# set_global_variable = {
+				# name = byz_claimant_champion
+				# value = story_owner.player_heir
+			# }
+			# remove_list_variable = {
+				# name = frankokratia_leaders
+				# target = story_owner
+			# }
+			# add_to_variable_list = {
+				# name = frankokratia_leaders
+				# target = story_owner.player_heir
+			# }
+			# make_story_owner = story_owner.player_heir
+		# }
+		# else_if = {
+			# limit = {
+				# exists = story_owner.primary_heir
+				# story_owner.primary_heir = {
+					# faith = faith:catholic
+					# highest_held_title_tier <= scope:dead_owner.highest_held_title_tier
+				# }
+			# }
+			# set_global_variable = {
+				# name = byz_claimant_champion
+				# value = story_owner.primary_heir
+			# }
+			# remove_list_variable = {
+				# name = frankokratia_leaders
+				# target = story_owner
+			# }
+			# add_to_variable_list = {
+				# name = frankokratia_leaders
+				# target = story_owner.primary_heir
+			# }
+			# make_story_owner = story_owner.primary_heir
+		# }
+		# else_if = {
+			# limit = {
+				# any_in_list = {
+					# variable = frankokratia_leaders
+					# OR = {
+						# exists = primary_heir
+						# exists = player_heir
+					# }
+					# age >= 13
+					# this != scope:dead_owner
+				# }
+			# }
+			# ordered_in_list = {
+				# variable = frankokratia_leaders
+				# order_by = current_military_strength
+				# limit = {
+					# OR = {
+						# exists = primary_heir
+						# exists = player_heir
+					# }
+					# age >= 13
+					# this != scope:dead_owner
+				# }
+				# save_scope_as = new_franko
+				
+				# set_global_variable = {
+					# name = byz_claimant_champion
+					# value = scope:new_franko
+				# }
+			# }
+			# remove_list_variable = {
+				# name = frankokratia_leaders
+				# target = story_owner
+			# }
+			# add_to_variable_list = {
+				# name = frankokratia_leaders
+				# target = scope:new_franko
+			# }
+			# make_story_owner = scope:new_franko
 		# }
 		# # Or destroy
 		# else = {
-		# 	end_story = yes
+			# end_story = yes
+			# every_in_list = {
+				# variable = frankokratia_leaders
+				# limit = {
+					# is_ai = no
+				# }
+				# trigger_event = ep3_frankokratia_events.0005
+			# }
 		# }
 	}
 

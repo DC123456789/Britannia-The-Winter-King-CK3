@@ -4,10 +4,12 @@ tags={
 	"History"
 }
 name="The Winter King"
-supported_version="1.17.1"
+supported_version="1.18.0"
 replace_path = "common/achievements"
 replace_path = "common/culture/cultures"
 replace_path = "common/culture/name_lists"
+replace_path = "common/dynasties"
+replace_path = "common/dynasty_houses"
 replace_path = "common/flavorization"
 replace_path = "common/landed_titles"
 replace_path = "history/characters"
