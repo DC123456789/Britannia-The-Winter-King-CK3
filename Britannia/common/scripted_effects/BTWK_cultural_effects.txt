@@ -214,7 +214,7 @@ convert_county_barons_of_culture_effect = {
 				set_culture = scope:effect_new_culture
 				every_courtier_or_guest = {
 					limit = {
-						$CULTURE_CONDITION$
+						$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
 					}
 					if = {
 						limit = {
@@ -236,15 +236,15 @@ convert_county_unlanded_domiciles_effect = {
 		every_province_domicile = {
 			limit = {
 				owner = {
-					$CHAR_CULTURE_CONDITION_LHS$ $CHAR_CULTURE_CONDITION_OP$ $CHAR_CULTURE_CONDITION_RHS$
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
 					is_independent_domicile_holder_for_culture_shift_trigger = yes
 				}
 			}
 			owner = {
 				convert_character_with_family_and_courtiers_effect = {
-					CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
-					CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
-					CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+					CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+					CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+					CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
 					NEW_CULTURE = scope:effect_new_culture
 				}
 				$DOMICILE_OWNER_EFFECT$
