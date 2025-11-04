@@ -125,9 +125,42 @@ county_can_convert_to_britannic_culture = {
 }
 
 county_is_in_britannic_culture_area = {
-	# TODO Need to block if under Brythonic / Britanno-Romanized Germanic, and
-	# those cultures have appeared/are eligible to appear
-	always = yes	# Can appear anywhere
+	NOR = {
+		# Not if should be shifting towards Brithenig
+		AND = {
+			holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+			culture:brithenig = { has_variable = culture_has_emerged }
+		}
+		# Not if should be shifting towards a Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+		}
+		# Not if under Imperial control and there is a sufficiently strong Imperial realm
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			OR = {
+				has_title = title:e_britannia
+				has_title = title:e_roman_britannia
+				any_realm_county = {
+					count >= 40
+					culture = culture:romanobritish
+				}
+				AND = {
+					any_realm_county = {
+						count >= 5
+						culture = culture:romanobritish
+					}
+					any_realm_county = {
+						count >= 80
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+				}
+			}
+		}
+	}
 }
 
 ## BRITHENIG CULTURE
@@ -147,9 +180,22 @@ county_is_in_brithenig_culture_area = {
 		}
 		any_neighboring_county = { culture = { has_cultural_pillar = heritage_brythonic } }
 		culture = { has_cultural_pillar = heritage_brythonic }
-		# TODO Need to block if under Britanno-Romanized Germanic, and
-		# that culture has appeared/is eligible to appear
-		# Also need to block if under Imperial control and there is a sufficiently strong Imperial realm
+	}
+	NOR = {
+		# Not if should be shifting towards a Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+		}
+		# Not if should be drifting towards Britannic, or if under the control of a 
+		# sufficiently strong Imperial realm
+		holder.top_liege.culture = culture:britannic
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			realm_size >= 40
+		}
 	}
 }
 
@@ -217,9 +263,31 @@ county_is_in_britannic_hybrid_culture_area = {
 				any_neighboring_county = { culture = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture }
 			}
 		}
-		# TODO Need to block if under Britanno-Romanized Germanic, and
-		# that culture has appeared/is eligible to appear
-		# Also need to block if under Imperial control and there is a sufficiently strong Imperial realm
+	}
+	NOR = {
+		# Not if should be shifting towards Brithenig
+		AND = {
+			holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+			culture:brithenig = { has_variable = culture_has_emerged }
+		}
+		# Not if should be shifting towards another Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+			NOR = {
+				this = $BARBARIAN_CULTURE$
+				$BARBARIAN_CULTURE$.var:britannic_hybrid_culture ?= this
+			}
+		}
+		# Not if should be drifting towards Britannic, or if under the control of a 
+		# sufficiently strong Imperial realm
+		holder.top_liege.culture = culture:britannic
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			realm_size >= 40
+		}
 	}
 }
 
