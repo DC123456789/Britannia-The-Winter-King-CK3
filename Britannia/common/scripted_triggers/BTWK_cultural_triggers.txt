@@ -201,7 +201,7 @@ is_imperial_like_culture_trigger = {
 culture_is_culture_or_descendant_trigger = {
 	custom_description = {
 		text = culture_is_culture_or_descendant_trigger
-		$CULTURE$ = { save_temporary_scope_as = current_culture }
+		$CULTURE$ = { save_temporary_scope_as = trigger_current_culture }
 		OR = {
 			this = $CULTURE$
 			any_parent_culture = {
@@ -215,7 +215,7 @@ culture_is_culture_or_descendant_trigger = {
 # Avoids recursive triggers with parameters, which hang the game
 culture_is_culture_or_descendant_helper_trigger = {
 	OR = {
-		this = scope:current_culture
+		this = scope:trigger_current_culture
 		any_parent_culture = {
 			has_same_culture_heritage = prev
 			culture_is_culture_or_descendant_helper_trigger = yes
@@ -225,12 +225,12 @@ culture_is_culture_or_descendant_helper_trigger = {
 
 is_culture_or_descendant_trigger = {
 	$CULTURE$ = { 
-		save_temporary_scope_as = current_culture 
+		save_temporary_scope_as = trigger_current_culture 
 		custom_description = {
 			text = is_culture_or_descendant_trigger
 			subject = this
 			object = prev
-			prev.culture = { culture_is_culture_or_descendant_trigger = { CULTURE = scope:current_culture } }
+			prev.culture = { culture_is_culture_or_descendant_trigger = { CULTURE = scope:trigger_current_culture } }
 		}
 	}
 }
@@ -238,7 +238,7 @@ is_culture_or_descendant_trigger = {
 # Avoids recursive triggers with parameters, which hang the game
 culture_is_culture_or_descendant_including_romance_helper_trigger = {
 	OR = {
-		this = scope:current_culture
+		this = scope:trigger_current_culture
 		any_parent_culture = {
 			has_same_culture_heritage = prev
 			culture_is_culture_or_descendant_helper_trigger = yes
@@ -254,7 +254,7 @@ culture_is_culture_or_descendant_including_romance_helper_trigger = {
 
 culture_is_culture_or_descendant_including_romance_trigger = {
 	$CULTURE$ = { 
-		save_temporary_scope_as = current_culture 
+		save_temporary_scope_as = trigger_current_culture 
 		prev = { 
 			culture_is_culture_or_descendant_including_romance_helper_trigger = yes
 		}
@@ -268,7 +268,7 @@ culture_is_culture_or_descendant_including_romance_trigger = {
 # Use when you want a custom description
 is_culture_or_descendant_including_romance_trigger = {
 	$CULTURE$ = { 
-		save_temporary_scope_as = current_culture 
+		save_temporary_scope_as = trigger_current_culture 
 		custom_description = {
 			text = is_culture_or_descendant_including_romance_trigger
 			subject = this
@@ -282,10 +282,10 @@ is_culture_or_descendant_including_romance_trigger = {
 
 # Use when you want a custom tooltip
 is_culture_or_descendant_including_romance_w_tooltip_trigger = {
-	$CULTURE$ = { save_temporary_scope_as = current_culture	}	
+	$CULTURE$ = { save_temporary_scope_as = trigger_current_culture	}	
 	custom_tooltip = {
 		text = is_culture_or_descendant_including_romance_tt
-		is_culture_or_descendant_including_romance_trigger = { CULTURE = scope:current_culture }
+		is_culture_or_descendant_including_romance_trigger = { CULTURE = scope:trigger_current_culture }
 	}
 }
 

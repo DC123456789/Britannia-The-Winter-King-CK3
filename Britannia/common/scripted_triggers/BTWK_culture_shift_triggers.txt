@@ -291,23 +291,117 @@ county_is_in_britannic_hybrid_culture_area = {
 	}
 }
 
+character_can_convert_to_current_culture_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		character_can_convert_to_anglo_saxon_regional_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		can_convert_to_anglo_saxon_unified_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		character_can_convert_to_brithenig_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		character_can_convert_to_britannic_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		scope:trigger_culture.var:romance_barbarian_culture_parent = {
+			save_temporary_scope_as = barbarian_culture
+		}
+		character_can_convert_to_britannic_hybrid_culture = yes
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
+county_can_convert_to_current_culture_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		county_can_convert_to_anglo_saxon_regional_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		can_convert_to_anglo_saxon_unified_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		county_can_convert_to_brithenig_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		county_can_convert_to_britannic_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		scope:trigger_culture.var:romance_barbarian_culture_parent = {
+			save_temporary_scope_as = barbarian_culture
+		}
+		county_can_convert_to_britannic_hybrid_culture = yes
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
+county_is_in_current_culture_area_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		county_is_in_anglo_saxon_regional_culture_kingdom = { 
+			KINGDOM = scope:trigger_culture.var:anglo_saxon_regional_culture_kingdom
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		county_is_in_anglo_saxon_unified_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		county_is_in_brithenig_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		county_is_in_britannic_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		county_is_in_britannic_hybrid_culture_area = {
+			BARBARIAN_CULTURE = scope:trigger_culture.var:romance_barbarian_culture_parent
+		}
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
 county_is_controlled_by_barbarian_culture_or_descendant_trigger = {
-	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = effect_barbarian_culture }
+	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = trigger_barbarian_culture }
 	holder.top_liege = {
 		character_is_barbarian_culture_or_descendant_trigger = { 
-			BARBARIAN_CULTURE = scope:effect_barbarian_culture
+			BARBARIAN_CULTURE = scope:trigger_barbarian_culture
 		}
 	}
 }
 
 character_is_barbarian_culture_or_descendant_trigger = {
-	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = effect_barbarian_culture }
+	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = trigger_barbarian_culture }
 	culture = {
 		OR = {
-			this = scope:effect_barbarian_culture
+			this = scope:trigger_barbarian_culture
 			AND = {
 				has_cultural_pillar = heritage_romance
-				this.var:ancestral_non_roman_culture ?= scope:effect_barbarian_culture
+				this.var:ancestral_non_roman_culture ?= scope:trigger_barbarian_culture
 			}
 		}
 	}
