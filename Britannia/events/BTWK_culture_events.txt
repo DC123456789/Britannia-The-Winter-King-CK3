@@ -2970,8 +2970,20 @@ culture_shifts.0034 = {
 				}
 				clamp_variable = { name = britannic_emergence_progress min = 0 max = 60 }
 			}
+			
+			# The first time you reach 70% progress, you get a warning
+			if = {
+				limit = {
+					this.var:britannic_emergence_progress >= 70
+					NOT = { has_variable = britannic_warning_fired }
+				}
+				every_player = {
+					limit = { culture = culture:romanobritish }
+					trigger_event = { id = culture_shifts.0036 }
+				}
+			}
 		
-			# If you reach 100% progress, then the new culture is created	
+			# If you reach 100% progress, then the new culture is created
 			if = {
 				limit = {
 					this.var:britannic_emergence_progress >= 100
@@ -3324,7 +3336,28 @@ culture_shifts.0035 = {
 	}
 }
 
-# TODO Warning event that Romano-British culture is dying and will soon transition to Britannic culture
+# Warning event that Romano-British culture is dying and will soon transition to Britannic culture
+culture_shifts.0036 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = culture_shifts.0036.t
+	desc = culture_shifts.0036.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+		animation = stress
+	}
+	
+	immediate = {
+		culture:romanobritish = { save_scope_as = romanobritish_culture }
+	}
+	
+	option = {
+		name = culture_shifts.0036.a
+		custom_tooltip = culture_shifts.0036.a.tt
+	}
+}
 
 # General event for spread of scripted emerging culture
 culture_shifts.9997 = {
