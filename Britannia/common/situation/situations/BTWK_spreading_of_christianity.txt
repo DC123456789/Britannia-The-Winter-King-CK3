@@ -1,0 +1,204 @@
+﻿spreading_of_christianity_situation = {
+	
+	is_unique = yes # It can only exist once in the world
+
+	gui_window_name = "BTWK_window_spreading_of_christianity_situation"
+	gui_participation_window_name = "window_situation_participation"
+	map_mode = religions
+	illustration = "gfx/interface/illustrations/terrain_types/mpo_season_abudant_grazing.dds"
+	situation_group_type = major
+	
+	is_unique = yes
+
+	##################################################
+	# Regions
+	##################################################
+	sub_regions = {
+		britannia = {
+			geographical_regions = { btwk_world_britannia }
+		}
+	}
+	
+	##################################################
+	# On Actions
+	##################################################
+	# on_monthly = {		# Recalculate phases for each sub region each month
+	# }
+
+	##################################################
+	# Groups
+	##################################################
+	participant_groups = {
+		christian_rulers = {
+			icon = "gfx/interface/icons/situations/debug_situation/group_nomad.dds"
+
+			is_character_valid = {
+				has_religion = religion:christianity_religion
+			}
+
+			on_join = { }
+			on_leave = { }
+
+			map_color = hsv{ 0.37 1.00 0.78 }
+		}
+
+		non_christian_rulers = {
+			icon = "gfx/interface/icons/situations/debug_situation/group_other.dds"
+
+			is_character_valid = {
+				NOT = { has_religion = religion:christianity_religion }
+			}
+			
+			on_join = { }
+			on_leave = { }
+
+			map_color = hsv{ 0.8 0.75 0.83 }
+		}
+	}
+	
+	##################################################
+	# Phases
+	##################################################
+	start_phase = christianity_spread_phase_0
+
+	phases = {
+		christianity_spread_phase_0 = {
+			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					every_situation_sub_region_participant = {
+						trigger_event = debug_situation.0001
+					}
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				christianity_spread_phase_1 = {
+					takeover_type = none
+				}
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		christianity_spread_phase_1 = {
+			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					every_situation_sub_region_participant = {
+						trigger_event = debug_situation.0001
+					}
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				christianity_spread_phase_0 = {
+					takeover_type = none
+				}
+				christianity_spread_phase_2 = {
+					takeover_type = none
+				}
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		christianity_spread_phase_2 = {
+			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					every_situation_sub_region_participant = {
+						trigger_event = debug_situation.0001
+					}
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				christianity_spread_phase_1 = {
+					takeover_type = none
+				}
+				christianity_spread_phase_3 = {
+					takeover_type = none
+				}
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		christianity_spread_phase_3 = {
+			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					every_situation_sub_region_participant = {
+						trigger_event = debug_situation.0001
+					}
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				christianity_spread_phase_2 = {
+					takeover_type = none
+				}
+				christianity_spread_phase_4 = {
+					takeover_type = none
+				}
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		christianity_spread_phase_4 = {
+			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					every_situation_sub_region_participant = {
+						trigger_event = debug_situation.0001
+					}
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				christianity_spread_phase_3 = {
+					takeover_type = none
+				}
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+	}
+}
