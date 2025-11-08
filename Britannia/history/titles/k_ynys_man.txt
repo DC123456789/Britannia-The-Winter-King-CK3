@@ -2,6 +2,21 @@ k_ynys_man = {
 	410.1.1={
 		holder=1350		# Manawydan map Llyr, "Founder" of Ynys Mann
 		liege = 0
+		effect = {
+			if = {
+				limit = {
+					exists = holder
+					has_dlc_feature = royal_court
+				}
+				holder = {
+					set_court_language = language_latin
+					if = {
+						limit = { NOT = { knows_court_language_of = this } }
+						learn_court_language_of = this
+					}
+				}
+			}
+		}
 	}
 	436.3.10={
 		holder=204		# King Tudwal of Novant
