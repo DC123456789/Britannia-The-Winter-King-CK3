@@ -1,0 +1,42 @@
+﻿namespace = spreading_of_christianity
+
+###########################################
+# The Spreading of Christianity Intro Event
+# 0001
+###########################################
+spreading_of_christianity.0001 = { # Fullscreen Intro Event
+	type = character_event
+	window = fullscreen_event
+	title = spreading_of_christianity.0001.t
+	desc = spreading_of_christianity.0001.desc
+	theme = realm
+	override_background = { 
+		reference = holy_site_christian
+	}
+	override_sound = { reference = "event:/DLC/FP2/SFX/UI/fp2_struggle_ui_intro_animate" }
+
+	widgets = {
+		widget = {
+ 			gui = "event_window_widget_situation_info_spreading_of_christianity"
+ 			container = "dynamic_content_widget"
+ 			controller = situation_info
+ 			setup_scope = { situation:spreading_of_christianity_situation = { save_scope_as = situation } }
+		}
+	}
+	
+	option = {
+		name = {
+			trigger = { 
+				religion = religion:christianity_religion
+			}
+			text = spreading_of_christianity.0001.a.christian
+		}
+		name = {
+			trigger = {
+				religion != religion:christianity_religion
+			}
+			text = spreading_of_christianity.0001.a.non_christian
+		}
+		clicksound = "event:/DLC/FP2/SFX/UI/fp2_struggle_start_select"
+	}
+}

@@ -195,7 +195,7 @@ window = {
 					### LOCATION CURRENT PHASE & DETAILS ###
 					vbox = {
 						background = {
-							texture = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
+							texture = "[SituationSubRegion.GetCurrentPhase.GetType.GetIllustration]"
 							fittype = topcrop
 							using = Mask_Rough_Edges
 							alpha = 0.15
@@ -620,10 +620,29 @@ window = {
 							layoutpolicy_vertical = expanding
 							spacing = 10
 							margin_left = 35
-							margin_top = 30
-							margin_bottom = 30
 
 							expand = {}
+							
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 30 10 }
+
+								background = {
+									using = Background_Area_Solid
+								}
+
+								background = {
+									using = GenericObjectCardHeaderBackground
+									using = Color_Blue
+								}
+
+								text_single = {
+									text = "[missionary_interactions|E]"
+									align = nobaseline
+									default_format = "#high"
+									using = Font_Size_Medium
+								}
+							}
 
 							button_standard = {
 								size = { 220 40 }
@@ -652,7 +671,7 @@ window = {
 							button_primary = {
 								size = { 200 60 }
 								text = "SPREADING_OF_CHRISTIANITY_BUTTON_REQUEST_CONVERSION"
-								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
+								visible = "[And(Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)), GetPlayer.GetFaith.IsUnreformed)]"
 							}
 
 							expand = {}
