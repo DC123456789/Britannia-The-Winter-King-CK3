@@ -63,6 +63,66 @@
 	
 	on_start = {
 		every_situation_participant = { trigger_event = spreading_of_christianity.0001 }
+		every_situation_county = {
+			limit = { religion != religion:christianity_religion }
+			
+			# Counties start with some proselytization progress
+			set_variable = { name = soc_proselytization_progress value = soc_proselytization_monthly_progress_value }
+			random_list = {
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 5 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 6 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 7 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 8 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 9 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 10 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 11 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 12 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 13 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 14 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 15 } }
+			}
+			clamp_variable = { name = soc_proselytization_progress min = 0 max = 100 }
+			
+			# Calculate months remaining at current rate
+			if = {
+				limit = { soc_proselytization_monthly_progress_value > 0 }
+				set_variable = { 
+					name = soc_proselytization_months_remaining
+					value = {
+						value = 100
+						subtract = soc_proselytization_progress
+						divide = soc_proselytization_monthly_progress_value
+					}
+				}
+				set_variable = { 
+					name = soc_proselytization_years_remaining
+					value = {
+						value = this.var:soc_proselytization_months_remaining
+						divide = 12
+					}
+				}
+			}
+			else = {
+				set_variable = { 
+					name = soc_proselytization_months_remaining
+					value = -1
+				}
+				set_variable = { 
+					name = soc_proselytization_years_remaining
+					value = -1
+				}
+			}
+			
+			# TODO Calculate the faith that this county will convert to
+			
+			# Add the notification modifier
+			save_scope_as = current_county
+			remove_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier
+			add_county_modifier = {
+				modifier = BTWK_spreading_of_christianity_proselytization_modifier
+				desc = BTWK_spreading_of_christianity_proselytization_modifier_desc_loc
+			}
+		}
 	}
 	
 	##################################################

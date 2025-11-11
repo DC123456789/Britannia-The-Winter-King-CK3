@@ -1,0 +1,189 @@
+﻿soc_proselytization_monthly_progress_value = {
+	value = 0
+	if = {
+		limit = { 
+			any_county_situation_sub_region = { 
+				sub_region_current_phase = spreading_of_christianity_phase_0
+			}
+		}
+		subtract = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_PHASE_0
+		}
+	}
+	else_if = {
+		limit = { 
+			any_county_situation_sub_region = { 
+				sub_region_current_phase = spreading_of_christianity_phase_1
+			}
+		}
+		subtract = {
+			value = 0.25
+			desc = PROSELYTIZATION_PROGRESS_PHASE_1
+		}
+	}
+	else_if = {
+		limit = { 
+			any_county_situation_sub_region = { 
+				sub_region_current_phase = spreading_of_christianity_phase_2
+			}
+		}
+		add = {
+			value = 0
+			desc = PROSELYTIZATION_PROGRESS_PHASE_2
+		}
+	}
+	else_if = {
+		limit = { 
+			any_county_situation_sub_region = { 
+				sub_region_current_phase = spreading_of_christianity_phase_3
+			}
+		}
+		add = {
+			value = 0.25
+			desc = PROSELYTIZATION_PROGRESS_PHASE_3
+		}
+	}
+	else_if = {
+		limit = { 
+			any_county_situation_sub_region = { 
+				sub_region_current_phase = spreading_of_christianity_phase_4
+			}
+		}
+		add = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_PHASE_4
+		}
+	}
+	if = {
+		limit = { 
+			holder.religion = religion:christianity_religion
+		}
+		add = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_HOLDER_CHRISTIAN
+		}
+	}
+	if = {
+		limit = { 
+			holder.top_liege.religion = religion:christianity_religion
+		}
+		add = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN
+		}
+	}
+	if = {
+		limit = { 
+			any_neighboring_county = { religion = religion:christianity_religion }
+		}
+		add = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				title_province = { terrain = farmlands }
+				title_province = { terrain = plains }
+			}
+		}
+		add = {
+			value = 0
+			save_scope_as = current_county
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	else_if = {
+		limit = {
+			title_province = { terrain = hills }
+		}
+		subtract = {
+			value = 0.25
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = desert }
+				title_province = { terrain = oasis }
+			}
+		}
+		subtract = {
+			value = 0.33
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	else_if = {
+		limit = {
+			title_province = { terrain = forest }
+		}
+		subtract = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = jungle }
+				title_province = { terrain = taiga }
+				title_province = { terrain = wetlands }
+			}
+		}
+		subtract = {
+			value = 0.75
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = mountains }
+				title_province = { terrain = desert_mountains }
+			}
+		}
+		subtract = {
+			value = 1
+			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+}
+
+# hen_ogledd_region_num_counties_value = {
+	# value = 0
+	# every_county_in_region = {
+		# region = btwk_world_britannia_hen_ogledd
+		# add = 1
+	# }
+# }
+
+# create_hen_ogledd_decision_required_share_value = 0.75
+
+# create_hen_ogledd_decision_required_percent_value = {
+	# value = create_hen_ogledd_decision_required_share_value
+	# multiply = 100
+# }
+
+# create_hen_ogledd_decision_required_value = {
+	# value = hen_ogledd_region_num_counties_value
+	# multiply = create_hen_ogledd_decision_required_share_value
+	# ceiling = yes
+# }
+
+# hen_ogledd_region_current_controlled_value = {
+	# value = 0
+	# every_county_in_region = {
+		# region = btwk_world_britannia_hen_ogledd
+		# limit = { root = { completely_controls = prev } }
+		# add = 1
+	# }
+# }
+
+# hen_ogledd_region_current_controlled_percent_value = {
+	# value = hen_ogledd_region_current_controlled_value
+	# divide = hen_ogledd_region_num_counties_value
+	# multiply = 100
+# }
