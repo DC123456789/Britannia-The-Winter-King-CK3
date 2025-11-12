@@ -10,7 +10,7 @@
 
 	icon = {
 		trigger = { always = yes }
-		reference = "gfx/interface/icons/situations/spreading_of_christianity_situation.dds"
+		reference = "gfx/interface/icons/modifiers/icon_piety_christian_02.dds"
 	}
 	
 	is_unique = yes
@@ -19,8 +19,11 @@
 	# Regions
 	##################################################
 	sub_regions = {
+		# Capital provinces are used to store variables
+		# For some reason though we can't scope to them directly in code, we need a switch statement
 		britannia = {
 			geographical_regions = { btwk_world_britannia }
+			capital_province = 191		# Londinium 
 		}
 	}
 	
@@ -35,7 +38,7 @@
 	##################################################
 	participant_groups = {
 		christian_rulers = {
-			icon = "gfx/interface/icons/situations/debug_situation/group_nomad.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_04.dds"
 
 			is_character_valid = {
 				has_religion = religion:christianity_religion
@@ -48,7 +51,7 @@
 		}
 
 		non_christian_rulers = {
-			icon = "gfx/interface/icons/situations/debug_situation/group_other.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_pagan_04.dds"
 
 			is_character_valid = {
 				NOT = { has_religion = religion:christianity_religion }
@@ -62,9 +65,27 @@
 	}
 	
 	on_start = {
+		# Starting event
 		every_situation_participant = { trigger_event = spreading_of_christianity.0001 }
+		
+		# Generate adjacency list
+		every_situation_county = {
+			save_scope_as = current_county
+			every_county = {
+				limit = { squared_distance = { target = prev value <= 22500 } }		# Actual distance: 150
+				scope:current_county = {
+					add_to_variable_list = {
+						name = nearby_counties
+						target = prev
+					}
+				}
+			}
+		}
+		
+		# County variable initialization
 		every_situation_county = {
 			limit = { religion != religion:christianity_religion }
+			save_scope_as = current_county
 			
 			# Counties start with some proselytization progress
 			set_variable = { name = soc_proselytization_progress value = soc_proselytization_monthly_progress_value }
@@ -84,14 +105,15 @@
 			clamp_variable = { name = soc_proselytization_progress min = 0 max = 100 }
 			
 			# Calculate months remaining at current rate
+			set_variable = { name = soc_proselytization_monthly_progress value = soc_proselytization_monthly_progress_value }
 			if = {
-				limit = { soc_proselytization_monthly_progress_value > 0 }
+				limit = { this.var:soc_proselytization_monthly_progress > 0 }
 				set_variable = { 
 					name = soc_proselytization_months_remaining
 					value = {
 						value = 100
-						subtract = soc_proselytization_progress
-						divide = soc_proselytization_monthly_progress_value
+						subtract = this.var:soc_proselytization_progress
+						divide = this.var:soc_proselytization_monthly_progress
 					}
 				}
 				set_variable = { 
@@ -113,14 +135,164 @@
 				}
 			}
 			
-			# TODO Calculate the faith that this county will convert to
+			# Calculate the faith that this county will convert to
+			religion:christianity_religion = {
+				every_faith = {
+					set_variable = { name = faith_counties_count value = 0 }
+				}
+			}
+			every_in_list = {
+				variable = nearby_counties
+				if = {
+					limit = { religion = religion:christianity_religion }
+					faith = {
+						change_variable = { name = faith_counties_count add = 1 }
+					}
+				}
+			}
+			religion:christianity_religion = {
+				if = {
+					limit = {
+						any_faith = { this.var:faith_counties_count > 0 }
+					}
+					random_faith = {
+						limit = {
+							save_temporary_scope_as = current_faith
+							NOT = { 
+								religion:christianity_religion = {
+									any_faith = {
+										this.var:faith_counties_count > scope:current_faith.var:faith_counties_count
+									}
+								}
+							}
+						}
+						scope:current_county = {
+							set_variable = { name = soc_proselytization_target_faith value = prev }
+						}
+					}
+				}
+				# Default to Catholic
+				else = {
+					scope:current_county = {
+						set_variable = { name = soc_proselytization_target_faith value = faith:catholic }
+					}
+				}
+			}
 			
 			# Add the notification modifier
-			save_scope_as = current_county
 			remove_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier
 			add_county_modifier = {
 				modifier = BTWK_spreading_of_christianity_proselytization_modifier
 				desc = BTWK_spreading_of_christianity_proselytization_modifier_desc_loc
+			}
+		}
+		
+		# Calculate region stats
+		every_situation_sub_region = {
+			if = {
+				limit = { this = situation:spreading_of_christianity_situation.situation_sub_region:britannia }
+				province:191 = { save_scope_as = sub_region_province }
+			}
+			# Calculate number of counties + spreading counties for each Christian faith
+			religion:christianity_religion = {
+				every_faith = {
+					limit = { NOT = { has_variable = block_conversion } }
+					save_scope_as = current_faith
+					if = {
+						limit = { 
+							NOT = {
+								scope:sub_region_province = {
+									any_in_list = {
+										variable = sub_region_faith_counters
+										this.var:faith ?= scope:current_faith
+									}
+								}
+							}
+						}
+						scope:sub_region_province.province_owner = {
+							create_story = {
+								type = sub_region_faith_spread_story
+								save_scope_as = sub_region_faith_spread_story
+							}
+						}
+						scope:sub_region_faith_spread_story = {
+							set_variable = { name = faith value = scope:current_faith }
+						}
+						scope:sub_region_province = {
+							add_to_variable_list = {
+								name = sub_region_faith_counters
+								target = scope:sub_region_faith_spread_story
+							}
+						}
+					}
+					else = {
+						scope:sub_region_province = {
+							random_in_list = {
+								variable = sub_region_faith_counters
+								limit = { this.var:faith ?= scope:current_faith }
+								save_scope_as = sub_region_faith_spread_story
+							}
+						}
+					}
+					scope:sub_region_faith_spread_story = {
+						set_variable = { name = num_sub_region_counties value = 0 }
+						set_variable = { name = num_sub_region_spreading_counties value = 0 }
+					}
+				}
+			}
+			
+			set_local_variable = { name = num_sub_region_christian_counties value = 0 }
+			set_local_variable = { name = num_sub_region_counties value = 0 }
+			every_situation_sub_region_county = {
+				save_scope_as = current_county
+				change_local_variable = { name = num_sub_region_counties add = 1 }
+				if = {
+					limit = { religion = religion:christianity_religion }
+					change_local_variable = { name = num_sub_region_christian_counties add = 1 }
+					scope:sub_region_province = {
+						random_in_list = {
+							variable = sub_region_faith_counters
+							limit = { this.var:faith ?= scope:current_county.faith }
+							change_variable = { name = num_sub_region_counties add = 1 }
+						}
+					}
+				}
+				else_if = {
+					limit = { this.var:soc_proselytization_monthly_progress > 0 }
+					scope:sub_region_province = {
+						random_in_list = {
+							variable = sub_region_faith_counters
+							limit = { this.var:faith ?= scope:current_county.var:soc_proselytization_target_faith }
+							change_variable = { name = num_sub_region_spreading_counties add = 1 }
+						}
+					}
+				}
+			}
+			
+			# Finish getting the overall stats for each faith
+			scope:sub_region_province = {
+				every_in_list = {
+					variable = sub_region_faith_counters
+					set_variable = { 
+						name = share_sub_region_faith_counties 
+						value = {
+							value = this.var:num_sub_region_counties
+							divide = local_var:num_sub_region_christian_counties
+						}
+					}
+				}
+			}
+			
+			# Also make sure to get the overall stats for the Christian religion as a whole
+			scope:sub_region_province = { 
+				set_variable = { name = num_sub_region_christian_counties value = local_var:num_sub_region_christian_counties }
+				set_variable = { 
+					name = share_sub_region_christian_counties 
+					value = {
+						value = local_var:num_sub_region_christian_counties
+						divide = local_var:num_sub_region_counties
+					}
+				}
 			}
 		}
 	}
@@ -132,7 +304,7 @@
 
 	phases = {
 		spreading_of_christianity_phase_0 = {
-			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_00.dds"
 
 			illustration = "gfx/interface/illustrations/event_scenes/fp1_tribal_temple.dds"
 
@@ -156,7 +328,7 @@
 		}
 
 		spreading_of_christianity_phase_1 = {
-			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_01.dds"
 
 			illustration = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
 
@@ -181,7 +353,7 @@
 		}
 
 		spreading_of_christianity_phase_2 = {
-			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_03.dds"
 
 			illustration = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
 
@@ -206,7 +378,7 @@
 		}
 
 		spreading_of_christianity_phase_3 = {
-			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_02.dds"
 
 			illustration = "gfx/interface/illustrations/event_scenes/ep2_holysite_western.dds"
 
@@ -231,7 +403,7 @@
 		}
 
 		spreading_of_christianity_phase_4 = {
-			icon = "gfx/interface/icons/situations/debug_situation/plentiful_harvest.dds"
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_04.dds"
 
 			illustration = "gfx/interface/illustrations/event_scenes/ep2_holysite_western.dds"
 

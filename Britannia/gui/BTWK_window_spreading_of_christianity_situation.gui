@@ -690,9 +690,6 @@ window = {
 				}
 				
 				scrollbox = {
-
-					# visible = "[Situation.HasMultipleSubRegions]"
-
 					using = Animation_Tab_Switch
 
 					layoutpolicy_horizontal = expanding
@@ -716,8 +713,8 @@ window = {
 							name = "sub_regions"
 							layoutpolicy_horizontal = expanding
 							spacing = 5
-
-							datamodel = "[GetReligionByKey('christianity_religion').GetFaiths]"
+							
+							datamodel = "[SituationWindow.GetSelectedSubRegion.GetCenterProvince.MakeScope.GetList('sub_region_faith_counters')]"
 
 							item = {
 								hbox = {
@@ -729,29 +726,19 @@ window = {
 									margin = { 4 0 }
 									# margin_right = 16
 									spacing = 5
+									
+									visible = "[Or(GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_counties').GetValue, '(CFixedPoint)0'), GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0'))]"
 
 									icon = {
 										size = { 25 25 }
-										texture = "[Faith.GetIcon]"
+										texture = "[Scope.Story.MakeScope.Var('faith').Faith.GetIcon]"
 									}
-
-									vbox = {
-										layoutpolicy_vertical = expanding
-										layoutpolicy_horizontal = expanding
-
-										spacing = -3
-										minimumsize = { 150 -1 }
-
-										expand = {}
-
-										text_single = {
-											layoutpolicy_horizontal = expanding
-
-											text = "[Faith.GetName]"
-											align = nobaseline
-										}
-
-										expand = {}
+									
+									text_single = {
+										size = { 140 20 }
+										autoresize = no
+										text = "[Scope.Story.MakeScope.Var('faith').Faith.GetName]"
+										align = nobaseline
 									}
 
 									text_single = {
@@ -769,21 +756,21 @@ window = {
 									}
 
 									text_single = {
-										size = { 160 20 }
+										size = { 170 20 }
 										margin_right = 10
 										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_SPREADING_COUNTIES"
 										autoresize = no
 										align = left|nobaseline
-										visible = "[ObjectsEqual(Faith.Self, GetFaithByKey('catholic').Self)]"
+										visible = "[GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0')]"
 									}
 
 									text_single = {
-										size = { 160 20 }
+										size = { 170 20 }
 										margin_right = 10
 										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_NOT_SPREADING"
 										autoresize = no
 										align = left|nobaseline
-										visible = "[Not(ObjectsEqual(Faith.Self, GetFaithByKey('catholic').Self))]"
+										visible = "[LessThanOrEqualTo_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0')]"
 									}
 								}
 							}
@@ -882,8 +869,8 @@ types Situation
 			}
 
 			text_single = {
-				size = { 30 20 }
-				text = "[SituationSubRegion.GetCurrentPhase.GetRelativeProgress|0%]"
+				size = { 55 20 }
+				text = "[SituationSubRegion.GetCenterProvince.MakeScope.Var('share_sub_region_christian_counties').GetValue|1%]"
 				autoresize = no
 				align = center|nobaseline
 			}
