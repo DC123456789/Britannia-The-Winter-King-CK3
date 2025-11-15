@@ -2333,13 +2333,9 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = no
-						portrait_wear_armor_trigger = no
-						portrait_mena_clothing_trigger = no
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
 				}
 			}
 			portrait_modifier = {
@@ -2353,33 +2349,8 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = no
-						portrait_wear_armor_trigger = no
-						portrait_mena_clothing_trigger = no
-					}
-				}
-			}
-			portrait_modifier = {
-				animations = frontEnd_center_male_decal
-			}
-		}
-
-		frontEnd_middle_dwarf = {
-			animation = { head = "frontEnd_middle_entry" torso = "frontEnd_middleFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = yes
-						portrait_wear_armor_trigger = no
-						portrait_mena_clothing_trigger = no
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2395,39 +2366,7 @@ frontend_center_idle = {
 					add = 100
 					AND = {
 						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = yes
-						portrait_wear_armor_trigger = no
-						portrait_mena_clothing_trigger = no
-					}
-				}
-			}
-			portrait_modifier = {
-				animations = frontEnd_center_male_decal
-			}
-		}
-
-		frontEnd_middle_MENA = {
-			animation = { head = "frontEnd_middle_entry" torso = "frontEnd_middleFatDwarf_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					OR = {
-						AND = {
-							scope:age >= 11
-							scope:current_weight > 1
-							is_dwarf_height = no
-							portrait_wear_armor_trigger = yes
-							portrait_mena_clothing_trigger = yes
-						}
-						AND = {
-							scope:age >= 11
-							scope:current_weight > 1
-							is_dwarf_height = no
-							is_female = yes
-							portrait_afr_berber_clothing_trigger = yes
-						}
+						should_use_fat_dwarf_animation = yes
 					}
 				}
 			}
@@ -2478,13 +2417,10 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
+					NOT = {portrait_has_trait_trigger = { TRAIT = pregnant }}
 				}
 			}
 			portrait_modifier = {
@@ -2498,31 +2434,9 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
-				}
-			}
-			portrait_modifier = {
-				animations = frontEnd_center_female_decal
-			}
-		}
-
-		frontEnd_middle_dwarf = {
-			animation = { head = "frontEnd_middle_entry" torso = "frontEnd_middleFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
+					NOT = {portrait_has_trait_trigger = { TRAIT = pregnant }}
 				}
 			}
 			portrait_modifier = {
@@ -2536,12 +2450,9 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_dwarf_animation = yes
+					NOT = {portrait_has_trait_trigger = { TRAIT = pregnant }}
 				}
 			}
 			portrait_modifier = {
@@ -2555,11 +2466,7 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = no
-					}
+					should_use_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2567,17 +2474,13 @@ frontend_center_idle = {
 			}
 		}
 
-		frontEnd_middle_pregnant_dwarf = {
+		frontEnd_middle_pregnant_fat = {
 			animation = { head = "frontEnd_pregnant" torso = "frontEnd_pregnantFat" }
 			weight = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2591,11 +2494,7 @@ frontend_center_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight >= 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_dwarf_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2649,11 +2548,9 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = no
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
 				}
 			}
 			portrait_modifier = {
@@ -2667,29 +2564,8 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = no
-					}
-				}
-			}
-			portrait_modifier = {
-				animations = frontEnd_left_male_decal
-			}
-		}
-
-		frontEnd_left_dwarf = {
-			animation = { head = "frontEnd_left_entry" torso = "frontEnd_leftFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = yes
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2703,11 +2579,8 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = yes
-					}
+					scope:age >= 11
+					should_use_fat_dwarf_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2758,12 +2631,10 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -2774,28 +2645,9 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
-				}
-			}
-		}
-
-		frontEnd_left_dwarf = {
-			animation = { head = "frontEnd_left_entry" torso = "frontEnd_leftFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -2806,12 +2658,9 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_dwarf_animation = yes
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -2822,11 +2671,7 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = no
-					}
+					should_use_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2834,17 +2679,13 @@ frontend_left_idle = {
 			}
 		}
 
-		frontEnd_left_pregnant_dwarf = {
+		frontEnd_left_pregnant_fat = {
 			animation = { head = "frontEnd_pregnant" torso = "frontEnd_pregnantFat" }
 			weight = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2858,11 +2699,7 @@ frontend_left_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight >= 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_dwarf_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2916,11 +2753,9 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = no
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
 				}
 			}
 			portrait_modifier = {
@@ -2934,29 +2769,8 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = no
-					}
-				}
-			}
-			portrait_modifier = {
-				animations = frontEnd_right_male_decal
-			}
-		}
-
-		frontEnd_right_dwarf = {
-			animation = { head = "frontEnd_right_entry" torso = "frontEnd_rightFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = yes
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -2970,11 +2784,8 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = yes
-					}
+					scope:age >= 11
+					should_use_fat_dwarf_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -3025,12 +2836,10 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight < 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_animation = no
+					should_use_fat_dwarf_animation = no
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -3041,28 +2850,9 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 60
-						is_dwarf_height = no
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
-				}
-			}
-		}
-
-		frontEnd_right_dwarf = {
-			animation = { head = "frontEnd_right_entry" torso = "frontEnd_rightFat_entry" }
-			weight = {
-				base = 0
-				modifier = {
-					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight <= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_animation = yes
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -3073,12 +2863,9 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:age >= 11
-						scope:current_weight >= 40
-						is_dwarf_height = yes
-						NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
-					}
+					scope:age >= 11
+					should_use_fat_dwarf_animation = yes
+					NOT = { portrait_has_trait_trigger = { TRAIT = pregnant } }
 				}
 			}
 		}
@@ -3089,11 +2876,7 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = no
-					}
+					should_use_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -3101,17 +2884,13 @@ frontend_right_idle = {
 			}
 		}
 
-		frontEnd_right_pregnant_dwarf = {
+		frontEnd_right_pregnant_fat = {
 			animation = { head = "frontEnd_pregnant" torso = "frontEnd_pregnantFat" }
 			weight = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight < 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -3125,11 +2904,7 @@ frontend_right_idle = {
 				base = 0
 				modifier = {
 					add = 100
-					AND = {
-						scope:current_weight >= 60
-						portrait_has_trait_trigger = { TRAIT = pregnant }
-						is_dwarf_height = yes
-					}
+					should_use_fat_dwarf_pregnant_animation = yes
 				}
 			}
 			portrait_modifier = {
@@ -5633,6 +5408,9 @@ reading = {
 
 stressed_teacher = {
 	default = {
+		portrait_modifier = {
+			animations = bloodshot_decal
+		}
 		default = { head = "emotion_stressed_teaching_loop1" torso = "emotion_stressed_teaching_loop1" }
 		stressed_teacher_no_arm = {
 			animation = { head = "idle_entry" torso = "idle_entry" }
@@ -6214,7 +5992,7 @@ dancing = {
 				}
 			}
 			portrait_modifier = {
-				animations_props = suzu
+				animations_props = tgp_suzu
 				animations = female_prop_fix_additive
 			}
 		}

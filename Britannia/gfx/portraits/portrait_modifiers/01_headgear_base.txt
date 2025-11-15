@@ -4089,6 +4089,7 @@ fp3_turkic_high_nobles = {
 					}
 					culture = {
 						has_clothing_gfx = chinese_clothing_gfx
+						NOT = { has_clothing_gfx = korean_clothing_gfx }
 					}
 				}
 				NOT = { exists = global_var:chinese_fashion_change }
@@ -4113,9 +4114,11 @@ fp3_turkic_high_nobles = {
 				OR = {
 					liege.culture = {
 						has_clothing_gfx = chinese_clothing_gfx
+						NOT = { has_clothing_gfx = korean_clothing_gfx }
 					}
 					culture = {
 						has_clothing_gfx = chinese_clothing_gfx
+						NOT = { has_clothing_gfx = korean_clothing_gfx }
 					}
 				}
 				has_tgp_dlc_trigger = yes
@@ -4195,9 +4198,11 @@ fp3_turkic_high_nobles = {
 				OR = {
 					liege.culture = {
 						has_clothing_gfx = chinese_clothing_gfx
+						NOT = { has_clothing_gfx = korean_clothing_gfx }
 					}
 					culture = {
 						has_clothing_gfx = chinese_clothing_gfx
+						NOT = { has_clothing_gfx = korean_clothing_gfx }
 					}
 				}
 				has_tgp_dlc_trigger = yes
@@ -4490,11 +4495,19 @@ fp3_turkic_high_nobles = {
 		weight = {
 			base = 0
 			modifier = {
-				add = 51
+				add = 250
 				portrait_royalty_trigger = {
 					CULTURE_INPUT = japanese
 				}
 				has_tgp_dlc_trigger = yes
+			}
+			modifier = {
+				add = 1000
+				has_tgp_dlc_trigger = yes
+				is_adult = yes
+				culture = { has_clothing_gfx = japanese_clothing_gfx }
+				tgp_is_in_ceremonial_house_trigger = yes
+				top_liege.primary_title.var:administrative_ui_special_title.current_heir ?= this
 			}
 		}
 	}
@@ -4515,10 +4528,6 @@ fp3_turkic_high_nobles = {
 				government_is_japanese_trigger = yes
 				OR = {
 					tgp_is_ceremonial_regent_trigger = yes # Not 'actual' ruler
-					AND = {
-						is_independent_ruler = yes
-						highest_held_title_tier = tier_kingdom
-					}
 					trigger_if = {
 						limit = { exists = top_liege }
 						is_councillor_of = top_liege
