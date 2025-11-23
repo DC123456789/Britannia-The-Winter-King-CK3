@@ -10,3 +10,104 @@ is_anglo_saxon_pagan_trigger = {
 		has_faith = faith:anglo_saxon_pagan
 	}
 }
+
+is_wrong_culture_for_ethnic_faith_trigger = {
+	$FAITH$ = { save_temporary_scope_as = trigger_faith }
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	OR = {
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = ingvaeonic_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_west_germanic }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = frankish_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_frankish }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = suebic_culture_faith }
+			scope:trigger_culture = {
+				NOR = { 
+					has_cultural_pillar = heritage_central_germanic 
+					has_name_list = name_list_suebic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = gothic_culture_faith }
+			scope:trigger_culture = {
+				OR = {
+					NOT = {
+						has_cultural_pillar = heritage_romanized_germanic
+					}
+					has_name_list = name_list_suebic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = norse_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_north_germanic }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = hellenic_culture_faith }
+			scope:trigger_culture = {
+				OR = {
+					NOT = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_romance
+					}
+					has_name_list = name_list_romanobritish
+					has_name_list = name_list_romanogallic
+					has_name_list = name_list_romanorhaetian
+					has_name_list = name_list_britannic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = romanoceltic_culture_faith }
+			scope:trigger_culture = {
+				NOR = {
+					has_name_list = name_list_romanobritish
+					has_name_list = name_list_romanogallic
+					has_name_list = name_list_romanorhaetian
+					has_name_list = name_list_britannic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = briton_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_brythonic }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = gaelic_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_goidelic }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = pictish_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_pictish }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = basque_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_basque }
+			}
+		}
+		AND = {
+			scope:trigger_faith = { has_doctrine_parameter = alan_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_romanized_sarmatian }
+			}
+		}
+	}
+}
