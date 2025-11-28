@@ -1,4 +1,59 @@
-﻿# Used on initialization
+﻿# Used on initialization + culture creation
+# Saves the ancestral-most culture that a culture is "primarily descended" from
+# This is the most ancestral culture that the culture is descended from through a series of only other 
+# cultures of the same heritage
+# For the purposes of this effect, Romance heritage is considered the same as Imperial heritage
+# (which is the main difference from save_ancestral_non_roman_culture_effect below)
+# We also use the starting Roman regional cultures as the roots as we need to differentiate between
+# i.e. Romano-British and Romano-Hispanic
+save_ancestral_starting_culture_effect = {
+	save_scope_as = current_culture
+	save_ancestral_starting_culture_helper_effect = yes
+}
+
+save_ancestral_starting_culture_helper_effect = {
+	if = {
+		limit = {
+			NOT = { has_cultural_pillar = heritage_romance }
+		}
+		if = {
+			limit = { 
+				any_parent_culture = { has_same_culture_heritage = prev } 
+				NOT = { has_variable = starting_imperial_culture }
+			}
+			random_parent_culture = { 
+				limit = { has_same_culture_heritage = prev }
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_starting_culture value = prev } }
+		}
+	}
+	else = {
+		if = {
+			limit = { any_parent_culture = { has_same_culture_heritage = prev } }
+			random_parent_culture = { 
+				limit = {
+					has_same_culture_heritage = prev
+				}
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else_if = {
+			limit = { any_parent_culture = { has_cultural_pillar = heritage_latin } }
+			random_parent_culture = { 
+				limit = { has_cultural_pillar = heritage_latin }
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_starting_culture value = prev } }
+		}
+	}
+}
+
+# Used on initialization + culture creation
 # Saves the ancestral-most non-Latin culture that a culture is "primarily descended" from
 # This is the most ancestral culture that the culture is descended from through a series of only other 
 # cultures of the same heritage
@@ -16,9 +71,7 @@ save_ancestral_non_roman_culture_helper_effect = {
 	if = {
 		limit = { has_cultural_pillar = heritage_latin }
 		if = {
-			limit = { 
-				any_parent_culture = { NOT = { has_same_culture_heritage = prev } }
-			}
+			limit = { any_parent_culture = { NOT = { has_same_culture_heritage = prev } } }
 			random_parent_culture = { 
 				limit = { NOT = { has_same_culture_heritage = prev } }
 				save_ancestral_non_roman_culture_helper_effect = yes
@@ -29,23 +82,7 @@ save_ancestral_non_roman_culture_helper_effect = {
 		}
 	}
 	else_if = {
-		limit = {
-			NOT = { has_cultural_pillar = heritage_romance }
-		}
-		if = {
-			limit = { 
-				NOT = { any_parent_culture = { has_same_culture_heritage = prev } }
-			}
-			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
-		}
-		else = {
-			random_parent_culture = { 
-				limit = { has_same_culture_heritage = prev }
-				save_ancestral_non_roman_culture_helper_effect = yes
-			}
-		}
-	}
-	else = {
+		limit = { has_cultural_pillar = heritage_romance }
 		if = {
 			limit = { 
 				any_parent_culture = { 
@@ -66,15 +103,25 @@ save_ancestral_non_roman_culture_helper_effect = {
 			}
 		}
 		else_if = {
-			any_parent_culture = { 
-				has_cultural_pillar = heritage_romance
-			}
+			limit = { any_parent_culture = { has_cultural_pillar = heritage_romance } }
 			random_parent_culture = { 
 				limit = {
 					has_cultural_pillar = heritage_romance
 				}
 				save_ancestral_non_roman_culture_helper_effect = yes
 			}
+		}
+	}
+	else = {
+		if = {
+			limit = { any_parent_culture = { has_same_culture_heritage = prev } }
+			random_parent_culture = { 
+				limit = { has_same_culture_heritage = prev }
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
 		}
 	}
 }

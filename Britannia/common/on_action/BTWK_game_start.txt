@@ -43,8 +43,13 @@ BTWK_story_trigger_on_game_start_479 = {
 
 BTWK_culture_setup = {
 	effect = {
-		# Set flags for parents for use in custom loc
+		# Find the ancestors of each culture
 		every_culture_global = {
+			if = {
+				limit = { has_cultural_pillar = heritage_latin }
+				set_variable = starting_imperial_culture
+			}
+			save_ancestral_starting_culture_effect = yes
 			save_ancestral_non_roman_culture_effect = yes
 		}
 		
