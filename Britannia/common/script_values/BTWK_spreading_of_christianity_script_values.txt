@@ -40,7 +40,7 @@
 			}
 		}
 		add = {
-			value = 0.25
+			value = 0.125
 			desc = PROSELYTIZATION_PROGRESS_PHASE_3
 		}
 	}
@@ -51,7 +51,7 @@
 			}
 		}
 		add = {
-			value = 0.5
+			value = 0.25
 			desc = PROSELYTIZATION_PROGRESS_PHASE_4
 		}
 	}
@@ -60,7 +60,7 @@
 			holder.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.5
+			value = 0.25
 			desc = PROSELYTIZATION_PROGRESS_HOLDER_CHRISTIAN
 		}
 	}
@@ -69,7 +69,7 @@
 			holder.top_liege.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.5
+			value = 0.25
 			desc = PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN
 		}
 	}
@@ -78,8 +78,49 @@
 			any_neighboring_county = { religion = religion:christianity_religion }
 		}
 		add = {
-			value = 0.5
+			value = 0.25
 			desc = PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY
+		}
+	}
+	if = {
+		limit = { 
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+		subtract = {
+			value = 0.5
+			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH
+		}
+	}
+	if = {
+		limit = { 
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+			religion = holder.religion
+		}
+		subtract = {
+			value = 0.25
+			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_HOLDER
+		}
+	}
+	if = {
+		limit = { 
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+			religion = holder.top_liege.religion
+		}
+		subtract = {
+			value = 0.25
+			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_TOP_LIEGE
+		}
+	}
+	# TODO Fervor modifiers
+	# TODO Culture/heritage modifiers
+	if = {
+		limit = { 
+			NOT = { holder.religion = religion:christianity_religion }
+			holder = { has_trait = zealous }
+		}
+		subtract = {
+			value = 0.15		# Relatively small because they should be using the Ban Missionaries interaction
+			desc = PROSELYTIZATION_PROGRESS_HOLDER_ZEALOUS_NON_CHRISTIAN
 		}
 	}
 	if = {
@@ -99,7 +140,7 @@
 			title_province = { terrain = hills }
 		}
 		subtract = {
-			value = 0.25
+			value = 0.1
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -111,7 +152,7 @@
 			}
 		}
 		subtract = {
-			value = 0.33
+			value = 0.15
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -120,7 +161,7 @@
 			title_province = { terrain = forest }
 		}
 		subtract = {
-			value = 0.5
+			value = 0.25
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -133,7 +174,7 @@
 			}
 		}
 		subtract = {
-			value = 0.75
+			value = 0.35
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -145,7 +186,7 @@
 			}
 		}
 		subtract = {
-			value = 1
+			value = 0.5
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
