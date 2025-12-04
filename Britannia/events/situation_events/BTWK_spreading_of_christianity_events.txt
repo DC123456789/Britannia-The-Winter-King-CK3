@@ -40,3 +40,49 @@ spreading_of_christianity.0001 = { # Fullscreen Intro Event
 		clicksound = "event:/DLC/FP2/SFX/UI/fp2_struggle_start_select"
 	}
 }
+
+
+# Toast for flipped provinces
+spreading_of_christianity.0010 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		scope:current_county.holder = {
+			add_to_list = informees
+			every_liege_or_above = {
+				add_to_list = informees
+			}
+		}
+		every_in_list = {
+			list = informees
+			switch = {
+				trigger = faith
+				scope:current_county.faith = { # Good if same as new faith
+					send_interface_message = {
+						type = msg_council_conversion_good
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+				scope:old_faith = {
+					send_interface_message = { # Bad if same faith as county
+						type = msg_council_conversion_bad
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+				fallback = {
+					send_interface_message = { # Neutral otherwise
+						type = msg_council_conversion_neutral
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+			}
+		}
+	}
+}
