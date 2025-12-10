@@ -21,6 +21,8 @@ namespace = titular_titles_test
 # 0004/0005 - Annex the North Bank (Mercia)
 # 0006/0007 - Create Berkshire
 # 0008/0009 - Expand Surrey
+# 0010/0011 - Unite Northumbria
+# 0012/0013 - Elevate Lindsey
 # 0100/0101	- Creation of kingdom
 
 # Creation of duchy
@@ -599,6 +601,94 @@ titular_titles_anglosaxon.0009 = {
 		}
 		name = {
 			text = titular_titles_anglosaxon.0009.a
+		}
+	}
+}
+
+# Unite Northumbria
+titular_titles_anglosaxon.0010 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Stop the default kingdom creation event from triggering
+		title:k_northumbria = { set_variable = title_has_been_created }
+		if = {
+			limit = { primary_title = title:k_deira }
+			title:k_northumbria = { set_coa = k_northumbria_deira }
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0011 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0011 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_bernicia = {
+				every_direct_de_jure_vassal_title = {
+					set_duchy_integrated_effect = {
+						INTEGRATION_KINGDOM = title:k_northumbria
+					}
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:k_deira = {
+				every_direct_de_jure_vassal_title = {
+					set_duchy_integrated_effect = {
+						INTEGRATION_KINGDOM = title:k_northumbria
+					}
+					check_de_jure_liege_effect = yes
+				}
+			}
+			# TODO handle integration progress + culture
+		}
+	}
+}
+
+titular_titles_anglosaxon.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0011.t
+	desc = titular_titles_anglosaxon.0011.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { NOT = { has_title = title:k_northumbria } }
+				get_title = title:k_northumbria
+				destroy_title = title:k_bernicia
+				destroy_title = title:k_deira
+			}
+		}
+		custom_tooltip = {
+			text = northumbria_de_jure_shift_happened_tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_anglosaxon.0011.a.founder
+		}
+		name = {
+			text = titular_titles_anglosaxon.0011.a
 		}
 	}
 }

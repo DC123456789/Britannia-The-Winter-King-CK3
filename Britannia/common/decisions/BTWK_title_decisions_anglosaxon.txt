@@ -681,9 +681,101 @@ expand_surrey_decision = {
 	}
 }
 
-# TODO
+form_northumbria_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
 
-# form_northumbria_decision
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = mercia_annex_north_bank_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:k_bernicia
+			has_title = title:k_deira
+			AND = {
+				highest_held_title_tier <= tier_duchy
+				OR = {
+					primary_title.kingdom = title:k_bernicia
+					primary_title.kingdom = title:k_deira
+				}
+			}
+			AND = {
+				highest_held_title_tier <= tier_county
+				can_create_germanic_title_trigger = yes
+				capital_county.var:anglo_saxon_duchy ?= {
+					OR = {
+						kingdom = title:k_bernicia
+						kingdom = title:k_deira
+					}
+				}
+			}
+		}
+		NOT = { title:k_northumbria = { has_variable = title_has_been_created } }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		# government_is_not_tribal_trigger = yes
+		prestige_level >= medium_prestige_level
+		has_title = title:k_bernicia
+		title:k_bernicia = { title_held_years >= 10 }
+		custom_tooltip = {
+			text = form_northumbria_decision_bernicia_20_counties_tt
+			any_realm_county = {
+				count >= 20
+				kingdom = title:k_bernicia
+			}
+		}
+		has_title = title:k_deira
+		title:k_deira = { title_held_years >= 10 }
+		custom_tooltip = {
+			text = form_northumbria_decision_deira_20_counties_tt
+			any_realm_county = {
+				count >= 20
+				kingdom = title:k_deira
+			}
+		}
+	}
+
+	effect = {
+		add_prestige = 300
+		add_legitimacy = 50
+		show_as_tooltip = {
+			get_title = title:k_northumbria
+			destroy_title = title:k_bernicia
+			destroy_title = title:k_deira
+		}
+		custom_tooltip = {
+			text = northumbria_de_jure_shift_tt
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0010 }
+	}
+	
+	cost = {
+		gold = { value = 125 }
+		piety = { value = 75 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+# TODO
 
 # elevate_lindsey_decision
 
