@@ -634,10 +634,6 @@ culture_shifts.0010 = {
 			if = {
 				limit = {
 					this.var:regional_culture_progress >= 100
-					OR = {
-						NOT = { exists = struggle:britannia_struggle }
-						struggle:britannia_struggle = { has_struggle_phase_parameter = allow_anglo_saxon_regional_cultures }
-					}
 				}
 				# If the kingdom has a holder, than diverge from the holder's culture
 				# Unless they are already a regional culture
@@ -909,7 +905,7 @@ culture_shifts.0010 = {
 							add_character_flag = suppress_culture_notifications_and_achievements
 							create_hybrid_culture = scope:old_culture
 							death = natural
-						}				
+						}	
 						scope:new_culture = {
 							set_heritage_from = scope:dominant_west_germanic_culture
 							set_language_from = scope:dominant_west_germanic_culture
@@ -1657,6 +1653,204 @@ culture_shifts.0011 = {
 		trigger = { always = no }
 		fallback = yes
 		name = culture_shifts.0011.d
+	}
+}
+
+# Handle formation of Northumbria
+culture_shifts.0012 = {
+	scope = character
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		# If neither Bernician nor Deiran has formed, then Northumbrian inherits any
+		# regional culture emergence progress
+		if = {
+			limit = { 
+				NOR = {
+					title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+					title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				}
+			}
+			title:k_northumbria = {
+				set_variable = { name = regional_culture_progress value = 0 }
+				if = {
+					limit = {
+						exists = title:k_bernicia.var:regional_culture_progress
+						title:k_bernicia.var:regional_culture_progress > this.var:regional_culture_progress
+					}
+					set_variable = { 
+						name = regional_culture_progress
+						value = title:k_bernicia.var:regional_culture_progress 
+					}
+				}
+				if = {
+					limit = { 
+						exists = title:k_bernicia.var:regional_culture_progress
+						title:k_deira.var:regional_culture_progress > this.var:regional_culture_progress 
+					}
+					set_variable = { 
+						name = regional_culture_progress
+						value = title:k_deira.var:regional_culture_progress 
+					}
+				}
+			}
+		}		
+		# If only one of Bernician or Deiran has formed, then that culture just gets
+		# renamed to Northumbrian and becomes the new Northumbrian regional culture
+		else_if = {
+			limit = {
+				OR = {
+					title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+					title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				}
+				NAND = {
+					title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+					title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				}
+			}
+			if = {
+				limit = { title:k_bernicia = { has_variable = anglo_saxon_regional_culture } }
+				title:k_bernicia = {
+					this.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian_culture }
+					remove_variable = anglo_saxon_regional_culture
+				}
+				title:k_northumbria = { set_variable = northumbrian_culture_from_bernician }
+			}
+			else = {
+				title:k_deira = {
+					this.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian_culture }
+					remove_variable = anglo_saxon_regional_culture
+				}
+				title:k_northumbria = { set_variable = northumbrian_culture_from_deiran }
+			}
+			title:k_northumbria = {
+				set_variable = { name = anglo_saxon_regional_culture value = scope:northumbrian_culture }
+			}
+			scope:northumbrian_culture = {
+				set_culture_name = {
+					noun = northumbrian
+					collective_noun = northumbrian_collective_noun
+					prefix = northumbrian
+				}
+				set_variable = { name = anglo_saxon_regional_culture_kingdom value = title:k_northumbria }
+			}
+		}
+		
+		# If both Bernician and Deiran have formed but at least one of them is < 50 years old,
+		# then they get merged into a single Northumbrian culture
+		else_if = {
+			limit = {
+				title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+				title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				OR = {
+					title:k_bernicia.var:anglo_saxon_regional_culture = { culture_age < 50 }
+					title:k_deira.var:anglo_saxon_regional_culture = { culture_age < 50 }
+				}
+			}
+			# Determine which of Bernician or Deiran is "primary"
+			if = {
+				limit = { 
+					root.culture = title:k_bernicia.var:anglo_saxon_regional_culture
+				}
+				root.culture = { save_scope_as = primary_parent }
+				title:k_deira.var:anglo_saxon_regional_culture = { save_scope_as = secondary_parent }
+			}
+			else_if = {
+				limit = { 
+					root.culture = title:k_deira.var:anglo_saxon_regional_culture
+				}
+				root.culture = { save_scope_as = primary_parent }
+				title:k_bernicia.var:anglo_saxon_regional_culture = { save_scope_as = secondary_parent }
+			}
+			else_if = {
+				limit = { 
+					title:k_bernicia = { has_variable = created_from_bernicia }
+				}
+				title:k_bernicia.var:anglo_saxon_regional_culture = { save_scope_as = primary_parent }
+				title:k_deira.var:anglo_saxon_regional_culture = { save_scope_as = secondary_parent }
+			}
+			else = {
+				title:k_deira.var:anglo_saxon_regional_culture = { save_scope_as = primary_parent }
+				title:k_bernicia.var:anglo_saxon_regional_culture = { save_scope_as = secondary_parent }
+			}
+			
+			# Make/get hybrid of Bernician and Deiran 
+			if = {
+				limit = {
+					title:k_bernicia.var:anglo_saxon_regional_culture = culture:bernician
+					title:k_deira.var:anglo_saxon_regional_culture = culture:deiran
+				}
+				culture:northumbrian_alt = {
+					reset_culture_creation_date = yes
+					get_all_innovations_from = culture:bernician
+					get_all_innovations_from = culture:deiran
+					copy_all_traditions_from = culture:bernician
+					copy_all_traditions_from = culture:deiran
+					set_ethos_from = scope:primary_parent
+					set_martial_custom_from = scope:primary_parent
+					
+					copy_acceptances_from_parent_cultures_effect = yes
+					
+					save_scope_as = northumbrian_culture
+				}
+			}
+			else = {
+				create_character = {
+					dynasty = none
+					location = root.title_capital_county.title_province
+					culture = scope:primary_parent
+					faith = faith:anglo_saxon_pagan
+					gender = male
+					save_scope_as = culture_creator
+				}
+				scope:culture_creator = {
+					# Stops normal notifications from creating new cultures
+					add_character_flag = suppress_culture_notifications_and_achievements
+					create_hybrid_culture = scope:secondary_parent
+					death = natural
+				}
+				scope:new_culture = {
+					set_culture_name = {
+						noun = northumbrian
+						collective_noun = northumbrian_collective_noun
+						prefix = northumbrian
+					}
+					
+					save_scope_as = northumbrian_culture
+				}
+			}
+			
+			title:k_northumbria = {
+				set_variable = northumbrian_culture_from_hybrid
+				set_variable = { name = anglo_saxon_regional_culture value = scope:northumbrian_culture }
+			}
+			scope:northumbrian_culture = {
+				set_variable = { name = anglo_saxon_regional_culture_kingdom value = title:k_northumbria }
+			}
+			
+			# Spread the new Northumbrian culture to all Bernician + Deiran characters and provinces
+			title:k_bernicia.var:anglo_saxon_regional_culture = {
+				every_culture_county = {
+					set_county_culture = scope:northumbrian_culture
+				}
+			}
+			title:k_deira.var:anglo_saxon_regional_culture = {
+				every_culture_county = {
+					set_county_culture = scope:northumbrian_culture
+				}
+			}
+			every_living_character = {
+				limit = { 
+					OR = {
+						culture = title:k_bernicia.var:anglo_saxon_regional_culture
+						culture = title:k_deira.var:anglo_saxon_regional_culture
+					}
+				}
+				set_culture = scope:northumbrian_culture
+			}
+		}
+		# If both cultures are > 50 years old, then nothing happens
 	}
 }
 

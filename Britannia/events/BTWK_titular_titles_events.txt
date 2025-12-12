@@ -617,8 +617,17 @@ titular_titles_anglosaxon.0010 = {
 		title:k_northumbria = { set_variable = title_has_been_created }
 		if = {
 			limit = { primary_title = title:k_deira }
-			title:k_northumbria = { set_coa = k_northumbria_deira }
+			title:k_northumbria = { 
+				set_coa = k_northumbria_deira
+				set_variable = created_from_deira
+			}
 		}
+		else = {
+			set_variable = created_from_bernicia
+		}
+		# Check for Northumbrian cultural unification
+		trigger_event = { id = culture_shifts.0012 }
+		
 		trigger_event = { id = titular_titles_anglosaxon.0011 }
 		every_player = {
 			limit = { NOT = { this = PREV } }
@@ -645,7 +654,47 @@ titular_titles_anglosaxon.0010 = {
 					check_de_jure_liege_effect = yes
 				}
 			}
-			# TODO handle integration progress + culture
+			# Northumbria inherits any integration progress from its parent kingdoms
+			title:k_northumbria = {
+				every_in_list = {
+					variable = integratable_duchies
+					if = {
+						limit = { 
+							OR = {
+								AND = {
+									exists = this.var:k_bernicia_integration_years
+									this.var:k_bernicia_integration_years > 0
+								}
+								AND = {
+									exists = this.var:k_deira_integration_years
+									this.var:k_deira_integration_years > 0
+								}
+							}
+						}
+						set_variable = { name = k_northumbria_integration_years value = 0 }
+						if = {
+							limit = { 
+								exists = this.var:k_bernicia_integration_years
+								this.var:k_bernicia_integration_years > this.var:k_northumbria_integration_years
+							}
+							set_variable = { 
+								name = k_northumbria_integration_years 
+								value = this.var:k_bernicia_integration_years 
+							}
+						}
+						if = {
+							limit = { 
+								exists = this.var:k_deira_integration_years
+								this.var:k_deira_integration_years > this.var:k_northumbria_integration_years
+							}
+							set_variable = { 
+								name = k_northumbria_integration_years 
+								value = this.var:k_deira_integration_years 
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -674,6 +723,30 @@ titular_titles_anglosaxon.0011 = {
 		}
 		custom_tooltip = {
 			text = northumbria_de_jure_shift_happened_tt
+		}
+		# Tooltip for Northumbrian cultural unification if applicable
+		if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_bernician } }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_bernician_tt
+			}			
+		}
+		else_if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_deiran } }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_deiran_tt
+			}			
+		}
+		if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_hybrid } }
+			title:k_bernicia.var:anglo_saxon_regional_culture = { save_scope_as = bernician }
+			title:k_deira.var:anglo_saxon_regional_culture = { save_scope_as = deiran }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_hybrid_tt
+			}			
 		}
 	}
 
