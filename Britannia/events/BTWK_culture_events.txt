@@ -1849,6 +1849,57 @@ culture_shifts.0012 = {
 				}
 				set_culture = scope:northumbrian_culture
 			}
+			
+			# Inherit any culture spread progress
+			every_county = {
+				limit = {
+					any_in_list = {
+						variable = scripted_culture_spread_progress_list
+						OR = {
+							this.var:culture = title:k_bernicia.var:anglo_saxon_regional_culture
+							this.var:culture = title:k_deira.var:anglo_saxon_regional_culture
+						}
+					}
+				}
+				if = {
+					limit = {
+						any_in_list = {
+							variable = scripted_culture_spread_progress_list
+							this.var:culture = title:k_bernicia.var:anglo_saxon_regional_culture
+						}
+					}
+					get_culture_spread_success_story_effect = { 
+						CULTURE = title:k_bernicia.var:anglo_saxon_regional_culture 
+					}
+					scope:culture_spread_progress_story = { save_scope_as = old_culture_spread_story }
+					get_culture_spread_success_story_effect = { CULTURE = scope:northumbrian_culture }
+					scope:culture_spread_progress_story = {
+						if = {
+							limit = { this.var:progress < scope:old_culture_spread_story.var:progress }
+							set_variable = { name = progress value = scope:old_culture_spread_story.var:progress }
+						}
+					}
+				}
+				if = {
+					limit = {
+						any_in_list = {
+							variable = scripted_culture_spread_progress_list
+							this.var:culture = title:k_deira.var:anglo_saxon_regional_culture
+						}
+					}
+					get_culture_spread_success_story_effect = { 
+						CULTURE = title:k_deira.var:anglo_saxon_regional_culture 
+					}
+					scope:culture_spread_progress_story = { save_scope_as = old_culture_spread_story }
+					get_culture_spread_success_story_effect = { CULTURE = scope:northumbrian_culture }
+					scope:culture_spread_progress_story = {
+						if = {
+							limit = { this.var:progress < scope:old_culture_spread_story.var:progress }
+							set_variable = { name = progress value = scope:old_culture_spread_story.var:progress }
+						}
+					}
+				}
+			}
 		}
 		# If both cultures are > 50 years old, then nothing happens
 	}

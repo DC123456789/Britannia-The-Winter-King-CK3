@@ -766,6 +766,81 @@ titular_titles_anglosaxon.0011 = {
 	}
 }
 
+# Elevate Lindsey
+titular_titles_anglosaxon.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Stop the default kingdom creation event from triggering
+		title:k_lindsey = { set_variable = title_has_been_created }		
+		trigger_event = { id = titular_titles_anglosaxon.0013 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0013 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_lindsey = {
+				set_duchy_integrated_effect = {
+					INTEGRATION_KINGDOM = title:k_lindsey
+				}
+				check_de_jure_liege_effect = yes
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0013 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0013.t
+	desc = titular_titles_anglosaxon.0013.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { NOT = { has_title = title:k_lindsey } }
+				get_title = title:k_lindsey
+			}
+		}
+		show_as_tooltip = {
+			title:d_lindsey = { save_scope_as = integrated_kingdom_pretend }
+			title:k_lindsey = { save_scope_as = integrated_kingdom_pretend_value }
+			title:d_lindsey = {
+				check_de_jure_liege_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_anglosaxon.0013.a.founder
+		}
+		name = {
+			text = titular_titles_anglosaxon.0013.a
+		}
+	}
+}
+
 # Creation of kingdom
 titular_titles_anglosaxon.0100 = {
 	type = character_event

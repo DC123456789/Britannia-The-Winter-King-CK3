@@ -696,7 +696,7 @@ form_northumbria_decision = {
 		hegemony = 12
 	}
 
-	desc = mercia_annex_north_bank_decision_desc
+	desc = form_northumbria_decision_desc
 
 	is_shown = {
 		OR = {
@@ -711,7 +711,7 @@ form_northumbria_decision = {
 			}
 			AND = {
 				highest_held_title_tier <= tier_county
-				can_create_germanic_title_trigger = yes
+				can_create_germanic_title_culture_trigger = yes
 				capital_county.var:anglo_saxon_duchy ?= {
 					OR = {
 						kingdom = title:k_bernicia
@@ -777,8 +777,74 @@ form_northumbria_decision = {
 	}
 }
 
-# TODO
+elevate_lindsey_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
 
-# elevate_lindsey_decision
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 12
+		kingdom = 0
+		empire = 0
+		hegemony = 0
+	}
+
+	desc = elevate_lindsey_decision_desc
+
+	is_shown = {
+		highest_held_title_tier <= tier_kingdom
+		OR = {
+			has_title = title:d_lindsey
+			AND = {
+				highest_held_title_tier <= tier_county
+				can_create_germanic_title_culture_trigger = yes
+				capital_county.var:anglo_saxon_duchy ?= title:d_lindsey
+			}
+		}
+		NOT = { title:k_lindsey = { has_variable = title_has_been_created } }
+		# TODO check variable once mechanic is implemented
+		NOT = { title:e_aengland = { has_variable = aengland_united } }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		prestige_level >= medium_prestige_level
+		has_title = title:d_lindsey
+		highest_held_title_tier <= tier_kingdom
+		realm_size >= 25
+	}
+
+	effect = {
+		add_prestige = 300
+		add_legitimacy = 50
+		show_as_tooltip = {
+			get_title = title:k_lindsey
+			title:d_lindsey = { save_scope_as = integrated_kingdom_pretend }
+			title:k_lindsey = { save_scope_as = integrated_kingdom_pretend_value }
+			title:d_lindsey = {
+				check_de_jure_liege_effect = yes
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0012 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 75 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+# TODO
 
 # create_hampshire_decision (maybe)
