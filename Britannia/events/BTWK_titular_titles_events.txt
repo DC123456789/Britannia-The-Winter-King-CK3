@@ -1258,6 +1258,7 @@ titular_titles_roman.0004 = {
 # 0012/0013	- High Kingdom of Cymru
 # 0014/0015	- Fall of Novant
 # 0016/0017	- Conquest of Aeron
+# 0018/0019	- Britannic Empire (from Britannia)
 # 0050-0052 - Fall of Britannia
 
 # Kingdom of Deheubarth
@@ -2185,6 +2186,69 @@ titular_titles_briton.0017 = {
 		}
 		name = {
 			text = titular_titles_briton.0017.a
+		}
+	}
+}
+
+# Britannic Empire
+titular_titles_briton.0018 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0019 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0019 }
+		}
+		hidden_effect = {
+			title:e_britannia = { 
+				remove_variable = high_king_flag
+				set_variable = emperor_flag
+				set_title_name = BRITANNIC_EMPIRE
+				set_definitive_form = yes
+				holder = { 
+					remove_character_flag = high_king_flag
+					add_character_flag = emperor_flag
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0019 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0019.t
+	desc = titular_titles_briton.0019.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:e_britannia = { 
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = BRITANNIC_EMPIRE } }
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_briton.0019.a.founder
+		}
+		# TODO Outrage from other emperors?
+		name = {
+			text = titular_titles_briton.0019.a
 		}
 	}
 }

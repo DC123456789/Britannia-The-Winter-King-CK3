@@ -715,3 +715,77 @@ reunite_the_britons_decision = {
 		base = 100
 	}
 }
+
+britannia_claim_imperial_title_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = britannia_claim_imperial_title_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_romanized_germanic
+				has_cultural_pillar = heritage_latin
+			}
+		}
+		NOT = { title:e_britannia = { has_variable = emperor_flag } }
+		# If the High King mechanic is still active, then you should be taking the Roman path after
+		# unification instead - this is basically for if a Britannic character/realm survives the Fall of 
+		# Britannia and then unifies Britannia
+		# TODO Take another look at this once the High King system has been implemented
+		has_global_variable = end_of_britannia
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		custom_tooltip = {
+			NOT = { exists = title:h_western_roman_empire.holder }
+			text = no_wre_emp_exists_tt
+		}
+		prestige_level >= very_high_prestige_level
+		completely_controls_region = btwk_world_britannia
+		custom_tooltip = {
+			text = follows_reformed_faith_tt
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+	}
+
+	effect = {
+		add_prestige = 1000
+		add_legitimacy = 100
+		save_scope_as = founder
+		show_as_tooltip = {
+			title:e_britannia = { set_title_name_w_tooltip_effect = { NEW_NAME = BRITANNIC_EMPIRE } }
+			custom_tooltip = {
+				text = britannia_claim_imperial_title_decision_tt
+			}
+		}
+		trigger_event = { id = titular_titles_briton.0018 }
+	}
+	
+	cost = {
+		gold = { value = 750 }
+		piety = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
