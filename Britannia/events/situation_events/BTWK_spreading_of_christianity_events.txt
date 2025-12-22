@@ -8,7 +8,28 @@ spreading_of_christianity.0001 = { # Fullscreen Intro Event
 	type = character_event
 	window = fullscreen_event
 	title = spreading_of_christianity.0001.t
-	desc = spreading_of_christianity.0001.desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { religion = religion:christianity_religion }
+				desc = spreading_of_christianity.0001.desc.christian
+			}
+			triggered_desc = {		# Hellenism has already been mostly marginalized by Christianity
+				trigger = { religion = religion:hellenism_religion }
+				desc = spreading_of_christianity.0001.desc.hellenic
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {			# Brythonic and Gaelic paganism are also significantly under pressure
+						faith = faith:briton_pagan
+						faith = faith:gael_pagan
+					}
+				}
+				desc = spreading_of_christianity.0001.desc.briton_gaelic
+			}						# Other faiths are not yet as exposed
+			desc = spreading_of_christianity.0001.desc.other_non_christian
+		}
+	}
 	theme = realm
 	override_background = { 
 		reference = holy_site_christian
@@ -26,16 +47,28 @@ spreading_of_christianity.0001 = { # Fullscreen Intro Event
 	
 	option = {
 		name = {
-			trigger = { 
-				religion = religion:christianity_religion
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { religion = religion:christianity_religion }
+						desc = spreading_of_christianity.0001.a.christian
+					}
+					triggered_desc = {
+						trigger = { religion = religion:hellenism_religion }
+						desc = spreading_of_christianity.0001.a.hellenic
+					}
+					triggered_desc = {
+						trigger = {
+							OR = {
+								faith = faith:briton_pagan
+								faith = faith:gael_pagan
+							}
+						}
+						desc = spreading_of_christianity.0001.a.briton_gaelic
+					}
+					desc = spreading_of_christianity.0001.a.other_non_christian
+				}
 			}
-			text = spreading_of_christianity.0001.a.christian
-		}
-		name = {
-			trigger = {
-				religion != religion:christianity_religion
-			}
-			text = spreading_of_christianity.0001.a.non_christian
 		}
 		clicksound = "event:/DLC/FP2/SFX/UI/fp2_struggle_start_select"
 	}
