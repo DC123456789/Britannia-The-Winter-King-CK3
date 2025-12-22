@@ -2,6 +2,117 @@
 # Briton Title Decisions												#
 #########################################################################
 
+claim_britannia_high_kingship_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = claim_britannia_high_kingship_decision_desc
+
+	is_shown = {
+		culture = {
+			OR = {
+				has_same_heritage_group_as = { TARGET = culture:briton }
+				has_cultural_pillar = heritage_latin
+				this = culture:britannic
+			}
+		}
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+		}
+		NOT = { has_title = title:e_britannia }
+		NOT = { has_global_variable = end_of_britannia }
+		# TODO This decision should be disabled after one of the reforms as well
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		OR = {
+			culture = { has_cultural_pillar = heritage_brythonic }
+			culture = { has_cultural_pillar = heritage_latin }
+			trigger_if = {
+				limit = { culture:britannic = { has_variable = culture_has_emerged } }
+				culture = culture:britannic
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				text = claim_britannia_high_kingship_kingdom_requirement_tt
+				any_held_title = {
+					tier = tier_kingdom
+					target_is_de_jure_liege_or_above = title:e_britannia
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+				}
+			}
+			has_title = title:e_hen_ogledd
+		}
+		NOT = { exists = title:e_britannia.holder }
+		prestige_level >= high_prestige_level
+		age >= 25
+		realm_size >= 10
+		diplomacy >= 10
+		martial >= 12
+		stewardship >= 7
+		OR = {
+			custom_tooltip = {
+				text = claim_britannia_high_kingship_king_ruled_years_requirement_tt
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 15 
+				}
+			}
+			prestige_level >= very_high_prestige_level
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+	}
+
+	effect = {
+		custom_tooltip = {
+			text = claim_britannia_high_kingship_decision_effect_tt
+		}
+		# trigger_event = { id = britannia_high_king.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_claim_britannia_high_kingship"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
 create_deheubarth_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
