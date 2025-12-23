@@ -2,6 +2,120 @@
 # Anglo-Saxon Title Decisions											#
 #########################################################################
 
+claim_aengland_bretwalda_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = claim_aengland_bretwalda_decision_desc
+
+	is_shown = {
+		culture = {
+			has_same_heritage_group_as = { TARGET = culture:angle }
+			NOT = { has_cultural_pillar = heritage_romanized_germanic }
+		}
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		}
+		NOT = { has_title = title:e_aengland }
+		NOT = { has_global_variable = aengland_united }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_culture_requirement_tt
+			culture = {
+				has_same_heritage_group_as = { TARGET = culture:angle }
+				NOT = { has_cultural_pillar = heritage_romanized_germanic }
+			}
+		}
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_kingdom_requirement_tt
+			any_held_title = {
+				tier = tier_kingdom
+				target_is_de_jure_liege_or_above = title:e_aengland
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+		NOT = { exists = title:e_aengland.holder }
+		prestige_level >= high_prestige_level
+		age >= 25
+		realm_size >= 15
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_military_requirement_tt
+			current_military_strength >= 1000
+		}
+		OR = {
+			custom_tooltip = {
+				text = claim_aengland_bretwalda_king_ruled_years_requirement_tt
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 10 
+				}
+			}
+			prestige_level >= very_high_prestige_level
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+		control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
+			FRACTION_REQUIRED = 0.5
+		}
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_king_hegemony_score_tt
+			this.var:aengland_hegemony_score >= 120
+		}
+	}
+
+	effect = {
+		show_as_tooltip = {
+			get_title = title:e_aengland
+		}
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_decision_effect_tt
+		}
+		# trigger_event = { id = aengland_bretwalda.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 0		# Want AI to calculate if it's actually going to win or not
+	}
+	
+	widget = {
+		gui = "decision_view_widget_claim_aengland_bretwalda"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
 create_anglo_saxon_de_jure_duchies_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"

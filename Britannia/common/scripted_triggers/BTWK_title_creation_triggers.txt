@@ -152,6 +152,86 @@ control_region_fraction_trigger = {
 	}
 }
 
+# Mostly for the custom tooltip
+control_region_fraction_including_tributaries_trigger = {
+	trigger_if = {
+		limit = { is_ai = no }
+		save_temporary_scope_as = current_scope
+		save_temporary_scope_value_as = { 
+			name = percent_required 
+			value = {
+				value = $FRACTION_REQUIRED$
+				multiply = 100
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_total_counties 
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_required_counties 
+			value = {
+				value = scope:region_total_counties
+				multiply = $FRACTION_REQUIRED$
+				ceiling = yes
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_counties
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					limit = { 
+						OR = {
+							scope:current_scope = { completely_controls = prev }
+							holder.top_liege = { is_tributary_of_suzerain_or_above = scope:current_scope }
+						}
+					}
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_percent
+			value = {
+				value = scope:region_controlled_counties
+				divide = scope:region_total_counties
+				multiply = 100
+			}
+		}
+		$REGION$ = { save_temporary_scope_as = region_scope }
+		custom_tooltip = {
+			text = control_region_fraction_including_tributaries_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+	trigger_if = {		# Avoid having to calculate all the variables unless necessary (does this actually matter?)
+		limit = { is_ai = yes }
+		custom_tooltip = {
+			text = control_region_fraction_including_tributaries_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				OR = {
+					root = { completely_controls = prev }
+					holder.top_liege = { is_tributary_of_suzerain_or_above = root }
+				}
+			}
+		}
+	}
+}
+
 # TODO Allow for Roman characters, but only if they are under the empire
 can_create_briton_kingdom_trigger = {
 	is_celtic_culture_trigger = yes

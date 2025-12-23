@@ -1,0 +1,82 @@
+﻿# Is an Anglo-Saxon province for the purposes of Bretwalda score calculations
+is_anglo_saxon_province_trigger = {
+	OR = {
+		culture = { has_cultural_pillar = heritage_west_germanic }
+		holder.top_liege = {
+			OR = {
+				has_title = title:e_aengland
+				any_held_title = {
+					tier = root.primary_title.tier
+					tier <= tier_kingdom
+					target_is_de_jure_liege_or_above = title:e_aengland
+				}
+			}
+			AND = {
+				has_same_heritage_group_as = { TARGET = culture:angle }
+				NOT = { has_cultural_pillar = heritage_romanized_germanic }
+			}
+		}
+	}
+}
+
+# Mostly for the custom tooltip
+control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
+	save_temporary_scope_as = current_scope
+	save_temporary_scope_value_as = { 
+		name = percent_required 
+		value = {
+			value = $FRACTION_REQUIRED$
+			multiply = 100
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_total_counties 
+		value = {
+			value = 0
+			every_county_in_region = {
+				region = btwk_world_britannia
+				limit = { is_anglo_saxon_province_trigger = yes }
+				add = 1
+			}
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_required_counties 
+		value = {
+			value = scope:region_total_counties
+			multiply = $FRACTION_REQUIRED$
+			ceiling = yes
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_controlled_counties
+		value = {
+			value = 0
+			every_county_in_region = {
+				region = btwk_world_britannia
+				limit = {
+					is_anglo_saxon_province_trigger = yes
+					OR = {
+						scope:current_scope = { completely_controls = prev }
+						holder.top_liege = { is_tributary_of_suzerain_or_above = scope:current_scope }
+					}
+				}
+				add = 1
+			}
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_controlled_percent
+		value = {
+			value = scope:region_controlled_counties
+			divide = scope:region_total_counties
+			multiply = 100
+		}
+	}
+	geographical_region:btwk_world_britannia = { save_temporary_scope_as = region_scope }
+	custom_tooltip = {
+		text = control_anglo_saxon_provinces_fraction_including_tributaries_trigger_tt
+		scope:region_controlled_counties >= scope:region_required_counties
+	}
+	# No reduced AI calc because we need to figure out the number of Anglo-Saxon counties in the denominator
+}
