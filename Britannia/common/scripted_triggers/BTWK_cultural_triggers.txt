@@ -36,12 +36,12 @@ culture_is_brythonic_culture_trigger = {
 		has_cultural_pillar = heritage_brythonic
         AND = {
             has_cultural_pillar = heritage_latin
-            OR = {
-                THIS = culture:romanobritish
-                any_parent_culture = {
-                    culture_is_romanobritish_culture_trigger = yes
-                }
-            }
+			this.var:ancestral_starting_culture = culture:romanobritish
+        }
+        AND = {
+            has_cultural_pillar = heritage_romance
+			this.var:ancestral_starting_culture = culture:romanobritish
+			NOT = { has_variable = ancestral_non_roman_culture }
         }
 	}
 }
@@ -62,57 +62,6 @@ can_create_roman_celtic_titles_trigger = {
 			has_cultural_pillar = heritage_north_germanic
 		}
 	}
-}
-
-is_roman_ruler_trigger = {
-	custom_description = {
-		text = is_roman_ruler_trigger
-		any_held_title = {
-			OR = {
-				has_variable = roman_province
-				has_variable = roman_empire_title
-			}
-		}
-	}
-}
-
-can_create_roman_title_culture_trigger = {
-	custom_description = {
-		text = can_create_roman_title_culture_trigger
-		OR = {
-			culture = { has_cultural_pillar = heritage_latin }
-			is_roman_ruler_trigger = yes
-		}
-	}
-}
-
-# In general, must be Imperial culture and either a governor/emperor or the vassal of one
-# An emperor or independent governor that isn't Imperial culture also gets the decision,
-# but they should in general be forced to convert to a Romanized version of their culture or be overthrown
-# Maybe we can have an interesting decision where you can abolish the empire if you decide to remain 
-# unromanized or something
-can_create_roman_title_show_trigger = {
-	can_create_roman_title_culture_trigger = yes
-	OR = {
-		is_roman_ruler_trigger = yes
-		any_liege_or_above = {
-			is_roman_ruler_trigger = yes
-		}
-	}
-}
-
-top_liege_can_create_roman_title_trigger = {
-	custom_description = {
-		text = top_liege_can_create_roman_title_trigger
-		top_liege = {
-			is_roman_ruler_trigger = yes
-		}
-	}
-}
-
-can_create_roman_title_trigger = {
-	top_liege_can_create_roman_title_trigger = yes
-	can_create_roman_title_culture_trigger = yes
 }
 
 # Determines access to Romanized Germanic titles (= Roman titles, pretty much)
@@ -152,27 +101,6 @@ is_germanic_culture_trigger = {
 	culture = { has_same_heritage_group_as = { TARGET = culture:angle } }
 }
 
-# For creating Germanic (= Anglo-Saxon, for now) titles
-can_create_germanic_title_culture_trigger = {
-	custom_description = {
-		text = can_create_germanic_title_culture_trigger
-		is_unromanized_germanic_culture_trigger = yes
-	}
-}
-
-top_liege_can_create_germanic_title_culture_trigger = {
-	custom_description = {
-		text = top_liege_can_create_germanic_title_culture_trigger
-		top_liege = { can_create_germanic_title_culture_trigger = yes }
-	}
-}
-
-can_create_germanic_title_trigger = {
-	top_liege_can_create_germanic_title_culture_trigger = yes
-	can_create_germanic_title_culture_trigger = yes
-	NOT = { is_roman_ruler_trigger = yes }
-}
-
 is_old_saxon_culture_trigger = { 
 # Used in Anglo-Saxon patron deity selection: Wodan (Angle, Frisian, Jutish) vs. Seaxneat (Saxon)
 	OR = {
@@ -192,6 +120,7 @@ is_imperial_like_culture_trigger = {
 			is_brythonic_culture_trigger = yes
 			is_imperial_culture_trigger = yes
 			is_romanized_barbarian_culture_trigger = yes
+			culture = { has_cultural_pillar = heritage_romance }
 		}
 	}
 }

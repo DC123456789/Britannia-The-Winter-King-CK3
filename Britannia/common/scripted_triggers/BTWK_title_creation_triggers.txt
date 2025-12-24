@@ -232,9 +232,37 @@ control_region_fraction_including_tributaries_trigger = {
 	}
 }
 
-# TODO Allow for Roman characters, but only if they are under the empire
 can_create_briton_kingdom_trigger = {
-	is_celtic_culture_trigger = yes
+	can_create_roman_celtic_titles_trigger = yes
+	trigger_if = {
+		limit = { is_independent_ruler = no }
+		any_liege_is_roman_ruler_trigger = no
+	}
+	is_roman_ruler_trigger = no
+}
+
+# For creating Germanic (= Anglo-Saxon, for now) titles
+can_create_germanic_title_culture_trigger = {
+	custom_description = {
+		text = can_create_germanic_title_culture_trigger
+		is_unromanized_germanic_culture_trigger = yes
+	}
+}
+
+top_liege_can_create_germanic_title_culture_trigger = {
+	custom_description = {
+		text = top_liege_can_create_germanic_title_culture_trigger
+		top_liege = { can_create_germanic_title_culture_trigger = yes }
+	}
+}
+
+can_create_germanic_title_trigger = {
+	trigger_if = {
+		limit = { is_independent_ruler = no }
+		top_liege_can_create_germanic_title_culture_trigger = yes
+	}
+	can_create_germanic_title_culture_trigger = yes
+	NOT = { is_roman_ruler_trigger = yes }
 }
 
 germanic_controlled_trigger = {
@@ -242,6 +270,66 @@ germanic_controlled_trigger = {
 		text = germanic_controlled_trigger
 		holder.top_liege = { can_create_germanic_title_culture_trigger = yes }
 	}
+}
+
+is_roman_ruler_trigger = {
+	custom_description = {
+		text = is_roman_ruler_trigger
+		any_held_title = {
+			OR = {
+				has_variable = is_roman_province_title
+				has_variable = roman_empire_title
+			}
+		}
+	}
+}
+
+any_liege_is_roman_ruler_trigger = {
+	custom_description = {
+		text = any_liege_is_roman_ruler_trigger
+		any_liege_or_above = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+can_create_roman_title_culture_trigger = {
+	custom_description = {
+		text = can_create_roman_title_culture_trigger
+		OR = {
+			culture = { has_cultural_pillar = heritage_latin }
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+# In general, must be Imperial culture and either a governor/emperor or the vassal of one
+# An emperor or independent governor that isn't Imperial culture also gets the decision,
+# but they should in general be forced to convert to a Romanized version of their culture or be overthrown
+# Maybe we can have an interesting decision where you can abolish the empire if you decide to remain 
+# unromanized or something
+can_create_roman_title_show_trigger = {
+	can_create_roman_title_culture_trigger = yes
+	OR = {
+		is_roman_ruler_trigger = yes
+		any_liege_or_above = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+top_liege_can_create_roman_title_trigger = {
+	custom_description = {
+		text = top_liege_can_create_roman_title_trigger
+		top_liege = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+can_create_roman_title_trigger = {
+	top_liege_can_create_roman_title_trigger = yes
+	can_create_roman_title_culture_trigger = yes
 }
 
 roman_controlled_trigger = {
