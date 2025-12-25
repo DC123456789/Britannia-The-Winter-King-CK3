@@ -71,46 +71,8 @@
 		# Get the most common Christian faith in the subregion if there are no nearby Christian provinces
 		else = {
 			scope:current_proselytization_county = {
-				random_county_situation_sub_region = {
-					limit = { 
-						any_situation_sub_region_participant_group = { 
-							participant_group_situation = situation:spreading_of_christianity_situation
-						}
-					}
-					BTWK_soc_situation_get_sub_region_province_effect = yes
-				}
-				
-				clear_saved_scope = most_common_faith
-				scope:sub_region_province = {
-					if = {
-						limit = { has_variable_list = sub_region_faith_counters }
-						random_in_list = {
-							variable = sub_region_faith_counters
-							limit = {
-								save_temporary_scope_as = current_faith_counter
-								NOT = {
-									scope:sub_region_province = {
-										any_in_list = {
-											variable = sub_region_faith_counters
-											this.var:num_sub_region_counties > scope:current_faith_counter.var:num_sub_region_counties
-										}
-									}
-								}
-								scope:current_faith_counter.var:num_sub_region_counties > 0
-							}
-							this.var:faith = { save_scope_as = most_common_faith }
-						}
-					}
-				}
-				
-				if = {
-					limit = { exists = scope:most_common_faith }
-					set_variable = { name = soc_proselytization_target_faith value = scope:most_common_faith }
-				}
-				# Default to Catholic if no Christian provinces in the whole region
-				else = {
-					set_variable = { name = soc_proselytization_target_faith value = faith:catholic }
-				}
+				BTWK_soc_situation_get_county_region_largest_christian_faith = yes
+				set_variable = { name = soc_proselytization_target_faith value = scope:region_largest_christian_faith }
 			}
 		}
 	}
@@ -243,6 +205,45 @@ BTWK_soc_situation_calc_subregion_stats_effect = {
 				divide = local_var:num_sub_region_counties
 			}
 		}
+	}
+}
+
+BTWK_soc_situation_get_county_region_largest_christian_faith = {
+	random_county_situation_sub_region = {
+		limit = { 
+			any_situation_sub_region_participant_group = { 
+				participant_group_situation = situation:spreading_of_christianity_situation
+			}
+		}
+		BTWK_soc_situation_get_sub_region_province_effect = yes
+	}
+	
+	clear_saved_scope = region_largest_christian_faith
+	scope:sub_region_province = {
+		if = {
+			limit = { has_variable_list = sub_region_faith_counters }
+			random_in_list = {
+				variable = sub_region_faith_counters
+				limit = {
+					save_temporary_scope_as = current_faith_counter
+					NOT = {
+						scope:sub_region_province = {
+							any_in_list = {
+								variable = sub_region_faith_counters
+								this.var:num_sub_region_counties > scope:current_faith_counter.var:num_sub_region_counties
+							}
+						}
+					}
+					scope:current_faith_counter.var:num_sub_region_counties > 0
+				}
+				this.var:faith = { save_scope_as = region_largest_christian_faith }
+			}
+		}
+	}
+	
+	if = {
+		limit = { NOT = { exists = scope:region_largest_christian_faith } }
+		faith:catholic = { save_scope_as = region_largest_christian_faith }
 	}
 }
 

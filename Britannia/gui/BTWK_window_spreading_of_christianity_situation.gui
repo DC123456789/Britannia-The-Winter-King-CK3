@@ -19,6 +19,10 @@ window = {
 		using = Animation_FadeIn_Quick
 		using = Sound_WindowShow_Standard
 		using = Window_Position_MainTab
+		
+		on_start = "[SetMapMode( 'religions' )]"
+		# Get faith to convert to in the button (largest faith in region? Or capital faith?)
+		on_start = "[GetScriptedGui('BTWK_soc_get_faith_to_convert_to').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 	}
 
 	state = {
@@ -26,6 +30,8 @@ window = {
 		using = Animation_FadeOut_Quick
 		using = Sound_WindowHide_Standard
 		using = Window_Position_MainTab_Hide
+		
+		on_start = "[SetMapMode( 'realms' )]"
 	}
 
 	margin_widget = {
@@ -51,7 +57,7 @@ window = {
 
 						blockoverride "header_text"
 						{
-							text = "[Situation.GetNameNoTooltip]"
+							text = "[Situation.GetName]"
 						}
 
 						blockoverride "button_back"
@@ -503,7 +509,7 @@ window = {
 
 					hbox = {
 						layoutpolicy_horizontal = expanding
-						margin = { 45 0 }
+						margin = { 35 0 }
 
 						background = {
 							texture = "gfx/interface/illustrations/event_scenes/church.dds"
@@ -616,10 +622,11 @@ window = {
 							}
 						}
 
+						expand = {}
+
 						vbox = {
 							layoutpolicy_vertical = expanding
 							spacing = 10
-							margin_left = 35
 
 							expand = {}
 							
@@ -670,14 +677,13 @@ window = {
 
 							button_primary = {
 								size = { 200 60 }
-								text = "SPREADING_OF_CHRISTIANITY_BUTTON_REQUEST_CONVERSION"
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_REQUEST_CONVERSION"								
 								visible = "[And(Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)), GetPlayer.GetFaith.IsUnreformed)]"
+								onclick = "[OpenGameViewData( 'faith_conversion', GetPlayer.MakeScope.Var('BTWK_soc_faith_to_convert_to').Faith.GetID)]"
 							}
 
 							expand = {}
 						}
-
-						expand = {}
 					}
 				}
 				
@@ -863,6 +869,7 @@ types Situation
 					icon = {
 						size = { 40 40 }
 						texture = "[SituationSubRegion.GetCurrentPhase.GetType.GetIcon]"
+						tooltip = "[SituationSubRegion.GetCurrentPhase.GetType.GetName]"
 						parentanchor = center
 					}
 				}
