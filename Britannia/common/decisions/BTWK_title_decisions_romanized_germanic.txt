@@ -1,0 +1,277 @@
+﻿#########################################################################
+# Romanized Germanic Title Decisions										#
+#########################################################################
+
+found_romanized_germanic_kingdom_britannia_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 12
+		duchy = 12
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = found_romanized_germanic_kingdom_britannia_decision_desc
+
+	is_shown = {
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_romanized_germanic
+				has_cultural_pillar = heritage_romanized_sarmatian
+				has_cultural_pillar = heritage_romance
+			}
+			has_variable = ancestral_non_roman_culture
+			this.var:ancestral_non_roman_culture = {
+				OR = {
+					has_cultural_pillar = heritage_romanized_germanic
+					has_cultural_pillar = heritage_romanized_sarmatian
+				}
+				NOT = { has_variable = britannia_cultural_kingdom_title }
+			}
+		}
+		highest_held_title_tier < tier_empire
+		any_held_title = {
+			OR = {
+				tier < root.highest_held_title_tier
+				title_capital_county.title_province = { geographical_region = geographical_region:btwk_world_britannia }
+			}
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		prestige_level >= medium_prestige_level
+		custom_tooltip = {
+			text = holds_no_kingdoms_outside_of_britannia_tt
+			any_held_title = {
+				OR = {
+					tier < tier_kingdom
+					title_capital_county.title_province = { geographical_region = geographical_region:btwk_world_britannia }
+				}
+			}
+		}
+		sub_realm_size >= 6
+		custom_tooltip = {
+			text = primary_title_is_in_britannia_tt
+			primary_title.title_capital_county.title_province = {
+				geographical_region = geographical_region:btwk_world_britannia
+			}
+		}
+		trigger_if = {
+			limit = {
+				primary_title.title_capital_county.title_province = {
+					geographical_region = geographical_region:btwk_world_britannia
+				}
+			}
+			primary_title.title_capital_county.var:default_duchy.var:default_kingdom = {
+				save_temporary_scope_as = capital_briton_kingdom
+			}
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_tt
+				completely_controls = scope:capital_briton_kingdom.title_capital_county
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_tt
+					has_title = scope:capital_briton_kingdom
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_tt
+					scope:capital_briton_kingdom = {
+						any_de_jure_county = { count > 1 }
+						any_de_jure_county = { 
+							percent >= 0.75
+							root = { completely_controls = prev }
+						}
+					}
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_tt
+						scope:capital_briton_kingdom = { any_de_jure_county = { count < 1 } }
+					}
+				}
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = controls_capital_of_capital_briton_kingdom_placeholder_tt
+				always = no
+			}
+			OR = {
+				custom_tooltip = {
+					text = holds_capital_briton_kingdom_placeholder_tt
+					always = no
+				}
+				custom_tooltip = {
+					text = controls_75_percent_of_briton_kingdom_placeholder_tt
+					always = no
+				}
+				AND = {
+					sub_realm_size >= 10
+					custom_tooltip = {
+						text = briton_kingdom_has_no_de_jure_counties_placeholder_tt
+						always = no
+					}
+				}
+			}
+		}
+	}
+
+	effect = {
+		add_prestige = 400
+		add_legitimacy = 50
+		primary_title.title_capital_county.var:default_duchy.var:default_kingdom = { save_scope_as = capital_kingdom }
+		save_scope_as = founder
+		show_as_tooltip = {
+			primary_title.title_capital_county = {
+				if = {
+					limit = { title_province = { geographical_region = geographical_region:btwk_world_britannia } }
+					this.var:default_duchy.var:default_kingdom = {
+						if = {
+							limit = {
+								NOT = { holder ?= scope:founder }
+							}
+							create_title_and_vassal_change = {
+								type = usurped
+								save_scope_as = title_change
+								add_claim_on_loss = yes
+							}
+							change_title_holder = {
+								holder = scope:founder
+								change = scope:title_change
+							}
+							resolve_title_and_vassal_change = scope:title_change
+						}
+						# Variables don't play well with tooltips so we use scopes here
+						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TOOLTIP }
+					}
+				}
+				else = {
+					custom_tooltip = {
+						text = found_romanized_germanic_kingdom_britannia_decision_tt
+					}
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0001 }
+	}
+	
+	cost = {
+		gold = { value = 200 }
+		piety = { value = 100 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+found_romanized_germanic_empire_britannia_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = found_romanized_germanic_empire_britannia_decision_desc
+
+	is_shown = {
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_romanized_germanic
+				has_cultural_pillar = heritage_romanized_sarmatian
+				has_cultural_pillar = heritage_romance
+			}
+			has_variable = ancestral_non_roman_culture
+			this.var:ancestral_non_roman_culture = {
+				OR = {
+					has_cultural_pillar = heritage_romanized_germanic
+					has_cultural_pillar = heritage_romanized_sarmatian
+				}
+			}
+		}
+		highest_held_title_tier < tier_empire
+		NOT = { e_romanized_germanic_britannia.var:romanized_germanic_empire_culture ?= root.var:ancestral_non_roman_culture }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier == tier_kingdom
+		custom_tooltip = {
+			NOT = { exists = title:h_western_roman_empire.holder }
+			text = no_wre_emp_exists_tt
+		}
+		trigger_if = {
+			limit = { exists = title:e_romanized_germanic_britannia.holder }
+			custom_tooltip = {
+				NOT = { exists = title:e_romanized_germanic_britannia.holder }
+				text = no_romanized_germanic_britannia_emp_exists_tt
+			}
+		}
+		prestige_level >= high_prestige_level
+		sub_realm_size >= 280
+		save_temporary_scope_as = founder
+		custom_tooltip = {
+			text = has_created_romanized_germanic_kingdom_britannia_for_culture_tt
+			culture = {
+				has_variable = ancestral_non_roman_culture
+				this.var:ancestral_non_roman_culture = {
+					has_variable = britannia_cultural_kingdom_title
+				}
+			}
+		}
+		completely_controls = title:c_londinium
+		completely_controls = title:c_corinium
+		completely_controls = title:c_lindum
+		completely_controls = title:c_eburacum
+	}
+
+	effect = {
+		add_prestige = 1000
+		add_legitimacy = 100
+		save_scope_as = founder
+		show_as_tooltip = {
+			custom_tooltip = {
+				text = found_romanized_germanic_empire_britannia_decision_tt
+			}
+			custom_tooltip = {
+				text = romanized_germanic_britannia_de_jure_shift_tt
+			}
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0003 }
+	}
+	
+	cost = {
+		gold = { value = 500 }
+		piety = { value = 300 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

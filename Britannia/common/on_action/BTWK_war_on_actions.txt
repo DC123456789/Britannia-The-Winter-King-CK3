@@ -1,0 +1,26 @@
+﻿# On actions for war events, triggered automatically by the game
+
+# called for when a casus belli resolves in one of the following ways.
+# same scopes are available in these events as in the CBs themselves, this just fires for all CBs instead of a specific CB.
+# note that any events/effects fired here WILL NOT show up in the war summary tooltip; they fire at the same time as the war resolution, but are not actually part of the war resolution itself.
+
+on_war_won_attacker = { # As in, won BY attacker. Only one of the two on_actions runs when a war ends.
+	# The war notifications are handled in `effect` instead of `events` due to order of operations.
+	# `effect` fires on THIS tick, `events` fires on the NEXT tick, and the war gets destroyed between this tick and the next.
+	on_actions = {
+		btwk_check_conquest_events
+	}
+}
+
+# Conquest flavour events are primarily triggered by on_war_won_attacker as usually they'll happen as 
+# a result of winning a war
+# We also check them in btwk_quarterly_global_pulse in case it happens outside of winning a war
+btwk_check_conquest_events = {
+	events = {
+		conquest_flavour_anglosaxon.0001 			# e_aengland
+		conquest_flavour_roman.0001 				# e_roman_britannia
+		conquest_flavour_briton.0001 				# e_britannia
+		conquest_flavour_irish.0001 				# e_cymru, Irish versions
+		conquest_flavour_romanized_germanic.0001	# e_romanized_germanic_britannia
+	}
+}

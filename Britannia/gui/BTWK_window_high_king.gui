@@ -1,0 +1,704 @@
+window = {
+	name = "high_king_window"
+	widgetid = "high_king_window"
+	visible = "[GetVariableSystem.Exists('show_high_king_window')]"
+	
+	size = { 1200 750 }
+	layer = middle
+
+	position = { 620 100 }
+	
+	using = Window_Movable
+	using = Window_Background
+	using = Window_Decoration_Spike
+	
+	datacontext = "[GetTitleByKey('e_britannia')]"
+	
+	state = {
+		name = _show
+		using = Animation_FadeIn_Standard
+		using = Sound_WindowShow_Standard
+		on_start = "[GetScriptedGui('BTWK_window_high_king_init').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+	}
+
+	state = {
+		name = _show
+		on_start = "[PdxGuiWidget.StackTop]"
+	}
+	
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Standard
+		using = Sound_WindowHide_Standard
+	}
+	
+	vbox = {
+		using = Window_Margins
+		
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text"
+			{
+				text = "[Title.GetNameNoTooltip]"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[GetVariableSystem.Toggle('show_high_king_window')]"
+			}
+		}
+		
+		background = {
+			texture = "gfx/interface/icons/high_king/high_king_bg.dds"
+			fittype = centercrop
+			alpha = 1.0
+			margin_bottom = -18
+			margin_left = -40
+			margin_right = -40
+			margin_top = -65
+			visible = "[Title.HasHolder]"
+		}
+		
+		background = {
+			texture = "gfx/interface/icons/high_king/high_king_claimant_bg.dds"
+			fittype = centercrop
+			alpha = 1.0
+			margin_bottom = -18
+			margin_left = -40
+			margin_right = -40
+			margin_top = -65
+			visible = "[Not(Title.HasHolder)]"
+		}
+		
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			###LEFT SIDE
+			widget = {
+				name = "left side"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				size = { 550 0 }
+				
+				text_label_center = {
+					text = "CURRENT_HIGH_KING"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					parentanchor = top|hcenter
+					margin_left = 0
+					margin_right = 0
+				}
+				
+				text_label_center = {
+					text = "HIGH_KING_CLAIMANT"
+					visible = "[Not(Title.HasHolder)]"
+					scale = 1.5
+					parentanchor = top|hcenter
+					margin_left = 0
+					margin_right = 0
+				}
+				
+				background = {
+					texture = "gfx/interface/icons/high_king/high_king_bg_left.dds"
+					fittype = centercrop
+					alpha = 0.5
+					
+					margin_bottom = -60
+					margin_left = -5
+					margin_right = -5
+					margin_top = -50
+				}
+				
+				coat_of_arms_icon = {
+					parentanchor = vcenter|hcenter
+					size = { 560 540 }
+					alpha = 0.5
+					coat_of_arms = "[GetTitleByKey('e_britannia').GetTitleCoA.GetTexture('(int32)256','(int32)256')]"
+					coat_of_arms_slot = "[GetTitleByKey('e_britannia').GetTitleCoA.GetSlot('(int32)256','(int32)256')]"
+					coat_of_arms_mask = "gfx/interface/frontend/mask_coa_flag.dds"
+
+					modify_texture = {
+						texture = "gfx/interface/coat_of_arms/coa_overlay.dds"
+						blend_mode = overlay
+						spritetype = corneredTiled
+					}
+				}
+				
+				portrait_body = {
+					name = "high_king_portrait"
+					datacontext = "[Title.GetHolder]"
+					visible = "[Title.HasHolder]"
+					parentanchor = bottom|hcenter
+					scale = 1.70
+					
+					blockoverride "status_icons" {}
+					blockoverride "coa" {}
+					blockoverride "opinion_box" {}
+				}
+				
+				portrait_body = {
+					name = "my_claim_portrait"
+					datacontext = "[GetPlayer]"
+					visible = "[Not(Title.HasHolder)]"
+					parentanchor = bottom|hcenter
+					scale = 1.75
+					
+					blockoverride "status_icons" {}
+					blockoverride "coa" {}
+					blockoverride "opinion_box" {}
+				}
+				
+				button_primary = {
+					#visible = "[...]" #TODO: disable if player is High King
+					enabled = "[Not(Title.HasHolder)]" #TODO
+					#onclick = "[...]" #TODO
+					#tooltip = "[...]" #TODO
+					
+					parentanchor = top|hcenter
+					position = { 0 70 }
+					size = { 150 70 }
+					
+					text_single = {
+						text = "CREATE_TITLE_HK"
+						align = center
+						
+						parentanchor = vcenter|hcenter
+						position = { 0 -5 }
+						fontsize = 20
+					}
+					
+					expand = {}
+				}
+				
+				container = {
+					name = "heir_high_king"
+					datacontext = "[Title.GetHeir]"
+					visible = "[Title.HasHolder]"
+					parentanchor = top|right
+					position = { 0 45 }
+					scale = 1.5
+
+					using = Animation_Character_Window_Refresh
+
+					portrait_head_small = {
+						parentanchor = right
+
+						blockoverride "portrait_transformation"
+						{
+							portrait_scale = { -1 1 }
+							portrait_offset = { 1 0 }
+						}
+					}
+
+					text_single = {
+						parentanchor = top|hcenter
+						position = { 0 85 }
+						scale = 0.8
+						text = "Current [heir|E]"
+					}
+				}
+				
+				text_single = {
+					text = "HIGH_KING_NAME"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					max_width = 350
+					parentanchor = bottom|hcenter
+					margin_bottom = 50
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NAME"
+					visible = "[Not(Title.HasHolder)]"
+					scale = 1.5
+					max_width = 350
+					parentanchor = bottom|hcenter
+					margin_bottom = 50
+				}
+				
+				text_single = {
+					text = "CURRENT_AUTHORITY"
+					visible = "[Title.HasHolder]"
+					scale = 1.5
+					parentanchor = top|left
+					position = { 30 75 }
+				}
+				
+				text_single = {
+					text = "CLAIMANT_SUPPORTER_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 30 65 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_OPPONENT_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 30 100 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRAL_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 30 135 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				#text_single = {
+				#	text = "NOT_HK_CLAIMANT"
+				#	visible = "[...]" #so that you cannot see this if you are not an independent elector
+				#	position = { 0 50 }
+				#	scale = 1.5
+				#	parentanchor = top|hcenter
+				#}
+			}
+			
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+			
+				###RIGHT SIDE
+				widget = {
+					name = "decisions view"
+					# layoutpolicy_horizontal = expanding
+					# layoutpolicy_vertical = expanding
+					size = { 550 233 }
+					
+					text_label_center = {
+						text = "HIGH_KING_DECISIONS"
+						scale = 1.5
+						parentanchor = top|hcenter
+					}
+					
+					hbox = {
+						# layoutpolicy_horizontal = expanding
+						# layoutpolicy_vertical = expanding
+						margin_top = 42
+						# margin_bottom = 70
+						margin_left = -3
+						
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 7
+							
+							button_standard = {
+								size = { 175 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_1"
+										fontsize = 15
+										max_width = 260
+									}
+								}
+							}
+							button_standard = {
+								size = { 175 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_2"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 175 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_3"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 7
+							
+							button_standard = {
+								size = { 180 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_4A"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 180 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_5"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_standard = {
+								size = { 180 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_6"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
+						vbox = {
+							# layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							spacing = 6
+							
+							button_primary = {
+								size = { 180 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_7A"
+										default_format = "#bold;color_green"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+							button_primary = {
+								size = { 180 50 }
+								enabled = no
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									margin_top = -8
+								
+									text_single = {
+										name = "title_name"
+										alwaystransparent = yes
+										text = "BRITANNIA_REFORM_7B"
+										default_format = "#bold;color_porple"
+										max_width = 260
+										align = center
+									}
+								}
+							}
+						}
+					}
+				}
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[Title.HasHolder]"
+					
+					widget = {
+						name = "vassal_kingdom_view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 200 }
+						
+						text_label_center = {
+							text = "HIGH_KING_VASSALS"
+							visible = "[Title.HasHolder]"
+							scale = 1.5
+							parentanchor = top|hcenter
+						}
+						
+						scrollbox = {
+							name = "high_king_vassal_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Title.HasHolder]"
+
+							position = { 0 46 }
+							
+							blockoverride "scrollbox_content" {
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 3
+									flipdirection = yes
+									# ignoreinvisible = yes		# Doesn't work
+									
+									datamodel = "[GetGlobalList('britannia_subject_kings_list')]"
+									
+									item = {											
+										portrait_head_small = {
+											name = "support_king_portrait"
+											datacontext = "[Scope.Char]"
+										}
+									}
+								}
+							}
+                            blockoverride "scrollbox_margins" {
+                                margin_left = -6
+                            }
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
+						}
+					}
+					
+					widget = {
+						name = "independent_kingdom_view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 0 }
+						
+						text_label_center = {
+							text = "HIGH_KING_INDEPENDENT"
+							visible = "[Title.HasHolder]"
+							scale = 1.5
+							parentanchor = top|hcenter
+						}
+						
+						scrollbox = {
+							name = "high_king_independent_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 325 }
+							visible = "[Title.HasHolder]"
+
+							position = { 0 46 }
+							
+							blockoverride "scrollbox_content" {
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 3
+									flipdirection = yes
+									
+									datamodel = "[GetGlobalList('britannia_independent_kings_list')]"
+									
+									item = {											
+										portrait_head_small = {
+											name = "support_king_portrait"
+											datacontext = "[Scope.Char]"
+										}
+									}
+								}
+							}
+                            blockoverride "scrollbox_margins" {
+                                margin_left = -6
+                            }
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
+						}
+					}
+				}
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[Not(Title.HasHolder)]"
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						
+						widget = {
+							name = "supporter_kingdom_view"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 150 }
+							
+							text_label_center = {
+								text = "HIGH_KING_SUPPORTERS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							scrollbox = {
+								name = "high_king_support_list"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								size = { 275 182 }
+								margin = { 5 5 }
+
+								position = { 0 45 }
+								
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_supporters_gridbox"
+										datamodel_wrap = 3
+										flipdirection = yes
+										# ignoreinvisible = yes		# Doesn't work
+										
+										datamodel = "[GetGlobalList('britannia_supporter_kings_list')]"
+										
+										item = {		
+											portrait_head_small = {
+												name = "support_king_portrait"
+												datacontext = "[Scope.Char]"
+											}
+										}
+									}
+								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
+							}
+						}
+						
+						widget = {
+							name = "opponent_kingdom_view"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 275 150 }
+							
+							text_label_center = {
+								text = "HIGH_KING_OPPONENTS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							scrollbox = {
+								name = "high_king_oppose_list"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								size = { 275 182 }
+								margin = { 5 5 }
+
+								position = { 0 45 }
+								
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_opponents_gridbox"
+										datamodel_wrap = 3
+										flipdirection = yes
+										# ignoreinvisible = yes		# Doesn't work
+										
+										datamodel = "[GetGlobalList('britannia_opponent_kings_list')]"
+										
+										item = {		
+											portrait_head_small = {
+												name = "support_king_portrait"
+												datacontext = "[Scope.Char]"
+											}
+										}
+									}
+								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
+							}
+						}
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 550 100 }
+						margin_top = -5
+						
+						widget = {
+							name = "neutral_kingdom_view"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 550 100 }
+							
+							text_label_center = {
+								text = "HIGH_KING_NEUTRALS"
+								scale = 1.5
+								parentanchor = top|hcenter
+							}
+							
+							scrollbox = {
+								name = "high_king_neutrals_list"
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								size = { 550 92 }
+
+								position = { 0 44 }
+								
+								blockoverride "scrollbox_content"
+								{
+									dynamicgridbox = {
+										name = "high_king_neutrals_gridbox"
+										datamodel_wrap = 6
+										flipdirection = yes
+										
+										datamodel = "[GetGlobalList('britannia_neutral_kings_list')]"
+										
+										item = {
+											portrait_head_small = {
+												name = "support_king_portrait"
+												datacontext = "[Scope.Char]"
+											}
+										}
+									}
+								}
+								blockoverride "scrollbox_margins" {
+									margin_left = -6
+								}
+								blockoverride "scrollbox_expand" {
+									expand = {}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

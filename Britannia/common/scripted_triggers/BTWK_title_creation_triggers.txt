@@ -12,9 +12,257 @@ title_has_de_jure_variable_trigger = {
 	}
 }
 
-# TODO Allow for Roman characters, but only if they are under the empire
+# Same as title_has_de_jure_variable_trigger, but is only true for tooltip purposes, not for the actual variales
+# I.e. it only checks if the [flag]_pretend scope is set to the scoped title (and the [flag]_ignore scope is not)
+title_has_de_jure_variable_tooltip_trigger = {
+	scope:$FLAG$_pretend ?= this
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
+# Similar to above, except that it checks if a title has a certain flag/variable set to a certain scope value
+# If the [flag]_pretend scope is set to the scoped title AND the [flag]_pretend_value scope is set to the scope value,
+# then the flag is considered set to the scope value even if it isn't actually - this is used for tooltip purposes
+# On the same lines, if the [flag]_ignore scope is set to the scoped title, then this will always return false
+title_has_de_jure_variable_with_scope_value_trigger = {
+	OR = {
+		this.var:$FLAG$ ?= $FLAG_VALUE$
+		AND = {
+			scope:$FLAG$_pretend ?= this
+			scope:$FLAG$_pretend_value ?= $FLAG_VALUE$
+		}
+	}
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
+# Same as title_has_de_jure_variable_with_scope_value_trigger, but ture only for tooltip purposes
+title_has_de_jure_variable_with_scope_value_tooltip_trigger = {
+	scope:$FLAG$_pretend ?= this
+	scope:$FLAG$_pretend_value ?= $FLAG_VALUE$
+	NOT = {
+		scope:$FLAG$_ignore ?= this
+	}
+}
+
+check_kingdom_region_de_jure_liege_trigger = {
+	has_variable = kingdom_region
+	this.var:kingdom_region.var:kingdom_region_empire ?= $DE_JURE_LIEGE$
+}
+
+# DUCHY is the Anglo-Saxon duchy to check if the capital is in
+is_capital_in_anglo_saxon_duchy_trigger = {
+	title_capital_county = {
+		OR = {
+			AND = {
+				this.var:anglo_saxon_duchy ?= $DUCHY$
+				OR = {
+					NOT = { has_variable = anglo_saxon_duchy_dependency }
+					this.var:anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				}
+			}
+			AND = {
+				this.var:secondary_anglo_saxon_duchy ?= $DUCHY$
+				OR = {
+					NOT = { has_variable = secondary_anglo_saxon_duchy_dependency }
+					this.var:secondary_anglo_saxon_duchy_dependency = { has_variable = title_created_de_jure }
+				}
+			}
+		}
+	}
+}
+
+is_capital_in_roman_duchy_trigger = {
+	title_capital_county = {
+		this.var:roman_duchy ?= $DUCHY$
+	}
+}
+
+# Mostly for the custom tooltip
+control_region_fraction_trigger = {
+	trigger_if = {
+		limit = { is_ai = no }
+		save_temporary_scope_as = current_scope
+		save_temporary_scope_value_as = { 
+			name = percent_required 
+			value = {
+				value = $FRACTION_REQUIRED$
+				multiply = 100
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_total_counties 
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_required_counties 
+			value = {
+				value = scope:region_total_counties
+				multiply = $FRACTION_REQUIRED$
+				ceiling = yes
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_counties
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					limit = { scope:current_scope = { completely_controls = prev } }
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_percent
+			value = {
+				value = scope:region_controlled_counties
+				divide = scope:region_total_counties
+				multiply = 100
+			}
+		}
+		$REGION$ = { save_temporary_scope_as = region_scope }
+		custom_tooltip = {
+			text = control_region_fraction_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+	trigger_if = {		# Avoid having to calculate all the variables unless necessary (does this actually matter?)
+		limit = { is_ai = yes }
+		custom_tooltip = {
+			text = control_region_fraction_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+}
+
+# Mostly for the custom tooltip
+control_region_fraction_including_tributaries_trigger = {
+	trigger_if = {
+		limit = { is_ai = no }
+		save_temporary_scope_as = current_scope
+		save_temporary_scope_value_as = { 
+			name = percent_required 
+			value = {
+				value = $FRACTION_REQUIRED$
+				multiply = 100
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_total_counties 
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_required_counties 
+			value = {
+				value = scope:region_total_counties
+				multiply = $FRACTION_REQUIRED$
+				ceiling = yes
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_counties
+			value = {
+				value = 0
+				every_county_in_region = {
+					region = $REGION$
+					limit = { 
+						OR = {
+							scope:current_scope = { completely_controls = prev }
+							holder.top_liege = { is_tributary_of_suzerain_or_above = scope:current_scope }
+						}
+					}
+					add = 1
+				}
+			}
+		}
+		save_temporary_scope_value_as = { 
+			name = region_controlled_percent
+			value = {
+				value = scope:region_controlled_counties
+				divide = scope:region_total_counties
+				multiply = 100
+			}
+		}
+		$REGION$ = { save_temporary_scope_as = region_scope }
+		custom_tooltip = {
+			text = control_region_fraction_including_tributaries_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				root = { completely_controls = prev }
+			}
+		}
+	}
+	trigger_if = {		# Avoid having to calculate all the variables unless necessary (does this actually matter?)
+		limit = { is_ai = yes }
+		custom_tooltip = {
+			text = control_region_fraction_including_tributaries_trigger_tt
+			any_county_in_region = {
+				percent >= $FRACTION_REQUIRED$
+				region = $REGION$
+				OR = {
+					root = { completely_controls = prev }
+					holder.top_liege = { is_tributary_of_suzerain_or_above = root }
+				}
+			}
+		}
+	}
+}
+
 can_create_briton_kingdom_trigger = {
-	is_celtic_culture_trigger = yes
+	can_create_roman_celtic_titles_trigger = yes
+	trigger_if = {
+		limit = { is_independent_ruler = no }
+		any_liege_is_roman_ruler_trigger = no
+	}
+	is_roman_ruler_trigger = no
+}
+
+# For creating Germanic (= Anglo-Saxon, for now) titles
+can_create_germanic_title_culture_trigger = {
+	custom_description = {
+		text = can_create_germanic_title_culture_trigger
+		is_unromanized_germanic_culture_trigger = yes
+	}
+}
+
+top_liege_can_create_germanic_title_culture_trigger = {
+	custom_description = {
+		text = top_liege_can_create_germanic_title_culture_trigger
+		top_liege = { can_create_germanic_title_culture_trigger = yes }
+	}
+}
+
+can_create_germanic_title_trigger = {
+	trigger_if = {
+		limit = { is_independent_ruler = no }
+		top_liege_can_create_germanic_title_culture_trigger = yes
+	}
+	can_create_germanic_title_culture_trigger = yes
+	NOT = { is_roman_ruler_trigger = yes }
 }
 
 germanic_controlled_trigger = {
@@ -22,6 +270,66 @@ germanic_controlled_trigger = {
 		text = germanic_controlled_trigger
 		holder.top_liege = { can_create_germanic_title_culture_trigger = yes }
 	}
+}
+
+is_roman_ruler_trigger = {
+	custom_description = {
+		text = is_roman_ruler_trigger
+		any_held_title = {
+			OR = {
+				has_variable = is_roman_province_title
+				has_variable = roman_empire_title
+			}
+		}
+	}
+}
+
+any_liege_is_roman_ruler_trigger = {
+	custom_description = {
+		text = any_liege_is_roman_ruler_trigger
+		any_liege_or_above = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+can_create_roman_title_culture_trigger = {
+	custom_description = {
+		text = can_create_roman_title_culture_trigger
+		OR = {
+			culture = { has_cultural_pillar = heritage_latin }
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+# In general, must be Imperial culture and either a governor/emperor or the vassal of one
+# An emperor or independent governor that isn't Imperial culture also gets the decision,
+# but they should in general be forced to convert to a Romanized version of their culture or be overthrown
+# Maybe we can have an interesting decision where you can abolish the empire if you decide to remain 
+# unromanized or something
+can_create_roman_title_show_trigger = {
+	can_create_roman_title_culture_trigger = yes
+	OR = {
+		is_roman_ruler_trigger = yes
+		any_liege_or_above = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+top_liege_can_create_roman_title_trigger = {
+	custom_description = {
+		text = top_liege_can_create_roman_title_trigger
+		top_liege = {
+			is_roman_ruler_trigger = yes
+		}
+	}
+}
+
+can_create_roman_title_trigger = {
+	top_liege_can_create_roman_title_trigger = yes
+	can_create_roman_title_culture_trigger = yes
 }
 
 roman_controlled_trigger = {
@@ -173,5 +481,202 @@ can_destroy_formable_title = {
 				NOT = { this.var:creation_requirement_title_unformed_3 = { has_variable = title_created_de_jure } }
 			}
 		}
+	}
+}
+
+potential_integrate_kingdom_region_trigger = {
+	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	NOT = { scope:kingdom_region_scope = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = scope:new_liege_scope } } }
+	NOT = {
+		AND = {
+			scope:kingdom_region_scope = title:k_ebrauc
+			scope:new_liege_scope = title:e_cymru
+			scope:new_liege_scope.holder.culture = { NOT = { has_cultural_pillar = heritage_goidelic } }
+		}
+	}
+}
+
+can_integrate_kingdom_region_cost_trigger = {
+	prestige_level >= 3
+	piety >= 300
+	gold >= 300
+}
+
+can_integrate_kingdom_region_trigger = {
+	save_temporary_scope_as = scoped_character
+	$KINGDOM_REGION$ = { save_temporary_scope_as = kingdom_region_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	control_region_fraction_trigger = {
+		FRACTION_REQUIRED = 0.80
+		REGION = scope:kingdom_region_scope.var:kingdom_geographical_region_var
+	}
+	custom_description = {
+		text = current_kingdom_region_empire_is_holds_no_territory_in_region_trigger
+		object = scope:kingdom_region_scope
+		scope:kingdom_region_scope.var:kingdom_region_empire = {
+			save_temporary_scope_as = old_liege_title
+			NOT = {
+				any_county_in_region = {
+					region = scope:kingdom_region_scope.var:kingdom_geographical_region_var
+					scope:old_liege_title.holder ?= { completely_controls = prev }
+				}
+			}
+		}
+	}
+}
+
+potential_integrate_duchy_anglo_saxon_trigger = {
+	$DUCHY$ = { save_temporary_scope_as = duchy_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	NOT = { scope:duchy_scope.kingdom = scope:new_liege_scope }
+	OR = {
+		NAND = {
+			scope:duchy_scope = title:d_berkshire
+			scope:new_liege_scope = title:k_mercia
+		}
+		title:d_berkshire = { has_variable = title_created_de_jure }
+	}
+}
+
+can_integrate_duchy_anglo_saxon_cost_trigger = {
+	prestige_level >= 3
+	piety >= 250
+	gold >= 200
+}
+
+can_integrate_duchy_anglo_saxon_trigger = {
+	$DUCHY$ = { save_temporary_scope_as = duchy_scope }
+	$NEW_LIEGE$ = { save_temporary_scope_as = new_liege_scope }
+	custom_description = {
+		text = current_duchy_is_created_de_jure_trigger
+		object = scope:duchy_scope
+		scope:duchy_scope = { has_variable = title_created_de_jure }
+	}
+	NOT = { has_title = scope:duchy_scope.de_jure_liege }
+	custom_description = {
+		text = current_duchy_de_jure_neighbours_new_liege_or_is_capital
+		subject = scope:duchy_scope
+		object = scope:new_liege_scope
+		OR = {
+			scope:duchy_scope = { any_title_to_title_neighboring_duchy = { de_jure_liege = scope:new_liege_scope } }
+			scope:new_liege_scope.title_capital_county.duchy = scope:duchy_scope
+		}
+	}
+	completely_controls = scope:duchy_scope
+	scope:duchy_scope = {
+		integrate_duchy_anglo_saxon_check_controlled_years_trigger = {
+			KINGDOM = scope:new_liege_scope
+		}
+	}
+}
+
+anglo_saxon_kingdom_injector_trigger = {
+	$KINGDOM$ = { save_temporary_scope_as = current_kingdom }
+	trigger_if = {
+		limit = { scope:current_kingdom = title:k_east_anglia }
+		$TRIGGER$ = {
+			KINGDOM = k_east_anglia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_eastseaxe }
+		$TRIGGER$ = {
+			KINGDOM = k_eastseaxe
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_cantia }
+		$TRIGGER$ = {
+			KINGDOM = k_cantia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_sussex }
+		$TRIGGER$ = {
+			KINGDOM = k_sussex
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_wessex }
+		$TRIGGER$ = {
+			KINGDOM = k_wessex
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_mercia }
+		$TRIGGER$ = {
+			KINGDOM = k_mercia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_bernicia }
+		$TRIGGER$ = {
+			KINGDOM = k_bernicia
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_deira }
+		$TRIGGER$ = {
+			KINGDOM = k_deira
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_lindsey }
+		$TRIGGER$ = {
+			KINGDOM = k_lindsey
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:current_kingdom = title:k_northumbria }
+		$TRIGGER$ = {
+			KINGDOM = k_northumbria
+			$OTHER_ARGUMENTS$
+		}
+	}
+	trigger_else = {
+		always = no
+	}
+}
+
+integrate_duchy_anglo_saxon_check_controlled_years_trigger = {
+	anglo_saxon_kingdom_injector_trigger = {
+		KINGDOM = $KINGDOM$
+		TRIGGER = integrate_duchy_anglo_saxon_check_controlled_years_helper_trigger
+		OTHER_ARGUMENTS = "OPERATION = >= VALUE = 40"
+	}
+}
+
+integrate_duchy_anglo_saxon_check_controlled_years_helper_trigger = {
+	save_temporary_scope_value_as = { 
+		name = controlled_years
+		value = {
+			if = {
+				limit = {
+					has_variable = $KINGDOM$_integration_years
+				}
+				value = this.var:$KINGDOM$_integration_years
+			}
+			else = {
+				value = 0
+			}
+		}
+	}
+	custom_description = {
+		text = current_duchy_has_been_controlled_for_40_years_trigger
+		subject = this
+		object = title:$KINGDOM$
+		value = scope:controlled_years
+		has_variable = $KINGDOM$_integration_years
+		this.var:$KINGDOM$_integration_years $OPERATION$ $VALUE$
 	}
 }

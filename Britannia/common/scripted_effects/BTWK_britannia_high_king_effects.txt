@@ -1,0 +1,101 @@
+﻿setup_britannia_high_king_window_lists_effect = {
+	clear_global_variable_list = britannia_subject_kings_list
+	clear_global_variable_list = britannia_independent_kings_list
+	clear_global_variable_list = britannia_supporter_kings_list
+	clear_global_variable_list = britannia_opponent_kings_list
+	clear_global_variable_list = britannia_neutral_kings_list
+
+	every_ruler = {
+		limit = {
+			any_held_title = {
+				OR = {
+					tier = tier_kingdom
+					AND = {
+						tier = tier_duchy
+						PREV = { 
+							is_independent_ruler = yes
+							highest_held_title_tier = tier_duchy
+						}
+					}
+				}
+				target_is_de_jure_liege_or_above = title:e_britannia
+			}
+		}
+		# Sort independent vs. subject kings
+		if = {
+			limit = {
+				OR = {
+					top_liege = { has_title = title:e_britannia }
+					AND = {
+						is_tributary = yes
+						has_subject_contract_group = tributary_britannia_subject_king
+						suzerain = { has_title = title:e_britannia }
+					}
+				}
+			}
+			add_to_global_variable_list = {
+				name = britannia_subject_kings_list
+				target = THIS
+			}
+		}
+		else = {
+			add_to_global_variable_list = {
+				name = britannia_independent_kings_list
+				target = THIS
+			}
+		}
+		# Sort supporter vs. opponent vs. neutral kings
+		if = {
+			limit = {
+				has_variable = HK_britannia_supporter		# Temp
+			}
+			add_to_global_variable_list = {
+				name = britannia_supporter_kings_list
+				target = THIS
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = HK_britannia_opponent		# Temp
+			}
+			add_to_global_variable_list = {
+				name = britannia_opponent_kings_list
+				target = THIS
+			}
+		}
+		else = {
+			add_to_global_variable_list = {
+				name = britannia_neutral_kings_list
+				target = THIS
+			}
+		}
+	}
+	# TODO Should turn these into script values
+	set_global_variable = {
+		name = britannia_supporter_kings_list_size
+		value = {
+			every_in_global_list = {
+				variable = britannia_supporter_kings_list
+				add = 1
+			}
+		}
+	}
+	set_global_variable = {
+		name = britannia_opponent_kings_list_size
+		value = {
+			every_in_global_list = {
+				variable = britannia_opponent_kings_list
+				add = 1
+			}
+		}
+	}
+	set_global_variable = {
+		name = britannia_neutral_kings_list_size
+		value = {
+			every_in_global_list = {
+				variable = britannia_neutral_kings_list
+				add = 1
+			}
+		}
+	}
+}

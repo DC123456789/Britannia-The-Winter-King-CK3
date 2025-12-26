@@ -10,16 +10,38 @@
 religious_decision.0001 = {
 	type = character_event
 	title = religious_decision.0001.t
-	desc = religious_decision.0001.desc
-	theme = faith
-	override_background = {
-		reference = wilderness
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { has_government = landless_adventurer_government }
+				desc = religious_decision.0001.desc_landless
+			}
+			desc = religious_decision.0001.desc
+		}
 	}
+	theme = faith
+	override_background = { reference = fp3_cave }
 	left_portrait = {
+		character = root
+		triggered_animation = {
+			trigger = {
+				NOT = { exists = scope:realm_priest }
+			}
+			animation = personality_zealous
+		}
+		triggered_animation = {
+			trigger = {
+				NOT = { has_trait = cynical }
+			}
+			animation = disbelief
+		}
+		animation = personality_coward
+	}
+	right_portrait = {
+		trigger = { exists = scope:realm_priest }
 		character = scope:realm_priest
 		animation = personality_zealous
 	}
-
 	trigger = {
 		NOT = { has_character_flag = flag_sought_aid_of_spirits }
 	}
@@ -29,8 +51,11 @@ religious_decision.0001 = {
 	}
 
 	immediate = {
-		cp:councillor_court_chaplain = {
-			save_scope_as = realm_priest
+		if = {
+			limit = { exists = cp:councillor_court_chaplain }
+			cp:councillor_court_chaplain = {
+				save_scope_as = realm_priest
+			}
 		}
 	}
 
@@ -139,13 +164,28 @@ religious_decision.0002 = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
+					exists = scope:realm_priest
 					scope:offering = flag:none
 				}
 				desc = religious_decision.0002.desc.start_no_offering
 			}
-			desc = religious_decision.0002.desc.start_offering
+			triggered_desc = {
+				trigger = { scope:offering = flag:none }
+				desc = religious_decision.0002.desc.start_no_offering_alone
+			}
+			triggered_desc = {
+				trigger = { exists = scope:realm_priest }
+				desc = religious_decision.0002.desc.start_offering
+			}
+			desc = religious_decision.0002.desc.start_offering_alone
 		}
-		desc = religious_decision.0002.desc
+		first_valid = {
+			triggered_desc = { 
+				trigger = { exists = scope:realm_priest }
+				desc = religious_decision.0002.desc
+			}
+			desc = religious_decision.0002.desc_alone
+		}
 		first_valid = {
 			triggered_desc = {
 				trigger = {
@@ -157,23 +197,59 @@ religious_decision.0002 = {
 		}
 	}
 	theme = faith
-	override_background = {
-		reference = wilderness
-	}
+	override_background = { reference = fp3_cave }
 	left_portrait = {
+		character = root
+		triggered_animation = {
+			trigger = { scope:outcome = flag:shrewd }
+			animation = personality_rational
+		}
+		triggered_animation = {
+			trigger = { 
+				OR = {
+					scope:outcome = flag:strong
+					scope:outcome = flag:wind_spirit
+					scope:outcome = flag:water_spirit
+					scope:outcome = flag:tree_spirit
+					scope:outcome = flag:bush_spirit
+					scope:outcome = flag:rock_spirit
+				}
+			}
+			animation = ecstasy
+		}
+		triggered_animation = {
+			trigger = { 
+				OR = {
+					scope:outcome = flag:possessed 
+					scope:outcome = flag:impotent
+				}
+			}
+			animation = paranoia
+		}
+		triggered_animation = {
+			trigger = { scope:outcome = flag:ill }
+			animation = sick
+		}
+		triggered_animation = {
+			trigger = { scope:outcome = flag:infirm }
+			animation = personality_irrational
+		}
+		animation = disbelief
+	}
+	right_portrait = {
+		trigger = { exists = scope:realm_priest }
 		character = scope:realm_priest
 		animation = personality_zealous
 	}
 
 	trigger = {
-		exists = scope:realm_priest
-		scope:realm_priest = {
-			is_available_adult = yes
+		trigger_if = {
+			limit = { exists = scope:realm_priest }
+			scope:realm_priest = { is_available_adult = yes }
 		}
 	}
-
+	# Refund the player's money if the ritual fails for some reason.
 	on_trigger_fail = {
-		# Refund the player's money if the ritual fails for some reason.
 		if = {
 			limit = {
 				scope:offering = flag:expensive
@@ -187,76 +263,74 @@ religious_decision.0002 = {
 			add_gold = minor_gold_value
 		}
 	}
-
 	immediate = {
 		# Character cannot take this decision again for 5 years.
 		add_character_flag = {
 			flag = flag_sought_aid_of_spirits
 			years = 5
 		}
-
 		# Determine what the impact of the ritual will be.
-		random_list = {
-			# Positive Effect
-			40 = { # Maximum ~85% chance of a good effect (Expensive offering nullifies no outcome; 60 weight good vs. 10 weight bad)
-				compare_modifier = {
-					value = {
-						value = scope:realm_priest.learning
-						subtract = 10
+		if = {
+			#Realm Priest, don't fail me now
+			limit = { exists = scope:realm_priest }
+			random_list = {
+				# Positive Effect
+				40 = { # Maximum ~85% chance of a good effect (Expensive offering nullifies no outcome; 60 weight good vs. 10 weight bad)
+					compare_modifier = {
+						value = {
+							value = scope:realm_priest.learning
+							subtract = 10
+						}
 					}
-				}
-				modifier = {
-					add = 10
-					scope:realm_priest = { has_trait = lifestyle_mystic }
-				}
-				random_list = {
-					# Permanent Skill Boost
-					10 = {
-						# Minimum chance of ~0%. Maximum chance of ~40% (Miracle Worker RP with 20 Learning and an Expensive Offering)
-						compare_modifier = {
-							value = {
-								value = scope:realm_priest.learning
-								subtract = 10
-							}
-						}
-						modifier = {
-							add = 10
-							scope:realm_priest = { has_trait = lifestyle_mystic }
-						}
-						modifier = {
-							add = 10
-							scope:realm_priest = {
-								has_trait = lifestyle_mystic
-								has_trait_xp = {
-									trait = lifestyle_mystic
-									value >= 50
+					modifier = {
+						add = 10
+						scope:realm_priest = { has_trait = lifestyle_mystic }
+					}
+					random_list = {
+						# Permanent Skill Boost
+						10 = {
+							# Minimum chance of ~0%. Maximum chance of ~40% (Miracle Worker RP with 20 Learning and an Expensive Offering)
+							compare_modifier = {
+								value = {
+									value = scope:realm_priest.learning
+									subtract = 10
 								}
 							}
-						}
-						modifier = {
-							add = 10
-							scope:realm_priest = {
-								has_trait = lifestyle_mystic
-								has_trait_xp = {
-									trait = lifestyle_mystic
-									value >= 100
+							modifier = {
+								add = 10
+								scope:realm_priest = { has_trait = lifestyle_mystic }
+							}
+							modifier = {
+								add = 10
+								scope:realm_priest = {
+									has_trait = lifestyle_mystic
+									has_trait_xp = {
+										trait = lifestyle_mystic
+										value >= 50
+									}
 								}
 							}
-						}
-						modifier = {
-							add = 40
-							scope:offering = flag:expensive
-						}
-						trigger = {
-							NAND = {
-								AND = {
+							modifier = {
+								add = 10
+								scope:realm_priest = {
+									has_trait = lifestyle_mystic
+									has_trait_xp = {
+										trait = lifestyle_mystic
+										value >= 100
+									}
+								}
+							}
+							modifier = {
+								add = 40
+								scope:offering = flag:expensive
+							}
+							trigger = {
+								NAND = {
 									has_trait = shrewd
 									has_trait_rank = {
 										trait = intellect_bad
 										rank > 0
 									}
-								}
-								AND = {
 									has_trait = strong
 									has_trait_rank = {
 										trait = physique_bad
@@ -264,152 +338,366 @@ religious_decision.0002 = {
 									}
 								}
 							}
-						}
-						random_list = {
-							50 = {
-								trigger = {
-									NOR = {
-										has_trait = shrewd
-										has_trait_rank = {
-											trait = intellect_bad
-											rank > 0
+							random_list = {
+								50 = {
+									trigger = {
+										NOR = {
+											has_trait = shrewd
+											has_trait_rank = {
+												trait = intellect_bad
+												rank > 0
+											}
 										}
 									}
+									save_scope_value_as = {
+										name = outcome
+										value = flag:shrewd
+									}
 								}
-								save_scope_value_as = {
-									name = outcome
-									value = flag:shrewd
+								50 = {
+									trigger = {
+										NOR = {
+											has_trait = strong
+											has_trait_rank = {
+												trait = physique_bad
+												rank > 0
+											}
+										}
+									}
+									save_scope_value_as = {
+										name = outcome
+										value = flag:strong
+									}
 								}
 							}
-							50 = {
-								trigger = {
-									NOR = {
-										has_trait = strong
-										has_trait_rank = {
-											trait = physique_bad
-											rank > 0
-										}
+						}
+						# Temporary Skill Boost
+						90 = {
+							random_list = {
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:wind_spirit
 									}
 								}
-								save_scope_value_as = {
-									name = outcome
-									value = flag:strong
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:water_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:bush_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:rock_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:tree_spirit
+									}
 								}
 							}
 						}
 					}
-					# Temporary Skill Boost
-					90 = {
-						random_list = {
-							20 = {
-								save_scope_value_as = {
-									name = outcome
-									value = flag:wind_spirit
-								}
-							}
-							20 = {
-								save_scope_value_as = {
-									name = outcome
-									value = flag:water_spirit
-								}
-							}
-							20 = {
-								save_scope_value_as = {
-									name = outcome
-									value = flag:bush_spirit
-								}
-							}
-							20 = {
-								save_scope_value_as = {
-									name = outcome
-									value = flag:rock_spirit
-								}
-							}
-							20 = {
-								save_scope_value_as = {
-									name = outcome
-									value = flag:tree_spirit
-								}
-							}
-						}
+				}
+				# No Effect
+				40 = {
+					# Offering modifiers only effect the 'None' chance.
+					modifier = { # 0% chance with expensive offering.
+						add = -40
+						scope:offering = flag:expensive
 					}
-				}
-			}
-			# No Effect
-			40 = {
-				# Offering modifiers only effect the 'None' chance.
-				modifier = { # 0% chance with expensive offering.
-					add = -40
-					scope:offering = flag:expensive
-				}
-				modifier = { # 40% chance with standard offering.
-					add = 0
-					scope:offering = flag:traditional
-				}
-				modifier = { # 66% chance with no offering.
-					add = 80
-					scope:offering = flag:none
-					NOT = { has_trait = arrogant }
-				}
+					modifier = { # 40% chance with standard offering.
+						add = 0
+						scope:offering = flag:traditional
+					}
+					modifier = { # 66% chance with no offering.
+						add = 80
+						scope:offering = flag:none
+						NOT = { has_trait = arrogant }
+					}
 
-				# Since the effects of the ritual could be explained through belief alone (placebo effect), a character's skepticism influences if they receive a bonus or not.
-				modifier = { # Cynical characters less likely to believe in the ritual.
-					add = 40
-					has_trait = cynical
+					# Since the effects of the ritual could be explained through belief alone (placebo effect), a character's skepticism influences if they receive a bonus or not.
+					modifier = { # Cynical characters less likely to believe in the ritual.
+						add = 40
+						has_trait = cynical
+					}
+					modifier = { # Zealous characters more likely to believe in the ritual.
+						add = -20
+						has_trait = zealous
+					}
+					save_scope_value_as = {
+						name = outcome
+						value = flag:no_effect
+					}
 				}
-				modifier = { # Zealous characters more likely to believe in the ritual.
-					add = -20
-					has_trait = zealous
-				}
-				save_scope_value_as = {
-					name = outcome
-					value = flag:no_effect
+				# Negative Effect
+				20 = {
+					modifier = {
+						add = 20
+						scope:offering = flag:none
+					}
+					compare_modifier = {
+						value = {
+							value = 10
+							subtract = scope:realm_priest.learning
+							min = -10
+						}
+					}
+					random_list = {
+						25 = {
+							trigger = { NOT = { has_trait = possessed } }
+							modifier = {
+								add = 100
+								scope:offering = flag:expensive
+							}
+							save_scope_value_as = {
+								name = outcome
+								value = flag:possessed
+							}
+						}
+						25 = {
+							trigger = { NOT = { has_trait = impotent } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:impotent
+							}
+						}
+						25 = {
+							trigger = { can_contract_disease_trigger = { DISEASE = ill } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:ill
+							}
+						}
+						25 = {
+							trigger = { NOT = { has_trait = infirm } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:infirm
+							}
+						}
+					}
 				}
 			}
-			# Negative Effect
-			20 = {
-				modifier = {
-					add = 20
-					scope:offering = flag:none
-				}
-				compare_modifier = {
-					value = {
-						value = 10
-						subtract = scope:realm_priest.learning
-						min = -10
+		}
+		#... we're on our own
+		else = {
+			random_list = {
+				# Positive Effect
+				40 = { # Maximum ~85% chance of a good effect (Expensive offering nullifies no outcome; 60 weight good vs. 10 weight bad)
+					compare_modifier = {
+						value = {
+							value = learning
+							subtract = 10
+						}
+					}
+					modifier = {
+						add = 10
+						has_trait = lifestyle_mystic
+					}
+					random_list = {
+						# Permanent Skill Boost
+						10 = {
+							# Minimum chance of ~0%. Maximum chance of ~40% (Miracle Worker RP with 20 Learning and an Expensive Offering)
+							compare_modifier = {
+								value = {
+									value = learning
+									subtract = 10
+								}
+							}
+							modifier = {
+								add = 10
+								has_trait = lifestyle_mystic
+							}
+							modifier = {
+								add = 10
+								has_trait = lifestyle_mystic
+								has_trait_xp = {
+									trait = lifestyle_mystic
+									value >= 50
+								}
+							}
+							modifier = {
+								add = 10
+								has_trait = lifestyle_mystic
+								has_trait_xp = {
+									trait = lifestyle_mystic
+									value >= 100
+								}
+							}
+							modifier = {
+								add = 40
+								scope:offering = flag:expensive
+							}
+							trigger = {
+								NAND = {
+									has_trait = shrewd
+									has_trait_rank = {
+										trait = intellect_bad
+										rank > 0
+									}
+									has_trait = strong
+									has_trait_rank = {
+										trait = physique_bad
+										rank > 0
+									}
+								}
+							}
+							random_list = {
+								50 = {
+									trigger = {
+										NOR = {
+											has_trait = shrewd
+											has_trait_rank = {
+												trait = intellect_bad
+												rank > 0
+											}
+										}
+									}
+									save_scope_value_as = {
+										name = outcome
+										value = flag:shrewd
+									}
+								}
+								50 = {
+									trigger = {
+										NOR = {
+											has_trait = strong
+											has_trait_rank = {
+												trait = physique_bad
+												rank > 0
+											}
+										}
+									}
+									save_scope_value_as = {
+										name = outcome
+										value = flag:strong
+									}
+								}
+							}
+						}
+						# Temporary Skill Boost
+						90 = {
+							random_list = {
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:wind_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:water_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:bush_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:rock_spirit
+									}
+								}
+								20 = {
+									save_scope_value_as = {
+										name = outcome
+										value = flag:tree_spirit
+									}
+								}
+							}
+						}
 					}
 				}
-				random_list = {
-					25 = {
-						trigger = { NOT = { has_trait = possessed } }
-						modifier = {
-							add = 100
-							scope:offering = flag:expensive
-						}
-						save_scope_value_as = {
-							name = outcome
-							value = flag:possessed
+				# No Effect
+				40 = {
+					# Offering modifiers only effect the 'None' chance.
+					modifier = { # 0% chance with expensive offering.
+						add = -40
+						scope:offering = flag:expensive
+					}
+					modifier = { # 40% chance with standard offering.
+						add = 0
+						scope:offering = flag:traditional
+					}
+					modifier = { # 66% chance with no offering.
+						add = 80
+						scope:offering = flag:none
+						NOT = { has_trait = arrogant }
+					}
+
+					# Since the effects of the ritual could be explained through belief alone (placebo effect), a character's skepticism influences if they receive a bonus or not.
+					modifier = { # Cynical characters less likely to believe in the ritual.
+						add = 40
+						has_trait = cynical
+					}
+					modifier = { # Zealous characters more likely to believe in the ritual.
+						add = -20
+						has_trait = zealous
+					}
+					save_scope_value_as = {
+						name = outcome
+						value = flag:no_effect
+					}
+				}
+				# Negative Effect
+				20 = {
+					modifier = {
+						add = 20
+						scope:offering = flag:none
+					}
+					compare_modifier = {
+						value = {
+							value = 10
+							subtract = learning
+							min = -10
 						}
 					}
-					25 = {
-						trigger = { NOT = { has_trait = impotent } }
-						save_scope_value_as = {
-							name = outcome
-							value = flag:impotent
+					random_list = {
+						25 = {
+							trigger = { NOT = { has_trait = possessed } }
+							modifier = {
+								add = 100
+								scope:offering = flag:expensive
+							}
+							save_scope_value_as = {
+								name = outcome
+								value = flag:possessed
+							}
 						}
-					}
-					25 = {
-						trigger = { can_contract_disease_trigger = { DISEASE = ill } }
-						save_scope_value_as = {
-							name = outcome
-							value = flag:ill
+						25 = {
+							trigger = { NOT = { has_trait = impotent } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:impotent
+							}
 						}
-					}
-					25 = {
-						trigger = { NOT = { has_trait = infirm } }
-						save_scope_value_as = {
-							name = outcome
-							value = flag:infirm
+						25 = {
+							trigger = { can_contract_disease_trigger = { DISEASE = ill } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:ill
+							}
+						}
+						25 = {
+							trigger = { NOT = { has_trait = infirm } }
+							save_scope_value_as = {
+								name = outcome
+								value = flag:infirm
+							}
 						}
 					}
 				}
@@ -482,9 +770,9 @@ religious_decision.0002 = {
 		# Apply the actual outcome effects:
 		# Good Outcomes
 		if = {
-			limit = { scope:outcome = flag:shrewd}
+			limit = { scope:outcome = flag:shrewd }
 			if = {
-				limit = { has_trait = dull}
+				limit = { has_trait = dull }
 				remove_trait = dull
 			}
 			else = {
@@ -492,9 +780,9 @@ religious_decision.0002 = {
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:strong}
+			limit = { scope:outcome = flag:strong }
 			if = {
-				limit = { has_trait = weak}
+				limit = { has_trait = weak }
 				remove_trait = weak
 			}
 			else = {
@@ -502,35 +790,35 @@ religious_decision.0002 = {
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:wind_spirit}
+			limit = { scope:outcome = flag:wind_spirit }
 			add_character_modifier = {
 				modifier = wind_spirit_blessing
 				years = 20
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:water_spirit}
+			limit = { scope:outcome = flag:water_spirit }
 			add_character_modifier = {
 				modifier = water_spirit_blessing
 				years = 20
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:tree_spirit}
+			limit = { scope:outcome = flag:tree_spirit }
 			add_character_modifier = {
 				modifier = tree_spirit_blessing
 				years = 20
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:bush_spirit}
+			limit = { scope:outcome = flag:bush_spirit }
 			add_character_modifier = {
 				modifier = bush_spirit_blessing
 				years = 20
 			}
 		}
 		else_if = {
-			limit = { scope:outcome = flag:rock_spirit}
+			limit = { scope:outcome = flag:rock_spirit }
 			add_character_modifier = {
 				modifier = rock_spirit_blessing
 				years = 20
@@ -538,19 +826,19 @@ religious_decision.0002 = {
 		}
 		# Bad Outcomes
 		else_if = {
-			limit = { scope:outcome = flag:possessed}
+			limit = { scope:outcome = flag:possessed }
 			add_trait = possessed_1
 		}
 		else_if = {
-			limit = { scope:outcome = flag:impotent}
+			limit = { scope:outcome = flag:impotent }
 			add_trait = impotent
 		}
 		else_if = {
-			limit = { scope:outcome = flag:ill}
+			limit = { scope:outcome = flag:ill }
 			contract_disease_effect = { DISEASE = ill TREATMENT_EVENT = yes }
 		}
 		else_if = {
-			limit = { scope:outcome = flag:infirm}
+			limit = { scope:outcome = flag:infirm }
 			add_trait = infirm
 		}
 	}
@@ -562,17 +850,6 @@ religious_decision.0002 = {
 # 0101-0120				#
 #########################
 
-scripted_trigger bhakti_foundational_faith_trigger = {
-	trigger_if = {
-		limit = {
-			exists = faith.founder
-			faith.founder = { has_variable = foundational_faith }
-		}
-		faith.founder.var:foundational_faith = $FAITH$
-	}
-	trigger_else = { always = no }
-}
-
 religious_decision.0101 = {
 	type = character_event
 	title = religious_decision.0101.t
@@ -581,27 +858,24 @@ religious_decision.0101 = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					OR = {
-						faith = faith:vaishnavism
-						bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
+					faith = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
 					}
 				}
 				desc = religious_decision.0101.desc.vaishnavism
 			}
 			triggered_desc = {
 				trigger = {
-					OR = {
-						faith = faith:shaivism
-						bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
+					faith = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
 					}
 				}
 				desc = religious_decision.0101.desc.shaivism
 			}
 			triggered_desc = {
 				trigger = {
-					OR = {
-						faith = faith:smartism
-						bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
+					faith = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
 					}
 				}
 				desc = religious_decision.0101.desc.smartism
@@ -622,11 +896,13 @@ religious_decision.0101 = {
 		trigger = {
 			NOR = {
 				# vaishnavism includes this one
-				faith = faith:shaivism
-				faith = faith:smartism
+				faith = {
+					OR = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
+					}
+				}
 				has_character_modifier = bhakti_hinduism_ganga
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
 			}
 		}
 		set_bhakti_effect = { BHAKTI = bhakti_hinduism_ganga }
@@ -636,13 +912,14 @@ religious_decision.0101 = {
 		name = religious_decision.0101.saraswati
 		trigger = {
 			NOR = {
-				faith = faith:vaishnavism
-				faith = faith:shaivism
-				faith = faith:smartism
+				faith = {
+					OR = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
+					}
+				}
 				has_character_modifier = bhakti_hinduism_saraswati
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
 			}
 		}
 		set_bhakti_effect = { BHAKTI = bhakti_hinduism_saraswati }
@@ -652,13 +929,14 @@ religious_decision.0101 = {
 		name = religious_decision.0101.kali
 		trigger = {
 			NOR = {
-				faith = faith:vaishnavism
-				faith = faith:shaivism
-				faith = faith:smartism
+				faith = {
+					OR = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
+					}
+				}
 				has_character_modifier = bhakti_hinduism_kali
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
 			}
 		}
 		set_bhakti_effect = { BHAKTI = bhakti_hinduism_kali }
@@ -668,12 +946,14 @@ religious_decision.0101 = {
 		name = religious_decision.0101.kubera
 		trigger = {
 			NOR = {
-				faith = faith:vaishnavism
-				faith = faith:shaivism
+				faith = {
+					OR = {
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
+						portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
+					}
+				}
 				# smartism includes this one
 				has_character_modifier = bhakti_hinduism_kubera
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
 			}
 		}
 		set_bhakti_effect = { BHAKTI = bhakti_hinduism_kubera }
@@ -683,9 +963,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.lakishmi
 		trigger = {
-			OR = {
-				faith = faith:vaishnavism
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
 			}
 			NOT = { has_character_modifier = bhakti_vaishnavism_lakishmi }
 		}
@@ -695,9 +974,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.jagganath
 		trigger = {
-			OR = {
-				faith = faith:vaishnavism
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
 			}
 			NOT = { has_character_modifier = bhakti_vaishnavism_jagganath }
 		}
@@ -707,9 +985,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.hayagriva
 		trigger = {
-			OR = {
-				faith = faith:vaishnavism
-				bhakti_foundational_faith_trigger = { FAITH = faith:vaishnavism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:vaishnavism }
 			}
 			NOT = { has_character_modifier = bhakti_vaishnavism_hayagriva }
 		}
@@ -720,9 +997,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.parvati
 		trigger = {
-			OR = {
-				faith = faith:shaivism
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
 			}
 			NOT = { has_character_modifier = bhakti_shaivism_parvati }
 		}
@@ -732,9 +1008,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.virabhadra
 		trigger = {
-			OR = {
-				faith = faith:shaivism
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
 			}
 			NOT = { has_character_modifier = bhakti_shaivism_virabhadra }
 		}
@@ -744,9 +1019,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.munishwarar
 		trigger = {
-			OR = {
-				faith = faith:shaivism
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
 			}
 			NOT = { has_character_modifier = bhakti_shaivism_munishwarar }
 		}
@@ -756,9 +1030,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.dakshinamoorthy
 		trigger = {
-			OR = {
-				faith = faith:shaivism
-				bhakti_foundational_faith_trigger = { FAITH = faith:shaivism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:shaivism }
 			}
 			NOT = { has_character_modifier = bhakti_shaivism_dakshinamoorthy }
 		}
@@ -769,9 +1042,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.ganesha
 		trigger = {
-			OR = {
-				faith = faith:smartism
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
 			}
 			NOT = { has_character_modifier = bhakti_smartism_ganesha }
 		}
@@ -781,9 +1053,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.vishnu
 		trigger = {
-			OR = {
-				faith = faith:smartism
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
 			}
 			NOT = { has_character_modifier = bhakti_smartism_vishnu }
 		}
@@ -793,9 +1064,8 @@ religious_decision.0101 = {
 	option = {
 		name = religious_decision.0101.shiva
 		trigger = {
-			OR = {
-				faith = faith:smartism
-				bhakti_foundational_faith_trigger = { FAITH = faith:smartism }
+			faith = {
+				portrait_religious_faith_or_foundational_trigger = { FAITH = faith:smartism }
 			}
 			NOT = { has_character_modifier = bhakti_smartism_shiva }
 		}
@@ -813,7 +1083,6 @@ religious_decision.0101 = {
 	}
 }
 
-# MODIFIED BY BTWK #
 religious_decision.0102 = {
 	type = character_event
 	title = religious_decision.0102.t
@@ -1042,7 +1311,12 @@ religious_decision.0200 = {
 		}
 	}
 	immediate = {
-		current_travel_plan ?= { cancel_travel_plan = yes }
+		current_travel_plan ?= { 
+			if = {
+				limit = { can_cancel = yes }
+				cancel_travel_plan = yes
+			}
+		}
 		remove_decision_cooldown = meditate_in_seclusion_decision
 		remove_variable = meditation_location
 		remove_character_flag = meditation_character_flag
@@ -1052,7 +1326,7 @@ religious_decision.0200 = {
 scripted_trigger religious_decision_0201_can_meditate_in_terrain_trigger = {
 	religious_decision_0201_has_two_meditation_options_trigger = no
 	any_sub_realm_barony = {
-		NOT = { this = root.capital_barony }
+		this != root.capital_barony
 		title_province = {
 			terrain = $TERRAIN$
 		}
@@ -1079,7 +1353,7 @@ scripted_effect save_meditation_option_effect = {
 	add_character_flag = meditation_option_$TERRAIN$
 	random_sub_realm_barony = {
 		limit = {
-			NOT = { this = root.capital_barony }
+			this != root.capital_barony
 			title_province = {
 				terrain = $TERRAIN$
 			}
@@ -1092,6 +1366,9 @@ scripted_effect meditate_at_location_effect = {
 	set_variable = {
 		name = meditation_location
 		value = scope:$TERRAIN$_location
+	}
+	scope:$TERRAIN$_location = { #to show the location name in the difficulty custom tooltip
+		save_scope_as = tooltip_loc
 	}
 	start_travel_plan = {
 		destination = var:meditation_location
@@ -1138,7 +1415,7 @@ religious_decision.0201 = {
 			limit = {
 				religious_decision_0201_has_two_meditation_options_trigger = no
 				any_sub_realm_barony = {
-					NOT = { this = root.capital_barony }
+					this != root.capital_barony
 					title_province = {
 						OR = {
 							terrain = mountains
@@ -1150,7 +1427,7 @@ religious_decision.0201 = {
 			add_character_flag = meditation_option_mountains
 			random_sub_realm_barony = {
 				limit = {
-					NOT = { this = root.capital_barony }
+					this != root.capital_barony
 					title_province = {
 						OR = {
 							terrain = mountains
@@ -1169,7 +1446,7 @@ religious_decision.0201 = {
 			limit = {
 				religious_decision_0201_has_two_meditation_options_trigger = no
 				any_sub_realm_barony = {
-					NOT = { this = root.capital_barony }
+					this != root.capital_barony
 					title_province = {
 						OR = {
 							terrain = forest
@@ -1181,7 +1458,7 @@ religious_decision.0201 = {
 			add_character_flag = meditation_option_forest
 			random_sub_realm_barony = {
 				limit = {
-					NOT = { this = root.capital_barony }
+					this != root.capital_barony
 					title_province = {
 						OR = {
 							terrain = forest
@@ -1229,6 +1506,9 @@ religious_decision.0201 = {
 		add_character_modifier = {
 			modifier = meditating_in_seclusion_modifier
 			days = meditation_duration
+		}
+		scope:capital_location = { #to show the location name in the difficulty custom tooltip
+			save_scope_as = tooltip_loc			
 		}
 		custom_tooltip = religious_decision.0201.difficulty.easy
 		trigger_event = {
@@ -1748,9 +2028,7 @@ religious_decision.0211 = {
 					}
 					25 = {
 						trigger = {
-							any_secret = {
-								count > 0
-							}
+							any_secret = { }
 						}
 						modifier = {
 							add = 75
@@ -1841,22 +2119,22 @@ religious_decision.0211 = {
 			text = religious_decision.0211.a.failure
 		}
 		if = {
-			limit = {has_character_flag = meditation_minor_stress_loss }
+			limit = { has_character_flag = meditation_minor_stress_loss }
 			add_stress = minor_stress_loss
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_medium_stress_loss }
+			limit = { has_character_flag = meditation_medium_stress_loss }
 			add_stress = medium_stress_loss
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_major_stress_loss }
+			limit = { has_character_flag = meditation_major_stress_loss }
 			add_stress = major_stress_loss
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_reflection }
+			limit = { has_character_flag = meditation_reflection }
 			random_list = {
 				1 = {
 					trigger = {	has_trait = gluttonous }
@@ -1902,37 +2180,37 @@ religious_decision.0211 = {
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_fugue }
+			limit = { has_character_flag = meditation_fugue }
 			add_learning_skill = 2
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_epiphany }
+			limit = { has_character_flag = meditation_epiphany }
 			add_learning_skill = 1
 			improve_meditation_skill = yes
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_impatient }
+			limit = { has_character_flag = meditation_impatient }
 			add_stress = minor_stress_gain
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_secret }
+			limit = { has_character_flag = meditation_secret }
 			add_stress = minor_stress_gain
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_hungry }
+			limit = { has_character_flag = meditation_hungry }
 			add_stress = minor_stress_gain
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_thirsty }
+			limit = { has_character_flag = meditation_thirsty }
 			add_stress = minor_stress_gain
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_headache }
+			limit = { has_character_flag = meditation_headache }
 			add_stress = minor_stress_gain
 		}
 		else_if = {
-			limit = {has_character_flag = meditation_distraction }
+			limit = { has_character_flag = meditation_distraction }
 			add_stress = minor_stress_gain
 		}
 	}
@@ -2105,8 +2383,7 @@ religious_decision.0311 = {
 
 	# Faiths that can raise a runestone need to have this character saved as a variable on their successor.
 	trigger = {
-		exists = player_heir
-		player_heir = {
+		player_heir ?= {
 			is_close_family_of = root
 			is_alive = yes
 		}
@@ -2129,12 +2406,13 @@ religious_decision.0311 = {
 #New holder of the county with a runestone
 religious_decision.0312 = {
 	hidden = yes
+	orphan = yes
 
 	trigger = {
 		scope:title = {
 			exists = var:ancestor_to_bury
 		}
-		NOT = { dynasty = scope:previous_holder.dynasty } #We only have to change something if the new holder is of a different dynasty
+		dynasty != scope:previous_holder.dynasty #We only have to change something if the new holder is of a different dynasty
 		# Use expanded version if we have FP1.
 		has_fp1_dlc_trigger = no
 	}
@@ -2201,7 +2479,12 @@ religious_decision.0401 = {
 	}
 	theme = faith
 	override_background = {
+		trigger = { is_landless_adventurer = no }
 		reference = corridor_night
+	}
+	override_background = {
+		trigger = { has_government = landless_adventurer_government }
+		reference = bp1_bonfire
 	}
 	left_portrait = root
 
@@ -2320,6 +2603,20 @@ religious_decision.0501 = {
 
 	option = {
 		name = religious_decision.0501.a
+		trigger = {
+			OR = {
+				NOT = { exists = scope:bwow_chosen_people }
+				scope:bwow_chosen_people = no
+			}
+			OR = {
+				NOT = { exists = scope:bwow_esotericism }
+				scope:bwow_esotericism = no
+			}
+			OR = {
+				NOT = { exists = scope:bwow_fundementalist }
+				scope:bwow_fundementalist = no
+			}
+		}
 		root.faith = { remove_doctrine = unreformed_faith_doctrine }
 		custom_description_no_bullet = {
 			text = can_never_reform_kuzarism_tt
@@ -2362,17 +2659,14 @@ religious_decision.0501 = {
 
 	option = {
 		name = religious_decision.0501.d
-		ai_chance = {
-			base = 100
-		}
-		stress_impact = {
-			zealous = minor_stress_impact_loss
+		trigger = {
+			scope:bwow_chosen_people ?= yes
 		}
 		root.faith = { break_with_old_ways_become_chosen_people = yes }
 		every_vassal = {
 			custom = religious_decision.0501.diff_culture.tt
 			limit = {
-				NOT = { culture = root.culture }
+				culture != root.culture
 			}
 			add_opinion = {
 				target = root
@@ -2383,7 +2677,7 @@ religious_decision.0501 = {
 		hidden_effect = {
 			every_ruler = {
 				limit = {
-					NOT = { this = root }
+					this != root
 					OR = {
 						is_vassal_of = root
 						has_faith = faith:kabarism
@@ -2392,15 +2686,18 @@ religious_decision.0501 = {
 				trigger_event = religious_decision.0502
 			}
 		}
-	}
-
-	option = {
-		name = religious_decision.0501.b
 		ai_chance = {
 			base = 100
 		}
 		stress_impact = {
 			zealous = minor_stress_impact_loss
+		}
+	}
+
+	option = {
+		name = religious_decision.0501.b
+		trigger = {
+			scope:bwow_esotericism ?= yes
 		}
 		root.faith = { break_with_old_ways_become_righteous = yes }
 		every_vassal = {
@@ -2417,7 +2714,7 @@ religious_decision.0501 = {
 		hidden_effect = {
 			every_ruler = {
 				limit = {
-					NOT = { this = root }
+					this != root
 					OR = {
 						is_vassal_of = root
 						has_faith = faith:kabarism
@@ -2426,13 +2723,18 @@ religious_decision.0501 = {
 				trigger_event = religious_decision.0502
 			}
 		}
+		ai_chance = {
+			base = 100
+		}
+		stress_impact = {
+			zealous = minor_stress_impact_loss
+		}
 	}
 
 	option = {
 		name = religious_decision.0501.c
-		stress_impact = {
-			zealous = major_stress_impact_loss
-			gregarious = minor_stress_impact_gain
+		trigger = {
+			scope:bwow_fundementalist ?= yes
 		}
 		root.faith = { break_with_old_ways_become_fundamentalist = yes }
 		every_vassal = {
@@ -2460,7 +2762,7 @@ religious_decision.0501 = {
 		hidden_effect = {
 			every_ruler = {
 				limit = {
-					NOT = { this = root }
+					this != root
 					OR = {
 						is_vassal_of = root
 						has_faith = faith:kabarism
@@ -2468,6 +2770,10 @@ religious_decision.0501 = {
 				}
 				trigger_event = religious_decision.0502
 			}
+		}
+		stress_impact = {
+			zealous = major_stress_impact_loss
+			gregarious = minor_stress_impact_gain
 		}
 	}
 }
@@ -2601,7 +2907,7 @@ religious_decision.0503 = {
 	option = { # Ah heck no
 		trigger = {
 			NOT = { root.faith.religion = religion:judaism_religion }
-			NOT = { this = scope:hebrew_language_adopter_scope }
+			this != scope:hebrew_language_adopter_scope
 			exists = scope:target_other_culture
 		}
 		name = religious_decision.0503.b
@@ -2741,6 +3047,12 @@ religious_decision.0602 = {
 
 		# Convert to scope:old_caliph's faith.
 		set_character_faith_with_conversion = scope:old_caliph.faith
+		if = {
+			limit = { 
+				scope:old_caliph.faith = { has_doctrine = doctrine_monotheist }
+			}
+			custom_description_no_bullet = { text = mandala_monotheist_warning_tt }
+		}
 		# Make a note that a major character chose to convert rather than toe the line.
 		scope:founder = {
 			if = {
@@ -2839,7 +3151,7 @@ religious_decision.0603 = {
 	option = {
 		name = religious_decision.0603.b
 		trigger = {
-			NOT = { this = scope:old_caliph }
+			this != scope:old_caliph
 			religion = religion:islam_religion
 		}
 

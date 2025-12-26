@@ -2,36 +2,78 @@
 
 ## CHARACTER MODIFIERS ##
   # STORY 
-    story_health_bonus_small_modifier:0 "Minor Health Bonus"
-    story_health_bonus_medium_modifier:0 "Medium Health Bonus"
-    story_health_bonus_large_modifier:0 "Large Health Bonus"
+    story_health_bonus_small_modifier: "Minor Health Bonus"
+    story_health_bonus_medium_modifier: "Medium Health Bonus"
+    story_health_bonus_large_modifier: "Large Health Bonus"
 
-    story_death_oath:0 "Oathbound to Mordred"
-    story_death_oath_desc:0 "This person has sworn an oath to protect Prince Mordred of Dumnonia with their life."
+    story_death_oath: "Oathbound to Mordred"
+    story_death_oath_desc: "This person has sworn an oath to protect Prince Mordred of Dumnonia with their life."
 
-    approved_by_high_king:0 "Approved by the High King" 
-    approved_by_high_king_desc:0 "This character has proven themself to their High King, and in turn gained their favour."
+    approved_by_high_king: "Approved by the High King" 
+    approved_by_high_king_desc: "This character has proven themself to their High King, and in turn gained their favour."
 
   # FRONTIER
-    built_offas_dyke_character_modifier:0 "Established a New Frontier"
-    built_offas_dyke_character_modifier_desc:0 "This ruler has established a new frontier to fend off attacks from West Wales."
+    built_offas_dyke_character_modifier: "Established a New Frontier"
+    built_offas_dyke_character_modifier_desc: "This ruler has established a new frontier to fend off attacks from West Wales."
 
-    restored_hadrians_wall_major_character_modifier:0 "Restored Hadrian's Wall"
-    restored_hadrians_wall_major_character_modifier_desc:0 "This character may lay claim to bringing about the restoration of Hadrian's Wall to its former glory."
+    restored_hadrians_wall_major_character_modifier: "Restored Hadrian's Wall"
+    restored_hadrians_wall_major_character_modifier_desc: "This character may lay claim to bringing about the restoration of Hadrian's Wall to its former glory."
 
-    restored_hadrians_wall_minor_character_modifier:0 "Restored Hadrian's Wall (Contributor)"
-    restored_hadrians_wall_minor_character_modifier_desc:0 "This character has contributed to the restoration of Hadrian's Wall."
+    restored_hadrians_wall_minor_character_modifier: "Restored Hadrian's Wall (Contributor)"
+    restored_hadrians_wall_minor_character_modifier_desc: "This character has contributed to the restoration of Hadrian's Wall."
 
-    destroyed_hadrians_wall_character_modifier:0 "Destroyed Hadrian's Wall"
-    destroyed_hadrians_wall_character_modifier_desc:0 "For better or for worse, this character is responsible for the final ruination of Hadrian's Wall. "
+    destroyed_hadrians_wall_character_modifier: "Destroyed Hadrian's Wall"
+    destroyed_hadrians_wall_character_modifier_desc: "For better or for worse, this character is responsible for the final ruination of Hadrian's Wall. "
+ 
+  # TRIBAL FAME
+    tribal_fame_positive: "Respected Ruler"
+    tribal_fame_positive_desc: "This character has a positive amount of [tribal_respect|E], granting them various bonuses. This amount is largely dependent on [prestige|E], [realm_size|E] and fighting skills. \nCurrent Tribal Fame: [SCOPE.sCharacter('current_character').MakeScope.ScriptValue('tribal_fame_value')]\n"
+    tribal_fame_negative: "Disrespected Ruler"
+    tribal_fame_negative_desc: "This character has a negative amount of [tribal_respect|E], granting them various bonuses. This amount is largely dependent on [prestige|E], [realm_size|E] and fighting skills. \nCurrent Tribal Fame: [SCOPE.sCharacter('current_character').MakeScope.ScriptValue('tribal_fame_value')]"
+    TRIBAL_FAME_VALUE_SCALE_DESC: "\t#weak Increase per 1 [tribal_respect|E] (#V -40#! to #V 40#!)"
 
 ## COUNTY MODIFIERS ##
   # STORY
-    story_recently_hosted_high_council:0 "Recently Held High Council"
+    story_recently_hosted_high_council: "Recently Held High Council"
 
   # FRONTIER 
-    destroyed_hadrians_wall_county_modifier:0 "Repurposed Materials from Hadrian's Wall"
+    destroyed_hadrians_wall_county_modifier: "Repurposed Materials from Hadrian's Wall"
 
   # PLAGUE OF JUSTINIAN: prefix = poj
  
   # LATE ANTIQUITY LITTLE ICE AGE: prefix = lalia
+  
+  # LAETI/FOEDERATI MODIFIERS
+    laeti_settlement: "Foederati Settlement"  #Named Foederati until Laeti are implemented
+    laeti_settlement_desc: "This province is home to [foederati|E], resulting in a higher number of local warriors."
+    foederati_employment_costs_1: "Foederati Employment Costs (1)"
+    foederati_employment_costs_1_desc: "PLACEHOLDER"
+    foederati_employment_costs_2: "Foederati Employment Costs (2)"
+    foederati_employment_costs_2_desc: "PLACEHOLDER"
+    foederati_employment_costs_3: "Foederati Employment Costs (3)"
+    foederati_employment_costs_4_desc: "PLACEHOLDER"
+    foederati_employment_costs_4: "Foederati Employment Costs (4)"
+    foederati_employment_costs_4_desc: "PLACEHOLDER"
+    foederati_employment_costs_5: "Foederati Employment Costs (5)"
+    foederati_employment_costs_5_desc: "PLACEHOLDER"
+ 
+  # SPREADING OF CHRISTIANITY SITUATION
+    BTWK_spreading_of_christianity_proselytization_modifier: "Missionary Activity"
+    BTWK_spreading_of_christianity_proselytization_modifier_desc_loc: "Missionaries are actively spreading the [GetReligionByKey('christianity_religion').GetAdjectiveNoTooltip] faith in this province as part of the greater [spreading_of_christianity|E] [situation|E].$BTWK_spreading_of_christianity_proselytization_modifier_desc_loc_2$"
+    BTWK_spreading_of_christianity_proselytization_modifier_desc_loc_2: "\n\nCurrent Proselytization Progress: #high [SCOPE.sTitle('current_proselytization_county').MakeScope.Var('soc_proselytization_progress').GetValue|2]#! (#high [SCOPE.sTitle('current_proselytization_county').MakeScope.ScriptValue('soc_proselytization_monthly_progress_value')|=2]#!)/100[SCOPE.sTitle('current_proselytization_county').Custom('spreading_of_christianity_county_conversion_time_loc')]\n\n#bold Progress Change Breakdown:#!\n[SCOPE.sTitle('current_proselytization_county').MakeScope.GetScriptValueDesc('soc_proselytization_monthly_progress_value')]"
+    BTWK_spreading_of_christianity_proselytization_modifier_desc_loc_conversion_time_years: "\nAt the current rate, [ROOT.Title.GetNameNoTierNoTooltip] will convert to [ROOT.Var('soc_proselytization_target_faith').Faith.GetName] in around #high [ROOT.Var('soc_proselytization_years_remaining').GetValue|1]#! years."
+    BTWK_spreading_of_christianity_proselytization_modifier_desc_loc_conversion_time_months: "\nAt the current rate, [ROOT.Title.GetNameNoTierNoTooltip] will convert to [ROOT.Var('soc_proselytization_target_faith').Faith.GetName] in around #high [ROOT.Var('soc_proselytization_months_remaining').GetValue|0]#! months."
+    BTWK_spreading_of_christianity_proselytization_modifier_desc_loc_will_not_convert: "\nAt the current rate, [ROOT.Title.GetNameNoTierNoTooltip] will not be converted."
+    PROSELYTIZATION_PROGRESS_PHASE_0: "Current Phase ($spreading_of_christianity_phase_0$)"
+    PROSELYTIZATION_PROGRESS_PHASE_1: "Current Phase ($spreading_of_christianity_phase_1$)"
+    PROSELYTIZATION_PROGRESS_PHASE_2: "Current Phase ($spreading_of_christianity_phase_2$)"
+    PROSELYTIZATION_PROGRESS_PHASE_3: "Current Phase ($spreading_of_christianity_phase_3$)"
+    PROSELYTIZATION_PROGRESS_PHASE_4: "Current Phase ($spreading_of_christianity_phase_4$)"
+    PROSELYTIZATION_PROGRESS_HOLDER_CHRISTIAN: "[holder|E] is [GetReligionByKey('christianity_religion').GetAdjectiveNoTooltip]"
+    PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN: "[top_liege|E] is [GetReligionByKey('christianity_religion').GetAdjectiveNoTooltip]"
+    PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY: "Neighbouring [county|E] is [GetReligionByKey('christianity_religion').GetAdjectiveNoTooltip]"
+    PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH: "Is [organized|E] faith"
+    PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_HOLDER: "Is [organized|E] faith under [holder|E] of same [religion|E]"
+    PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_TOP_LIEGE: "Is [organized|E] faith under [top_liege|E] of same [religion|E]"
+    PROSELYTIZATION_PROGRESS_HOLDER_ZEALOUS_NON_CHRISTIAN: "[holder|E] is [zealous|E] and not [GetReligionByKey('christianity_religion').GetAdjectiveNoTooltip]"
+    PROSELYTIZATION_PROGRESS_TERRAIN: "Terrain"     # TODO Make more specific

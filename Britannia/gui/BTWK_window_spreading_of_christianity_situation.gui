@@ -1,0 +1,1113 @@
+﻿######################################################
+##################### SITUATION ######################
+######################################################
+window = {
+	name = "BTWK_window_spreading_of_christianity_situation"
+	widgetid = "BTWK_window_spreading_of_christianity_situation"
+	datacontext = "[SituationWindow.GetSituation]"
+	datacontext = "[GetVariableSystem]"
+	datacontext = "[GetPlayer]"
+	parentanchor = top|right
+	layer = windows_layer
+	movable = no
+	allow_outside = yes
+
+	using = Window_Size_MainTab
+
+	state = {
+		name = _show
+		using = Animation_FadeIn_Quick
+		using = Sound_WindowShow_Standard
+		using = Window_Position_MainTab
+		
+		on_start = "[SetMapMode( 'religions' )]"
+		# Get faith to convert to in the button (largest faith in region? Or capital faith?)
+		on_start = "[GetScriptedGui('BTWK_soc_get_faith_to_convert_to').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		using = Sound_WindowHide_Standard
+		using = Window_Position_MainTab_Hide
+		
+		on_start = "[SetMapMode( 'realms' )]"
+	}
+
+	margin_widget = {
+		size = { 100% 100% }
+		margin = { 0 26 }
+		margin_right = 13
+
+		widget = {
+			size = { 100% 100% }
+
+			vbox = {
+				using = Window_Margins
+
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = expanding
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 6
+
+					header_pattern = {
+						layoutpolicy_horizontal = expanding
+
+						blockoverride "header_text"
+						{
+							text = "[Situation.GetName]"
+						}
+
+						blockoverride "button_back"
+						{
+							onclick = "[OpenGameView( 'situations' )]"
+						}
+
+						blockoverride "button_close"
+						{
+							onclick = "[SituationWindow.Close]"
+						}
+					}
+				}
+
+				scrollbox = {
+					name = "sub_region_scrollbox"
+
+					# visible = "[Situation.HasMultipleSubRegions]"
+
+					using = Animation_Tab_Switch
+
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					min_height = 185
+					max_height = 185
+
+					blockoverride "scrollbox_content"
+					{
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						vbox = {
+							name = "sub_regions"
+							layoutpolicy_horizontal = expanding
+							spacing = 2
+
+							datamodel = "[Situation.GetSubRegions]"
+
+							item = {
+								button_situation_subregion = { }
+							}
+						}
+
+						blockoverride "scrollbox_expand" {
+							expand = {}
+						}
+					}
+				}
+
+
+				vbox = {
+					name = "current_sub_region"
+					margin_top = 2
+					layoutpolicy_horizontal = expanding
+
+					datacontext = "[SituationWindow.GetSelectedSubRegion]"
+					datacontext = "[SituationSubRegion.GetCurrentPhase]"
+
+					visible = "[SituationSubRegion.IsValid]"
+
+					text_label_center = {
+						layoutpolicy_horizontal = expanding
+						margin = { 10 5 }
+						using = Background_Area_Dark
+						visible = "[Situation.HasMultipleSubRegions]"
+
+						text = "[SituationSubRegion.GetNameNoTooltip]"
+						using = Font_Size_Medium
+						align = nobaseline
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						min_height = 75
+
+						margin = { 15 15 }
+
+						datacontext = "[SituationSubRegion.GetCharacterParticipantGroup( GetPlayer )]"
+
+						background = {
+							using = Background_Area
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+
+							text_multi = {
+								visible = "[Not( SituationParticipantGroup.IsValid )]"
+								layoutpolicy_horizontal = expanding
+
+								text = "SITUATION_WINDOW_NO_REGION_PARTICIPANT_GROUP"
+								default_format = "#low"
+								align = nobaseline
+							}
+
+							icon = {
+								visible = "[SituationParticipantGroup.IsValid]"
+
+								size = { 40 40 }
+								texture = "[SituationParticipantGroup.GetType.GetIcon]"
+
+								background = {
+									texture = "gfx/interface/buttons/button_lifestyles_base.dds"
+									margin = { 5 5 }
+								}
+							}
+
+							vbox = {
+								visible = "[SituationParticipantGroup.IsValid]"
+
+								margin_left = 10
+								text_single = {
+									layoutpolicy_horizontal = expanding
+									text = "[SituationParticipantGroup.GetName]"
+									align = nobaseline
+								}
+
+								text_single = {
+									layoutpolicy_horizontal = expanding
+
+									text = "[SelectLocalization( Situation.HasMultipleSubRegions, 'SITUATION_WINDOW_YOUR_PARTICIPANT_GROUP_MULTI_SUBREGION', 'SITUATION_WINDOW_YOUR_PARTICIPANT_GROUP' ) ]"
+
+									align = nobaseline
+									default_format = "#Weak"
+								}
+							}
+
+							expand = {}
+
+							button_standard_small = {
+								onclick = "[SituationWindow.AccessParticipantCharacterList.Toggle]"
+								text = "SITUATION_WINDOW_VIEW_PARTICIPANT_GROUPS"
+							}
+						}
+					}
+
+					### LOCATION CURRENT PHASE & DETAILS ###
+					vbox = {
+						background = {
+							texture = "[SituationSubRegion.GetCurrentPhase.GetType.GetIllustration]"
+							fittype = topcrop
+							using = Mask_Rough_Edges
+							alpha = 0.15
+						}
+						
+						hbox = {
+							margin = { 15 10 }
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							
+							background = { 
+								using = Background_Area_Border_Solid
+								using = Mask_Rough_Edges
+							}
+							
+							alpha = 0.75
+							
+							vbox = {
+								layoutpolicy_vertical = expanding
+								alpha = 1.33
+
+								text_single = {
+									margin_bottom = 4
+
+									text = "[SituationSubRegion.GetName]"
+									using = Font_Size_Medium
+									# align = nobaseline
+									# default_format = "color_white"
+								}
+									
+							}
+						}
+					
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 15 }
+							spacing = 5
+
+							datamodel = "[Situation.GetPhases]"
+
+							item = {
+								vbox = {
+									margin = { 3 10 }
+									background = { 
+										using = Background_Area_Border_Solid
+										using = Background_Frame_Gold
+									}
+									
+									text_single = {
+										text = "[SituationPhaseType.GetName]"
+										align = nobaseline
+										visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+									}
+									
+									text_single = {
+										text = "[SituationPhaseType.GetName]"
+										align = nobaseline
+										default_format = "#bold;clickable"
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+									}
+									
+									hbox = {
+										margin_top = 2
+										margin_left = -1
+										margin_right = 4
+										
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSituation.GetType.GetPhaseType('spreading_of_christianity_phase_0').Self)]"
+									
+										icon = {
+											name = "faith_icon"
+											size = { 25 25 }
+											texture = "[GetFaithByKey('catholic').GetIcon]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_0_REQUIREMENTS"
+											align = nobaseline
+											visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_0_REQUIREMENTS"
+											align = nobaseline
+											default_format = "#bold;clickable"
+											visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+										}
+									}
+									
+									hbox = {
+										margin_top = 2
+										margin_left = -1
+										margin_right = 4	
+										
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSituation.GetType.GetPhaseType('spreading_of_christianity_phase_1').Self)]"
+									
+										icon = {
+											name = "faith_icon"
+											size = { 25 25 }
+											texture = "[GetFaithByKey('catholic').GetIcon]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_1_REQUIREMENTS"
+											align = nobaseline
+											visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_1_REQUIREMENTS"
+											align = nobaseline
+											default_format = "#bold;clickable"
+											visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+										}
+									}
+									
+									hbox = {
+										margin_top = 2
+										margin_left = -1
+										margin_right = 4	
+										
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSituation.GetType.GetPhaseType('spreading_of_christianity_phase_2').Self)]"
+									
+										icon = {
+											name = "faith_icon"
+											size = { 25 25 }
+											texture = "[GetFaithByKey('catholic').GetIcon]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_2_REQUIREMENTS"
+											align = nobaseline
+											visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_2_REQUIREMENTS"
+											align = nobaseline
+											default_format = "#bold;clickable"
+											visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+										}
+									}
+									
+									hbox = {
+										margin_top = 2
+										margin_left = -1
+										margin_right = 4	
+										
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSituation.GetType.GetPhaseType('spreading_of_christianity_phase_3').Self)]"
+									
+										icon = {
+											name = "faith_icon"
+											size = { 25 25 }
+											texture = "[GetFaithByKey('catholic').GetIcon]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_3_REQUIREMENTS"
+											align = nobaseline
+											visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_3_REQUIREMENTS"
+											align = nobaseline
+											default_format = "#bold;clickable"
+											visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+										}
+									}
+									
+									hbox = {
+										margin_top = 2
+										margin_left = -1
+										margin_right = 4	
+										
+										visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSituation.GetType.GetPhaseType('spreading_of_christianity_phase_4').Self)]"
+									
+										icon = {
+											name = "faith_icon"
+											size = { 25 25 }
+											texture = "[GetFaithByKey('catholic').GetIcon]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_4_REQUIREMENTS"
+											align = nobaseline
+											visible = "[Not(ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self))]"
+										}
+										
+										text_single = {
+											text = "SPREADING_OF_CHRISTIANITY_PHASE_4_REQUIREMENTS"
+											align = nobaseline
+											default_format = "#bold;clickable"
+											visible = "[ObjectsEqual(SituationPhaseType.Self, SituationWindow.GetSelectedSubRegion.GetCurrentPhase.GetType.Self)]"
+										}
+									}
+								}
+							}
+						}
+
+						### LOCATION INFO ###
+						hbox = {
+							margin = { 15 10 }
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							
+							vbox = {
+								layoutpolicy_vertical = expanding
+								
+								text_multi = {
+									layoutpolicy_horizontal = expanding
+									max_width = 350
+									min_width = 350
+
+									text = "SPREADING_OF_CHRISTIANITY_SITUATION_SUBREGION_CURRENT_PHASE_DESC"
+									align = nobaseline
+								}
+								
+								text_single = {
+									layoutpolicy_horizontal = expanding
+									max_width = 350
+									min_width = 350
+
+									text = "SPREADING_OF_CHRISTIANITY_SITUATION_SUBREGION_CURRENT_SPREAD"
+									align = nobaseline
+								}
+
+							}
+
+							expand = {}
+
+							### LOCATION EFFECTS ###
+							vbox = {
+								name = "situations_header"
+								layoutpolicy_vertical = expanding
+								margin_right = 20
+
+								text_single = {
+									margin_bottom = 5
+									margin_left = -20
+									layoutpolicy_horizontal = expanding
+
+									text = "SITUATION_WINDOW_PHASE_EFFECTS"
+									align = nobaseline
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+
+									fixedgridbox = {
+										name = "named_effect_sets"
+										layoutpolicy_horizontal = expanding
+
+										addcolumn = 48
+										addrow = 48
+										setitemsizefromcell = yes
+										datamodel_wrap = 6
+										maxhorizontalslots = 6
+										maxverticalslots = 2
+										flipdirection = yes
+										layoutanchor = topleft
+
+										datamodel = "[SituationSubRegion.GetCurrentPhase.GetType.GetModifierNamedSets]"
+										item = {
+											button_phase_named_set_item = {}
+										}
+									}
+								}
+
+								expand = {}
+							}
+						}
+					}
+				}
+		
+				vbox = {
+					name = "pope_window"
+					datacontext = "[GetTitleByKey('k_papal_state').GetHolder]"
+					visible = "[Character.IsValid]"
+					layoutpolicy_horizontal = expanding
+					allow_outside = yes
+
+					### TOP HEADER ###
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						margin = { 15 15 }
+
+						background = {
+							using = Background_Area_Dark
+						}
+
+						background = {
+							using = GenericObjectCardHeaderBackground
+							using = Color_Blue
+						}
+
+						text_single = {
+							text = "SPREADING_OF_CHRISTIANITY_POPE_HEADER"
+							align = nobaseline
+							default_format = "#high"
+							using = Font_Size_Medium
+						}
+
+						expand = {}
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						margin = { 35 0 }
+
+						background = {
+							texture = "gfx/interface/illustrations/event_scenes/church.dds"
+							fittype = centercrop
+							using = Mask_Rough_Edges
+							alpha = 0.75
+						}
+
+						### POPE PORTRAIT ###
+						widget = {
+							size = { 220 250 }
+
+							tooltipwidget = {
+								container_character_tooltip = {}
+							}
+
+							blockoverride "portrait_button"
+							{
+								using = tooltip_ne
+							}
+
+							blockoverride "glow_visible"
+							{
+								visible = no
+							}
+
+							using = Character_Background
+
+							portrait_button = {
+								parentanchor = hcenter
+								position = { 0 0 }
+								size = { 220 240 }
+
+								using = portrait_base
+
+								portrait_texture = "[Character.GetAnimatedPortrait( 'environment_hud', 'camera_torso', 'war_over_win', PdxGetWidgetScreenSize( PdxGuiWidget.Self ) )]"
+								background_texture = "gfx/portraits/portrait_transparent.dds"
+								effectname = "NoHighlight"
+								texture = "gfx/portraits/portrait_transparent.dds"
+								mask = "gfx/portraits/portrait_mask_body.dds"
+							}
+
+							portrait_status_icons = {
+								parentanchor = bottom|right
+								position = { -15 -85 }
+							}
+
+							coa_realm_small_crown = {
+								visible = "[Character.HasLandedTitles]"
+								parentanchor = bottom|left
+								position = { 10 -85 }
+							}
+
+							portrait_opinion = {
+								parentanchor = bottom|hcenter
+								position = { 10 -65 }
+							}
+
+							widget = {
+								parentanchor = bottom|hcenter
+								size = { 220 80 }
+
+								vbox = {
+									layoutpolicy_horizontal = expanding
+									parentanchor = center
+
+									hbox = {
+										layoutpolicy_horizontal = expanding
+										margin = { 15 5 }
+
+										background = {
+											using = Background_Area_Solid
+											margin = { 10 0 }
+										}
+
+										icon = {
+											size = { 40 40 }
+											texture = "gfx/interface/icons/faith/catholic.dds"
+										}
+
+										### POPE TITLE & NAME ###
+										vbox = {
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+
+											margin = { 10 0 }
+
+											expand = {}
+
+											text_single = {
+												layoutpolicy_horizontal = expanding
+
+												text = "[Character.GetShortUINameNotMeNoTooltip|U]"
+												align = nobaseline
+												max_width = 150
+											}
+
+											text_single = {
+												layoutpolicy_horizontal = expanding
+
+												text = "[GetTitleByKey('k_papal_state').GetName]"
+												align = nobaseline
+												max_width = 150
+											}
+
+											expand = {}
+										}
+									}
+								}
+							}
+						}
+
+						expand = {}
+
+						vbox = {
+							layoutpolicy_vertical = expanding
+							spacing = 10
+
+							expand = {}
+							
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 30 10 }
+
+								background = {
+									using = Background_Area_Solid
+								}
+
+								background = {
+									using = GenericObjectCardHeaderBackground
+									using = Color_Blue
+								}
+
+								text_single = {
+									text = "[missionary_interactions|E]"
+									align = nobaseline
+									default_format = "#high"
+									using = Font_Size_Medium
+								}
+							}
+
+							button_standard = {
+								size = { 220 40 }
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_INTERNAL_MISSIONARIES"
+								visible = "[ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)]"
+							}
+
+							button_standard = {
+								size = { 220 40 }
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_EXTERNAL_MISSIONARIES"
+								visible = "[ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)]"
+							}
+
+							button_standard = {
+								size = { 200 40 }
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_ENCOURAGE_MISSIONARIES"
+								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
+							}
+
+							button_standard = {
+								size = { 200 40 }
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_BAN_MISSIONARIES"
+								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
+							}
+
+							button_primary = {
+								size = { 200 60 }
+								text = "SPREADING_OF_CHRISTIANITY_BUTTON_REQUEST_CONVERSION"								
+								visible = "[And(Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)), GetPlayer.GetFaith.IsUnreformed)]"
+								onclick = "[OpenGameViewData( 'faith_conversion', GetPlayer.MakeScope.Var('BTWK_soc_faith_to_convert_to').Faith.GetID)]"
+							}
+
+							expand = {}
+						}
+					}
+				}
+				
+				vbox = { 
+					minimumsize = { 527 5 }
+					layoutpolicy_horizontal = expanding
+					background = { 
+						using = Background_Area_Border_Solid
+					}
+				}
+				
+				scrollbox = {
+					using = Animation_Tab_Switch
+
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					# min_height = 185
+					# max_height = 185
+					
+					background = { 
+						using = Background_Area_Border_Solid
+					}
+
+					blockoverride "scrollbox_content"
+					{
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						
+						margin = { 5 5 }
+
+						vbox = {
+							name = "sub_regions"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							
+							datamodel = "[SituationWindow.GetSelectedSubRegion.GetCenterProvince.MakeScope.GetList('sub_region_faith_counters_sorted')]"
+
+							item = {
+								hbox = {
+									# minimumsize = { 527 30 }
+									
+									layoutpolicy_vertical = expanding
+									layoutpolicy_horizontal = expanding
+
+									margin = { 4 0 }
+									# margin_right = 16
+									spacing = 5
+									
+									visible = "[Or(GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_counties').GetValue, '(CFixedPoint)0'), GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0'))]"
+
+									icon = {
+										size = { 25 25 }
+										texture = "[Scope.Story.MakeScope.Var('faith').Faith.GetIcon]"
+									}
+									
+									text_single = {
+										size = { 140 20 }
+										autoresize = no
+										text = "[Scope.Story.MakeScope.Var('faith').Faith.GetName]"
+										align = nobaseline
+									}
+
+									text_single = {
+										size = { 135 20 }
+										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_COUNTIES"
+										autoresize = no
+										align = left|nobaseline
+									}
+
+									text_single = {
+										size = { 80 20 }
+										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_COUNTIES_PERCENTAGE"
+										autoresize = no
+										align = left|nobaseline
+									}
+
+									text_single = {
+										size = { 180 20 }
+										margin_right = 10
+										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_SPREADING_COUNTIES"
+										autoresize = no
+										align = left|nobaseline
+										visible = "[GreaterThan_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0')]"
+									}
+
+									text_single = {
+										size = { 180 20 }
+										margin_right = 10
+										text = "SPREADING_OF_CHRISTIANITY_FAITH_SUBREGION_NOT_SPREADING"
+										autoresize = no
+										align = left|nobaseline
+										visible = "[LessThanOrEqualTo_CFixedPoint(Scope.Story.MakeScope.Var('num_sub_region_spreading_counties').GetValue, '(CFixedPoint)0')]"
+									}
+								}
+							}
+						}
+
+						blockoverride "scrollbox_expand" {
+							expand = {}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	situation_mini_map_mode = {}
+
+	window_situation_participant_groups = {
+		datacontext = "[SituationWindow.AccessParticipantCharacterList]"
+		datacontext = "[SituationParticipantCharacterList.AccessCharacterList]"
+		visible = "[SituationParticipantCharacterList.IsVisible]"
+
+		datacontext = "[SituationWindow.GetSelectedSubRegion]"
+		blockoverride "header_text"
+		{
+			text = "[SituationWindow.GetParticipationWindowHeader]"
+		}
+	}
+}
+
+types Situation
+{
+	type button_situation_subregion = button_standard {
+		minimumsize = { 527 50 }
+
+		layoutpolicy_horizontal = expanding
+
+		onclick = "[SituationWindow.SetSelectedSubRegion( SituationSubRegion.Self )]"
+		down = "[ObjectsEqual( SituationWindow.GetSelectedSubRegion.Self, SituationSubRegion.Self )]"
+
+		hbox = {
+			layoutpolicy_vertical = expanding
+			layoutpolicy_horizontal = expanding
+
+			margin = { 4 0 }
+			margin_right = 16
+			spacing = 5
+
+			icon = {
+				size = { 40 40 }
+				texture = "[SituationSubRegion.GetIcon]"
+			}
+
+			vbox = {
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = expanding
+
+				spacing = -3
+				minimumsize = { 150 -1 }
+
+				expand = {}
+
+				text_single = {
+					layoutpolicy_horizontal = expanding
+
+					text = "[SituationSubRegion.GetNameNoTooltip]"
+					default_format = "#clickable"
+					align = nobaseline
+				}
+
+				text_single = {
+					layoutpolicy_horizontal = expanding
+
+					text = "SITUATION_WINDOW_SUB_GROUP_SUBTITLE"
+					align = nobaseline
+				}
+
+				expand = {}
+			}
+
+
+
+			widget = {
+				size = { 40 40 }
+
+				widget_level_marker = {
+					blockoverride "visible_inactive" {
+						visible = no
+					}
+
+					icon = {
+						size = { 40 40 }
+						texture = "[SituationSubRegion.GetCurrentPhase.GetType.GetIcon]"
+						tooltip = "[SituationSubRegion.GetCurrentPhase.GetType.GetName]"
+						parentanchor = center
+					}
+				}
+			}
+
+			text_single = {
+				size = { 55 20 }
+				text = "[SituationSubRegion.GetCenterProvince.MakeScope.Var('share_sub_region_christian_counties').GetValue|1%]"
+				autoresize = no
+				align = center|nobaseline
+			}
+		}
+	}
+
+	type button_phase_named_set_item = button_round {
+		datacontext = "[GetPlayer]"
+
+		icon = {
+			size = { 100% 100% }
+
+			texture = "gfx/interface/buttons/button_lifestyles_base.dds"
+		}
+
+		icon = {
+			size = { 80% 80% }
+			position = { 0 0 }
+			parentanchor = center
+			alwaystransparent = yes
+			texture = "[SituationModifierNamedSet.GetIcon]"
+		}
+
+		tooltipwidget = {
+			using = situation_modifier_named_set_tooltip
+		}
+	}
+
+	type window_situation_participant_groups = window  {
+		name = "window_situation_participant_groups"
+		widgetanchor = right
+		position = { 30 100 }
+		size = { 740 82% }
+
+		layer = middle
+		movable = yes
+
+		using = Window_Background
+		using = Window_Decoration_Spike
+		using = Window_Size_CharacterList
+
+		state = {
+			name = _show
+			using = Animation_FadeIn_Quick
+		}
+
+		state = {
+			name = _hide
+			using = Animation_FadeOut_Quick
+		}
+
+		vbox = {
+			using = Window_Margins
+
+			header_pattern = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "button_close"
+				{
+					onclick = "[SituationParticipantCharacterList.Close]"
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				margin = { 8 0 }
+				margin_bottom = 4
+				
+				background = {
+					using = Background_Area
+					margin = { 0 4 }
+				}
+
+				flowcontainer = {
+					layoutstretchfactor_horizontal = 50
+
+					datamodel = "[SituationSubRegion.GetParticipantGroups]"
+					spacing = 10
+					margin = { 10 10 }
+
+					item = {
+						button = {
+							size = { 46 46 }
+							visible = "[SituationParticipantGroup.IsValid]"
+							onclick = "[SituationParticipantCharacterList.SetSelectedParticipantGroup( SituationParticipantGroup.Self )]"
+							tooltip = "[SituationParticipantGroup.GetName]"
+
+							icon = {
+								visible = "[SituationParticipantCharacterList.IsParticipantGroupSelected( SituationParticipantGroup.Self )]"
+								parentanchor = center
+
+								texture = "gfx/interface/buttons/button_round_frame.dds"
+								size = { 58 58 }
+								color = { 0.75 0.75 0.65 1 }
+
+								modify_texture = {
+									texture = "gfx/interface/colors/gold.dds"
+									alpha = 1
+								}
+							}
+
+							icon_round_button_base = {
+								parentanchor = center
+								size = { 100% 100% }
+								enabled = "[Not( SituationParticipantCharacterList.IsParticipantGroupSelected( SituationParticipantGroup.Self ) )]"
+							}
+
+							icon = {
+								parentanchor = center
+								size = { 36 36 }
+
+								visible = "[SituationParticipantCharacterList.IsParticipantGroupSelected( SituationParticipantGroup.Self )]"
+								texture = "[SituationParticipantGroup.GetType.GetIcon]"
+							}
+
+							icon = {
+								parentanchor = center
+								size = { 36 36 }
+
+								visible = "[Not( SituationParticipantCharacterList.IsParticipantGroupSelected( SituationParticipantGroup.Self ) )]"
+								texture = "[SituationParticipantGroup.GetType.GetIcon]"
+								alpha = "[Select_float(SituationParticipantCharacterList.IsParticipantGroupSelected( SituationParticipantGroup.Self ),'(float)1.0','(float)0.6')]"
+							}
+						}
+					}
+				}
+				expand = {}
+
+				divider_light = {
+					layoutpolicy_vertical = expanding
+				}
+
+				expand = {}
+				
+				vbox_participant_group_summary = {
+					datacontext = "[SituationParticipantCharacterList.GetSelectedParticipantGroup]"
+
+					layoutpolicy_vertical = expanding
+					layoutstretchfactor_horizontal = 50
+				}
+
+				expand = {}
+			}
+
+			vbox_character_list = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				blockoverride "sort_buttons"
+				{
+					blockoverride "filters_visible" {
+						visible = no
+					}
+
+					hbox_list_sort_buttons = {
+						layoutpolicy_horizontal = expanding
+
+						blockoverride "skill_sort_buttons" {}
+					}
+				}
+
+				blockoverride "skill_sort_buttons" {}
+
+				blockoverride "scrollbox_empty_visibility"
+				{
+					layoutpolicy_vertical = expanding
+					visible = "[Not( CharacterSelectionList.HasItems )]"
+					text = "SITUATION_PARTICIPANT_WINDOW_PARTICIPANT_EMPTY"
+				}
+
+				blockoverride "container_implementation"
+				{
+					fixedgridbox = {
+						addcolumn = 630
+						addrow = 92
+
+						name = "characters_grid"
+						datamodel_reuse_widgets = yes
+						datamodel = "[CharacterSelectionList.GetList]"
+						visible = "[Not(CharacterSelectionList.IsBuildingList)]"
+
+						item = {
+							widget_character_list_item_finder = {
+								size = { 630 94 }
+								blockoverride "character_relation" {}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	type situation_mini_map_mode = mini_map_mode {
+		parentanchor = bottom|left
+		widgetanchor = bottom|right
+		position = { -250 -25 }
+
+		blockoverride "widget_size"
+		{
+			size = { 280 60 }
+		}
+
+		blockoverride "map_mode_buttons"
+		{			
+			icon_button_mapmode = {
+				blockoverride = "mm_datacontext"
+				{
+					datacontext = "[GetMapMode( 'religions' )]"
+				}
+			}
+			
+			icon_button_mapmode = {
+				blockoverride = "mm_datacontext"
+				{
+					datacontext = "[GetMapMode( 'realms' )]"
+				}
+			}
+
+			icon_button_mapmode = {
+				blockoverride = "mm_datacontext"
+				{
+					datacontext = "[GetMapMode( 'situation' )]"
+				}
+
+				blockoverride "mm_icon"
+				{
+					datacontext = "[GetMapMode( 'struggle' )]"
+				}
+			}
+		}
+	}
+}

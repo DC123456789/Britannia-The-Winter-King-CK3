@@ -1,0 +1,408 @@
+﻿# Notes:
+# - character_can_convert_to_X_culture: Character's culture is eligible to convert to the culture
+# - county_can_convert_to_X_culture: County's culture is eligible to convert to the culture
+# - county_is_in_X_culture_area: County's location is eligible to convert to the culture
+# In general, a character will convert only if their culture trigger and their capital/location's 
+# area trigger are both true
+# And a county will convert only if their culture trigger and their area's trigger are both true
+
+## ANGLO-SAXON REGIONAL CULTURE
+# Character can adopt an Anglo-Saxon regional culture
+character_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			OR = {
+				AND = {
+					is_ruler = yes
+					is_independent_ruler = no
+				}
+				is_ruler = no
+			}
+			liege_or_court_owner = { is_unromanized_germanic_culture_trigger = yes }
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - culture check only
+county_can_convert_to_anglo_saxon_regional_culture = {
+	OR = {
+		is_unromanized_germanic_culture_trigger = yes
+		AND = {
+			culture = { has_cultural_pillar = heritage_romanized_germanic }
+			holder = {
+				OR = {
+					NOT = { culture = prev.culture }
+					AND = {
+						is_independent_ruler = no
+						liege = { is_unromanized_germanic_culture_trigger = yes }
+					}
+				}
+			}
+		}		
+	}
+	NOR = { 
+		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
+		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County can adopt an Anglo-Saxon regional culture - location/kingdom check only
+county_is_in_anglo_saxon_regional_culture_kingdom = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		AND = {
+			var:anglo_saxon_duchy.kingdom ?= $KINGDOM$
+			OR = {
+				NOT = { $KINGDOM$ = title:k_wales }
+				title_province = { geographical_region = btwk_custom_wales } 
+			}
+		}
+		kingdom = $KINGDOM$
+		holder = {
+			save_temporary_scope_as = county_holder
+			AND = {
+				OR = {
+					has_title = $KINGDOM$
+					any_liege_or_above = { has_title = $KINGDOM$ }
+				}
+				NOT = {
+					prev.kingdom = {
+						save_temporary_scope_as = county_kingdom
+						NOT = { this = $KINGDOM$ }
+						is_anglo_saxon_kingdom_trigger = yes
+						scope:county_holder = {
+							OR = {
+								has_title = scope:county_kingdom
+								any_liege_or_above = { has_title = scope:county_kingdom }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+## ANGLO-SAXON UNIFIED CULTURE
+can_convert_to_anglo_saxon_unified_culture = {
+	culture = {
+		has_cultural_pillar = heritage_west_germanic
+		NOT = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+county_is_in_anglo_saxon_unified_culture_area = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	holder = {
+		OR = {
+			has_title = title:e_aengland
+			any_liege_or_above = { has_title = title:e_aengland }
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			any_liege_or_above = { culture = { has_variable = is_anglo_saxon_unified_culture } }
+		}
+	}
+}
+
+## BRITANNIC CULTURE
+character_can_convert_to_britannic_culture = {
+	culture = culture:romanobritish
+}
+
+county_can_convert_to_britannic_culture = {
+	culture = culture:romanobritish
+}
+
+county_is_in_britannic_culture_area = {
+	NOR = {
+		# Not if should be shifting towards Brithenig
+		AND = {
+			holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+			culture:brithenig = { has_variable = culture_has_emerged }
+		}
+		# Not if should be shifting towards a Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+		}
+		# Not if under Imperial control and there is a sufficiently strong Imperial realm
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			OR = {
+				has_title = title:e_britannia
+				has_title = title:e_roman_britannia
+				any_realm_county = {
+					count >= 40
+					culture = culture:romanobritish
+				}
+				AND = {
+					any_realm_county = {
+						count >= 5
+						culture = culture:romanobritish
+					}
+					any_realm_county = {
+						count >= 80
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+				}
+			}
+		}
+	}
+}
+
+## BRITHENIG CULTURE
+character_can_convert_to_brithenig_culture = {
+	culture = culture:romanobritish
+}
+
+county_can_convert_to_brithenig_culture = {
+	culture = culture:romanobritish
+}
+
+county_is_in_brithenig_culture_area = {
+	OR = {
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_brythonic }	# Includes Brithenig itself
+			NOT = { suzerain ?= { culture = culture:romanobritish } }
+		}
+		any_neighboring_county = { culture = { has_cultural_pillar = heritage_brythonic } }
+		culture = { has_cultural_pillar = heritage_brythonic }
+	}
+	NOR = {
+		# Not if should be shifting towards a Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+		}
+		# Not if should be drifting towards Britannic, or if under the control of a 
+		# sufficiently strong Imperial realm
+		holder.top_liege.culture = culture:britannic
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			realm_size >= 40
+		}
+	}
+}
+
+## BRITANNO-ROMANIZED GERMANIC CULTURE
+# Requires that scope:barbarian_culture be saved beforehand
+character_can_convert_to_britannic_hybrid_culture = {
+	OR = {
+		culture = scope:barbarian_culture
+		culture = culture:romanobritish
+		culture = {
+			has_cultural_pillar = heritage_romance
+			culture_is_culture_or_descendant_including_romance_trigger = {
+				CULTURE = culture:romanobritish
+			}
+			OR = {
+				NOT = { has_variable = ancestral_non_roman_culture }
+				this.var:ancestral_non_roman_culture = {
+					culture_is_romanized_barbarian_culture_trigger = no
+				}
+			}
+		}
+	}
+}
+
+# Requires that scope:barbarian_culture be saved beforehand
+county_can_convert_to_britannic_hybrid_culture = {
+	OR = {
+		AND = {
+			culture = scope:barbarian_culture
+			OR = {
+				title_province = { geographical_region = btwk_world_britannia }
+				title_province = { geographical_region = btwk_world_caledonia }
+			}
+		}
+		culture = culture:romanobritish
+		culture = {
+			has_cultural_pillar = heritage_romance
+			culture_is_culture_or_descendant_including_romance_trigger = {
+				CULTURE = culture:romanobritish
+			}
+			OR = {
+				NOT = { has_variable = ancestral_non_roman_culture }
+				this.var:ancestral_non_roman_culture = {
+					culture_is_romanized_barbarian_culture_trigger = no
+				}
+			}
+		}
+	}
+}
+
+county_is_in_britannic_hybrid_culture_area = {
+	OR = {
+		NOT = { culture = $BARBARIAN_CULTURE$ }
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		county_is_controlled_by_barbarian_culture_or_descendant_trigger = {
+			BARBARIAN_CULTURE = $BARBARIAN_CULTURE$
+		}
+		AND = {
+			exists = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture
+			OR = {
+				culture = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture
+				any_neighboring_county = { culture = $BARBARIAN_CULTURE$.var:britannic_hybrid_culture }
+			}
+		}
+	}
+	NOR = {
+		# Not if should be shifting towards Brithenig
+		AND = {
+			holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+			culture:brithenig = { has_variable = culture_has_emerged }
+		}
+		# Not if should be shifting towards another Britanno-Germanic hybrid culture
+		holder.top_liege.culture = { 
+			OR = {
+				has_variable = is_britannic_germanic_hybrid_culture
+				has_variable = britannic_hybrid_culture
+			}
+			NOR = {
+				this = $BARBARIAN_CULTURE$
+				$BARBARIAN_CULTURE$.var:britannic_hybrid_culture ?= this
+			}
+		}
+		# Not if should be drifting towards Britannic, or if under the control of a 
+		# sufficiently strong Imperial realm
+		holder.top_liege.culture = culture:britannic
+		holder.top_liege = {
+			culture = { has_cultural_pillar = heritage_latin }
+			realm_size >= 40
+		}
+	}
+}
+
+character_can_convert_to_current_culture_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		character_can_convert_to_anglo_saxon_regional_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		can_convert_to_anglo_saxon_unified_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		character_can_convert_to_brithenig_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		character_can_convert_to_britannic_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		scope:trigger_culture.var:romance_barbarian_culture_parent = {
+			save_temporary_scope_as = barbarian_culture
+		}
+		character_can_convert_to_britannic_hybrid_culture = yes
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
+county_can_convert_to_current_culture_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		county_can_convert_to_anglo_saxon_regional_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		can_convert_to_anglo_saxon_unified_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		county_can_convert_to_brithenig_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		county_can_convert_to_britannic_culture = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		scope:trigger_culture.var:romance_barbarian_culture_parent = {
+			save_temporary_scope_as = barbarian_culture
+		}
+		county_can_convert_to_britannic_hybrid_culture = yes
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
+county_is_in_current_culture_area_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	trigger_if = {
+		limit = { scope:trigger_culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+		county_is_in_anglo_saxon_regional_culture_kingdom = { 
+			KINGDOM = scope:trigger_culture.var:anglo_saxon_regional_culture_kingdom
+		}
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_anglo_saxon_unified_culture } }
+		county_is_in_anglo_saxon_unified_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:brithenig }
+		county_is_in_brithenig_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = culture:britannic }
+		county_is_in_britannic_culture_area = yes
+	}
+	trigger_else_if = {
+		limit = { scope:trigger_culture = { has_variable = is_britannic_germanic_hybrid_culture } }
+		county_is_in_britannic_hybrid_culture_area = {
+			BARBARIAN_CULTURE = scope:trigger_culture.var:romance_barbarian_culture_parent
+		}
+	}
+	# Always required for some reason
+	trigger_else = {
+		always = no
+	}
+}
+
+county_is_controlled_by_barbarian_culture_or_descendant_trigger = {
+	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = trigger_barbarian_culture }
+	holder.top_liege = {
+		character_is_barbarian_culture_or_descendant_trigger = { 
+			BARBARIAN_CULTURE = scope:trigger_barbarian_culture
+		}
+	}
+}
+
+character_is_barbarian_culture_or_descendant_trigger = {
+	$BARBARIAN_CULTURE$ = { save_temporary_scope_as = trigger_barbarian_culture }
+	culture = {
+		OR = {
+			this = scope:trigger_barbarian_culture
+			AND = {
+				has_cultural_pillar = heritage_romance
+				this.var:ancestral_non_roman_culture ?= scope:trigger_barbarian_culture
+			}
+		}
+	}
+}

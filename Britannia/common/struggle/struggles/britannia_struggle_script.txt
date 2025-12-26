@@ -1,0 +1,249 @@
+﻿britannia_struggle = {
+	illustration = "gfx/interface/illustrations/situations/situation_struggle_britannia.dds"
+
+	##################################################
+	# Setup
+	##################################################
+	cultures = {
+		# Brythonic
+		briton
+		cumbrian
+		welsh
+		cornish
+		romanobritish
+		
+		# Germanic
+		angle
+		old_saxon
+		jute
+		# TODO Scripted derivative cultures too
+	}
+	faiths = {
+		catholic
+		briton_pagan
+		romano_celtic_pagan
+		anglo_saxon_pagan
+	}
+	regions = { btwk_world_britannia }
+
+	# A culture or faith becomes involved if 80% of the total number of counties belonging to it are inside the struggle region.
+	involvement_prerequisite_percentage = 0.8
+
+	transition_state_duration = { months = 3 }
+
+	on_start = {
+		# Starting Events
+		# trigger_event = { on_action = fp2_iberian_struggle_starting_events }
+	}
+
+	on_change_phase = {
+		# Set up AI Intent
+		# trigger_event = fp2_struggle.0003
+	}
+	
+	# Root = the current struggle
+	# scope:character = the character which has joined the struggle
+ 	on_join = {
+		# if = {
+			# limit = {
+				# is_ai = no
+			# }
+
+			# trigger_event = fp2_struggle.0501
+		# }
+		# else = {
+			# # assign an intent to the freshly joined character
+			# trigger_event = fp2_struggle.004
+		# }
+ 	}  
+
+	##################################################
+	# Phases
+	##################################################
+	start_phase = struggle_britannia_phase_invasion	
+	
+	phase_list = {
+
+		# Invasion Phase represents the initial advance and migration of the Anglo-Saxons, with new kingdoms being founded and lots of unrest/fighting
+		struggle_britannia_phase_invasion = {
+			##################################################
+			# General Set-Up
+			future_phases = {
+				struggle_britannia_phase_detente = {						
+					catalysts = {
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# War effects
+						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_sign_truce_outside_war = medium_struggle_catalyst_gain
+						catalyst_end_any_war_within_the_region = medium_struggle_catalyst_gain
+						
+						# Diplomatic effects
+						catalyst_learned_new_language_important = minor_struggle_catalyst_gain
+						catalyst_formed_intercultural_alliance_with_important_character = major_struggle_catalyst_gain
+						catalyst_gift_independent_ruler = minor_struggle_catalyst_gain
+						catalyst_became_friend_lover_with_character = minor_struggle_catalyst_gain
+						
+						# Realm effects
+						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_bretwalda_died_violently = massive_struggle_catalyst_gain
+						catalyst_bretwalda_died_naturally = major_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+					}
+				}
+				struggle_britannia_phase_consolidation = {
+					catalysts = {
+						catalyst_vassalize_independent_ruler = minor_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = massive_struggle_catalyst_gain
+						catalyst_convert_to_reformed_religion = medium_struggle_catalyst_gain
+					}
+				}
+			}
+
+			war_effects = {
+				name = WAR_EFFECTS_NAME
+				# TODO
+			}
+
+			culture_effects = {
+				name = CULTURE_EFFECTS_NAME
+				# TODO
+			}
+
+			other_effects = {
+				name = OTHER_EFFECTS_NAME
+				# TODO
+			}
+
+			#We are listing all available decision to give players insights on how they can end the Struggle
+			ending_decisions = {
+				# TODO
+			}
+		}
+
+		# Detente represents a period of peace, when both sides have exhausted themselves in the fighting and are using the peace to rebuild their forces
+		struggle_britannia_phase_detente = {
+			##################################################
+			# General Set-Up
+			future_phases = {
+				struggle_britannia_phase_invasion = {						
+					catalysts = {
+						# TODO
+					}
+				}
+				struggle_britannia_phase_consolidation = {
+					catalysts = {
+						# TODO
+					}
+				}
+			}
+
+			war_effects = {
+				name = WAR_EFFECTS_NAME
+				# TODO
+			}
+
+			culture_effects = {
+				name = CULTURE_EFFECTS_NAME
+				# TODO
+			}
+
+			other_effects = {
+				name = OTHER_EFFECTS_NAME
+				# TODO
+			}
+
+			#We are listing all available decision to give players insights on how they can end the Struggle
+			ending_decisions = {
+				# TODO
+			}
+        }
+
+		# Consolidation is triggered as the Anglo-Saxon kingdoms become better organized and/or a powerful Briton/Roman/Romanized Germanic(?) realm starts to consolidate
+        # This triggers the beginning of larger-scale wars(?) and the unification of the Anglo-Saxons into larger kingdoms
+		struggle_britannia_phase_consolidation = {
+			##################################################
+			# General Set-Up
+			future_phases = {
+				struggle_britannia_phase_unification = {
+					catalysts = {
+						# TODO
+					}
+				}
+			}
+
+			war_effects = {
+				name = WAR_EFFECTS_NAME
+				# TODO
+			}
+
+			faith_effects = {
+				name = FAITH_EFFECTS_NAME
+				# TODO
+			}
+
+			culture_effects = {
+				name = CULTURE_EFFECTS_NAME
+				# TODO
+
+				###### Involved
+				involved_parameters = {
+					allow_briton_culture_split = yes
+					allow_anglo_saxon_regional_cultures = yes
+					allow_romanobritish_culture_shifts = yes
+				}
+			}
+
+			other_effects = {
+				name = OTHER_EFFECTS_NAME
+				# TODO
+			}
+
+			#We are listing all available decision to give players insights on how they can end the Struggle
+			ending_decisions = {
+				# TODO
+			}
+		}
+
+		# The endgame of the struggle - things are (seemingly) moving inexorably towards the unification of Britannia under a High King or Bretwalda
+		struggle_britannia_phase_unification = {
+			##################################################
+			# Final phase! No more progress!
+            # Unless maybe can go back to consolidation if Britannia is too divided?
+
+			war_effects = {
+				name = WAR_EFFECTS_NAME
+				# TODO
+			}
+
+			faith_effects = {
+				name = FAITH_EFFECTS_NAME
+				# TODO
+			}
+
+			culture_effects = {
+				name = CULTURE_EFFECTS_NAME
+				# TODO
+
+				###### Involved
+				involved_parameters = {
+					allow_briton_culture_split = yes
+					allow_anglo_saxon_regional_cultures = yes
+					allow_romano_british_culture_shifts = yes
+				}
+			}
+
+			other_effects = {
+				name = OTHER_EFFECTS_NAME
+				# TODO
+			}
+
+			#We are listing all available decision to give players insights on how they can end the Struggle
+			ending_decisions = {
+				# TODO
+			}
+		}
+	}
+}

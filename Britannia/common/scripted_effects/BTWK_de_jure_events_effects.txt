@@ -4,15 +4,15 @@
 		set_variable = title_created_de_jure
 	}
 	save_scope_as = conqueror
-	trigger_event = { id = titular_titles.0001 }
+	trigger_event = { id = titular_titles_anglosaxon.0001 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
-		trigger_event = { id = titular_titles.0001 }
+		trigger_event = { id = titular_titles_anglosaxon.0001 }
 	}
 	scope:new_duchy_title = {
 		every_in_list = {
 			variable = de_jure_affected_territory
-			check_de_jure_liege_county_effect = yes
+			check_de_jure_liege_effect = yes
 		}
 	}
 }
@@ -23,15 +23,15 @@ destroy_anglo_saxon_duchy_effect = {
 		remove_variable = title_created_de_jure
 	}
 	save_scope_as = conqueror
-	trigger_event = { id = titular_titles.0002 }
+	trigger_event = { id = titular_titles_anglosaxon.0002 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
-		trigger_event = { id = titular_titles.0002 }
+		trigger_event = { id = titular_titles_anglosaxon.0002 }
 	}
 	scope:old_duchy_title = {
 		every_in_list = {
 			variable = de_jure_affected_territory
-			check_de_jure_liege_county_effect = yes
+			check_de_jure_liege_effect = yes
 		}
 	}
 }
@@ -42,16 +42,16 @@ create_roman_duchy_effect = {
 		set_variable = roman_title_created_de_jure
 	}
 	save_scope_as = conqueror
-	trigger_event = { id = titular_titles.0101 }
+	trigger_event = { id = titular_titles_roman.0001 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
-		trigger_event = { id = titular_titles.0101 }
+		trigger_event = { id = titular_titles_roman.0001 }
 	}
 	scope:new_roman_duchy_title = {
-		check_de_jure_liege_duchy_effect = yes
+		check_de_jure_liege_effect = yes
 		every_in_list = {
 			variable = roman_de_jure_affected_territory
-			check_de_jure_liege_county_effect = yes
+			check_de_jure_liege_effect = yes
 		}
 	}
 }
@@ -62,16 +62,235 @@ destroy_roman_duchy_effect = {
 		remove_variable = roman_title_created_de_jure
 	}
 	save_scope_as = conqueror
-	trigger_event = { id = titular_titles.0102 }
+	trigger_event = { id = titular_titles_roman.0002 }
 	every_player = {
 		limit = { NOT = { this = PREV } }
-		trigger_event = { id = titular_titles.0102 }
+		trigger_event = { id = titular_titles_roman.0002 }
 	}
 	scope:old_roman_duchy_title = {
-		check_de_jure_liege_duchy_effect = yes
+		check_de_jure_liege_effect = yes
 		every_in_list = {
 			variable = roman_de_jure_affected_territory
-			check_de_jure_liege_county_effect = yes
+			check_de_jure_liege_effect = yes
 		}
+	}
+}
+
+generate_integrate_kingdom_region_list = {
+	if = {
+		limit = { has_variable_list = integrate_kingdom_region_list }
+		every_in_list = {
+			variable = integrate_kingdom_region_list
+			end_story = THIS
+		}
+		clear_variable_list = integrate_kingdom_region_list
+	}
+	every_held_title = {
+		limit = { tier = tier_empire }
+		save_temporary_scope_as = new_liege_scope
+		every_in_list = {
+			variable = base_and_expansion_kingdom_regions
+			save_temporary_scope_as = kingdom_region_scope
+			ROOT = {
+				create_story = {
+					type = integratable_region_struct_story
+					save_temporary_scope_as = new_integratable_region_struct_story
+				}
+				scope:new_integratable_region_struct_story = {
+					set_variable = { name = kingdom_region value = scope:kingdom_region_scope }
+					set_variable = { name = new_liege value = scope:new_liege_scope }
+				}
+				add_to_variable_list = {
+					name = integrate_kingdom_region_list
+					target = scope:new_integratable_region_struct_story
+				}
+			}
+		}
+	}
+}
+
+integrate_kingdom_region_effect = {
+	save_scope_as = conqueror
+	$REGION_BASE$ = { save_scope_as = region_base_title }
+	$NEW_DE_JURE_LIEGE$ = { save_scope_as = new_de_jure_liege_title }
+	trigger_event = { id = titular_titles.0001 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles.0001 }
+	}
+	hidden_effect = {
+		set_kingdom_region_de_jure_liege_effect = {
+			REGION_BASE = scope:region_base_title
+			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
+		}
+	}
+}
+
+integrate_kingdom_region_cost_effect = {
+	add_prestige = 500
+	add_legitimacy = 75
+	add_piety = -150
+	remove_short_term_gold = 300
+}
+
+generate_integrate_duchy_anglo_saxon_list = {
+	if = {
+		limit = { has_variable_list = integrate_duchy_anglo_saxon_list }
+		every_in_list = {
+			variable = integrate_duchy_anglo_saxon_list
+			end_story = THIS
+		}
+		clear_variable_list = integrate_duchy_anglo_saxon_list
+	}
+	every_held_title = {
+		limit = {
+			is_anglo_saxon_kingdom_trigger = yes
+			has_variable_list = integratable_duchies
+		}
+		save_temporary_scope_as = new_liege_scope
+		every_in_list = {
+			variable = integratable_duchies
+			save_temporary_scope_as = duchy_scope
+			ROOT = {
+				create_story = {
+					type = integratable_duchy_struct_story
+					save_temporary_scope_as = new_integratable_duchy_struct_story
+				}
+				scope:new_integratable_duchy_struct_story = {
+					set_variable = { name = duchy value = scope:duchy_scope }
+					set_variable = { name = new_liege value = scope:new_liege_scope }
+				}
+				add_to_variable_list = {
+					name = integrate_duchy_anglo_saxon_list
+					target = scope:new_integratable_duchy_struct_story
+				}
+			}
+		}
+	}
+}
+
+integrate_duchy_anglo_saxon_effect = {
+	save_scope_as = conqueror
+	$DUCHY$ = { save_scope_as = current_duchy }
+	$NEW_DE_JURE_LIEGE$ = { save_scope_as = new_de_jure_liege_title }
+	scope:current_duchy = {
+		set_duchy_integrated_effect = {
+			INTEGRATION_KINGDOM = scope:new_de_jure_liege_title
+		}
+	}
+	trigger_event = { id = titular_titles_anglosaxon.0003 }
+	every_player = {
+		limit = { NOT = { this = PREV } }
+		trigger_event = { id = titular_titles_anglosaxon.0003 }
+	}
+	hidden_effect = {
+		scope:current_duchy = { check_de_jure_liege_effect = yes }
+	}
+}
+
+integrate_duchy_anglo_saxon_cost_effect = {
+	add_prestige = 100
+	add_legitimacy = 25
+	add_piety = -120
+	remove_short_term_gold = 200
+}
+
+integrate_duchy_anglo_saxon_change_controlled_years_effect = {
+	$KINGDOM$ = { save_temporary_scope_as = current_kingdom }
+	if = {
+		limit = { scope:current_kingdom = title:k_east_anglia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_east_anglia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_eastseaxe }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_eastseaxe
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_cantia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_cantia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_sussex }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_sussex
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_wessex }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_wessex
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_mercia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_mercia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_bernicia }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_bernicia
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_deira }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_deira
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_lindsey }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_lindsey
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+	else_if = {
+		limit = { scope:current_kingdom = title:k_northumbria }
+		integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+			KINGDOM = k_northumbria
+			OPERATION = $OPERATION$
+			VALUE = $VALUE$
+		}
+	}
+}
+
+integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
+	if = {
+		limit = { NOT = { has_variable = $KINGDOM$_integration_years } }
+		set_variable = { name = $KINGDOM$_integration_years value = 0 }
+	}
+	change_variable = {
+		name = $KINGDOM$_integration_years
+		$OPERATION$ = $VALUE$
+	}
+	clamp_variable = {
+		name = $KINGDOM$_integration_years
+		min = 0
+		max = 40
 	}
 }

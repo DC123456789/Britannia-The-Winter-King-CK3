@@ -25,6 +25,8 @@
 @nobility_03 = "gfx/interface/icons/culture_innovations/innovation_nobility_03.dds"
 @nobility_04 = "gfx/interface/icons/culture_innovations/innovation_nobility_04.dds"
 @misc_inventions = "gfx/interface/icons/culture_innovations/innovation_misc_inventions.dds"
+@gunpowder = "gfx/interface/icons/culture_innovations/innovation_gunpowder.dds"
+@caballeros = "gfx/interface/icons/culture_innovations/innovation_caballeros.dds"
 
 @camel = "gfx/interface/icons/culture_innovations/innovation_camel.dds"
 @elephant = "gfx/interface/icons/culture_innovations/innovation_elephant.dds"
@@ -33,7 +35,8 @@
 
 #Gesithes
 innovation_zweihanders = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @special_maa_01
 	
@@ -46,10 +49,15 @@ innovation_zweihanders = {
 
 	flag = global_regional
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 innovation_adaptive_militia = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_late_medieval
 	icon = @special_maa_02
 
@@ -60,10 +68,23 @@ innovation_adaptive_militia = {
 	unlock_maa = goedendag
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_late_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
 }
 
 innovation_valets = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_late_medieval
 	icon = @special_maa_01
 
@@ -74,11 +95,24 @@ innovation_valets = {
 	unlock_maa = gendarme
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_late_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
 }
 
 #Limitanei
 innovation_pike_columns = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @maa_01
 
@@ -89,11 +123,16 @@ innovation_pike_columns = {
 	unlock_maa = picchieri
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 #Comitatenses
 innovation_legionnaires = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @maa_01
 
@@ -104,10 +143,15 @@ innovation_legionnaires = {
 	unlock_maa = praetorian
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 innovation_desert_tactics = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @special_maa_01
 
@@ -123,10 +167,15 @@ innovation_desert_tactics = {
 	unlock_maa = cataphract
 	
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 #Champions/Oath-Sworn
 innovation_caballeros = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @maa_01
         
@@ -135,22 +184,40 @@ innovation_caballeros = {
 
 	flag = global_regional
 	flag = tribal_era_regional
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
-innovation_hobbies = {
-	group = culture_group_regional
-	culture_era = culture_era_high_medieval
-	region = ghw_region_britannia
-	icon = @special_maa_02
-
-	unlock_maa = hobelar
-
-	flag = global_regional
-	flag = global_maa
-}
+#innovation_hobbies = {
+#	skill = martial
+#	group = culture_group_military
+#	culture_era = culture_era_high_medieval
+#	region = ghw_region_britannia
+#	icon = @special_maa_02
+#
+#	unlock_maa = hobelar
+#
+#	flag = global_regional
+#	flag = global_maa
+#	
+#	ai_weight_for_fascination = {
+#		value = 100
+#		if = {
+#			limit = {
+#				NOT = {
+#					has_cultural_era_or_later = culture_era_high_medieval
+#				}
+#			}
+#			multiply = 0
+#		}
+#	}
+#}
 
 innovation_rectilinear_schiltron = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_late_medieval
 	icon = @special_maa_01
 
@@ -161,10 +228,23 @@ innovation_rectilinear_schiltron = {
 	unlock_maa = schiltron
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_late_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
 }
 
 innovation_bamboo_bows = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	
 	icon = @special_maa_02
@@ -176,11 +256,16 @@ innovation_bamboo_bows = {
 
 	flag = global_regional
 	flag = tribal_era_regional
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 #Light Horse
 innovation_sahel_horsemen = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @special_maa_01
 
@@ -188,10 +273,15 @@ innovation_sahel_horsemen = {
 
 	flag = global_regional
 	flag = tribal_era_regional
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 innovation_sarawit = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_high_medieval
 	icon = @maa_02
 
@@ -202,11 +292,24 @@ innovation_sarawit = {
 	unlock_maa = sarawit
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_high_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
 }
 
 #Manuballista
 innovation_repeating_crossbow = {
-	group = culture_group_regional
+	skill = learning
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @special_maa_02
 
@@ -214,14 +317,19 @@ innovation_repeating_crossbow = {
 		has_cultural_pillar = heritage_latin
 	}
 
-	unlock_maa = chu_ko_nu
+	unlock_maa = shenbigong
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }
 
 #Huscarls
 innovation_pole_vault = {
-	group = culture_group_regional
+	skill = martial
+	group = culture_group_military
 	culture_era = culture_era_tribal
 	icon = @weapons_and_armor_01
 	
@@ -234,4 +342,148 @@ innovation_pole_vault = {
 	unlock_maa = huscarl
 
 	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
+}
+
+#innovation_pole_vault = {
+#	skill = martial
+#	group = culture_group_military
+#	culture_era = culture_era_tribal
+#	icon = @weapons_and_armor_01
+#
+#	potential = {
+#		always = no
+#	}
+#
+#	unlock_maa = guanch_vaulter
+#
+#	flag = global_maa
+#	
+#	ai_weight_for_fascination = {
+#		value = 100
+#	}
+#}
+
+#Germanic Heavy Cavalry
+innovation_armored_horsemen = {
+	skill = martial
+	group = culture_group_military
+	culture_era = culture_era_late_medieval
+	icon = @knight
+	
+	potential = { 
+		has_cultural_pillar = heritage_west_germanic 
+	}
+
+	custom = unlock_maa_armored_horsemen
+	
+	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_late_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+#Wolf Warriors
+innovation_wolf_warriors = {
+	skill = martial
+	group = culture_group_military
+	culture_era = culture_era_tribal
+	icon = @weapons_and_armor_01
+	
+	potential = {
+		OR = {
+			has_cultural_pillar = heritage_frankish
+			has_cultural_pillar = heritage_central_germanic
+			has_cultural_pillar = heritage_north_germanic
+		}
+	}
+	
+	unlock_maa = wolf_warriors
+
+	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
+}
+
+#Gothic Heavy Cavalry
+innovation_gothic_heavy_cav = {
+	skill = martial
+	group = culture_group_military
+	culture_era = culture_era_early_medieval
+	icon = @knight
+	
+	potential = {
+		has_cultural_pillar = heritage_romanized_germanic
+	}
+	
+	unlock_maa = gothic_heavy_cavalry
+	
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_early_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
+
+	flag = global_maa
+}
+
+#Gadrauhteis
+innovation_gadrauhteis = {
+	skill = martial
+	group = culture_group_military
+	culture_era = culture_era_tribal
+	icon = @weapons_and_armor_01
+	
+	potential = {
+		has_cultural_pillar = heritage_romanized_germanic
+	}
+	
+	unlock_maa = gadrauhteis
+
+	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
+}
+
+#Throwing Axes (Frankish Axemen)
+
+innovation_throwing_axes = {
+	skill = martial
+	group = culture_group_military
+	culture_era = culture_era_tribal
+	icon = @weapons_and_armor_01
+	
+	potential = {
+		has_cultural_pillar = heritage_frankish
+	}
+	
+	unlock_maa = frankish_axemen
+
+	flag = global_maa
+	
+	ai_weight_for_fascination = {
+		value = 100
+	}
 }

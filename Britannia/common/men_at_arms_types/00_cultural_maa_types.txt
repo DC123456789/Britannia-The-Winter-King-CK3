@@ -4,6 +4,22 @@
 @maa_high_maintenance_cost = 5.0
 @cultural_maa_extra_ai_score = 80 # Equivalent to having 8 extra regiments beyond what the code scoring would indicate (see NEGATIVE_SCORE_PER_EXISTING_REGIMENT)
 
+# Must be synced between files with the values located at "# Provisions Costs #".
+@provisions_cost_infantry_cheap = 3
+@provisions_cost_infantry_moderate = 7
+@provisions_cost_infantry_expensive = 12
+@provisions_cost_infantry_bankrupting = 15
+
+@provisions_cost_cavalry_cheap = 7
+@provisions_cost_cavalry_moderate = 15
+@provisions_cost_cavalry_expensive = 21
+@provisions_cost_cavalry_bankrupting = 30
+
+@provisions_cost_special_cheap = 6
+@provisions_cost_special_moderate = 12
+@provisions_cost_special_expensive = 18
+@provisions_cost_special_bankrupting = 24
+
 huscarl = {
 	type = heavy_infantry
 
@@ -12,10 +28,9 @@ huscarl = {
 	pursuit = 0
 	screen = 0
 	
-	
-	
 	counters = {
 		pikemen = 0.5
+		peasant_militia = 2
 		heavy_infantry = 1
 	}
 
@@ -23,9 +38,11 @@ huscarl = {
 		culture = {
 			has_innovation = innovation_pole_vault
 			has_innovation = innovation_quilted_armor
-			has_innovation = innovation_zweihanders 
-			
-			}
+			has_innovation = innovation_zweihanders
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 
 	winter_bonus = {
@@ -36,6 +53,7 @@ huscarl = {
 	buy_cost = { gold = huscarls_recruitment_cost }
 	low_maintenance_cost = { gold = huscarls_low_maint_cost }
 	high_maintenance_cost = { gold = huscarls_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 20
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -53,21 +71,24 @@ landsknecht = {
 	
 	counters = {
 		pikemen = 0.5
+		peasant_militia = 2
 		heavy_infantry = 1
 	}
 
 	can_recruit = {
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_landsknecht }	
 		culture = {
-			
-			has_cultural_parameter = unlock_maa_landsknecht
-			has_innovation = innovation_quilted_armor
-					
+			has_innovation = innovation_quilted_armor					
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
 	}
 
 	buy_cost = { gold = landsknecht_recruitment_cost }
 	low_maintenance_cost = { gold = landsknecht_low_maint_cost }
 	high_maintenance_cost = { gold = landsknecht_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 10
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -77,9 +98,7 @@ landsknecht = {
 longbowmen = {
 	type = archers
 	can_recruit = {
-		culture = {
-			has_cultural_parameter = unlock_maa_longbowmen
-		}
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_longbowmen }
 	}
 	
 	damage = 20
@@ -114,6 +133,7 @@ longbowmen = {
 	buy_cost = { gold = longbowmen_recruitment_cost }
 	low_maintenance_cost = { gold = longbowmen_low_maint_cost }
 	high_maintenance_cost = { gold = longbowmen_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -136,6 +156,7 @@ goedendag = {
 	buy_cost = { gold = goedendag_recruitment_cost }
 	low_maintenance_cost = { gold = goedendag_low_maint_cost }
 	high_maintenance_cost = { gold = goedendag_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -149,26 +170,30 @@ gendarme = {
 	damage = 40
 	toughness = 80
 	pursuit = 1
-	screen = 20
-	
+	screen = 20	
 	
 	counters = {
 		heavy_infantry = 3
 		heavy_cavalry = .25
 		skirmishers = .50
 		archers = .50
+		peasant_militia = 2
 		pikemen = 3
 		light_cavalry = .50
 		camel_cavalry = .50
-		archer_cavalry = .25
-		
-	}
+		archer_cavalry = .25		
+	}	
 
-	
+	can_recruit = {
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
 
 	buy_cost = { gold = gendarme_recruitment_cost }
 	low_maintenance_cost = { gold = gendarme_low_maint_cost }
 	high_maintenance_cost = { gold = gendarme_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 5
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -195,17 +220,19 @@ chasseur = {
 
 	counters = {
 		archers = 1
+		gunpowder = 1
 	}
 
 	winter_bonus = {
 		harsh_winter = { damage = -5 toughness = -2 }
 	}
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_chasseur }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_chasseur }
 	}
 	buy_cost = { gold = chasseur_recruitment_cost }
 	low_maintenance_cost = { gold = chasseur_low_maint_cost }
 	high_maintenance_cost = { gold = chasseur_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -222,17 +249,16 @@ picchieri = {
 	screen = 0
 	
 	can_recruit = {
+		valid_for_maa_trigger = { PARAMETER = heritage_latin }
 		culture = {
-			has_cultural_parameter = heritage_latin
 			has_innovation = innovation_barracks
-			
 		}
-	}
-	
+	}	
 
 	counters = {
 		pikemen = 1
 		heavy_infantry = .5
+		peasant_militia = 1
 		light_cavalry = 3
 		heavy_cavalry = 2
 		camel_cavalry = 1
@@ -243,6 +269,7 @@ picchieri = {
 	buy_cost = { gold = picchieri_recruitment_cost }
 	low_maintenance_cost = { gold = picchieri_low_maint_cost }
 	high_maintenance_cost = { gold = picchieri_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 25
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -259,20 +286,24 @@ praetorian = {
 	screen = 0
 	
 	can_recruit = {
+		valid_for_maa_trigger = { PARAMETER = heritage_latin }
 		culture = {
-			has_cultural_parameter = heritage_latin
 			has_innovation = innovation_barracks
-			
+			NOT = {
+				has_cultural_parameter = strength_in_numbers_heavy_maa_ban
+			}
 		}
 	}
 	counters = {
 		pikemen = .5
 		heavy_infantry = 1
+		peasant_militia = 2
 	}
 	
 	buy_cost = { gold = praetorian_recruitment_cost }
 	low_maintenance_cost = { gold = praetorian_low_maint_cost }
 	high_maintenance_cost = { gold = praetorian_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 20
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -287,11 +318,10 @@ caballero = {
 	toughness = 41
 	pursuit = 1
 	screen = 0
-	
-	
 
 	counters = {
 		pikemen = 1
+		peasant_militia = 1
 		heavy_infantry = .5
 		light_cavalry = 3
 		heavy_cavalry = 2
@@ -300,13 +330,14 @@ caballero = {
 		archer_cavalry = 1	
 	}
 	can_recruit = {
-		culture = {has_innovation = innovation_caballeros }
+		culture = { has_innovation = innovation_caballeros }
 	}
 
 	
 	buy_cost = { gold = caballero_recruitment_cost }
 	low_maintenance_cost = { gold = caballero_low_maint_cost }
 	high_maintenance_cost = { gold = caballero_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 15
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 20] }
@@ -331,17 +362,20 @@ monaspa = {
 
 	counters = {
 		archers = 1
-	}
-
-	
+		gunpowder = 1
+	}	
 	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_monaspa }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_monaspa }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 
 	buy_cost = { gold = monaspa_recruitment_cost }
 	low_maintenance_cost = { gold = monaspa_low_maint_cost }
 	high_maintenance_cost = { gold = monaspa_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_moderate
 	
 	stack = 50
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -358,7 +392,7 @@ cataphract = {
 	screen = 20
 	
 	terrain_bonus = {
-		plains = { damage = 30 }
+		plains = { damage = 30 toughness = 5 }
 		drylands = { damage = 30 }
 		hills = { damage = -10 }
 		mountains = { damage = -50 }
@@ -367,60 +401,65 @@ cataphract = {
 	}
 
 	counters = {
-		
+		gunpowder = 1		
 	}
 
 	
 	can_recruit = {
+		valid_for_maa_trigger = { PARAMETER = heritage_latin }
 		culture = {
-			has_cultural_parameter = heritage_latin
 			has_innovation = innovation_quilted_armor
 			has_innovation = innovation_sahel_horsemen
-			
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
 	}
 	
 	buy_cost = { gold = cataphract_recruitment_cost }
 	low_maintenance_cost = { gold = cataphract_low_maint_cost }
 	high_maintenance_cost = { gold = cataphract_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_bankrupting
 	
 	stack = 10
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = heavy_cavalry
+	icon = cataphracts
 }
 
-hobelar = {
-	type = light_cavalry
-	
-	damage = 22
-	toughness = 15
-	pursuit = 50
-	screen = 30
-	
-	terrain_bonus = {
-		forest = { damage = 15 }
-		hills = { damage = 10 }
-		mountains = { damage = -10 pursuit = -30 }
-		desert_mountains = { damage = -15 pursuit = -30 }
-		wetlands = { damage = -10 pursuit = -20 screen = -15 }
-	}
-
-	counters = {
-		archers = 1
-	}
-
-	winter_bonus = {
-		harsh_winter = { damage = -5 }
-	}
-
-	buy_cost = { gold = hobelar_recruitment_cost }
-	low_maintenance_cost = { gold = hobelar_low_maint_cost }
-	high_maintenance_cost = { gold = hobelar_high_maint_cost }
-	
-	stack = 25
-	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = light_cavalry
-}
+#hobelar = {
+#	type = light_cavalry
+#	
+#	damage = 22
+#	toughness = 15
+#	pursuit = 50
+#	screen = 30
+#	
+#	terrain_bonus = {
+#		forest = { damage = 15 }
+#		hills = { damage = 10 }
+#		mountains = { damage = -10 pursuit = -30 }
+#		desert_mountains = { damage = -15 pursuit = -30 }
+#		wetlands = { damage = -10 pursuit = -20 screen = -15 }
+#	}
+#
+#	counters = {
+#		archers = 1
+#		gunpowder = 1
+#	}
+#
+#	winter_bonus = {
+#		harsh_winter = { damage = -5 }
+#	}
+#
+#	buy_cost = { gold = hobelar_recruitment_cost }
+#	low_maintenance_cost = { gold = hobelar_low_maint_cost }
+#	high_maintenance_cost = { gold = hobelar_high_maint_cost }
+#	provision_cost = @provisions_cost_cavalry_cheap
+#	
+#	stack = 25
+#	ai_quality = { value = @cultural_maa_extra_ai_score }
+#	icon = light_cavalry
+#}
 
 schiltron = {
 	type = pikemen
@@ -445,35 +484,7 @@ schiltron = {
 	buy_cost = { gold = schiltron_recruitment_cost }
 	low_maintenance_cost = { gold = schiltron_low_maint_cost }
 	high_maintenance_cost = { gold = schiltron_high_maint_cost }
-	
-	stack = 100
-	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = pikemen
-}
-
-schiltron = {
-	type = pikemen
-	
-	damage = 36
-	toughness = 28
-	pursuit = 0
-	screen = 0
-	
-	terrain_bonus = {
-		mountains = { toughness = 12 }
-		desert_mountains = { toughness = 12 }
-		hills = { toughness = 8 }
-		plains = { damage = 8 }
-	}
-
-	counters = {
-		light_cavalry = 1
-		heavy_cavalry = 1
-	}
-
-	buy_cost = { gold = schiltron_recruitment_cost }
-	low_maintenance_cost = { gold = schiltron_low_maint_cost }
-	high_maintenance_cost = { gold = schiltron_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -503,12 +514,13 @@ metsanvartija = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_metsanvartija }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_metsanvartija }
 	}
 
 	buy_cost = { gold = metsanvartija_recruitment_cost }
 	low_maintenance_cost = { gold = metsanvartija_low_maint_cost }
 	high_maintenance_cost = { gold = metsanvartija_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -543,18 +555,27 @@ horse_archers = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_horse_archers 
-
-			    has_innovation = innovation_sahel_horsemen  }
-			
+		OR = {
+			AND = {
+				is_landless_adventurer = yes
+				has_perk = planned_cultivation_perk
+				location.county.culture ?= { culture_has_archer_cavalry_maa = yes }
+			}
+			culture = { has_cultural_parameter = unlock_maa_horse_archers }
+			mpo_can_recruit_nomad_maa_trigger = yes
+		}
 	}
 
 	buy_cost = { gold = horse_archers_recruitment_cost }
 	low_maintenance_cost = { gold = horse_archers_low_maint_cost }
 	high_maintenance_cost = { gold = horse_archers_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_cheap
 	
 	stack = 50
-	ai_quality = { value = @cultural_maa_extra_ai_score }
+	ai_quality = {
+		value = @cultural_maa_extra_ai_score
+		add = 60 #I mean... they're horse archers
+	}
 	icon = horse_archers
 }
 
@@ -568,15 +589,20 @@ ayyar = {
 	
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_ayyar }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_ayyar }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 	
 	buy_cost = { gold = ayyar_recruitment_cost }
 	low_maintenance_cost = { gold = ayyar_low_maint_cost }
 	high_maintenance_cost = { gold = ayyar_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -593,16 +619,21 @@ mubarizun = {
 
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 		heavy_infantry = 1
 	}
 	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_mubarizun }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_mubarizun }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 	
 	buy_cost = { gold = mubarizun_recruitment_cost }
 	low_maintenance_cost = { gold = mubarizun_low_maint_cost }
 	high_maintenance_cost = { gold = mubarizun_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @[cultural_maa_extra_ai_score - 20] }
@@ -631,6 +662,7 @@ mulaththamun = { #Murabit Cavalry
 
 	counters = {
 		archers = 1
+		gunpowder = 1
 	}
 
 	winter_bonus = {
@@ -638,18 +670,18 @@ mulaththamun = { #Murabit Cavalry
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_mulaththamun }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_mulaththamun }
 	}
 
 	buy_cost = { gold = mulaththamun_recruitment_cost }
 	low_maintenance_cost = { gold = mulaththamun_low_maint_cost }
 	high_maintenance_cost = { gold = mulaththamun_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_cheap
 	
 	stack = 100
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 20] }
 	icon = light_cavalry
 }
-
 
 archers_of_the_nile = { #Nile Archers
 	type = archers
@@ -671,12 +703,13 @@ archers_of_the_nile = { #Nile Archers
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_archers_of_the_nile }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_archers_of_the_nile }
 	}
 
 	buy_cost = { gold = archers_of_the_nile_recruitment_cost }
 	low_maintenance_cost = { gold = archers_of_the_nile_low_maint_cost }
 	high_maintenance_cost = { gold = archers_of_the_nile_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -698,7 +731,7 @@ paiks = { #Indian Footmen - carrying bows but also swords and spears.
 	}
 	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_paiks }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_paiks }
 	}
 
 	counters = {
@@ -708,10 +741,12 @@ paiks = { #Indian Footmen - carrying bows but also swords and spears.
 	buy_cost = { gold = paiks_recruitment_cost }
 	low_maintenance_cost = { gold = paiks_low_maint_cost }
 	high_maintenance_cost = { gold = paiks_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
-	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = bowmen
+	ai_quality = { value = @[cultural_maa_extra_ai_score - 40] }
+
+	icon = paiks
 }
 
 druzhina = {
@@ -724,19 +759,23 @@ druzhina = {
 	
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 	}
 
 	can_recruit = {
+		valid_for_maa_trigger = { PARAMETER = heritage_west_germanic }
 		culture = {
-			has_cultural_parameter = heritage_west_germanic
 			has_innovation = innovation_barracks
-			
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
 	}
 	
 	buy_cost = { gold = druzhina_recruitment_cost }
 	low_maintenance_cost = { gold = druzhina_low_maint_cost }
 	high_maintenance_cost = { gold = druzhina_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -762,6 +801,7 @@ hussar = {
 
 	counters = {
 		archers = 1
+		gunpowder = 1
 	}
 
 	winter_bonus = {
@@ -769,12 +809,13 @@ hussar = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_hussar }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_hussar }
 	}
 
 	buy_cost = { gold = hussar_recruitment_cost }
 	low_maintenance_cost = { gold = hussar_low_maint_cost }
 	high_maintenance_cost = { gold = hussar_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_cheap
 	
 	stack = 100
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 10] }
@@ -800,12 +841,13 @@ horn_warrior = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_horn_warrior }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_horn_warrior }
 	}
 
 	buy_cost = { gold = horn_warrior_recruitment_cost }
 	low_maintenance_cost = { gold = horn_warrior_low_maint_cost }
 	high_maintenance_cost = { gold = horn_warrior_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -831,12 +873,13 @@ bush_hunter = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_bush_hunter }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_bush_hunter }
 	}
 
 	buy_cost = { gold = bush_hunter_recruitment_cost }
 	low_maintenance_cost = { gold = bush_hunter_low_maint_cost }
 	high_maintenance_cost = { gold = bush_hunter_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -856,12 +899,13 @@ shomer = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_shomer }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_shomer }
 	}
 
 	buy_cost = { gold = shomer_recruitment_cost }
 	low_maintenance_cost = { gold = shomer_low_maint_cost }
 	high_maintenance_cost = { gold = shomer_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -883,23 +927,29 @@ garudas = {
 	
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 		archers = 1
 	}
 	
 	buy_cost = { gold = garudas_recruitment_cost }
 	low_maintenance_cost = { gold = garudas_low_maint_cost }
 	high_maintenance_cost = { gold = garudas_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_garudas }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_garudas }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = heavy_infantry
+
+	icon = garudas
 }
 
 khandayat = {
@@ -917,19 +967,25 @@ khandayat = {
 	counters = {
 		light_cavalry = 1
 		pikemen = 1
+		peasant_militia = 2
 	}
 	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_khandayat }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_khandayat }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 
 	buy_cost = { gold = khandayat_recruitment_cost }
 	low_maintenance_cost = { gold = khandayat_low_maint_cost }
 	high_maintenance_cost = { gold = khandayat_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_bankrupting
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = heavy_infantry
+
+	icon = khandayat
 }
 
 mountaineer = {
@@ -947,6 +1003,7 @@ mountaineer = {
 	
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 	}
 
 	winter_bonus = {
@@ -955,16 +1012,21 @@ mountaineer = {
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_mountaineer }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_mountaineer }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 	
 	buy_cost = { gold = mountaineer_recruitment_cost }
 	low_maintenance_cost = { gold = mountaineer_low_maint_cost }
 	high_maintenance_cost = { gold = mountaineer_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = heavy_infantry
+
+	icon = mountaineer
 }
 
 #Light Cavalry
@@ -990,13 +1052,13 @@ sahel_horsemen = {
 	counters = {
 		light_cavalry = 1
 		archer_cavalry = .75
-	}
-
-	
+		gunpowder = 1
+	}	
 
 	buy_cost = { gold = sahel_rider_recruitment_cost }
 	low_maintenance_cost = { gold = sahel_rider_low_maint_cost }
 	high_maintenance_cost = { gold = sahel_rider_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_cheap
 	
 	stack = 20
 	ai_quality = { value = @[cultural_maa_extra_ai_score + 30] }
@@ -1022,12 +1084,13 @@ guinea_warrior = { #AKA Guinean uplander
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_guinea_warrior }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_guinea_warrior }
 	}
 
 	buy_cost = { gold = guinea_warrior_recruitment_cost }
 	low_maintenance_cost = { gold = guinea_warrior_low_maint_cost }
 	high_maintenance_cost = { gold = guinea_warrior_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -1049,7 +1112,7 @@ sarawit = { #AKA Ethiopian mountaineer
 		drylands = { screen = -10 }
 		desert = { toughness = -10 screen = -10 }
 	}
-	
+
 	counters = {
 		light_cavalry = 1
 	}
@@ -1057,6 +1120,7 @@ sarawit = { #AKA Ethiopian mountaineer
 	buy_cost = { gold = sarawit_recruitment_cost }
 	low_maintenance_cost = { gold = sarawit_low_maint_cost }
 	high_maintenance_cost = { gold = sarawit_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -1084,12 +1148,13 @@ abudrar = { #AKA Jabali - Berber mountaineer
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_abudrar }
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_abudrar }
 	}
 	
 	buy_cost = { gold = abudrar_recruitment_cost }
 	low_maintenance_cost = { gold = abudrar_low_maint_cost }
 	high_maintenance_cost = { gold = abudrar_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_cheap
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -1113,16 +1178,21 @@ zbrojnosh = {
 
 	counters = {
 		pikemen = 1
+		peasant_militia = 2
 		archers = 1
 	}
 	
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_zbrojnosh }
-	}			
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_zbrojnosh }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
 	
 	buy_cost = { gold = zbrojnosh_recruitment_cost }
 	low_maintenance_cost = { gold = zbrojnosh_low_maint_cost }
 	high_maintenance_cost = { gold = zbrojnosh_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
@@ -1144,22 +1214,28 @@ palace_guards = {
 	
 	counters = {
 		pikemen = 2
+		peasant_militia = 4
 	}
 
 	can_recruit = {
-		culture = { has_cultural_parameter = unlock_maa_palace_guards }
-
+		valid_for_maa_trigger = { PARAMETER = unlock_maa_palace_guards }
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
 	
 	buy_cost = { gold = palace_guards_recruitment_cost }
 	low_maintenance_cost = { gold = palace_guards_low_maint_cost }
 	high_maintenance_cost = { gold = palace_guards_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_bankrupting
 	
 	stack = 100
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = heavy_infantry
+
+	icon = palace_guards
 }
-chu_ko_nu = {
+
+shenbigong = {
 	type = archers
 	
 	damage = 100
@@ -1178,19 +1254,226 @@ chu_ko_nu = {
 	
 	counters = {
 		archers = 1
+		peasant_militia = 1
 		
 	}
 	can_recruit = {
-		culture = { has_cultural_parameter = heritage_latin }
+		valid_for_maa_trigger = { PARAMETER = heritage_latin }
 	}
-	buy_cost = { gold = chu_ko_nu_recruitment_cost }
-	low_maintenance_cost = { gold = chu_ko_nu_low_maint_cost }
-	high_maintenance_cost = { gold = chu_ko_nu_high_maint_cost }
+	buy_cost = { gold = shenbigong_recruitment_cost }
+	low_maintenance_cost = { gold = shenbigong_low_maint_cost }
+	high_maintenance_cost = { gold = shenbigong_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
 	
 	stack = 10
 	ai_quality = { value = @cultural_maa_extra_ai_score }
-	icon = crossbowmen
+	icon = ballistrai
 }
 
+guanch_vaulter = {
+	type = skirmishers
+	
+	damage = 10
+	toughness = 12
+	pursuit = 15
+	screen = 20
+	siege_value = 0.1
+	
+	terrain_bonus = {
+		hills = { damage = 4 toughness = 6 }
+		mountains = { damage = 4 pursuit = 6 }
+		desert_mountains = { damage = 4 pursuit = 6 }
+		wetlands = { damage = 4 pursuit = 6 }
+	}
 
+	counters = {
+		heavy_infantry = 1
+	}
+	can_recruit = {
+		always = no
+	}
+	buy_cost = { gold = guanch_vaulter_recruitment_cost }
+	low_maintenance_cost = { gold = guanch_vaulter_low_maint_cost }
+	high_maintenance_cost = { gold = guanch_vaulter_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
+	
+	
+	stack = 25
+	ai_quality = { value = culture_ai_weight_skirmishers }
+	icon = skirmishers
+}
 
+wolf_warriors = {
+	type = heavy_infantry
+
+	damage = 45
+	toughness = 35
+	pursuit = 5
+	screen = 0
+	
+	counters = {
+		pikemen = 0.5
+		heavy_infantry = 1
+		peasant_militia = 2
+	}
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_wolf_warriors
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+
+	winter_bonus = {
+		normal_winter = { toughness = 10 screen = 5 }
+		harsh_winter = { toughness = 10 screen = 5 }
+	}
+	
+	buy_cost = { gold = wolf_warriors_recruitment_cost }
+	low_maintenance_cost = { gold = wolf_warriors_low_maint_cost }
+	high_maintenance_cost = { gold = wolf_warriors_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_expensive
+	
+	stack = 20
+	ai_quality = { value = @cultural_maa_extra_ai_score }
+	icon = wolf_warriors
+}
+
+gothic_heavy_cavalry = {
+	type = heavy_cavalry
+
+	damage = 35
+	toughness = 30
+	pursuit = 80
+	screen = 20
+	
+	terrain_bonus = {
+		plains = { damage = 30 }
+		drylands = { damage = 30 }
+		farmlands = { damage = 30 }
+		hills = { damage = -20 pursuit = -3 }
+		mountains = { damage = -75 pursuit = -10 }
+		desert_mountains = { damage = -75 pursuit = -10 }
+		wetlands = { damage = -75 toughness = -10 pursuit = -10 }
+	}
+
+	counters = {
+		gunpowder = 1		
+	}
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_gothic_heavy_cav
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+
+	winter_bonus = {
+		normal_winter = { damage = -10 toughness = -5 }
+		harsh_winter = { damage = -20 toughness = -10 }
+	}
+	
+	buy_cost = { gold = heavy_cavalry_recruitment_cost }
+	low_maintenance_cost = { gold = heavy_cavalry_low_maint_cost }
+	high_maintenance_cost = { gold = heavy_cavalry_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_expensive
+	
+	stack = 25
+	ai_quality = { value = culture_ai_weight_heavy_cavalry }
+	icon = light_cavalry
+}
+
+gadrauhteis = { 
+	type = heavy_infantry
+	
+	damage = 30
+	toughness = 30
+	pursuit = 0
+	screen = 0
+	
+	counters = {
+		peasant_militia = 1
+	}
+
+	terrain_bonus = {
+		mountains = { damage = -10 toughness = -5 }
+		desert_mountains = { damage = -10 toughness = -5 }
+		wetlands = { damage = -10 toughness = -5 }
+	}
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_gadrauhteis
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+		
+	buy_cost = { gold = gadrauhteis_recruitment_cost }
+	low_maintenance_cost = { gold = gadrauhteis_low_maint_cost }
+	high_maintenance_cost = { gold = gadrauhteis_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
+
+	holy_order_fallback = yes
+
+	stack = 50
+	ai_quality = {
+		value = culture_ai_weight_heavy_infantry
+		add = counter_synergy_ai_weight_heavy_infantry
+	}
+	icon = skirmishers
+}
+
+frankish_axemen = { 
+	type = heavy_infantry
+	
+	damage = 40
+	toughness = 20
+	pursuit = 10
+	screen = 0
+	
+	counters = {
+		peasant_militia = 1
+	}
+
+	terrain_bonus = {
+		jungle = { damage = -10 pursuit = -5 }
+		forest = { damage = -10 pursuit = -5 }
+		mountains = { damage = -10 pursuit = -5 }
+		desert_mountains = { damage = -10 pursuit = -5 }
+		wetlands = { damage = -10 pursuit = -5 }
+	}
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_throwing_axes
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+	
+	winter_bonus = {
+		normal_winter = { toughness = -5 }
+		harsh_winter = { toughness = -5 }
+	}
+		
+	buy_cost = { gold = frankish_axemen_recruitment_cost }
+	low_maintenance_cost = { gold = frankish_axemen_low_maint_cost }
+	high_maintenance_cost = { gold = frankish_axemen_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
+
+	holy_order_fallback = yes
+
+	stack = 50
+	ai_quality = {
+		value = culture_ai_weight_heavy_infantry
+		add = counter_synergy_ai_weight_heavy_infantry
+	}
+	icon = skirmishers
+}

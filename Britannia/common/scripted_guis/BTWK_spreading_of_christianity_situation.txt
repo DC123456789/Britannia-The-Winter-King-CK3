@@ -1,0 +1,44 @@
+﻿# Get faith to convert to in the request conversion button (largest faith in region? Or capital faith?)
+BTWK_soc_get_faith_to_convert_to = {
+	scope = character
+	
+	effect = {
+		if = {
+			limit = { is_landed = yes }
+			capital_province.county = {
+				BTWK_soc_situation_get_county_region_largest_christian_faith = yes
+			}
+			set_variable = { 
+				name = BTWK_soc_faith_to_convert_to
+				value = scope:region_largest_christian_faith
+			}
+		}
+		else_if = {
+			limit = { has_domicile = yes }
+			domicile.domicile_location.county = {				
+				BTWK_soc_situation_get_county_region_largest_christian_faith = yes
+			}
+			set_variable = { 
+				name = BTWK_soc_faith_to_convert_to
+				value = scope:region_largest_christian_faith
+			}
+		}
+		# Shouldn't be possible, but...
+		else_if = {
+			limit = { exists = location.county }
+			location.county = {				
+				BTWK_soc_situation_get_county_region_largest_christian_faith = yes
+			}
+			set_variable = { 
+				name = BTWK_soc_faith_to_convert_to
+				value = scope:region_largest_christian_faith
+			}
+		}
+		else = {
+			set_variable = { 
+				name = BTWK_soc_faith_to_convert_to
+				value = faith:catholic
+			}
+		}
+	}
+}

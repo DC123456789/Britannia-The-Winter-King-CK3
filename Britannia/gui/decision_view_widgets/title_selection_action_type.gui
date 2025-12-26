@@ -1,7 +1,7 @@
 
 types TitleSelectionActionTypes
 {
-	type TitleSelectionActionBoxType vbox = {
+	type TitleSelectionActionBoxType = vbox {
 		layoutpolicy_horizontal = expanding
 		layoutpolicy_vertical = expanding
 		ignoreinvisible = yes
@@ -53,12 +53,19 @@ types TitleSelectionActionTypes
 				on_start = "[GetScriptedGui('title_selection_decision_reset_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 			}
 		}
+		
+		state = {
+			name = init_state
+			trigger_on_create = yes
+			block "box_create_state_secondary" {
+			}
+		}
 	}
 	
 	type TitleSelectionActionTitleType = hbox {
 		#layoutpolicy_horizontal = expanding		# Causes slight alignment bug for some reason
 		layoutpolicy_vertical = expanding
-		spacing = 6
+		# spacing = 6		# This doesn't work for the last element in the list (????) so we instead have an invisible widget between the buttons
 		
 		block "title_visible" {
 		}
@@ -68,10 +75,10 @@ types TitleSelectionActionTypes
 			margin = { 10 10 }
 
 			block "title_button" {
-				onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
-				# enabled = "[GetScriptedGui('title_selection_decision_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
+				# enabled = "[GetScriptedGui('title_selection_decision_selection').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
 				# tooltip = "[Entry.GetTooltip]"
-				down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_duchy', Scope.Title.MakeScope).End)]"
+				down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
 			}
 			
 			hbox = {
@@ -80,12 +87,20 @@ types TitleSelectionActionTypes
 				spacing = 10
 				margin_left = 10
 
-				coa_title_tiny = {
-					datacontext = "[Scope.Title]"
+				vbox = {
+					layoutpolicy_vertical = expanding
+					margin_top = 12
+					coa_title_tiny = {
+						block "title_button_coa" {
+							datacontext = "[Scope.Title]"
+						}
+					}
 				}
 
 				vbox = {
-					datacontext = "[Scope.Title]"
+					block "title_button_box_datacontext" {
+						datacontext = "[Scope.Title]"
+					}
 					name = "title_info"
 					layoutpolicy_vertical = expanding
 					margin_bottom = 5
@@ -105,6 +120,12 @@ types TitleSelectionActionTypes
 			}
 		}
 		
+		hbox = {
+			widget = {
+				size = { 6 50 }
+			}
+		}
+		
 		button_standard = {
 			size = { 70 50 }
 			margin = { 10 10 }
@@ -121,7 +142,9 @@ types TitleSelectionActionTypes
 				}
 
 				vbox = {
-					datacontext = "[Scope.Title]"
+					block "title_select_button_box_datacontext" {
+						datacontext = "[Scope.Title]"
+					}
 					name = "title_info"
 					layoutpolicy_vertical = expanding
 					margin_bottom = 5

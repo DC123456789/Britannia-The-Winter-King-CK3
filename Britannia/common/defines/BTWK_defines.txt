@@ -4,7 +4,7 @@
 
 NJominiMap = {
 	WORLD_EXTENTS_X = 8095
-	WORLD_EXTENTS_Y = 51
+	WORLD_EXTENTS_Y = 50
 	WORLD_EXTENTS_Z = 8095
 	WATERLEVEL = 3.5
 }
@@ -27,35 +27,35 @@ NArmy = {
 	MOVEMENT_SPEED_RETREAT = 25					# Movement speed while retreating
 	MOVEMENT_SPEED = 18								# Normal movement speed
 	MOVEMENT_SPEED_BONUS_FRIENDLY_AREA = 0.6		# In friendly areas you get a 90% speed bonus
-	COUNTY_MOVEMENT_ATTRITION_PERCENTAGE = 0.05
-	MINIMUM_COUNTY_MOVEMENT_ATTRITION = 30	
+	COUNTY_MOVEMENT_ATTRITION_PERCENTAGE = 0.02
+	MINIMUM_COUNTY_MOVEMENT_ATTRITION = 5	
 }
 
 NCulture = {
-		FIRST_ERA_START_YEAR = 1
-		
-		# This counts the # of border counties. So if culture A has a county that borders a single county of culture B, that's 2 border counties. If it bordered 2, it'd be 3 border counties, as each individual county can only get counted once
-		YEARLY_ACCEPTANCE_PER_BORDER_COUNTY = 0.005
-		MAX_YEARLY_ACCEPTANCE_PER_BORDER_COUNTY = 0.2
-		
-		# If 100% of both cultures are in the same realm, acceptance will increase by this much each year. 
-		# For each realm with both cultures we take the % of each culture that's present in the realm and multiply them with one another. 
-		# E.G., if a realm has 50% of all Norwegian counties and 40% of all Swedish cultures, that'll contribute 50% * 40% * MAX_ACCEPTANCE_FROM_SHARED_REALMS to acceptance each year
-		MAX_ACCEPTANCE_FROM_SHARED_REALMS = 0.3
+	FIRST_ERA_START_YEAR = 1
+	
+	# This counts the # of border counties. So if culture A has a county that borders a single county of culture B, that's 2 border counties. If it bordered 2, it'd be 3 border counties, as each individual county can only get counted once
+	YEARLY_ACCEPTANCE_PER_BORDER_COUNTY = 0.005
+	MAX_YEARLY_ACCEPTANCE_PER_BORDER_COUNTY = 0.2
+	
+	# If 100% of both cultures are in the same realm, acceptance will increase by this much each year. 
+	# For each realm with both cultures we take the % of each culture that's present in the realm and multiply them with one another. 
+	# E.G., if a realm has 50% of all Norwegian counties and 40% of all Swedish cultures, that'll contribute 50% * 40% * MAX_ACCEPTANCE_FROM_SHARED_REALMS to acceptance each year
+	MAX_ACCEPTANCE_FROM_SHARED_REALMS = 0.3
 
-		MAX_YEARLY_ACCEPTANCE_FROM_VASSALS = 0.75 # We don't give more than this from vassalage
-	#	MIN_CULTURE_SIZE_FOR_VASSAL_ACCEPTANCE = 5 # We pretend neither culture involved is smaller than this
+	MAX_YEARLY_ACCEPTANCE_FROM_VASSALS = 0.75 # We don't give more than this from vassalage
+#	MIN_CULTURE_SIZE_FOR_VASSAL_ACCEPTANCE = 5 # We pretend neither culture involved is smaller than this
 
-		# If two cultures gain no acceptance at all from bordering, vassals, or shared realm, their acceptance will go 
-		# down by this amount each year. Cultures with the same heritage are exempt
-	#	ACCEPTANCE_REDUCTION_FROM_NO_INTERACTION = 0.5 
+	# If two cultures gain no acceptance at all from bordering, vassals, or shared realm, their acceptance will go 
+	# down by this amount each year. Cultures with the same heritage are exempt
+#	ACCEPTANCE_REDUCTION_FROM_NO_INTERACTION = 0.5 
 
-		ACCEPTANCE_REGRESSION_TOWARDS_BASELINE = 0.8 # At 100% past the baseline it ticks down at this rate per year. Scaled from 0 to 100%, so at 50% it'd be half this value
-	#	MIN_ACCEPTANCE_REGRESSION_TOWARDS_BASELINE = 0.1 # Regression towards zero can't go below this (except to avoid overshooting the baseline)
-	#	ACCEPTANCE_DIMINISHING_RETURNS = 0.5 # At 100%, increases are reduced by this much. Scaled from 0 to 100%, ignores baseline
+	ACCEPTANCE_REGRESSION_TOWARDS_BASELINE = 0.8 # At 100% past the baseline it ticks down at this rate per year. Scaled from 0 to 100%, so at 50% it'd be half this value
+#	MIN_ACCEPTANCE_REGRESSION_TOWARDS_BASELINE = 0.1 # Regression towards zero can't go below this (except to avoid overshooting the baseline)
+#	ACCEPTANCE_DIMINISHING_RETURNS = 0.5 # At 100%, increases are reduced by this much. Scaled from 0 to 100%, ignores baseline
 
-	#	HYBRID_GFX_CHANCE = 0.666 # What's the chance that a GFX culture that can be made into a hybrid will be? Used for the AI, the default selection, and when making a culture through script
-	#	HYBRID_NAMING_CHANCE = 0.666 # What's the chance hybrid name lists will be used? Used for the AI, the default selection, and when making a culture through script
+#	HYBRID_GFX_CHANCE = 0.666 # What's the chance that a GFX culture that can be made into a hybrid will be? Used for the AI, the default selection, and when making a culture through script
+#	HYBRID_NAMING_CHANCE = 0.666 # What's the chance hybrid name lists will be used? Used for the AI, the default selection, and when making a culture through script
 }
 
 NMercenary = {
@@ -71,7 +71,7 @@ NMercenary = {
 	SIZE_INNOVATIONS_RATIO = 1.75			# How much are mercenary companies growing with the ratio of discovered to all cultural innovations of the culture. 1.0 means +100%
 											# if SIZE_INNOVATIONS_RATIO = 2, the mercenaries will be 3x their original size if all innovations are discovered
 	
-	HIRE_MONTHS = 60						# The length of the period mercenaries are hired for in months
+	BASE_HIRE_MONTHS = 60						# The length of the period mercenaries are hired for in months
 	
 	LEVY_COST_PER_100_SOLDIERS = 18.0		# The cost of the levy regiment part of mercenary companies, per 100 soldiers for better precision
 	MAA_COST_RATIO = 1.0					# The cost of the MAA regiments of mercenary companies as a fraction of what those regiments cost when buying them
@@ -83,10 +83,50 @@ NMercenary = {
 
 	COUNTY_REMOVAL_FACTOR = 1.2				# When removing mercenaries from shrinking cultures, first multiply culture size with this
 }
+NHolyOrder = {
+	# In addition to the holding levies, a holy order has levies according to this formula:
+	# NUM_LEVIES_BASE + <num holdings> * NUM_LEVIES_PER_HOLDING
+	NUM_LEVIES_BASE = 50
+	NUM_LEVIES_PER_HOLDING = 25
+
+	# The holy order starts out with NUM_MAA_BASE Men-At-Arms sub-regiments. These will always try to use the holy_order_maa defined in the religion, if any are available.
+	NUM_MAA_BASE = 50
+
+	# The holy order also gets NUM_MAA_PER_HOLDING additional Men-At-Arms sub-regiments for each holding leased to it.
+	NUM_MAA_PER_HOLDING = 1
+	# The MaA from this many holdings will all go into the same regiment
+	NUM_HOLDINGS_PER_MAA_REGIMENT = 3
+	# The regiment type of these additional Men-At-Arms has a chance of RELIGION_MAA_RATIO % (multiplied by 100) to use a religious type, like NUM_MAA_BASE.
+	# Otherwise it will use a random type with the holy_order_fallback = yes flag.
+	RELIGION_MAA_RATIO = 0.7
+
+	PATRON_MIN_TIER = 4						# minimum tier for a ruler to be a patron of a holy order
+
+	LEVY_COST_PER_100_SOLDIERS = 200		# The piety cost of the levy regiment part of holy orders, per 100 soldiers for better precision
+	MAA_COST_RATIO = 1.0					# The piety cost of the MAA regiments of holy orders as a fraction of what those regiments cost when buying them
+	REALM_SIZE_MULT = 0.05					# The cost will increase by this many percent multiplied by the square root of the hirer's realm size (# of counties)
+	PATRON_HIRE_COST_MULT = 0				# The patron pays only a fraction for hiring a holy order. Set to 0 to make it free.
+	PATRON_STEAL_COST_MULT = 1				# But if someone's already hired it, they do have to pay still
+
+	# One character can hire up to this many holy orders. Set to -1 to disable the limit.
+	HIRE_LIMIT = 1
+
+	# Must be at war with someone with at least this hostility level to be able to hire holy orders. Once hired hey can be used against all enemies, though.
+	ENEMY_MIN_HOSTILITY_LEVEL = 2
+
+	BASE_NUM_KNIGHTS = 0					# How many knights do holy orders have?
+	EXTRA_KNIGHTS_PER_HOLDING = 0.5			# How many knights do holy orders get for each holding? Rounds down
+
+	COAT_OF_ARMS_LIST = "religious_title"
+}
 
 NRoyalCourt = {
 	COURT_GRANDEUR_STARTING_DEFAULT = 20 # Default starting current grandeur
 	SHARES_COURT_LANGUAGE_WITH_GRANDEST_DIFFERENT_RELIGION_MULTIPLIER = -0.25 # Reduce by 25% if grandest court and us are of different religions
+}
+
+NTitle = {
+	CREATE_TITLE_GOLD_COST = { 0 0 0 50 100 300 750 } # remember to update values in create_duchy_title_value etc. in 01_dynamic_values.txt!
 }
 
 # Settings for character based travel (not army travel)

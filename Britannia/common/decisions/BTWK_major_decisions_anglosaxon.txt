@@ -1,0 +1,81 @@
+﻿#########################################################################
+# Anglo-Saxon Major Decisions											#
+#########################################################################
+
+embrace_anglo_saxon_culture_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 36
+		hegemony = 36
+	}
+
+	desc = embrace_anglo_saxon_culture_decision_desc
+
+	is_shown = {
+		has_title = title:e_aengland
+		NOT = { title:e_aengland = { has_variable = anglo_saxon_unified_culture } }
+		culture = { has_cultural_pillar = heritage_west_germanic }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		government_is_not_tribal_trigger = yes
+		custom_tooltip = {
+			text = follows_reformed_faith_tt
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+		prestige_level >= medium_prestige_level
+		title:e_aengland = { title_held_years >= 30 }
+		# TODO Easier if many Anglo-Saxon provinces are under foreign (i.e. Danish) rule?
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.75
+			REGION = geographical_region:btwk_custom_aengland
+		}
+		custom_tooltip = {
+			text = aengland_has_declared_supremacy_tt
+			# TODO check variable once mechanic is implemented
+			title:e_aengland = { has_variable = aengland_declared_supremacy }
+		}
+		OR = {
+			custom_tooltip = {
+				text = aengland_has_been_united_tt
+				# TODO check variable once mechanic is implemented
+				title:e_aengland = { has_variable = aengland_united }
+			}
+			# TODO once mechanic is implemented, need to figure out appropriate values
+			custom_tooltip = {
+				text = aengland_has_at_least_1000_bretwalda_authority_tt
+				always = no
+			}
+		}
+	}
+
+	effect = {
+		add_prestige = 300
+		if = {
+			limit = { capital_county.culture = { has_cultural_pillar = heritage_west_germanic } }
+			custom_tooltip = { text = embrace_anglo_saxon_culture_decision_tt }
+		}
+		else = {
+			custom_tooltip = { text = embrace_anglo_saxon_culture_decision_no_capital_tt }
+		}
+		custom_tooltip = { text = embrace_anglo_saxon_culture_decision_adopt_anglo_saxon_tt }
+		trigger_event = { id = culture_shifts.0020 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

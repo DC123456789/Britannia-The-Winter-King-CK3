@@ -1,5 +1,5 @@
-e_western_roman_empire = {
-	1.1.1={
+h_western_roman_empire = {
+	-27.1.16={
 	#	law = succ_byzantine_elective
 	#	law = agnatic_succession
 		holder=2031	#Augustus
@@ -217,39 +217,39 @@ e_western_roman_empire = {
 	}
 }
 
-# e_eastern_roman_empire = {
-# 	395.1.17={
-# 	#	law = agnatic_succession
-# 	#	law = succ_byzantine_elective
-# 		liege=0
-# 		holder=2006	#Arcadius
-#		effect = { set_variable = roman_empire_title }
-# 	}
-# 	408.5.1={
-# 		holder=34071 #Theodosius II
-# 	}
-# 	450.7.26={
-# 		holder=34072 #Pulcheria
-# 	}
-# 	450.11.25={
-# 		holder=68001 #Marcian
-# 	}
-# 	457.1.27={
-# 		holder=66000 #Leo the Thracian
-# 	}
-# 	474.1.18={
-# 		holder=58004 #Leo II
-# 	}
-# 	474.11.17={
-# 		holder=58001 #Zeno first time
-# 	}
-# 	475.1.9={
-# 		holder=66003 #Basilicus
-# 	}
-# 	476.12.1={
-# 		holder=58001 #Zeno second time
-# 	}
-# }
+h_eastern_roman_empire = {
+ 	395.1.17={
+ 	#	law = agnatic_succession
+ 	#	law = succ_byzantine_elective#
+		liege=0
+		holder=2006	#Arcadius
+		effect = { set_variable = roman_empire_title }
+ 	}
+ 	408.5.1={
+ 		holder=34071 #Theodosius II
+ 	}
+ 	450.7.26={
+ 		holder=34072 #Pulcheria
+ 	}
+ 	450.11.25={
+ 		holder=68001 #Marcian
+ 	}
+ 	457.1.27={
+ 		holder=66000 #Leo the Thracian
+ 	}
+ 	474.1.18={
+ 		holder=58004 #Leo II
+ 	}
+ 	474.11.17={
+ 		holder=58001 #Zeno first time
+ 	}
+ 	475.1.9={
+ 		holder=66003 #Basilicus
+ 	}
+ 	476.12.1={
+ 		holder=58001 #Zeno second time
+ 	}
+}
 
 e_roman_britannia = {
 	286.1.1 = {
@@ -277,8 +277,7 @@ e_roman_britannia = {
 k_britannia_prima = {
 	396.5.20={
 		holder=801		# Lucius Septimius
-		liege=e_western_roman_empire
-		effect = { set_variable = roman_province }
+		liege=h_western_roman_empire
 	}
 	410.1.1={
 		holder=0
@@ -289,8 +288,7 @@ k_britannia_prima = {
 k_britannia_secunda = {
 	383.1.1={
 		holder=300		# Coel Hen
-		liege=e_western_roman_empire
-		effect = { set_variable = roman_province }
+		liege=h_western_roman_empire
 	}
 	410.1.1={
 		holder=0
@@ -301,7 +299,7 @@ k_britannia_secunda = {
 k_maxima_cesariensis = {
 	43.1.1 = {
 		holder = 2363
-		liege = e_western_roman_empire
+		liege = h_western_roman_empire
 	}
 	47.1.1 = {
 		holder = 2369
@@ -344,7 +342,7 @@ k_maxima_cesariensis = {
 		holder = 2341
 	}
 	296.1.1 = {
-		liege = e_western_roman_empire
+		liege = h_western_roman_empire
 		holder = 0
 	}
 	406.8.1 = {
@@ -356,8 +354,10 @@ k_maxima_cesariensis = {
 	}
 	407.5.1 = {
 		holder=1637	#AAtE
-		set_global_flag = maxima_cesariensis_restored
-		effect = { set_variable = roman_province }
+		effect = { 
+			set_global_variable = maxima_cesariensis_restored
+			set_variable = title_has_been_created
+		}
 	}
 	409.1.1 = {
 		liege = 0
@@ -368,7 +368,10 @@ k_maxima_cesariensis = {
 	442.1.1={
 		holder=0
 		liege = 0
-		clr_global_flag = maxima_cesariensis_restored
+		effect = { 
+			remove_global_variable = maxima_cesariensis_restored
+			clear_variable = title_has_been_created
+		}
 	#	clear_tribute_suzerain = e_britannia
 	}
 }
@@ -377,7 +380,6 @@ k_flavia_cesariensis = {
 	410.1.1={
 		holder=0
 		liege=0
-		effect = { set_variable = roman_province }
 	}
 }
 
@@ -385,7 +387,6 @@ k_valentia = {
 	410.1.1={
 		holder=0
 		liege=0
-		effect = { set_variable = roman_province }
 	}
 }
 
@@ -396,27 +397,20 @@ k_valentia = {
 # 	#	law = agnatic_succession
 # 	#	law = succ_primogeniture
 # 	#	law = crown_authority_2
-#		effect = { set_variable = roman_province }
 # 	}
 # }
 
 # k_hibernia_prima = {
-#	410.1.1={
-#		effect = { set_variable = roman_province }
-#	}
 # }
 
 # k_hibernia_secunda = {
-#	410.1.1={
-#		effect = { set_variable = roman_province }
-#	}
 # }
 
 # e_gaul = {
 # 	1.1.1 = {
 # 		liege = 0
-# 		set_global_flag = imperium_galliarum_created
-# 		set_global_flag = roman_provinces_gaul_restored
+# 		effect = { set_global_variable = imperium_galliarum_created }
+# 		effect = { set_global_variable = roman_provinces_gaul_restored }
 # 	}
 # 	69.1.1 = {
 # 		holder = 2041
@@ -494,42 +488,43 @@ k_valentia = {
 # 	#	clear_tribute_suzerain = k_visigoths
 # 	}
 # 	461.8.7 = {
-# 		clr_global_flag = imperium_galliarum_created
-# 		clr_global_flag = roman_provinces_gaul_restored
+# 		effect = { remove_global_variable = imperium_galliarum_created }
+# 		effect = { remove_global_variable = roman_provinces_gaul_restored }
 # 	}
 # }
 
-# k_gaul = {
-# 	410.1.1={
-# 		holder = 0
-# 		liege = 0
-# 	#	law = succ_primogeniture
-# 	#	law = agnatic_succession
-# 	#	law = crown_authority_2
-# 	#	law = centralization_1
-#		effect = { set_variable = roman_province }
-# 	}
-# 	457.1.1={
-# 		holder=1091
-# 	}
-# 	468.9.26={
-# 		holder=1089
-# 	}
-# 	486.1.1={
-# 		holder = 0	# Fall of Soissons
-# 		set_global_flag = soissons_conquered
-# 		set_global_flag = roman_defeat
-# 		set_global_flag = frankish_war_480
-# 		set_global_flag = roman_provinces_gaul_restored
-# 	}
-# }
+k_gaul = {
+ 	410.1.1={
+ 		holder = 0
+ 		liege = 0
+ 	#	law = succ_primogeniture
+ 	#	law = agnatic_succession
+ 	#	law = crown_authority_2
+ 	#	law = centralization_1
+	#	effect = { set_variable = roman_province }
+ 	}
+ 	457.1.1={
+ 		holder=1091
+ 	}
+ 	468.9.26={
+ 		holder=1089
+ 	}
+  	486.1.1={
+ 	#	holder = 0	# Fall of Soissons
+  		effect = { 
+			set_global_variable = soissons_conquered 
+			set_global_variable = roman_defeat
+			set_global_variable = frankish_war_480
+			set_global_variable = roman_provinces_gaul_restored
+		}
+	}
+}
 
 # k_germania_tertia = {
 # 	410.1.1={
 # 		liege=0
 # 		holder=0
 # 		de_jure_liege = e_gaul
-#		effect = { set_variable = roman_province }
 # 		effect = {
 # 			set_title_flag = gallic_province
 # 		}
@@ -541,7 +536,6 @@ k_valentia = {
 # 		liege=0
 # 		holder=0
 # 		de_jure_liege = e_gaul
-#		effect = { set_variable = roman_province }
 # 	}
 # }
 

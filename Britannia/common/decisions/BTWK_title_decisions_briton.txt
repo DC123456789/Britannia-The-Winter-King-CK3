@@ -2,11 +2,138 @@
 # Briton Title Decisions												#
 #########################################################################
 
-create_deheubarth_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
-	major = yes
+claim_britannia_high_kingship_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
 
-	ai_check_interval = 1
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = claim_britannia_high_kingship_decision_desc
+
+	is_shown = {
+		culture = {
+			OR = {
+				has_same_heritage_group_as = { TARGET = culture:briton }
+				has_cultural_pillar = heritage_latin
+				this = culture:britannic
+			}
+		}
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		}
+		NOT = { has_title = title:e_britannia }
+		NOT = { has_global_variable = end_of_britannia }
+		# TODO This decision should be disabled after one of the reforms as well
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		OR = {
+			culture = { has_cultural_pillar = heritage_brythonic }
+			culture = { has_cultural_pillar = heritage_latin }
+			trigger_if = {
+				limit = { culture:britannic = { has_variable = culture_has_emerged } }
+				culture = culture:britannic
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				text = claim_britannia_high_kingship_kingdom_requirement_tt
+				any_held_title = {
+					tier = tier_kingdom
+					target_is_de_jure_liege_or_above = title:e_britannia
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+				}
+			}
+			has_title = title:e_hen_ogledd
+		}
+		NOT = { exists = title:e_britannia.holder }
+		prestige_level >= high_prestige_level
+		age >= 25
+		realm_size >= 10
+		custom_tooltip = {
+			text = claim_britannia_high_kingship_military_requirement_tt
+			current_military_strength >= 750
+		}
+		diplomacy >= 10
+		martial >= 12
+		stewardship >= 7
+		OR = {
+			custom_tooltip = {
+				text = claim_britannia_high_kingship_king_ruled_years_requirement_tt
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 15 
+				}
+			}
+			prestige_level >= very_high_prestige_level
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+	}
+
+	effect = {
+		custom_tooltip = {
+			text = claim_britannia_high_kingship_decision_effect_tt_0
+		}
+		custom_tooltip = {
+			text = claim_britannia_high_kingship_decision_effect_tt_1
+		}
+		# trigger_event = { id = britannia_high_king.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 0		# Want AI to calculate if it's actually going to win or not
+	}
+	
+	widget = {
+		gui = "decision_view_widget_claim_britannia_high_kingship"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+create_deheubarth_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
 
 	desc = create_deheubarth_decision_desc
 
@@ -22,28 +149,18 @@ create_deheubarth_decision = {
 		has_title = title:k_demetia
 		is_independent_ruler = yes
 		highest_held_title_tier < tier_empire
-		NOT = { government_has_flag = government_is_tribal }
+		government_is_not_tribal_trigger = yes
 		NOT = { has_title = title:k_gwynedd }
 		prestige_level >= medium_prestige_level
-		completely_controls_region = custom_deheubarth
+		completely_controls_region = btwk_custom_deheubarth
 	}
 
 	effect = {
 		add_prestige = 200
+		add_legitimacy = 25	
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
-			create_title_and_vassal_change = {
-				type = created
-				save_scope_as = title_change
-				add_claim_on_loss = no
-			}
-			title:k_deheubarth = {
-				change_title_holder = {
-					holder = root
-					change = scope:title_change
-				}
-			}
-			resolve_title_and_vassal_change = scope:title_change
+			get_title = title:k_deheubarth
 			destroy_title = title:k_demetia
 		}
 		title:k_deheubarth = { 
@@ -51,11 +168,16 @@ create_deheubarth_decision = {
 			every_in_list = {
 				variable = dynamic_de_jure_territory
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
 			}
 		}
-		trigger_event = { id = titular_titles.0201 }
+		trigger_event = { id = titular_titles_briton.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
 	}
 	
 	ai_potential = {
@@ -68,10 +190,19 @@ create_deheubarth_decision = {
 }
 
 reunite_dumnonia_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_realm.dds"
-	major = yes
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
 
-	ai_check_interval = 1
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
 
 	desc = reunite_dumnonia_decision_desc
 
@@ -95,7 +226,7 @@ reunite_dumnonia_decision = {
 	is_valid = {
 		is_independent_ruler = yes
 		highest_held_title_tier < tier_empire
-		NOT = { government_has_flag = government_is_tribal }
+		government_is_not_tribal_trigger = yes
 		prestige_level >= medium_prestige_level
 		OR = {
 			AND = { 
@@ -104,12 +235,12 @@ reunite_dumnonia_decision = {
 					text = controls_half_of_dumnonia_tt
 					any_county_in_region = {
 						percent > 0.5
-						region = custom_dumnonia
+						region = btwk_custom_dumnonia
 						holder.top_liege = root
 					}
 				}
 			}
-			completely_controls_region = custom_dumnonia
+			completely_controls_region = btwk_custom_dumnonia
 		}
 		OR = {
 			AND = { 
@@ -118,28 +249,34 @@ reunite_dumnonia_decision = {
 					text = controls_half_of_cornwall_tt
 					any_county_in_region = {
 						percent > 0.5
-						region = custom_cornwall
+						region = btwk_custom_cornwall
 						holder.top_liege = root
 					}
 				}
 			}
-			completely_controls_region = custom_cornwall
+			completely_controls_region = btwk_custom_cornwall
 		}
 	}
 
 	effect = {
 		add_prestige = 200
+		add_legitimacy = 25
 		destroy_title = title:k_kernow
 		title:k_dumnonia = { 
 			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
-				variable = dynamic_de_jure_territory
+				variable = de_jure_affected_territory
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
 			}
 		}
-		trigger_event = { id = titular_titles.0203 }
+		trigger_event = { id = titular_titles_briton.0003 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
 	}
 	
 	ai_potential = {
@@ -152,10 +289,19 @@ reunite_dumnonia_decision = {
 }
 
 form_strathclyde_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
-	major = yes
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
 
-	ai_check_interval = 1
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
 
 	desc = form_strathclyde_decision_desc
 
@@ -169,10 +315,7 @@ form_strathclyde_decision = {
 		}
 		highest_held_title_tier < tier_empire
 		title:k_strathclyde = {
-			NOR = { 
-				has_variable = title_expanded_de_jure 
-				has_variable = title_expanded_alt_de_jure 
-			}
+			NOT = { has_variable = formed_strathclyde }
 		}
 	}
 
@@ -180,7 +323,7 @@ form_strathclyde_decision = {
 		is_independent_ruler = yes
 		highest_held_title_tier < tier_empire
 		has_title = title:k_strathclyde
-		realm_size >= 35
+		sub_realm_size >= 35
 		OR = {
 			completely_controls = title:c_luguvalium
 			completely_controls = title:c_din_eidyn
@@ -192,70 +335,314 @@ form_strathclyde_decision = {
 				exists = holder
 				NOT = { holder = ROOT }
 				holder.culture = { has_cultural_pillar = heritage_brythonic }
-				title_capital_county.title_province = { geographical_region = world_britannia_hen_ogledd }
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
 			}
 		}
 	}
 
 	effect = {
-		add_prestige = 200
-		title:k_strathclyde = { 
-			custom_label = { text = rename_to_strathclyde subject = title:k_strathclyde }
-			set_title_name = STRATHCLYDE
+		add_prestige = 300
+		add_legitimacy = 50
+		title:k_strathclyde = {		
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
 			set_variable = custom_name
 		}
 		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
 		custom_description_no_bullet = {
 			text = if_controls_c_luguvalium_effect
+			subject = title:c_luguvalium
+		}
+		custom_description = { 			# Needs to be a custom description to keep its place here
+			text = destroy_title_tooltip_effect
 			subject = title:k_rheged
 		}
-		show_as_tooltip = { destroy_title = title:k_rheged }
-		title:k_strathclyde = { 
+		title:k_strathclyde = {
 			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
-				variable = dynamic_de_jure_territory
+				variable = de_jure_affected_territory
 				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
 				limit = {
-					has_variable = expansion_kingdom_1
-					this.var:expansion_kingdom_1 = prev
+					has_variable_list = expansion_kingdoms
+					any_in_list = {
+						variable = expansion_kingdoms
+						this = title:k_strathclyde
+					}
 				}
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
 			}
 			clear_saved_scope = title_expanded_de_jure_pretend
+			if = {
+				limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_de_jure_pretend
+			}
 		}
 		title:k_pennines = { 
 			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
-				variable = dynamic_de_jure_territory
+				variable = de_jure_affected_territory
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
 			}
 			clear_saved_scope = title_expanded_de_jure_pretend
 		}
+		if = {
+			limit = {
+				NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+			}
+			# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
+			custom_description_no_bullet = {
+				text = if_controls_c_desnes_mor_effect
+				subject = title:c_desnes_mor
+			}
+			title:k_strathclyde = {
+				save_scope_as = title_expanded_alt_2_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_2_kingdoms
+						any_in_list = {
+							variable = expansion_alt_2_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_2_de_jure_pretend
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_3_de_jure_pretend
+				title:k_ynys_man = {
+					show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+				}
+			}
+		}
 		# By giving this a different subject from all the other custom descriptions/labels, it doesn't try to put them together
 		custom_description_no_bullet = {
 			text = if_controls_c_din_eidyn_effect
+			subject = title:c_din_eidyn
+		}
+		custom_description = { 			# Needs to be a custom description to keep its place here
+			text = destroy_title_tooltip_effect
 			subject = title:k_lothian
 		}
-		show_as_tooltip = { destroy_title = title:k_lothian }
 		title:k_strathclyde = { 
 			save_scope_as = title_expanded_alt_de_jure_pretend
 			every_in_list = {
-				variable = dynamic_de_jure_territory
+				variable = de_jure_affected_territory
 				limit = {
-					has_variable = expansion_alt_kingdom_1
-					this.var:expansion_alt_kingdom_1 = prev
+					has_variable_list = expansion_alt_kingdoms
+					any_in_list = {
+						variable = expansion_alt_kingdoms
+						this = title:k_strathclyde
+					}
 				}
 				show_as_tooltip = {
-					check_de_jure_liege_duchy_effect = yes
+					check_de_jure_liege_effect = yes
 				}
 			}
 			clear_saved_scope = title_expanded_alt_de_jure_pretend
 		}
-		trigger_event = { id = titular_titles.0205 }
+		trigger_event = { id = titular_titles_briton.0005 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+rheged_annex_novant_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = rheged_annex_novant_decision_desc
+
+	is_shown = {
+		has_title = title:k_rheged
+		highest_held_title_tier < tier_empire
+		title:k_rheged = {
+			NOT = { has_variable = title_expanded_de_jure }
+		}
+		NOT = {
+			title:k_strathclyde = { 
+				has_variable = formed_strathclyde 
+				has_variable = title_expanded_de_jure
+			}
+		}
+	}
+
+	is_valid = {
+		has_title = title:k_rheged
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		government_is_not_tribal_trigger = yes
+		NOT = { has_title = title:k_ynys_man }
+		prestige_level >= medium_prestige_level
+		completely_controls = title:c_desnes_mor
+		completely_controls = title:c_novantia
+	}
+
+	effect = {
+		add_prestige = 200
+		add_legitimacy = 25	
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		title:k_rheged = { 
+			save_scope_as = title_expanded_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+				limit = {
+					has_variable_list = expansion_alt_2_kingdoms
+					any_in_list = {
+						variable = expansion_alt_2_kingdoms
+						this = title:k_strathclyde
+					}
+				}
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		title:k_ynys_man = {
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+		}
+		trigger_event = { id = titular_titles_briton.0014 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+strathclyde_annex_aeron_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = strathclyde_annex_aeron_decision_desc
+
+	is_shown = {
+		has_title = title:k_strathclyde
+		highest_held_title_tier < tier_empire
+		title:k_strathclyde = {
+			NOT = { has_variable = title_expanded_alt_2_de_jure }
+		}
+	}
+
+	is_valid = {
+		has_title = title:k_strathclyde
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		government_is_not_tribal_trigger = yes
+		NOT = { has_title = title:k_ynys_man }
+		prestige_level >= medium_prestige_level
+		completely_controls = title:c_ayr
+		OR = {
+			completely_controls = title:c_cunninghame
+			completely_controls = title:c_southayr
+		}
+	}
+
+	effect = {
+		add_prestige = 200
+		add_legitimacy = 25	
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_3_de_jure_pretend
+			every_in_list = {
+				variable = dynamic_de_jure_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_briton.0016 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
 	}
 	
 	ai_potential = {
@@ -268,17 +655,28 @@ form_strathclyde_decision = {
 }
 
 create_hen_ogledd_decision = {
-	picture = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
-	major = yes
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	}
+	decision_group_type = major
 
-	ai_check_interval = 1
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
 
 	desc = create_hen_ogledd_decision_desc
 
 	is_shown = {
-		any_held_title = {
-			has_variable = formable_empire_1
-			this.var:formable_empire_1 = title:e_hen_ogledd
+		OR = {
+			any_held_title = {
+				this.var:kingdom_region ?= title:k_ebrauc
+			}
+			primary_title = { title_capital_county = { title_province = { geographical_region = btwk_world_britannia_hen_ogledd } } }
 		}
 		culture = {
 			OR = {
@@ -287,52 +685,47 @@ create_hen_ogledd_decision = {
 			}
 		}
 		highest_held_title_tier < tier_empire
-		title:e_hen_ogledd = {
-			NOT = { has_variable = title_created_de_jure }
-		}
+		# title:k_ebrauc = {
+			# NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
+		# }
+		title:e_hen_ogledd = { is_title_created = no }
 	}
 
 	is_valid = {
 		is_independent_ruler = yes
 		highest_held_title_tier < tier_empire
 		prestige_level >= high_prestige_level
-		custom_tooltip = {
-			text = controls_0_75_of_hen_ogledd_tt
-			any_county_in_region = {
-				percent >= create_hen_ogledd_decision_required_percent_value
-				region = world_britannia_hen_ogledd
-				root = { completely_controls = prev }
-			}
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.75
+			REGION = geographical_region:btwk_world_britannia_hen_ogledd
 		}
 	}
 
 	effect = {
 		add_prestige = 500
+		add_legitimacy = 75
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
-			create_title_and_vassal_change = {
-				type = created
-				save_scope_as = title_change
-				add_claim_on_loss = no
-			}
-			title:e_hen_ogledd = {
-				change_title_holder = {
-					holder = root
-					change = scope:title_change
-				}
-			}
-			resolve_title_and_vassal_change = scope:title_change
+			get_title = title:e_hen_ogledd
 		}
-		title:e_hen_ogledd = { 
-			save_scope_as = title_created_de_jure_pretend
+		title:e_hen_ogledd = {
 			every_in_list = {
-				variable = dynamic_de_jure_territory
-				show_as_tooltip = {
-					check_de_jure_liege_kingdom_effect = yes
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = this
+					NEW_DE_JURE_LIEGE = title:e_hen_ogledd
 				}
 			}
 		}
-		trigger_event = { id = titular_titles.0207 }
+		# Need to set these scopes to trigger the event
+		title:e_hen_ogledd = { save_scope_as = title }
+		flag:created = { save_scope_as = transfer_type }
+		trigger_event = { id = titular_titles_briton.0007 }
+	}
+	
+	cost = {
+		gold = { value = 400 }
+		piety = { value = 200 }
 	}
 	
 	ai_potential = {
@@ -344,5 +737,173 @@ create_hen_ogledd_decision = {
 	}
 }
 
-## TODO
-# reunite_the_britons_decision = { }
+reunite_the_britons_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = reunite_the_britons_decision_desc
+
+	is_shown = {
+		any_held_title = {
+			OR = {
+				this.var:kingdom_region ?= title:k_ebrauc
+				this.var:kingdom_region ?= title:k_gwynedd
+				this.var:kingdom_region ?= title:k_londinium
+			}
+		}
+		has_global_variable = end_of_britannia
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_brythonic
+				has_cultural_pillar = heritage_latin
+			}
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		prestige_level >= high_prestige_level
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.80
+			REGION = geographical_region:btwk_world_britannia
+		}
+		OR = {
+			has_title = title:e_cymru
+			title:e_cymru = { is_title_created = no }
+		}
+		OR = {
+			has_title = title:e_hen_ogledd
+			title:e_hen_ogledd = { is_title_created = no }
+		}
+	}
+
+	effect = {
+		add_prestige = 1000
+		add_legitimacy = 150
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			get_title = title:e_britannia
+			destroy_title = title:e_cymru
+			destroy_title = title:e_hen_ogledd
+			give_nickname = nick_y_mab_darogan
+		}
+		custom_tooltip = {
+			text = britannia_de_jure_shift_tt
+		}
+		show_as_tooltip = {
+			if = {
+				limit = { 
+					primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_hen_ogledd 
+					} 
+				}
+				custom_description_no_bullet = {
+					text = if_has_e_hen_ogledd_as_primary_title_effect
+					subject = title:e_hen_ogledd		# Some trickery to make the game render tooltips in order
+				}
+				title:e_britannia = { 
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:e_hen_ogledd.title_capital_county }
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_briton.0009 }
+	}
+	
+	cost = {
+		gold = { value = 500 }
+		piety = { value = 250 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+britannia_claim_imperial_title_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = britannia_claim_imperial_title_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_romanized_germanic
+				has_cultural_pillar = heritage_latin
+			}
+		}
+		NOT = { title:e_britannia = { has_variable = emperor_flag } }
+		# If the High King mechanic is still active, then you should be taking the Roman path after
+		# unification instead - this is basically for if a Britannic character/realm survives the Fall of 
+		# Britannia and then unifies Britannia
+		# TODO Take another look at this once the High King system has been implemented
+		has_global_variable = end_of_britannia
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		custom_tooltip = {
+			NOT = { exists = title:h_western_roman_empire.holder }
+			text = no_wre_emp_exists_tt
+		}
+		prestige_level >= very_high_prestige_level
+		completely_controls_region = btwk_world_britannia
+		custom_tooltip = {
+			text = follows_reformed_faith_tt
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+	}
+
+	effect = {
+		add_prestige = 1000
+		add_legitimacy = 100
+		save_scope_as = founder
+		show_as_tooltip = {
+			title:e_britannia = { set_title_name_w_tooltip_effect = { NEW_NAME = BRITANNIC_EMPIRE } }
+			custom_tooltip = {
+				text = britannia_claim_imperial_title_decision_tt
+			}
+		}
+		trigger_event = { id = titular_titles_briton.0018 }
+	}
+	
+	cost = {
+		gold = { value = 750 }
+		piety = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

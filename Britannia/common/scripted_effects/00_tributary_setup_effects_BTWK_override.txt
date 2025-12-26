@@ -1,0 +1,76 @@
+﻿# This file contains the setup effects for the tributaries in the game.
+# The setup_tributaries_effect is invoked by on_game_start and should make calls to subsequent scripted effects.
+# Sections are organized by top-suzerain title.
+# Note that existing vassals (as established in title history) must be released and recreated into tributaries before
+# they can have their own tributaries.
+
+setup_tributaries_effect = {
+	if = {
+		limit = { always = yes }
+		base_479_tributary_setup_effect = yes
+	}
+}
+
+base_479_tributary_setup_effect = {
+
+	title:k_dumnonia.holder = {		# King Uther of Dumnonia
+		save_scope_as = suzerain
+		title:d_eastgwent.holder = { # King Meriadoc of Stronggore (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+	}
+	title:k_powys.holder = {		# King Gorfyddyd of Powys
+		save_scope_as = suzerain
+		title:d_lerion.holder = { # King Gydion of Lerion (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+	}
+	title:k_east_anglia.holder = {	# King Aelle of East Anglia
+		save_scope_as = suzerain
+		title:d_eastseaxe.holder = { # King Bedca of East Seaxe (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:c_brinavis.holder = { # Lord Leofhelm of Geddingas (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:d_trinovantia.holder = { # King Lucretius of Colun (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:d_lundein.holder = { # King Meriadoc of Lundein (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:d_mincip.holder = { # King Pellehan of Mincip (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+	}
+	title:k_sussex.holder = {		# King Cerdic of Sussex
+		save_scope_as = suzerain
+		title:d_cantware.holder = { # King Æsc of Cantware (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:d_westcantware.holder = { # King Gerold of Ceasterware (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+		title:d_rhegin.holder = { # King Marianus of Rhegin (Subjugated Tributary)
+			start_tributary_interaction_effect = { SUZERAIN = scope:suzerain TRIBUTARY = this }
+		}
+	}
+	title:k_ebrauc.holder = {			# King Einion of Ebrauc
+		save_scope_as = suzerain
+		title:c_praetorium.holder = {	# Soemil of Fifeleg (Foederati)
+			start_tributary = {
+				contract_group = tributary_foederatus
+				suzerain = scope:suzerain
+			}
+		}
+	}
+	title:k_bryneich.holder = {			# King Cygnar of Bryneich
+		save_scope_as = suzerain
+		title:c_jarrow.holder = {	# Esa of Ġyrwum (Foederati)
+			start_tributary = {
+				contract_group = tributary_foederatus
+				suzerain = scope:suzerain
+			}
+		}
+	}
+}

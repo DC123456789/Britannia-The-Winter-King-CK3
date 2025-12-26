@@ -1,0 +1,58 @@
+﻿yearly_global_pulse = {
+	on_actions = {
+		btwk_quarterly_global_pulse	
+		delay = { months = 3 }
+		btwk_quarterly_global_pulse	
+		delay = { months = 6 }
+		btwk_quarterly_global_pulse	
+		delay = { months = 9 }
+		btwk_quarterly_global_pulse	
+	}
+}
+
+btwk_quarterly_global_pulse = {
+	on_actions = {
+		btwk_anglo_saxon_duchy_integration_pulse
+		btwk_check_conquest_events
+	}
+}
+
+btwk_anglo_saxon_duchy_integration_pulse = {
+	effect = {
+		every_in_global_list = {
+			variable = anglo_saxon_kingdom_list
+			save_temporary_scope_as = current_kingdom
+			every_in_list = {
+				variable = integratable_duchies
+				if = {
+					limit = { de_jure_liege = scope:current_kingdom }
+					integrate_duchy_anglo_saxon_change_controlled_years_effect = {
+						KINGDOM = scope:current_kingdom
+						OPERATION = multiply	# Slight hack to set it to 0
+						VALUE = 0
+					}
+				}
+				else = {
+					if = {
+						limit = {
+							has_variable = title_created_de_jure
+							scope:current_kingdom.holder ?= { completely_controls = prev }
+						}
+						integrate_duchy_anglo_saxon_change_controlled_years_effect = {
+							KINGDOM = scope:current_kingdom
+							OPERATION = add
+							VALUE = 0.25
+						}
+					}
+					else = {
+						integrate_duchy_anglo_saxon_change_controlled_years_effect = {
+							KINGDOM = scope:current_kingdom
+							OPERATION = subtract
+							VALUE = 0.25
+						}
+					}
+				}
+			}
+		}
+	}
+}

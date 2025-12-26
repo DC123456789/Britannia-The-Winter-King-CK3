@@ -3,6 +3,22 @@
 @maa_low_maintenance_cost = 1.0
 @maa_high_maintenance_cost = 5.0
 
+# Must be synced between files with the values located at "# Provisions Costs #".
+@provisions_cost_infantry_cheap = 3
+@provisions_cost_infantry_moderate = 7
+@provisions_cost_infantry_expensive = 12
+@provisions_cost_infantry_bankrupting = 15
+
+@provisions_cost_cavalry_cheap = 7
+@provisions_cost_cavalry_moderate = 15
+@provisions_cost_cavalry_expensive = 21
+@provisions_cost_cavalry_bankrupting = 30
+
+@provisions_cost_special_cheap = 6
+@provisions_cost_special_moderate = 12
+@provisions_cost_special_expensive = 18
+@provisions_cost_special_bankrupting = 24
+
 light_footmen = {
 	type = skirmishers
 	
@@ -16,19 +32,39 @@ light_footmen = {
 	counters = {
 		skirmishers = 1
 	}
-	
-	
+
+	can_recruit = {
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+	}
 
 	buy_cost = { gold = skirmisher_recruitment_cost }
 	low_maintenance_cost = { gold = skirmisher_low_maint_cost }
 	high_maintenance_cost = { gold = skirmisher_high_maint_cost }
-
+	provision_cost = @provisions_cost_infantry_cheap
 
 	holy_order_fallback = yes
 	
 	stack = 60
 	ai_quality = { value = culture_ai_weight_skirmishers }
-	icon = skirmishers
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = skirmishers_asia
+	}
+
+	illustration = {
+		reference = skirmishers
+	}
 }
 
 bowmen = {
@@ -42,33 +78,53 @@ bowmen = {
 	terrain_bonus = {
 		hills = { damage = 10  }
 		mountains = { damage = 15  }
-		forest = { damage = -10 }
-		
+		forest = { damage = -10 }		
 	}
 
-	counters = {
-		
+	counters = {		
 		archers = 1
 		skirmishers = 1
+	}
+
+	can_recruit = {
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
 	}
 
 	buy_cost = { gold = bowmen_recruitment_cost }
 	low_maintenance_cost = { gold = bowmen_low_maint_cost }
 	high_maintenance_cost = { gold = bowmen_high_maint_cost }
-	
+	provision_cost = @provisions_cost_infantry_moderate
 
 	holy_order_fallback = yes
 	
 	stack = 25
 	ai_quality = { 
 		value = culture_ai_weight_archers
-		value = counter_synergy_ai_weight_archers
+		add = counter_synergy_ai_weight_archers
+	}
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = bowmen_asia
+	}
+
+	illustration = {
+		reference = bowmen
 	}
 }
 
 light_horsemen = {
 	type = light_cavalry
-	
 	
 	damage = 10
 	toughness = 15
@@ -83,24 +139,47 @@ light_horsemen = {
 		desert_mountains = { damage = 1 pursuit = 1 }
 		wetlands = { damage = 1 toughness = 1 pursuit = 1 screen = 1 }
 	}
-	
-	
 
-	
+	can_recruit = {
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		NOT = { has_access_to_maa = steppe_raiders }
+	}
+
+	access_through_subject = {
+		NOT = { has_access_to_maa = steppe_raiders }
+	}
 
 	buy_cost = { gold = light_cavalry_recruitment_cost }
 	low_maintenance_cost = { gold = light_cavalry_low_maint_cost }
 	high_maintenance_cost = { gold = light_cavalry_high_maint_cost }
-
+	provision_cost = @provisions_cost_cavalry_cheap
 
 	holy_order_fallback = yes
 	
 	stack = 15
-	ai_quality = { 
-		
+	ai_quality = {		
 		value = culture_ai_weight_light_cavalry
+		add = counter_synergy_ai_weight_light_cavalry
 	}
-	icon = light_cavalry
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = light_cavalry_asia
+	}
+
+	illustration = {
+		reference = light_cavalry
+	}
 }
 
 pikemen_unit = {
@@ -109,9 +188,7 @@ pikemen_unit = {
 	damage = 21
 	toughness = 25
 	pursuit = 0
-	screen = 0
-	
-	
+	screen = 0	
 
 	counters = {
 		pikemen = 1
@@ -123,68 +200,132 @@ pikemen_unit = {
 		archer_cavalry = 1	
 	}
 
+	can_recruit = {
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+	}
+
 	buy_cost = { gold = pikemen_recruitment_cost }
 	low_maintenance_cost = { gold = pikemen_low_maint_cost }
 	high_maintenance_cost = { gold = pikemen_high_maint_cost }
-
+	provision_cost = @provisions_cost_infantry_expensive
 
 	holy_order_fallback = yes
 
 	stack = 45
 	ai_quality = {
 		value = culture_ai_weight_pikemen
-		value = counter_synergy_ai_weight_pikemen
+		add = counter_synergy_ai_weight_pikemen
 	}
-	icon = pikemen
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = pikemen_asia
+	}
+
+	illustration = {
+		reference = pikemen
+	}
 }
-
-
 
 #Tribal Era   #Future Placeholder for Late Unit
 armored_footmen = { 
-type = heavy_infantry
+	type = heavy_infantry
 	
 	damage = 15
 	toughness = 15
 	pursuit = 0
 	screen = 0
 
+	counters = {
+		peasant_militia = 2
+	}
 	can_recruit = {
-		culture = has_innovation =  innovation_knighthood 
-	}		
+		culture = {
+			has_innovation = innovation_knighthood
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
 
-		
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+	}
+
 	buy_cost = { gold = heavy_infantry_recruitment_cost }
 	low_maintenance_cost = { gold = heavy_infantry_low_maint_cost }
 	high_maintenance_cost = { gold = heavy_infantry_high_maint_cost }
-
+	provision_cost = @provisions_cost_infantry_moderate
 
 	holy_order_fallback = yes
 
 	stack = 20
 	ai_quality = {
 		value = culture_ai_weight_heavy_infantry
-		value = counter_synergy_ai_weight_heavy_infantry
+		add = counter_synergy_ai_weight_heavy_infantry
 	}
-	icon = heavy_infantry
-	
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = heavy_infantry_asia
+	}
+
+	illustration = {
+		reference = heavy_infantry
+	}
 }
 
 onager = {
 	type = siege_weapon
 	fights_in_main_phase = no
-	
+
 	damage = 0
 	toughness = 12
-	
-	
+
 	siege_tier = 1
 	siege_value = 1.5
-	
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_catapult
+			NOR = {
+				has_cultural_pillar = heritage_chinese
+				has_cultural_pillar = heritage_korean
+				has_cultural_pillar = heritage_japonic
+			}
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+	}
+
 	buy_cost = { gold = onager_recruitment_cost }
 	low_maintenance_cost = { gold = onager_low_maint_cost }
 	high_maintenance_cost = { gold = onager_high_maint_cost }
-	
+	provision_cost = @provisions_cost_special_cheap
+
 	stack = 10
 	allowed_in_hired_troops = no
 }
@@ -199,7 +340,35 @@ armored_horsemen = {
 	screen = 0
 	
 	can_recruit = {
-		culture = has_innovation =  innovation_knighthood 
+		culture = {
+			has_innovation = innovation_armored_horsemen
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_armored_horsemen
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		culture = { has_cultural_era_or_later = culture_era_late_medieval }
+		NOT = { has_access_to_maa = nomad_lancers }
+	}
+
+	access_through_subject = {
+		NOT = { has_access_to_maa = nomad_lancers }
 	}
 
 	terrain_bonus = {
@@ -223,40 +392,71 @@ armored_horsemen = {
 	buy_cost = { gold = heavy_cavalry_recruitment_cost }
 	low_maintenance_cost = { gold = heavy_cavalry_low_maint_cost }
 	high_maintenance_cost = { gold = heavy_cavalry_high_maint_cost }
+	provision_cost = @provisions_cost_cavalry_expensive
 	
 	stack = 25
 	ai_quality = { value = culture_ai_weight_heavy_cavalry }
-	icon = heavy_cavalry
 
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = heavy_cavalry_asia
+	}
+
+	illustration = {
+		reference = heavy_cavalry
+	}
 }
 
 mangonel = {
 	type = siege_weapon
 	fights_in_main_phase = no
-	
+
 	damage = 0
 	toughness = 12
-	
+
 	siege_tier = 2
 	siege_value = 1.0
-	
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_mangonel
+			NOR = {
+				has_cultural_pillar = heritage_chinese
+				has_cultural_pillar = heritage_korean
+				has_cultural_pillar = heritage_japonic
+			}
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		culture = { has_cultural_era_or_later = culture_era_early_medieval }
+	}
+
 	buy_cost = { gold = mangonel_recruitment_cost }
 	low_maintenance_cost = { gold = mangonel_low_maint_cost }
 	high_maintenance_cost = { gold = mangonel_high_maint_cost }
-	
-	stack = 10
-	
+	provision_cost = @provisions_cost_special_moderate
+
+	stack = 10	
 }
 
 #High Medieval Era
 crossbowmen = {
 	type = archers
-	
+
 	damage = 42
 	toughness = 18
 	pursuit = 0
 	screen = 0
-	
+
 	terrain_bonus = {
 		hills = { damage = 10 }
 		plains = { toughness = -8 }
@@ -270,33 +470,83 @@ crossbowmen = {
 		archer_cavalry = 0.5
 	}
 
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_plate_armor
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		culture = { has_cultural_era_or_later = culture_era_late_medieval }
+	}
+
 	buy_cost = { gold = crossbowmen_recruitment_cost }
 	low_maintenance_cost = { gold = crossbowmen_low_maint_cost }
 	high_maintenance_cost = { gold = crossbowmen_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
 
 	ai_quality = {
-		value = counter_synergy_ai_weight_archers
+		value = culture_ai_weight_crossbowmen
 	}
 	
 	holy_order_fallback = yes
 	
 	stack = 25
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = crossbowmen_asia
+	}
+
+	illustration = {
+		reference = crossbowmen
+	}
 }
 
 trebuchet = {
 	type = siege_weapon
 	fights_in_main_phase = no
-	
+
 	damage = 0
 	toughness = 12
-	
+
 	siege_tier = 3
 	siege_value = 0.4
-	
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_trebuchet
+			NOR = {
+				has_cultural_pillar = heritage_chinese
+				has_cultural_pillar = heritage_korean
+				has_cultural_pillar = heritage_japonic
+			}
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+		
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		culture = { has_cultural_era_or_later = culture_era_high_medieval }
+	}
+
 	buy_cost = { gold = trebuchet_recruitment_cost }
 	low_maintenance_cost = { gold = trebuchet_low_maint_cost }
 	high_maintenance_cost = { gold = trebuchet_high_maint_cost }
-	
+	provision_cost = @provisions_cost_special_expensive
+
 	stack = 10
 	allowed_in_hired_troops = no
 
@@ -306,47 +556,166 @@ trebuchet = {
 bombard = {
 	type = siege_weapon
 	fights_in_main_phase = no
-	
+
 	damage = 0
 	toughness = 12
-	
+
 	siege_tier = 4
 	siege_value = 0.6
-	
+
+	can_recruit = {
+		culture = {
+			has_innovation = innovation_bombard
+			NOR = {
+				has_cultural_pillar = heritage_chinese
+				has_cultural_pillar = heritage_korean
+				has_cultural_pillar = heritage_japonic
+			}
+		}
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_herder
+		}
+	}
+
+	should_show_when_unavailable = {
+		government_allows = subject_men_at_arms
+		culture = { has_cultural_era_or_later = culture_era_late_medieval }
+	}
+
 	buy_cost = { gold = bombard_recruitment_cost }
 	low_maintenance_cost = { gold = bombard_low_maint_cost }
 	high_maintenance_cost = { gold = bombard_high_maint_cost }
-	
+	provision_cost = @provisions_cost_special_bankrupting
+
 	stack = 10
 	allowed_in_hired_troops = no
+}
+
+handgunners = {
+	type = gunpowder
+
+	damage = 52
+	toughness = 12
+	pursuit = 0
+	screen = 5
+
+	can_recruit = {
+		gunpowder_raise_limit_existing_gunpowder_units < gunpowder_raise_limit_existing_gunpowder_buildings	# one powder magazine must be owned to support three handgunner regiments, regardless of maa size
+		culture = { has_cultural_parameter = unlock_late_medieval_gunpowder_units }
+	}
+
+	terrain_bonus = {
+		wetlands = { damage = -10 }
+		floodplains = { damage = -5 }
+	}
+
+	counters = {
+		heavy_infantry = 1
+	}
+
+	buy_cost = { gold = handgunner_recruitment_cost }
+	low_maintenance_cost = { gold = handgunner_low_maint_cost }
+	high_maintenance_cost = { gold = handgunner_high_maint_cost }
+	provision_cost = @provisions_cost_infantry_moderate
+
+	ai_quality = {
+		value = counter_synergy_ai_weight_gunpowder
+	}
+
+	stack = 25
+
+	icon = handgonne
+
 }
 
 # Special
 house_guard = {
 	type = heavy_infantry
 	can_recruit = {
-		exists = dynasty
-		dynasty = {
+		dynasty ?= {
 			has_dynasty_perk = warfare_legacy_5
 		}
+		NOT = {
+			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
+		}
 	}
-	
+
 	damage = 40
 	toughness = 32
 	pursuit = 0
 	screen = 24
-	
+
 	counters = {
 		pikemen = 2
+		peasant_militia = 4
 		archers = 2
 	}
-	
+
 	buy_cost = { gold = 50 }
 	low_maintenance_cost = { gold = 0 }
 	high_maintenance_cost = { gold = 1 }
-	
-	max_sub_regiments = 5
-	
+	provision_cost = @provisions_cost_infantry_expensive
+
+	max_regiments = 1
+
 	stack = 25
 	ai_quality = { value = 100 }
+
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+
+		reference = heavy_infantry_asia
+	}
+
+	illustration = {
+		reference = heavy_infantry
+	}
+}
+
+pikemen_militia = {
+	type = peasant_militia
+
+	damage = 12
+	toughness = 16
+	pursuit = 10
+	screen = 0
+
+	terrain_bonus = {
+		mountains = { toughness = 8 }
+		desert_mountains = { toughness = 8 }
+		hills = { toughness = 4 }
+		farmlands = { toughness = 8 }
+		floodplains = { toughness = 8 }
+		terraced_hills = { toughness = 8 }
+	}
+
+	counters = {
+		light_cavalry = 1
+		heavy_cavalry = 0.5
+		camel_cavalry = 1
+	}
+
+	special_recruit_only = yes
+
+	buy_cost = { gold = 0 }
+	low_maintenance_cost = { gold = 0 }
+	high_maintenance_cost = { gold = 0 }
+	provision_cost = @provisions_cost_infantry_expensive
+
+	stack = 25
+	ai_quality = { value = -100 }
+
+	allowed_in_hired_troops = no
+	illustration = {
+		trigger = {
+			should_use_asian_maa_graphics = yes
+		}
+		reference = pikemen_militia_asia
+	}
+	illustration = {
+		reference = pikemen_militia
+	}
 }

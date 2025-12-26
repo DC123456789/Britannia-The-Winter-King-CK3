@@ -1,0 +1,508 @@
+﻿# Used on initialization + culture creation
+# Saves the ancestral-most culture that a culture is "primarily descended" from
+# This is the most ancestral culture that the culture is descended from through a series of only other 
+# cultures of the same heritage
+# For the purposes of this effect, Romance heritage is considered the same as Imperial heritage
+# (which is the main difference from save_ancestral_non_roman_culture_effect below)
+# We also use the starting Roman regional cultures as the roots as we need to differentiate between
+# i.e. Romano-British and Romano-Hispanic
+save_ancestral_starting_culture_effect = {
+	save_scope_as = current_culture
+	save_ancestral_starting_culture_helper_effect = yes
+}
+
+save_ancestral_starting_culture_helper_effect = {
+	if = {
+		limit = {
+			NOT = { has_cultural_pillar = heritage_romance }
+		}
+		if = {
+			limit = { 
+				any_parent_culture = { has_same_culture_heritage = prev } 
+				NOT = { has_variable = starting_imperial_culture }
+			}
+			random_parent_culture = { 
+				limit = { has_same_culture_heritage = prev }
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_starting_culture value = prev } }
+		}
+	}
+	else = {
+		if = {
+			limit = { any_parent_culture = { has_same_culture_heritage = prev } }
+			random_parent_culture = { 
+				limit = {
+					has_same_culture_heritage = prev
+				}
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else_if = {
+			limit = { any_parent_culture = { has_cultural_pillar = heritage_latin } }
+			random_parent_culture = { 
+				limit = { has_cultural_pillar = heritage_latin }
+				save_ancestral_starting_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_starting_culture value = prev } }
+		}
+	}
+}
+
+# Used on initialization + culture creation
+# Saves the ancestral-most non-Latin culture that a culture is "primarily descended" from
+# This is the most ancestral culture that the culture is descended from through a series of only other 
+# cultures of the same heritage
+# Can also be used on a Romance culture that is descended at least partly from non-Romance/Imperial cultures,
+# possibly through other Romance cultures (but not through Imperial cultures)
+save_ancestral_non_roman_culture_effect = {
+	save_scope_as = current_culture
+	save_ancestral_non_roman_culture_helper_effect = yes
+}
+
+save_ancestral_non_roman_culture_helper_effect = {
+	# Even though it's not *really* relevant, we still calculate it for Imperial heritage cultures anyways
+	# This also helps cover dynamically generated Romance cultures, which may be Imperial heritage on the
+	# first tick depending on how it is generated
+	if = {
+		limit = { has_cultural_pillar = heritage_latin }
+		if = {
+			limit = { any_parent_culture = { NOT = { has_same_culture_heritage = prev } } }
+			random_parent_culture = { 
+				limit = { NOT = { has_same_culture_heritage = prev } }
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else = {
+			# Pass
+		}
+	}
+	else_if = {
+		limit = { has_cultural_pillar = heritage_romance }
+		if = {
+			limit = { 
+				any_parent_culture = { 
+					NOR = { 
+						has_cultural_pillar = heritage_romance
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			random_parent_culture = { 
+				limit = {
+					NOR = { 
+						has_cultural_pillar = heritage_romance
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else_if = {
+			limit = { any_parent_culture = { has_cultural_pillar = heritage_romance } }
+			random_parent_culture = { 
+				limit = {
+					has_cultural_pillar = heritage_romance
+				}
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { any_parent_culture = { has_same_culture_heritage = prev } }
+			random_parent_culture = { 
+				limit = { has_same_culture_heritage = prev }
+				save_ancestral_non_roman_culture_helper_effect = yes
+			}
+		}
+		else = {
+			scope:current_culture = { set_variable = { name = ancestral_non_roman_culture value = prev } }
+		}
+	}
+}
+
+get_briton_successor_culture_for_province_effect = {
+	if = {
+		limit = {
+			OR = {
+				geographical_region = btwk_world_britannia_hen_ogledd
+				geographical_region = btwk_world_caledonia
+				geographical_region = btwk_world_ireland_ulaid
+			}
+		}
+		culture:cumbrian = { save_scope_as = briton_successor_culture }
+	}
+	else_if = {
+		limit = {
+			geographical_region = btwk_custom_britannia_south_coast
+		}
+		culture:cornish = { save_scope_as = briton_successor_culture }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				geographical_region = btwk_world_britannia
+				geographical_region = btwk_world_ireland
+			}
+		}
+		culture:welsh = { save_scope_as = briton_successor_culture }
+	}
+	else = {		# On the continent
+		culture:breton = { save_scope_as = briton_successor_culture }
+	}
+}
+
+# Note - includes barons
+convert_unlanded_close_family_members_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_close_family_member = {
+		limit = {
+			$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+			OR = {
+				is_landed = no 			# Includes courtiers and landless rulers!
+				highest_held_title_tier = tier_barony
+			}
+		}
+		if = {
+			limit = {
+				exists = domicile
+			}
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			convert_unlanded_courtiers_and_guests_of_culture_effect = {
+				CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+				CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+				CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+				NEW_CULTURE = scope:effect_new_culture
+			}
+		}
+		set_culture = scope:effect_new_culture
+	}
+}
+
+convert_unlanded_courtiers_and_guests_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_courtier_or_guest = {
+		limit = {
+			$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+		}
+		if = {
+			limit = {
+				exists = domicile
+			}
+			if = {
+				limit = {
+					exists = domicile.domicile_culture
+					culture = domicile.domicile_culture
+				}
+				domicile = { set_domicile_culture = scope:effect_new_culture }
+			}
+			# Need to avoid recursion here
+			every_courtier_or_guest = {
+				limit = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+				}
+				set_culture = scope:effect_new_culture
+			}
+		}
+		set_culture = scope:effect_new_culture
+	}
+}
+
+# We separate the condition into individual words to let us pass it down to other effects
+# If you need a complex condition, wrap it in a scripted trigger
+convert_character_with_family_and_courtiers_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	if = {
+		limit = { $CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$ }
+		culture = { save_scope_as = old_char_culture }
+		if = {
+			limit = {
+				exists = domicile.domicile_culture
+				culture = domicile.domicile_culture
+			}
+			domicile = { set_domicile_culture = scope:effect_new_culture }
+		}
+		set_culture = scope:effect_new_culture
+		convert_unlanded_close_family_members_of_culture_effect = { 
+			CULTURE_CONDITION_LHS = "culture"
+			CULTURE_CONDITION_OP = "="
+			CULTURE_CONDITION_RHS = "scope:old_char_culture"
+			NEW_CULTURE = scope:effect_new_culture
+		}
+		convert_unlanded_courtiers_and_guests_of_culture_effect = {
+			CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+			CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+			CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+			NEW_CULTURE = scope:effect_new_culture
+		} 
+	}
+}
+
+convert_county_barons_of_culture_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_direct_de_jure_vassal_title = {
+		holder ?= {
+			if = {
+				limit = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+					highest_held_title_tier = tier_barony
+				}
+				set_culture = scope:effect_new_culture
+				every_courtier_or_guest = {
+					limit = {
+						$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+					}
+					if = {
+						limit = {
+							exists = domicile.domicile_culture
+							culture = domicile.domicile_culture
+						}
+						domicile = { set_domicile_culture = scope:effect_new_culture }
+					}
+					set_culture = scope:effect_new_culture
+				}
+			}
+		}
+	}
+}
+
+convert_county_unlanded_domiciles_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	every_county_province = {
+		every_province_domicile = {
+			limit = {
+				owner = {
+					$CULTURE_CONDITION_LHS$ $CULTURE_CONDITION_OP$ $CULTURE_CONDITION_RHS$
+					is_independent_domicile_holder_for_culture_shift_trigger = yes
+				}
+			}
+			owner = {
+				convert_character_with_family_and_courtiers_effect = {
+					CULTURE_CONDITION_LHS = $CULTURE_CONDITION_LHS$
+					CULTURE_CONDITION_OP = $CULTURE_CONDITION_OP$
+					CULTURE_CONDITION_RHS = $CULTURE_CONDITION_RHS$
+					NEW_CULTURE = scope:effect_new_culture
+				}
+				$DOMICILE_OWNER_EFFECT$
+			}
+		}
+	}
+}
+
+convert_county_and_domiciles_and_holder_if_capital_with_court_effect = {
+	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
+	# Flip county if applicable
+	if = {
+		limit = { 
+			$COUNTY_CULTURE_CONDITION_LHS$ $COUNTY_CULTURE_CONDITION_OP$ $COUNTY_CULTURE_CONDITION_RHS$ 
+			NOT = { culture = scope:effect_new_culture }
+		}
+		set_county_culture = scope:effect_new_culture
+	}
+	# Flip barons if applicable
+	convert_county_barons_of_culture_effect = { 
+		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+		NEW_CULTURE = scope:effect_new_culture
+	}
+	# Flip holder and court if applicable and this is the holder's capital
+	holder = {
+		if = {
+			limit = { capital_county = prev }
+			convert_character_with_family_and_courtiers_effect = {
+				CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+				CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+				CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+				NEW_CULTURE = scope:effect_new_culture
+			}
+		}
+	}
+	# Flip domiciles in the area and their courts if applicable
+	convert_county_unlanded_domiciles_effect = {
+		CULTURE_CONDITION_LHS = $CHAR_CULTURE_CONDITION_LHS$
+		CULTURE_CONDITION_OP = $CHAR_CULTURE_CONDITION_OP$
+		CULTURE_CONDITION_RHS = $CHAR_CULTURE_CONDITION_RHS$
+		NEW_CULTURE = scope:effect_new_culture
+		DOMICILE_OWNER_EFFECT = ""
+	}
+}
+
+copy_acceptances_from_parent_cultures_effect = {
+	save_temporary_scope_as = effect_new_culture
+	every_parent_culture = {
+		if = {
+			limit = { NOT = { exists = scope:effect_new_culture_parent_1 } }
+			save_temporary_scope_as = effect_new_culture_parent_1
+		}
+		else = {
+			save_temporary_scope_as = effect_new_culture_parent_2
+		}
+	}
+	
+	# Copy acceptances
+	every_culture_global = {
+		limit = {
+			NOT = { this = scope:effect_new_culture }
+		}
+		# Since the pre-scripted cultures aren't actually divergences, we need to set 
+		# the 100% acceptance with the parent culture manually
+		if = {
+			limit = { scope:effect_new_culture = { is_child_culture_of_trigger = { TARGET = prev } } }
+			scope:effect_new_culture = {
+				set_cultural_acceptance = {
+					target = prev
+					value = 100 
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:effect_new_culture = { is_hybrid_culture = yes } }
+			
+			# Get the higher of the two parental acceptances
+			if = {
+				limit = { "scope:effect_new_culture_parent_1.cultural_acceptance(this)" > "scope:effect_new_culture_parent_2.cultural_acceptance(this)" }
+				scope:effect_new_culture = {
+					set_cultural_acceptance = {
+						target = prev
+						value = "scope:effect_new_culture_parent_1.cultural_acceptance(prev)"
+					}
+				}
+			}
+			else = {
+				scope:effect_new_culture = {
+					set_cultural_acceptance = {
+						target = prev
+						value = "scope:effect_new_culture_parent_2.cultural_acceptance(prev)"
+					}
+				}
+			}
+		}
+		else = {
+			scope:effect_new_culture = {
+				set_cultural_acceptance = {
+					target = prev
+					value = "scope:effect_new_culture_parent_1.cultural_acceptance(prev)"
+				}
+			}
+		}
+	}
+}
+
+# Saves the relevant story as culture_spread_progress_story
+get_culture_spread_success_story_effect = {
+	$CULTURE$ = { save_temporary_scope_as = current_culture }
+	if = {
+		limit = { exists = scope:culture_spread_progress_story }
+		clear_saved_scope = culture_spread_progress_story
+	}
+	random_in_list = {
+		variable = scripted_culture_spread_progress_list
+		limit = {
+			this.var:culture = scope:current_culture
+		}
+		save_scope_as = culture_spread_progress_story
+	}
+	if = {
+		limit = { NOT = { exists = scope:culture_spread_progress_story } }
+		holder = {
+			create_story = {
+				type = culture_spread_progress_story
+				save_scope_as = culture_spread_progress_story
+			}
+			scope:culture_spread_progress_story = {
+				set_variable = { name = culture value = scope:current_culture }
+				set_variable = { name = progress value = 0 }
+			}
+		}
+		add_to_variable_list = {
+			name = scripted_culture_spread_progress_list
+			target = scope:culture_spread_progress_story
+		}
+	}
+}
+
+apply_culture_spread_progress_terrain_modifiers = {
+	if = {
+		limit = {
+			OR = {
+				title_province = { terrain = farmlands }
+				title_province = { terrain = plains }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 1.1 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = hills }
+				title_province = { terrain = desert }
+				title_province = { terrain = oasis }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.8 }
+	}
+	else_if = {
+		limit = {
+			title_province = { terrain = forest }
+		}
+		change_local_variable = { name = progress_change multiply = 0.75 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = jungle }
+				title_province = { terrain = taiga }
+				title_province = { terrain = wetlands }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.67 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				title_province = { terrain = mountains }
+				title_province = { terrain = desert_mountains }
+			}
+		}
+		change_local_variable = { name = progress_change multiply = 0.5 }
+	}
+}
+
+remove_roman_traditions_effect = {
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_imperial_tagmata }
+		remove_culture_tradition = tradition_ep3_imperial_tagmata
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_roman_legacy }
+		remove_culture_tradition = tradition_roman_legacy
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_roman_ceremonies }
+		remove_culture_tradition = tradition_ep3_roman_ceremonies
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_legalistic }
+		remove_culture_tradition = tradition_legalistic
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+		remove_culture_tradition = tradition_ep3_cultivated_sophistication
+	}
+	if = {
+		limit = { has_cultural_tradition = tradition_noble_adoption }
+		remove_culture_tradition = tradition_noble_adoption
+	}
+}

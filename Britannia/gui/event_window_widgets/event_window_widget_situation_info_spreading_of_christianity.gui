@@ -1,0 +1,81 @@
+# Event window widget to show situation info about specifically the great steppe
+# Required controller: situation_info
+
+vbox = {
+	name = "event_window_widget_situation_info_spreading_of_christianity"
+	EventWindowWidget = {
+		blockoverride "situation_info_content"
+		{
+			hbox = {
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = fixed
+				spacing = 15
+				datacontext = "[EventWindowCustomWidgetSituationInfo.GetSituation]"
+				datacontext = "[GetPlayer]"
+				
+				SituationInfo = {
+					blockoverride "situation_tooltip"
+					{
+						tooltipwidget = {
+							using = situation_info_tooltip
+							blockoverride "title_text" {
+								text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_PROSELYTIZATION_TITLE"
+							}
+							blockoverride "header_icon"
+							{
+								texture = "gfx/interface/icons/struggle_effects/faith.dds"
+							}
+							blockoverride "localization_text"
+							{
+								text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_PROSELYTIZATION_EXPLANATION"
+							}
+						}
+					}
+					blockoverride "situation_icon"
+					{
+						texture = "gfx/interface/icons/struggle_effects/faith.dds"
+					}
+					blockoverride "situation_text"
+					{
+						text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_PROSELYTIZATION_TITLE_LB"
+					}
+				}
+				
+				SituationInfo = {
+					
+					blockoverride "situation_tooltip"
+					{
+						tooltipwidget = {
+							using = situation_info_tooltip
+							blockoverride "title_text" {
+								text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_INTERACTIONS_TITLE"
+							}
+							blockoverride "header_icon"
+							{
+								texture = "gfx/interface/icons/situations/situation_modifier_character.dds"
+							}
+							blockoverride "localization_text"
+							{
+								datacontext = "[Character.GetCurrentLocation.GetCounty]"
+								datacontext = "[County.GetSubRegionInSituation(Situation.Self)]"
+								text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_INTERACTIONS_EXPLANATION"
+							}
+						}
+					}
+					blockoverride "situation_icon"
+					{
+						texture = "gfx/interface/icons/situations/situation_modifier_character.dds"
+					}
+					blockoverride "situation_text"
+					{
+						text = "SPREADING_OF_CHRISTIANITY_SITUATION_INFO_INTERACTIONS_TITLE_LB"
+					}
+				}
+
+				expand = {}
+			}
+			
+		}
+	}
+}
+

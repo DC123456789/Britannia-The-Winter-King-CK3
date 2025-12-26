@@ -1,0 +1,240 @@
+﻿#########################################################################
+# Irish/Gaelic Title Decisions											#
+#########################################################################
+
+create_lleyn_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/mpo_decision_confederation.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 12
+		duchy = 12
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = create_lleyn_decision_desc
+
+	is_shown = {
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_custom_lleyn }
+		}
+		highest_held_title_tier < tier_kingdom
+		title:k_lleyn = {
+			NOT = { has_variable = title_created_de_jure }
+		}
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_kingdom
+		prestige_level >= medium_prestige_level
+		completely_controls_region = btwk_custom_lleyn
+	}
+
+	effect = {
+		add_prestige = 300
+		add_legitimacy = 50
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			get_title = title:k_lleyn
+		}
+		title:k_lleyn = { 
+			save_scope_as = title_created_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		show_as_tooltip = {
+			if = {
+				limit = {
+					government_is_not_tribal_trigger = no
+					NOT = { has_trait = reaver }
+					number_of_commander_traits < 3
+				}
+				add_trait = reaver
+			}
+		}
+		trigger_event = { id = titular_titles_irish.0001 }
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		piety = { value = 50 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+destroy_lleyn_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_levy_outcasts.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 12
+		duchy = 12
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = destroy_lleyn_decision_desc
+
+	is_shown = {
+		OR = {
+			has_title = title:k_gwynedd
+			any_realm_county = {
+				title_province = { geographical_region = btwk_custom_northern_wales }
+			}
+		}
+		title:k_lleyn = { has_variable = title_created_de_jure }
+		OR = {
+			culture = { has_cultural_pillar = heritage_brythonic }
+			culture = { has_cultural_pillar = heritage_latin }
+		}
+		top_liege_can_create_roman_title_trigger = no
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		custom_tooltip = {
+			text = lleyn_controlled_by_non_gaelic_tt
+			NOT = {
+				any_county_in_region = {
+					region = btwk_custom_lleyn
+					holder.top_liege = { culture = { has_cultural_pillar = heritage_goidelic } }
+				}
+			}
+		}
+		completely_controls = title:c_henis_wyren
+	}
+
+	effect = {
+		add_prestige = 100
+		add_legitimacy = 25
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			destroy_title = title:k_lleyn
+		}
+		title:k_lleyn = { 
+			save_scope_as = title_created_de_jure_ignore
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		show_as_tooltip = {
+			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_deganwy } }
+		}
+		trigger_event = { id = titular_titles_irish.0003 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+create_irish_cymru_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = create_irish_cymru_decision_desc
+
+	is_shown = {
+		OR = {
+			any_held_title = {
+				this.var:kingdom_region ?= title:k_gwynedd
+			}
+			primary_title = { title_capital_county = { title_province = { geographical_region = btwk_world_britannia_south_cymry } } }
+		}
+		NOT = { has_title = title:e_cymru }
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier < tier_empire
+		prestige_level >= high_prestige_level
+		title:e_cymru = { is_title_created = no }
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.75
+			REGION = geographical_region:btwk_world_britannia_south_cymry
+		}
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+
+	effect = {
+		add_prestige = 500
+		add_legitimacy = 75
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		show_as_tooltip = {
+			get_title = title:e_cymru
+		}
+		title:e_cymru = {
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = this
+					NEW_DE_JURE_LIEGE = title:e_cymru
+				}
+			}
+		}
+		title:e_cymru = { 
+			set_variable = { name = force_creation_event days = 1 }
+			save_scope_as = title
+		}
+		trigger_event = { id = titular_titles_irish.0005 }
+		add_to_global_variable_list = {
+			name = unavailable_unique_decisions
+			target = flag:create_irish_cymru_decision
+		}
+	}
+	
+	cost = {
+		gold = { value = 300 }
+		piety = { value = 150 }
+	}
+	
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

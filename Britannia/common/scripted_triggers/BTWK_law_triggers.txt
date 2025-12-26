@@ -1,0 +1,138 @@
+﻿
+can_have_high_partition_succession_law_trigger = {
+	trigger_if = {
+		limit = {
+			NOT = { 
+				culture = { has_cultural_parameter = can_enact_high_partition_succession_law }
+			}
+		}
+		culture = {
+			has_innovation = innovation_heraldry
+		}
+	}
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+		}
+	}
+}
+
+can_have_single_heir_succession_law_trigger = {
+	trigger_if = {
+		limit = {
+			culture = {
+				has_innovation = innovation_roman_primogeniture
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_roman
+			has_realm_law_flag = title_revocation_allowed #limited crown authority 
+		}
+	}
+	trigger_if = {
+		limit = {
+			NOT = {
+				culture = {
+					has_innovation = innovation_roman_primogeniture
+				}
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_non_roman
+			has_realm_law_flag = max_authority_level #absolute crown authority 
+		}
+		prestige >= 2000
+		legitimacy_level >= 3
+	}
+	# Non-tribals only
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+		}
+	}
+	NOT = { government_allows = administrative }
+}
+
+can_have_single_heir_youngest_succession_law_trigger = {
+	trigger_if = {
+		limit = {
+			culture = {
+				has_innovation = innovation_roman_primogeniture
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_roman
+			has_realm_law_flag = title_revocation_allowed #limited crown authority 
+		}
+	}
+	trigger_if = {
+		limit = {
+			NOT = {
+				culture = {
+					has_innovation = innovation_roman_primogeniture
+				}
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_non_roman
+			has_realm_law_flag = max_authority_level #absolute crown authority 
+		}
+		prestige >= 2000
+		legitimacy_level >= 3
+	}
+	# Non-tribals only
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+		}
+	}
+	NOT = { government_allows = administrative }
+}
+
+can_have_single_heir_dynasty_house_trigger = {
+	exists = house
+	#trigger_if = {
+	#	limit = {
+	#		culture = {
+	#			OR = {
+	#				has_cultural_pillar = heritage_west_slavic
+	#				NOT = {	has_innovation = innovation_heraldry }
+	#			}
+	#		}
+	#	}
+	#	culture = {
+	#		has_innovation = innovation_table_of_princes
+	#	}
+	#}
+	trigger_if = {
+		culture = {
+			has_innovation = innovation_heraldry
+		}
+	}
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+		}
+	}
+	NOT = { government_allows = administrative }
+}
+
+can_change_succession_law_trigger = {
+	#can_change_succession_laws_realm_flag_trigger = yes
+	custom_description = {
+		text = "no_powerful_vassal_with_negative_opinion"
+		NOT = {
+			any_vassal = {
+				is_powerful_vassal = yes
+				opposes_succession_law_change_trigger = yes
+			}
+		}
+	}
+}

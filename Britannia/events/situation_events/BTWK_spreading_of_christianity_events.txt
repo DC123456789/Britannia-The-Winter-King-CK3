@@ -1,0 +1,121 @@
+﻿namespace = spreading_of_christianity
+
+###########################################
+# The Spreading of Christianity Intro Event
+# 0001
+###########################################
+spreading_of_christianity.0001 = { # Fullscreen Intro Event
+	type = character_event
+	window = fullscreen_event
+	title = spreading_of_christianity.0001.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { religion = religion:christianity_religion }
+				desc = spreading_of_christianity.0001.desc.christian
+			}
+			triggered_desc = {		# Hellenism has already been mostly marginalized by Christianity
+				trigger = { religion = religion:hellenism_religion }
+				desc = spreading_of_christianity.0001.desc.hellenic
+			}
+			triggered_desc = {
+				trigger = {
+					OR = {			# Brythonic and Gaelic paganism are also significantly under pressure
+						faith = faith:briton_pagan
+						faith = faith:gael_pagan
+					}
+				}
+				desc = spreading_of_christianity.0001.desc.briton_gaelic
+			}						# Other faiths are not yet as exposed
+			desc = spreading_of_christianity.0001.desc.other_non_christian
+		}
+	}
+	theme = realm
+	override_background = { 
+		reference = holy_site_christian
+	}
+	override_sound = { reference = "event:/DLC/FP2/SFX/UI/fp2_struggle_ui_intro_animate" }
+
+	widgets = {
+		widget = {
+ 			gui = "event_window_widget_situation_info_spreading_of_christianity"
+ 			container = "dynamic_content_widget"
+ 			controller = situation_info
+ 			setup_scope = { situation:spreading_of_christianity_situation = { save_scope_as = situation } }
+		}
+	}
+	
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { religion = religion:christianity_religion }
+						desc = spreading_of_christianity.0001.a.christian
+					}
+					triggered_desc = {
+						trigger = { religion = religion:hellenism_religion }
+						desc = spreading_of_christianity.0001.a.hellenic
+					}
+					triggered_desc = {
+						trigger = {
+							OR = {
+								faith = faith:briton_pagan
+								faith = faith:gael_pagan
+							}
+						}
+						desc = spreading_of_christianity.0001.a.briton_gaelic
+					}
+					desc = spreading_of_christianity.0001.a.other_non_christian
+				}
+			}
+		}
+		clicksound = "event:/DLC/FP2/SFX/UI/fp2_struggle_start_select"
+	}
+}
+
+
+# Toast for flipped provinces
+spreading_of_christianity.0010 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		scope:current_county.holder = {
+			add_to_list = informees
+			every_liege_or_above = {
+				add_to_list = informees
+			}
+		}
+		every_in_list = {
+			list = informees
+			switch = {
+				trigger = faith
+				scope:current_county.faith = { # Good if same as new faith
+					send_interface_message = {
+						type = msg_council_conversion_good
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+				scope:old_faith = {
+					send_interface_message = { # Bad if same faith as county
+						type = msg_council_conversion_bad
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+				fallback = {
+					send_interface_message = { # Neutral otherwise
+						type = msg_council_conversion_neutral
+						title = spreading_of_christianity.0010.t
+						desc = spreading_of_christianity.0010.desc
+						right_icon = scope:current_county
+					}
+				}
+			}
+		}
+	}
+}

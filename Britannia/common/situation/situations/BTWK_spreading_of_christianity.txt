@@ -1,0 +1,283 @@
+﻿spreading_of_christianity_situation = {
+	
+	is_unique = yes # It can only exist once in the world
+
+	gui_window_name = "BTWK_window_spreading_of_christianity_situation"
+	gui_participation_window_name = "window_situation_participation"
+	map_mode = sub_regions
+	illustration = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
+	situation_group_type = major
+
+	icon = {
+		trigger = { always = yes }
+		reference = "gfx/interface/icons/modifiers/icon_piety_christian_02.dds"
+	}
+	
+	is_unique = yes
+
+	##################################################
+	# Regions
+	##################################################
+	sub_regions = {
+		# Capital provinces are used to store variables
+		# For some reason though we can't scope to them directly in code, we need a switch statement
+		# So every time you add a new region you need to update the BTWK_soc_situation_get_sub_region_province_effect 
+		# scripted effect as well
+		britannia = {
+			geographical_regions = { btwk_world_britannia }
+			capital_province = 191		# Londinium 
+		}
+	}
+	
+	##################################################
+	# On Actions
+	##################################################
+	on_monthly = {	
+		every_situation_county = {			
+			# Increment progress and flip religion if reaches 100
+			if = {
+				limit = { religion != religion:christianity_religion }
+				change_variable = {
+					name = soc_proselytization_progress
+					add = soc_proselytization_monthly_progress_value
+				}
+				clamp_variable = { name = soc_proselytization_progress min = 0 max = 100 }
+				
+				if = {
+					limit = { this.var:soc_proselytization_progress >= 100 }
+					faith = { save_scope_as = old_faith }
+					set_county_faith = this.var:soc_proselytization_target_faith
+					trigger_event = { id = spreading_of_christianity.0010 }
+				}
+			}
+			
+			# Update proselytization modifiers
+			if = {
+				limit = { religion != religion:christianity_religion }
+				BTWK_soc_situation_set_proselytization_modifier_effect = yes
+			}
+			else_if = {
+				limit = { has_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier }
+				remove_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier
+			}
+		}
+		
+		every_situation_sub_region = {
+			# Update subregion stats
+			BTWK_soc_situation_calc_subregion_stats_effect = yes
+			
+			# TODO Recalculate subregion phases
+		}
+		
+	}
+
+	##################################################
+	# Groups
+	##################################################
+	participant_groups = {
+		christian_rulers = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_04.dds"
+
+			is_character_valid = {
+				has_religion = religion:christianity_religion
+			}
+
+			on_join = { }
+			on_leave = { }
+
+			map_color = hsv{ 0.37 1.00 0.78 }
+		}
+
+		non_christian_rulers = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_pagan_04.dds"
+
+			is_character_valid = {
+				NOT = { has_religion = religion:christianity_religion }
+			}
+			
+			on_join = { }
+			on_leave = { }
+
+			map_color = hsv{ 0.8 0.75 0.83 }
+		}
+	}
+	
+	on_start = {
+		# Starting event
+		every_situation_participant = { trigger_event = spreading_of_christianity.0001 }
+		
+		# Generate adjacency list
+		every_situation_county = {
+			save_scope_as = current_county
+			every_county = {
+				limit = { squared_distance = { target = prev value <= 22500 } }		# Actual distance: 150
+				scope:current_county = {
+					add_to_variable_list = {
+						name = nearby_counties
+						target = prev
+					}
+				}
+			}
+		}
+		
+		# County variable initialization
+		every_situation_county = {
+			limit = { religion != religion:christianity_religion }
+			save_scope_as = current_county
+			
+			# Counties start with some proselytization progress
+			set_variable = { name = soc_proselytization_progress value = soc_proselytization_monthly_progress_value }
+			random_list = {
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 5 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 6 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 7 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 8 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 9 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 10 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 11 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 12 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 13 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 14 } }
+				1 = { change_variable = { name = soc_proselytization_progress multiply = 15 } }
+			}
+			clamp_variable = { name = soc_proselytization_progress min = 0 max = 100 }
+			
+			BTWK_soc_situation_set_proselytization_modifier_effect = yes
+		}
+		
+		# Calculate region stats
+		every_situation_sub_region = {
+			BTWK_soc_situation_calc_subregion_stats_effect = yes
+		}
+	}
+	
+	##################################################
+	# Phases
+	##################################################
+	start_phase = spreading_of_christianity_phase_0
+
+	phases = {
+		spreading_of_christianity_phase_0 = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_00.dds"
+
+			illustration = "gfx/interface/illustrations/event_scenes/fp1_tribal_temple.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					# every_situation_participant = { trigger_event = spreading_of_christianity_situation.0010 }
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				spreading_of_christianity_phase_1 = { }
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		spreading_of_christianity_phase_1 = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_01.dds"
+
+			illustration = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					# every_situation_participant = { trigger_event = spreading_of_christianity_situation.0011 }
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				spreading_of_christianity_phase_0 = { }
+				spreading_of_christianity_phase_2 = { }
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		spreading_of_christianity_phase_2 = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_03.dds"
+
+			illustration = "gfx/interface/illustrations/situations/situation_spreading_of_christianity.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					# every_situation_participant = { trigger_event = spreading_of_christianity_situation.0012 }
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				spreading_of_christianity_phase_1 = { }
+				spreading_of_christianity_phase_3 = { }
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		spreading_of_christianity_phase_3 = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_02.dds"
+
+			illustration = "gfx/interface/illustrations/event_scenes/ep2_holysite_western.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					# every_situation_participant = { trigger_event = spreading_of_christianity_situation.0013 }
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				spreading_of_christianity_phase_2 = { }
+				spreading_of_christianity_phase_4 = { }
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+
+		spreading_of_christianity_phase_4 = {
+			icon = "gfx/interface/icons/modifiers/icon_piety_christian_04.dds"
+
+			illustration = "gfx/interface/illustrations/event_scenes/ep2_holysite_western.dds"
+
+			on_start = {
+				scope:situation_sub_region = {
+					# every_situation_participant = { trigger_event = spreading_of_christianity_situation.0014 }
+				}
+			}
+			on_end = {
+			}
+
+			future_phases = {
+				spreading_of_christianity_phase_3 = { }
+			}
+
+			modifier_sets = {
+				spreading_of_christianity_situation_religion_effects = {
+					icon = "gfx/interface/icons/struggle_effects/faith.dds"
+				}
+			}
+		}
+	}
+}

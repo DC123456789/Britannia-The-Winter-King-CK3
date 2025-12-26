@@ -1,0 +1,35 @@
+# Here so that you can tweak the rules on which innovations allow raiding without overriding the whole scripted rule trigger.
+can_ran_raid_overseas_cultural_innovations_trigger = {
+	# has_innovation = innovation_longboats
+	# has_innovation = innovation_african_canoes
+}
+
+can_raid_across_water_trigger = {
+	OR = {
+		# Culture logic.
+		culture = {
+			OR = {
+				has_cultural_parameter = culture_can_raid_at_sea_even_if_feudal
+				has_cultural_parameter = culture_can_raid_at_sea_even_if_feudal_no_restrictions
+			}
+		}
+		# Dynasty logic.
+		dynasty ?= { can_raid_dynasty_modifiers_that_enable_raiding_overseas_list_trigger = yes }
+		# House logic.
+		house ?= { can_raid_house_modifiers_that_enable_raiding_overseas_list_trigger = yes }
+		# Can raid overseas by government rules
+		government_has_flag = government_enables_naval_raiding
+		# Government/faith logic.
+		AND = {
+			has_government = tribal_government
+			faith = {
+				has_doctrine = unreformed_faith_doctrine
+			}
+			NOT = {
+				culture = {
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+		}
+	}
+}

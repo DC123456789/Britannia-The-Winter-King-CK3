@@ -1,0 +1,667 @@
+task_promote_culture = {
+	position = councillor_steward
+
+	task_type = task_type_county
+	county_target = realm
+	ai_county_target = realm
+	task_progress = task_progress_percentage
+	restart_on_finish = yes
+	highlight_own_realm = yes
+
+	asset = {
+		icon = "gfx/interface/icons/council_task_types/task_promote_culture.dds"
+		background = "gfx/interface/buttons/button_round_bg.dds"
+		frame = "gfx/interface/buttons/button_round_frame.dds"
+		glow = "gfx/particles/halo.dds"
+	}
+	
+	effect_desc = {
+		desc = {
+			desc = task_promote_culture_effect_desc
+			triggered_desc = {
+				trigger = {
+					scope:councillor_liege = {
+						any_vassal = {
+							vassal_stance = minority
+						}
+					}
+				}
+				desc = minority_disapproves_conversion_tooltip
+			}
+			triggered_desc = {
+				trigger = {
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							culture != scope:councillor_liege.culture
+						}
+						NOT = {
+							scope:councillor_liege.culture = {
+								is_hybrid_culture = yes
+								any_parent_culture = {
+									this = scope:county.culture
+								}
+							}
+						}
+					}
+					trigger_else = { always = no }
+				}
+				desc = task_promote_culture_acceptance_effect_desc
+			}
+		}
+		desc = {
+			desc = council_task_possible_side_effects
+			triggered_desc = {
+				trigger = {
+					stewardship > mediocre_skill_rating
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							NOT = { has_county_modifier = steward_task_efficient_taxation_modifier }
+						}
+					}
+				}
+				desc = task_promote_culture_improve_county_opinion
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship > mediocre_skill_rating
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							NOT = { has_county_modifier = steward_task_efficient_taxation_modifier }
+						}
+					}
+				}
+				desc = task_promote_culture_increased_taxes
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship > mediocre_skill_rating
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							NOT = { has_county_modifier = steward_task_efficient_taxation_modifier }
+						}
+					}
+				}
+				desc = task_promote_culture_increased_levies
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship < high_skill_rating
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							NOT = { has_county_modifier = steward_settler_resistance_modifier }
+						}
+					}
+				}
+				desc = task_promote_culture_resistance_to_settlers
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship < high_skill_rating
+					trigger_if = {
+						limit = { exists = scope:county }
+						scope:county = {
+							NOT = { has_county_modifier = steward_settler_resistance_modifier }
+						}
+					}
+				}
+				desc = task_promote_culture_resistance_to_administration
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		tgp_natural_disaster_councillor_available_for_task_trigger = yes
+	}
+
+	progress = {
+		value = 0
+		add = {
+			value = steward_promote_culture_base
+			desc = STEWARD_PROGRESS_BASE
+		}
+		add = {
+			value = scope:councillor.steward_promote_culture_monthly_increase
+			desc = SCALED_COUNCILLOR_STEWARDSHIP_VALUE
+		}
+
+		add = steward_promote_culture_contextual_bonuses
+		
+		if = { # Development reduces the speed. Should be the last non-multiply modifier applied to avoid negative values
+			limit = {
+				exists = scope:county
+				scope:county = {
+					development_level > 0
+				}
+			}
+			add = {
+				value = scope:county.promote_culture_development_penalty
+				desc = STEWARD_PROMOTE_CULTURE_DEVELOPMENT_PENALTY
+			}
+		}
+		
+		# Conversion speed game rules
+		if = {
+			limit = {
+				has_game_rule = slower_culture_conversion_speed
+			}
+			multiply = {
+				value = slower_game_rule_value
+				desc = GAME_RULE_SLOWER_REASON
+			}
+		}
+		if = {
+			limit = {
+				has_game_rule = significantly_slower_culture_conversion_speed
+			}
+			multiply = {
+				value = significantly_slower_game_rule_value
+				desc = GAME_RULE_SIGNIFICANTLY_SLOWER_REASON
+			}
+		}
+		if = {
+			limit = {
+				has_game_rule = significantly_faster_culture_conversion_speed
+			}
+			multiply = {
+				value = significantly_faster_game_rule_value
+				desc = GAME_RULE_SIGNIFICANTLY_FASTER_REASON
+			}
+		}
+		if = {
+			limit = {
+				has_game_rule = faster_culture_conversion_speed
+			}
+			multiply = {
+				value = faster_game_rule_value
+				desc = GAME_RULE_FASTER_REASON
+			}
+		}
+		# Faster conversion for FP2 Hostility ending, if county is in Iberia and culture was involved
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = fp2_struggle_ending_culture_list
+					this = scope:county.culture
+				}
+				scope:county.title_province = { geographical_region = world_europe_west_iberia }
+				scope:councillor.liege.house = {
+					OR = {
+						has_house_modifier = fp2_struggle_hostility_house_culture_modifier
+						has_house_modifier = fp2_struggle_hostility_house_combined_modifier
+					}
+				}
+			}
+			multiply = {
+				value = fp2_struggle_hostility_conversion_value
+				desc = fp2_struggle_hostility_culture_conversion_task_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = devoted_to_tradition_modifier
+				}
+			}
+			multiply = {
+				value = 1.25
+				desc = bp2_devoted_to_tradition_modifier_conversion_task_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					has_title = title:c_byzantion
+					title:c_byzantion = { has_county_modifier = pandidakterion_university_modifier }
+				}
+			}
+			multiply = {
+				value = 1.25
+				desc = pandidakterion_university_modifier
+			}
+		}
+		if = {
+			limit = {
+				scope:county = { has_county_modifier = improve_promote_culture_modifier }
+				scope:councillor_liege = scope:county.holder.top_liege
+			}
+			multiply = {
+				value = 1.20
+				desc = improve_promote_culture_modifier
+			}
+		}
+	}
+
+	potential_county = {
+		scope:county = {
+			is_landless_type_title = no
+			culture != scope:councillor_liege.culture
+			trigger_if = {
+				limit = {
+					scope:councillor_liege = { has_variable = hold_court_8130_culture_block }
+				}
+				custom_tooltip = {
+					text = hold_court_8130_conversion_tt
+					culture != scope:councillor_liege.var:hold_court_8130_culture_block
+				}
+			}
+		}
+		trigger_if = { #Tribal rulers can only convert their demesne
+			limit = {
+				scope:councillor_liege = { has_government = tribal_government }
+			}
+			scope:county.holder = scope:councillor_liege
+		}
+		trigger_if = {
+			limit = {
+				scope:councillor_liege = {
+					is_ai = yes
+					NAND = { # AI Directives override this
+						has_character_flag = vassal_directive_convert_culture
+						vassal_is_valid_and_follows_directive_trigger = { VASSAL = this LIEGE = liege }
+					}
+				}
+			}
+			scope:councillor_liege = {
+				OR = {
+					NOT = {
+						scope:county.culture = {
+							cultural_acceptance = { target = scope:councillor_liege.culture value >= 50 }
+						}
+					}
+					culture = { # All AI's are motivated to spread new Hybrid/Divergent cultures
+						OR = {
+							is_hybrid_culture = yes
+							is_divergent_culture = yes
+						}
+						any_parent_culture = {
+							this = scope:county.culture
+						}
+					}
+					culture = { # Small cultures want to grow a bit
+						any_culture_county = {
+							count < 10
+						}
+					}
+					scope:county.culture = { # 'dead' small cultures can go away
+						OR = {
+							is_hybrid_culture = yes
+							is_divergent_culture = yes
+						}
+						any_culture_county = {
+							count < 10
+						}
+						OR = {
+							NOT = { exists = culture_head }
+							any_culture_county = {
+								count < 5
+							}
+						}
+					}
+					AND = {
+						# The Gaels want to convert the Picts and Cumbrians
+						culture = culture:gaelic
+						OR = {
+							scope:county.culture = culture:cumbrian
+							scope:county.culture = culture:pictish
+						}
+					}
+					AND = {
+						# Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
+						culture = { has_variable = is_anglo_saxon_unified_culture }
+						OR = {
+							scope:county.culture = culture:old_saxon
+							scope:county.culture = culture:jute
+							scope:county.culture = culture:angle
+							scope:county.culture = { 
+								has_variable = anglo_saxon_regional_culture_kingdom
+							}
+						}
+					}
+					AND = {
+						# Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+						has_cultural_pillar = heritage_west_germanic
+						OR = {
+							scope:county.culture = culture:romanobritish
+							scope:county.culture = culture:britannic
+							scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+							scope:county.culture = { has_cultural_pillar = heritage_pictish }
+						}
+					}
+				}
+				OR = {
+					is_independent_ruler = yes
+					primary_title.tier > tier_county
+					culture = { # All AI's are motivated to spread new Hybrid/Divergent cultures
+						OR = {
+							is_hybrid_culture = yes
+							is_divergent_culture = yes
+						}
+						any_parent_culture = {
+							this = scope:county.culture
+						}
+					}
+					culture = { # Small cultures want to grow a bit
+						any_culture_county = {
+							count < 10
+						}
+					}
+					scope:county.culture = { # 'dead' small cultures can go away
+						OR = {
+							is_hybrid_culture = yes
+							is_divergent_culture = yes
+						}
+						any_culture_county = {
+							count < 10
+						}
+						OR = {
+							NOT = { exists = culture_head }
+							any_culture_county = {
+								count < 5
+							}
+						}
+					}
+					culture = { # Imperious cultures want to grow to a certain size
+						culture_head ?= {
+							is_independent_ruler = yes
+							highest_held_title_tier >= tier_kingdom
+							sub_realm_size >= 30
+						}
+						any_culture_county = {
+							count < 35
+						}
+					}
+					AND = { # The Gaels want to convert the Picts and Cumbrians
+						culture = culture:gaelic
+						OR = {
+							scope:county.culture = culture:cumbrian
+							scope:county.culture = culture:pictish
+						}
+					}
+					AND = { # Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
+						culture = { has_variable = is_anglo_saxon_unified_culture }
+						OR = {
+							scope:county.culture = culture:old_saxon
+							scope:county.culture = culture:jute
+							scope:county.culture = culture:angle
+							scope:county.culture = { 
+								has_variable = anglo_saxon_regional_culture_kingdom
+							}
+						}
+					}
+					AND = { # Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+						has_cultural_pillar = heritage_west_germanic
+						OR = {
+							scope:county.culture = culture:romanobritish
+							scope:county.culture = culture:britannic
+							scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+							scope:county.culture = { has_cultural_pillar = heritage_pictish }
+						}
+					}
+				}
+			}
+			OR = {
+				scope:county = {
+					any_neighboring_county = {
+						culture = scope:councillor_liege.culture # The AI only wants to convert counties bordering their own culture
+					}
+				}
+				AND = { # The Gaels want to convert the Picts and Cumbrians
+					scope:councillor_liege.culture = culture:gaelic
+					OR = {
+						scope:county.culture = culture:cumbrian
+						scope:county.culture = culture:pictish
+					}
+				}
+				AND = { # Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+					scope:councillor_liege = {
+						has_cultural_pillar = heritage_west_germanic
+					}
+					OR = {
+						scope:county.culture = culture:romanobritish
+						scope:county.culture = culture:britannic
+						scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+						scope:county.culture = { has_cultural_pillar = heritage_pictish }
+					}
+				}
+			}
+		}
+		trigger_else_if = { # But AI Directives should still try to look pretty
+			limit = {
+				scope:councillor_liege = {
+					is_ai = yes
+					has_character_flag = vassal_directive_convert_culture
+					vassal_is_valid_and_follows_directive_trigger = { VASSAL = this LIEGE = liege }
+				}
+			}
+			trigger_if = {
+				limit = {
+					scope:county = {
+						any_neighboring_county = {
+							culture = scope:councillor_liege.culture
+						}
+					}
+				}
+				scope:county = {
+					any_neighboring_county = {
+						culture = scope:councillor_liege.culture # The AI only wants to convert counties bordering their own culture
+					}
+				}
+			}
+			trigger_else = {
+				always = yes
+			}
+		}
+		trigger_else = {
+		}
+	}
+
+	on_finish_task_county = {
+		scope:councillor_liege = {
+			if = {
+				limit = {	
+					NOT = {
+						culture = {
+							is_hybrid_culture = yes
+							any_parent_culture = {
+								this = scope:county.culture
+							}
+						}
+					}
+				}
+				if = {
+					limit = {
+						top_liege != this
+					}
+					add_character_flag = {
+						flag = no_ai_culture_convert
+						years = 60
+					}
+				}
+				else = {
+					add_character_flag = {
+						flag = no_ai_culture_convert
+						years = 30
+					}
+				}
+			}
+		}
+		scope:county = {
+			if = {
+				limit = {
+					NOT = {
+						scope:councillor_liege.culture = {
+							is_hybrid_culture = yes
+							any_parent_culture = {
+								this = scope:county.culture
+							}
+						}
+					}
+				}
+				culture = {
+					change_cultural_acceptance = {
+						target = scope:councillor_liege.culture
+						value = culture_conversion_acceptance_impact
+						desc = cultural_acceptance_loss_promote_culture
+					}
+				}
+			}
+			set_county_culture = scope:councillor_liege.culture
+		}
+		scope:councillor = {
+			start_default_task = yes
+		}
+	}
+
+	monthly_on_action = task_promote_culture_side_effects
+
+	ai_will_do = {
+		value = 0
+		if = {
+			limit = {
+				scope:councillor = {
+					is_performing_council_task = task_promote_culture
+				}
+			}
+			add = 10000 # Always keep going if this is already chosen
+		}
+		else_if = {
+			limit = {
+				scope:councillor_liege = {
+					gold > 0
+					OR = {
+						gold >= steward_convert_culture_value
+						AND = {
+							culture = culture:anglo_saxon
+							top_liege.primary_title = title:e_aengland
+							capital_county.kingdom = title:e_aengland
+						}
+						AND = {
+							culture = {
+								OR = {
+									is_hybrid_culture = yes
+									is_divergent_culture = yes
+								}
+							}
+							any_realm_county = {
+								culture = {
+									save_temporary_scope_as = culture_check
+									scope:councillor_liege.culture = {
+										any_parent_culture = {
+											this = scope:culture_check
+										}
+									}
+								}
+							}
+						}
+						culture = { # Small cultures want to grow a bit
+							any_culture_county = {
+								count < 10
+							}
+						}
+						culture = { # Imperious cultures want to grow to a certain size
+							culture_head ?= {
+								is_independent_ruler = yes
+								highest_held_title_tier >= tier_kingdom
+								sub_realm_size >= 30
+							}
+							NOR = {
+								has_cultural_pillar = ethos_egalitarian
+								has_cultural_tradition = tradition_xenophilic
+							}
+							any_culture_county = {
+								count < 35
+							}
+						}
+					}
+				}
+			}
+			add = 500
+		}
+		if = {
+			limit = {
+				scope:councillor_liege.culture = {
+					has_cultural_parameter = less_likely_to_promote_culture
+				}
+			}
+			add = -250
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					culture = {
+						OR = {
+							is_hybrid_culture = yes
+							is_divergent_culture = yes
+						}
+					}
+					any_sub_realm_county = {
+						culture = {
+							save_temporary_scope_as = culture_check
+							scope:councillor_liege.culture = {
+								any_parent_culture = {
+									this = scope:culture_check
+								}
+							}
+						}
+					}
+				}
+			}
+			add = 200
+		}
+		# Motivate the AI with an escalation agenda to take this task
+		if = {
+			limit = {
+				has_character_flag = agenda_towards_escalation
+			}
+			add = 500
+		}
+		else_if = {
+			limit = {
+				has_character_flag = agenda_towards_deescalation
+			}
+			add = -250
+		}
+		if = {
+			# Don't do this too often
+			limit = {
+				scope:councillor_liege = {
+					has_character_flag = no_ai_culture_convert
+					NAND = { # ignore it if in Hostility with escalation
+						has_character_flag = agenda_towards_escalation
+						any_character_struggle = {
+							involvement = involved
+							is_struggle_type = iberian_struggle
+							is_struggle_phase = struggle_iberia_phase_hostility
+						}
+					}
+				}
+			}
+			multiply = 0
+		}
+		if = {
+			# Interrupt this task if you're bankrupt
+			limit = {
+				scope:councillor_liege = {
+					gold < -50
+				}
+			}
+			multiply = 0
+		}
+		
+		# AI directive
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_flag = vassal_directive_convert_culture
+					vassal_is_valid_and_follows_directive_trigger = { VASSAL = this LIEGE = liege }
+				}
+			}
+			add = 50000
+		}
+	}
+}

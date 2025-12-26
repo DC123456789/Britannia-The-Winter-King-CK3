@@ -1,0 +1,109 @@
+﻿# Culture on actions.
+
+# Happens when a culture is created through hybridization or divergence
+# Root = The new culture
+# scope:founder = The founder of the new culture
+on_culture_created = {
+	on_actions = { BTWK_on_culture_created }
+}
+
+BTWK_on_culture_created = {
+	effect = {
+		save_ancestral_starting_culture_effect = yes
+		save_ancestral_non_roman_culture_effect = yes
+	}
+}
+
+# Happens when a character changes culture
+# Root = character
+on_character_culture_change = {
+	on_actions = { BTWK_on_character_culture_change }
+}
+
+BTWK_on_character_culture_change = {
+	effect = {
+		if = {
+			limit = {
+				coronation_trigger = yes
+				NOT = {
+					has_game_rule = coronation_laws_off
+				}
+				NOR = {
+					has_realm_law = uncrowned
+					has_realm_law = crowned_king
+					has_realm_law = crowned_emperor					
+				}
+			}
+			trigger_event = { id = ach_maintenance_events.0001 }		# Set proper coronation law
+			if = {
+				limit = { 
+					is_ai = no
+					has_realm_law = uncrowned
+				}
+				trigger_event = {
+					id = ach_yearly_events.1005		# Notify human players
+				}
+			}
+		}
+	}
+}
+
+# Happens once a year for the culture. Arbitrary day, but the same day every year for that culture
+# Root is the culture
+yearly_culture_pulse = {
+	on_actions = { BTWK_yearly_culture_pulse }
+}
+
+BTWK_yearly_culture_pulse = {
+	on_actions = {
+		BTWK_quarterly_culture_pulse	
+		delay = { months = 3 }
+		BTWK_quarterly_culture_pulse	
+		delay = { months = 6 }
+		BTWK_quarterly_culture_pulse	
+		delay = { months = 9 }
+		BTWK_quarterly_culture_pulse	
+	}
+	events = {
+		name_lists.001
+		name_lists.003
+		name_lists.005
+		name_lists.007
+		name_lists.009
+		name_lists.011
+		
+		culture_shifts.9997		# General spread of scripted emerging culture
+	}
+}
+
+# Check if coronations innovation has been discovered, and if so assign proper laws and notify rulers
+BTWK_quarterly_culture_pulse = {
+	effect = {
+		if = {
+			limit = {
+				has_innovation = innovation_coronations
+				NOT = { has_variable = coronations_enabled }
+			}
+			set_variable = coronations_enabled
+			every_ruler = {
+				limit = {
+					culture = prev
+					coronation_trigger = yes
+					NOT = {
+						has_game_rule = coronation_laws_off
+					}
+				}
+				trigger_event = { id = ach_maintenance_events.0001 }		# Set proper coronation law
+				if = {
+					limit = { 
+						is_ai = no
+						has_realm_law = uncrowned
+					}
+					trigger_event = {
+						id = ach_yearly_events.1005		# Notify human players
+					}
+				}
+			}
+		}
+	}
+}
