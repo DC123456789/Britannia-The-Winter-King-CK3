@@ -250,9 +250,7 @@ BTWK_frontier_event.0101 = {
 					has_trait = ambitious
 				}
 				has_trait = brave
-			}
-
-			
+			}			
 		}
 
 		# EFFECTS:
@@ -277,9 +275,44 @@ BTWK_frontier_event.0201 = {
 		animation = personality_rational
 	}	
 
+	immediate = {
+		hidden_effect = {
+			every_province = {
+				limit = {
+					geographical_region = btwk_custom_hadrians_wall_provs
+				}
+				if = {
+					limit = {
+						has_building = hadrians_wall_03
+					}
+					remove_building = hadrians_wall_03
+				}
+				if = {
+					limit = {
+						has_building = hadrians_wall_02
+					}
+					remove_building = hadrians_wall_02
+				}
+				if = {
+					limit = {
+						has_building = hadrians_wall_01
+					}
+					remove_building = hadrians_wall_01
+				}
+				add_special_building_slot = hadrians_wall_01_ruined
+				add_special_building = hadrians_wall_01_ruined
+				add_county_modifier = {
+					modifier = destroyed_hadrians_wall_county_modifier
+					years = 20
+				}
+			}
+		}
+	}
+	
 	option = {
 		name = BTWK_frontier_event.0201.a
 		custom_tooltip = BTWK_frontier_event.0201.a_tt
+		custom_tooltip = BTWK_frontier_event.0201.a_tt_1
 		add_character_modifier = {
 			modifier = destroyed_hadrians_wall_character_modifier
 		}
@@ -293,41 +326,6 @@ BTWK_frontier_event.0201 = {
 
 		hidden_effect = {
 			save_scope_as = destroyed_hadrians_wall_char
-			every_province = {
-				limit = {
-					geographical_region = btwk_custom_hadrians_wall_provs
-				}
-				if = {
-					limit = {
-						this = {
-							has_building = hadrians_wall_02
-						}
-					}
-					remove_building = hadrians_wall_02
-					add_special_building_slot = hadrians_wall_01
-					add_special_building = hadrians_wall_01
-				}
-				else_if = {
-					limit = {
-						this = {
-							has_building = hadrians_wall_03
-						}
-					}
-					remove_building = hadrians_wall_03
-					add_special_building_slot = hadrians_wall_01
-					add_special_building = hadrians_wall_01
-				}
-				every_county = {
-					limit = {
-							geographical_region = btwk_custom_hadrians_wall_provs
-						}			
-					add_county_modifier = {
-						modifier = destroyed_hadrians_wall_county_modifier
-						years = 20
-					}
-				}
-			}
-
 			every_ruler = {
 				limit = {
 					is_landed = yes
@@ -468,19 +466,117 @@ BTWK_frontier_event.0202 = {
 	}
 }
 
-# Hadrian's Wall has been fully restored - effects for root
-BTWK_frontier_event.0203 = {
+# Start restoration
+BTWK_frontier_event.0210 = {
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_frontier_event.0203
+	title = BTWK_frontier_event.0210
 	desc = {
-		desc = BTWK_frontier_event.0203_desc
+		desc = BTWK_frontier_event.0210_desc
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:rebuilder = { is_roman_ruler_trigger = no }
+				}
+				desc = BTWK_frontier_event.0210_desc_romanized
+			}
+			triggered_desc = {
+				trigger = {
+					scope:rebuilder = { is_roman_ruler_trigger = yes }
+				}
+				desc = BTWK_frontier_event.0210_desc_roman
+			}
+		}
+	}
+	theme = stewardship_domain_focus
+	override_background = {
+		reference = courtyard
+	}
+
+	left_portrait = {
+		character = scope:rebuilder 
+		animation = personality_rational
+	}
+	
+	immediate = {
+		# Swap out the fully ruined building if relevant
+		hidden_effect = {
+			every_province = {
+				limit = {
+					geographical_region = btwk_custom_hadrians_wall_provs
+				}
+				if = {
+					limit = {
+						has_building = hadrians_wall_01_ruined
+					}
+					remove_building = hadrians_wall_01_ruined
+					add_special_building_slot = hadrians_wall_01
+					add_special_building = hadrians_wall_01
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_frontier_event.0210.a
+		trigger = {
+			this = scope:rebuilder
+		}
+		
+		custom_tooltip = BTWK_frontier_event.0210.a_tt
+		if = {
+			limit = { has_global_variable = ruin_hadrians_wall_decision }
+			custom_tooltip = BTWK_frontier_event.0210.a_tt_1
+		}
+
+		add_prestige = 200	
+		if = {
+			limit = {
+				is_imperial_like_culture_trigger = yes
+			}
+			add_legitimacy = medium_legitimacy_gain
+		}
+
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					is_imperial_like_culture_trigger = yes
+					has_trait = romanitas_trait
+				}
+			}
+			text = BTWK_frontier_event.0212.a
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_imperial_like_culture_trigger = yes
+					has_trait = romanitas_trait
+				}
+			}
+			text = BTWK_frontier_event.0212.a_other
+		}
+		trigger = {
+			this != scope:rebuilder
+		}
+	}
+}
+
+# Hadrian's Wall has been fully restored - effects for root
+BTWK_frontier_event.0211 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_frontier_event.0211
+	desc = {
+		desc = BTWK_frontier_event.0211_desc
 		first_valid = {
 			triggered_desc = {
 				trigger = {
 					has_global_variable = fall_of_britannia
 				}
-				desc = BTWK_frontier_event.0203_desc_britannia_collapsed
+				desc = BTWK_frontier_event.0211_desc_britannia_collapsed
 			}
 			triggered_desc = {
 				trigger = {
@@ -489,7 +585,7 @@ BTWK_frontier_event.0203 = {
 						has_title = title:e_roman_britannia
 					}
 				}
-				desc = BTWK_frontier_event.0203_desc_high_king
+				desc = BTWK_frontier_event.0211_desc_high_king
 			}
 			triggered_desc = {
 				trigger = {
@@ -498,7 +594,7 @@ BTWK_frontier_event.0203 = {
 						has_title = title:e_roman_britannia
 					}
 				}
-				desc = BTWK_frontier_event.0203_desc_not_high_king
+				desc = BTWK_frontier_event.0211_desc_not_high_king
 			}
 		}
 	} 
@@ -510,7 +606,7 @@ BTWK_frontier_event.0203 = {
 	}	
 
 	option = {
-		name = BTWK_frontier_event.0203.a
+		name = BTWK_frontier_event.0211.a
 
 		give_nickname = nick_hadrianus
 		add_prestige = 2500
@@ -549,7 +645,7 @@ BTWK_frontier_event.0203 = {
 						NOT = { this = root }
 					}			
 					trigger_event = {
-						id = BTWK_frontier_event.0204
+						id = BTWK_frontier_event.0212
 						days = 1
 					}
 				}
@@ -559,25 +655,25 @@ BTWK_frontier_event.0203 = {
 }
 
 # Hadrian's Wall has been fully restored - global notification for players. Ensure notification for player vassals & for who own Hadrian's Wall provinces
-BTWK_frontier_event.0204 = {
+BTWK_frontier_event.0212 = {
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_frontier_event.0204
+	title = BTWK_frontier_event.0212
 	desc = {
-		desc = BTWK_frontier_event.0204_desc_header
+		desc = BTWK_frontier_event.0212_desc_header
 		first_valid = {
 			triggered_desc = { 
 				trigger = {
 					has_global_variable = fall_of_britannia
 				}
-				desc = BTWK_frontier_event.0204_desc_britannia_collapsed
+				desc = BTWK_frontier_event.0212_desc_britannia_collapsed
 			}
 			triggered_desc = {
 				trigger = {
 					NOT = { has_global_variable = fall_of_britannia }
 				}
 				desc = {
-					desc = BTWK_frontier_event.0204_desc_britannia_alive
+					desc = BTWK_frontier_event.0212_desc_britannia_alive
 					first_valid = {
 
 						triggered_desc = {
@@ -598,7 +694,7 @@ BTWK_frontier_event.0204 = {
 									is_imperial_like_culture_trigger = yes
 								}
 							}
-							desc = BTWK_frontier_event.0204_desc_not_high_king
+							desc = BTWK_frontier_event.0212_desc_not_high_king
 						}
 
 						triggered_desc = {
@@ -620,7 +716,7 @@ BTWK_frontier_event.0204 = {
 								}
 
 							}
-							desc = BTWK_frontier_event.0204_desc_high_king
+							desc = BTWK_frontier_event.0212_desc_high_king
 						}
 
 						triggered_desc = {
@@ -630,7 +726,7 @@ BTWK_frontier_event.0204 = {
 								}
 								is_imperial_like_culture_trigger = no
 							}
-							desc = BTWK_frontier_event.0204_desc_caledonian
+							desc = BTWK_frontier_event.0212_desc_caledonian
 						}
 
 					}
@@ -642,7 +738,7 @@ BTWK_frontier_event.0204 = {
 		# 		trigger = {
 		# 			has_variable = var:hadrians_wall_holder_restored_wall_segment
 		# 		}
-		# 		desc = BTWK_frontier_event.0204_desc_contribution
+		# 		desc = BTWK_frontier_event.0212_desc_contribution
 		# 	}
 		# }
 	}
@@ -662,7 +758,7 @@ BTWK_frontier_event.0204 = {
 					has_trait = romanitas_trait
 				}
 			}
-			text = BTWK_frontier_event.0204.a_imperial_like
+			text = BTWK_frontier_event.0212.a_imperial_like
 		}
 
 		name = {
@@ -672,7 +768,7 @@ BTWK_frontier_event.0204 = {
 					has_trait = romanitas_trait
 				}
 			}
-			text = BTWK_frontier_event.0204.a
+			text = BTWK_frontier_event.0212.a
 		}
 		name = {
 			trigger = {
@@ -681,7 +777,7 @@ BTWK_frontier_event.0204 = {
 					geographical_region = btwk_world_caledonia
 				}
 			}
-			text = BTWK_frontier_event.0204.a_caledonian
+			text = BTWK_frontier_event.0212.a_caledonian
 		}
 
 		if = {

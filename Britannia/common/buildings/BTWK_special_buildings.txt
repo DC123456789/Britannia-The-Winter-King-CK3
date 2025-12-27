@@ -2,7 +2,7 @@
 # Hadrian's Wall
 ##########
 
-hadrians_wall_01 = {
+hadrians_wall_01_ruined = {
 	# Hadrian's Wall - Ruined
 	# Change province modifiers?
 	# Cannot be restored from here - totally ruined.
@@ -24,18 +24,63 @@ hadrians_wall_01 = {
 	type = special
 }
 
+hadrians_wall_01 = {
+	# Hadrian's Wall - Ruined but rebuilding
+	type_icon = "icon_structure_hadrians_wall.dds"
+	
+	# No construction cost modifier - you're trying to rebuild!
+
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+	next_building = hadrians_wall_02
+	type = special
+}
+
 hadrians_wall_02 = {
-	# Can't be constructed
 	# Hadrian's Wall 
+	construction_time = slow_construction_time
+	cost_gold = 50
 
 	type_icon = "icon_structure_hadrians_wall.dds"
 
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation
+		}
+		custom_tooltip = {
+			text = is_restoring_hadrians_wall_tt
+			has_global_variable = restore_hadrians_wall_decision
+		}
+	}
+	
 	province_modifier = {
 		fort_level = 1
 		defender_holding_advantage = 5
 		build_gold_cost = -0.025
 	}
+	
 	next_building = hadrians_wall_03
+	
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+		modifier = { # Only cares if Romanized
+			factor = 0
+			NOR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
+	}
+	
 	type = special
 }
 
@@ -50,13 +95,9 @@ hadrians_wall_03 = {
 		culture = { 
 			has_innovation = innovation_crop_rotation
 		}
-		scope:holder.top_liege = {
-			completely_controls_region = btwk_custom_hadrians_wall_duchies
-			OR = {
-				is_imperial_like_culture_trigger = yes
-				has_trait = romanitas_trait
-			}
-			NOT = { has_trait = barbarian_trait }
+		custom_tooltip = {
+			text = is_restoring_hadrians_wall_tt
+			has_global_variable = restore_hadrians_wall_decision
 		}
 	}
 
@@ -80,6 +121,13 @@ hadrians_wall_03 = {
 		modifier = { # Fill all building slots before going for special buildings
 			factor = 0
 			free_building_slots > 0
+		}
+		modifier = { # Only cares if Romanized
+			factor = 0
+			NOR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
 		}
 	}
 	type = special
