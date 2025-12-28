@@ -86,8 +86,7 @@ begin_restoration_antonine_wall_decision = {
 		any_sub_realm_county = {
 			title_province = {
 				geographical_region = btwk_custom_northern_hen_ogledd
-			}
-				
+			}				
 		}
 	}
 	
@@ -118,6 +117,100 @@ begin_restoration_antonine_wall_decision = {
 	}
 }
 
+restore_hadrians_wall_decision = {
+	
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	desc = restore_hadrians_wall_decision_desc
+	selection_tooltip = restore_hadrians_wall_decision_tooltip
+	confirm_text = restore_hadrians_wall_decision_confirm
+
+	is_shown = {
+		any_sub_realm_county = {
+			title_province = {
+				geographical_region = btwk_world_britannia_hen_ogledd
+			}
+		}
+		NOR = { 
+			has_global_variable = restore_hadrians_wall_decision
+			AND = {		# Romanized characters can still rebuild a torn down wall if they want
+				has_global_variable = ruin_hadrians_wall_decision
+				is_imperial_like_culture_trigger = no
+			}
+		}
+	}
+	
+	is_valid = {
+		is_independent_ruler = yes
+		primary_title = {
+			tier >= tier_kingdom
+		}
+		culture = { 
+			has_innovation = innovation_crop_rotation
+		}
+		completely_controls_region = btwk_custom_hadrians_wall_duchies
+		OR = {
+			is_imperial_like_culture_trigger = yes
+			has_trait = romanitas_trait
+		}
+		NOT = { has_trait = barbarian_trait }
+	}
+
+	effect = {
+		custom_tooltip = BTWK_frontier_event.0210.a_tt
+		if = {
+			limit = { has_global_variable = ruin_hadrians_wall_decision }
+			custom_tooltip = BTWK_frontier_event.0210.a_tt_1
+		}
+			
+		show_as_tooltip = {
+			add_prestige = 200	
+			if = {
+				limit = {
+					is_imperial_like_culture_trigger = yes
+				}
+				add_legitimacy = medium_legitimacy_gain
+			}
+		}
+		
+		save_scope_as = rebuilder
+		trigger_event = BTWK_frontier_event.0210
+		every_player = {
+			limit = { this != root }
+			trigger_event = BTWK_frontier_event.0210
+		}
+		set_global_variable = restore_hadrians_wall_decision
+		remove_global_variable = ruin_hadrians_wall_decision
+	}
+	
+	cost = {
+		gold = 200
+	}
+
+	ai_will_do = {
+		base = 50
+		modifier = {
+			factor = 0
+			NOR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
+	}
+}
+
 ruin_hadrians_wall_decision = {
 	
 	picture = {
@@ -144,7 +237,13 @@ ruin_hadrians_wall_decision = {
 			title_province = {
 				geographical_region = btwk_world_britannia_hen_ogledd
 			}
-			NOT = { has_global_variable = ruin_hadrians_wall_decision }
+		}
+		NOR = { 
+			has_global_variable = ruin_hadrians_wall_decision
+			AND = {		# Non-Romans can still tear down a restored wall if they want
+				has_global_variable = restore_hadrians_wall_decision
+				is_imperial_like_culture_trigger = yes
+			}
 		}
 	}
 	
@@ -166,7 +265,33 @@ ruin_hadrians_wall_decision = {
 	}
 
 	effect = {
+		custom_tooltip = BTWK_frontier_event.0201.a_tt
+		custom_tooltip = BTWK_frontier_event.0201.a_tt_1
+		show_as_tooltip = {
+			add_character_modifier = {
+				modifier = destroyed_hadrians_wall_character_modifier
+			}
+			if = {
+				limit = {
+					is_imperial_like_culture_trigger = yes
+				}
+				add_legitimacy = medium_legitimacy_loss
+			}
+		}
+		
 		trigger_event = BTWK_frontier_event.0201
 		set_global_variable = ruin_hadrians_wall_decision
+		remove_global_variable = restore_hadrians_wall_decision
+	}
+
+	ai_will_do = {
+		base = 25
+		modifier = {
+			factor = 0
+			OR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
 	}
 }
