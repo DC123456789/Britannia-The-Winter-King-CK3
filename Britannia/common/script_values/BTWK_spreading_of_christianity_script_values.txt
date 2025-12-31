@@ -1,5 +1,6 @@
 ﻿soc_proselytization_monthly_progress_value = {
 	value = 0
+	# Phase modifiers
 	if = {
 		limit = { 
 			any_county_situation_sub_region = { 
@@ -55,6 +56,7 @@
 			desc = PROSELYTIZATION_PROGRESS_PHASE_4
 		}
 	}
+	# Religion/Faith modifiers
 	if = {
 		limit = { 
 			holder.religion = religion:christianity_religion
@@ -69,7 +71,7 @@
 			holder.top_liege.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.25
+			value = 0.15
 			desc = PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN
 		}
 	}
@@ -111,8 +113,6 @@
 			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_TOP_LIEGE
 		}
 	}
-	# TODO Fervor modifiers
-	# TODO Culture/heritage modifiers
 	if = {
 		limit = { 
 			NOT = { holder.religion = religion:christianity_religion }
@@ -123,6 +123,86 @@
 			desc = PROSELYTIZATION_PROGRESS_HOLDER_ZEALOUS_NON_CHRISTIAN
 		}
 	}
+	# Fervor modifiers
+	subtract = {
+		value = {
+			value = 0.4
+			multiply = {
+				value = faith.fervor
+				divide = 100
+			}
+		}
+		desc = PROSELYTIZATION_PROGRESS_COUNTY_FAITH_FERVOR
+	}
+	add = {
+		value = {
+			value = 0.4
+			multiply = {
+				value = var:soc_proselytization_target_faith.fervor
+				divide = 100
+			}
+		}
+		desc = PROSELYTIZATION_PROGRESS_CONVERTING_FAITH_FERVOR
+	}
+	# Heritage modifiers
+	if = {
+		limit = {
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_latin
+					has_cultural_pillar = heritage_romance
+					has_cultural_pillar = heritage_romanized_germanic
+					has_cultural_pillar = heritage_romanized_sarmatian
+				}
+			}
+		}
+		add = {
+			value = 0.10
+			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
+		}
+	}
+	else_if = {
+		limit = { 
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_brythonic
+					has_cultural_pillar = heritage_goidelic
+				}
+			}
+		}
+		add = {
+			value = 0.05
+			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
+		}
+	}
+	else_if = {
+		limit = { 
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_west_germanic
+					has_cultural_pillar = heritage_central_germanic
+				}
+			}
+		}
+		subtract = {
+			value = 0.05
+			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
+		}
+	}
+	else_if = {
+		limit = { 
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_north_germanic
+				}
+			}
+		}
+		subtract = {
+			value = 0.10
+			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
+		}
+	}
+	# Terrain modifiers
 	if = {
 		limit = {
 			OR = {
