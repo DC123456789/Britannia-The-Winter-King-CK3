@@ -1,8 +1,11 @@
-﻿##########
+﻿# NOTE: IF ANY NEW BUILDINGS ARE ADDED, YOU ALSO NEED TO UPDATE THE CUSTOM LOC FILES 
+# 00_building_custom_localization.txt and 00_travel.txt!
+
+##########
 # Hadrian's Wall
 ##########
 
-hadrians_wall_01 = {
+hadrians_wall_01_ruined = {
 	# Hadrian's Wall - Ruined
 	# Change province modifiers?
 	# Cannot be restored from here - totally ruined.
@@ -24,18 +27,63 @@ hadrians_wall_01 = {
 	type = special
 }
 
+hadrians_wall_01 = {
+	# Hadrian's Wall - Ruined but rebuilding
+	type_icon = "icon_structure_hadrians_wall.dds"
+	
+	# No construction cost modifier - you're trying to rebuild!
+
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+	next_building = hadrians_wall_02
+	type = special
+}
+
 hadrians_wall_02 = {
-	# Can't be constructed
 	# Hadrian's Wall 
+	construction_time = slow_construction_time
+	cost_gold = 50
 
 	type_icon = "icon_structure_hadrians_wall.dds"
 
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation
+		}
+		custom_tooltip = {
+			text = is_restoring_hadrians_wall_tt
+			has_global_variable = restore_hadrians_wall_decision
+		}
+	}
+	
 	province_modifier = {
 		fort_level = 1
 		defender_holding_advantage = 5
 		build_gold_cost = -0.025
 	}
+	
 	next_building = hadrians_wall_03
+	
+	ai_value = {
+		base = 100
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+		modifier = { # Only cares if Romanized
+			factor = 0
+			NOR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
+	}
+	
 	type = special
 }
 
@@ -50,13 +98,9 @@ hadrians_wall_03 = {
 		culture = { 
 			has_innovation = innovation_crop_rotation
 		}
-		scope:holder.top_liege = {
-			completely_controls_region = btwk_custom_hadrians_wall_duchies
-			OR = {
-				is_imperial_like_culture_trigger = yes
-				has_trait = romanitas_trait
-			}
-			NOT = { has_trait = barbarian_trait }
+		custom_tooltip = {
+			text = is_restoring_hadrians_wall_tt
+			has_global_variable = restore_hadrians_wall_decision
 		}
 	}
 
@@ -81,18 +125,25 @@ hadrians_wall_03 = {
 			factor = 0
 			free_building_slots > 0
 		}
+		modifier = { # Only cares if Romanized
+			factor = 0
+			NOR = {
+				is_imperial_like_culture_trigger = yes
+				has_trait = romanitas_trait
+			}
+		}
 	}
 	type = special
 }
 
-arbeia_01 = {
+btwk_arbeia_01 = {
 
 	type_icon = "icon_structure_hadrians_wall.dds"  # Change? 
 
 	province_modifier = {
 		fort_level = 1
 		supply_limit = 2000 
-		stationed_maa_toughness_add = 5 
+		stationed_maa_toughness_mult = 0.15 
 		levy_size = 0.15
 
 	}
@@ -172,3 +223,138 @@ offas_dyke_01 = {
 #	}
 #	type = special
 #}
+
+
+##################
+# Dumbarton Rock #
+##################
+btwk_dumbarton_rock_01 = {   # Could do with a hill-esque icon 
+	construction_time = slow_construction_time
+	type_icon = "gibraltar.dds"
+
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation 
+		}
+	}
+
+	cost_gold = expensive_building_tier_3_cost
+
+	province_modifier = {
+		defender_holding_advantage = normal_building_advantage_tier_3
+		fort_level = good_building_fort_level_tier_2
+		stationed_maa_damage_mult = normal_maa_damage_tier_2
+		stationed_maa_toughness_mult = normal_maa_toughness_tier_2
+	}
+	county_modifier = {
+		tax_mult = 0.10
+		levy_size = 0.1
+		monthly_county_control_growth_add = 0.25
+		hostile_raid_time = 0.5
+	}
+
+	character_modifier = {
+		hostile_scheme_resistance_add = 15
+	}
+
+	ai_value = { base = 100 }
+	type = special
+	flag = travel_point_of_interest_martial
+}
+
+###################
+# Glastonbury Tor #
+###################
+btwk_glastonbury_tor_01 = {
+	construction_time = slow_construction_time
+	type_icon = "icon_structure_canterbury_cathedral.dds"  # Could do with a hill-esque icon
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation 
+		}
+	}
+
+	cost_gold = expensive_building_tier_3_cost
+
+	county_modifier = {
+		county_opinion_add = 15
+		tax_mult = 0.25
+		development_growth_factor = 0.15
+	}
+
+	character_modifier = {
+		monthly_piety = 0.5
+		monthly_income = 0.1
+	}
+
+	ai_value = { base = 100 }
+	type = special
+	flag = travel_point_of_interest_religious
+}
+
+################
+# Bath's Baths #
+################
+btwk_aquae_sulis_baths_01 = {  # Disrepair
+	construction_time = slow_construction_time
+	type_icon = "compostela.dds"  # Unsure on use of this symbol here
+
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_crop_rotation 
+		}
+		is_imperial_like_culture_trigger = yes
+	}
+
+	cost_gold = expensive_building_tier_3_cost
+
+	county_modifier = {
+		county_opinion_add = 5
+	}
+
+	character_modifier = {
+		monthly_prestige_gain_mult = 0.05
+		stress_loss_mult = 0.05
+	}
+
+	next_building = btwk_aquae_sulis_baths_02
+	ai_value = { base = 100 }
+	type = special
+	flag = travel_point_of_interest_diplomacy
+}
+
+btwk_aquae_sulis_baths_02 = {  # Restored
+	construction_time = very_slow_construction_time
+	type_icon = "icon_structure_palace_of_achen.dds"
+	# Add feast cost reduction effect - weaker than leisure palaces 
+
+	can_construct = {
+		culture = { 
+			has_innovation = innovation_manorialism
+		}
+		is_imperial_like_culture_trigger = yes
+	}
+
+	cost_gold = expensive_building_tier_6_cost  # Bit cheaper than full leisure palaces upgrade, bit weaker but other bonuses
+
+	county_modifier = {
+		development_growth_factor = 0.1
+		tax_mult = 0.2
+		county_opinion_add = 20
+	}
+
+	character_modifier = {
+		monthly_prestige_gain_mult = 0.05
+		stress_loss_mult = 0.25
+		owned_personal_scheme_success_chance_add = 15
+		owned_hostile_scheme_success_chance_add = 15
+	}
+
+	ai_value = { base = 100 }
+	type = special
+	flag = travel_point_of_interest_diplomacy
+}
+
+###############
+# Holy Island #
+###############
