@@ -509,7 +509,7 @@ window = {
 
 					hbox = {
 						layoutpolicy_horizontal = expanding
-						margin = { 35 0 }
+						margin = { 25 0 }
 
 						background = {
 							texture = "gfx/interface/illustrations/event_scenes/church.dds"
@@ -632,7 +632,7 @@ window = {
 							
 							hbox = {
 								layoutpolicy_horizontal = expanding
-								margin = { 30 10 }
+								margin = { 50 10 }
 
 								background = {
 									using = Background_Area_Solid
@@ -652,31 +652,115 @@ window = {
 							}
 
 							button_standard = {
-								size = { 220 40 }
-								text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_INTERNAL_MISSIONARIES"
+								size = { 260 40 }
 								visible = "[ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)]"
+								onclick = "[GetScriptedGui('BTWK_soc_toggle_sponsor_internal_missionaries').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "[GetScriptedGui('BTWK_soc_toggle_sponsor_internal_missionaries').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_INTERNAL_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[GetScriptedGui('BTWK_soc_toggle_sponsor_internal_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_STOP_SPONSOR_INTERNAL_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[Not(GetScriptedGui('BTWK_soc_toggle_sponsor_internal_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
+								}
+							}
+
+							button_standard = {
+								size = { 260 40 }
+								visible = "[ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)]"
+								onclick = "[GetScriptedGui('BTWK_soc_toggle_sponsor_external_missionaries').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "[GetScriptedGui('BTWK_soc_toggle_sponsor_external_missionaries').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_EXTERNAL_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[GetScriptedGui('BTWK_soc_toggle_sponsor_external_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_STOP_SPONSOR_EXTERNAL_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[Not(GetScriptedGui('BTWK_soc_toggle_sponsor_external_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
+								}
 							}
 
 							button_standard = {
 								size = { 220 40 }
-								text = "SPREADING_OF_CHRISTIANITY_BUTTON_SPONSOR_EXTERNAL_MISSIONARIES"
-								visible = "[ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)]"
+								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
+								onclick = "[GetScriptedGui('BTWK_soc_toggle_encourage_missionaries').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "[GetScriptedGui('BTWK_soc_toggle_encourage_missionaries').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_ENCOURAGE_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[GetScriptedGui('BTWK_soc_toggle_encourage_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_STOP_ENCOURAGE_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[Not(GetScriptedGui('BTWK_soc_toggle_encourage_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
+								}
 							}
 
 							button_standard = {
-								size = { 200 40 }
-								text = "SPREADING_OF_CHRISTIANITY_BUTTON_ENCOURAGE_MISSIONARIES"
+								size = { 220 40 }
 								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
-							}
-
-							button_standard = {
-								size = { 200 40 }
-								text = "SPREADING_OF_CHRISTIANITY_BUTTON_BAN_MISSIONARIES"
-								visible = "[Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self))]"
+								onclick = "[GetScriptedGui('BTWK_soc_toggle_ban_missionaries').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "[GetScriptedGui('BTWK_soc_toggle_ban_missionaries').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_BAN_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[GetScriptedGui('BTWK_soc_toggle_ban_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+								
+								text_single = {
+									alwaystransparent = yes
+									size = { 100% 100% }
+									raw_text = "SPREADING_OF_CHRISTIANITY_BUTTON_STOP_BAN_MISSIONARIES"
+									align = center|nobaseline
+									default_format = "#clickable"
+									autoresize = no
+									visible = "[Not(GetScriptedGui('BTWK_soc_toggle_ban_missionaries').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
+								}
 							}
 
 							button_primary = {
-								size = { 200 60 }
+								size = { 220 50 }
 								text = "SPREADING_OF_CHRISTIANITY_BUTTON_REQUEST_CONVERSION"								
 								visible = "[And(Not(ObjectsEqual(GetPlayer.GetFaith.GetReligion.Self, GetReligionByKey('christianity_religion').Self)), GetPlayer.GetFaith.IsUnreformed)]"
 								onclick = "[OpenGameViewData( 'faith_conversion', GetPlayer.MakeScope.Var('BTWK_soc_faith_to_convert_to').Faith.GetID)]"

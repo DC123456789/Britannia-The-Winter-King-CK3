@@ -50,17 +50,10 @@
 					trigger_event = { id = spreading_of_christianity.0010 }
 				}
 			}
-			
-			# Update proselytization modifiers
-			if = {
-				limit = { religion != religion:christianity_religion }
-				BTWK_soc_situation_set_proselytization_modifier_effect = yes
-			}
-			else_if = {
-				limit = { has_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier }
-				remove_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier
-			}
 		}
+		
+		# Update proselytization modifiers
+		BTWK_soc_situation_update_proselytization_modifiers_effect
 		
 		every_situation_sub_region = {
 			# Update subregion stats

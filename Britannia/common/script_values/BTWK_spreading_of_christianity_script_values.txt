@@ -4,6 +4,16 @@ soc_phase_2_base_spread = 0
 soc_phase_3_base_spread = 0.125
 soc_phase_4_base_spread = 0.25
 
+soc_internal_missionaries_holder_base_spread = 0.50
+soc_internal_missionaries_realm_base_spread = 0.25
+soc_external_missionaries_base_spread = 0.20
+soc_encourage_missionaries_holder_base_spread = 0.40
+soc_encourage_missionaries_realm_base_spread = 0.20
+soc_ban_missionaries_holder_base_spread = -0.40
+soc_ban_missionaries_realm_base_spread = -0.20
+
+# Should not be used outside the BTWK_soc_situation_set_proselytization_modifier_effect scripted effect
+# as that effect sets up many of the variables and lists this uses
 soc_proselytization_monthly_progress_value = {
 	value = 0
 	# Phase modifiers
@@ -274,6 +284,192 @@ soc_proselytization_monthly_progress_value = {
 		subtract = {
 			value = 0.5
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
+		}
+	}
+	if = {
+		limit = {
+			holder = {
+				religion = religion:christianity_religion
+				has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+			}
+		}
+		add = {
+			value = soc_internal_missionaries_holder_base_spread
+			desc = PROSELYTIZATION_HOLDER_INTERNAL_MISSIONARIES
+		}
+	}
+	add = {
+		value = {
+			value = 0
+			save_temporary_value_as = current_harmonic_sum
+			value = 1
+			save_temporary_value_as = current_index
+			holder = {
+				every_liege_or_above = {
+					limit = {
+						religion = religion:christianity_religion
+						has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+					}
+					value = 0
+					add = 1
+					divide = scope:current_index
+					add = scope:current_harmonic_sum
+					save_temporary_value_as = current_harmonic_sum
+					value = scope:current_index
+					add = 1
+					save_temporary_value_as = current_index
+				}
+			}
+			value = scope:current_harmonic_sum
+		}
+		multiply = soc_internal_missionaries_realm_base_spread
+		desc = PROSELYTIZATION_LIEGE_INTERNAL_MISSIONARIES
+	}
+	add = {
+		value = {
+			value = 0
+			save_temporary_value_as = current_harmonic_sum
+			value = 1
+			save_temporary_value_as = current_index
+			every_in_list = {
+				variable = nearby_external_missionary_sponsors
+				value = 0
+				add = 1
+				divide = scope:current_index
+				add = scope:current_harmonic_sum
+				save_temporary_value_as = current_harmonic_sum
+				value = scope:current_index
+				add = 1
+				save_temporary_value_as = current_index
+			}
+			value = scope:current_harmonic_sum
+		}
+		multiply = soc_external_missionaries_base_spread
+		desc = PROSELYTIZATION_EXTERNAL_MISSIONARIES
+	}
+	if = {
+		limit = {
+			holder = {
+				religion != religion:christianity_religion
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+		}
+		add = {
+			value = soc_encourage_missionaries_holder_base_spread
+			desc = PROSELYTIZATION_HOLDER_ENCOURAGING_MISSIONARIES
+		}
+	}
+	add = {
+		value = {
+			value = 0
+			save_temporary_value_as = current_harmonic_sum
+			value = 1
+			save_temporary_value_as = current_index
+			holder = {
+				every_liege_or_above = {
+					limit = {
+						religion != religion:christianity_religion
+						has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+					}
+					value = 0
+					add = 1
+					divide = scope:current_index
+					add = scope:current_harmonic_sum
+					save_temporary_value_as = current_harmonic_sum
+					value = scope:current_index
+					add = 1
+					save_temporary_value_as = current_index
+				}
+			}
+			value = scope:current_harmonic_sum
+		}
+		multiply = soc_encourage_missionaries_realm_base_spread
+		desc = PROSELYTIZATION_LIEGE_ENCOURAGING_MISSIONARIES
+	}
+	if = {
+		limit = {
+			holder = {
+				religion != religion:christianity_religion
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+		}
+		add = {
+			value = soc_ban_missionaries_holder_base_spread
+			desc = PROSELYTIZATION_HOLDER_BANNING_MISSIONARIES
+		}
+	}
+	add = {
+		value = {
+			value = 0
+			save_temporary_value_as = current_harmonic_sum
+			value = 1
+			save_temporary_value_as = current_index
+			holder = {
+				every_liege_or_above = {
+					limit = {
+						religion != religion:christianity_religion
+						has_character_modifier = BTWK_soc_banning_missionaries_modifier
+					}
+					value = 0
+					add = 1
+					divide = scope:current_index
+					add = scope:current_harmonic_sum
+					save_temporary_value_as = current_harmonic_sum
+					value = scope:current_index
+					add = 1
+					save_temporary_value_as = current_index
+				}
+			}
+			value = scope:current_harmonic_sum
+		}
+		multiply = soc_ban_missionaries_realm_base_spread
+		desc = PROSELYTIZATION_LIEGE_BANNING_MISSIONARIES
+	}
+}
+
+soc_proselytization_num_liege_internal_missionaries = {
+	value = 0
+	holder = {
+		every_liege_or_above = {
+			limit = {
+				religion = religion:christianity_religion
+				has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+			}
+			add = 1			
+		}
+	}
+}
+
+soc_proselytization_num_external_missionaries = {
+	value = 0
+	every_in_list = {
+		variable = nearby_external_missionary_sponsors
+		add = 1
+	}
+}
+
+soc_proselytization_num_liege_encouraging_missionaries = {
+	value = 0
+	holder = {
+		every_liege_or_above = {
+			limit = {
+				religion != religion:christianity_religion
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			add = 1			
+		}
+	}
+}
+
+soc_proselytization_num_liege_banning_missionaries = {
+	value = 0
+	holder = {
+		every_liege_or_above = {
+			limit = {
+				religion != religion:christianity_religion
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			add = 1			
 		}
 	}
 }

@@ -1,4 +1,19 @@
-﻿BTWK_soc_situation_set_proselytization_modifier_effect = {
+﻿BTWK_soc_situation_update_proselytization_modifiers_effect = {
+	situation:spreading_of_christianity_situation = {
+		every_situation_county = {
+			if = {
+				limit = { religion != religion:christianity_religion }
+				BTWK_soc_situation_set_proselytization_modifier_effect = yes
+			}
+			else_if = {
+				limit = { has_county_modifier = BTWK_soc_proselytization_modifier }
+				remove_county_modifier = BTWK_soc_proselytization_modifier
+			}
+		}
+	}
+}
+
+BTWK_soc_situation_set_proselytization_modifier_effect = {
 	save_scope_as = current_proselytization_county
 	set_global_variable = { name = soc_current_county value = scope:current_proselytization_county }
 
@@ -78,11 +93,68 @@
 		}
 	}
 	
+	# Get list of holder and current lieges of county
+	clear_variable_list = county_lieges
+	holder = { 
+		scope:current_proselytization_county = { 
+			add_to_variable_list = { name = county_lieges target = prev }
+		}
+		every_liege_or_above = {
+			scope:current_proselytization_county = { 
+				add_to_variable_list = { name = county_lieges target = prev }
+			}
+		}
+	}
+	
+	# Get the list of all nearby rulers sponsoring external missionaries
+	clear_variable_list = nearby_external_missionary_sponsors
+	every_in_list = {
+		variable = nearby_counties
+		holder = {
+			if = {
+				limit = { 
+					religion = religion:christianity_religion
+					has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+					NOT = { 
+						scope:current_proselytization_county = { 
+							is_target_in_variable_list = {
+								name = county_lieges
+								target = prev
+							}
+						}
+					}
+				}
+				scope:current_proselytization_county = { 
+					add_to_variable_list = { name = nearby_external_missionary_sponsors target = prev }
+				}
+			}
+			every_liege_or_above = {
+				if = {
+					limit = { 
+						religion = religion:christianity_religion
+						has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+						NOT = { 
+							scope:current_proselytization_county = { 
+								is_target_in_variable_list = {
+									name = county_lieges
+									target = prev
+								}
+							}
+						}
+					}
+					scope:current_proselytization_county = { 
+						add_to_variable_list = { name = nearby_external_missionary_sponsors target = prev }
+					}
+				}
+			}
+		}
+	}	
+	
 	# Add the notification modifier
-	remove_county_modifier = BTWK_spreading_of_christianity_proselytization_modifier
+	remove_county_modifier = BTWK_soc_proselytization_modifier
 	add_county_modifier = {
-		modifier = BTWK_spreading_of_christianity_proselytization_modifier
-		desc = BTWK_spreading_of_christianity_proselytization_modifier_desc_loc
+		modifier = BTWK_soc_proselytization_modifier
+		desc = BTWK_soc_proselytization_modifier_desc_loc
 	}
 }
 
