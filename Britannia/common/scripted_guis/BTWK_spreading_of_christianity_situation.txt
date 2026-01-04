@@ -42,3 +42,125 @@ BTWK_soc_get_faith_to_convert_to = {
 		}
 	}
 }
+
+BTWK_soc_toggle_sponsor_internal_missionaries = {
+	scope = character
+	
+	is_shown = {
+		NOT = { has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier }
+	}
+	
+	effect = {
+		if = {
+			limit = { has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier }
+			remove_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_stop_sponsor_internal_missionaries_tt
+			}
+		}
+		else = {
+			add_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_start_sponsor_internal_missionaries_tt
+			}
+		}
+		hidden_effect = {
+			BTWK_soc_situation_update_proselytization_modifiers_effect = yes
+		}
+	}
+}
+
+BTWK_soc_toggle_sponsor_external_missionaries = {
+	scope = character
+	
+	is_shown = {
+		NOT = { has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier }
+	}
+	
+	effect = {
+		if = {
+			limit = { has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier }
+			remove_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_stop_sponsor_external_missionaries_tt
+			}
+		}
+		else = {
+			add_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_start_sponsor_external_missionaries_tt
+			}
+		}
+		hidden_effect = {
+			BTWK_soc_situation_update_proselytization_modifiers_effect = yes
+		}
+	}
+}
+
+BTWK_soc_toggle_encourage_missionaries = {
+	scope = character
+	
+	is_shown = {
+		NOT = { has_character_modifier = BTWK_soc_encouraging_missionaries_modifier }
+	}
+	
+	effect = {
+		if = {
+			limit = { has_character_modifier = BTWK_soc_encouraging_missionaries_modifier }
+			remove_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_stop_encourage_missionaries_tt
+			}
+		}
+		else = {
+			if = {
+				limit = { has_character_modifier = BTWK_soc_banning_missionaries_modifier }
+				remove_character_modifier = BTWK_soc_banning_missionaries_modifier
+				custom_tooltip = {
+					text = BTWK_soc_stop_ban_missionaries_tt
+				}
+			}
+			add_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_start_encourage_missionaries_tt
+			}
+		}
+		hidden_effect = {
+			BTWK_soc_situation_update_proselytization_modifiers_effect = yes
+		}
+	}
+}
+
+BTWK_soc_toggle_ban_missionaries = {
+	scope = character
+	
+	is_shown = {
+		NOT = { has_character_modifier = BTWK_soc_banning_missionaries_modifier }
+	}
+	
+	effect = {
+		if = {
+			limit = { has_character_modifier = BTWK_soc_banning_missionaries_modifier }
+			remove_character_modifier = BTWK_soc_banning_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_stop_ban_missionaries_tt
+			}
+		}
+		else = {
+			if = {
+				limit = { has_character_modifier = BTWK_soc_encouraging_missionaries_modifier }
+				remove_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+				custom_tooltip = {
+					text = BTWK_soc_stop_encourage_missionaries_tt
+				}
+			}
+			add_character_modifier = BTWK_soc_banning_missionaries_modifier
+			custom_tooltip = {
+				text = BTWK_soc_start_ban_missionaries_tt
+			}
+		}
+		hidden_effect = {
+			BTWK_soc_situation_update_proselytization_modifiers_effect = yes
+		}
+	}
+}

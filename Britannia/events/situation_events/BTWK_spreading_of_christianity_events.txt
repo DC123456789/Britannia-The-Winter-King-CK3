@@ -119,3 +119,192 @@ spreading_of_christianity.0010 = {
 		}
 	}
 }
+
+spreading_of_christianity.0020 = { # Subregion phase changes
+	type = character_event
+	title = spreading_of_christianity.0020.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_0 }
+				}
+				desc = spreading_of_christianity.0020.desc.phase_0.decreased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_0 }
+				}
+				desc = spreading_of_christianity.0020.desc.phase_0.decreased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_1 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_1.increased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_1 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_1.increased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_1 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_1.decreased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_1 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_1.decreased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_2.increased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_2.increased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_2.decreased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_2.decreased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_3 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_3.increased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_3 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_3.increased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_3 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_3.decreased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_3 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_3.decreased.non_christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion = religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_4 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_4.increased.christian
+			}
+			triggered_desc = {
+				trigger = { 
+					religion != religion:christianity_religion
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_4 }
+					global_var:soc_current_phase_change = flag:increased
+				}
+				desc = spreading_of_christianity.0020.desc.phase_4.increased.non_christian
+			}
+		}
+	}
+	
+	theme = realm
+	override_background = { 		# TODO
+		reference = holy_site_christian
+	}
+	
+	immediate = {
+		situation:spreading_of_christianity_situation = { save_scope_as = situation }
+		if = {
+			limit = { global_var:soc_current_phase_change = flag:increased }
+			custom_tooltip = spreading_of_christianity.0020.tt_phase_increased
+		}
+		else_if = {
+			limit = { global_var:soc_current_phase_change = flag:decreased }
+			custom_tooltip = spreading_of_christianity.0020.tt_phase_decreased
+		}
+	}
+	
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							religion = religion:christianity_religion
+							global_var:soc_current_phase_change = flag:increased
+						}
+						desc = spreading_of_christianity.0020.a.increased.christian
+					}
+					triggered_desc = {
+						trigger = { 
+							religion != religion:christianity_religion
+							global_var:soc_current_phase_change = flag:increased
+						}
+						desc = spreading_of_christianity.0020.a.increased.non_christian
+					}
+					triggered_desc = {
+						trigger = { 
+							religion = religion:christianity_religion
+							global_var:soc_current_phase_change = flag:decreased
+						}
+						desc = spreading_of_christianity.0020.a.decreased.christian
+					}
+					triggered_desc = {
+						trigger = { 
+							religion != religion:christianity_religion
+							global_var:soc_current_phase_change = flag:decreased
+						}
+						desc = spreading_of_christianity.0020.a.decreased.non_christian
+					}
+				}
+			}
+		}
+	}
+}
