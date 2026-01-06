@@ -6,10 +6,29 @@
 
 btwk_on_title_gain = {
 	events = {
-		titular_titles_anglosaxon.0100 # Anglo-Saxon Kingdoms
+		titular_titles_anglosaxon.0100 	# Anglo-Saxon Kingdoms
 		titular_titles_roman.0003 		# Roman Provinces
 		titular_titles_briton.0007 		# High Kingdom of Yr Hen Ogledd
 		titular_titles_briton.0012 		# High Kingdom of Cymru
 		titular_titles_irish.0005		# High Kingdom of Comruig (Irish Cymru)
+		
+		delay = { days = 1 }			# This makes sure that the player actually sees the event in inheritances
+		spreading_of_christianity.0100		# First Anglo-Saxon Christian King
+	}
+}
+
+# A vassal changes their liege
+# root = vassal changing their status
+# scope:old_liege = the previous liege of the vassal
+# It is also fired for rulers gaining independence, those can be identified by checking current liege
+on_vassal_change = {
+	on_actions = {
+		btwk_on_vassal_change
+	}
+}
+
+btwk_on_vassal_change = {
+	events = {
+		spreading_of_christianity.0100		# First Anglo-Saxon Christian King
 	}
 }

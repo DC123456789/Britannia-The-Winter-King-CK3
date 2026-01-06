@@ -120,7 +120,8 @@ spreading_of_christianity.0010 = {
 	}
 }
 
-spreading_of_christianity.0020 = { # Subregion phase changes
+# Subregion phase changes
+spreading_of_christianity.0020 = { 
 	type = character_event
 	title = spreading_of_christianity.0020.t
 	desc = {
@@ -305,6 +306,134 @@ spreading_of_christianity.0020 = { # Subregion phase changes
 					}
 				}
 			}
+		}
+	}
+}
+
+###########################################
+# Flavour/Spread Events
+# 0100 - 0199
+###########################################
+
+# First Anglo-Saxon Christian King
+spreading_of_christianity.0100 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		culture = { has_cultural_pillar = heritage_west_germanic }
+		highest_held_title_tier >= tier_kingdom
+		primary_title.title_capital_county = { geographical_region = btwk_world_britannia }
+		is_independent_ruler = yes
+		religion = religion:christianity_religion
+		NOT = { has_global_variable = first_saxon_catholic_king }
+	}
+	
+	immediate = {
+		save_scope_as = target_char
+		trigger_event = { id = spreading_of_christianity.0101 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = spreading_of_christianity.0101 }
+		}
+		set_global_variable = first_saxon_catholic_king
+		# Update situation variables since this event speeds up spread in Anglo-Saxon counties
+		BTWK_soc_situation_update_proselytization_modifiers_effect = yes
+	}
+}
+
+spreading_of_christianity.0101 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0101.t
+	desc = spreading_of_christianity.0101.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:target_char
+		animation = prayer
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:target_char }
+			add_piety = 100
+		}
+		custom_tooltip = spreading_of_christianity.0101.tt
+	}
+
+	option = {
+		name = {
+			trigger = {
+				religion = religion:christianity_religion
+				culture = { has_cultural_pillar = heritage_west_germanic }
+			}
+			text = spreading_of_christianity.0101.a.anglosaxon.christian
+		}
+		name = {
+			trigger = {
+				religion != religion:christianity_religion
+				culture = { has_cultural_pillar = heritage_west_germanic }
+			}
+			text = spreading_of_christianity.0101.a.anglosaxon.non_christian
+		}
+		name = {
+			trigger = {
+				religion = religion:christianity_religion
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = spreading_of_christianity.0101.a.briton.christian
+		}
+		name = {
+			trigger = {
+				religion != religion:christianity_religion
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = spreading_of_christianity.0101.a.briton.non_christian
+		}
+		name = {
+			trigger = {
+				religion = religion:christianity_religion
+				NOR = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = spreading_of_christianity.0101.a.other.christian
+		}
+		name = {
+			trigger = {
+				religion != religion:christianity_religion
+				NOR = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = spreading_of_christianity.0101.a.other.non_christian
 		}
 	}
 }
