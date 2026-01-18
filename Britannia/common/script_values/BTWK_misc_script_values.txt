@@ -11,61 +11,82 @@ negated_sub_realm_size_value = {
 tribal_fame_value = {
 	value = 0
 	
+	if = {
+		limit = { 
+			prestige_level = 0
+		}
+		add = {
+			value = -3
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 1
+		}
+		add = {
+			value = 1.5
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 2
+		}
+		add = {
+			value = 3
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 3
+		}
+		add = {
+			value = 7.5
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 4
+		}
+		add = {
+			value = 15
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 5
+		}
+		add = {
+			value = 30
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
 	add = {
 		value = prestige
 		subtract = 500
-		divide = 125
-		if = {
-			limit = { 
-				prestige_level = 0
-			}
-			multiply = 0.80
-		}
-		if = {
-			limit = { 
-				prestige_level = 1
-			}
-			multiply = 1.0
-		}
-		if = {
-			limit = { 
-				prestige_level = 2
-			}
-			multiply = 1.2
-		}
-		if = {
-			limit = { 
-				prestige_level = 3
-			}
-			multiply = 1.4
-		}
-		if = {
-			limit = { 
-				prestige_level = 4
-			}
-			multiply = 1.6
-		}
-		if = {
-			limit = { 
-				prestige_level = 5
-			}
-			multiply = 1.8
-		}
+		divide = 300
+		desc = TRIBAL_FAME_VALUE_PRESTIGE
 	}
 	add = {
 		value = martial
 		subtract = 6
 		divide = 4
+		desc = TRIBAL_FAME_VALUE_MARTIAL
 	}
 	add = {
 		value = prowess
 		subtract = 6
-		divide = 4
+		divide = 5
+		desc = TRIBAL_FAME_VALUE_PROWESS
 	}
 	subtract = {
-		value = realm_size
+		value = sub_realm_size
 		subtract = 4
-		divide = 2
+		divide = 1.5
 		if = {
 			limit = { 
 				has_realm_law = tribal_authority_0
@@ -90,9 +111,28 @@ tribal_fame_value = {
 			}
 			multiply = 1.2
 		}
+		min = 0
+		desc = TRIBAL_FAME_VALUE_REALM_SIZE
 	}
-	
-	divide = 5
+	subtract = {
+		value = {
+			value = 0
+			every_tributary = {
+				add = sub_realm_size
+			}
+		}
+		divide = 3
+		desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE
+	}
+	if = {
+		limit = {
+			has_trait = conqueror
+		}
+		add = {
+			value = 9
+			desc = TRIBAL_FAME_VALUE_CONQUEROR
+		}
+	}
 	
 	max = 40
 	min = -40
