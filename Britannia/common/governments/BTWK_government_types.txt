@@ -1,4 +1,381 @@
-﻿# This is needed because the actual landless adventurer government doesn't seem to be loaded properly
+﻿
+sub_roman_brythonic_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = yes
+		legitimacy = yes
+		use_as_base_on_landed = yes
+	}
+
+	royal_court = any
+
+	primary_holding = castle_holding
+	valid_holdings = { temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = feudal_vassal
+
+	ai = {
+		use_legends = yes
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_feudal
+		government_is_settled
+		may_elevate_co_monarch
+		government_uses_crown_authority
+		government_uses_domain_limit
+		
+		government_is_sub_roman_brythonic
+	}
+
+	mechanic_type = feudal
+
+	color = { 124 184 70 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}
+
+sub_roman_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = no
+		administrative = yes
+		landless_playable = yes
+		legitimacy = yes
+		state_faith = yes
+		use_as_base_on_landed = yes
+		use_as_base_on_rank_up = yes
+		inherit_from_dynastic_government = no
+		sticky_government = yes
+		house_aspirations = yes
+		noble_families = yes
+		admin_allows_holding_multiple_primary_tier_titles = yes
+	}
+
+	royal_court = any
+	blocked_subject_courts = { 
+		meritocratic_government celestial_government japan_administrative_government administrative_government steppe_admin_government
+		sub_roman_government sub_roman_no_dlc_government germanic_government germanic_no_dlc_government
+	}
+
+	domicile_type = estate
+	main_administrative_tier = duchy
+	min_appointment_tier = duchy
+	minimum_provincial_maa_tier = duchy
+
+	fallback = 3
+
+	primary_holding = castle_holding
+	valid_holdings = { city_holding temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = admin_vassal
+
+	can_get_government = {
+		#The LAAMP Construct Holding decision
+		trigger_if = {
+			limit = {
+				OR = {
+					has_variable = city_construction_is_temple_citadel
+					has_variable = city_construction_is_castle
+				}
+			}
+			always = no
+		}
+	}
+
+	character_modifier = {
+		levy_size = -0.25
+		feudal_government_tax_contribution_mult = -0.5
+		feudal_government_levy_contribution_mult = -0.5
+		clan_government_tax_contribution_mult = -0.5
+		clan_government_levy_contribution_mult = -0.5
+		men_at_arms_cap = -1
+		men_at_arms_limit = -1
+		knight_limit = -3
+		vassal_limit = 50
+		active_accolades = -1
+		title_creation_cost_mult = -0.25
+		mercenary_hire_cost_mult = 1.5
+		men_at_arms_maintenance = 0.75
+	}
+
+	top_liege_character_modifier = {
+		men_at_arms_maintenance = 1.25
+		men_at_arms_recruitment_cost = 1
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_administrative
+
+		# These flags only exist for loc and in-game descriptions
+		government_has_influence
+		government_has_title_men_at_arms
+		government_has_powerful_families
+		government_is_settled
+		government_uses_domicile_but_not_adventurer
+		government_uses_domain_limit
+		government_uses_admin_province_obligations
+		
+		government_is_sub_roman
+		government_is_romanized_government
+	}
+
+	mechanic_type = administrative
+
+	color = { 0.6 0.7 0.3 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}
+
+sub_roman_no_dlc_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = yes
+		legitimacy = yes
+		use_as_base_on_landed = yes
+		use_as_base_on_rank_up = yes
+	}
+
+	royal_court = any
+	blocked_subject_courts = { 
+		meritocratic_government celestial_government japan_administrative_government administrative_government steppe_admin_government
+		sub_roman_government sub_roman_no_dlc_government germanic_government germanic_no_dlc_government
+	}
+
+	primary_holding = castle_holding
+	valid_holdings = { temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = feudal_vassal
+	
+	
+	can_get_government = {
+		# Only if you don't have RtP
+		trigger_if = {
+			limit = {
+				has_dlc_feature = roads_to_power
+			}
+			always = no
+		}
+	}
+
+	character_modifier = {
+		levy_size = -0.25
+		men_at_arms_cap = 1
+		men_at_arms_limit = 1
+		knight_limit = -3
+		vassal_limit = 50
+		active_accolades = -1
+		title_creation_cost_mult = -0.25
+		mercenary_hire_cost_mult = 1.5
+		men_at_arms_maintenance = 0.75
+	}
+
+	top_liege_character_modifier = {
+		men_at_arms_maintenance = 1.25
+		men_at_arms_recruitment_cost = 1
+	}
+
+	ai = {
+		use_legends = yes
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_feudal
+		government_is_settled
+		may_elevate_co_monarch
+		government_uses_crown_authority
+		government_uses_domain_limit
+		
+		government_is_sub_roman
+		government_is_romanized_government
+	}
+
+	mechanic_type = feudal
+
+	color = { 124 184 70 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}
+
+germanic_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = no
+		administrative = yes
+		landless_playable = yes
+		legitimacy = yes
+		state_faith = yes
+		use_as_base_on_landed = yes
+		use_as_base_on_rank_up = yes
+		inherit_from_dynastic_government = no
+		sticky_government = yes
+		house_aspirations = yes
+		noble_families = yes
+		admin_allows_holding_multiple_primary_tier_titles = yes
+	}
+
+	royal_court = any
+	blocked_subject_courts = { 
+		meritocratic_government celestial_government japan_administrative_government administrative_government steppe_admin_government
+		sub_roman_government sub_roman_no_dlc_government germanic_government germanic_no_dlc_government
+	}
+
+	domicile_type = estate
+	main_administrative_tier = duchy
+	min_appointment_tier = duchy
+	minimum_provincial_maa_tier = duchy
+
+	fallback = 3
+
+	primary_holding = castle_holding
+	valid_holdings = { city_holding temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = admin_vassal
+
+	can_get_government = {
+		#The LAAMP Construct Holding decision
+		trigger_if = {
+			limit = {
+				OR = {
+					has_variable = city_construction_is_temple_citadel
+					has_variable = city_construction_is_castle
+				}
+			}
+			always = no
+		}
+	}
+
+	character_modifier = {
+		levy_size = -0.25
+		feudal_government_tax_contribution_mult = -0.5
+		feudal_government_levy_contribution_mult = -0.5
+		clan_government_tax_contribution_mult = -0.5
+		clan_government_levy_contribution_mult = -0.5
+		men_at_arms_cap = -1
+		men_at_arms_limit = -1
+		knight_limit = -3
+		vassal_limit = 50
+		active_accolades = -1
+		title_creation_cost_mult = -0.25
+		mercenary_hire_cost_mult = 1.5
+		men_at_arms_maintenance = 0.75
+	}
+
+	top_liege_character_modifier = {
+		men_at_arms_maintenance = 1.25
+		men_at_arms_recruitment_cost = 1
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_administrative
+
+		# These flags only exist for loc and in-game descriptions
+		government_has_influence
+		government_has_title_men_at_arms
+		government_has_powerful_families
+		government_is_settled
+		government_uses_domicile_but_not_adventurer
+		government_uses_domain_limit
+		government_uses_admin_province_obligations
+		government_has_house_blocs
+		
+		government_is_germanic
+		government_is_romanized_government
+	}
+
+	mechanic_type = administrative
+
+	color = hsv{ 0.6 0.7 0.3 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}
+
+germanic_no_dlc_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = yes
+		legitimacy = yes
+		use_as_base_on_landed = yes
+		use_as_base_on_rank_up = yes
+	}
+
+	royal_court = any
+	blocked_subject_courts = { 
+		meritocratic_government celestial_government japan_administrative_government administrative_government steppe_admin_government
+		sub_roman_government sub_roman_no_dlc_government germanic_government germanic_no_dlc_government
+	}
+
+	primary_holding = castle_holding
+	valid_holdings = { temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = feudal_vassal
+	
+	
+	can_get_government = {
+		# Only if you don't have RtP
+		trigger_if = {
+			limit = {
+				has_dlc_feature = roads_to_power
+			}
+			always = no
+		}
+	}
+
+	character_modifier = {
+		levy_size = -0.25
+		men_at_arms_cap = 1
+		men_at_arms_limit = 1
+		knight_limit = -3
+		vassal_limit = 50
+		active_accolades = -1
+		title_creation_cost_mult = -0.25
+		mercenary_hire_cost_mult = 1.5
+		men_at_arms_maintenance = 0.75
+	}
+
+	top_liege_character_modifier = {
+		men_at_arms_maintenance = 1.25
+		men_at_arms_recruitment_cost = 1
+	}
+
+	ai = {
+		use_legends = yes
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_feudal
+		government_is_settled
+		may_elevate_co_monarch
+		government_uses_crown_authority
+		government_uses_domain_limit
+		
+		government_is_germanic
+		government_is_romanized_government
+	}
+
+	mechanic_type = feudal
+
+	color = hsv{ 0.6 0.7 0.3 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}
+
+# This is needed because the actual landless adventurer government doesn't seem to be loaded properly
 # in the bookmarks screen if you don't have the DLC
 landless_adventurer_government_bm_placeholder = {
 	government_rules = {
