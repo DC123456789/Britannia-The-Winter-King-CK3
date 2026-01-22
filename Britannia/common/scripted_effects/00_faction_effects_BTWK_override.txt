@@ -1,0 +1,635 @@
+﻿
+# Shared effect between the Popular Faction's demand event and victory outcome.
+#
+# Parameters:
+#	$FACTION_LEADER$
+#	$TARGET_TITLE$
+#	$SOURCE_GOVERNMENT$
+#
+successful_popular_revolt_outcome_effect = {
+	# Save scopes for later usage.
+	$FACTION_LEADER$ = {
+		save_scope_as = faction_leader
+		joined_faction = {
+			save_scope_as = popular_faction
+			every_faction_member = {
+				add_to_list = faction_members
+			}
+			faction_target = {
+				save_scope_as = faction_target
+			}
+		}
+		add_to_list = faction_members
+	}
+	$TARGET_TITLE$ = {
+		save_scope_as = some_title
+	}
+	if = { # Populists factions in an admin realm should aim to change state faith, if they are of the capital culture
+		limit = {
+			$SOURCE_GOVERNMENT$ = { government_allows = state_faith }
+			$FACTION_LEADER$.culture = scope:faction_target.capital_county.culture
+			$FACTION_LEADER$.faith != scope:faction_target.primary_title.state_faith
+		}
+
+		$SOURCE_GOVERNMENT$.primary_title = {
+			# Change the state faith
+			set_state_faith = $FACTION_LEADER$.faith
+
+			# Try grabbing someone from the line of succession who practices the State Faith
+			if = {
+				limit = {
+					any_title_heir = {
+						faith = $FACTION_LEADER$.faith
+					}
+				}
+				ordered_title_heir = {
+					order_by = "appointment_candidate_score(prev)"
+					limit = {
+						faith = $FACTION_LEADER$.faith
+					}
+					save_scope_as = new_ruler
+				}
+			}
+			# Otherwise, make the peasant leader the new emperor
+			else = { $FACTION_LEADER$ = { save_scope_as = new_ruler } }
+
+			# Actually make the switch
+			create_title_and_vassal_change = {
+				type = conquest_populist
+				save_scope_as = change
+			}
+			# Transfer all titles to heir of primary title if only one governorship is held
+			hidden_effect = {
+				$SOURCE_GOVERNMENT$ = {
+					every_held_title = {
+						title_tier >= county
+						limit = {
+							is_landless_type_title = no
+							is_noble_family_title = no
+						}
+						change_title_holder_include_vassals = {
+							holder = scope:new_ruler
+							change = scope:change
+							take_baronies = no
+						}
+					}
+				}
+			}
+			resolve_title_and_vassal_change = scope:change
+		}
+	}
+	else_if = { # Populists factions of the state faith in an admin realm where the emperor is of a heretical faith simply take the empire
+		limit = {
+			$SOURCE_GOVERNMENT$ = { government_allows = state_faith }
+			$FACTION_LEADER$.faith = scope:faction_target.primary_title.state_faith
+			$FACTION_LEADER$.faith != scope:faction_target.faith
+		}
+
+		$SOURCE_GOVERNMENT$.primary_title = {
+
+			$FACTION_LEADER$ = { save_scope_as = new_ruler }
+
+			# Actually make the switch
+			create_title_and_vassal_change = {
+				type = conquest_populist
+				save_scope_as = change
+			}
+			# Transfer all titles to heir of primary title if only one governorship is held
+			hidden_effect = {
+				$SOURCE_GOVERNMENT$ = {
+					every_held_title = {
+						title_tier >= county
+						limit = {
+							is_landless_type_title = no
+							is_noble_family_title = no
+						}
+						change_title_holder_include_vassals = {
+							holder = scope:new_ruler
+							change = scope:change
+							take_baronies = no
+						}
+					}
+				}
+			}
+			resolve_title_and_vassal_change = scope:change
+		}
+	}
+	else = { # Otherwise we run the normal script
+		# Compile a list of all counties belonging to the faction.
+		scope:popular_faction = {
+			every_faction_county_member = {
+				duchy = {
+					add_to_list = seized_duchies
+					every_de_jure_county = {
+						limit = {
+							holder.top_liege = scope:faction_target
+						}
+						add_to_list = seized_counties
+					}
+				}
+			}
+		}
+		# Additionally, if we're at war (and not just pressing demands)...
+		if = {
+			limit = {
+				scope:faction_leader = {
+					is_at_war_with = scope:faction_target
+				}
+			}
+			# Add all occupied counties of the correct culture/faith.
+			scope:faction_target = {
+				every_sub_realm_county = {
+					limit = {
+						county_controller = scope:faction_leader
+						OR = {
+							culture = scope:faction_leader.culture
+							faith = scope:faction_leader.faith
+						}
+					}
+					add_to_list = seized_counties
+				}
+			}
+
+			# And add any war members that aren't already in the faction.
+			scope:faction_leader = {
+				every_character_war = {
+					limit = {
+						is_defender = scope:faction_target
+					}
+					every_war_attacker = {
+						limit = {
+							NOT = { is_in_list = faction_members }
+						}
+						add_to_list = faction_members
+					}
+				}
+			}
+		}
+		show_as_tooltip = {
+			create_title_and_vassal_change = {
+				type = conquest_populist
+				save_scope_as = change_tooltip
+				add_claim_on_loss = yes
+			}
+			every_in_list = {
+				list = seized_duchies
+				change_title_holder = {
+					holder = scope:faction_leader
+					change = scope:change_tooltip
+					take_baronies = no
+				}
+				becomes_independent = {
+					change = scope:change_tooltip
+				}
+			}
+			resolve_title_and_vassal_change = scope:change_tooltip
+		}
+		# Give out titles in such way that each leader gets all titles within the same Kingdom
+		# Step 1: Duplicate the list of all members 
+		every_in_list = {
+			list = faction_members
+			add_to_list = faction_members_loop
+		}
+		# Step 2: Create a while loop to give out counties to each faction member until we run out of the counties
+		while = {
+			limit = {
+				list_size:seized_counties >= 1
+			}
+			# Step 3: If there is no more leaders, create new one
+			if = {
+				limit = {
+					list_size:faction_members_loop < 1
+				}
+				# Step 3.1: Pick the best county that is still available to base all other title handovers on 
+				ordered_in_list = {
+					list = seized_counties
+					order_by = {
+						value = total_county_levies
+						multiply = {
+							value = 1
+							# Up to 50% bonus points for counties of the correct culture/faith.
+							if = {
+								limit = { culture != scope:faction_leader.culture }
+								add = 0.25
+							}
+							if = {
+								limit = { faith != scope:faction_leader.faith }
+								add = 0.25
+							}
+						}
+					}
+					save_scope_as = capital_county
+				}
+				create_character = {
+					location = scope:capital_county.title_province
+					culture = scope:capital_county.culture
+					faith = scope:capital_county.faith
+					template = peasant_faction_leader_template
+					gender_female_chance = scope:capital_county.location_faith_dominant_gender_female_chance
+					save_scope_as = new_county_holder
+				}
+				scope:new_county_holder = {
+					add_to_list = faction_members
+					add_to_list = faction_members_loop
+					add_trait_xp = {
+						trait = peasant_leader
+						value = peasant_leader_xp_value
+					}
+				}
+			}
+			# Step 4: Grab a faction member with highest peasant leader xp, but always grab the faction leader first
+			ordered_in_list = {
+				list = faction_members_loop
+				order_by = {
+					value = "has_trait_xp(peasant_leader)"
+					if = {
+						limit = {
+							this = scope:faction_leader
+						}
+						add = 1000
+					}
+				}
+				save_scope_as = next_leader
+				# Step 4.1: Pick the best county that is still available to base all other title handovers on 
+				if = {
+					limit = {
+						NOT = { exists = scope:capital_county }
+					}
+					if = {
+						limit = {
+							is_landed = yes
+						}
+						capital_county = {
+							save_scope_as = capital_county
+						}
+					}
+					else = {
+						ordered_in_list = {
+							list = seized_counties
+							order_by = {
+								value = total_county_levies
+								multiply = {
+									value = 1
+									# Up to 300% bonus points for counties of the correct culture/faith.
+									if = {
+										limit = { culture = scope:next_leader.culture }
+										add = 1
+									}
+									if = {
+										limit = { faith = scope:next_leader.faith }
+										add = 1
+									}
+								}
+							}
+							save_scope_as = capital_county
+						}
+					}
+				}
+				# Step 5: CHANGE ONE - Give them the selected county and make them go independent
+				create_title_and_vassal_change = {
+					type = conquest_populist
+					save_scope_as = change_one
+					add_claim_on_loss = yes
+				}
+				scope:capital_county = {
+					change_title_holder = {
+						holder = scope:next_leader
+						change = scope:change_one
+						take_baronies = no
+					}
+				}
+				becomes_independent = {
+					change = scope:change_one
+				}
+				resolve_title_and_vassal_change = scope:change_one
+				# Step 6: CHANGE TWO - Give them all Duchies and Counties within the Kingdom of the capital county
+				create_title_and_vassal_change = {
+					type = conquest_populist
+					save_scope_as = change_two
+					add_claim_on_loss = yes
+				}
+				every_in_list = {
+					list = seized_counties
+					limit = {
+						kingdom = scope:capital_county.kingdom
+					}
+					change_title_holder = {
+						holder = scope:next_leader
+						change = scope:change_two
+						take_baronies = no
+					}
+					remove_from_list = seized_counties
+				}
+				every_in_list = {
+					list = seized_duchies
+					limit = {
+						kingdom = scope:capital_county.kingdom
+					}
+					change_title_holder = {
+						holder = scope:next_leader
+						change = scope:change_two
+						take_baronies = no
+					}
+					remove_from_list = seized_duchies
+				}
+				resolve_title_and_vassal_change = scope:change_two
+
+				# Step 6: CHANGE THREE - Usurp the Kingdom if they hold enough land
+				if = {
+					limit = {
+						primary_title.kingdom = {
+							any_de_jure_county = {
+								percent > 0.5
+								holder = scope:next_leader
+							}
+						}
+					}
+					create_title_and_vassal_change = {
+						type = conquest_populist
+						save_scope_as = change_three
+						add_claim_on_loss = yes
+					}
+					primary_title.kingdom = {
+						change_title_holder = {
+							holder = scope:next_leader
+							change = scope:change_three
+							take_baronies = no
+						}
+					}
+					resolve_title_and_vassal_change = scope:change_three
+				}
+				# Step 6.1: If the title we gave is a new dynamic title, generate a CoA for it.
+				if = {
+					limit = {
+						exists = scope:new_title
+					}
+					scope:new_title = {
+						set_capital_county = scope:capital_county
+						generate_coa = yes
+					}
+				}
+				# Step 7: Destroy their peasant uprising title
+				if = {
+					limit = {
+						has_variable = peasant_title
+						exists = var:peasant_title.holder
+					}
+					destroy_title = var:peasant_title
+				}
+				# Step 8: Set up government type correctly.
+				scope:capital_county = {
+					previous_holder ?= {
+						if = {
+							limit = {
+								is_alive = yes
+							}
+							save_scope_as = old_holder
+							switch = {
+								trigger = government_has_flag
+								government_is_administrative = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_clan = {
+									save_scope_value_as = { name = old_government value = flag:clan }
+								}
+								government_is_tribal = {
+									save_scope_value_as = { name = old_government value = flag:tribal }
+								}
+								government_is_wanua = {
+									save_scope_value_as = { name = old_government value = flag:wanua }
+								}
+								government_is_nomadic = {
+									save_scope_value_as = { name = old_government value = flag:nomad }
+								}
+								government_is_celestial = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_steppe_admin = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_meritocratic = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_japan_administrative = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_japan_feudal = {
+									save_scope_value_as = { name = old_government value = flag:japan_feudal }
+								}
+								government_is_mandala = {
+									save_scope_value_as = { name = old_government value = flag:mandala }
+								}
+								# BTWK
+								government_is_sub_roman_brythonic = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_brythonic }
+								}
+								government_is_sub_roman_admin = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
+								}
+								government_is_sub_roman_feudal = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_feudal }
+								}
+								government_is_germanic_admin = {
+									save_scope_value_as = { name = old_government value = flag:germanic_admin }
+								}
+								government_is_germanic_feudal = {
+									save_scope_value_as = { name = old_government value = flag:germanic_feudal }
+								}
+							}
+						}
+					}
+				}
+				# Change our government according to the government of our liege.
+				## Nomad.
+				if = {
+					limit = {
+						OR = {
+							government_has_flag = government_is_nomadic
+							scope:old_government ?= flag:nomad
+							scope:capital_county.title_province = {
+								OR = {
+									has_holding_type = nomad_holding
+									has_holding_type = herder_holding
+								}
+							}
+						}
+					}
+					change_government = nomad_government
+				}
+				## Clan.
+				else_if = {
+					limit = {
+						OR = {
+							government_has_flag = government_is_clan
+							scope:old_government ?= flag:clan
+							ep3_is_clan_inclined_trigger = yes
+						}
+					}
+					change_government = clan_government
+				}
+				## Wanua or Tribal.
+				else_if = {
+					limit = {
+						scope:capital_county.title_province = {
+							has_holding_type = tribal_holding
+						}
+					}
+					if = {
+						limit = {
+							OR = {
+								government_has_flag = government_is_wanua
+								scope:old_government ?= flag:wanua
+								scope:capital_county.title_province = {
+									geographical_region = world_asia_southeast_islands
+								}
+							}
+						}
+						change_government = wanua_government
+					}
+					else = {
+						change_government = tribal_government
+					}
+				}
+				## Ritsuryo.
+				else_if = {
+					limit = {
+						OR = {
+							government_has_flag = government_is_japan_feudal
+							scope:old_government ?= flag:japan_feudal
+							culture = culture:japanese
+							culture = {
+								any_parent_culture_or_above = { this = culture:japanese }
+							}
+						}
+					}
+					change_government = japan_feudal_government
+				}
+				## Mandala.
+				else_if = {
+					limit = {
+						OR = {
+							AND = {
+								has_mandala_culture_trigger = yes
+								has_mandala_faith_trigger = yes
+								scope:capital_county.title_province = {
+									has_holding_type = temple_citadel_holding
+								}
+							}
+							government_has_flag = government_is_mandala
+						}
+					}
+					change_government = mandala_government
+				}
+				## Administrative.
+				## Celestial.
+				## Steppe admin.
+				## Meritocratic.
+				## Soryo.
+				else_if = {
+					limit = {
+						OR = {
+							government_allows = administrative
+							scope:old_government ?= flag:admin
+							scope:old_government ?= flag:sub_roman_admin
+							scope:old_government ?= flag:germanic_admin
+						}
+					}
+					change_to_administrative_effect = yes
+				}
+				## Sub-Roman Brythonic
+				else_if = {
+					limit = {
+						scope:old_government ?= flag:sub_roman_brythonic
+					}
+					change_government = sub_roman_brythonic
+				}
+				## Sub-Roman (Feudal)
+				else_if = {
+					limit = {
+						scope:old_government ?= flag:sub_roman_feudal
+					}
+					change_government = sub_roman_no_dlc_government
+				}
+				## Germanic (Feudal)
+				else_if = {
+					limit = {
+						scope:old_government ?= flag:germanic_feudal
+					}
+					change_government = germanic_no_dlc_government
+				}
+				## Else feudal.
+				else = { change_government = feudal_government }
+				# Step 9: Give them some gold/treasury if they don't have any
+				if = {
+					limit = {
+						gold <= 100
+					}
+					add_gold = {
+						value = stewardship
+						multiply = realm_size
+					}
+				}
+				if = {
+					limit = {
+						has_treasury = yes
+						treasury <= 100
+					}
+					add_treasury = {
+						value = gold
+						multiply = stewardship
+						max = 4000
+					}
+				}
+				# Step 10: Remove them from the looping list
+				remove_from_list = faction_members_loop
+				# Step 11: Clear the scopes, otherwise the while loop will break
+				clear_saved_scope = next_leader
+				clear_saved_scope = capital_county
+			}
+		}
+	}
+	hidden_effect = {
+		# Make sure to destroy all peasant uprising titles and clean all variables
+		every_in_list = {
+			list = faction_members
+			every_held_title = {
+				limit = {
+					has_variable = faction
+				}
+				prev = {
+					destroy_title = prev
+				}
+			}
+			remove_variable = peasant_war_escalates
+			remove_variable = peasant_title
+			remove_variable = rebel_leader_peasants
+			remove_variable = peasant_faction_random_peasant
+			remove_variable = peasant_revolt_do_not_kill
+		}
+		# If the faction still exists, dissolve it (it's no longer relevant).
+		if = {
+			limit = {
+				exists = scope:popular_faction
+			}
+			scope:popular_faction = {
+				destroy_faction = yes
+			}
+		}
+	}
+	if = {
+		limit = {
+			scope:faction_target.top_participant_group:dynastic_cycle ?= {
+				participant_group_type = hegemon_ruler 
+			}
+			situation:dynastic_cycle = {
+				situation_top_has_catalyst = catalyst_hegemon_lost_defensive_territorial_war
+			}
+		}
+		situation:dynastic_cycle = {
+			trigger_situation_catalyst = {
+				catalyst = catalyst_hegemon_lost_defensive_territorial_war
+				character = scope:faction_leader
+			}
+		}
+	}
+}
