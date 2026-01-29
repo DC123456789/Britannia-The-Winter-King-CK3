@@ -1,0 +1,103 @@
+﻿###########
+## Special buildings rewarded from legends
+###########
+
+legendary_shrine = {
+
+	asset = {
+		type = pdxmesh
+		name = "fp4_legendary_steppe_shrine_01_a_mesh"
+	}
+
+	asset = {
+		type = pdxmesh
+		name = "fp4_legendary_building_christian_shrine_01_mesh"
+		graphical_faiths = { "catholic_gfx" "hellenic_gfx" }
+	}
+
+	asset = {
+		type = pdxmesh
+		name = "fp4_legendary_islamic_shrine_01_a_mesh"
+		graphical_faiths = { "islamic_gfx" }
+	}
+
+	asset = {
+		type = pdxmesh
+		name = "fp4_legendary_building_norse_shrine_01_a_mesh"
+		graphical_cultures = { norse_building_gfx }
+		graphical_faiths = { pagan_gfx }
+	}
+
+	asset = {
+		type = pdxmesh
+		name = "fp4_legendary_dharmic_shrine_01_a_mesh"
+		graphical_faiths = { dharmic_gfx }
+	}
+
+	construction_time = very_slow_construction_time
+
+	type_icon = "icon_building_legendary_shrine.dds"
+
+	is_enabled = {
+		always = yes
+	}
+
+	cost = {
+		gold = 1000
+		piety = 1000
+	}
+
+	character_modifier = {
+		monthly_piety = 0.15
+		zealot_opinion = 5
+		zealot_tax_contribution_mult = 0.05
+		same_faith_opinion = 5
+		zealot_tax_contribution_mult = 0.1
+		life_expectancy = 5
+	}
+
+	county_modifier = {
+		tax_mult = 0.05
+		monthly_county_control_growth_add = 0.1
+	}
+
+	province_modifier = {
+		monthly_income = 0.2
+	}
+
+	ai_value = {
+		base = 100
+		ai_pious_building_preference_modifier = yes
+		modifier = { # Fill all building slots before going for special buildings
+			factor = 0
+			free_building_slots > 0
+		}
+	}
+
+	on_complete = {
+		root = { save_scope_as = legendary_province }
+
+		county.holder = {
+			if = {
+				limit = {
+					has_trait = pilgrim
+				}
+				add_trait_xp = {
+					trait = pilgrim
+					value = 30
+				}
+			}
+			else = {
+				add_trait = pilgrim
+				add_trait_xp = {
+					trait = pilgrim
+					value = 30
+				}
+			}
+		}
+	}
+
+	type = special
+
+	flag = travel_point_of_interest_religious
+}

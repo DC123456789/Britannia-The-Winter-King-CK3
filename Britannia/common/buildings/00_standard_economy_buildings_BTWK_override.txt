@@ -24,7 +24,7 @@ watermills_01 = {
 			limit = {
 				NOT = {
 					culture = {
-					has_cultural_parameter = watermills_windmills_cities
+						has_cultural_parameter = watermills_windmills_cities
 					}
 				}
 			}
@@ -53,29 +53,20 @@ watermills_01 = {
 		trigger_if = {
 			limit = {
 				has_holding_type = city_holding
+				is_county_capital = no
+				culture = {
+					has_cultural_parameter = watermills_windmills_cities
+				}
 			}
 			has_building_or_higher = city_01
-			culture = {
-				has_cultural_parameter = watermills_windmills_cities
-			}
 			NOR = {
 				has_building_or_higher = windmills_01
 				has_building_or_higher = caravanserai_01
 			}
 		}
-		trigger_else_if = {
-			limit = {
-				OR = {
-					has_holding_type = castle_holding
-					has_holding_type = church_holding
-					has_holding_type = temple_citadel_holding
-				}
-			}
+		trigger_else = {
 			building_requirement_castle_city_church = { LEVEL = 01 }
 			is_county_capital = yes
-		}
-		trigger_else = {
-			always = no
 		}
 		OR = {
 			culture = { # Standard unlock from innovation (High medieval)
