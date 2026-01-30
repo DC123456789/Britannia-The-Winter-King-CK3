@@ -64,38 +64,7 @@
 			parent = feudal_tax_low
 			position = { 2 0 }
 
-			tax = {
-				if = {
-					limit = { 
-						scope:subject = {
-							NOT = { vassal_contract_has_flag = has_tribal_obligations_contract }
-						}
-					}
-					value = normal_feudal_tax
-				}
-				else = {
-					value = 0
-					scope:liege = {
-						add = {
-							value = tribal_obligations_taxes_per_prestige_level
-							multiply = prestige_level
-						}
-					}
-					max = extortionate_feudal_tax
-				}
-			}
-			contribution_desc = {
-				first_valid = {
-					triggered_desc = {
-						trigger = {
-							scope:subject = {
-								vassal_contract_has_flag = has_tribal_obligations_contract
-							}
-						}
-						desc = "pre_feudal_government_vassal_contribution_prestige_level"
-					}
-				}
-			}
+			tax = normal_feudal_tax
 
 			ai_liege_desire = {
 				value = 3
@@ -246,38 +215,7 @@ feudal_government_levies = {
 			parent = feudal_levies_low
 			position = { 2 0 }
 
-			levies = {
-				if = {
-					limit = { 
-						scope:subject = {
-							NOT = { vassal_contract_has_flag = has_tribal_obligations_contract }
-						}
-					}
-					value = 0.25
-				}
-				else = {
-					value = 0
-					scope:liege = {
-						add = {
-							value = tribal_obligations_levies_per_prestige_level
-							multiply = prestige_level
-						}
-					}
-					max = 0.5
-				}
-			}
-			contribution_desc = {
-				first_valid = {
-					triggered_desc = {
-						trigger = {
-							scope:subject = {
-								vassal_contract_has_flag = has_tribal_obligations_contract
-							}
-						}
-						desc = "pre_feudal_government_vassal_contribution_prestige_level"
-					}
-				}
-			}
+			levies = 0.25
 
 			ai_liege_desire = 3
 			ai_subject_desire = 3
