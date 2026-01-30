@@ -85,8 +85,8 @@
 				save_scope_value_as = { name = old_government value = flag:mandala }
 			}
 			# BTWK
-			government_is_sub_roman_brythonic = {
-				save_scope_value_as = { name = old_government value = flag:sub_roman_brythonic }
+			government_is_pre_feudal = {
+				save_scope_value_as = { name = old_government value = flag:pre_feudal }
 			}
 			government_is_sub_roman_admin = {
 				save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
@@ -338,8 +338,8 @@
 				}
 				else = { change_government = feudal_government }
 			}
-			flag:sub_roman_brythonic = {
-				change_government = sub_roman_brythonic_government
+			flag:pre_feudal = {
+				change_government = pre_feudal_government
 			}
 			flag:sub_roman_admin = {
 				change_government = sub_roman_admin_government
@@ -483,11 +483,11 @@
 			else_if = {
 				limit = {
 					OR = {
-						scope:new_liege ?= { government_has_flag = government_is_sub_roman_brythonic }
-						scope:old_government ?= flag:sub_roman_brythonic
+						scope:new_liege ?= { government_has_flag = government_is_pre_feudal }
+						scope:old_government ?= flag:pre_feudal
 					}
 				}
-				change_government = sub_roman_brythonic_government
+				change_government = pre_feudal_government
 			}
 			## Sub-Roman (Feudal)
 			else_if = {
@@ -767,9 +767,9 @@ admin_change_government_effect = {
 	else_if = {
 		limit = {
 			top_liege != this
-			liege = { government_has_flag = government_is_sub_roman_brythonic }
+			liege = { government_has_flag = government_is_pre_feudal }
 		}
-		change_government = sub_roman_brythonic_government
+		change_government = pre_feudal_government
 	}
 	else_if = {
 		limit = {
