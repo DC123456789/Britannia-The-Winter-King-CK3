@@ -13,3 +13,71 @@ government_is_not_tribal_trigger = {
 		NOT = { government_has_flag = government_is_tribal }
 	}
 }
+
+BTWK_has_sub_roman_government_trigger = {
+	OR = {
+		has_government = sub_roman_government
+		has_government = sub_roman_no_dlc_government
+	}
+}
+
+BTWK_has_germanic_government_trigger = {
+	OR = {
+		has_government = germanic_government
+		has_government = germanic_no_dlc_government
+	}
+}
+
+BTWK_should_become_sub_roman_government_trigger = {
+	OR = {
+		top_liege = {
+			BTWK_has_sub_roman_government_trigger = yes
+		}
+		AND = {
+			OR = {
+				is_independent_ruler = yes
+				liege = {
+					NOT = {
+						government_has_flag = government_is_administrative
+					}
+				}
+			}
+			NOT = {
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_frankish
+						this.var:ancestral_non_roman_culture ?= {
+							has_cultural_pillar = heritage_frankish
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_should_become_germanic_government_trigger = {
+	OR = {
+		top_liege = {
+			BTWK_has_germanic_government_trigger = yes
+		}
+		AND = {
+			OR = {
+				is_independent_ruler = yes
+				liege = {
+					NOT = {
+						government_has_flag = government_is_administrative
+					}
+				}
+			}
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_frankish
+					this.var:ancestral_non_roman_culture ?= {
+						has_cultural_pillar = heritage_frankish
+					}
+				}
+			}
+		}
+	}
+}

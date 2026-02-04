@@ -37,6 +37,19 @@ convert_to_administrative_from_feudalism_effect = {
 				value = flag:japan_administrative
 			}
 		}
+		# BTWK
+		flag:sub_roman = { # sub_roman_government / Sub-Roman
+			save_scope_value_as = {
+				name = has_selected_a_government
+				value = flag:sub_roman
+			}
+		}
+		flag:germanic = { # germanic_government / Germanic
+			save_scope_value_as = {
+				name = has_selected_a_government
+				value = flag:germanic
+			}
+		}
 	}
 
 	change_to_administrative_effect = yes
@@ -211,7 +224,13 @@ convert_to_administrative_from_feudalism_game_start_effect = {
 			limit = {
 				NOT = { government_has_flag = government_is_administrative }
 			}
-			change_government = administrative_government
+			if = {
+				limit = { BTWK_should_become_sub_roman_government_trigger = yes }
+				change_government = sub_roman_government
+			}
+			else = {
+				change_government = germanic_government
+			}
 			create_noble_family_effect = { GOVERNMENT_GIVER = this }
 			add_to_list = estatified_list
 		}
