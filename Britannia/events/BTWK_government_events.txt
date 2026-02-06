@@ -1,0 +1,60 @@
+﻿namespace = BTWK_government
+
+#convert_pre_feudal_to_feudalism_decision
+BTWK_government.0001 = {
+	type = character_event
+	title = BTWK_government.0001.t
+	desc = BTWK_government.0001.desc
+	theme = realm
+	override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = storyteller
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			change_government = feudal_government
+			custom_tooltip = easier_for_vassals_to_convert_to_feudal
+		}
+		hidden_effect = {
+			every_liege_or_above = {
+				limit = {
+					NOT = { top_liege = this }
+				}
+				send_interface_message = {
+					type = event_stewardship_neutral_with_text
+					title = msg_vassal_pre_feudal_to_feudal
+					desc = msg_vassal_pre_feudal_to_feudal_desc
+					right_icon = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = major_decisions.0001.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0002 = {
+	type = letter_event
+	opening = BTWK_government.0002.opening
+	desc = BTWK_government.0001.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			scope:actor = { change_government = feudal_government }
+			custom_tooltip = easier_to_convert_to_feudal
+		}
+	}
+
+	option = {
+		name = BTWK_government.0001.a
+	}
+}

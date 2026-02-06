@@ -1501,149 +1501,153 @@ convert_whole_realm_to_feudalism_effect = {
 	}
 	
 	##Liege has Soryo? Convert to Soryo!
-	if = {
-		limit = {
-			has_tgp_dlc_trigger = yes
-			top_liege != this
-			liege = { government_has_flag = government_is_japan_feudal }
-		}
-		change_government = japan_feudal_government
-		if = {
-			limit = {
-				is_house_head = yes
-			}
-			save_scope_as = new_head
-			house = {
-				set_house_name = japanese_dynasty_name
-				save_scope_as = new_house
-			}
-			create_noble_family_effect = { GOVERNMENT_GIVER = this }
-			scope:new_title = {
-				#set_title_name_dynamic = japanese_noble_family_name
-				set_coa = scope:new_house
-			}
-		}
-	}
-	##Liege has clan? Convert to clan!
-	else_if = {
-		limit = {
-			top_liege != this
-			OR = {
-				liege = { government_has_flag = government_is_clan }
-				AND = {
-					liege = { government_has_flag = government_is_tribal }
-					religion = religion:islam_religion
-				}
-			}
-		}
-		change_government = clan_government
-	}
-	## BTWK governments
-	else_if = {
-		limit = {
-			top_liege != this
-			liege = { government_has_flag = government_is_pre_feudal }
-		}
-		change_government = pre_feudal_government
-	}
-	else_if = {
-		limit = {
-			top_liege != this
-			liege = { has_government = sub_roman_no_dlc_government }
-		}
-		change_government = sub_roman_no_dlc_government
-	}
-	else_if = {
-		limit = {
-			top_liege != this
-			liege = { has_government = germanic_no_dlc_government }
-		}
-		change_government = germanic_no_dlc_government
-	}
-	##Liege has feudal? Convert to feudal!
-	else_if = {
-		limit = {
-			top_liege != this
-			OR = {
-				liege = { government_has_flag = government_is_feudal }
-				AND = {
-					liege = { government_has_flag = government_is_tribal }
-					NOT = { religion = religion:islam_religion }
-				}
-			}
-		}
-		change_government = feudal_government
-	}
-	##You're an independent Japanese Heritage Character? Convert to Soryo!
-	else_if = {
-		limit = {
-			has_tgp_dlc_trigger = yes
-			top_liege = this
-			culture.culture_head ?= { government_is_japanese_trigger = yes }
-		}
-		add_character_flag = can_become_japanese_feudal # Used in the can_get_government of japan_feudal_government
-		change_government = japan_feudal_government
-		if = {
-			limit = {
-				is_house_head = yes
-			}
-			save_scope_as = new_head
-			house = {
-				set_house_name = japanese_dynasty_name
-				save_scope_as = new_house
-			}
-			create_noble_family_effect = { GOVERNMENT_GIVER = this }
-			scope:new_title = {
-				#set_title_name_dynamic = japanese_noble_family_name
-				set_coa = scope:new_house
-			}
-		}
-	}
-	##You're an independent Muslim? Convert to clan!
-	else_if = {
-		limit = {
-			top_liege = this
-			faith = { religion_tag = islam_religion }
-		}
-		change_government = clan_government
-	}
-	##You're an independent anything else? Convert to feudal!
-	else = { change_government = feudal_government }
+	# if = {
+		# limit = {
+			# has_tgp_dlc_trigger = yes
+			# top_liege != this
+			# liege = { government_has_flag = government_is_japan_feudal }
+		# }
+		# change_government = japan_feudal_government
+		# if = {
+			# limit = {
+				# is_house_head = yes
+			# }
+			# save_scope_as = new_head
+			# house = {
+				# set_house_name = japanese_dynasty_name
+				# save_scope_as = new_house
+			# }
+			# create_noble_family_effect = { GOVERNMENT_GIVER = this }
+			# scope:new_title = {
+				# #set_title_name_dynamic = japanese_noble_family_name
+				# set_coa = scope:new_house
+			# }
+		# }
+	# }
+	# ##Liege has clan? Convert to clan!
+	# else_if = {
+		# limit = {
+			# top_liege != this
+			# OR = {
+				# liege = { government_has_flag = government_is_clan }
+				# AND = {
+					# liege = { government_has_flag = government_is_tribal }
+					# religion = religion:islam_religion
+				# }
+			# }
+		# }
+		# change_government = clan_government
+	# }
+	# ## BTWK governments
+	# else_if = {
+		# limit = {
+			# top_liege != this
+			# liege = { government_has_flag = government_is_pre_feudal }
+		# }
+		# change_government = pre_feudal_government
+	# }
+	# else_if = {
+		# limit = {
+			# top_liege != this
+			# liege = { has_government = sub_roman_no_dlc_government }
+		# }
+		# change_government = sub_roman_no_dlc_government
+	# }
+	# else_if = {
+		# limit = {
+			# top_liege != this
+			# liege = { has_government = germanic_no_dlc_government }
+		# }
+		# change_government = germanic_no_dlc_government
+	# }
+	# ##Liege has feudal? Convert to feudal!
+	# else_if = {
+		# limit = {
+			# top_liege != this
+			# OR = {
+				# liege = { government_has_flag = government_is_feudal }
+				# AND = {
+					# liege = { government_has_flag = government_is_tribal }
+					# NOT = { religion = religion:islam_religion }
+				# }
+			# }
+		# }
+		# change_government = feudal_government
+	# }
+	# ##You're an independent Japanese Heritage Character? Convert to Soryo!
+	# else_if = {
+		# limit = {
+			# has_tgp_dlc_trigger = yes
+			# top_liege = this
+			# culture.culture_head ?= { government_is_japanese_trigger = yes }
+		# }
+		# add_character_flag = can_become_japanese_feudal # Used in the can_get_government of japan_feudal_government
+		# change_government = japan_feudal_government
+		# if = {
+			# limit = {
+				# is_house_head = yes
+			# }
+			# save_scope_as = new_head
+			# house = {
+				# set_house_name = japanese_dynasty_name
+				# save_scope_as = new_house
+			# }
+			# create_noble_family_effect = { GOVERNMENT_GIVER = this }
+			# scope:new_title = {
+				# #set_title_name_dynamic = japanese_noble_family_name
+				# set_coa = scope:new_house
+			# }
+		# }
+	# }
+	# ##You're an independent Muslim? Convert to clan!
+	# else_if = {
+		# limit = {
+			# top_liege = this
+			# faith = { religion_tag = islam_religion }
+		# }
+		# change_government = clan_government
+	# }
+	# ##You're an independent anything else? Convert to pre-feudal!
+	# else = { change_government = pre_feudal_government }
+	
+    # You always become Folkright first before you can reform to anything else
+    change_government = pre_feudal_government
 	if = {
 		limit = {
 			government_has_flag = government_is_tribal
 		}
 		##General
 		custom_tooltip = all_holding_will_change
-		##Liege has clan? Convert to clan!
-		if = {
-			limit = {
-				top_liege != this
-				liege = { government_has_flag = government_is_clan }
-			}
-			custom_tooltip = clan_liege_vassals_will_convert
-		}
-		#Liege has feudal? Convert to feudal!
-		if = {
-			limit = {
-				top_liege != this
-				liege = { government_has_flag = government_is_feudal }
-			}
-			custom_tooltip = feudal_liege_vassals_will_convert
-		}
-		##If I am Islamic, we will become clan.
-		if = {
-			limit = {
-				top_liege = this
-				faith = { religion_tag = islam_religion }
-			}
-			custom_tooltip = islamic_vassals_will_convert
-		}
-		##If I am not Islamic, we will become feudal.
-		else_if = {
-			limit = { top_liege = this }
-			custom_tooltip = other_vassals_will_convert
-		}
+		# ##Liege has clan? Convert to clan!
+		# if = {
+			# limit = {
+				# top_liege != this
+				# liege = { government_has_flag = government_is_clan }
+			# }
+			# custom_tooltip = clan_liege_vassals_will_convert
+		# }
+		# #Liege has feudal? Convert to feudal!
+		# if = {
+			# limit = {
+				# top_liege != this
+				# liege = { government_has_flag = government_is_feudal }
+			# }
+			# custom_tooltip = feudal_liege_vassals_will_convert
+		# }
+		# ##If I am Islamic, we will become clan.
+		# if = {
+			# limit = {
+				# top_liege = this
+				# faith = { religion_tag = islam_religion }
+			# }
+			# custom_tooltip = islamic_vassals_will_convert
+		# }
+		# ##If I am not Islamic, we will become feudal.
+		# else_if = {
+			# limit = { top_liege = this }
+			# custom_tooltip = other_vassals_will_convert
+		# }
+		custom_tooltip = other_vassals_will_convert
 	}
 
 	hidden_effect = {

@@ -11,6 +11,29 @@ tribal_obligations_levies_per_prestige_level = 0.10
 tribal_obligations_taxes_baseline = -0.10
 tribal_obligations_taxes_per_prestige_level = 0.04
 
+percent_count_or_higher_vassals_with_tribal_obligations = {
+	value = 0
+	every_vassal = {
+		limit = {
+			highest_held_title_tier >= tier_county
+			OR = {
+				government_has_flag = government_is_tribal
+				vassal_contract_has_flag = has_tribal_obligations_contract
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = 0
+		every_vassal = {
+			limit = {
+				highest_held_title_tier >= tier_county
+			}
+			add = 1
+		}
+	}
+}
+
 ## Tribal fame
 
 tribal_fame_value = {

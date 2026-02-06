@@ -101,6 +101,7 @@ convert_to_feudalism_liege_converted_decision = {
 				government_has_flag = government_is_japan_feudal
 				government_has_flag = government_is_feudal
 				government_has_flag = government_is_clan
+				government_has_flag = government_is_administrative
 			}
 		}
 	}
@@ -123,6 +124,15 @@ convert_to_feudalism_liege_converted_decision = {
 		custom_description = {
 			text = recent_conversion_to_tribalism
 			NOT = { has_character_flag = just_converted_to_tribalism }
+		}
+		capital_province.county = {
+			development_level >= convert_to_feudalism_development_requirement
+		}
+		custom_description = {
+			text = capital_has_building_requirements_for_pre_feudal_from_liege
+			capital_province = {
+				combined_building_level >= 7
+			}
 		}
 	}
 
@@ -380,6 +390,7 @@ convert_whole_realm_to_feudalism_decision = {
 					NOR = {
 						government_has_flag = government_is_feudal
 						government_has_flag = government_is_clan
+						government_has_flag = government_is_administrative
 					}
 				}
 			}
@@ -397,12 +408,19 @@ convert_whole_realm_to_feudalism_decision = {
 		capital_province.county = {
 			development_level >= convert_to_feudalism_development_requirement
 		}
-		custom_description = { #You need to have 70% of all (non-regional/unique) tribal innovations!
-			text = has_all_tribal_innovations
+		custom_description = {
+			text = capital_has_building_requirements_for_pre_feudal
+			capital_province = {
+				has_building = tribe_02
+				combined_building_level >= 10
+			}
+		}
+		custom_description = { #You need to have 80% of all (non-regional/unique) tribal innovations!
+			text = has_80_pc_of_tribal_innovations
 			subject = root.culture
 			culture = {
 				calc_true_if = {
-					amount >= 9
+					amount >= 13
 					has_innovation = innovation_motte
 					has_innovation = innovation_catapult
 					has_innovation = innovation_barracks
@@ -417,6 +435,7 @@ convert_whole_realm_to_feudalism_decision = {
 					has_innovation = innovation_ledger
 					has_innovation = innovation_development_01
 					has_innovation = innovation_currency_01
+					has_innovation = innovation_longboats
 				}
 			}
 		}

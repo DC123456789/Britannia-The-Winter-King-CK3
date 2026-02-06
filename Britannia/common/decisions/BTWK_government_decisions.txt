@@ -1,0 +1,204 @@
+﻿#########################################################################
+# Government Decisions													#
+#########################################################################
+
+# Convert from Pre-Feudal to Feudalism
+convert_pre_feudal_to_feudalism_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+	desc = convert_pre_feudal_to_feudalism_decision_desc
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 72
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	is_shown = {
+		government_has_flag = government_is_pre_feudal
+		OR = {
+			top_liege = this
+			AND = {
+				top_liege != this
+				liege = {
+					NOR = {
+						government_has_flag = government_is_feudal
+						government_has_flag = government_is_clan
+						government_has_flag = government_is_administrative
+					}
+				}
+			}
+		}
+	}
+
+	is_valid = {
+		OR = {
+			has_realm_law = crown_authority_1
+			has_realm_law = crown_authority_2
+			has_realm_law = crown_authority_3
+		}
+		custom_description = {
+			text = faith_is_reformed
+			subject = root
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+		prestige_level >= 2
+		capital_province.county = {
+			development_level >= 15
+		}
+		custom_description = {
+			text = capital_has_building_requirements_for_feudal
+			capital_province = {
+				has_building = castle_02
+				combined_building_level >= 15
+			}
+		}
+		custom_description = { #You need to have 75% of all era 2 innovations
+			text = has_75_pc_of_era_2_innovations
+			subject = root.culture
+			culture = {
+				calc_true_if = {
+					amount >= 11
+					has_innovation = innovation_battlements
+					has_innovation = innovation_mangonel
+					has_innovation = innovation_burhs
+					has_innovation = innovation_house_soldiers
+					has_innovation = innovation_horseshoes
+					has_innovation = innovation_sappers
+					has_innovation = innovation_hereditary_rule
+					has_innovation = innovation_manorialism
+					has_innovation = innovation_development_02
+					has_innovation = innovation_currency_02
+					has_innovation = innovation_royal_prerogative
+					has_innovation = innovation_chronicle_writing
+					has_innovation = innovation_armilary_sphere
+					has_innovation = innovation_baliffs
+				}
+			}
+		}
+		custom_description = {
+			text = has_tribal_obligations_condition_for_feudal
+			percent_count_or_higher_vassals_with_tribal_obligations <= 0.33
+		}
+	}
+
+	cost = {
+		prestige = 200
+		gold = 100
+	}
+
+	effect = {
+		trigger_event = BTWK_government.0001
+		change_government = feudal_government
+		custom_tooltip = easier_for_vassals_to_convert_to_feudal
+		hidden_effect = {
+			save_scope_as = actor
+			every_vassal = {
+				trigger_event = {
+					id = BTWK_government.0002
+					days = 3
+				}
+			}
+		}
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+convert_pre_feudal_to_feudalism_through_liege_decision = {
+	picture = {
+		trigger = {
+			has_tgp_dlc_trigger = yes
+			liege = {
+				culture = { has_cultural_pillar = heritage_japonic }
+			}
+		}
+		reference = "gfx/interface/illustrations/decisions/tgp_dominance.dds"
+	}
+	picture = {
+		trigger = {
+			liege = {
+				government_has_flag = government_is_clan
+			}
+		}
+		reference = "gfx/interface/illustrations/event_scenes/bp1_courtyard_mena.dds"
+	}
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+	desc = convert_pre_feudal_to_feudalism_through_liege_decision_desc
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 72
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	is_shown = {
+		government_has_flag = government_is_pre_feudal
+		liege = {
+			has_government = feudal_government
+		}
+	}
+
+	is_valid = {
+		OR = {
+			has_realm_law = crown_authority_1
+			has_realm_law = crown_authority_2
+			has_realm_law = crown_authority_3
+		}
+		custom_description = {
+			text = faith_is_reformed
+			subject = root
+			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		}
+		capital_province.county = {
+			development_level >= 10
+		}
+		custom_description = {
+			text = capital_has_building_requirements_for_feudal_through_liege
+			capital_province = {
+				combined_building_level >= 10
+			}
+		}
+	}
+
+	cost = {
+		prestige = 150
+		gold = 75
+	}
+
+	effect = {
+		trigger_event = BTWK_government.0001
+		change_government = feudal_government
+		custom_tooltip = easier_for_vassals_to_convert_to_feudal
+		hidden_effect = {
+			save_scope_as = actor
+			every_vassal = {
+				trigger_event = {
+					id = BTWK_government.0002
+					days = 3
+				}
+			}
+		}
+	}
+
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
