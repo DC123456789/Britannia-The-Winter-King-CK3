@@ -58,32 +58,13 @@ convert_pre_feudal_to_feudalism_decision = {
 				combined_building_level >= 15
 			}
 		}
-		custom_description = { #You need to have 75% of all era 2 innovations
-			text = has_75_pc_of_era_2_innovations
-			subject = root.culture
-			culture = {
-				calc_true_if = {
-					amount >= 11
-					has_innovation = innovation_battlements
-					has_innovation = innovation_mangonel
-					has_innovation = innovation_burhs
-					has_innovation = innovation_house_soldiers
-					has_innovation = innovation_horseshoes
-					has_innovation = innovation_sappers
-					has_innovation = innovation_hereditary_rule
-					has_innovation = innovation_manorialism
-					has_innovation = innovation_development_02
-					has_innovation = innovation_currency_02
-					has_innovation = innovation_royal_prerogative
-					has_innovation = innovation_chronicle_writing
-					has_innovation = innovation_armilary_sphere
-					has_innovation = innovation_baliffs
-				}
+		BTWK_reform_from_pre_feudal_innovations_trigger = yes
+		trigger_if = {
+			limit = { is_ai = no }
+			custom_description = {
+				text = has_tribal_obligations_condition_for_feudal
+				percent_count_or_higher_vassals_with_tribal_obligations <= 0.33
 			}
-		}
-		custom_description = {
-			text = has_tribal_obligations_condition_for_feudal
-			percent_count_or_higher_vassals_with_tribal_obligations <= 0.33
 		}
 	}
 
@@ -109,6 +90,12 @@ convert_pre_feudal_to_feudalism_decision = {
 
 	ai_will_do = {
 		base = 100
+		modifier = {		# Shouldn't go for feudal if prefers Sub-Roman
+			add = -100
+			is_romanized_government_culture_trigger = yes
+			realm_size >= 30
+			primary_title.tier >= tier_kingdom
+		}
 	}
 }
 

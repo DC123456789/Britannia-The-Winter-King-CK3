@@ -731,7 +731,8 @@ convert_to_administrative_decision = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					has_tgp_dlc_trigger = yes
+					# has_tgp_dlc_trigger = yes
+					always = yes
 				}
 				desc = convert_to_administrative_decision_title_multiple
 			}
@@ -743,7 +744,8 @@ convert_to_administrative_decision = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					has_tgp_dlc_trigger = yes
+					# has_tgp_dlc_trigger = yes
+					always = yes
 				}
 				desc = convert_to_administrative_decision_tooltip_multiple
 			}
@@ -754,7 +756,8 @@ convert_to_administrative_decision = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					has_tgp_dlc_trigger = yes
+					# has_tgp_dlc_trigger = yes
+					always = yes
 				}
 				desc = convert_to_administrative_decision_confirm_multiple
 			}
@@ -768,22 +771,30 @@ convert_to_administrative_decision = {
 		duchy = 36
 		kingdom = 36
 		empire = 36
-		hegemony = 0
+		hegemony = 36
 	}
 
 	is_shown = {
-		OR = {
-			has_ep3_dlc_trigger = yes
-			has_tgp_dlc_trigger = yes
-		}
+		# OR = {        # Without DLC, you can still adopt the non-DLC versions of the governments
+			# has_ep3_dlc_trigger = yes
+			# has_tgp_dlc_trigger = yes
+		# }
 		OR = {
 			government_has_flag = government_is_feudal
 			government_has_flag = government_is_clan
 			government_has_flag = government_is_japan_feudal
 		}
+		NOT = { government_has_flag = government_is_romanized_government }
 		trigger_if = {
 			limit = { top_liege != this }
 			liege = { government_allows = administrative }
+		}
+		trigger_if = {
+			limit = { 
+				government_has_flag = government_is_pre_feudal
+				NOT = { liege = { government_allows = administrative } }
+			}
+			is_romanized_government_culture_trigger = yes
 		}
 	}
 
@@ -793,35 +804,105 @@ convert_to_administrative_decision = {
 			liege = { government_allows = administrative }
 		}
 		trigger_else = {
+			custom_tooltip = {
+				text = king_tier_tt
+				primary_title.tier >= tier_kingdom
+			}
+		}
+		trigger_if = {
+			limit = {
+				government_has_flag = government_is_pre_feudal
+				top_liege != this 
+			}
 			OR = {
-				# custom_tooltip = {
-					# text = HAS_SEAL_OF_INVESTITURE
-					# any_character_artifact = {
-						# OR = {
-							# artifact_type = seal_of_investiture
-							# artifact_type = seal_of_investiture_court
-						# }
-					# }
-				# }
-				trigger_if = {
-					limit = {
-						culture = { has_cultural_parameter = can_adopt_administrative_government_as_kingdom_tier }
-					}
-					custom_tooltip = {
-						text = king_tier_tt
-						primary_title.tier >= tier_kingdom
-					}
+				has_realm_law = crown_authority_1
+				has_realm_law = crown_authority_2
+				has_realm_law = crown_authority_3
+			}
+			custom_description = {
+				text = faith_is_reformed
+				subject = root
+				faith = { NOT = { has_doctrine_parameter = unreformed } }
+			}
+			capital_province.county = {
+				development_level >= 10
+			}
+			custom_description = {
+				text = capital_has_building_requirements_for_feudal_through_liege
+				capital_province = {
+					combined_building_level >= 10
 				}
-				trigger_else = {
-					AND = { # To force the correct tooltip in loc
-						custom_tooltip = {
-							text = empire_tier_tt
-							primary_title.tier >= tier_empire
-						}
-						root = { save_temporary_scope_as = root_scope }
-						custom_tooltip = {
-							text = small_realm_size_tt
-							realm_size >= small_empire_size_value
+			}
+		}
+		trigger_if = {
+			limit = {
+				government_has_flag = government_is_pre_feudal
+				top_liege = this 
+			}
+			OR = {
+				has_realm_law = crown_authority_2
+				has_realm_law = crown_authority_3
+			}
+			custom_description = {
+				text = faith_is_reformed
+				subject = root
+				faith = { NOT = { has_doctrine_parameter = unreformed } }
+			}
+			realm_size >= 30
+			capital_province.county = {
+				development_level >= 15
+			}
+			custom_description = {
+				text = capital_has_building_requirements_for_sub_roman
+				capital_province = {
+					has_building = castle_02
+					combined_building_level >= 20
+				}
+			}
+			BTWK_reform_from_pre_feudal_innovations_trigger = yes
+			trigger_if = {
+				limit = { is_ai = no }
+				custom_description = {
+					text = has_tribal_obligations_condition_for_sub_roman
+					percent_count_or_higher_vassals_with_tribal_obligations <= 0.20
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				NOT = { government_has_flag = government_is_pre_feudal }
+				top_liege = this 
+			}
+			has_realm_law = crown_authority_3
+			root = { save_temporary_scope_as = root_scope }
+			trigger_if = {
+				limit = { is_romanized_government_culture_trigger = yes }
+				realm_size >= 45
+				BTWK_reform_from_pre_feudal_innovations_trigger = yes
+			}
+			trigger_else = {
+				realm_size >= small_empire_size_value
+				custom_description = { #You need to have 25% of all era 3 innovations
+					text = has_25_pc_of_era_3_innovations
+					subject = root.culture
+					culture = {
+						calc_true_if = {
+							amount >= 4
+							has_innovation = innovation_hoardings
+							has_innovation = innovation_trebuchet
+							has_innovation = innovation_castle_baileys
+							has_innovation = innovation_men_at_arms
+							has_innovation = innovation_knighthood
+							has_innovation = innovation_advanced_bowmaking
+							has_innovation = innovation_primogeniture
+							has_innovation = innovation_windmills
+							has_innovation = innovation_divine_right
+							has_innovation = innovation_coronations
+							has_innovation = innovation_land_grants
+							has_innovation = innovation_scutage
+							has_innovation = innovation_guilds
+							has_innovation = innovation_development_03
+							has_innovation = innovation_currency_03
 						}
 					}
 				}
@@ -832,7 +913,13 @@ convert_to_administrative_decision = {
 				top_liege = this
 				is_ai = no
 			}
-			prestige_level >= 3
+			trigger_if = {
+				limit = { is_romanized_government_culture_trigger = yes }
+				prestige_level >= 2
+			}
+			trigger_else = {
+				prestige_level >= 3
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -852,26 +939,29 @@ convert_to_administrative_decision = {
 		}
 		trigger_if = {
 			limit = { is_ai = yes }
-			calc_true_if = {
-				amount >= 2
-				culture = { has_cultural_pillar = ethos_bureaucratic }
-				culture = { has_cultural_pillar = ethos_courtly }
-				culture = { has_cultural_pillar = ethos_egalitarian }
-				culture = { has_cultural_tradition = tradition_legalistic }
-				has_realm_law = crown_authority_3
-				capital_county = { development_level > medium_development_level }
-				faith = { has_doctrine = tenet_legalism }
-				dynasty = { has_dynasty_perk = erudition_legacy_5 }
-				dynasty = { has_dynasty_perk = law_legacy_5 }
+			OR = {			
+				is_romanized_government_culture_trigger = yes
+				calc_true_if = {
+					amount >= 2
+					culture = { has_cultural_pillar = ethos_bureaucratic }
+					culture = { has_cultural_pillar = ethos_courtly }
+					culture = { has_cultural_pillar = ethos_egalitarian }
+					culture = { has_cultural_tradition = tradition_legalistic }
+					has_realm_law = crown_authority_3
+					capital_county = { development_level > medium_development_level }
+					faith = { has_doctrine = tenet_legalism }
+					dynasty = { has_dynasty_perk = erudition_legacy_5 }
+					dynasty = { has_dynasty_perk = law_legacy_5 }
+				}
 			}
 		}
 	}
 	
 	is_valid_showing_failures_only = {
-		OR = {
-			has_ep3_dlc_trigger = yes
-			tgp_should_become_meritocratic_trigger = yes
-		}
+		# OR = {
+			# has_ep3_dlc_trigger = yes
+			# tgp_should_become_meritocratic_trigger = yes
+		# }
 		is_at_war = no
 	}
 
@@ -1060,10 +1150,69 @@ convert_to_administrative_decision = {
 		decision_to_second_step_button = "SELECT_ACTION"
 		show_from_start = no
 
+		# BTWK
+		# Has to be here as having the first item be not shown apparently causes a crash?
+		item = { # Sub-Roman
+			value = go_sub_roman_government
+			is_shown = {
+				always = yes
+				# has_ep3_dlc_trigger = yes
+			}
+			is_valid = {
+				top_liege = {
+					NOR = {
+						has_government = administrative_government
+						BTWK_has_germanic_government_trigger = yes
+						has_government = celestial_government
+						has_government = meritocratic_government
+						has_government = japan_administrative_government
+					}
+				}
+				custom_tooltip = {
+					text = convert_to_administrative_sub_roman_desc
+					BTWK_should_become_sub_roman_government_trigger = yes
+				}
+			}
+			current_description = go_sub_roman_government_desc
+			localization = go_sub_roman_government_name
+			icon = "gfx/interface/icons/government_types/sub_roman_government.dds"
+			ai_chance = {
+				value = 10
+			}
+		}
+		item = { # Germanic
+			value = go_germanic_government
+			is_shown = {
+				always = yes
+				# has_ep3_dlc_trigger = yes
+			}
+			is_valid = {
+				top_liege = {
+					NOR = {
+						has_government = administrative_government
+						BTWK_has_sub_roman_government_trigger = yes
+						has_government = celestial_government
+						has_government = meritocratic_government
+						has_government = japan_administrative_government
+					}
+				}
+				custom_tooltip = {
+					text = convert_to_administrative_germanic_desc
+					BTWK_should_become_germanic_government_trigger = yes
+				}
+			}
+			current_description = go_germanic_government_desc
+			localization = go_germanic_government_name
+			icon = "gfx/interface/icons/government_types/germanic_government.dds"
+			ai_chance = {
+				value = 10
+			}
+		}
 		item = { # Administrative
 			value = go_administrative_government
 			is_shown = {
 				has_ep3_dlc_trigger = yes
+				always = no			# Cannot go directly to Admin from Feudal
 			}
 			is_valid = {
 				top_liege = {
@@ -1159,63 +1308,6 @@ convert_to_administrative_decision = {
 				value = 100
 			}
 		}
-		# BTWK
-		item = { # Sub-Roman
-			value = go_sub_roman_government
-			is_shown = {
-				always = yes
-				# has_ep3_dlc_trigger = yes
-			}
-			is_valid = {
-				top_liege = {
-					NOR = {
-						has_government = administrative_government
-						BTWK_has_germanic_government_trigger = yes
-						has_government = celestial_government
-						has_government = meritocratic_government
-						has_government = japan_administrative_government
-					}
-				}
-				custom_tooltip = {
-					text = convert_to_administrative_sub_roman_desc
-					BTWK_should_become_sub_roman_government_trigger = yes
-				}
-			}
-			current_description = go_sub_roman_government_desc
-			localization = go_sub_roman_government_name
-			icon = "gfx/interface/icons/government_types/sub_roman_government.dds"
-			ai_chance = {
-				value = 10
-			}
-		}
-		item = { # Germanic
-			value = go_germanic_government
-			is_shown = {
-				always = yes
-				# has_ep3_dlc_trigger = yes
-			}
-			is_valid = {
-				top_liege = {
-					NOR = {
-						has_government = administrative_government
-						BTWK_has_sub_roman_government_trigger = yes
-						has_government = celestial_government
-						has_government = meritocratic_government
-						has_government = japan_administrative_government
-					}
-				}
-				custom_tooltip = {
-					text = convert_to_administrative_germanic_desc
-					BTWK_should_become_germanic_government_trigger = yes
-				}
-			}
-			current_description = go_germanic_government_desc
-			localization = go_germanic_government_name
-			icon = "gfx/interface/icons/government_types/germanic_government.dds"
-			ai_chance = {
-				value = 10
-			}
-		}
 	}
 
 	effect = {
@@ -1241,23 +1333,11 @@ convert_to_administrative_decision = {
 		# BTWK
 		else_if = {
 			limit = { scope:go_sub_roman_government = yes }
-			if = {
-				limit = { has_dlc_feature = admin_gov }
-				convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:sub_roman }
-			}
-			else = {
-				change_government = sub_roman_no_dlc_government
-			}
+			convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:sub_roman }
 		}
 		else_if = {
 			limit = { scope:go_germanic_government = yes }
-			if = {
-				limit = { has_dlc_feature = admin_gov }
-				convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:germanic }
-			}
-			else = {
-				change_government = germanic_no_dlc_government
-			}
+			convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:germanic }
 		}
 		save_scope_as = actor
 		if = {
@@ -1376,14 +1456,7 @@ convert_to_administrative_decision = {
 			add = -50
 		}
 		modifier = {
-			culture = {
-				any_parent_culture_or_above = {
-					OR = {
-						# this = culture:han
-						this = culture:greek
-					}
-				}
-			}
+			is_romanized_government_culture_trigger = yes
 			add = 100
 		}
 	}
@@ -1402,10 +1475,10 @@ convert_to_feudalism_from_administrative_decision = {
 	desc = convert_to_feudalism_from_administrative_decision_desc
 
 	is_shown = {
-		trigger_if = {
-			limit = { has_title = title:h_china }
-			NOT = { government_has_flag = government_is_celestial }
-		}
+		# trigger_if = {
+			# limit = { has_title = title:h_china }
+			# NOT = { government_has_flag = government_is_celestial }
+		# }
 		government_allows = administrative
 		tgp_is_ceremonial_liege_trigger = no
 		tgp_is_ceremonial_regent_trigger = no

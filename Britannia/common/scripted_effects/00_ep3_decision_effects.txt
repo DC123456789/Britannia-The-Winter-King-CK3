@@ -104,7 +104,7 @@ convert_to_administrative_from_feudalism_effect = {
 					}
 					opinion = {
 						target = scope:administrative_liege
-						value > 25
+						value >= 50
 					}
 				}
 			}
@@ -145,12 +145,12 @@ convert_to_administrative_from_feudalism_effect = {
 					}
 					opinion = {
 						target = scope:administrative_liege
-						value > 0
+						value > 25
 					}
 				}
 			}
 			random_list = {
-				10 = { } #10% of the vassals that like us less than 25 but more than 0 still convert.
+				10 = { } #10% of the vassals that like us less than 50 but more than 25 still convert.
 				90 = {
 					save_scope_as = recipient
 					change_to_administrative_effect = yes
@@ -181,16 +181,19 @@ convert_to_administrative_from_feudalism_effect = {
 				}
 			}
 		}
-		every_vassal = {
-			limit = {
-				highest_held_title_tier >= tier_duchy
-				house.house_head ?= this
-				government_has_flag = government_is_administrative
-				NOT = {
-					any_held_title = { is_noble_family_title = yes }
+		if = {
+			limit = { BTWK_admin_gov_enabled_trigger = yes }
+			every_vassal = {
+				limit = {
+					highest_held_title_tier >= tier_duchy
+					house.house_head ?= this
+					government_has_flag = government_is_administrative
+					NOT = {
+						any_held_title = { is_noble_family_title = yes }
+					}
 				}
+				create_noble_family_effect = { GOVERNMENT_GIVER = this }
 			}
-			create_noble_family_effect = { GOVERNMENT_GIVER = this }
 		}
 	}
 
@@ -200,13 +203,17 @@ convert_to_administrative_from_feudalism_effect = {
 				has_character_flag = latin_emp_force_admin_flag
 			}
 			top_liege = this
+			BTWK_admin_gov_enabled_trigger = yes
 		}
 		add_character_modifier = {
 			modifier = first_admin_emperor
 		}
 	}
 	
-	change_influence = admin_convert_influence_value
+	if = {
+		limit = { BTWK_admin_gov_enabled_trigger = yes }
+		change_influence = admin_convert_influence_value
+	}
 
 	custom_description_no_bullet = {
 		text = vassals_can_become_administrative
