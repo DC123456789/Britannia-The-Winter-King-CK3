@@ -93,8 +93,15 @@ convert_pre_feudal_to_feudalism_decision = {
 		modifier = {		# Shouldn't go for feudal if prefers Sub-Roman
 			add = -100
 			is_romanized_government_culture_trigger = yes
-			realm_size >= 30
-			primary_title.tier >= tier_kingdom
+			OR = {
+				AND = {
+					realm_size >= 25
+					primary_title.tier >= tier_kingdom
+				}
+				any_neighboring_and_across_water_top_liege_realm_owner = {
+					government_has_flag = government_is_administrative
+				}				
+			}
 		}
 	}
 }
@@ -187,5 +194,303 @@ convert_pre_feudal_to_feudalism_through_liege_decision = {
 
 	ai_will_do = {
 		base = 100
+	}
+}
+
+convert_sub_roman_to_germanic_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					top_liege != this
+				}
+				desc = convert_sub_roman_to_germanic_decision_from_liege_desc
+			}
+			desc = convert_sub_roman_to_germanic_decision_desc
+		}
+	}
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 72
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	is_shown = {
+		government_has_flag = government_is_sub_roman
+		OR = {
+			AND = {
+				top_liege != this
+				liege = {
+					government_has_flag = government_is_germanic
+				}
+			}
+			AND = {
+				top_liege = this
+				BTWK_should_become_germanic_government_trigger = yes
+			}
+		}
+	}
+
+	is_valid = {
+		trigger_if = {
+			limit = { top_liege = this }
+			trigger_if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				OR = {
+					has_realm_law = imperial_bureaucracy_1
+					has_realm_law = imperial_bureaucracy_2
+					has_realm_law = imperial_bureaucracy_3
+				}
+			}
+			trigger_else = {
+				OR = {
+					has_realm_law = crown_authority_1
+					has_realm_law = crown_authority_2
+					has_realm_law = crown_authority_3
+				}
+			}
+			primary_title = { title_held_years >= 10 }
+		}
+		trigger_else = {
+			custom_description = {
+				text = similar_culture_as_liege
+				OR = {
+					culture = liege.culture
+					culture = {
+						cultural_acceptance = { target = root.liege.culture value >= 60 }
+					}
+				}
+			}
+		}
+	}
+
+	cost = {
+		prestige = 150
+		gold = {
+			value = 0
+			if = {
+				limit = {
+					top_liege = this
+				}
+				add = 50
+			}
+		}
+	}
+
+	effect = {
+		trigger_event = BTWK_government.0003
+		save_scope_as = actor
+
+		if = {
+			limit = { BTWK_admin_gov_enabled_trigger = yes }
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = germanic_government
+			}
+			change_government = germanic_government
+		}
+		else = {
+			change_government = germanic_no_dlc_government
+		}
+		custom_tooltip = sub_roman_vassals_will_convert
+
+		hidden_effect = {
+			every_vassal_or_below = {
+				limit = { government_has_flag = government_is_sub_roman }
+				if = {
+					limit = { BTWK_admin_gov_enabled_trigger = yes }
+					tgp_domicile_conversion_when_changing_government_type = {
+						NEW_DOMICILE_TYPE = estate
+						NEW_GOVERNMENT_TYPE = germanic_government
+					}
+					change_government = germanic_government
+				}
+				else = {
+					change_government = germanic_no_dlc_government
+				}
+				trigger_event = {
+					id = BTWK_government.0004
+					days = 3
+				}
+			}
+		}
+	}
+
+	ai_potential = {
+		prestige >= 150
+	}
+
+	ai_will_do = {
+		base = 0
+
+		modifier = {
+			add = 100
+			top_liege = this
+		}
+		modifier = {
+			add = 100
+			top_liege != this
+			opinion = {
+				target = liege
+				value >= 0
+			}
+		}
+	}
+}
+
+convert_germanic_to_sub_roman_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					top_liege != this
+				}
+				desc = convert_sub_roman_to_germanic_decision_from_liege_desc
+			}
+			desc = convert_sub_roman_to_germanic_decision_desc
+		}
+	}
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 72
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	is_shown = {
+		government_has_flag = government_is_germanic
+		OR = {
+			AND = {
+				top_liege != this
+				liege = {
+					government_has_flag = government_is_sub_roman
+				}
+			}
+			AND = {
+				top_liege = this
+				BTWK_should_become_sub_roman_government_trigger = yes
+			}
+		}
+	}
+
+	is_valid = {
+		trigger_if = {
+			limit = { top_liege = this }
+			trigger_if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				OR = {
+					has_realm_law = imperial_bureaucracy_1
+					has_realm_law = imperial_bureaucracy_2
+					has_realm_law = imperial_bureaucracy_3
+				}
+			}
+			trigger_else = {
+				OR = {
+					has_realm_law = crown_authority_1
+					has_realm_law = crown_authority_2
+					has_realm_law = crown_authority_3
+				}
+			}
+			primary_title = { title_held_years >= 10 }
+		}
+		trigger_else = {
+			custom_description = {
+				text = similar_culture_as_liege
+				OR = {
+					culture = liege.culture
+					culture = {
+						cultural_acceptance = { target = root.liege.culture value >= 60 }
+					}
+				}
+			}
+		}
+	}
+
+	cost = {
+		prestige = 150
+		gold = {
+			value = 0
+			if = {
+				limit = {
+					top_liege = this
+				}
+				add = 50
+			}
+		}
+	}
+
+	effect = {
+		trigger_event = BTWK_government.0005
+		save_scope_as = actor
+
+		if = {
+			limit = { BTWK_admin_gov_enabled_trigger = yes }
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = sub_roman_government
+			}
+			change_government = sub_roman_government
+		}
+		else = {
+			change_government = sub_roman_no_dlc_government
+		}
+		custom_tooltip = germanic_vassals_will_convert
+
+		hidden_effect = {
+			every_vassal_or_below = {
+				limit = { government_has_flag = government_is_germanic }
+				if = {
+					limit = { BTWK_admin_gov_enabled_trigger = yes }
+					tgp_domicile_conversion_when_changing_government_type = {
+						NEW_DOMICILE_TYPE = estate
+						NEW_GOVERNMENT_TYPE = sub_roman_government
+					}
+					change_government = sub_roman_government
+				}
+				else = {
+					change_government = sub_roman_no_dlc_government
+				}
+				trigger_event = {
+					id = BTWK_government.0006
+					days = 3
+				}
+			}
+		}
+	}
+
+	ai_potential = {
+		prestige >= 150
+	}
+
+	ai_will_do = {
+		base = 0
+
+		modifier = {
+			add = 100
+			top_liege = this
+		}
+		modifier = {
+			add = 100
+			top_liege != this
+			opinion = {
+				target = liege
+				value >= 0
+			}
+		}
 	}
 }

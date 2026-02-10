@@ -786,13 +786,28 @@ convert_to_administrative_decision = {
 		}
 		NOT = { government_has_flag = government_is_romanized_government }
 		trigger_if = {
-			limit = { top_liege != this }
+			limit = { 
+				top_liege != this
+				BTWK_admin_gov_enabled_trigger = yes
+			}
 			liege = { government_allows = administrative }
 		}
 		trigger_if = {
 			limit = { 
+				top_liege != this
+				BTWK_admin_gov_enabled_trigger = no
+			}
+			liege = { government_has_flag = government_is_romanized_government }
+		}
+		trigger_if = {
+			limit = { 
 				government_has_flag = government_is_pre_feudal
-				NOT = { liege = { government_allows = administrative } }
+				liege = { 
+					NOR = {
+						government_allows = administrative 
+						government_has_flag = government_is_romanized_government
+					}
+				}
 			}
 			is_romanized_government_culture_trigger = yes
 		}
@@ -802,12 +817,6 @@ convert_to_administrative_decision = {
 		trigger_if = {
 			limit = { top_liege != this }
 			liege = { government_allows = administrative }
-		}
-		trigger_else = {
-			custom_tooltip = {
-				text = king_tier_tt
-				primary_title.tier >= tier_kingdom
-			}
 		}
 		trigger_if = {
 			limit = {
@@ -848,7 +857,21 @@ convert_to_administrative_decision = {
 				subject = root
 				faith = { NOT = { has_doctrine_parameter = unreformed } }
 			}
-			realm_size >= 30
+			OR = {
+				AND = {
+					custom_tooltip = {
+						text = king_tier_tt
+						primary_title.tier >= tier_kingdom
+					}
+					realm_size >= 25
+				}
+				custom_description = {
+					text = has_any_neighbouring_bureaucratic_government_realm
+					any_neighboring_and_across_water_top_liege_realm_owner = {
+						government_has_flag = government_is_administrative
+					}
+				}
+			}
 			capital_province.county = {
 				development_level >= 15
 			}
@@ -867,11 +890,22 @@ convert_to_administrative_decision = {
 					percent_count_or_higher_vassals_with_tribal_obligations <= 0.20
 				}
 			}
+			trigger_if = {
+				limit = { has_cultural_pillar = heritage_brythonic }
+				custom_description = {
+					text = end_of_britannia_has_not_triggered
+					NOT = { has_global_variable = end_of_britannia } 
+				}
+			}
 		}
 		trigger_if = {
 			limit = {
 				NOT = { government_has_flag = government_is_pre_feudal }
 				top_liege = this 
+			}
+			custom_tooltip = {
+				text = king_tier_tt
+				primary_title.tier >= tier_kingdom
 			}
 			has_realm_law = crown_authority_3
 			root = { save_temporary_scope_as = root_scope }
