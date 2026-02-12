@@ -1,0 +1,72 @@
+﻿l_english:
+ # Briton name aesthetics
+ culture_aesthetics_naming_briton: "$culture_aesthetics_naming_default$, with $briton$ patronymics"
+ 
+ BRITON_PATRONYM: "[$BRITON_PATRONYM_US_OR_NEXT$]"
+ BRITON_PATRONYM_US_OR_NEXT: "SelectLocalization($briton_patronym_us_check$, $briton_patronym_us_genitive$, $BRITON_PATRONYM_OS_OR_NEXT$)"
+ BRITON_PATRONYM_OS_OR_NEXT: "SelectLocalization($briton_patronym_os_check$, $briton_patronym_os_genitive$, $BRITON_PATRONYM_IX_OR_NEXT$)"
+ BRITON_PATRONYM_IX_OR_NEXT: "SelectLocalization($briton_patronym_ix_check$, $briton_patronym_ix_genitive$, '$PATRONYM$')"
+ 
+ briton_patronym_nominative: "TrimBackChars('$PATRONYM$', '#!')"
+ briton_patronym_us_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 's'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'u'), TrimBackChars($briton_patronym_nominative$, 's'))))"
+ briton_patronym_us_base: "TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'u')"
+ briton_patronym_us_genitive: "Concatenate($briton_patronym_us_base$, 'i#!')"
+ briton_patronym_os_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 's'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'o'), TrimBackChars($briton_patronym_nominative$, 's'))))"
+ briton_patronym_os_base: "TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'o')"
+ briton_patronym_os_genitive: "Concatenate($briton_patronym_os_base$, 'i#!')"
+ briton_patronym_ix_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 'x'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 'x'), 'i'), TrimBackChars($briton_patronym_nominative$, 'x'))))"
+ briton_patronym_ix_base: "TrimBackChars(TrimBackChars($briton_patronym_nominative$, 'x'), 'i')"
+ briton_patronym_ix_genitive: "Concatenate($briton_patronym_ix_base$, 'igos#!')"
+ 
+ # Patronym
+ CHARACTER_FIRST_NAME_PATRONYM_BRITON: "$NAME$ $BRITON_PATRONYM$"
+ CHARACTER_TITLED_FIRST_NAME_PATRONYM_BRITON: "$TIER$ $NAME$ $BRITON_PATRONYM$"
+ CHARACTER_FIRST_NAME_AND_DYNASTY_PATRONYM_BRITON: "$NAME$ $HOUSE$"
+ CHARACTER_NAME_PATRONYM_BRITON: "$TIER$ $NAME$ $BRITON_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_PATRONYM_BRITON: "$TIER$ $NAME$ $BRITON_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_PATRONYM_BRITON: "$NAME$ $BRITON_PATRONYM$ $HOUSE$"
+ 
+ # Nickname + Patronym 
+ CHARACTER_FIRST_NAME_NICKNAMED_PATRONYM_BRITON: "$NAME$ $NICK$ $BRITON_PATRONYM$"
+ CHARACTER_FIRST_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON: "$NICK$ $NAME$ $BRITON_PATRONYM$"
+ CHARACTER_TITLED_FIRST_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON: "$TIER$ $NICK$ $NAME$ $BRITON_PATRONYM$"
+ CHARACTER_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON: "$TIER$ $NICK$ $NAME$ $BRITON_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON: "$TIER$ $NICK$ $NAME$ $BRITON_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_PREFIX_PATRONYM_BRITON: "$NICK$ $NAME$ $BRITON_PATRONYM$"
+
+ # _ONLY variants
+ CHARACTER_TITLED_FIRST_NAME_ONLY_NICKNAMED_PATRONYM_BRITON: "$CHARACTER_TITLED_FIRST_NAME_NICKNAMED_PATRONYM_BRITON$"
+ CHARACTER_FIRST_NAME_ONLY_PATRONYM_BRITON: "$CHARACTER_FIRST_NAME_PATRONYM_BRITON$"
+ CHARACTER_TITLED_FIRST_NAME_ONLY_PATRONYM_BRITON: "$CHARACTER_TITLED_FIRST_NAME_PATRONYM_BRITON$"
+ CHARACTER_FULL_NAME_ONLY_NICKNAMED_PREFIX_PATRONYM_BRITON: "$CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON$"
+ 
+ # Roman name aesthetics
+ culture_aesthetics_naming_roman: "Nomen dynasty names first when given, otherwise dynasty name last when required"
+ 
+ roman_dynasty_is_nomen: "Not(Or(Or(EqualTo_string(TrimBackChars($roman_dynasty_name$, 's'), $roman_dynasty_name$), EqualTo_string(TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'), TrimBackChars($roman_dynasty_name$, 's'))), EqualTo_string(TrimBackChars(TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'), 'i'), TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'))))"
+ roman_dynasty_name: "TrimBackChars('$DYNASTY$', '#!')"
+ 
+ ROMAN_NOMEN: "[SelectLocalization($roman_dynasty_is_nomen$, '$DYNASTY$ ', '')]"
+ ROMAN_HOUSE_LAST_NAME: "[SelectLocalization($roman_dynasty_is_nomen$, '', ' $HOUSE$')]"
+ 
+ # Basic name
+ CHARACTER_FIRST_NAME_AND_DYNASTY_ROMAN: "$ROMAN_NOMEN$$NAME$$ROMAN_HOUSE_LAST_NAME$"
+ CHARACTER_FULL_NAME_ROMAN: "$TIER$ $ROMAN_NOMEN$$NAME$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_ROMAN: "$ROMAN_NOMEN$$NAME$$ROMAN_HOUSE_LAST_NAME$"
+
+ # Nickname
+ CHARACTER_FIRST_NAME_AND_DYNASTY_NICKNAMED_ROMAN: "$ROMAN_NOMEN$$NAME$ '$NICK$'$ROMAN_HOUSE_LAST_NAME$"
+ CHARACTER_FULL_NAME_NICKNAMED_ROMAN: "$TIER$ $ROMAN_NOMEN$$NAME$ '$NICK$' of $TITLE$"
+ CHARACTER_FULL_NAME_NICKNAMED_PREFIX_ROMAN: "$TIER$ $NICK$ $ROMAN_NOMEN$$NAME$$ROMAN_HOUSE_LAST_NAME$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_ROMAN: "$ROMAN_NOMEN$$NAME$ '$NICK$'$ROMAN_HOUSE_LAST_NAME$"
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_PREFIX_ROMAN: "$ROMAN_NOMEN$$NICK$ $NAME$$ROMAN_HOUSE_LAST_NAME$"
+
+ # Patronym
+ CHARACTER_FULL_NAME_PATRONYM_ROMAN: "$TIER$ $ROMAN_NOMEN$$NAME$ $PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_PATRONYM_ROMAN: "$ROMAN_NOMEN$$NAME$ $PATRONYM$$ROMAN_HOUSE_LAST_NAME$"
+ 
+ # Nickname + Patronym 
+ CHARACTER_FULL_NAME_NICKNAMED_PATRONYM_ROMAN: "$TIER$ $ROMAN_NOMEN$$NAME$ '$NICK$'$ROMAN_HOUSE_LAST_NAME$ of $TITLE$"
+ CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_ROMAN: "$TIER$ $NICK$ $ROMAN_NOMEN$$NAME$ $PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_PATRONYM_ROMAN: "$ROMAN_NOMEN$$NAME$ '$NICK$'$ROMAN_HOUSE_LAST_NAME$ "
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_PREFIX_PATRONYM_ROMAN: "$NICK$ $ROMAN_NOMEN$$NAME$ $PATRONYM$"
