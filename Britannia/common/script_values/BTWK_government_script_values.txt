@@ -1,0 +1,160 @@
+﻿tribal_obligations_levies_baseline = -0.25
+tribal_obligations_levies_per_prestige_level = 0.10
+tribal_obligations_taxes_baseline = -0.10
+tribal_obligations_taxes_per_prestige_level = 0.04
+
+percent_count_or_higher_vassals_with_tribal_obligations = {
+	value = 0
+	every_vassal = {
+		limit = {
+			highest_held_title_tier >= tier_county
+			OR = {
+				government_has_flag = government_is_tribal
+				vassal_contract_has_flag = has_tribal_obligations_contract
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = 0
+		every_vassal = {
+			limit = {
+				highest_held_title_tier >= tier_county
+			}
+			add = 1
+		}
+	}
+}
+
+## Tribal fame
+tribal_fame_value = {
+	value = 0
+	
+	if = {
+		limit = { 
+			prestige_level = 0
+		}
+		add = {
+			value = -3
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 1
+		}
+		add = {
+			value = 1.5
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 2
+		}
+		add = {
+			value = 3
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 3
+		}
+		add = {
+			value = 7.5
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 4
+		}
+		add = {
+			value = 15
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	else_if = {
+		limit = { 
+			prestige_level = 5
+		}
+		add = {
+			value = 30
+			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
+		}
+	}
+	add = {
+		value = prestige
+		subtract = 500
+		divide = 300
+		desc = TRIBAL_FAME_VALUE_PRESTIGE
+	}
+	add = {
+		value = martial
+		subtract = 6
+		divide = 4
+		desc = TRIBAL_FAME_VALUE_MARTIAL
+	}
+	add = {
+		value = prowess
+		subtract = 6
+		divide = 5
+		desc = TRIBAL_FAME_VALUE_PROWESS
+	}
+	subtract = {
+		value = sub_realm_size
+		subtract = 4
+		divide = 1.5
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_0
+			}
+			multiply = 0.85
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_1
+			}
+			multiply = 1.0
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_2
+			}
+			multiply = 1.1
+		}
+		if = {
+			limit = { 
+				has_realm_law = tribal_authority_3
+			}
+			multiply = 1.2
+		}
+		min = 0
+		desc = TRIBAL_FAME_VALUE_REALM_SIZE
+	}
+	subtract = {
+		value = {
+			value = 0
+			every_tributary = {
+				add = sub_realm_size
+			}
+		}
+		divide = 3
+		desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE
+	}
+	if = {
+		limit = {
+			has_trait = conqueror
+		}
+		add = {
+			value = 9
+			desc = TRIBAL_FAME_VALUE_CONQUEROR
+		}
+	}
+	
+	max = 40
+	min = -40
+}
+
+BTWK_admin_min_realm_size = 200

@@ -1,0 +1,86 @@
+﻿yearly_playable_pulse = {
+	on_actions = {
+		btwk_quarterly_playable_pulse	
+		delay = { months = 3 }
+		btwk_quarterly_playable_pulse	
+		delay = { months = 6 }
+		btwk_quarterly_playable_pulse	
+		delay = { months = 9 }
+		btwk_quarterly_playable_pulse	
+	}
+}
+
+btwk_quarterly_playable_pulse = {
+	effect = {
+		if = {
+			limit = {
+				government_has_flag = government_is_administrative_proper
+				is_independent_ruler = yes
+			}
+			# If lower than emperor tier, instantly lose admin government
+			if = {
+				limit = {
+					highest_held_title_tier < tier_empire
+				}
+				trigger_event = BTWK_government.0010
+			}			
+			# Check if the realm is under the admin minimum size limit, and if so increase the counter
+			else_if = {
+				limit = {
+					realm_size < BTWK_admin_min_realm_size
+					NOR = {
+						has_title = title:h_western_roman_empire
+						has_title = title:h_eastern_roman_empire
+					}
+				}
+				every_held_title = { 
+					limit = { tier = prev.highest_held_title_tier }
+					if = {
+						limit = { 
+							OR = {
+								NOT = { has_variable = below_min_admin_size_years }
+								this.var:below_min_admin_size_years <= 0
+							}
+						}
+						set_variable = { name = below_min_admin_size_years value = 0.25 }
+						set_local_variable = send_warning
+					}
+					else = {
+						change_variable = { name = below_min_admin_size_years add = 0.25 }
+					}
+				}
+				if = {
+					limit = { 
+						has_local_variable = send_warning
+					}
+					trigger_event = BTWK_government.0009
+				}
+				if = {
+					limit = { 
+						any_held_title = {
+							tier = prev.highest_held_title_tier
+							this.var:below_min_admin_size_years >= 10
+						}
+					}
+					every_held_title = { 
+						limit = { tier = prev.highest_held_title_tier }
+						remove_variable = below_min_admin_size_years
+					}
+					trigger_event = BTWK_government.0010
+				}
+			}
+			else = {
+				every_held_title = { 
+					limit = { tier = prev.highest_held_title_tier } 
+					if = {
+						limit = { 
+							has_variable = below_min_admin_size_years
+							this.var:below_min_admin_size_years > 0
+						}
+						change_variable = { name = below_min_admin_size_years subtract = 0.25 }
+					}
+				}
+			}
+		}
+	}
+}

@@ -5,7 +5,9 @@
  BRITON_PATRONYM: "[$BRITON_PATRONYM_US_OR_NEXT$]"
  BRITON_PATRONYM_US_OR_NEXT: "SelectLocalization($briton_patronym_us_check$, $briton_patronym_us_genitive$, $BRITON_PATRONYM_OS_OR_NEXT$)"
  BRITON_PATRONYM_OS_OR_NEXT: "SelectLocalization($briton_patronym_os_check$, $briton_patronym_os_genitive$, $BRITON_PATRONYM_IX_OR_NEXT$)"
- BRITON_PATRONYM_IX_OR_NEXT: "SelectLocalization($briton_patronym_ix_check$, $briton_patronym_ix_genitive$, '$PATRONYM$')"
+ BRITON_PATRONYM_IX_OR_NEXT: "SelectLocalization($briton_patronym_ix_check$, $briton_patronym_ix_genitive$, $BRITON_PATRONYM_A_OR_NEXT$)"
+ BRITON_PATRONYM_A_OR_NEXT: "SelectLocalization($briton_patronym_a_check$, $briton_patronym_a_genitive$, $BRITON_PATRONYM_R_OR_NEXT$)"
+ BRITON_PATRONYM_R_OR_NEXT: "SelectLocalization($briton_patronym_r_check$, $briton_patronym_r_genitive$, '$PATRONYM$')"
  
  briton_patronym_nominative: "TrimBackChars('$PATRONYM$', '#!')"
  briton_patronym_us_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 's'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'u'), TrimBackChars($briton_patronym_nominative$, 's'))))"
@@ -17,6 +19,12 @@
  briton_patronym_ix_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 'x'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 'x'), 'i'), TrimBackChars($briton_patronym_nominative$, 'x'))))"
  briton_patronym_ix_base: "TrimBackChars(TrimBackChars($briton_patronym_nominative$, 'x'), 'i')"
  briton_patronym_ix_genitive: "Concatenate($briton_patronym_ix_base$, 'igos#!')"
+ briton_patronym_a_check: "Not(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 'a'), $briton_patronym_nominative$))"
+ briton_patronym_a_base: "TrimBackChars($briton_patronym_nominative$, 'a')"
+ briton_patronym_a_genitive: "Concatenate($briton_patronym_a_base$, 'ae#!')"
+ briton_patronym_r_check: "Not(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 'r'), $briton_patronym_nominative$))"
+ briton_patronym_r_base: "TrimBackChars($briton_patronym_nominative$, 'r')"
+ briton_patronym_r_genitive: "Concatenate($briton_patronym_r_base$, 'ris#!')"
  
  # Patronym
  CHARACTER_FIRST_NAME_PATRONYM_BRITON: "$NAME$ $BRITON_PATRONYM$"

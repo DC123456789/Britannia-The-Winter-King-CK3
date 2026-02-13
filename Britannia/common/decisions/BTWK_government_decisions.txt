@@ -494,3 +494,121 @@ convert_germanic_to_sub_roman_decision = {
 		}
 	}
 }
+
+BTWK_convert_to_administrative_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+	}
+	decision_group_type = major
+	desc = BTWK_convert_to_administrative_decision_desc
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 72
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	is_shown = {
+		BTWK_admin_gov_enabled_trigger = yes
+		OR = {
+			government_has_flag = government_is_sub_roman
+			government_has_flag = government_is_germanic
+			AND = {
+				top_liege != this
+				liege = {
+					has_government = administrative_government
+				}
+			}
+		}
+	}
+
+	is_valid = {
+		trigger_if = {
+			limit = { top_liege = this }
+			OR = {
+				has_realm_law = imperial_bureaucracy_2
+				has_realm_law = imperial_bureaucracy_3
+			}
+			realm_size >= 300
+			custom_description = {
+				text = empire_tier_tt
+				primary_title.tier >= tier_empire
+			}
+			primary_title = { title_held_years >= 10 }
+		}
+	}
+
+	cost = {
+		prestige = {
+			value = 100
+			if = {
+				limit = {
+					top_liege = this
+				}
+				add = 650
+			}
+		}
+		gold = {
+			value = 50
+			if = {
+				limit = {
+					top_liege = this
+				}
+				add = 450
+			}
+		}
+	}
+
+	effect = {
+		trigger_event = BTWK_government.0007
+		save_scope_as = actor
+		tgp_domicile_conversion_when_changing_government_type = {
+			NEW_DOMICILE_TYPE = estate
+			NEW_GOVERNMENT_TYPE = administrative_government
+		}
+		change_government = administrative_government
+		custom_tooltip = bureaucratic_vassals_will_convert_to_administrative
+
+		hidden_effect = {
+			every_vassal_or_below = {
+				limit = { 
+					government_allows = administrative
+					NOT = { has_government = administrative_government }
+				}
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = administrative_government
+				}
+				change_government = administrative_government
+				trigger_event = {
+					id = BTWK_government.0008
+					days = 3
+				}
+			}
+		}
+	}
+
+	ai_potential = {
+		prestige >= 150
+	}
+
+	ai_will_do = {
+		base = 0
+
+		modifier = {
+			add = 100
+			top_liege = this
+		}
+		modifier = {
+			add = 100
+			top_liege != this
+			opinion = {
+				target = liege
+				value >= 0
+			}
+		}
+	}
+}
