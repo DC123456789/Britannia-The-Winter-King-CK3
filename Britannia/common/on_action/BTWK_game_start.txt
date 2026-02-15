@@ -372,6 +372,44 @@ BTWK_government_setup = {
 				}
 			}
 		}
+		
+		# Set up laws
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_feudal
+			}
+			if = {
+				limit = { 
+					is_romanized_government_culture_trigger = yes
+				}
+				add_realm_law_skip_effects = crown_authority_1
+			}
+		}
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_tribal
+			}
+			if = {
+				limit = { 
+					is_romanized_government_culture_trigger = yes
+				}
+				add_realm_law_skip_effects = tribal_authority_2
+			}
+			else_if = {
+				limit = { 
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_goidelic
+							has_cultural_pillar = heritage_pictish
+							has_cultural_pillar = heritage_west_germanic
+							has_cultural_pillar = heritage_frankish
+							has_cultural_pillar = heritage_central_germanic
+						}
+					}
+				}
+				add_realm_law_skip_effects = tribal_authority_1
+			}
+		}
 	}
 }
 

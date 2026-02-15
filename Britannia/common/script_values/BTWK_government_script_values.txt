@@ -44,7 +44,7 @@ tribal_fame_value = {
 			prestige_level = 1
 		}
 		add = {
-			value = 1.5
+			value = 0.5
 			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
 		}
 	}
@@ -86,7 +86,7 @@ tribal_fame_value = {
 	}
 	add = {
 		value = prestige
-		subtract = 500
+		subtract = 800
 		divide = 300
 		desc = TRIBAL_FAME_VALUE_PRESTIGE
 	}
@@ -110,25 +110,49 @@ tribal_fame_value = {
 			limit = { 
 				has_realm_law = tribal_authority_0
 			}
-			multiply = 0.85
+			multiply = 1.2
 		}
-		if = {
+		else_if = {
 			limit = { 
 				has_realm_law = tribal_authority_1
 			}
-			multiply = 1.0
+			multiply = 1.1
 		}
-		if = {
+		else_if = {
 			limit = { 
 				has_realm_law = tribal_authority_2
 			}
-			multiply = 1.1
+			multiply = 1.0
 		}
-		if = {
+		else_if = {
 			limit = { 
 				has_realm_law = tribal_authority_3
 			}
-			multiply = 1.2
+			multiply = 0.9
+		}
+		else_if = {
+			limit = { 
+				has_realm_law = crown_authority_0
+			}
+			multiply = 0.8
+		}
+		else_if = {
+			limit = { 
+				has_realm_law = crown_authority_1
+			}
+			multiply = 0.7
+		}
+		else_if = {
+			limit = { 
+				has_realm_law = crown_authority_2
+			}
+			multiply = 0.6
+		}
+		else_if = {
+			limit = { 
+				has_realm_law = crown_authority_3
+			}
+			multiply = 0.5
 		}
 		min = 0
 		desc = TRIBAL_FAME_VALUE_REALM_SIZE
@@ -141,6 +165,8 @@ tribal_fame_value = {
 			}
 		}
 		divide = 3
+		# TODO Add authority law modifiers
+		# TODO Add High King/Bretwalda modifiers
 		desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE
 	}
 	if = {
@@ -150,6 +176,15 @@ tribal_fame_value = {
 		add = {
 			value = 9
 			desc = TRIBAL_FAME_VALUE_CONQUEROR
+		}
+	}
+	if = {
+		limit = {
+			NOT = { government_has_flag = government_is_tribal }
+		}
+		multiply = {
+			value = 0.66
+			desc = TRIBAL_FAME_VALUE_NOT_TRIBAL
 		}
 	}
 	
