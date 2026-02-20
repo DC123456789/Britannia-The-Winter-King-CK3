@@ -26,6 +26,58 @@ percent_count_or_higher_vassals_with_tribal_obligations = {
 	}
 }
 
+tribal_fame_government_law_realm_size_multiplier = {
+	value = 1
+	if = {
+		limit = { 
+			has_realm_law = tribal_authority_0
+		}
+		multiply = 1.2
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_1
+		}
+		multiply = 1.1
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_2
+		}
+		multiply = 1.0
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_3
+		}
+		multiply = 0.9
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_0
+		}
+		multiply = 0.8
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_1
+		}
+		multiply = 0.7
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_2
+		}
+		multiply = 0.6
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_3
+		}
+		multiply = 0.5
+	}
+}
+
 ## Tribal fame
 tribal_fame_value = {
 	value = 0
@@ -106,68 +158,58 @@ tribal_fame_value = {
 		value = sub_realm_size
 		subtract = 4
 		divide = 1.5
-		if = {
-			limit = { 
-				has_realm_law = tribal_authority_0
-			}
-			multiply = 1.2
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = tribal_authority_1
-			}
-			multiply = 1.1
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = tribal_authority_2
-			}
-			multiply = 1.0
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = tribal_authority_3
-			}
-			multiply = 0.9
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = crown_authority_0
-			}
-			multiply = 0.8
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = crown_authority_1
-			}
-			multiply = 0.7
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = crown_authority_2
-			}
-			multiply = 0.6
-		}
-		else_if = {
-			limit = { 
-				has_realm_law = crown_authority_3
-			}
-			multiply = 0.5
-		}
+		multiply = tribal_fame_government_law_realm_size_multiplier
 		min = 0
 		desc = TRIBAL_FAME_VALUE_REALM_SIZE
 	}
-	subtract = {
-		value = {
-			value = 0
-			every_tributary = {
-				add = sub_realm_size
-			}
+	if = {
+		limit = {
+			has_title = title:e_britannia
+			BTWK_britannia_high_kingship_active_trigger = yes
 		}
-		divide = 3
-		# TODO Add authority law modifiers
-		# TODO Add High King/Bretwalda modifiers
-		desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE
+		subtract = {
+			value = {
+				value = 0
+				every_tributary = {
+					add = sub_realm_size
+				}
+			}
+			divide = 3
+			multiply = tribal_fame_government_law_realm_size_multiplier
+			multiply = 0.33
+			desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE_BRITANNIA_HIGH_KING
+		}
+	}
+	else_if = {
+		limit = {
+			has_title = title:e_aengland
+			BTWK_aengland_bretwalda_active_trigger = yes
+		}
+		subtract = {
+			value = {
+				value = 0
+				every_tributary = {
+					add = sub_realm_size
+				}
+			}
+			divide = 3
+			multiply = tribal_fame_government_law_realm_size_multiplier
+			multiply = 0.5
+			desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE_AENGLAND_BRETWALDA
+		}
+	}
+	else = {
+		subtract = {
+			value = {
+				value = 0
+				every_tributary = {
+					add = sub_realm_size
+				}
+			}
+			divide = 3
+			multiply = tribal_fame_government_law_realm_size_multiplier
+			desc = TRIBAL_FAME_VALUE_TRIBUTARY_REALM_SIZE
+		}
 	}
 	if = {
 		limit = {
