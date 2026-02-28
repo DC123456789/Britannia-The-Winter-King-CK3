@@ -159,6 +159,11 @@
 			BTWK_soc_situation_calc_subregion_stats_effect = yes
 		}
 	}
+	
+	on_yearly = {
+		# Check AI missionary interactions
+		BTWK_update_ai_missionary_interactions_effect = yes
+	}
 
 	##################################################
 	# Groups
@@ -199,7 +204,11 @@
 		every_situation_county = {
 			save_scope_as = current_county
 			every_county = {
-				limit = { squared_distance = { target = prev value <= 22500 } }		# Actual distance: 150
+				limit = { 
+					squared_distance = { target = prev value <= 22500 } 		# Actual distance: 150
+					# Make sure it's not a titular county (typically noble families)
+					any_direct_de_jure_vassal_title = { count > 0 }
+				}		
 				scope:current_county = {
 					add_to_variable_list = {
 						name = nearby_counties
@@ -208,6 +217,9 @@
 				}
 			}
 		}
+		
+		# Check AI missionary interactions (should happen before county progress is calculated)
+		BTWK_update_ai_missionary_interactions_effect = yes
 		
 		# County variable initialization
 		every_situation_county = {

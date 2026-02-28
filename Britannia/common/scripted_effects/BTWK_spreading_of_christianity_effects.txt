@@ -251,6 +251,17 @@ BTWK_soc_situation_calc_subregion_stats_effect = {
 		}
 	}
 	
+	# variable_list_size doesn't seem to work right so we copy the list we want into a local list and 
+	# get the size of *that*
+	every_in_list = {
+		list = sub_region_faith_counters_list
+		remove_from_list = sub_region_faith_counters_list
+	}
+	every_in_list = {
+		variable = sub_region_faith_counters
+		add_to_temporary_list = sub_region_faith_counters_list
+	}
+	
 	# Now make a sorted version of the list
 	scope:sub_region_province = {
 		clear_variable_list = sub_region_faith_counters_sorted
@@ -258,7 +269,7 @@ BTWK_soc_situation_calc_subregion_stats_effect = {
 			variable = sub_region_faith_counters
 			order_by = var:num_sub_region_counties
 			min = 0
-			max = "variable_list_size(sub_region_faith_counters)"
+			max = list_size:sub_region_faith_counters_list
 			scope:sub_region_province = {
 				add_to_variable_list = {
 					name = sub_region_faith_counters_sorted
@@ -324,5 +335,271 @@ BTWK_soc_situation_get_sub_region_province_effect = {
 	if = {
 		limit = { this = situation:spreading_of_christianity_situation.situation_sub_region:britannia }
 		province:191 = { save_scope_as = sub_region_province }
+	}
+}
+
+# Should be called in situation scope
+BTWK_update_ai_missionary_interactions_effect = {
+	# Precalculate list of in-range provinces for each ruler first
+	every_situation_participant = {
+		clear_variable_list = external_missionary_range_counties
+		remove_variable = has_christian_or_spreading_subrealm_county
+		remove_variable = has_unreformed_pagan_subrealm_county
+		remove_variable = has_unreformed_pagan_missionary_range_county
+	}
+	every_situation_county = {
+		save_scope_as = current_county
+		
+		# Get list of holder and current lieges of county
+		clear_variable_list = county_lieges
+		holder = { 
+			scope:current_county = { 
+				add_to_variable_list = { name = county_lieges target = prev }
+			}
+			every_liege_or_above = {
+				scope:current_county = { 
+					add_to_variable_list = { name = county_lieges target = prev }
+				}
+			}
+		}
+		
+		# Every ruler that holds (directly or through a vassal) a nearby county, but not this county itself,
+		# that is in external missionary range
+		every_in_list = {
+			variable = nearby_counties
+			holder = {
+				if = {
+					limit = {
+						NOT = { 
+							scope:current_county = { 
+								is_target_in_variable_list = {
+									name = county_lieges
+									target = prev
+								}
+							}
+						}
+					}
+					add_to_variable_list = { 
+						name = external_missionary_range_counties target = scope:current_county
+					}
+					if = {
+						limit = {
+							faith != scope:current_county.faith
+							scope:current_county.faith = { has_doctrine_parameter = unreformed }
+						}
+						set_variable = has_unreformed_pagan_missionary_range_county
+					}
+				}
+				every_liege_or_above = {
+					if = {
+						limit = { 
+							NOT = { 
+								scope:current_county = { 
+									is_target_in_variable_list = {
+										name = county_lieges
+										target = prev
+									}
+								}
+							}
+						}
+						add_to_variable_list = { 
+							name = external_missionary_range_counties target = scope:current_county
+						}
+						if = {
+							limit = {
+								faith != scope:current_county.faith
+								scope:current_county.faith = { has_doctrine_parameter = unreformed }
+							}
+							set_variable = has_unreformed_pagan_missionary_range_county
+						}
+					}
+				}
+			}
+		}
+		
+		# Flag all rulers with Christian or Christian-spreading counties
+		if = {
+			limit = {
+				OR = {
+					religion = religion:christianity_religion
+					this.var:soc_proselytization_monthly_progress > 0
+				}
+			}
+			holder = {
+				set_variable = has_christian_or_spreading_subrealm_county
+				every_liege_or_above = {
+					set_variable = has_christian_or_spreading_subrealm_county
+				}
+			}
+		}
+		# Flag all rulers with unreformed pagan counties
+		if = {
+			limit = {
+				faith = { has_doctrine_parameter = unreformed }
+			}
+			holder = {
+				if = {
+					limit = { faith != scope:current_county.faith }
+					set_variable = has_unreformed_pagan_subrealm_county
+				}
+				every_liege_or_above = {
+					if = {
+						limit = { faith != scope:current_county.faith }
+						set_variable = has_unreformed_pagan_subrealm_county
+					}
+				}
+			}
+		}
+	}
+	
+	# Evaluate AI logic for missionary interactions
+	situation_participant_group:christian_rulers = {
+		every_situation_group_participant = {
+			limit = { is_ai = yes }
+			# Promote Internal Missionaries:
+			# - Requires >= 1 unreformed pagan province in subrealm
+			# - Requires ai_zeal > 0
+			# value = -25
+			#	+ ai_zeal 
+			# 	- ai_greed * 0.5 if ai_greed > 0
+			#	+ (monthly_character_balance / monthly_character_income - 0.3) * 25 / .15 with max of 25
+			#	+ 50 * share of unreformed pagan provinces in subrealm
+			if = {
+				limit = {
+					NOT = { has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier }
+				}
+				if = {
+					limit = {
+						ai_zeal > 0
+						BTWK_soc_internal_missionaries_score > 0
+						has_variable = has_unreformed_pagan_subrealm_county
+					}
+					add_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+				}
+			}
+			else_if = {
+				limit = {
+					has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+					# All interactions have some inertia
+					OR = {
+						ai_zeal < -15
+						BTWK_soc_internal_missionaries_score < -15
+						NOT = { has_variable = has_unreformed_pagan_subrealm_county }
+					}
+				}
+				remove_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+			}
+			set_variable = { name = BTWK_soc_internal_missionaries_score value = BTWK_soc_internal_missionaries_score }
+
+			# Promote External Missionaries:
+			# - Precalculate list of in-range provinces for each ruler first (same calculation as for calculating the spread)
+			# - Requires ai_zeal > 25
+			# value = -50
+			#	+ ai_zeal 
+			# 	- ai_greed * 0.5 if ai_greed > 0
+			#	+ (monthly_character_balance / monthly_character_income - 0.3) * 30 / .15 with max of 25
+			#	+ 50 * share of unreformed pagan provinces in range
+			if = {
+				limit = {
+					NOT = { has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier }
+				}
+				if = {
+					limit = {
+						ai_zeal > 25
+						BTWK_soc_external_missionaries_score > 0
+						has_variable = has_unreformed_pagan_missionary_range_county
+					}
+					add_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+				}
+			}
+			else_if = {
+				limit = {
+					has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+					# All interactions have some inertia
+					OR = {
+						ai_zeal < -10
+						BTWK_soc_external_missionaries_score < -15
+						NOT = { has_variable = has_unreformed_pagan_missionary_range_county }
+					}
+				}
+				remove_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+			}			
+			set_variable = { name = BTWK_soc_external_missionaries_score value = BTWK_soc_external_missionaries_score }
+		}
+	}
+	
+	situation_participant_group:non_christian_rulers = {
+		every_situation_group_participant = {
+			limit = { is_ai = yes }
+			# Encourage Missionaries
+			# - Requires >= 1 province in with positive spread in subrealm
+			# - Never if ai_zeal > 25
+			# value = -25
+			#	- ai_zeal
+			#	+ ai_rationality * 0.5
+			#	- monthly_character_balance / monthly_character_income * 200, capped within 50 to -25
+			if = {
+				limit = {
+					NOT = { has_character_modifier = BTWK_soc_encouraging_missionaries_modifier }
+				}
+				if = {
+					limit = {
+						ai_zeal <= 25
+						BTWK_soc_encourage_missionaries_score > 0
+						has_variable = has_christian_or_spreading_subrealm_county
+					}
+					add_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+					remove_character_modifier = BTWK_soc_banning_missionaries_modifier
+				}
+			}
+			else_if = {
+				limit = {
+					has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+					# All interactions have some inertia
+					OR = {
+						ai_zeal > 40
+						BTWK_soc_encourage_missionaries_score < -15
+						NOT = { has_variable = has_christian_or_spreading_subrealm_county }
+					}
+				}
+				remove_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			set_variable = { name = BTWK_soc_encourage_missionaries_score value = BTWK_soc_encourage_missionaries_score }
+			
+			# Ban Missionaries
+			# - Requires >= 1 province in with positive spread in subrealm
+			# - Requires ai_zeal > 25
+			# value = -25
+			#	+ ai_zeal
+			#	- ai_rationality * 0.5
+			#	+ (monthly_character_balance / monthly_character_income - 0.1) * 100, capped within 50 to -25
+			if = {
+				limit = {
+					NOT = { has_character_modifier = BTWK_soc_banning_missionaries_modifier }
+				}
+				if = {
+					limit = {
+						ai_zeal > 25
+						BTWK_soc_ban_missionaries_score > 0
+						has_variable = has_christian_or_spreading_subrealm_county
+					}
+					add_character_modifier = BTWK_soc_banning_missionaries_modifier
+					remove_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+				}
+			}
+			else_if = {
+				limit = {
+					has_character_modifier = BTWK_soc_banning_missionaries_modifier
+					# All interactions have some inertia
+					OR = {
+						ai_zeal < 10
+						BTWK_soc_ban_missionaries_score < -15
+						NOT = { has_variable = has_christian_or_spreading_subrealm_county }
+					}
+				}
+				remove_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			set_variable = { name = BTWK_soc_ban_missionaries_score value = BTWK_soc_ban_missionaries_score }
+		}
 	}
 }

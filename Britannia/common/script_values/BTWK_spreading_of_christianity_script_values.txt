@@ -482,38 +482,106 @@ soc_proselytization_num_liege_banning_missionaries = {
 	}
 }
 
-# hen_ogledd_region_num_counties_value = {
-	# value = 0
-	# every_county_in_region = {
-		# region = btwk_world_britannia_hen_ogledd
-		# add = 1
-	# }
-# }
+BTWK_soc_internal_missionaries_score = {
+	value = -25
+	add = ai_zeal
+	if = {
+		limit = { ai_greed > 0 }
+		subtract = {
+			value = ai_greed
+			multiply = 0.5
+		}
+	}
+	add = {
+		value = monthly_character_balance
+		divide = monthly_character_income
+		subtract = 0.3
+		multiply = 25
+		divide = 0.15
+		max = 25
+	}
+	add = {
+		value = 0
+		every_sub_realm_county = {
+			limit = {
+				faith != prev.faith
+				faith = { has_doctrine_parameter = unreformed }
+			}
+			add = 1
+		}
+		divide = sub_realm_size
+		multiply = 50
+	}
+}
 
-# create_hen_ogledd_decision_required_share_value = 0.75
+BTWK_soc_external_missionaries_score = {
+	value = -50
+	add = ai_zeal
+	if = {
+		limit = { ai_greed > 0 }
+		subtract = {
+			value = ai_greed
+			multiply = 0.5
+		}
+	}
+	add = {
+		value = monthly_character_balance
+		divide = monthly_character_income
+		subtract = 0.3
+		multiply = 30
+		divide = 0.15
+		max = 25
+	}
+	add = {
+		value = 0
+		every_in_list = {
+			variable = external_missionary_range_counties
+			limit = {
+				faith != prev.faith
+				faith = { has_doctrine_parameter = unreformed }
+			}
+			add = 1
+		}
+		# divide = "variable_list_size(external_missionary_range_counties)"		# Broken
+		divide = {
+			every_in_list = {
+				variable = external_missionary_range_counties
+				add = 1
+			}
+		}
+		multiply = 50
+	}
+}
 
-# create_hen_ogledd_decision_required_percent_value = {
-	# value = create_hen_ogledd_decision_required_share_value
-	# multiply = 100
-# }
+BTWK_soc_encourage_missionaries_score = {
+	value = -25
+	subtract = ai_zeal
+	add = {
+		value = ai_rationality
+		multiply = 0.5
+	}
+	subtract = {
+		value = monthly_character_balance
+		divide = monthly_character_income
+		multiply = 200
+		max = 50
+		min = -25
+	}
+}
 
-# create_hen_ogledd_decision_required_value = {
-	# value = hen_ogledd_region_num_counties_value
-	# multiply = create_hen_ogledd_decision_required_share_value
-	# ceiling = yes
-# }
-
-# hen_ogledd_region_current_controlled_value = {
-	# value = 0
-	# every_county_in_region = {
-		# region = btwk_world_britannia_hen_ogledd
-		# limit = { root = { completely_controls = prev } }
-		# add = 1
-	# }
-# }
-
-# hen_ogledd_region_current_controlled_percent_value = {
-	# value = hen_ogledd_region_current_controlled_value
-	# divide = hen_ogledd_region_num_counties_value
-	# multiply = 100
-# }
+BTWK_soc_ban_missionaries_score = {
+	value = -25
+	add = ai_zeal
+	subtract = {
+		value = ai_rationality
+		multiply = 0.5
+	}
+	add = {
+		value = monthly_character_balance
+		divide = monthly_character_income
+		subtract = 0.1
+		multiply = 100
+		max = 50
+		min = -25
+	}
+}
