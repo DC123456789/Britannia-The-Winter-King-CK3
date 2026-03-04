@@ -44,11 +44,14 @@
 					}
 				}
 			}
+			# If you are Tribal or Folkright...
 			trigger_if = {
 				limit = {
 					government_has_flag = government_limited_conquest_cb
 				}
 				OR = {
+					# You are an unromanized Germanic, and you are attacking someone who is not unromanized Germanic
+					# Or you are not tribal (Folkright unromanized Germanic can declare on anyone)
 					AND = {
 						culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 						OR = {
@@ -56,6 +59,7 @@
 							NOT = { government_has_flag = government_is_tribal }
 						}
 					}
+					# Or you are not an unromanized Germanic, and you are attacking an unromanized Germanic 
 					AND = {
 						NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
 						scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
@@ -164,6 +168,64 @@
 					multiply = scope:attacker.realm_size
 					desc = CB_REALM_SIZE_COST
 					max = 100
+				}
+			}
+			if = {
+				limit = {
+					scope:attacker = { government_has_flag = government_limited_conquest_cb }
+				}
+				if = {
+					limit = { scope:attacker = { government_has_flag = government_is_tribal } }
+					add = {
+						value = 200		# Adjustment for 0.5x from Tribal
+						desc = CB_COST_LIMITED_CONQUEST_CBS
+					}
+				}
+				else = {
+					add = {
+						value = 100
+						desc = CB_COST_LIMITED_CONQUEST_CBS
+					}
+				}				
+			}
+			# Unromanized Germanic attacking another Unromanized Germanic is more expensive
+			if = {
+				limit = {
+					scope:attacker.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+					scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
+				}
+				# Especially in the early game
+				if = {
+					limit = {
+						scope:attacker = {
+							any_character_struggle = {
+								involvement = involved
+								has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+							}
+						}
+						scope:defender = {
+							OR = {
+								any_character_struggle = {
+									involvement = involved
+									has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+								}
+								any_character_struggle = {
+									involvement = interloper
+									has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+								}
+							}
+						}
+					}
+					add = {
+						value = 500
+						desc = CB_COST_OTHER_UNROMANIZED_GERMANIC
+					}
+				}
+				else = {
+					add = {
+						value = 200
+						desc = CB_COST_OTHER_UNROMANIZED_GERMANIC
+					}
 				}
 			}
 			multiply = common_cb_prestige_cost_multiplier
@@ -459,6 +521,37 @@ duchy_conquest_cb = {
 			struggle_blocks_invasion_conquest_cb_trigger = yes
 		}
 		tgp_japan_offensive_wars_ban_trigger = yes
+		
+		# Early game block for Folkright in Britannia
+		trigger_if = {
+			limit = {
+				scope:attacker = {
+					government_has_flag = government_limited_conquest_cb
+					NOT = { any_character_trait = { has_trait_flag = conqueror_bonuses_modifier } }
+					any_character_struggle = {
+						involvement = involved
+						has_struggle_phase_parameter = duchy_conquest_cb_blocked
+					}
+				}
+			}
+			custom_tooltip = {
+				text = struggle_involvement_cb_check_failure
+				NOT = {
+					struggle:britannia_struggle = { has_struggle_phase_parameter = duchy_conquest_cb_blocked }
+				}
+			}
+		}
+		
+		# 10 year timer if you have limited conquest
+		trigger_if = {
+			limit = {
+				government_has_flag = government_limited_conquest_cb
+			}
+			custom_tooltip = {
+				text = government_limited_conquest_cb_duchy_conquest_timer_tooltip
+				NOT = { has_character_modifier = recent_duchy_conquest_war }
+			}
+		}
 	}
 
 	allowed_against_character = {
@@ -558,6 +651,9 @@ duchy_conquest_cb = {
 			}
 		}
 	}
+	
+	valid_to_start_display_regardless = {
+	}
 
 	should_invalidate = {
 		NOT = {
@@ -619,6 +715,64 @@ duchy_conquest_cb = {
 					max = 800
 				}
 			}
+			if = {
+				limit = {
+					scope:attacker = { government_has_flag = government_limited_conquest_cb }
+				}
+				if = {
+					limit = { scope:attacker = { government_has_flag = government_is_tribal } }
+					add = {
+						value = 1500		# Adjustment for 0.5x from Tribal
+						desc = CB_COST_LIMITED_CONQUEST_CBS
+					}
+				}
+				else = {				
+					add = {
+						value = 750
+						desc = CB_COST_LIMITED_CONQUEST_CBS
+					}
+				}
+			}
+			# Unromanized Germanic attacking another Unromanized Germanic is more expensive
+			if = {
+				limit = {
+					scope:attacker.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+					scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
+				}
+				# Especially in the early game
+				if = {
+					limit = {
+						scope:attacker = {
+							any_character_struggle = {
+								involvement = involved
+								has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+							}
+						}
+						scope:defender = {
+							OR = {
+								any_character_struggle = {
+									involvement = involved
+									has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+								}
+								any_character_struggle = {
+									involvement = interloper
+									has_struggle_phase_parameter = more_expensive_unromanized_germanic_mutual_conquest_cb
+								}
+							}
+						}
+					}
+					add = {
+						value = 1000
+						desc = CB_COST_OTHER_UNROMANIZED_GERMANIC
+					}
+				}
+				else = {
+					add = {
+						value = 500
+						desc = CB_COST_OTHER_UNROMANIZED_GERMANIC
+					}
+				}
+			}
 			multiply = common_cb_prestige_cost_multiplier
 			if = {
 				limit = {
@@ -664,6 +818,17 @@ duchy_conquest_cb = {
 
 	on_declaration = {
 		on_declared_war = yes
+		custom_tooltip = {
+			text = government_limited_conquest_cb_duchy_conquest_timer_effect_tooltip
+			scope:attacker = {
+				if = {
+					limit = {
+						government_has_flag = government_limited_conquest_cb
+					}
+					add_character_modifier = { modifier = recent_duchy_conquest_war years = 10 }
+				}
+			}
+		}
 	}
 
 	on_victory_desc = {
