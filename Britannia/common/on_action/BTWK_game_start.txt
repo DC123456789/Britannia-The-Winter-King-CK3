@@ -7,6 +7,7 @@ BTWK_on_game_start = {
 		BTWK_culture_setup
 		BTWK_religion_setup
 		BTWK_government_setup
+		BTWK_character_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_settlement_placement
 		BTWK_laeti_trait_distribution
@@ -408,6 +409,20 @@ BTWK_government_setup = {
 					}
 				}
 				add_realm_law_skip_effects = tribal_authority_1
+			}
+		}
+	}
+}
+
+BTWK_character_setup = {
+	effect = {
+		character:80 ?= {
+			if = {
+				limit = {
+					is_alive = yes
+					NOT = { has_game_rule = no_conquerors_frequency }
+				}
+				create_story = story_conqueror
 			}
 		}
 	}

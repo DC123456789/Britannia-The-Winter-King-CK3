@@ -1,0 +1,30 @@
+﻿
+conquests_culture_targets_ai_score_value = {
+	value = 1
+	# Anglo-Saxons prioritize Britannia
+	if = {
+		limit = {
+			scope:attacker = {
+				culture = { has_cultural_pillar = heritage_west_germanic }
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+		every_target_title = {
+			title_province = {
+				if = {
+					limit = { 
+						geographical_region = btwk_world_britannia
+						NOT = { geographical_region = btwk_custom_wales }
+					}
+					add = 3
+				}
+				else_if = {
+					limit = { 
+						geographical_region = btwk_world_britannia
+					}
+					add = 1
+				}
+			}
+		}
+	}
+}

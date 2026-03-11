@@ -64,12 +64,12 @@
 						NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
 						scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 					}
-					# Or you have the Adventurer Warlord modifier, and you are attacking someone outside your heritage group
+					# Or you have the Adventurer Warlord modifier, and you are attacking someone outside your heritage
 					AND = {
 						has_character_modifier = BTWK_recent_adventurer_conquest_modifier
 						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
 					}
-					# Or you are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					# Or you are attacking someone outside your heritage who has the Adventurer Warlord modifier, and 
 					AND = {
 						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
 						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
@@ -86,11 +86,12 @@
 	attacker_score_from_battles_scale = 150
 	defender_score_from_battles_scale = 150
 
-	ai_can_target_all_titles = {
-		can_use_viking_invasion_cbs_trigger = yes
-	}
+	ai_only_against_neighbors = yes
+	# ai_can_target_all_titles = {
+		# can_use_viking_invasion_cbs_trigger = yes
+	# }
 	ai_score_mult = {
-		value = viking_conquest_ai_score_value
+		value = 1
 
 		# As a feudal gov, do not attack owner of tribal holdings  if you have a tribal holding to convert already
 		add = {
@@ -107,9 +108,12 @@
 		# AI in struggles act insularly for wars that don't have a familial or legal basis.
 		multiply = struggle_wars_prioritise_struggle_targets_value
 		# Tell the Romans to stop going adventuring into the steppe for no gods-damned reason.
-		multiply = byzantium_conquests_ai_score_value
+		# multiply = byzantium_conquests_ai_score_value
 
-		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+		# add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+		
+		# BTWK
+		multiply = conquests_culture_targets_ai_score_value
 	}
 
 	valid_to_start = {
@@ -277,7 +281,7 @@
 							scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 						}
 					}
-					# You have the Adventurer Warlord modifier, and you are attacking someone outside your heritage group
+					# You have the Adventurer Warlord modifier, and you are attacking someone outside your heritage
 					AND = {
 						has_character_modifier = BTWK_recent_adventurer_conquest_modifier
 						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
@@ -306,7 +310,7 @@
 							scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 						}
 					}
-					# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					# You are attacking someone outside your heritage who has the Adventurer Warlord modifier 
 					AND = {
 						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
 						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
@@ -695,11 +699,12 @@ duchy_conquest_cb = {
 	target_de_jure_regions_above = yes
 	ignore_effect = change_title_holder
 
-	ai_can_target_all_titles = {
-		can_use_viking_invasion_cbs_trigger = yes
-	}
+	ai_only_against_neighbors = yes
+	# ai_can_target_all_titles = {
+		# can_use_viking_invasion_cbs_trigger = yes
+	# }
 	ai_score_mult = {
-		value = viking_conquest_ai_score_value
+		value = 1
 
 		# As a feudal gov, do not attack tribal
 		add = {
@@ -716,10 +721,13 @@ duchy_conquest_cb = {
 		# AI in struggles act insularly for wars that don't have a familial or legal basis.
 		multiply = struggle_wars_prioritise_struggle_targets_value
 		# Tell the Romans to stop going adventuring into the steppe for no gods-damned reason.
-		multiply = byzantium_conquests_ai_score_value
+		# multiply = byzantium_conquests_ai_score_value
 		multiply = muslim_invasions_prefer_nonmuslims_ai_score_value
 
-		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+		# add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+	
+		# BTWK
+		multiply = conquests_culture_targets_ai_score_value
 	}
 
 	valid_to_start = {
