@@ -64,6 +64,16 @@
 						NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
 						scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 					}
+					# Or you have the Adventurer Warlord modifier, and you are attacking someone outside your heritage group
+					AND = {
+						has_character_modifier = BTWK_recent_adventurer_conquest_modifier
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
+					# Or you are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					AND = {
+						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
 				}
 			}
 		}
@@ -246,6 +256,64 @@
 				desc = county_conquest_cb_victory_desc_attacker
 			}
 			desc = county_conquest_cb_victory_desc
+		}
+		triggered_desc = {			# Warning that the cb is temporary (if you are adventurer)
+			trigger = {
+				scope:attacker = {
+					government_has_flag = government_limited_conquest_cb
+					NOR = {
+						# You are an unromanized Germanic, and you are attacking someone who is not unromanized Germanic
+						# Or you are not tribal (Folkright unromanized Germanic can declare on anyone)
+						AND = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							OR = {
+								scope:defender.top_liege.culture = { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+								NOT = { government_has_flag = government_is_tribal }
+							}
+						}
+						# Or you are not an unromanized Germanic, and you are attacking an unromanized Germanic 
+						AND = {
+							NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+							scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+						}
+					}
+					# You have the Adventurer Warlord modifier, and you are attacking someone outside your heritage group
+					AND = {
+						has_character_modifier = BTWK_recent_adventurer_conquest_modifier
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
+				}
+			}
+			desc = county_conquest_cb_recent_adventurer_attacker_war_warning_desc
+		}
+		triggered_desc = {			# Warning that the cb is temporary (if you are attacking adventurer)
+			trigger = {
+				scope:attacker = {
+					government_has_flag = government_limited_conquest_cb
+					NOR = {
+						# You are an unromanized Germanic, and you are attacking someone who is not unromanized Germanic
+						# Or you are not tribal (Folkright unromanized Germanic can declare on anyone)
+						AND = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							OR = {
+								scope:defender.top_liege.culture = { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+								NOT = { government_has_flag = government_is_tribal }
+							}
+						}
+						# Or you are not an unromanized Germanic, and you are attacking an unromanized Germanic 
+						AND = {
+							NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+							scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+						}
+					}
+					# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					AND = {
+						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
+				}
+			}
+			desc = county_conquest_cb_recent_adventurer_defender_war_warning_desc
 		}
 		# triggered_desc = {			# Warning for Wales?
 			# trigger = { scope:attacker = { is_local_player = yes } }
@@ -472,6 +540,11 @@ duchy_conquest_cb = {
 			NOT = { government_has_flag = government_limited_conquest_cb }
 			NOT = { government_has_flag = government_is_tribal }
 			any_character_trait = { has_trait_flag = conqueror_bonuses_modifier }
+			# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+			AND = {
+				scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+				NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+			}
 		}
 	}
 
@@ -549,6 +622,11 @@ duchy_conquest_cb = {
 						involvement = involved
 						has_struggle_phase_parameter = duchy_conquest_cb_blocked
 					}
+					# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					NAND = {
+						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
 				}
 			}
 			custom_tooltip = {
@@ -602,6 +680,11 @@ duchy_conquest_cb = {
 					AND = {
 						NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
 						scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+					}
+					# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					AND = {
+						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
 					}
 				}
 			}
@@ -858,6 +941,32 @@ duchy_conquest_cb = {
 				desc = county_conquest_cb_victory_desc_attacker
 			}
 			desc = county_conquest_cb_victory_desc
+		}
+		triggered_desc = {			# Warning that the cb is temporary (if you are attacking adventurer)
+			trigger = {
+				scope:attacker = {
+					government_has_flag = government_limited_conquest_cb
+					NOR = {
+						AND = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							OR = {
+								scope:defender.top_liege.culture = { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+								NOT = { government_has_flag = government_is_tribal }
+							}
+						}
+						AND = {
+							NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+							scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+						}
+					}
+					# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+					AND = {
+						scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+						NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+					}
+				}
+			}
+			desc = duchy_conquest_cb_recent_adventurer_defender_war_warning_desc
 		}
 	}
 

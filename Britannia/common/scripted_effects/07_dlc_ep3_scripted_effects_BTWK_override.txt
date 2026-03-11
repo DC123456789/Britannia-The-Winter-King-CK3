@@ -592,6 +592,16 @@
 		limit = { government_allows = administrative }
 		give_new_noble_family_title_effect = yes
 	}
+	
+	# BTWK - If you seized land in a conquest war, you are vulnerable to conquest from
+	# characters of a different heritage even if you would not normally be, and vice versa
+	if = {
+		limit = { $REASON$ = flag:conquest }
+		add_character_modifier = {
+			modifier = BTWK_recent_adventurer_conquest_modifier
+			years = 20
+		}
+	}
 }
 
 purchase_land_interaction_effect = {
