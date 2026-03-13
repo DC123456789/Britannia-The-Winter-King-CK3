@@ -121,6 +121,24 @@
 			is_landless_type_title = no
 			neighboring_county_or_viking_conquest_trigger = { CHARACTER = root }
 		}
+		
+		# Stop AI Aelle from going to the north - block needed since he is a conqueror 
+		NOT = {
+			AND = {
+				scope:attacker = {
+					has_character_flag = aelle_of_anglia
+					is_ai = yes
+				}
+				scope:target = {
+					title_province = {
+						OR = {
+							geographical_region = btwk_custom_lindum
+							geographical_region = btwk_world_britannia_hen_ogledd
+						}
+					}
+				}
+			}
+		}
 	}
 
 	should_invalidate = {
@@ -753,6 +771,24 @@ duchy_conquest_cb = {
 						OR = {
 							this = scope:defender
 							is_vassal_or_below_of = scope:defender
+						}
+					}
+				}
+			}
+		}
+		
+		# Stop AI Aelle from going to the north - block needed since he is a conqueror 
+		NOT = {
+			AND = {
+				scope:attacker = {
+					has_character_flag = aelle_of_anglia
+					is_ai = yes
+				}
+				scope:target = {
+					title_province = {
+						OR = {
+							geographical_region = btwk_custom_lindum
+							geographical_region = btwk_world_britannia_hen_ogledd
 						}
 					}
 				}
