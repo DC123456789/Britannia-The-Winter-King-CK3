@@ -9,6 +9,7 @@
 BTWK_startup.0001 = {
 	type = character_event
 	content_source = dlc_BTWK
+	window = fullscreen_event_w_portraits
 	title = {
 		first_valid = {
 			# Uther
@@ -45,6 +46,11 @@ BTWK_startup.0001 = {
 	}
 	theme = realm 
 
+	override_background = {
+		trigger = { root = character:1 }
+		reference = bp3_plains_winter
+	}
+	
 	left_portrait = {
 		character = root
 		animation = personality_honorable
@@ -67,13 +73,46 @@ BTWK_startup.0001 = {
 				}
 			}
 		}
-			
+		
+		# Southern Britons + Romano-Britons - warn about threat of Aelle
+		if = {
+			limit = {
+				OR = {
+					primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_south_lloegyr
+					}
+					any_realm_county = {
+						geographical_region = btwk_world_britannia_south_lloegyr
+					}
+					# Also relevant for these rulers
+					has_title = title:k_powys
+					has_title = title:d_the_peak
+				}
+				is_unromanized_germanic_culture_trigger = no
+			}
+			custom_tooltip = { text = BTWK_startup.0001.aelle_warning_tooltip }
+		}
+		
+		# Britons + Romano-Britons - explain High King mechanic, warn about Anglo-Saxon invasions
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_latin }
+					trigger_if = {
+						limit = { culture:britannic = { has_variable = culture_has_emerged } }
+						culture = culture:britannic
+					}
+				}
+			}
+			custom_tooltip = { text = BTWK_startup.0001.britannia_high_kingship_tooltip }
+		}
+		
 		# Uther - explain starting situation, succession issues / regency event chain
 		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
 		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
-		# Britons + Romano-Britons - explain High King mechanic, warn about Anglo-Saxon invasions
 		# Northern Britons - talk about Yr Hen Ogledd and how you will need to unite that before claiming the High Kingship
-		# Southern Britons + Romano-Britons - warn about threat of Aelle
 		# Anglo-Saxons - explain Bretwalda mechanic
 	}
 }
