@@ -9,7 +9,10 @@
 	allow_hostages = no
 
 	allowed_for_character = {
-		government_has_flag = government_allow_pre_feudal_subjugation
+		OR = {
+			government_has_flag = government_allow_pre_feudal_subjugation
+			government_has_flag = government_allow_pre_feudal_subjugation_limited
+		}
 	}
 	
 	# Root is the title
@@ -28,16 +31,25 @@
 			trigger_else = {
 				prestige_level >= 2
 			}
+			trigger_if = {
+				limit = {
+					government_has_flag = government_allow_pre_feudal_subjugation_limited
+				}
+				BTWK_reform_from_tribal_innovations_trigger = yes
+			}
 		}
 	}
 	
 	allowed_against_character = {
 		scope:attacker = {
-			government_has_flag = government_allow_pre_feudal_subjugation
+			OR = {
+				government_has_flag = government_allow_pre_feudal_subjugation
+				government_has_flag = government_allow_pre_feudal_subjugation_limited
+			}
 			scope:defender = {
 				OR = {
 					government_has_flag = government_allow_pre_feudal_subjugation
-					government_has_flag = government_is_tribal
+					government_has_flag = government_allow_pre_feudal_subjugation_limited
 				}
 			}
 			culture = { has_same_heritage_group_as = { TARGET = scope:defender.culture } }
