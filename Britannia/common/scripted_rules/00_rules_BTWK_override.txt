@@ -1,4 +1,149 @@
-﻿# Determines if a character can convert faith via the convert faith UI, on top of the piety requirement
+﻿# Determines if a faith can be created, on top of the piety requirement, and the doctrine requirements
+# Also handles reforming a faith, check for the unreformed doctrine to enable those additional checks
+# Root is the faith creator
+faith_creation = {
+	trigger_if = {
+		limit = {
+			highest_held_title_tier = tier_county
+			top_liege != this
+			NOT = { faith = { has_doctrine_parameter = unreformed } }
+		}
+		custom_description = {
+			text = "faith_creation_duchy_or_higher"
+			highest_held_title_tier >= tier_duchy
+		}
+	}
+
+	is_adult = yes
+	is_at_war = no
+	custom_description = {
+		text = "character_is_not_real_head"
+		faith.religious_head != root
+	}
+
+	custom_description = {
+		text = "character_can_only_create_one_faith"
+		NOT = { exists = var:has_created_a_faith }
+	}
+
+	trigger_if = {
+		limit = {
+			faith = { has_doctrine_parameter = unreformed }
+		}
+
+		NOT = {
+			custom_description = {
+				text = faith_has_been_reformed
+				object = faith
+				exists = faith.var:has_been_reformed
+			}
+		}
+		
+		government_is_not_tribal_trigger = yes
+		sub_realm_size >= 30
+		highest_held_title_tier >= tier_kingdom
+
+		trigger_if = {
+			limit = {
+				NOT = {
+					has_character_flag = ignore_3_holy_site_rule
+				}
+			}
+			faith = {
+				num_realm_holy_sites_faithful_holders = {
+					CHARACTER = root
+					COUNT = 1
+				}
+			}
+		}
+		
+		# Make sure to update the tooltips if you change this!
+		trigger_if = {
+			limit = {
+				faith = {
+					num_realm_holy_sites_faithful_holders = {
+						CHARACTER = root
+						COUNT = 3
+					}
+				}
+			}
+			piety_level >= 2
+			learning >= 15
+		}
+		trigger_else_if = {
+			limit = {
+				faith = {
+					num_realm_holy_sites_faithful_holders = {
+						CHARACTER = root
+						COUNT = 2
+					}
+				}
+			}
+			piety_level >= 3
+			learning >= 20
+			custom_tooltip = {
+				text = faith_reformation_one_learning_trait_tooltip
+				OR = {
+					has_trait = scholar
+					has_trait = theologian
+					has_trait = education_learning_3
+					has_trait = education_learning_4
+					has_trait = education_learning_5
+				}
+			}
+			custom_tooltip = {
+				text = faith_reformation_can_reduce_requirements_tooltip
+				piety_level >= 3
+				learning >= 20
+				OR = {
+					has_trait = scholar
+					has_trait = theologian
+					has_trait = education_learning_3
+					has_trait = education_learning_4
+					has_trait = education_learning_5
+				}
+			}
+		}
+		trigger_else = {
+			piety_level >= 4
+			learning >= 25
+			custom_tooltip = {
+				text = faith_reformation_two_learning_traits_tooltip
+				calc_true_if = {
+					amount = 2
+					has_trait = scholar
+					has_trait = theologian
+					has_trait = education_learning_3
+					has_trait = education_learning_4
+					has_trait = education_learning_5
+				}
+			}
+			custom_tooltip = {
+				text = faith_reformation_can_reduce_requirements_tooltip
+				piety_level >= 4
+				learning >= 25
+				calc_true_if = {
+					amount = 2
+					has_trait = scholar
+					has_trait = theologian
+					has_trait = education_learning_3
+					has_trait = education_learning_4
+					has_trait = education_learning_5
+				}
+			}
+		}
+		
+
+		custom_tooltip = {
+			text = faith_reformation_via_decision
+			faith = {
+				NOT = { has_variable = block_reformation_var }
+			}
+		}
+	}
+}
+
+# Determines if a character can convert faith via the convert faith UI, on top of the piety requirement
 # Root is the faith creator
 # scope:new_faith is the faith they want to convert to
 faith_conversion = {
