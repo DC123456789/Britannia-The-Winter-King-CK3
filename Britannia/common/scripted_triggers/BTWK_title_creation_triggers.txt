@@ -212,7 +212,10 @@ control_region_fraction_including_tributaries_trigger = {
 			any_county_in_region = {
 				percent >= $FRACTION_REQUIRED$
 				region = $REGION$
-				root = { completely_controls = prev }
+				OR = {
+					root = { completely_controls = prev }
+					holder.top_liege = { is_tributary_of_suzerain_or_above = root }
+				}
 			}
 		}
 	}
