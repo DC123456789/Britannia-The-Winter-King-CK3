@@ -14,8 +14,32 @@ BTWK_startup.0001 = {
 		first_valid = {
 			# Uther
 			triggered_desc = {
-				trigger = { root = character:1 }
+				trigger = { this = character:1 }
 				desc = BTWK_startup.0001.t.uther_pendragon
+			}
+			# Northern Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				}
+				desc = BTWK_startup.0001.t.cumbrian
+			}
+			# Southern Britons / Romano-Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						AND = {
+							culture = { has_cultural_pillar = heritage_latin }
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+				}
+				desc = BTWK_startup.0001.t.briton
 			}
 			# Default/fallback
 			desc = BTWK_startup.0001.t
@@ -25,7 +49,7 @@ BTWK_startup.0001 = {
 		first_valid = {
 			# Uther
 			triggered_desc = {
-				trigger = { root = character:1 }
+				trigger = { this = character:1 }
 				desc = BTWK_startup.0001.desc.uther_pendragon
 			}
 			# Arthur
@@ -35,8 +59,33 @@ BTWK_startup.0001 = {
 			# Cerdic
 			# Ambrosii
 			# Northern Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				}
+				desc = BTWK_startup.0001.desc.cumbrian
+			}
 			# Southern Britons
+			triggered_desc = {
+				trigger = { 
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				desc = BTWK_startup.0001.desc.briton
+			}
 			# Romano-Britons
+			triggered_desc = {
+				trigger = { 
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+				desc = BTWK_startup.0001.desc.romanobritish
+			}
 			# Anglo-Saxons
 			# Irish
 			# Romanized Germanics
@@ -59,22 +108,51 @@ BTWK_startup.0001 = {
 	immediate = {
 		character:1 = { save_scope_as = uther_pendragon }
 		character:80 = { save_scope_as = aelle_of_anglia }
+		character:300 = { save_scope_as = coel_hen }
 	}
 
 	option = {
 		name = {
 			text = {
 				first_valid = {
+					# Uther
 					triggered_desc = {
-						trigger = { root = character:1 }
+						trigger = { this = character:1 }
 						desc = BTWK_startup.0001.a.uther_pendragon
+					}
+					# Northern Britons
+					triggered_desc = {
+						trigger = {
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								culture = { has_cultural_pillar = heritage_latin }
+							}
+							capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+						}
+						desc = BTWK_startup.0001.a.cumbrian
+					}
+					# Southern Britons / Romano-Britons
+					triggered_desc = {
+						trigger = { 
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = BTWK_startup.0001.a.briton
 					}
 					desc = BTWK_startup.0001.a
 				}
 			}
 		}
 		
-		# Southern Britons + Romano-Britons - warn about threat of Aelle
+		# Uther - explain starting situation, succession issues / regency event chain
+		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
+		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
+		# Everyone else in southeastern Britain - warn about threat of Aelle
 		if = {
 			limit = {
 				OR = {
@@ -88,7 +166,6 @@ BTWK_startup.0001 = {
 					has_title = title:k_powys
 					has_title = title:d_the_peak
 				}
-				is_unromanized_germanic_culture_trigger = no
 			}
 			custom_tooltip = { text = BTWK_startup.0001.aelle_warning_tooltip }
 		}
@@ -109,10 +186,22 @@ BTWK_startup.0001 = {
 			custom_tooltip = { text = BTWK_startup.0001.britannia_high_kingship_tooltip }
 		}
 		
-		# Uther - explain starting situation, succession issues / regency event chain
-		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
-		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
 		# Northern Britons - talk about Yr Hen Ogledd and how you will need to unite that before claiming the High Kingship
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_latin }
+					trigger_if = {
+						limit = { culture:britannic = { has_variable = culture_has_emerged } }
+						culture = culture:britannic
+					}
+				}
+			}
+			custom_tooltip = { text = BTWK_startup.0001.hen_ogledd_tooltip }
+		}
+		
 		# Anglo-Saxons - explain Bretwalda mechanic
 	}
 }
