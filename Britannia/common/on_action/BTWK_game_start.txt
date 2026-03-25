@@ -417,13 +417,11 @@ BTWK_government_setup = {
 
 BTWK_character_setup = {
 	effect = {
-		character:80 ?= {
-			if = {
-				limit = {
-					is_alive = yes
-					NOT = { has_game_rule = no_conquerors_frequency }
-				}
-				create_story = story_conqueror
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			# Start Anglian Invasions a few months after start
+			character:80 ?= {
+				trigger_event = { id = BTWK_anglo_saxon_invasions.0001 days = { 120 240 } }
 			}
 		}
 	}
