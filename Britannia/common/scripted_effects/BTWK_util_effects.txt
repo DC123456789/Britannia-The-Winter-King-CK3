@@ -17,3 +17,61 @@
 	# }
 	# set_global_variable = { name = $NAME$ value = scope:$NAME$ }
 # }
+
+# Saves the first node to the linked_list_nodes scope, and a list of all nodes to linked_list_nodes
+create_linked_list_from_list = {
+	clear_saved_scope = linked_list_start
+	clear_saved_scope = previous_list_story
+	if = {
+		limit = { any_in_list = { list = linked_list_nodes } }
+		every_in_list = {
+			list = linked_list_nodes
+			remove_from_list = linked_list_nodes
+		}
+	}
+	every_in_list = {
+		$LIST_IDENTIFIER$
+		# Stories need to be created on a character
+		title:c_durnovaria.holder = {
+			create_story = {
+				type = linked_list_struct_story
+				save_scope_as = current_list_story
+			}
+		}
+		scope:current_list_story = {
+			set_variable = { name = list_name value = $LIST_NAME$ }
+			set_variable = { name = owner value = $LIST_OWNER$ }
+			set_variable = { name = value value = $LIST_VALUE$ }
+		}
+		if = {
+			limit = { NOT = { exists = scope:previous_list_story } }	# First item
+			scope:current_list_story = { save_scope_as = linked_list_start }
+		}
+		else = {
+			scope:previous_list_story = {
+				set_variable = { name = next value = scope:current_list_story }
+			}
+		}
+		scope:current_list_story = { 
+			save_scope_as = previous_list_story
+			add_to_list = linked_list_nodes
+		}
+	}
+	
+	# Degenerate case for an empty list
+	if = {
+		limit = { NOT = { exists = scope:linked_list_start } }
+		title:c_durnovaria.holder = {
+			create_story = {
+				type = linked_list_struct_story
+				save_scope_as = current_list_story
+			}
+		}
+		scope:current_list_story = {
+			set_variable = { name = list_name value = $LIST_NAME$ }
+			set_variable = { name = owner value = $LIST_OWNER$ }
+			save_scope_as = linked_list_start
+			add_to_list = linked_list_nodes
+		}
+	}
+}

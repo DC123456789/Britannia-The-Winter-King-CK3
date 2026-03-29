@@ -1,3 +1,66 @@
 ﻿BTWK_britannia_high_kingship_active_trigger = {
 	NOT = { has_global_variable = end_of_britannia }
 }
+
+BTWK_britannia_high_kingship_can_claim_trigger = {
+	is_independent_ruler = yes
+	trigger_if = {
+		limit = { culture:britannic = { has_variable = culture_has_emerged } }
+		custom_description = {
+			text = claim_britannia_high_kingship_culture_requirement_w_britannic
+			OR = {
+				culture = { has_cultural_pillar = heritage_brythonic }
+				culture = { has_cultural_pillar = heritage_latin }
+				culture = culture:britannic
+			}
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = claim_britannia_high_kingship_culture_requirement
+			OR = {
+				culture = { has_cultural_pillar = heritage_brythonic }
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+		}
+	}
+	custom_description = {
+		text = claim_britannia_high_kingship_kingdom_requirement
+		OR = {
+			any_held_title = {
+				tier = tier_kingdom
+				target_is_de_jure_liege_or_above = title:e_britannia
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+			}
+			has_title = title:e_hen_ogledd
+		}
+	}
+	NOT = { exists = title:e_britannia.holder }
+	prestige_level >= high_prestige_level
+	age >= 25
+	realm_size >= 10
+	custom_description = {
+		text = claim_britannia_high_kingship_military_requirement
+		current_military_strength >= 750
+	}
+	diplomacy >= 10
+	martial >= 12
+	stewardship >= 7
+	custom_description = {
+		text = claim_britannia_high_kingship_skill_requirement
+		OR = {
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+	}
+	trigger_if = {
+		limit = { has_character_modifier = BTWK_was_recently_high_king_modifier }
+		NOT = { has_character_modifier = BTWK_was_recently_high_king_modifier }
+	}
+}

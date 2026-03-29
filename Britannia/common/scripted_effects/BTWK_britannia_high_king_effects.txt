@@ -1,9 +1,32 @@
 ﻿setup_britannia_high_king_window_lists_effect = {
+	save_scope_as = claimant
+
+	# Clear old lists
 	clear_global_variable_list = britannia_subject_kings_list
 	clear_global_variable_list = britannia_independent_kings_list
+	clear_variable_list = britannia_potential_supporter_kings_list
+	clear_variable_list = britannia_potential_opponent_kings_list
+	clear_variable_list = britannia_potential_neutral_kings_list
 	clear_global_variable_list = britannia_supporter_kings_list
 	clear_global_variable_list = britannia_opponent_kings_list
 	clear_global_variable_list = britannia_neutral_kings_list
+	
+	# These stories are also cleared on the death of the owner to avoid bloat
+	every_in_list = {
+		variable = britannia_potential_supporter_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_supporter_kings_linked_list
+	every_in_list = {
+		variable = britannia_potential_opponent_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_opponent_kings_linked_list
+	every_in_list = {
+		variable = britannia_potential_neutral_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_neutral_kings_linked_list
 
 	every_ruler = {
 		limit = {
@@ -18,9 +41,20 @@
 						}
 					}
 				}
-				target_is_de_jure_liege_or_above = title:e_britannia
+				OR = {
+					target_is_de_jure_liege_or_above = title:e_britannia
+					target_is_de_jure_liege_or_above = title:e_roman_britannia
+				}
 			}
 		}
+		add_to_temporary_list = britannia_all_kings_list
+	}
+	
+	ordered_in_list = {
+		list = britannia_all_kings_list
+		max = list_size:britannia_all_kings_list
+		order_by = sub_realm_size
+
 		# Sort independent vs. subject kings
 		if = {
 			limit = {
@@ -33,15 +67,52 @@
 					}
 				}
 			}
-			add_to_global_variable_list = {
-				name = britannia_subject_kings_list
-				target = THIS
+			if = {
+				limit = { NOT = { has_title = title:e_britannia } }		# High king himself shouldn't be here
+				add_to_global_variable_list = {
+					name = britannia_subject_kings_list
+					target = THIS
+				}
 			}
 		}
 		else = {
 			add_to_global_variable_list = {
 				name = britannia_independent_kings_list
 				target = THIS
+			}
+		}
+		# Calculate potential supporter vs. opponent vs. neutral kings
+		if = {
+			limit = { this != scope:claimant }
+			if = {
+				limit = { 
+					BTWK_britannia_high_king_scope_support_for_claimant >= 25
+				}
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_supporter_kings_list
+						target = PREV
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					BTWK_britannia_high_king_scope_support_for_claimant >= -25
+				}
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_neutral_kings_list
+						target = PREV
+					}
+				}
+			}
+			else = {
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_opponent_kings_list
+						target = PREV
+					}
+				}
 			}
 		}
 		# Sort supporter vs. opponent vs. neutral kings
@@ -70,6 +141,86 @@
 			}
 		}
 	}
+	
+	# Make a linked list for each of the supporter/opponent/neutral lists so we can make them into a tooltip
+	create_linked_list_from_list = {
+		LIST_IDENTIFIER = "variable = britannia_potential_supporter_kings_list"
+		LIST_NAME = flag:britannia_potential_supporter_kings_list
+		LIST_OWNER = scope:claimant
+		LIST_VALUE = prev
+	}
+	scope:claimant = {
+		set_variable = { 
+			name = britannia_potential_supporter_kings_linked_list_start 
+			value = scope:linked_list_start
+		}
+	}
+	every_in_list = {
+		list = linked_list_nodes
+		if = {
+			limit = { has_variable = value }
+			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		}
+		scope:claimant = {
+			add_to_variable_list = {
+				name = britannia_potential_supporter_kings_linked_list
+				target = PREV
+			}
+		}
+	}
+	
+	create_linked_list_from_list = {
+		LIST_IDENTIFIER = "variable = britannia_potential_neutral_kings_list"
+		LIST_NAME = flag:britannia_potential_neutral_kings_list
+		LIST_OWNER = scope:claimant
+		LIST_VALUE = prev
+	}
+	scope:claimant = {
+		set_variable = { 
+			name = britannia_potential_neutral_kings_linked_list_start 
+			value = scope:linked_list_start
+		}
+	}
+	every_in_list = {
+		list = linked_list_nodes
+		if = {
+			limit = { has_variable = value }
+			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		}
+		scope:claimant = {
+			add_to_variable_list = {
+				name = britannia_potential_neutral_kings_linked_list
+				target = PREV
+			}
+		}
+	}
+	
+	create_linked_list_from_list = {
+		LIST_IDENTIFIER = "variable = britannia_potential_opponent_kings_list"
+		LIST_NAME = flag:britannia_potential_opponent_kings_list
+		LIST_OWNER = scope:claimant
+		LIST_VALUE = prev
+	}
+	scope:claimant = {
+		set_variable = { 
+			name = britannia_potential_opponent_kings_linked_list_start 
+			value = scope:linked_list_start
+		}
+	}
+	every_in_list = {
+		list = linked_list_nodes
+		if = {
+			limit = { has_variable = value }
+			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		}
+		scope:claimant = {
+			add_to_variable_list = {
+				name = britannia_potential_opponent_kings_linked_list
+				target = PREV
+			}
+		}
+	}
+	
 	# TODO Should turn these into script values
 	set_global_variable = {
 		name = britannia_supporter_kings_list_size
@@ -98,4 +249,23 @@
 			}
 		}
 	}
+}
+
+BTWK_britannia_claim_high_kingship_effect = {
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_effect_tt_0
+	}
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_effect_tt_1
+	}
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_predicted_supporters_tt
+	}
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_predicted_opponents_tt
+	}
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_predicted_neutrals_tt
+	}
+	# trigger_event = { id = britannia_high_king.0001 }
 }

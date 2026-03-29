@@ -37,60 +37,11 @@ claim_britannia_high_kingship_decision = {
 	}
 
 	is_valid = {
-		is_independent_ruler = yes
-		OR = {
-			culture = { has_cultural_pillar = heritage_brythonic }
-			culture = { has_cultural_pillar = heritage_latin }
-			trigger_if = {
-				limit = { culture:britannic = { has_variable = culture_has_emerged } }
-				culture = culture:britannic
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = claim_britannia_high_kingship_kingdom_requirement_tt
-				any_held_title = {
-					tier = tier_kingdom
-					target_is_de_jure_liege_or_above = title:e_britannia
-					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
-				}
-			}
-			has_title = title:e_hen_ogledd
-		}
-		NOT = { exists = title:e_britannia.holder }
-		prestige_level >= high_prestige_level
-		age >= 25
-		realm_size >= 10
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_military_requirement_tt
-			current_military_strength >= 750
-		}
-		diplomacy >= 10
-		martial >= 12
-		stewardship >= 7
-		OR = {
-			custom_tooltip = {
-				text = claim_britannia_high_kingship_king_ruled_years_requirement_tt
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 15 
-				}
-			}
-			prestige_level >= very_high_prestige_level
-			diplomacy >= 25
-			martial >= 25
-			prowess >= 30
-		}
+		BTWK_britannia_high_kingship_can_claim_trigger = yes
 	}
 
 	effect = {
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_decision_effect_tt_0
-		}
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_decision_effect_tt_1
-		}
-		# trigger_event = { id = britannia_high_king.0001 }
+		BTWK_britannia_claim_high_kingship_effect = yes
 	}
 	
 	cost = {

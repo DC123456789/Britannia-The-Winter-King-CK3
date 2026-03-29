@@ -84,16 +84,6 @@ window = {
 				
 				text_label_center = {
 					text = "CURRENT_HIGH_KING"
-					visible = "[Title.HasHolder]"
-					scale = 1.5
-					parentanchor = top|hcenter
-					margin_left = 0
-					margin_right = 0
-				}
-				
-				text_label_center = {
-					text = "HIGH_KING_CLAIMANT"
-					visible = "[Not(Title.HasHolder)]"
 					scale = 1.5
 					parentanchor = top|hcenter
 					margin_left = 0
@@ -139,11 +129,13 @@ window = {
 				}
 				
 				portrait_body = {
-					name = "my_claim_portrait"
-					datacontext = "[GetPlayer]"
+					name = "high_king_portrait"
+					datacontext = "[Title.GetHolder]"
 					visible = "[Not(Title.HasHolder)]"
 					parentanchor = bottom|hcenter
-					scale = 1.75
+					scale = 1.70
+					
+					position = { 0 -70 }
 					
 					blockoverride "status_icons" {}
 					blockoverride "coa" {}
@@ -152,10 +144,10 @@ window = {
 				
 				button_primary = {
 					#visible = "[...]" #TODO: disable if player is High King
-					enabled = "[Not(Title.HasHolder)]" #TODO
-					#onclick = "[...]" #TODO
-					#tooltip = "[...]" #TODO
-					
+					onclick = "[GetScriptedGui('BTWK_claim_high_kingship').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+					enabled = "[GetScriptedGui('BTWK_claim_high_kingship').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+					tooltip = "[GetScriptedGui('BTWK_claim_high_kingship').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+				
 					parentanchor = top|hcenter
 					position = { 0 70 }
 					size = { 150 70 }
@@ -210,7 +202,7 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_NAME"
+					text = "NO_HIGH_KING"
 					visible = "[Not(Title.HasHolder)]"
 					scale = 1.5
 					max_width = 350
@@ -227,7 +219,7 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_SUPPORTER_COUNT"
+					text = "CLAIMANT_POTENTIAL"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 65 }
 					scale = 1.5
@@ -235,7 +227,7 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_OPPONENT_COUNT"
+					text = "CLAIMANT_SUPPORTER_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 100 }
 					scale = 1.5
@@ -243,9 +235,17 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_NEUTRAL_COUNT"
+					text = "CLAIMANT_OPPONENT_COUNT"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 135 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRAL_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 30 170 }
 					scale = 1.5
 					parentanchor = top|left
 				}
@@ -257,6 +257,13 @@ window = {
 				#	scale = 1.5
 				#	parentanchor = top|hcenter
 				#}
+				
+				text_single = {
+					text = "BRITANNIA_PROVINCES_CONTROLLED"
+					scale = 1.5
+					parentanchor = bottom|left
+					position = { 25 -13 }
+				}
 			}
 			
 			vbox = {
@@ -441,6 +448,7 @@ window = {
 						}
 					}
 				}
+				# If there is a high king, then two boxes - Subject Kings and Independent Kings
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
@@ -541,10 +549,12 @@ window = {
 						}
 					}
 				}
+				# If there is a high king claimant, then three boxes - 
+				# Supporters, Opponents, and Neutral Parties
 				vbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
-					visible = "[Not(Title.HasHolder)]"
+					visible = "[And(Not(Title.HasHolder), GetGlobalVariable('BTWK_britannia_high_king_has_claimant').IsSet)]"
 					hbox = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
@@ -694,6 +704,57 @@ window = {
 								blockoverride "scrollbox_expand" {
 									expand = {}
 								}
+							}
+						}
+					}
+				}
+				# If there is no high king or claimant, then just one list with all the kings
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[And(Not(Title.HasHolder), Not(GetGlobalVariable('BTWK_britannia_high_king_has_claimant').IsSet))]"
+					
+					widget = {
+						name = "all_independent_kingdom_view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 0 }
+						
+						text_label_center = {
+							text = "HIGH_KING_INDEPENDENT"
+							scale = 1.5
+							parentanchor = top|hcenter
+						}
+						
+						scrollbox = {
+							name = "high_king_all_independent_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 550 325 }
+
+							position = { 0 46 }
+							
+							blockoverride "scrollbox_content" {
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 6
+									flipdirection = yes
+									
+									datamodel = "[GetGlobalList('britannia_independent_kings_list')]"
+									
+									item = {											
+										portrait_head_small = {
+											name = "support_king_portrait"
+											datacontext = "[Scope.Char]"
+										}
+									}
+								}
+							}
+                            blockoverride "scrollbox_margins" {
+                                margin_left = -6
+                            }
+							blockoverride "scrollbox_expand" {
+								expand = {}
 							}
 						}
 					}
