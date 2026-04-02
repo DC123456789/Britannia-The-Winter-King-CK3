@@ -227,7 +227,7 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_SUPPORTER_COUNT"
+					text = "CLAIMANT_SUPPORTERS"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 100 }
 					scale = 1.5
@@ -235,7 +235,30 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_OPPONENT_COUNT"
+					text = "CLAIMANT_SUPPORTER_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 175 100 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#P"
+						}						
+					}
+				}
+				
+				text_single = {
+					text = "CLAIMANT_OPPONENTS"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 135 }
 					scale = 1.5
@@ -243,11 +266,57 @@ window = {
 				}
 				
 				text_single = {
-					text = "CLAIMANT_NEUTRAL_COUNT"
+					text = "CLAIMANT_OPPONENT_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 175 135 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_OPPONENT_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#N"
+						}
+					}
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRALS"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 170 }
 					scale = 1.5
 					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRAL_COUNT"
+					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					position = { 175 170 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_NEUTRAL_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#V"
+						}
+					}
 				}
 				
 				#text_single = {
@@ -760,6 +829,211 @@ window = {
 					}
 				}
 			}
+		}
+	}
+}
+
+
+template HighKingStanceListTooltipWidget {
+	container = {
+		using = GeneralTooltipSetup
+		alwaystransparent = no
+
+		widget = {
+			name = "background"
+			using = DefaultTooltipBackground
+			size = { 100% 100% }
+			alwaystransparent = no
+		}
+
+		flowcontainer = {
+			direction = vertical
+			margin_top = 12
+			margin_bottom = 18
+			
+			block "list_datamodel" {
+			}
+			
+			item = {
+				flowcontainer = {
+					direction = horizontal
+					
+					textbox = {
+						using = DefaultTooltipText
+						margin_left = 20
+						margin_right = 5
+						text = "CLAIMANT_STANCE_OTHER_KING_NAME"
+
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+						alwaystransparent = no
+					}
+					
+					# Only one of these will actually be displayed, depending on the BTWK_high_king_window_view_num
+					# variable set on the player (when the window is opened)
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)1')]"
+							text = "CLAIMANT_STANCE_VALUE_1"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_1"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)2')]"
+							text = "CLAIMANT_STANCE_VALUE_2"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_2"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)3')]"
+							text = "CLAIMANT_STANCE_VALUE_3"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_3"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)4')]"
+							text = "CLAIMANT_STANCE_VALUE_4"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_4"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)5')]"
+							text = "CLAIMANT_STANCE_VALUE_5"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_5"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)6')]"
+							text = "CLAIMANT_STANCE_VALUE_6"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_6"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)7')]"
+							text = "CLAIMANT_STANCE_VALUE_7"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_7"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)8')]"
+							text = "CLAIMANT_STANCE_VALUE_8"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_8"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)9')]"
+							text = "CLAIMANT_STANCE_VALUE_9"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_9"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[EqualTo_CFixedPoint(GetPlayer.MakeScope.GetVariable('BTWK_high_king_window_view_num').GetValue, '(CFixedPoint)10')]"
+							text = "CLAIMANT_STANCE_VALUE_10"
+							tooltip = "CLAIMANT_STANCE_VALUE_DESC_10"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					# This makes the space at the right of the support value text
+					textbox = {
+						using = DefaultTooltipText
+						margin_right = 20
+					}
+				}
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				block "none_text_visible" { }
+				margin = { 20 0 }
+				text = "None"
+
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+				alwaystransparent = no
+			}
+			
+			textbox = {
+				name = "TooltipTextShortcut" # named used in code
+				using = DefaultTooltipText
+				parentanchor = right
+				margin_top = -20
+				margin_bottom = 15
+				margin_right = 15
+			}
+		}
+	}
+}
+
+types HighKingWindowTypes
+{
+	type HighKingStanceSupportValueText = textbox {
+		block "textbox_overrides" { }
+		using = DefaultTooltipText
+		using = tooltip_se
+		block "text_format" {
+			default_format = "#V"
+		}
+
+		fonttintcolor = "[TooltipInfo.GetTintColor]"
+		alwaystransparent = no
+		
+		tooltipwidget = {
 		}
 	}
 }

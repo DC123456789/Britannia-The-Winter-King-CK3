@@ -1,4 +1,5 @@
-﻿setup_britannia_high_king_window_lists_effect = {
+﻿# Sets up all the necessary variables for viewing the High King window and its associated tooltips
+setup_britannia_high_king_window_lists_effect = {
 	save_scope_as = claimant
 
 	# Clear old lists
@@ -142,84 +143,144 @@
 		}
 	}
 	
-	# Make a linked list for each of the supporter/opponent/neutral lists so we can make them into a tooltip
-	create_linked_list_from_list = {
-		LIST_IDENTIFIER = "variable = britannia_potential_supporter_kings_list"
-		LIST_NAME = flag:britannia_potential_supporter_kings_list
-		LIST_OWNER = scope:claimant
-		LIST_VALUE = prev
-	}
-	scope:claimant = {
-		set_variable = { 
-			name = britannia_potential_supporter_kings_linked_list_start 
-			value = scope:linked_list_start
-		}
-	}
-	every_in_list = {
-		list = linked_list_nodes
-		if = {
-			limit = { has_variable = value }
-			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		}
-		scope:claimant = {
-			add_to_variable_list = {
-				name = britannia_potential_supporter_kings_linked_list
-				target = PREV
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_global_variable = last_high_king_window_view_num }
+				global_var:BTWK_last_high_king_window_view_num = 10
 			}
+		}
+		set_global_variable = { name = BTWK_last_high_king_window_view_num value = 1 }
+		set_global_variable = { name = BTWK_high_king_claimant_1 value = scope:claimant }
+		scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 1 } }
+	}
+	else = {
+		change_global_variable = { name = BTWK_last_high_king_window_view_num add = 1 }
+		if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 2 }
+			set_global_variable = { name = BTWK_high_king_claimant_2 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 2 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 3 }
+			set_global_variable = { name = BTWK_high_king_claimant_3 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 3 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 4 }
+			set_global_variable = { name = BTWK_high_king_claimant_4 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 4 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 5 }
+			set_global_variable = { name = BTWK_high_king_claimant_5 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 5 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 6 }
+			set_global_variable = { name = BTWK_high_king_claimant_6 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 6 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 7 }
+			set_global_variable = { name = BTWK_high_king_claimant_7 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 7 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 8 }
+			set_global_variable = { name = BTWK_high_king_claimant_8 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 8 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 9 }
+			set_global_variable = { name = BTWK_high_king_claimant_9 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 9 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 10 }
+			set_global_variable = { name = BTWK_high_king_claimant_10 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 10 } }
 		}
 	}
 	
-	create_linked_list_from_list = {
-		LIST_IDENTIFIER = "variable = britannia_potential_neutral_kings_list"
-		LIST_NAME = flag:britannia_potential_neutral_kings_list
-		LIST_OWNER = scope:claimant
-		LIST_VALUE = prev
-	}
-	scope:claimant = {
-		set_variable = { 
-			name = britannia_potential_neutral_kings_linked_list_start 
-			value = scope:linked_list_start
-		}
-	}
-	every_in_list = {
-		list = linked_list_nodes
-		if = {
-			limit = { has_variable = value }
-			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		}
-		scope:claimant = {
-			add_to_variable_list = {
-				name = britannia_potential_neutral_kings_linked_list
-				target = PREV
-			}
-		}
-	}
+	# # Make a linked list for each of the supporter/opponent/neutral lists so we can make them into a tooltip
+	# create_linked_list_from_list = {
+		# LIST_IDENTIFIER = "variable = britannia_potential_supporter_kings_list"
+		# LIST_NAME = flag:britannia_potential_supporter_kings_list
+		# LIST_OWNER = scope:claimant
+		# LIST_VALUE = prev
+	# }
+	# scope:claimant = {
+		# set_variable = { 
+			# name = britannia_potential_supporter_kings_linked_list_start 
+			# value = scope:linked_list_start
+		# }
+	# }
+	# every_in_list = {
+		# list = linked_list_nodes
+		# if = {
+			# limit = { has_variable = value }
+			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		# }
+		# scope:claimant = {
+			# add_to_variable_list = {
+				# name = britannia_potential_supporter_kings_linked_list
+				# target = PREV
+			# }
+		# }
+	# }
 	
-	create_linked_list_from_list = {
-		LIST_IDENTIFIER = "variable = britannia_potential_opponent_kings_list"
-		LIST_NAME = flag:britannia_potential_opponent_kings_list
-		LIST_OWNER = scope:claimant
-		LIST_VALUE = prev
-	}
-	scope:claimant = {
-		set_variable = { 
-			name = britannia_potential_opponent_kings_linked_list_start 
-			value = scope:linked_list_start
-		}
-	}
-	every_in_list = {
-		list = linked_list_nodes
-		if = {
-			limit = { has_variable = value }
-			set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		}
-		scope:claimant = {
-			add_to_variable_list = {
-				name = britannia_potential_opponent_kings_linked_list
-				target = PREV
-			}
-		}
-	}
+	# create_linked_list_from_list = {
+		# LIST_IDENTIFIER = "variable = britannia_potential_neutral_kings_list"
+		# LIST_NAME = flag:britannia_potential_neutral_kings_list
+		# LIST_OWNER = scope:claimant
+		# LIST_VALUE = prev
+	# }
+	# scope:claimant = {
+		# set_variable = { 
+			# name = britannia_potential_neutral_kings_linked_list_start 
+			# value = scope:linked_list_start
+		# }
+	# }
+	# every_in_list = {
+		# list = linked_list_nodes
+		# if = {
+			# limit = { has_variable = value }
+			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		# }
+		# scope:claimant = {
+			# add_to_variable_list = {
+				# name = britannia_potential_neutral_kings_linked_list
+				# target = PREV
+			# }
+		# }
+	# }
+	
+	# create_linked_list_from_list = {
+		# LIST_IDENTIFIER = "variable = britannia_potential_opponent_kings_list"
+		# LIST_NAME = flag:britannia_potential_opponent_kings_list
+		# LIST_OWNER = scope:claimant
+		# LIST_VALUE = prev
+	# }
+	# scope:claimant = {
+		# set_variable = { 
+			# name = britannia_potential_opponent_kings_linked_list_start 
+			# value = scope:linked_list_start
+		# }
+	# }
+	# every_in_list = {
+		# list = linked_list_nodes
+		# if = {
+			# limit = { has_variable = value }
+			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
+		# }
+		# scope:claimant = {
+			# add_to_variable_list = {
+				# name = britannia_potential_opponent_kings_linked_list
+				# target = PREV
+			# }
+		# }
+	# }
 	
 	# TODO Should turn these into script values
 	set_global_variable = {
@@ -257,15 +318,6 @@ BTWK_britannia_claim_high_kingship_effect = {
 	}
 	custom_tooltip = {
 		text = claim_britannia_high_kingship_decision_effect_tt_1
-	}
-	custom_tooltip = {
-		text = claim_britannia_high_kingship_decision_predicted_supporters_tt
-	}
-	custom_tooltip = {
-		text = claim_britannia_high_kingship_decision_predicted_opponents_tt
-	}
-	custom_tooltip = {
-		text = claim_britannia_high_kingship_decision_predicted_neutrals_tt
 	}
 	# trigger_event = { id = britannia_high_king.0001 }
 }
