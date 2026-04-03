@@ -129,7 +129,7 @@ window = {
 				}
 				
 				portrait_body = {
-					name = "high_king_portrait"
+					name = "high_king_empty_portrait"
 					datacontext = "[Title.GetHolder]"
 					visible = "[Not(Title.HasHolder)]"
 					parentanchor = bottom|hcenter
@@ -143,7 +143,7 @@ window = {
 				}
 				
 				button_primary = {
-					#visible = "[...]" #TODO: disable if player is High King
+					visible = "[Not(ObjectsEqual(Title.GetHolder.GetID, GetPlayer.GetID))]"
 					onclick = "[GetScriptedGui('BTWK_claim_high_kingship').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 					enabled = "[GetScriptedGui('BTWK_claim_high_kingship').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 					tooltip = "[GetScriptedGui('BTWK_claim_high_kingship').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
