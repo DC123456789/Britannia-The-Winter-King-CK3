@@ -1,0 +1,70 @@
+﻿namespace = BTWK_wre_events
+
+##############################
+# 		  WRE EVENTS		 #
+##############################
+
+##############################
+
+# Death of Julius Nepos / End of the WRE
+BTWK_wre_events.0001 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+
+	immediate = {
+		title:h_western_roman_empire.holder = {
+			save_scope_as = julius_nepos
+		}
+		every_player = {
+			trigger_event = { id = BTWK_wre_events.0002 }
+		}
+		title:h_western_roman_empire = {
+			holder = { 
+				destroy_title = title:h_western_roman_empire
+				death = { death_reason = death_murder }
+			}
+			set_landless_title = no
+		}
+	}
+}
+
+# Notify players
+BTWK_wre_events.0002 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_wre_events.0002.t
+	desc = BTWK_wre_events.0002.desc
+	theme = claim_throne_scheme
+	override_background = ep3_byzantium_throneroom
+
+	right_portrait = {
+		character = scope:julius_nepos
+		animation = map_fear
+	}
+	
+	immediate = {
+		show_as_tooltip = {
+			title:h_western_roman_empire.holder = {
+				destroy_title = title:h_western_roman_empire
+				death = { death_reason = death_murder }
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_imperial_like_culture_trigger = yes
+			}
+			text = BTWK_wre_events.0002.a_roman
+		}
+		name = {
+			trigger = {
+				is_imperial_like_culture_trigger = no
+			}
+			text = BTWK_wre_events.0002.a
+		}
+	}
+}
