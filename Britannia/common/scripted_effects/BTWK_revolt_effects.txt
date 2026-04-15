@@ -1,0 +1,34 @@
+﻿BTWK_add_cultural_redoubt_modifier_effect = {
+	save_scope_as = current_county
+	if = {
+		limit = { NOT = { has_variable = BTWK_cultural_redoubt_pacified } }
+		if = {
+			limit = {
+				holder.top_liege.culture = { 
+					NOT = { 
+						BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { 
+							COUNTY = scope:current_county 
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						NOT = { has_variable = BTWK_cultural_redoubt_pacified_years }
+						this.var:BTWK_cultural_redoubt_pacified_years < BTWK_cultural_redoubt_pacification_stage_1_years
+					}
+				}
+				add_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
+			}
+			else = {
+				add_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
+			}
+		}
+		else = {
+			add_county_modifier = BTWK_cultural_redoubt_modifier
+		}
+	}
+}
+
+

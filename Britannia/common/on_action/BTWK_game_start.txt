@@ -7,6 +7,7 @@ BTWK_on_game_start = {
 		BTWK_culture_setup
 		BTWK_religion_setup
 		BTWK_government_setup
+		BTWK_county_setup
 		BTWK_character_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_settlement_placement
@@ -419,6 +420,27 @@ BTWK_government_setup = {
 				}
 				add_realm_law_skip_effects = tribal_authority_1
 			}
+		}
+	}
+}
+
+BTWK_county_setup = {
+	effect = {
+		# Wales (minus Anglesey and the Pembroke area) gets the Cultural Redoubt modifier
+		every_county_in_region = {
+			region = btwk_custom_wales
+			limit = {
+				NOR = {
+					duchy = title:d_osmaeliog
+					this = title:c_roose
+					this = title:c_pembroke
+				}
+			}
+			BTWK_add_cultural_redoubt_modifier_effect = yes
+		}
+		every_county_in_region = {
+			region = btwk_custom_cornwall
+			BTWK_add_cultural_redoubt_modifier_effect = yes
 		}
 	}
 }
