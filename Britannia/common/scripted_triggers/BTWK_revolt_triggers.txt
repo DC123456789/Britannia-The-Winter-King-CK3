@@ -3,12 +3,168 @@
 		limit = {
 			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
 		}
-		# Is not Celtic or Roman/Romanized
-		NOR = {
+		# Is Celtic or Roman/Romanized
+		OR = {
 			culture = { has_same_heritage_group_as = { TARGET = culture:briton } }
 			is_imperial_culture_trigger = yes
 			is_romanized_barbarian_culture_trigger = yes
 			culture = { has_cultural_pillar = heritage_romance }
+		}
+	}
+}
+
+BTWK_has_cultural_redoubt_modifier_trigger = {
+	OR = {
+		has_county_modifier = BTWK_cultural_redoubt_modifier
+		has_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
+		has_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
+	}
+}
+
+BTWK_cb_target_titles_has_cultural_redoubt_trigger = {
+	any_in_list = {
+		list = target_titles
+		OR = {
+			AND = {
+				title_tier = tier_county
+				holder = {
+					OR = {
+						this = scope:defender
+						target_is_liege_or_above = scope:defender
+					}
+				}
+				BTWK_has_cultural_redoubt_modifier_trigger = yes
+				NOT = {
+					scope:attacker = { 
+						BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+					}
+				}
+			}
+			AND = {
+				title_tier > tier_county
+				any_de_jure_county = {
+					holder = {
+						OR = {
+							this = scope:defender
+							target_is_liege_or_above = scope:defender
+						}
+					}
+					BTWK_has_cultural_redoubt_modifier_trigger = yes
+					NOT = {
+						scope:attacker = { 
+							BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_ai_cb_target_title_block_on_cultural_redoubts_trigger = {
+	trigger_if = {
+		limit = { scope:attacker = { is_ai = yes } }
+		trigger_if = {
+			limit = { title_tier = tier_county }
+			trigger_if = {
+				limit = {
+					scope:attacker = {
+						government_has_flag = government_cannot_pacify_cultural_redoubts
+					}
+				}
+				NAND = {
+					BTWK_has_cultural_redoubt_modifier_trigger = yes
+					NOT = {
+						scope:attacker = { 
+							BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+						}
+					}
+				}
+			}
+			# Additional block on Wales for Anglo-Saxons until Aengland is unified
+			trigger_if = {
+				limit = {
+					scope:attacker = {
+						is_unromanized_germanic_culture_trigger = yes
+						OR = {
+							has_title = title:e_aengland
+							primary_title = {
+								tier < tier_empire
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+						}
+					}
+				}
+				NAND = {
+					BTWK_has_cultural_redoubt_modifier_trigger = yes
+					title_province = { geographical_region = btwk_custom_wales }
+					NOT = {
+						scope:attacker = { 
+							BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+						}
+					}
+					NOT = { title:e_aengland = { has_variable = aengland_united } }
+				}			
+			}
+		}
+		trigger_if = {
+			limit = { title_tier > tier_county }
+			trigger_if = {
+				limit = {
+					scope:attacker = {
+						government_has_flag = government_cannot_pacify_cultural_redoubts
+					}
+				}
+				NOT = {
+					any_de_jure_county = {
+						holder = {
+							OR = {
+								this = scope:defender
+								target_is_liege_or_above = scope:defender
+							}
+						}
+						BTWK_has_cultural_redoubt_modifier_trigger = yes
+						NOT = {
+							scope:attacker = { 
+								BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+							}
+						}
+					}
+				}
+			}
+			# Additional block on Wales for Anglo-Saxons until Aengland is unified
+			trigger_if = {
+				limit = {
+					scope:attacker = {
+						is_unromanized_germanic_culture_trigger = yes
+						OR = {
+							has_title = title:e_aengland
+							primary_title = {
+								tier < tier_empire
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+						}
+					}
+				}
+				NAND = {
+					NOT = { title:e_aengland = { has_variable = aengland_united } }
+					any_de_jure_county = {
+						holder = {
+							OR = {
+								this = scope:defender
+								target_is_liege_or_above = scope:defender
+							}
+						}
+						BTWK_has_cultural_redoubt_modifier_trigger = yes
+						title_province = { geographical_region = btwk_custom_wales }
+						NOT = {
+							scope:attacker = { 
+								BTWK_is_compatible_culture_with_cultural_redoubt_trigger = { COUNTY = prev }
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
