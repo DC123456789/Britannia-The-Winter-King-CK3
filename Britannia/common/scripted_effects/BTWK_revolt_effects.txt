@@ -1,10 +1,11 @@
 ﻿BTWK_update_cultural_redoubt_modifier_effect = {
 	save_scope_as = current_county
+	set_global_variable = { name = cultural_redoubt_current_county value = scope:current_county }
 	remove_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
 	remove_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
 	
 	if = {
-		limit = { NOT = { has_variable = BTWK_cultural_redoubt_pacified } }
+		limit = { BTWK_county_is_cultural_redoubt_culture_trigger = yes }
 		if = {
 			limit = {
 				holder.top_liege = { 
@@ -17,16 +18,74 @@
 			}
 			remove_county_modifier = BTWK_cultural_redoubt_modifier
 			if = {
-				limit = {
-					OR = {
-						NOT = { has_variable = BTWK_cultural_redoubt_pacified_years }
-						this.var:BTWK_cultural_redoubt_pacified_years < BTWK_cultural_redoubt_pacification_stage_1_years
+				limit = { NOT = { has_variable = BTWK_cultural_redoubt_pacified } }
+				if = {
+					limit = { NOT = { has_variable = BTWK_cultural_redoubt_being_pacified } }
+					add_county_modifier = {
+						modifier = BTWK_cultural_redoubt_negative_1_modifier
+						desc = BTWK_cultural_redoubt_negative_modifier_not_pacifying_desc
 					}
 				}
-				add_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
+				else_if = {
+					limit = {
+						this.var:BTWK_cultural_redoubt_pacified_years < BTWK_cultural_redoubt_pacification_stage_1_years
+					}
+					add_county_modifier = {
+						modifier = BTWK_cultural_redoubt_negative_1_modifier
+						desc = BTWK_cultural_redoubt_negative_modifier_pacifying_desc
+					}
+				}
+				else_if = {
+					limit = {
+						this.var:BTWK_cultural_redoubt_pacified_years < BTWK_cultural_redoubt_pacification_stage_2_years
+					}
+					add_county_modifier = {
+						modifier = BTWK_cultural_redoubt_negative_2_modifier
+						desc = BTWK_cultural_redoubt_negative_modifier_pacifying_desc
+					}
+				}
+				else = {
+					set_variable = BTWK_cultural_redoubt_pacified
+					remove_variable = BTWK_cultural_redoubt_being_pacified
+					remove_variable = BTWK_cultural_redoubt_pacified_years
+					
+					add_county_modifier = BTWK_cultural_redoubt_pacified_modifier
+					# Notify pacification
+					holder = {
+						send_interface_message = {
+							type = msg_BTWK_cultural_redoubt_pacification_finished
+							title = msg_BTWK_cultural_redoubt_pacification_finished.t
+							desc = msg_BTWK_cultural_redoubt_pacification_finished.desc
+							right_icon = scope:current_county
+						}
+						every_liege_or_above = {
+							send_interface_message = {
+								type = msg_BTWK_cultural_redoubt_pacification_finished
+								title = msg_BTWK_cultural_redoubt_pacification_finished.t
+								desc = msg_BTWK_cultural_redoubt_pacification_finished.desc
+								right_icon = scope:current_county
+							}
+						}
+					}
+				}
 			}
 			else = {
-				add_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
+				if = {
+					limit = { NOT = { has_county_modifier = BTWK_cultural_redoubt_pacified_modifier } }
+					add_county_modifier = BTWK_cultural_redoubt_pacified_modifier
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_county_modifier = BTWK_cultural_redoubt_pacified_modifier
+			}
+			if = {
+				limit = {
+					culture = { has_same_culture_heritage = prev.holder.top_liege.culture }
+				}
+				remove_county_modifier = BTWK_cultural_redoubt_pacified_modifier
+				add_county_modifier = BTWK_cultural_redoubt_modifier
 			}
 		}
 		else = {
@@ -34,9 +93,18 @@
 				limit = { NOT = { has_county_modifier = BTWK_cultural_redoubt_modifier } }
 				add_county_modifier = BTWK_cultural_redoubt_modifier
 			}
+			if = {
+				limit = { has_variable = BTWK_cultural_redoubt_being_pacified }
+				remove_variable = BTWK_cultural_redoubt_being_pacified
+			}
+			if = {
+				limit = { has_variable = BTWK_cultural_redoubt_pacified_years }
+				remove_variable = BTWK_cultural_redoubt_pacified_years
+			}
 		}
 	}
 	else = {
+		remove_county_modifier = BTWK_cultural_redoubt_pacified_modifier
 		remove_county_modifier = BTWK_cultural_redoubt_modifier
 	}
 }
@@ -45,6 +113,44 @@ BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = {
 	every_sub_realm_county = {
 		limit = { BTWK_has_cultural_redoubt_modifier_trigger = yes }
 		BTWK_update_cultural_redoubt_modifier_effect = yes
+	}
+}
+
+BTWK_generate_pacify_cultural_redoubt_list = {
+	if = {
+		limit = { has_variable_list = BTWK_pacify_cultural_redoubt_list }
+		clear_variable_list = BTWK_pacify_cultural_redoubt_list
+	}
+	every_sub_realm_county = {
+		limit = {
+			BTWK_has_negative_cultural_redoubt_modifier_trigger = yes
+			NOT = { has_variable = BTWK_cultural_redoubt_being_pacified }
+		}
+		ROOT = {
+			add_to_variable_list = {
+				name = BTWK_pacify_cultural_redoubt_list
+				target = prev
+			}
+		}
+	}
+}
+
+BTWK_start_pacify_cultural_redoubt = {
+	custom_tooltip = {
+		text = BTWK_start_pacify_cultural_redoubt_tt
+		set_variable = BTWK_cultural_redoubt_being_pacified
+		set_variable = { name = BTWK_cultural_redoubt_pacified_years value = 0 }
+		BTWK_update_cultural_redoubt_modifier_effect = yes
+	}
+}
+
+BTWK_cultural_redoubt_yearly_pacification_progress_effect = {
+	if = {
+		limit = { county_controller.top_liege = holder.top_liege }
+		change_variable = {
+			name = BTWK_cultural_redoubt_pacified_years
+			add = 1
+		}
 	}
 }
 
