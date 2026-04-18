@@ -16,10 +16,10 @@
 	}
 }
 
-BTWK_county_is_cultural_redoubt_culture_trigger = {
+BTWK_is_culture_of_cultural_redoubt_trigger = {
 	trigger_if = {
 		limit = {
-			title_province = { geographical_region = btwk_world_britannia }
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
 		}
 		# Is Celtic or Romano-British (or descendant)
 		OR = {
@@ -36,6 +36,11 @@ BTWK_county_is_cultural_redoubt_culture_trigger = {
 	trigger_else = {
 		always = no
 	}
+}
+
+BTWK_county_is_cultural_redoubt_culture_trigger = {
+	save_temporary_scope_as = county_temp
+	BTWK_is_culture_of_cultural_redoubt_trigger = { COUNTY = scope:county_temp }
 }
 
 BTWK_has_cultural_redoubt_modifier_trigger = {

@@ -245,6 +245,9 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_SUPPORTERS_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')]"
 						}
@@ -276,6 +279,9 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_OPPONENTS_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')]"
 						}
@@ -307,6 +313,9 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_NEUTRAL_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')]"
 						}
@@ -853,6 +862,15 @@ template HighKingStanceListTooltipWidget {
 			
 			block "list_datamodel" {
 			}
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				block "header_text" {
+				}
+
+				alwaystransparent = no
+			}
 			
 			item = {
 				flowcontainer = {
@@ -1002,7 +1020,7 @@ template HighKingStanceListTooltipWidget {
 				using = DefaultTooltipText
 				block "none_text_visible" { }
 				margin = { 20 0 }
-				text = "None"
+				text = "CLAIMANT_STANCE_NONE"
 
 				fonttintcolor = "[TooltipInfo.GetTintColor]"
 				alwaystransparent = no
