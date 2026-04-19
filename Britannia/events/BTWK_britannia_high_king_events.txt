@@ -1,5 +1,5 @@
-﻿namespace = britannia_high_king
-namespace = britannia_high_king_test
+﻿namespace = BTWK_britannia_high_king
+namespace = BTWK_britannia_high_king_test
 
 ##################################################
 
@@ -7,12 +7,79 @@ namespace = britannia_high_king_test
 
 ##################################################
 
+############################################################################
+# BTWK_britannia_high_king.0001 - 0019: Claiming the High Kingship
+############################################################################
+# BTWK_britannia_high_king.0001 - Claim made
+# BTWK_britannia_high_king.0002 - Other kings notified of claim made (CK2: 312167)
+# BTWK_britannia_high_king.0003 - Other kings decide on stance (CK2: 312161)
+# BTWK_britannia_high_king.0004 - Notify claimant of responses (maybe as toast/message?) (CK2: 312162)
+# BTWK_britannia_high_king.0005 - Claimant decides whether to go to war or give up their claim (CK2: 312163)
+# BTWK_britannia_high_king.0006 - Notify other kings of claimant's decision to proceed or not (CK2: 312169)
+# BTWK_britannia_high_king.0007 - Claimant won war / no opponents, become High King (CK2: 312165)
+# BTWK_britannia_high_king.0008 - Claimant defeated (CK2: 312164)
+# BTWK_britannia_high_king.0009 - War ends inconclusively due to claimant dying or losing their throne
+
+BTWK_britannia_high_king.0001 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0001.t
+	desc = BTWK_britannia_high_king.0001.desc
+	theme = realm
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		title:e_britannia = {
+			set_variable = { name = britannia_high_kingship_claimant value = ROOT }
+		}
+		setup_britannia_high_king_window_lists_effect = yes
+		# TODO Initialize story (?) to handle subsequent events
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0001.a
+		custom_tooltip = BTWK_britannia_high_king.0001.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0001.a.tt.2
+	}
+}
+
+############################################################################
+# BTWK_britannia_high_king.0020 - 0029: Losing the High Kingship
+############################################################################
+# BTWK_britannia_high_king.0020 - Unfit to Rule (warning) (CK2: 312170)
+# BTWK_britannia_high_king.0021 - Unfit to Rule, High Kingship lost (CK2: 312166)
+# BTWK_britannia_high_king.0022 - Death / Abdication of the High King before first reform (CK2: 314480 / 314481)
+
+############################################################################
+# BTWK_britannia_high_king.0100 - 0199: High Kingship Reforms
+############################################################################
+# BTWK_britannia_high_king.0100 - Formalize the High Kingship
+# BTWK_britannia_high_king.0110 - Establish a Central Mint
+# BTWK_britannia_high_king.0120 - Empower the High Council (initial event)
+# BTWK_britannia_high_king.0121 - Empower the High Council (demand to subject kings)
+# BTWK_britannia_high_king.0122 - Empower the High Council (response to demands)
+# BTWK_britannia_high_king.0123 - Empower the High Council (victory in civil war, vassalize all subject kings)
+# BTWK_britannia_high_king.0124 - Empower the High Council (defeat / white peace in civil war, reform not passed)
+# BTWK_britannia_high_king.0130 - Restore the Archbishopric of London / Establish a State Church
+# BTWK_britannia_high_king.0140 - Codify the Succession
+# BTWK_britannia_high_king.0150 - Unify the Legal Codes
+# BTWK_britannia_high_king.0160 - Reclaim the Legacy of Caratacus
+# BTWK_britannia_high_king.0170 - Restore Imperial Dignity (initial event)
+# BTWK_britannia_high_king.0171 - Restore Imperial Dignity (demand to subject kings)
+# BTWK_britannia_high_king.0172 - Restore Imperial Dignity (response to demands)
+# BTWK_britannia_high_king.0173 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
+# BTWK_britannia_high_king.0174 - Restore Imperial Dignity (defeat / white peace in civil war, reform not passed)
+
 ##################################################
 # Debug Test Events
 ##################################################
 
 # Give Britannia to Dumnonia and make Gwent, Powys, Siluria, Stronggore, Demetia their subject kings (i.e. book scenario)
-britannia_high_king_test.0001 = {
+BTWK_britannia_high_king_test.0001 = {
 	hidden = yes
 	content_source = dlc_BTWK
 
@@ -65,7 +132,7 @@ britannia_high_king_test.0001 = {
 }
 
 # Dumnonia + Gwent + Stronggore vs. Powys + Siluria + Demetia + Kernow (book scenario)
-britannia_high_king_test.0002 = {
+BTWK_britannia_high_king_test.0002 = {
 	hidden = yes
 	content_source = dlc_BTWK
 

@@ -1,4 +1,8 @@
-﻿on_title_gain = {
+﻿# A title is usurped by a character
+# root = the new holder
+# scope:title = the title that changes hands
+# scope:previous_holder = previous holder. Shouldn't be dead
+on_title_gain = {
 	on_actions = {
 		btwk_on_title_gain
 	}
@@ -28,6 +32,27 @@ btwk_on_title_gain = {
 		if = {
 			limit = { is_independent_ruler = yes }
 			BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
+		}
+	}
+}
+
+# A title is lost by a character
+# root = the old holder
+# scope:title = the title that changes hands
+# scope:new_holder = new holder.
+on_title_lost = {
+	on_actions = {
+		btwk_on_title_lost
+	}
+}
+
+btwk_on_title_lost = {
+	effect = {
+		if = {
+			limit = {
+				is_playable_character = no
+			}
+			remove_tribal_fame_effect = yes
 		}
 	}
 }

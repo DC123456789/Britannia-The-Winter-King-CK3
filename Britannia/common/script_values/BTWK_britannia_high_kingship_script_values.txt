@@ -49,7 +49,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 	}
 	# Relative Power
 	# 20 * (scope:claimant.military_power / military_power - 1.25 ) if the claimant is at least 1.25x stronger
-	# -40 * (military_power / scope:claimant.military_power - 0.8) if the claimant is not at least 1.25x stronger
+	# -50 * (military_power / scope:claimant.military_power - 0.8) if the claimant is not at least 1.25x stronger
 	add = {
 		value = 0
 		if = {
@@ -75,7 +75,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 				min = 1
 			}
 			subtract = 0.8
-			multiply = -40
+			multiply = -50
 		}
 		max = 50
 		desc = CLAIMANT_SUPPORT_MILITARY_POWER
@@ -480,9 +480,17 @@ BTWK_britannia_high_king_scope_support_for_claimant_10 = {
 		add = BTWK_britannia_high_king_scope_support_for_claimant
 	}
 }
+BTWK_britannia_high_king_scope_support_for_current_claimant = {
+	value = 0
+	if = {
+		limit = { title:e_britannia = { has_variable = britannia_high_kingship_claimant } }
+		title:e_britannia.var:britannia_high_kingship_claimant = { save_temporary_scope_as = claimant }
+		add = BTWK_britannia_high_king_scope_support_for_claimant
+	}
+}
 
 BTWK_britannia_high_king_scope_supporter_threshold = 40
-BTWK_britannia_high_king_scope_opponent_threshold = -25
+BTWK_britannia_high_king_scope_opponent_threshold = -20
 
 BTWK_britannia_high_king_num_potential_supporters = {
 	value = 0
