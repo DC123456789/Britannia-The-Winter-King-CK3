@@ -10,8 +10,7 @@ BTWK_on_game_start = {
 		BTWK_county_setup
 		BTWK_character_setup
 		BTWK_roman_walls_upgrade
-		BTWK_laeti_settlement_placement
-		BTWK_laeti_trait_distribution
+		BTWK_laeti_setup
 		BTWK_high_king_electors_setup
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
@@ -2786,99 +2785,31 @@ BTWK_roman_walls_upgrade = {
 	}
 }
 
-BTWK_laeti_settlement_placement = {
-	effect = {
-		title:c_praetorium.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_jarrow.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_ad_abum.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_luda.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_sleaford.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_vedonium.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-		title:c_chiltern_hills.holder = {
-			every_directly_owned_province = {
-				limit = {
-					has_holding = yes
-				}
-				add_province_modifier = { 
-					modifier = laeti_settlement 
-					years = 50 
-				}
-			}
-		}
-	}
-}
-
-BTWK_laeti_trait_distribution = {
+BTWK_laeti_setup = {
 	effect = {
 		every_ruler = {
 			limit = {
 				is_tributary = yes
 				has_subject_contract_group = tributary_foederatus
 			}
-			# add_trait = foederati_leader
-			# overlord = {
-				# add_trait = foederati_employer
-			# }
+			every_directly_owned_province = {
+				limit = {
+					has_holding = yes
+				}
+				add_province_modifier = { 
+					modifier = laeti_settlement 
+					years = 50 
+				}
+			}
+			create_maa_regiment = {
+				type = light_footmen
+				check_can_recruit = no
+				size = 3
+			}
+			tributary_contract_set_obligation_level = { 
+				type = tributary_war_participation_obligation
+				level = tributary_war_participation_obligation_forced 
+			}
 		}
 	}
 }
