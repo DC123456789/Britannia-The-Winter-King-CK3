@@ -11,11 +11,48 @@
 			culture = { has_cultural_pillar = heritage_romance }
 		}
 	}
+	trigger_else = {
+		always = no
+	}
+}
+
+BTWK_is_culture_of_cultural_redoubt_trigger = {
+	trigger_if = {
+		limit = {
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		# Is Celtic or Romano-British (or descendant)
+		OR = {
+			culture = { has_same_heritage_group_as = { TARGET = culture:briton } }
+			AND = {
+				OR = {
+					is_imperial_culture_trigger = yes
+					culture = { has_cultural_pillar = heritage_romance }
+				}
+				culture.var:ancestral_starting_culture = culture:romanobritish
+			}
+		}
+	}
+	trigger_else = {
+		always = no
+	}
+}
+
+BTWK_county_is_cultural_redoubt_culture_trigger = {
+	save_temporary_scope_as = county_temp
+	BTWK_is_culture_of_cultural_redoubt_trigger = { COUNTY = scope:county_temp }
 }
 
 BTWK_has_cultural_redoubt_modifier_trigger = {
 	OR = {
 		has_county_modifier = BTWK_cultural_redoubt_modifier
+		has_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
+		has_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
+	}
+}
+
+BTWK_has_negative_cultural_redoubt_modifier_trigger = {
+	OR = {
 		has_county_modifier = BTWK_cultural_redoubt_negative_1_modifier
 		has_county_modifier = BTWK_cultural_redoubt_negative_2_modifier
 	}

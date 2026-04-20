@@ -1,0 +1,42 @@
+# Required controller: decision_option_list_controller
+
+vbox = {
+	name = "decision_view_widget_BTWK_pacify_cultural_redoubt_decision"
+	TitleSelectionActionBoxType = {
+		blockoverride "title_button_size" {
+			size = { 284 40 }
+		}
+		blockoverride "spacing_hbox_size" {
+			size = { 6 40 }
+		}
+		blockoverride "selection_button_size" {
+			size = { 70 40 }
+		}
+		blockoverride "box_datamodel" {
+			datamodel = "[GetPlayer.MakeScope.GetList('BTWK_pacify_cultural_redoubt_list')]"
+		}
+		blockoverride "no_titles_text_is_shown" {
+			visible = "[GetScriptedGui('BTWK_pacify_cultural_redoubt_none_shown').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+		blockoverride "box_create_state_secondary" {
+			on_start = "[GetScriptedGui('BTWK_pacify_cultural_redoubt_list_init').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
+		blockoverride "title_button" {
+		}
+		blockoverride "selection_button" {
+			onclick = "[GetScriptedGui('BTWK_pacify_cultural_redoubt_pacify').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
+			enabled = "[GetScriptedGui('BTWK_pacify_cultural_redoubt_pacify').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
+			tooltip = "[GetScriptedGui('BTWK_pacify_cultural_redoubt_pacify').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Title.MakeScope).End)]"
+		}
+		blockoverride "title_button_coa" {
+			datacontext = "[Scope.Title]"
+			scale = 0.85
+		}
+		blockoverride "selection_button_text_box" {
+			margin_left = 16
+		}
+		blockoverride "selection_button_text" {
+			text = "Pacify"
+		}
+	}
+}

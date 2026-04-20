@@ -452,6 +452,205 @@ BTWK_character_setup = {
 			character:80 ?= {
 				trigger_event = { id = BTWK_anglo_saxon_invasions.0001 days = { 120 240 } }
 			}
+			# Remove claims of most king-level rulers on their vassals
+			every_independent_ruler = {
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege = prev }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Remove Corneu claims on each other
+			character:1 ?= {			# King Uther of Dumnonia
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_kernow } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:13 ?= {			# King Mark of Cornwall
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_dumnonia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Coeling
+			character:303 ?= {			# King Gwrast of Rheged
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:8004 ?= {			# Prince Pappo of Hen Ogledd 
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:1510 ?= {			# King Cygnar of Bryneich
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_jarrow
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+				add_pressed_claim = title:e_hen_ogledd
+			}
+			character:1511 ?= {			# Prince Bran of Bryneich
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_jarrow
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+				add_pressed_claim = title:e_hen_ogledd
+			}
+			character:135 ?= {			# King Arthwys of Peibion
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:365 ?= {			# King Einion of Ebrauc
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_elmet
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:15 ?= {			# King Cadwallon of Gwynedd (female line)
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:1381 ?= {			# King Dogfael of Dogfeilion (female line)
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Macsen
+			character:1917 ?= {			# King Dingat of Novant
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_demetia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Some other misc claims that don't really make sense
+			character:18 ?= {			# King Gundleus of Siluria
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:d_westpowys } }
+					scope:current_char = { remove_claim = PREV }
+				}
+				every_sibling = {
+					save_scope_as = current_char
+					every_claim = {
+						limit = { holder.top_liege ?= { has_title = title:d_westpowys } }
+						scope:current_char = { remove_claim = PREV }
+					}
+				}
+			}
+			character:16 ?= {			# King Gorfyddyd of Powys
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_gwent } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:74 ?= {			# King Decimus of Linnius
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_east_anglia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
 		}
 	}
 }
@@ -2679,6 +2878,17 @@ BTWK_de_jure_setup = {
 				name = roman_duchy_list
 				target = THIS
 			}
+		}
+		
+		# Flag creation requirements for Anglo-Saxon duchies - Anglo-Saxons should prioritize these
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			this.var:creation_requirement_1 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_1_alt ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_2 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_2_alt ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_3 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_3_alt ?= { set_variable = anglo_saxon_duchy_requirement }
 		}
 		
 		# Initialize de jure structure

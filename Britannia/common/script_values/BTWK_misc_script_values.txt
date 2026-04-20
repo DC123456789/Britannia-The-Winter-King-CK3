@@ -8,3 +8,44 @@ negated_sub_realm_size_value = {
 
 BTWK_cultural_redoubt_pacification_stage_1_years = 20
 BTWK_cultural_redoubt_pacification_stage_2_years = 40
+BTWK_cultural_redoubt_pacification_rebel_siege_years_lost = 5
+
+BTWK_cultural_redoubt_pacification_gold_cost = 200
+BTWK_cultural_redoubt_pacification_years_remaining = {
+	value = BTWK_cultural_redoubt_pacification_stage_2_years
+	subtract = this.var:BTWK_cultural_redoubt_pacified_years
+}
+
+BTWK_cultural_redoubt_num_to_pacify = {
+	save_temporary_scope_as = current_char
+	value = 0
+	every_sub_realm_county = {
+		limit = {
+			BTWK_has_negative_cultural_redoubt_modifier_trigger = yes
+			NOT = { has_variable = BTWK_cultural_redoubt_being_pacified }
+			scope:current_char = {
+				OR = {
+					is_ai = no
+					# AI won't pacify provinces of its culture
+					NOT = { BTWK_is_culture_of_cultural_redoubt_trigger = { COUNTY = prev } }
+				}
+			}
+		}
+		add = 1
+	}
+}
+
+BTWK_cultural_redoubt_num_can_pacify_min_1 = {
+	value = BTWK_cultural_redoubt_num_to_pacify
+	max = {
+		value = gold
+		divide = BTWK_cultural_redoubt_pacification_gold_cost
+		floor = yes
+	}
+	min = 1
+}
+
+BTWK_cultural_redoubt_num_can_pacify_min_1_index = {
+	value = BTWK_cultural_redoubt_num_can_pacify_min_1
+	subtract = 1
+}

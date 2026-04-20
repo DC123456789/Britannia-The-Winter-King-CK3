@@ -39,6 +39,7 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	prestige_level >= high_prestige_level
 	age >= 25
 	realm_size >= 10
+	is_tributary = no
 	custom_description = {
 		text = claim_britannia_high_kingship_military_requirement
 		current_military_strength >= 750
@@ -58,6 +59,12 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 			martial >= 25
 			prowess >= 30
 		}
+	}
+	is_incapable = no
+	NOT = { has_diarchy_type = regency }
+	custom_description = {
+		text = claim_britannia_high_kingship_no_current_claimant
+		NOT = { title:e_britannia = { has_variable = britannia_high_kingship_claimant } }
 	}
 	trigger_if = {
 		limit = { has_character_modifier = BTWK_was_recently_high_king_modifier }

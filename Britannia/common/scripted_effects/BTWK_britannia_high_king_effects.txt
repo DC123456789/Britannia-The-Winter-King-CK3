@@ -87,7 +87,7 @@ setup_britannia_high_king_window_lists_effect = {
 			limit = { this != scope:claimant }
 			if = {
 				limit = { 
-					BTWK_britannia_high_king_scope_support_for_claimant >= 25
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
 				}
 				scope:claimant = {
 					add_to_variable_list = {
@@ -98,7 +98,7 @@ setup_britannia_high_king_window_lists_effect = {
 			}
 			else_if = {
 				limit = { 
-					BTWK_britannia_high_king_scope_support_for_claimant >= -25
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold
 				}
 				scope:claimant = {
 					add_to_variable_list = {
@@ -116,7 +116,8 @@ setup_britannia_high_king_window_lists_effect = {
 				}
 			}
 		}
-		# Sort supporter vs. opponent vs. neutral kings
+		
+		# Sort declared supporter vs. opponent vs. neutral kings
 		if = {
 			limit = {
 				has_variable = HK_britannia_supporter		# Temp
@@ -135,7 +136,13 @@ setup_britannia_high_king_window_lists_effect = {
 				target = THIS
 			}
 		}
-		else = {
+		else_if = {
+			limit = {
+				OR = {
+					NOT = { exists = title:e_britannia.var:britannia_high_kingship_claimant }
+					title:e_britannia.var:britannia_high_kingship_claimant != this
+				}
+			}
 			add_to_global_variable_list = {
 				name = britannia_neutral_kings_list
 				target = THIS
@@ -202,111 +209,56 @@ setup_britannia_high_king_window_lists_effect = {
 			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 10 } }
 		}
 	}
-	
-	# # Make a linked list for each of the supporter/opponent/neutral lists so we can make them into a tooltip
-	# create_linked_list_from_list = {
-		# LIST_IDENTIFIER = "variable = britannia_potential_supporter_kings_list"
-		# LIST_NAME = flag:britannia_potential_supporter_kings_list
-		# LIST_OWNER = scope:claimant
-		# LIST_VALUE = prev
-	# }
-	# scope:claimant = {
-		# set_variable = { 
-			# name = britannia_potential_supporter_kings_linked_list_start 
-			# value = scope:linked_list_start
-		# }
-	# }
-	# every_in_list = {
-		# list = linked_list_nodes
-		# if = {
-			# limit = { has_variable = value }
-			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		# }
-		# scope:claimant = {
-			# add_to_variable_list = {
-				# name = britannia_potential_supporter_kings_linked_list
-				# target = PREV
-			# }
-		# }
-	# }
-	
-	# create_linked_list_from_list = {
-		# LIST_IDENTIFIER = "variable = britannia_potential_neutral_kings_list"
-		# LIST_NAME = flag:britannia_potential_neutral_kings_list
-		# LIST_OWNER = scope:claimant
-		# LIST_VALUE = prev
-	# }
-	# scope:claimant = {
-		# set_variable = { 
-			# name = britannia_potential_neutral_kings_linked_list_start 
-			# value = scope:linked_list_start
-		# }
-	# }
-	# every_in_list = {
-		# list = linked_list_nodes
-		# if = {
-			# limit = { has_variable = value }
-			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		# }
-		# scope:claimant = {
-			# add_to_variable_list = {
-				# name = britannia_potential_neutral_kings_linked_list
-				# target = PREV
-			# }
-		# }
-	# }
-	
-	# create_linked_list_from_list = {
-		# LIST_IDENTIFIER = "variable = britannia_potential_opponent_kings_list"
-		# LIST_NAME = flag:britannia_potential_opponent_kings_list
-		# LIST_OWNER = scope:claimant
-		# LIST_VALUE = prev
-	# }
-	# scope:claimant = {
-		# set_variable = { 
-			# name = britannia_potential_opponent_kings_linked_list_start 
-			# value = scope:linked_list_start
-		# }
-	# }
-	# every_in_list = {
-		# list = linked_list_nodes
-		# if = {
-			# limit = { has_variable = value }
-			# set_variable = { name = support_value value = this.var:value.BTWK_britannia_high_king_scope_support_for_claimant }
-		# }
-		# scope:claimant = {
-			# add_to_variable_list = {
-				# name = britannia_potential_opponent_kings_linked_list
-				# target = PREV
-			# }
-		# }
-	# }
-	
-	# TODO Should turn these into script values
-	set_global_variable = {
-		name = britannia_supporter_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_supporter_kings_list
-				add = 1
-			}
+	if = {
+		limit = { 
+			exists = title:e_britannia.var:britannia_high_kingship_claimant
+			title:e_britannia.var:britannia_high_kingship_claimant != scope:claimant
 		}
-	}
-	set_global_variable = {
-		name = britannia_opponent_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_opponent_kings_list
-				add = 1
-			}
-		}
-	}
-	set_global_variable = {
-		name = britannia_neutral_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_neutral_kings_list
-				add = 1
+		title:e_britannia.var:britannia_high_kingship_claimant = {
+			save_scope_as = claimant
+			clear_variable_list = britannia_potential_supporter_kings_list
+			clear_variable_list = britannia_potential_opponent_kings_list
+			clear_variable_list = britannia_potential_neutral_kings_list
+			ordered_in_list = {
+				list = britannia_all_kings_list
+				max = list_size:britannia_all_kings_list
+				order_by = sub_realm_size
+				# If there is an actual claimant, calculate potential stances for them too
+				if = {
+					limit = {
+						title:e_britannia.var:britannia_high_kingship_claimant != this
+					}
+					if = {
+						limit = { 
+							BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
+						}
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_supporter_kings_list
+								target = PREV
+							}
+						}
+					}
+					else_if = {
+						limit = { 
+							BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold
+						}
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_neutral_kings_list
+								target = PREV
+							}
+						}
+					}
+					else = {
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_opponent_kings_list
+								target = PREV
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -319,5 +271,5 @@ BTWK_britannia_claim_high_kingship_effect = {
 	custom_tooltip = {
 		text = claim_britannia_high_kingship_decision_effect_tt_1
 	}
-	# trigger_event = { id = britannia_high_king.0001 }
+	trigger_event = { id = BTWK_britannia_high_king.0001 }
 }

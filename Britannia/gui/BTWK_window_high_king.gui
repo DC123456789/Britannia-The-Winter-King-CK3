@@ -129,9 +129,21 @@ window = {
 				}
 				
 				portrait_body = {
+					name = "high_king_claimant_portrait"
+					datacontext = "[Title.MakeScope.Var('britannia_high_kingship_claimant').Char]"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					parentanchor = bottom|hcenter
+					scale = 1.70
+					
+					blockoverride "status_icons" {}
+					blockoverride "coa" {}
+					blockoverride "opinion_box" {}
+				}
+				
+				portrait_body = {
 					name = "high_king_empty_portrait"
 					datacontext = "[Title.GetHolder]"
-					visible = "[Not(Title.HasHolder)]"
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					parentanchor = bottom|hcenter
 					scale = 1.70
 					
@@ -164,6 +176,9 @@ window = {
 					expand = {}
 				}
 				
+				# TODO Only show this once the 1st reform has been passed
+				# Otherwise display a message that the High Kingship will 
+				# not be inherited on succession
 				container = {
 					name = "heir_high_king"
 					datacontext = "[Title.GetHeir]"
@@ -203,8 +218,17 @@ window = {
 				
 				text_single = {
 					text = "NO_HIGH_KING"
-					visible = "[Not(Title.HasHolder)]"
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					scale = 1.5
+					max_width = 350
+					parentanchor = bottom|hcenter
+					margin_bottom = 50
+				}
+				
+				text_single = {
+					text = "HIGH_KING_CLAIMANT"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					scale = 1.4
 					max_width = 350
 					parentanchor = bottom|hcenter
 					margin_bottom = 50
@@ -220,7 +244,15 @@ window = {
 				
 				text_single = {
 					text = "CLAIMANT_POTENTIAL"
-					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
+					position = { 30 65 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_STANCES"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet)]"
 					position = { 30 65 }
 					scale = 1.5
 					parentanchor = top|left
@@ -228,7 +260,7 @@ window = {
 				
 				text_single = {
 					text = "CLAIMANT_SUPPORTERS"
-					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					visible = "[Not(Title.HasHolder)]"
 					position = { 30 100 }
 					scale = 1.5
 					parentanchor = top|left
@@ -236,7 +268,7 @@ window = {
 				
 				text_single = {
 					text = "CLAIMANT_SUPPORTER_COUNT"
-					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					position = { 175 100 }
 					scale = 1.5
 					parentanchor = top|left
@@ -245,11 +277,40 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_SUPPORTERS_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')]"
 						}
 						blockoverride "none_text_visible" {
 							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#P"
+						}						
+					}
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_SUPPORTER_COUNT"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					position = { 175 100 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_SUPPORTERS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_supporter_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_supporter_kings_list')), '(int32)0')]"
 						}
 						blockoverride "text_format" {
 							default_format = "#P"
@@ -267,7 +328,7 @@ window = {
 				
 				text_single = {
 					text = "CLAIMANT_OPPONENT_COUNT"
-					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					position = { 175 135 }
 					scale = 1.5
 					parentanchor = top|left
@@ -276,6 +337,9 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_OPPONENTS_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')]"
 						}
@@ -289,6 +353,32 @@ window = {
 				}
 				
 				text_single = {
+					text = "CURRENT_CLAIMANT_OPPONENT_COUNT"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					position = { 175 135 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_OPPONENTS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_opponent_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_opponent_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#N"
+						}						
+					}
+				}
+				
+				text_single = {
 					text = "CLAIMANT_NEUTRALS"
 					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
 					position = { 30 170 }
@@ -298,7 +388,7 @@ window = {
 				
 				text_single = {
 					text = "CLAIMANT_NEUTRAL_COUNT"
-					visible = "[Not(Title.HasHolder)]" #so that you can only see this if you are an independent elector
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					position = { 175 170 }
 					scale = 1.5
 					parentanchor = top|left
@@ -307,6 +397,9 @@ window = {
 
 					tooltipwidget = {
 						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_NEUTRAL_DESCRIPTION"
+						}
 						blockoverride "list_datamodel" {
 							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')]"
 						}
@@ -316,6 +409,32 @@ window = {
 						blockoverride "text_format" {
 							default_format = "#V"
 						}
+					}
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_NEUTRAL_COUNT"
+					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					position = { 175 170 }
+					scale = 1.5
+					parentanchor = top|left
+					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_NEUTRAL_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_neutral_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_neutral_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#V"
+						}						
 					}
 				}
 				
@@ -623,7 +742,7 @@ window = {
 				vbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
-					visible = "[And(Not(Title.HasHolder), GetGlobalVariable('BTWK_britannia_high_king_has_claimant').IsSet)]"
+					visible = "[And(Not(Title.HasHolder), Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet)]"
 					hbox = {
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
@@ -781,7 +900,7 @@ window = {
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
-					visible = "[And(Not(Title.HasHolder), Not(GetGlobalVariable('BTWK_britannia_high_king_has_claimant').IsSet))]"
+					visible = "[And(Not(Title.HasHolder), Not(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet))]"
 					
 					widget = {
 						name = "all_independent_kingdom_view"
@@ -852,6 +971,15 @@ template HighKingStanceListTooltipWidget {
 			margin_bottom = 18
 			
 			block "list_datamodel" {
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				block "header_text" {
+				}
+
+				alwaystransparent = no
 			}
 			
 			item = {
@@ -1002,7 +1130,92 @@ template HighKingStanceListTooltipWidget {
 				using = DefaultTooltipText
 				block "none_text_visible" { }
 				margin = { 20 0 }
-				text = "None"
+				text = "CLAIMANT_STANCE_NONE"
+
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+				alwaystransparent = no
+			}
+			
+			textbox = {
+				name = "TooltipTextShortcut" # named used in code
+				using = DefaultTooltipText
+				parentanchor = right
+				margin_top = -20
+				margin_bottom = 15
+				margin_right = 15
+			}
+		}
+	}
+}
+
+template HighKingCurrentClaimantStanceListTooltipWidget {
+	container = {
+		using = GeneralTooltipSetup
+		alwaystransparent = no
+
+		widget = {
+			name = "background"
+			using = DefaultTooltipBackground
+			size = { 100% 100% }
+			alwaystransparent = no
+		}
+
+		flowcontainer = {
+			direction = vertical
+			margin_top = 12
+			margin_bottom = 18
+			
+			block "list_datamodel" {
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				block "header_text" {
+				}
+
+				alwaystransparent = no
+			}
+			
+			item = {
+				flowcontainer = {
+					direction = horizontal
+					
+					textbox = {
+						using = DefaultTooltipText
+						margin_left = 20
+						margin_right = 5
+						text = "CLAIMANT_STANCE_OTHER_KING_NAME"
+
+						fonttintcolor = "[TooltipInfo.GetTintColor]"
+						alwaystransparent = no
+					}
+					
+					HighKingStanceSupportValueText = {
+						blockoverride "textbox_overrides" {
+							visible = "[And(Not(GetTitleByKey('e_britannia').HasHolder), GetTitleByKey('e_britannia').MakeScope.Var('britannia_high_kingship_claimant').IsSet)]"
+							text = "CURRENT_CLAIMANT_STANCE_VALUE"
+							tooltip = "CURRENT_CLAIMANT_STANCE_VALUE_DESC"
+						}
+						blockoverride "text_format" {
+							block "text_format" {
+							}
+						}
+					}
+					
+					# This makes the space at the right of the support value text
+					textbox = {
+						using = DefaultTooltipText
+						margin_right = 20
+					}
+				}
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				block "none_text_visible" { }
+				margin = { 20 0 }
+				text = "CLAIMANT_STANCE_NONE"
 
 				fonttintcolor = "[TooltipInfo.GetTintColor]"
 				alwaystransparent = no
