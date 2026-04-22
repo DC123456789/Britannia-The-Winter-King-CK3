@@ -35,7 +35,6 @@ doorkeeper_royal_hall_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 40
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = martial
 			multiply = 2
@@ -167,34 +166,9 @@ doorkeeper_royal_hall_court_position = {
 				desc = court_position_blind_trait
 			}
 		}
-		add = court_position_aptitude_traveling_friends_value
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_low_penalty_value
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+
+		add = court_position_aptitude_high_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -414,84 +388,6 @@ antiquarian_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 1
-		add = court_position_aptitude_boon_voyager_trait
-		if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = soon_forgiven_perk
-				}
-			}
-			add = {
-				value = 10
-				desc = court_position_soon_forgiven_perk
-			}
-		}
-		if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = positions_of_power_perk
-				}
-				any_relation = { type = friend }
-			}
-			add = {
-				value = 5
-				desc = court_position_positions_of_power_perk_friend
-			}
-		}
-		if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = positions_of_power_perk
-				}
-				any_relation = { type = lover }
-			}
-			add = {
-				value = 5
-				desc = court_position_positions_of_power_perk_lover
-			}
-		}
-		if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = positions_of_power_perk
-				}
-				is_married = yes
-			}
-			add = {
-				value = 10
-				desc = court_position_positions_of_power_perk_marriage
-			}
-		}
-		if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = likable_perk
-					has_relation_best_friend = prev
-				}
-			}
-			add = {
-				value = 30
-				desc = court_position_best_friend
-			}
-		}
-		else_if = {
-			limit = {
-				employer ?= {
-					government_has_flag = government_is_landless_adventurer
-					has_perk = likable_perk
-					has_relation_friend = prev
-				}
-			}
-			add = {
-				value = 15
-				desc = court_position_friend
-			}
-		}
 		add = {
 			value = learning
 			multiply = 2.5
@@ -561,10 +457,6 @@ antiquarian_court_position = {
 				desc = estate_increase_antiquarian_aptitude_desc
 			}
 		}
-		add = court_position_aptitude_traveling_friends_value
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_low_penalty_value
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:antiquarian }
@@ -573,30 +465,8 @@ antiquarian_court_position = {
 				desc = cp_bonus_aptitude
 			}
 		}
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+		add = court_position_aptitude_low_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -877,7 +747,6 @@ master_of_hunt_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 25
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = prowess
 			multiply = 2
@@ -960,10 +829,6 @@ master_of_hunt_court_position = {
 				desc = estate_increase_master_of_hunt_aptitude_desc
 			}
 		}
-		add = court_position_aptitude_traveling_friends_value
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_high_penalty_value
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:master_of_hunt }
@@ -972,30 +837,9 @@ master_of_hunt_court_position = {
 				desc = cp_bonus_aptitude
 			}
 		}
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+		
+		add = court_position_aptitude_high_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -1249,7 +1093,6 @@ court_musician_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 1
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = diplomacy
 			multiply = 2.5
@@ -1348,11 +1191,6 @@ court_musician_court_position = {
 				desc = estate_musician_building
 			}
 		}
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_traveling_friends_value
-
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_low_penalty_value
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:court_musician }
@@ -1361,30 +1199,8 @@ court_musician_court_position = {
 				desc = cp_bonus_aptitude
 			}
 		}
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+		add = court_position_aptitude_low_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -1649,7 +1465,6 @@ keeper_of_swans_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 40
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = stewardship
 			multiply = 2
@@ -1714,44 +1529,19 @@ keeper_of_swans_court_position = {
 				desc = court_position_blind_trait
 			}
 		}
-		add = court_position_aptitude_traveling_friends_value
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_low_penalty_value
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
 		# Japan
 		if = {
 			limit = {
-				liege.house ?= { has_house_power_parameter = improved_stewardship_court_position_efficiency }
+				liege.house ?= { has_house_aspiration_parameter = improved_stewardship_court_position_efficiency }
 			}
 			add = {
 				value = cp_bonus_aptitude_value
 				desc = improved_stewardship_court_position_efficiency_desc
 			}
 		}
+
+		add = court_position_aptitude_low_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -1989,7 +1779,6 @@ court_jester_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 1
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = diplomacy
 			multiply = 2.5
@@ -2041,7 +1830,6 @@ court_jester_court_position = {
 				desc = court_position_athletic_trait
 			}
 		}
-		add = court_position_aptitude_traveling_friends_value
 		if = { # ep3_emperor_yearly.2090
 			limit = {
 				has_character_flag = famous_mime_court
@@ -2051,9 +1839,6 @@ court_jester_court_position = {
 				desc = court_position_famous_mime
 			}
 		}
-		add = court_position_aptitude_eunuch_tradition_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_high_penalty_value
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:court_jester }
@@ -2062,30 +1847,9 @@ court_jester_court_position = {
 				desc = cp_bonus_aptitude
 			}
 		}
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+
+		add = court_position_aptitude_high_penalty_value
+		add = general_aptitude_bonus
 	}
 
 	is_shown = {
@@ -2322,7 +2086,6 @@ garuda_court_position = {
 	# How good is this character in this position? root scope is the holder of the court position
 	aptitude = {
 		value = 1
-		add = court_position_aptitude_boon_voyager_trait
 		add = {
 			value = martial
 			multiply = 2.5
@@ -2336,42 +2099,38 @@ garuda_court_position = {
 			desc = court_position_skill_prowess
 		}
 		if = {
-			limit = {
-				has_trait = lifestyle_blademaster
-				has_trait_xp = {
-					trait = lifestyle_blademaster
-					value >= 100
+			limit = { has_trait = lifestyle_blademaster }
+			if = {
+				limit = {
+					has_trait_xp = {
+						trait = lifestyle_blademaster
+						value >= 100
+					}
+				}
+				add = {
+					value = 30
+					desc = court_position_blademaster_3_trait
 				}
 			}
-			add = {
-				value = 30
-				desc = court_position_blademaster_3_trait
-			}
-		}
-		else_if = {
-			limit = {
-				has_trait = lifestyle_blademaster
-				has_trait_xp = {
-					trait = lifestyle_blademaster
-					value >= 50
+			else_if = {
+				limit = {
+					has_trait_xp = {
+						trait = lifestyle_blademaster
+						value >= 50
+					}
+				}
+				add = {
+					value = 15
 				}
 			}
-			add = {
-				value = 15
+			else = {
+				add = {
+					value = 5
+					desc = court_position_blademaster_1_trait
+				}
 			}
 		}
-		else_if = {
-			limit = {
-				has_trait = lifestyle_blademaster
-			}
-			add = {
-				value = 5
-				desc = court_position_blademaster_1_trait
-			}
-		}
-		add = court_position_aptitude_traveling_friends_value
-		add = court_position_aptitude_family_business_value
-		add = court_position_aptitude_high_penalty_value
+
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:garuda }
@@ -2380,31 +2139,11 @@ garuda_court_position = {
 				desc = cp_bonus_aptitude
 			}
 		}
-		# Seneschal
-		if = {
-			limit = {
-				liege.court_position:seneschal_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:seneschal_court_position.seneschal_improve_court_value
-				desc = seneschal_improve_court_aptitude_desc
-			}
-		}
-		# Yeke Jarquchi
-		if = {
-			limit = {
-				liege.court_position:yeke_jarquchi_court_position ?= {
-					has_variable = performing_improve_court
-				}
-			}
-			add = {
-				value = liege.court_position:yeke_jarquchi_court_position.yeke_jarquchi_improve_court_value
-				desc = yeke_jarquchi_improve_court_aptitude_desc
-			}
-		}
+
+		add = court_position_aptitude_high_penalty_value
+		add = general_aptitude_bonus
 	}
+
 
 	# Is this an available position for this court? (root is court owner)
 	is_shown = {

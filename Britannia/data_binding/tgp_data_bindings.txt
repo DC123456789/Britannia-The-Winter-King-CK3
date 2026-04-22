@@ -83,7 +83,7 @@ macro = {
 }
 
 macro = {
-	description = "Is the character one that will hold Coronations?"
-	definition = "CoronationCharacter(TargetCharacter)"
-	replace_with = "Or( TargetCharacter.GetGovernment.IsType( 'feudal_government' ), Or( TargetCharacter.GetGovernment.IsType( 'tribal_government' ), Or( And( TargetCharacter.GetGovernment.IsType( 'administrative_government' ), TargetCharacter.IsIndependentRuler ), Or( TargetCharacter.GetGovernment.IsType( 'wanua_government' ), Or( TargetCharacter.GetGovernment.IsType( 'nomad_government' ), Or( TargetCharacter.GetGovernment.IsType( 'clan_government' ), Or( And( TargetCharacter.IsIndependentRuler, TargetCharacter.GetGovernment.IsType( 'meritocratic_government' ), ), Or( And( TargetCharacter.IsIndependentRuler, TargetCharacter.GetGovernment.IsType( 'steppe_admin_government' ), ), Or( TargetCharacter.GetGovernment.IsType( 'mandala_government' ), Or( TargetCharacter.GetGovernment.IsType( 'japan_feudal_government' ), Or( IsBTWKFeudalGovernment(TargetCharacter.GetGovernment), And( IsBTWKAdminGovernment(TargetCharacter.GetGovernment), TargetCharacter.IsIndependentRuler ) ) ) ) ) ) ) ) ) ) ) )"
+	description = "Has the character failed the Children examination?"
+	definition = "HasAccessToMinistry(ScopeCharacter)"
+	replace_with = "GetScriptedGui( 'tgp_has_access_to_ministry_trigger_gui' ).IsValid( GuiScope.AddScope( 'owner', ScopeCharacter.MakeScope ).End )"
 }
