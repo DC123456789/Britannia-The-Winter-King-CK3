@@ -17,37 +17,6 @@ BTWK_soc_situation_set_proselytization_modifier_effect = {
 	save_scope_as = current_proselytization_county
 	set_global_variable = { name = soc_current_county value = scope:current_proselytization_county }
 
-	# Calculate months remaining at current rate
-	set_variable = { name = soc_proselytization_monthly_progress value = soc_proselytization_monthly_progress_value }
-	if = {
-		limit = { this.var:soc_proselytization_monthly_progress > 0 }
-		set_variable = { 
-			name = soc_proselytization_months_remaining
-			value = {
-				value = 100
-				subtract = this.var:soc_proselytization_progress
-				divide = this.var:soc_proselytization_monthly_progress
-			}
-		}
-		set_variable = { 
-			name = soc_proselytization_years_remaining
-			value = {
-				value = this.var:soc_proselytization_months_remaining
-				divide = 12
-			}
-		}
-	}
-	else = {
-		set_variable = { 
-			name = soc_proselytization_months_remaining
-			value = -1
-		}
-		set_variable = { 
-			name = soc_proselytization_years_remaining
-			value = -1
-		}
-	}
-	
 	# Calculate the faith that this county will convert to
 	religion:christianity_religion = {
 		every_faith = {
@@ -90,6 +59,38 @@ BTWK_soc_situation_set_proselytization_modifier_effect = {
 				BTWK_soc_situation_get_county_region_largest_christian_faith = yes
 				set_variable = { name = soc_proselytization_target_faith value = scope:region_largest_christian_faith }
 			}
+		}
+	}
+	
+	# Calculate months remaining at current rate 
+	# Note: need to calculate the faith it's converting to first because we fetch its fervour
+	set_variable = { name = soc_proselytization_monthly_progress value = soc_proselytization_monthly_progress_value }
+	if = {
+		limit = { this.var:soc_proselytization_monthly_progress > 0 }
+		set_variable = { 
+			name = soc_proselytization_months_remaining
+			value = {
+				value = 100
+				subtract = this.var:soc_proselytization_progress
+				divide = this.var:soc_proselytization_monthly_progress
+			}
+		}
+		set_variable = { 
+			name = soc_proselytization_years_remaining
+			value = {
+				value = this.var:soc_proselytization_months_remaining
+				divide = 12
+			}
+		}
+	}
+	else = {
+		set_variable = { 
+			name = soc_proselytization_months_remaining
+			value = -1
+		}
+		set_variable = { 
+			name = soc_proselytization_years_remaining
+			value = -1
 		}
 	}
 	
@@ -422,7 +423,10 @@ BTWK_update_ai_missionary_interactions_effect = {
 			limit = {
 				OR = {
 					religion = religion:christianity_religion
-					this.var:soc_proselytization_monthly_progress > 0
+					AND = {
+						has_variable = soc_proselytization_monthly_progress
+						this.var:soc_proselytization_monthly_progress > 0
+					}
 				}
 			}
 			holder = {

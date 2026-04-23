@@ -566,16 +566,6 @@ duchy_conquest_cb = {
 		NOT = {
 			government_has_flag = government_is_landless_adventurer
 		}
-		OR = {
-			NOT = { government_has_flag = government_limited_conquest_cb }
-			NOT = { government_has_flag = government_is_tribal }
-			any_character_trait = { has_trait_flag = conqueror_bonuses_modifier }
-			# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
-			AND = {
-				scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
-				NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
-			}
-		}
 	}
 
 	allowed_for_character_display_regardless = {
@@ -684,6 +674,16 @@ duchy_conquest_cb = {
 			ALL_FALSE = {
 				top_liege = scope:defender.top_liege
 				liege = scope:defender
+			}
+			OR = {
+				NOT = { government_has_flag = government_limited_conquest_cb }
+				NOT = { government_has_flag = government_is_tribal }
+				any_character_trait = { has_trait_flag = conqueror_bonuses_modifier }
+				# You are attacking someone outside your heritage group who has the Adventurer Warlord modifier, and 
+				AND = {
+					scope:defender = { has_character_modifier = BTWK_recent_adventurer_conquest_modifier }
+					NOT = { has_same_culture_heritage = scope:defender.top_liege.culture }
+				}
 			}
 			trigger_if = {
 				limit = {
