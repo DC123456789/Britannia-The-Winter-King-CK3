@@ -1,0 +1,26 @@
+﻿BTWK_britannia_claim_high_kingship_story = {
+	on_setup = {
+		story_owner = { save_scope_as = claimant }
+		# Notify other players
+		every_player = {
+			limit = { 
+				NOT = { this = prev.story_owner }
+				OR = {
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			trigger_event = BTWK_britannia_high_king.0002
+		}
+		# Wait a few days before actually asking the other kings for support
+		story_owner = { trigger_event = { id = BTWK_britannia_high_king.0003 days = 4 } }
+	}
+
+	on_end = {
+		# TODO Cleanup variables
+	}
+
+	on_owner_death = {
+		end_story = yes
+	}
+}

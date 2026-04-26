@@ -11,14 +11,15 @@ namespace = BTWK_britannia_high_king_test
 # BTWK_britannia_high_king.0001 - 0019: Claiming the High Kingship
 ############################################################################
 # BTWK_britannia_high_king.0001 - Claim made
-# BTWK_britannia_high_king.0002 - Other kings notified of claim made (CK2: 312167)
-# BTWK_britannia_high_king.0003 - Other kings decide on stance (CK2: 312161)
-# BTWK_britannia_high_king.0004 - Notify claimant of responses (maybe as toast/message?) (CK2: 312162)
-# BTWK_britannia_high_king.0005 - Claimant decides whether to go to war or give up their claim (CK2: 312163)
-# BTWK_britannia_high_king.0006 - Notify other kings of claimant's decision to proceed or not (CK2: 312169)
-# BTWK_britannia_high_king.0007 - Claimant won war / no opponents, become High King (CK2: 312165)
-# BTWK_britannia_high_king.0008 - Claimant defeated (CK2: 312164)
-# BTWK_britannia_high_king.0009 - War ends inconclusively due to claimant dying or losing their throne
+# BTWK_britannia_high_king.0002 - Other kings notified of claim made
+# BTWK_britannia_high_king.0003 - Bounce event to trigger asking other kings 
+# BTWK_britannia_high_king.0004 - Other kings decide on stance (CK2: 312161)
+# BTWK_britannia_high_king.0005 - Notify claimant of responses (maybe as toast/message?) (CK2: 312162)
+# BTWK_britannia_high_king.0006 - Claimant decides whether to go to war or give up their claim (CK2: 312163)
+# BTWK_britannia_high_king.0007 - Notify other kings of claimant's decision to proceed or not (CK2: 312169)
+# BTWK_britannia_high_king.0008 - Claimant won war / no opponents, become High King (CK2: 312165)
+# BTWK_britannia_high_king.0009 - Claimant defeated (CK2: 312164)
+# BTWK_britannia_high_king.0010 - War ends inconclusively due to claimant dying or losing their throne
 
 BTWK_britannia_high_king.0001 = { 
 	type = character_event
@@ -37,13 +38,146 @@ BTWK_britannia_high_king.0001 = {
 			set_variable = { name = britannia_high_kingship_claimant value = ROOT }
 		}
 		setup_britannia_high_king_window_lists_effect = yes
-		# TODO Initialize story (?) to handle subsequent events
+		# Initialize story to handle subsequent events
+		create_story = BTWK_britannia_claim_high_kingship_story
 	}
 
 	option = {
 		name = BTWK_britannia_high_king.0001.a
 		custom_tooltip = BTWK_britannia_high_king.0001.a.tt.1
 		custom_tooltip = BTWK_britannia_high_king.0001.a.tt.2
+	}
+}
+
+BTWK_britannia_high_king.0002 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0002.t
+	desc = BTWK_britannia_high_king.0002.desc
+	theme = realm
+
+	left_portrait = {
+		character = scope:claimant
+		animation = war_over_win
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				BTWK_britannia_high_kingship_is_elector_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0002.a.other_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_elector_trigger = no
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0002.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				BTWK_britannia_high_kingship_is_elector_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0002.a.anglo_saxon
+		}
+		name = {
+			NOR = {
+				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0002.a.other
+		}
+		custom_tooltip = BTWK_britannia_high_king.0002.a.tt
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_is_elector_trigger = no
+			}
+			custom_tooltip = BTWK_britannia_high_king.0002.a.tt.other_king
+		}
+	}
+}
+
+# Trigger actual High King support request event for other kings
+BTWK_britannia_high_king.0003 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		title:e_britannia.var:britannia_high_kingship_claimant ?= ROOT
+	}
+
+	immediate = {
+		every_ruler = {
+			limit = { 
+				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				NOT = { this = ROOT }
+			}
+			trigger_event = BTWK_britannia_high_king.0004
+		}
+	}
+}
+
+BTWK_britannia_high_king.0004 = {
+	type = letter_event
+	opening = BTWK_britannia_high_king.0004.opening
+	desc = BTWK_britannia_high_king.0004.desc
+	
+	sender = {
+		character = scope:claimant
+		animation = personality_rational
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0004.a
+		custom_tooltip = BTWK_britannia_high_king.0004.a.tt
+		set_variable = HK_britannia_supporter
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold 
+			}
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0004.b
+		custom_tooltip = BTWK_britannia_high_king.0004.b.tt
+		set_variable = HK_britannia_opponent
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold 
+			}
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0004.c
+		custom_tooltip = BTWK_britannia_high_king.0004.c.tt
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_supporter_threshold 
+				BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold 
+			}
+		}
 	}
 }
 

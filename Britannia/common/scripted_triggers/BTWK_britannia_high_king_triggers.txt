@@ -71,3 +71,32 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 		NOT = { has_character_modifier = BTWK_was_recently_high_king_modifier }
 	}
 }
+
+BTWK_britannia_high_kingship_is_elector_trigger = {
+	culture = {
+		OR = {
+			has_same_heritage_group_as = { TARGET = culture:briton }
+			has_cultural_pillar = heritage_latin
+			AND = {
+				has_cultural_pillar = heritage_romance
+				NOT = { has_variable = ancestral_non_roman_culture }
+			}
+		}
+	}
+	any_held_title = {
+		OR = {
+			tier = tier_kingdom
+			AND = {
+				tier = tier_duchy
+				PREV = { 
+					is_independent_ruler = yes
+					highest_held_title_tier = tier_duchy
+				}
+			}
+		}
+		OR = {
+			target_is_de_jure_liege_or_above = title:e_britannia
+			target_is_de_jure_liege_or_above = title:e_roman_britannia
+		}
+	}
+}
