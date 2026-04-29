@@ -12,12 +12,23 @@
 			}
 			trigger_event = BTWK_britannia_high_king.0002
 		}
-		# Wait a few days before actually asking the other kings for support
-		story_owner = { trigger_event = { id = BTWK_britannia_high_king.0003 days = 4 } }
+		story_owner = { 
+			# Wait a few days before actually asking the other kings for support
+			trigger_event = { id = BTWK_britannia_high_king.0003 days = 4 }
+			# Followup event is triggered a day later to make sure all other kings have been asked
+			trigger_event = { id = BTWK_britannia_high_king.0006 days = 5 }
 	}
 
 	on_end = {
-		# TODO Cleanup variables
+		# Cleanup variables
+		title:e_britannia = {
+			remove_variable = britannia_high_kingship_claimant
+		}
+		setup_britannia_high_king_window_lists_effect = yes
+		every_ruler = {		# TODO Also add a hook in on_title_lost to remove this if you become unlanded altogether 
+			remove_variable = HK_britannia_supporter
+			remove_variable = HK_britannia_opponent
+		}
 	}
 
 	on_owner_death = {
