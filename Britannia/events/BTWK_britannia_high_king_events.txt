@@ -14,13 +14,14 @@ namespace = BTWK_britannia_high_king_test
 # BTWK_britannia_high_king.0002 - Other kings notified of claim made
 # BTWK_britannia_high_king.0003 - Bounce event to trigger asking other kings 
 # BTWK_britannia_high_king.0004 - Other kings decide on stance
-# BTWK_britannia_high_king.0005 - Notify claimant of responses (maybe as toast/message?) (CK2: 312162)
-# BTWK_britannia_high_king.0006 - Claimant decides whether to go to war or give up their claim (CK2: 312163)
+# BTWK_britannia_high_king.0005 - Notify claimant of responses
+# BTWK_britannia_high_king.0006 - Claimant decides whether to go to war or give up their claim
 # BTWK_britannia_high_king.0007 - Notify other kings of claimant's decision to proceed or not (CK2: 312169)
 # BTWK_britannia_high_king.0008 - Claimant won war / no opponents, become High King (CK2: 312165)
 # BTWK_britannia_high_king.0009 - Claimant defeated (CK2: 312164)
 # BTWK_britannia_high_king.0010 - War ends inconclusively due to claimant dying or losing their throne
 
+# High Kingship claimed, awaiting responses
 BTWK_britannia_high_king.0001 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -49,6 +50,7 @@ BTWK_britannia_high_king.0001 = {
 	}
 }
 
+# Notify other rulers in Britannia
 BTWK_britannia_high_king.0002 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -88,15 +90,17 @@ BTWK_britannia_high_king.0002 = {
 			text = BTWK_britannia_high_king.0002.a.anglo_saxon
 		}
 		name = {
-			NOR = {
-				BTWK_britannia_high_kingship_is_elector_trigger = yes
-				culture = { 
-					OR = {
-						has_cultural_pillar = heritage_brythonic 
-						has_cultural_pillar = heritage_latin
+			trigger = { 
+				NOR = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
 					}
+					is_unromanized_germanic_culture_trigger = yes
 				}
-				is_unromanized_germanic_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0002.a.other
 		}
@@ -130,6 +134,7 @@ BTWK_britannia_high_king.0003 = {
 	}
 }
 
+# Other kings receive request for support, decide stance
 BTWK_britannia_high_king.0004 = {
 	type = letter_event
 	opening = BTWK_britannia_high_king.0004.opening
@@ -139,11 +144,31 @@ BTWK_britannia_high_king.0004 = {
 		character = scope:claimant
 		animation = personality_rational
 	}
+	
+	immediate = {
+		save_scope_as = other_king
+	}
 
 	option = {
 		name = BTWK_britannia_high_king.0004.a
-		custom_tooltip = BTWK_britannia_high_king.0004.a.tt
+		if = {
+			limit = {
+				OR = {
+					is_tributary = no
+					suzerain ?= scope:claimant
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0004.a.tt
+		}
+		else_if = {
+			limit = { suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0004.a.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0004.a.tt.other_tributary
+		}
 		set_variable = HK_britannia_supporter
+		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
 		ai_chance = {
 			base = 0
@@ -155,8 +180,24 @@ BTWK_britannia_high_king.0004 = {
 	}
 	option = {
 		name = BTWK_britannia_high_king.0004.b
-		custom_tooltip = BTWK_britannia_high_king.0004.b.tt
+		if = {
+			limit = {
+				OR = {
+					is_tributary = no
+					suzerain ?= scope:claimant
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0004.b.tt
+		}
+		else_if = {
+			limit = { suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0004.b.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0004.b.tt.other_tributary
+		}
 		set_variable = HK_britannia_opponent
+		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
 		ai_chance = {
 			base = 0
@@ -168,7 +209,22 @@ BTWK_britannia_high_king.0004 = {
 	}
 	option = {
 		name = BTWK_britannia_high_king.0004.c
-		custom_tooltip = BTWK_britannia_high_king.0004.c.tt
+		if = {
+			limit = { scope:other_king = { is_tributary = no } }
+			custom_tooltip = BTWK_britannia_high_king.0004.c.tt
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= root }
+			custom_tooltip = BTWK_britannia_high_king.0004.c.tt.claimant_tributary
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0004.c.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0004.c.tt.other_tributary
+		}
+		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
 		ai_chance = {
 			base = 0
@@ -178,6 +234,193 @@ BTWK_britannia_high_king.0004 = {
 				BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold 
 			}
 		}
+	}
+}
+
+# Claimant receives responses from other kings
+BTWK_britannia_high_king.0005 = {
+	type = letter_event
+	opening = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:other_king = { has_variable = HK_britannia_supporter } }
+				desc = BTWK_britannia_high_king.0005.opening.supporter
+			}
+			triggered_desc = {
+				trigger = { scope:other_king = { has_variable = HK_britannia_opponent } }
+				desc = BTWK_britannia_high_king.0005.opening.opponent
+			}
+			desc = BTWK_britannia_high_king.0005.opening.neutral
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:other_king = { 
+						has_variable = HK_britannia_supporter
+						is_tributary = yes
+					}
+				}
+				desc = BTWK_britannia_high_king.0005.desc.tributary_supporter
+			}
+			triggered_desc = {
+				trigger = { scope:other_king = { has_variable = HK_britannia_supporter } }
+				desc = BTWK_britannia_high_king.0005.desc.supporter
+			}
+			triggered_desc = {
+				trigger = { scope:other_king = { has_variable = HK_britannia_opponent } }
+				desc = BTWK_britannia_high_king.0005.desc.opponent
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:other_king = { is_tributary = yes }
+				}
+				desc = BTWK_britannia_high_king.0005.desc.tributary_neutral
+			}
+			desc = BTWK_britannia_high_king.0005.desc.neutral
+		}
+	}
+	
+	sender = {
+		character = scope:other_king
+		animation = personality_rational
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0005.a
+		trigger = { scope:other_king = { has_variable = HK_britannia_supporter } }
+		if = {
+			limit = {
+				OR = {
+					scope:other_king = { is_tributary = no } 
+					scope:other_king.suzerain ?= root
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0005.a.tt
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0005.a.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0005.a.tt.other_tributary
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0005.b
+		trigger = { scope:other_king = { has_variable = HK_britannia_opponent } }
+		if = {
+			limit = {
+				OR = {
+					scope:other_king = { is_tributary = no } 
+					scope:other_king.suzerain ?= root
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0005.b.tt
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0005.b.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0005.b.tt.other_tributary
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0005.c
+		trigger = { 
+			scope:other_king = { 
+				NOR = {
+					has_variable = HK_britannia_supporter 
+					has_variable = HK_britannia_opponent 
+				} 
+			}
+		}
+		if = {
+			limit = { scope:other_king = { is_tributary = no } }
+			custom_tooltip = BTWK_britannia_high_king.0005.c.tt
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= root }
+			custom_tooltip = BTWK_britannia_high_king.0005.c.tt.claimant_tributary
+		}
+		else_if = {
+			limit = { scope:other_king.suzerain ?= { BTWK_britannia_high_kingship_is_elector_trigger = yes } }
+			custom_tooltip = BTWK_britannia_high_king.0005.c.tt.briton_tributary
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0005.c.tt.other_tributary
+		}
+	}
+}
+
+# All responses recieved, decide what to do now
+BTWK_britannia_high_king.0006 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_independent_ruler = { has_variable = HK_britannia_opponent } } }
+				desc = BTWK_britannia_high_king.0006.t.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0006.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_independent_ruler = { has_variable = HK_britannia_opponent } } }
+				desc = BTWK_britannia_high_king.0006.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0006.desc
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		ordered_independent_ruler = {
+			limit = { has_variable = HK_britannia_opponent }
+			order_by = military_power
+			save_scope_as = HK_britannia_opponent_leader
+		}
+	}
+
+	option = {		# To war!
+		name = BTWK_britannia_high_king.0006.a
+		trigger = { any_independent_ruler = { has_variable = HK_britannia_opponent } }
+		custom_tooltip = BTWK_britannia_high_king.0006.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0006.a.tt.2
+		# TODO Declare war with custom cb on your strongest opponent
+		# All supporters join your side
+		# All opponents join the enemy
+	}
+	option = {		# Back down
+		name = BTWK_britannia_high_king.0006.b
+		trigger = { any_independent_ruler = { has_variable = HK_britannia_opponent } }
+		add_prestige = -200
+		custom_tooltip = BTWK_britannia_high_king.0006.b.tt
+		add_character_modifier = {
+			modifier = BTWK_recently_claimed_high_kingship_modifier
+			years = 5
+		}
+		every_owned_story = {
+			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+			end_story = yes
+		}
+	}
+	option = {		# No opponents, automatically win
+		name = BTWK_britannia_high_king.0006.c
+		trigger = { NOT = { any_independent_ruler = { has_variable = HK_britannia_opponent } } }
+		custom_tooltip = BTWK_britannia_high_king.0006.c.tt
+		trigger_event = BTWK_britannia_high_king.0008
 	}
 }
 
