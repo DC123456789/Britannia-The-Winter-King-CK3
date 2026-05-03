@@ -252,7 +252,15 @@ window = {
 				
 				text_single = {
 					text = "CURRENT_CLAIMANT_STANCES"
-					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet)]"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Not(Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet))]"
+					position = { 30 65 }
+					scale = 1.5
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_DECLARED_STANCES"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet)]"
 					position = { 30 65 }
 					scale = 1.5
 					parentanchor = top|left
@@ -272,7 +280,6 @@ window = {
 					position = { 175 100 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -294,11 +301,10 @@ window = {
 				
 				text_single = {
 					text = "CURRENT_CLAIMANT_SUPPORTER_COUNT"
-					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Not(Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet))]"
 					position = { 175 100 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -311,6 +317,34 @@ window = {
 						}
 						blockoverride "none_text_visible" {
 							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_supporter_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#P"
+						}						
+					}
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_DECLARED_SUPPORTER_COUNT"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet)]"
+					position = { 175 100 }
+					scale = 1.5
+					parentanchor = top|left
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_DECLARED_SUPPORTERS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetGlobalList('britannia_supporter_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetGlobalList('britannia_supporter_kings_list')), '(int32)0')]"
+						}
+						blockoverride "support_value_text" {
+							visible = no
 						}
 						blockoverride "text_format" {
 							default_format = "#P"
@@ -332,7 +366,6 @@ window = {
 					position = { 175 135 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_OPPONENT_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -354,11 +387,10 @@ window = {
 				
 				text_single = {
 					text = "CURRENT_CLAIMANT_OPPONENT_COUNT"
-					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Not(Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet))]"
 					position = { 175 135 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -371,6 +403,34 @@ window = {
 						}
 						blockoverride "none_text_visible" {
 							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_opponent_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#N"
+						}						
+					}
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_DECLARED_OPPONENT_COUNT"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet)]"
+					position = { 175 135 }
+					scale = 1.5
+					parentanchor = top|left
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_DECLARED_OPPONENTS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetGlobalList('britannia_opponent_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetGlobalList('britannia_opponent_kings_list')), '(int32)0')]"
+						}
+						blockoverride "support_value_text" {
+							visible = no
 						}
 						blockoverride "text_format" {
 							default_format = "#N"
@@ -392,7 +452,6 @@ window = {
 					position = { 175 170 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_NEUTRAL_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -414,11 +473,10 @@ window = {
 				
 				text_single = {
 					text = "CURRENT_CLAIMANT_NEUTRAL_COUNT"
-					visible = "[Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet]"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Not(Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet))]"
 					position = { 175 170 }
 					scale = 1.5
 					parentanchor = top|left
-					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
 					using = tooltip_se
 
 					tooltipwidget = {
@@ -431,6 +489,34 @@ window = {
 						}
 						blockoverride "none_text_visible" {
 							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(Title.MakeScope.Var('britannia_high_kingship_claimant').GetList('britannia_potential_neutral_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#V"
+						}						
+					}
+				}
+				
+				text_single = {
+					text = "CURRENT_CLAIMANT_DECLARED_NEUTRAL_COUNT"
+					visible = "[And(Title.MakeScope.Var('britannia_high_kingship_claimant').IsSet, Title.MakeScope.Var('britannia_high_kingship_stances_decided').IsSet)]"
+					position = { 175 170 }
+					scale = 1.5
+					parentanchor = top|left
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingCurrentClaimantStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CURRENT_CLAIMANT_DECLARED_NEUTRALS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetGlobalList('britannia_neutral_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetGlobalList('britannia_neutral_kings_list')), '(int32)0')]"
+						}
+						blockoverride "support_value_text" {
+							visible = no
 						}
 						blockoverride "text_format" {
 							default_format = "#V"
@@ -1204,6 +1290,8 @@ template HighKingCurrentClaimantStanceListTooltipWidget {
 					}
 					
 					HighKingStanceSupportValueText = {
+						block "support_value_text" {
+						}
 						blockoverride "textbox_overrides" {
 							visible = "[Not(Scope.Char.IsPlayer)]"
 							text = "CURRENT_CLAIMANT_STANCE_VALUE"
@@ -1216,6 +1304,8 @@ template HighKingCurrentClaimantStanceListTooltipWidget {
 					}
 					
 					HighKingStanceSupportValueText = {
+						block "support_value_text" {
+						}
 						blockoverride "textbox_overrides" {
 							visible = "[Scope.Char.IsPlayer]"
 							text = "CLAIMANT_STANCE_VALUE_YOU"

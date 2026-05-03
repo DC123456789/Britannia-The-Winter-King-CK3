@@ -520,6 +520,30 @@ BTWK_britannia_high_king_num_potential_neutrals = {
 	}
 }
 
+BTWK_britannia_high_king_num_declared_supporters = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_supporter_kings_list
+		add = 1
+	}
+}
+
+BTWK_britannia_high_king_num_declared_opponents = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_opponent_kings_list
+		add = 1
+	}
+}
+
+BTWK_britannia_high_king_num_declared_neutrals = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_neutral_kings_list
+		add = 1
+	}
+}
+
 BTWK_britannia_high_king_dispute_war_military_power_ratio = {
 	value = military_power
 	ordered_independent_ruler = {
@@ -561,6 +585,68 @@ BTWK_britannia_high_king_dispute_war_military_power_ratio = {
 					this = scope:HK_britannia_opponent_leader
 					is_allied_to = scope:HK_britannia_opponent_leader
 					has_variable = HK_britannia_opponent
+				}
+			}
+			add = military_power
+		}		
+		min = 1
+	}
+}
+
+BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio = {
+	value = military_power
+	save_temporary_scope_as = claimant
+	ordered_independent_ruler = {
+		limit = {
+			BTWK_britannia_high_kingship_is_elector_trigger = yes
+			BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+		}
+		order_by = military_power
+		save_temporary_scope_as = HK_britannia_opponent_leader
+	}
+	# Add military power of all predicted allies
+	every_independent_ruler = {
+		limit = {
+			this != prev
+			OR = {
+				is_allied_to = prev
+				AND = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
+				}
+			}
+			NOR = {
+				this = scope:HK_britannia_opponent_leader
+				is_allied_to = scope:HK_britannia_opponent_leader
+				AND = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+					BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+				}
+			}
+		}
+		add = military_power
+	}
+	# Personality adjustment - bold characters will go ahead at less favourable odds
+	multiply = {
+		value = 1
+		add = {
+			value = ai_boldness
+			divide = 100
+			multiply = 0.25
+		}
+	}
+	# Divide by the military power of all predicted opponents
+	divide = {
+		value = 0
+		every_independent_ruler = {
+			limit = {
+				OR = {
+					this = scope:HK_britannia_opponent_leader
+					is_allied_to = scope:HK_britannia_opponent_leader
+					AND = {
+						BTWK_britannia_high_kingship_is_elector_trigger = yes
+						BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+					}
 				}
 			}
 			add = military_power
