@@ -16,7 +16,7 @@ namespace = BTWK_britannia_high_king_test
 # BTWK_britannia_high_king.0004 - Other kings decide on stance
 # BTWK_britannia_high_king.0005 - Notify claimant of responses
 # BTWK_britannia_high_king.0006 - Claimant decides whether to go to war or give up their claim
-# BTWK_britannia_high_king.0007 - Notify other kings of claimant's decision to proceed or not (CK2: 312169)
+# BTWK_britannia_high_king.0007 - Notify other kings of claimant's decision to proceed or not
 # BTWK_britannia_high_king.0008 - Claimant won war / no opponents, become High King (CK2: 312165)
 # BTWK_britannia_high_king.0009 - Claimant defeated (CK2: 312164)
 # BTWK_britannia_high_king.0010 - War ends inconclusively due to claimant dying or losing their throne
@@ -167,6 +167,14 @@ BTWK_britannia_high_king.0004 = {
 		else = {
 			custom_tooltip = BTWK_britannia_high_king.0004.a.tt.other_tributary
 		}
+		if = {
+			limit = {
+				any_tributary = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0004.a.tt.suzerain_warning
+		}
 		set_variable = HK_britannia_supporter
 		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
@@ -195,6 +203,14 @@ BTWK_britannia_high_king.0004 = {
 		}
 		else = {
 			custom_tooltip = BTWK_britannia_high_king.0004.b.tt.other_tributary
+		}
+		if = {
+			limit = {
+				any_tributary = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+				}
+			}
+			custom_tooltip = BTWK_britannia_high_king.0004.b.tt.suzerain_warning
 		}
 		set_variable = HK_britannia_opponent
 		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
@@ -384,6 +400,12 @@ BTWK_britannia_high_king.0006 = {
 		character = root
 		animation = war_over_win
 	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
 	
 	immediate = {
 		ordered_independent_ruler = {
@@ -396,11 +418,56 @@ BTWK_britannia_high_king.0006 = {
 	option = {		# To war!
 		name = BTWK_britannia_high_king.0006.a
 		trigger = { any_independent_ruler = { has_variable = HK_britannia_opponent } }
+		# Declare war on your strongest opponent
+		start_war = {
+			cb = BTWK_dispute_britannia_high_kingship_cb
+			target = scope:HK_britannia_opponent_leader
+		}
+		title:e_britannia = { set_variable = britannia_high_kingship_dispute_war }
+		random_character_war = {
+			limit = {
+				primary_attacker = root
+				primary_defender = scope:HK_britannia_opponent_leader
+				using_cb = BTWK_dispute_britannia_high_kingship_cb
+			}
+			save_scope_as = HK_britannia_war
+		}
 		custom_tooltip = BTWK_britannia_high_king.0006.a.tt.1
 		custom_tooltip = BTWK_britannia_high_king.0006.a.tt.2
-		# TODO Declare war with custom cb on your strongest opponent
+		custom_tooltip = BTWK_britannia_high_king.0006.a.tt.3
 		# All supporters join your side
+		every_independent_ruler = {
+			limit = { has_variable = HK_britannia_supporter }
+			scope:HK_britannia_war ?= { add_attacker = prev }
+		}
 		# All opponents join the enemy
+		every_independent_ruler = {
+			limit = { 
+				has_variable = HK_britannia_opponent
+				NOT = { this = scope:HK_britannia_opponent_leader }
+			}
+			scope:HK_britannia_war ?= { add_defender = prev }
+		}
+		# Notify other players
+		save_scope_as = claimant
+		every_player = {
+			limit = { 
+				NOT = { this = root }
+				OR = {
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			trigger_event = BTWK_britannia_high_king.0007
+		}
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_dispute_war_military_power_ratio > 1.2		# Only if they think they can win
+			}
+		}
 	}
 	option = {		# Back down
 		name = BTWK_britannia_high_king.0006.b
@@ -415,12 +482,257 @@ BTWK_britannia_high_king.0006 = {
 			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
 			end_story = yes
 		}
+		# Notify other players
+		save_scope_as = claimant
+		every_player = {
+			limit = { 
+				NOT = { this = root }
+				OR = {
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			trigger_event = BTWK_britannia_high_king.0007
+		}
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_dispute_war_military_power_ratio < 1.1		# If they don't think they can win
+			}
+		}
 	}
 	option = {		# No opponents, automatically win
 		name = BTWK_britannia_high_king.0006.c
 		trigger = { NOT = { any_independent_ruler = { has_variable = HK_britannia_opponent } } }
 		custom_tooltip = BTWK_britannia_high_king.0006.c.tt
 		trigger_event = BTWK_britannia_high_king.0008
+	}
+}
+
+# Notify other rulers in Britannia of war / backing down
+BTWK_britannia_high_king.0007 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
+				desc = BTWK_britannia_high_king.0007.t.war
+			}
+			desc = BTWK_britannia_high_king.0007.t.backed_down
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
+				desc = BTWK_britannia_high_king.0007.desc.war
+			}
+			desc = BTWK_britannia_high_king.0007.desc.backed_down
+		}
+	}
+	theme = war
+	override_background = {
+		reference = throne_room
+	}
+
+	left_portrait = {
+		character = scope:claimant
+		triggered_animation = {
+			trigger = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
+			animation = war_over_win
+		}
+		animation = war_over_loss
+	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
+	
+	immediate = {
+		if = {
+			limit = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
+			custom_tooltip = BTWK_britannia_high_king.0007.a.tt.1
+			if = {
+				limit = { has_variable = HK_britannia_supporter }
+				custom_tooltip = BTWK_britannia_high_king.0007.a.tt.1.a
+			}
+			custom_tooltip = BTWK_britannia_high_king.0007.a.tt.2
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0007.b.tt.1
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = HK_britannia_supporter
+			}
+			text = BTWK_britannia_high_king.0007.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = HK_britannia_opponent
+			}
+			text = BTWK_britannia_high_king.0007.a.opponent
+		}
+		name = {
+			trigger = {
+				NOT = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+				}
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0007.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				NOT = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0007.a.anglo_saxon
+		}
+		name = {
+			trigger = { 
+				NOR = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
+					}
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0007.a.other
+		}
+		trigger = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = HK_britannia_supporter
+			}
+			text = BTWK_britannia_high_king.0007.b.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = HK_britannia_opponent
+			}
+			text = BTWK_britannia_high_king.0007.b.opponent
+		}
+		name = {
+			trigger = {
+				NOT = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+				}
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0007.b.briton_roman
+		}
+		name = {
+			trigger = { 
+				NOT = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0007.b.anglo_saxon
+		}
+		name = {
+			trigger = { 
+				NOR = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
+					}
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0007.b.other
+		}
+		trigger = { title:e_britannia = { NOT = { has_variable = britannia_high_kingship_dispute_war } } }
+	}
+}
+
+# All agreed / opponents defeated, claimant proclaimed High King
+BTWK_britannia_high_king.0008 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0008.t
+	desc = BTWK_britannia_high_king.0008.desc
+	theme = realm
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		save_scope_as = new_high_king
+		capital_barony = { save_scope_as = new_high_king_capital_barony }
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0008.a
+		get_title = title:e_britannia
+		# Make subject kingdoms
+		every_independent_ruler = {
+			limit = {
+				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				OR = {
+					has_variable = HK_britannia_supporter
+					has_variable = HK_britannia_opponent
+				}
+				# If a tributary, only make them a subject king if they are already you tributary,
+				# or their suzerain has already submitted (voluntarily or not)
+				OR = {
+					is_tributary = no
+					suzerain = {
+						OR = {
+							this = root
+							has_variable = HK_britannia_supporter
+							has_variable = HK_britannia_opponent
+						}
+					}
+				}
+			}
+			start_tributary = {
+				contract_group = tributary_britannia_subject_king
+				suzerain = root
+			}
+		}
+		add_prestige = 200
+		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
 	}
 }
 
