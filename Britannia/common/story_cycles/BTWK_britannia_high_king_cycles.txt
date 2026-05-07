@@ -15,6 +15,8 @@
 			# Followup event is triggered a day later to make sure all other kings have been asked
 			trigger_event = { id = BTWK_britannia_high_king.0006 days = 5 }
 		}
+		clear_global_variable_list = HK_britannia_supporter_list
+		clear_global_variable_list = HK_britannia_opponent_list
 	}
 
 	on_end = {
@@ -62,11 +64,11 @@
 							BTWK_britannia_high_kingship_is_relevant_trigger = yes
 						}
 						if = {
-							limit = { has_variable = remove_variable = HK_britannia_supporter }
+							limit = { has_variable = HK_britannia_supporter }
 							set_variable = BTWK_britannia_high_king_was_supporter
 						}
 						else_if = {
-							limit = { has_variable = remove_variable = HK_britannia_opponent }
+							limit = { has_variable = HK_britannia_opponent }
 							set_variable = BTWK_britannia_high_king_was_opponent
 						}
 						trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
@@ -74,8 +76,12 @@
 				}
 			}
 		}
-		every_ruler = {		# TODO Also add a hook in on_title_lost to remove this if you become unlanded altogether 
+		every_in_global_list = {
+			variable = HK_britannia_supporter_list
 			remove_variable = HK_britannia_supporter
+		}
+		every_in_global_list = {
+			variable = HK_britannia_opponent_list
 			remove_variable = HK_britannia_opponent
 		}
 	}

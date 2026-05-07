@@ -4,25 +4,9 @@
 
 BTWK_britannia_high_kingship_can_claim_trigger = {
 	is_independent_ruler = yes
-	trigger_if = {
-		limit = { culture:britannic = { has_variable = culture_has_emerged } }
-		custom_description = {
-			text = claim_britannia_high_kingship_culture_requirement_w_britannic
-			OR = {
-				culture = { has_cultural_pillar = heritage_brythonic }
-				culture = { has_cultural_pillar = heritage_latin }
-				culture = culture:britannic
-			}
-		}
-	}
-	trigger_else = {
-		custom_description = {
-			text = claim_britannia_high_kingship_culture_requirement
-			OR = {
-				culture = { has_cultural_pillar = heritage_brythonic }
-				culture = { has_cultural_pillar = heritage_latin }
-			}
-		}
+	custom_description = {
+		text = claim_britannia_high_kingship_culture_requirement_w_britannic
+		BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 	}
 	custom_description = {
 		text = claim_britannia_high_kingship_kingdom_requirement
@@ -107,17 +91,9 @@ BTWK_britannia_high_kingship_is_elector_trigger = {
 
 BTWK_britannia_high_kingship_is_eligible_trigger = {
 	is_tributary = no
+	is_independent_ruler = yes
 	is_incapable = no
-	culture = {
-		OR = {
-			has_cultural_pillar = heritage_brythonic
-			has_cultural_pillar = heritage_latin
-			AND = {
-				has_cultural_pillar = heritage_romance
-				NOT = { has_variable = ancestral_non_roman_culture }
-			}
-		}
-	}
+	BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 	any_held_title = {
 		OR = {
 			tier = tier_kingdom
@@ -140,5 +116,19 @@ BTWK_britannia_high_kingship_is_relevant_trigger = {
 	OR = {
 		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 		capital_province = { geographical_region = btwk_world_britannia }
+	}
+}
+
+BTWK_britannia_high_kingship_is_relevant_culture_trigger = {
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_brythonic
+			has_cultural_pillar = heritage_latin
+			AND = {
+				has_cultural_pillar = heritage_romance
+				NOT = { has_variable = ancestral_non_roman_culture }
+				var:ancestral_starting_culture ?= culture:romanobritish
+			}
+		}
 	}
 }

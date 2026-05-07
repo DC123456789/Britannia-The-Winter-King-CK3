@@ -75,12 +75,7 @@ BTWK_britannia_high_king.0002 = {
 		name = {
 			trigger = {
 				BTWK_britannia_high_kingship_is_elector_trigger = no
-				culture = { 
-					OR = {
-						has_cultural_pillar = heritage_brythonic 
-						has_cultural_pillar = heritage_latin
-					}
-				}
+				BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0002.a.briton_roman
 		}
@@ -95,12 +90,7 @@ BTWK_britannia_high_king.0002 = {
 			trigger = { 
 				NOR = {
 					BTWK_britannia_high_kingship_is_elector_trigger = yes
-					culture = { 
-						OR = {
-							has_cultural_pillar = heritage_brythonic 
-							has_cultural_pillar = heritage_latin
-						}
-					}
+					BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 					is_unromanized_germanic_culture_trigger = yes
 				}
 			}
@@ -178,6 +168,10 @@ BTWK_britannia_high_king.0004 = {
 			custom_tooltip = BTWK_britannia_high_king.0004.a.tt.suzerain_warning
 		}
 		set_variable = HK_britannia_supporter
+		add_to_global_variable_list = {
+			name = HK_britannia_supporter_list
+			target = THIS
+		}
 		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
 		ai_chance = {
@@ -215,6 +209,10 @@ BTWK_britannia_high_king.0004 = {
 			custom_tooltip = BTWK_britannia_high_king.0004.b.tt.suzerain_warning
 		}
 		set_variable = HK_britannia_opponent
+		add_to_global_variable_list = {
+			name = HK_britannia_opponent_list
+			target = THIS
+		}
 		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
 		
 		ai_chance = {
@@ -242,7 +240,13 @@ BTWK_britannia_high_king.0004 = {
 		else = {
 			custom_tooltip = BTWK_britannia_high_king.0004.c.tt.other_tributary
 		}
-		scope:claimant = { trigger_event = BTWK_britannia_high_king.0005 }
+		scope:claimant = { 
+			if = {
+				limit = { NOT = { has_variable = received_BTWK_britannia_high_king_0005 } }
+				trigger_event = BTWK_britannia_high_king.0005 
+				set_variable = received_BTWK_britannia_high_king_0005
+			}
+		}
 		
 		ai_chance = {
 			base = 0
@@ -370,6 +374,10 @@ BTWK_britannia_high_king.0005 = {
 		else = {
 			custom_tooltip = BTWK_britannia_high_king.0005.c.tt.other_tributary
 		}
+		if = {
+			limit = { BTWK_britannia_high_king_num_potential_neutrals > 1 }
+			custom_tooltip = BTWK_britannia_high_king.0005.c.tt.2
+		}
 	}
 }
 
@@ -416,6 +424,7 @@ BTWK_britannia_high_king.0006 = {
 			save_scope_as = HK_britannia_opponent_leader
 		}
 		title:e_britannia = { set_variable = britannia_high_kingship_stances_decided }
+		remove_variable = received_BTWK_britannia_high_king_0005
 	}
 
 	option = {		# To war!
@@ -576,12 +585,7 @@ BTWK_britannia_high_king.0007 = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
 				}
-				culture = { 
-					OR = {
-						has_cultural_pillar = heritage_brythonic 
-						has_cultural_pillar = heritage_latin
-					}
-				}
+				BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0007.a.briton_roman
 		}
@@ -600,12 +604,7 @@ BTWK_britannia_high_king.0007 = {
 				NOR = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
-					culture = { 
-						OR = {
-							has_cultural_pillar = heritage_brythonic 
-							has_cultural_pillar = heritage_latin
-						}
-					}
+					BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 					is_unromanized_germanic_culture_trigger = yes
 				}
 			}
@@ -633,12 +632,7 @@ BTWK_britannia_high_king.0007 = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
 				}
-				culture = { 
-					OR = {
-						has_cultural_pillar = heritage_brythonic 
-						has_cultural_pillar = heritage_latin
-					}
-				}
+				BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0007.b.briton_roman
 		}
@@ -657,12 +651,7 @@ BTWK_britannia_high_king.0007 = {
 				NOR = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
-					culture = { 
-						OR = {
-							has_cultural_pillar = heritage_brythonic 
-							has_cultural_pillar = heritage_latin
-						}
-					}
+					BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 					is_unromanized_germanic_culture_trigger = yes
 				}
 			}
@@ -683,13 +672,24 @@ BTWK_britannia_high_king.0008 = {
 			limit = { 
 				BTWK_britannia_high_kingship_is_eligible_trigger = yes 
 			}
-			trigger_event = BTWK_britannia_high_king.0009
+			save_scope_as = new_high_king
+			save_scope_as = background_throne_room_scope 
+			primary_title = { save_scope_as = new_high_king_primary_title }
 			every_player = {
 				limit = {
 					NOT = { this = ROOT }
 				}
+				if = {
+					limit = { has_variable = HK_britannia_supporter }
+					set_variable = BTWK_britannia_high_king_was_supporter
+				}
+				if = {
+					limit = { has_variable = HK_britannia_opponent }
+					set_variable = BTWK_britannia_high_king_was_opponent
+				}
 				trigger_event = BTWK_britannia_high_king.0010
 			}
+			trigger_event = BTWK_britannia_high_king.0009
 		}
 		else = {
 			every_owned_story = {
@@ -707,7 +707,8 @@ BTWK_britannia_high_king.0009 = {
 	window = big_event_window
 	title = BTWK_britannia_high_king.0009.t
 	desc = BTWK_britannia_high_king.0009.desc
-	theme = realm
+	theme = war
+	override_background = { reference = throne_room }
 
 	left_portrait = {
 		character = root
@@ -715,14 +716,16 @@ BTWK_britannia_high_king.0009 = {
 	}
 	
 	immediate = {
-		save_scope_as = new_high_king
 		capital_barony = { save_scope_as = new_high_king_capital_barony }
 	}
 
 	option = {
 		name = BTWK_britannia_high_king.0009.a
+		add_prestige = 200
 		get_title = title:e_britannia
-		# TODO Other tooltips
+		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.2
+		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.3
 		# Make subject kingdoms
 		every_independent_ruler = {
 			limit = {
@@ -749,12 +752,87 @@ BTWK_britannia_high_king.0009 = {
 				suzerain = root
 			}
 		}
-		add_prestige = 200
+		title:e_britannia = { custom_tooltip = BTWK_britannia_high_king.0009.a.tt.4 } # Slight hack to force ordering of tooltips
 		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
 		every_owned_story = {
 			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
 			end_story = yes
 		}
+	}
+}
+
+# Notify other rulers
+BTWK_britannia_high_king.0010 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0010.t
+	desc = BTWK_britannia_high_king.0010.desc
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:new_high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:new_high_king = { 
+			capital_barony = { save_scope_as = new_high_king_capital_barony }
+			show_as_tooltip = {
+				get_title = title:e_britannia
+			}
+		}
+		custom_tooltip = BTWK_britannia_high_king.0010.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0010.a.tt.2
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_supporter
+			}
+			text = BTWK_britannia_high_king.0010.a.was_supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_opponent
+			}
+			text = BTWK_britannia_high_king.0010.a.was_opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+				}
+				BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0010.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0010.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+					BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0010.a.other
+		}
+		remove_variable = BTWK_britannia_high_king_was_supporter
+		remove_variable = BTWK_britannia_high_king_was_opponent
 	}
 }
 
@@ -831,7 +909,7 @@ BTWK_britannia_high_king.0012 = {
 	option = {
 		name = {
 			trigger = { 
-				has_variable = BTWK_britannia_high_king_was_supporter
+				this = scope:claimant
 			}
 			text = BTWK_britannia_high_king.0012.a.claimant
 		}
@@ -861,12 +939,14 @@ BTWK_britannia_high_king.0012 = {
 					has_variable = BTWK_britannia_high_king_was_supporter
 					has_variable = BTWK_britannia_high_king_was_opponent
 				}
+				BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0012.a.briton_roman
 		}
 		name = {
 			trigger = {
 				NOR = {
+					this = scope:claimant
 					has_variable = BTWK_britannia_high_king_was_supporter
 					has_variable = BTWK_britannia_high_king_was_opponent
 				}
@@ -877,14 +957,10 @@ BTWK_britannia_high_king.0012 = {
 		name = {
 			trigger = {
 				NOR = {
+					this = scope:claimant
 					has_variable = BTWK_britannia_high_king_was_supporter
 					has_variable = BTWK_britannia_high_king_was_opponent
-					culture = { 
-						OR = {
-							has_cultural_pillar = heritage_brythonic 
-							has_cultural_pillar = heritage_latin
-						}
-					}
+					BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
 					is_unromanized_germanic_culture_trigger = yes
 				}
 			}
