@@ -5,10 +5,7 @@
 		every_player = {
 			limit = { 
 				NOT = { this = prev.story_owner }
-				OR = {
-					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-					capital_province = { geographical_region = btwk_world_britannia }
-				}
+				BTWK_britannia_high_kingship_is_relevant_trigger = yes
 			}
 			trigger_event = BTWK_britannia_high_king.0002
 		}
@@ -27,6 +24,56 @@
 			remove_variable = britannia_high_kingship_dispute_war
 		}
 		setup_britannia_high_king_window_lists_effect = yes
+		# If the High Kingdom was not successfully claimed, notify everyone
+		story_owner = {
+			if = {
+				limit = { NOT = { has_title = title:e_britannia } }
+				save_scope_as = claimant
+				# Notify backing down
+				if = {
+					limit = { prev = { has_variable = claimant_backed_down } }
+					# Claimant doesn't need a notification of the decision they just made
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0007
+					}
+				}
+				# Notify death / ineligibility
+				else = {
+					if = {
+						limit = { is_alive = no }
+						player_heir ?= {
+							set_variable = BTWK_britannia_high_king_was_supporter
+							trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+						}
+					}
+					else = {
+						trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+					}
+					every_player = {
+						limit = { 
+							NOR = { 
+								prev.story_owner = this
+								prev.story_owner.player_heir ?= this
+							} 
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						if = {
+							limit = { has_variable = remove_variable = HK_britannia_supporter }
+							set_variable = BTWK_britannia_high_king_was_supporter
+						}
+						else_if = {
+							limit = { has_variable = remove_variable = HK_britannia_opponent }
+							set_variable = BTWK_britannia_high_king_was_opponent
+						}
+						trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+					}
+				}
+			}
+		}
 		every_ruler = {		# TODO Also add a hook in on_title_lost to remove this if you become unlanded altogether 
 			remove_variable = HK_britannia_supporter
 			remove_variable = HK_britannia_opponent

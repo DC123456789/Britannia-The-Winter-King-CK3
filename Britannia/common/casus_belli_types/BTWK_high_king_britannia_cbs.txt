@@ -10,10 +10,8 @@
 	}
 
 	should_invalidate = {
-		# TODO Invalidate if the attacker is no longer eligible for the High Kingship
+		scope:attacker = { BTWK_britannia_high_kingship_is_eligible_trigger = no }
 	}
-
-	on_invalidated_desc = msg_invasion_war_invalidated_message
 	
 	on_declaration = {
 		on_declared_war = yes
@@ -120,7 +118,7 @@
 		scope:attacker = {
 			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_white_peace_tt
 			set_variable = dispute_high_kingship_war_wp
-			trigger_event = BTWK_britannia_high_king.0009
+			trigger_event = BTWK_britannia_high_king.0011
 		}
 		
 		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
@@ -142,6 +140,17 @@
 
 		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
 		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_invalidated_desc = msg_dispute_britannia_high_kingship_war_invalidated_message
+	
+	on_invalidated = {
+		scope:attacker = {
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				end_story = yes
+			}
+		}
 	}
 
 	on_defeat_desc = {
@@ -179,7 +188,7 @@
 		scope:attacker = {
 			add_prestige_level = -1
 			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_defeat_tt
-			trigger_event = BTWK_britannia_high_king.0009
+			trigger_event = BTWK_britannia_high_king.0011
 		}
 
 		# Allies on both sides get full prestige value for helping in the war, based on their war participation.

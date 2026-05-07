@@ -17,9 +17,11 @@ namespace = BTWK_britannia_high_king_test
 # BTWK_britannia_high_king.0005 - Notify claimant of responses
 # BTWK_britannia_high_king.0006 - Claimant decides whether to go to war or give up their claim
 # BTWK_britannia_high_king.0007 - Notify other kings of claimant's decision to proceed or not
-# BTWK_britannia_high_king.0008 - Claimant won war / no opponents, become High King (CK2: 312165)
-# BTWK_britannia_high_king.0009 - Claimant defeated (CK2: 312164)
-# BTWK_britannia_high_king.0010 - War ends inconclusively due to claimant dying or losing their throne
+# BTWK_britannia_high_king.0008 - Claimant won war / no opponents, checks that you are still eligible
+# BTWK_britannia_high_king.0009 - Claimant becomes High King (Claimant POV)
+# BTWK_britannia_high_king.0010 - Claimant becomes High King (Other POV)
+# BTWK_britannia_high_king.0011 - Claimant defeated (CK2: 312164)
+# BTWK_britannia_high_king.0012 - War ends inconclusively due to claimant dying or losing their throne
 
 # High Kingship claimed, awaiting responses
 BTWK_britannia_high_king.0001 = { 
@@ -454,10 +456,7 @@ BTWK_britannia_high_king.0006 = {
 		every_player = {
 			limit = { 
 				NOT = { this = root }
-				OR = {
-					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-					capital_province = { geographical_region = btwk_world_britannia }
-				}
+				BTWK_britannia_high_kingship_is_relevant_trigger = yes
 			}
 			trigger_event = BTWK_britannia_high_king.0007
 		}
@@ -474,26 +473,15 @@ BTWK_britannia_high_king.0006 = {
 		name = BTWK_britannia_high_king.0006.b
 		trigger = { any_independent_ruler = { has_variable = HK_britannia_opponent } }
 		add_prestige = -200
-		custom_tooltip = BTWK_britannia_high_king.0006.b.tt
+		custom_tooltip = BTWK_britannia_high_king_abandon_claim_claimant.tt
 		add_character_modifier = {
 			modifier = BTWK_recently_claimed_high_kingship_modifier
 			years = 5
 		}
 		every_owned_story = {
 			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+			set_variable = claimant_backed_down
 			end_story = yes
-		}
-		# Notify other players
-		save_scope_as = claimant
-		every_player = {
-			limit = { 
-				NOT = { this = root }
-				OR = {
-					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-					capital_province = { geographical_region = btwk_world_britannia }
-				}
-			}
-			trigger_event = BTWK_britannia_high_king.0007
 		}
 		
 		ai_chance = {
@@ -565,7 +553,7 @@ BTWK_britannia_high_king.0007 = {
 			custom_tooltip = BTWK_britannia_high_king.0007.a.tt.2
 		}
 		else = {
-			custom_tooltip = BTWK_britannia_high_king.0007.b.tt.1
+			custom_tooltip = BTWK_britannia_high_king_abandon_claim.tt
 		}
 	}
 
@@ -684,13 +672,41 @@ BTWK_britannia_high_king.0007 = {
 	}
 }
 
-# All agreed / opponents defeated, claimant proclaimed High King
-BTWK_britannia_high_king.0008 = { 
+# All agreed / opponents defeated, check if claimant is still eligible to become High King
+BTWK_britannia_high_king.0008 = {
+	hidden = yes
+	content_source = dlc_BTWK
+
+	immediate = {
+		save_scope_as = claimant
+		if = {
+			limit = { 
+				BTWK_britannia_high_kingship_is_eligible_trigger = yes 
+			}
+			trigger_event = BTWK_britannia_high_king.0009
+			every_player = {
+				limit = {
+					NOT = { this = ROOT }
+				}
+				trigger_event = BTWK_britannia_high_king.0010
+			}
+		}
+		else = {
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				end_story = yes
+			}
+		}
+	}
+}
+
+# Claimant proclaimed High King
+BTWK_britannia_high_king.0009 = { 
 	type = character_event
 	content_source = dlc_BTWK
 	window = big_event_window
-	title = BTWK_britannia_high_king.0008.t
-	desc = BTWK_britannia_high_king.0008.desc
+	title = BTWK_britannia_high_king.0009.t
+	desc = BTWK_britannia_high_king.0009.desc
 	theme = realm
 
 	left_portrait = {
@@ -704,8 +720,9 @@ BTWK_britannia_high_king.0008 = {
 	}
 
 	option = {
-		name = BTWK_britannia_high_king.0008.a
+		name = BTWK_britannia_high_king.0009.a
 		get_title = title:e_britannia
+		# TODO Other tooltips
 		# Make subject kingdoms
 		every_independent_ruler = {
 			limit = {
@@ -734,6 +751,147 @@ BTWK_britannia_high_king.0008 = {
 		}
 		add_prestige = 200
 		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
+		every_owned_story = {
+			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+			end_story = yes
+		}
+	}
+}
+
+# Claimant dies / is no longer eligible for the High Kingship
+BTWK_britannia_high_king.0012 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0012.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:claimant = { is_alive = no } }
+				desc = BTWK_britannia_high_king.0012.desc.death
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:claimant = {  
+						this = root
+						OR = {
+							is_landed = no
+							highest_held_title_tier < tier_kingdom
+						}
+					} 
+				}
+				desc = BTWK_britannia_high_king.0012.desc.deposed_claimant
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:claimant = {
+						this != root
+						OR = {
+							is_landed = no
+							highest_held_title_tier < tier_kingdom
+						}
+					} 
+				}
+				desc = BTWK_britannia_high_king.0012.desc.deposed
+			}
+			# This will usually be triggered by you becoming incapable or changing culture
+			triggered_desc = {
+				trigger = { 
+					scope:claimant = root
+				}
+				desc = BTWK_britannia_high_king.0012.desc.ineligible_claimant
+			}
+			desc = BTWK_britannia_high_king.0012.desc.ineligible
+		}
+	}
+	theme = war
+	override_background = {
+		reference = throne_room
+	}
+
+	left_portrait = {
+		character = scope:claimant
+		animation = war_over_loss
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:claimant }
+			custom_tooltip = BTWK_britannia_high_king_abandon_claim_claimant.tt
+			add_character_modifier = {
+				modifier = BTWK_recently_claimed_high_kingship_modifier
+				years = 5
+			}
+		}
+		else_if = {
+			limit = { scope:claimant = { is_alive = yes } }
+			custom_tooltip = BTWK_britannia_high_king_abandon_claim.tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_supporter
+			}
+			text = BTWK_britannia_high_king.0012.a.claimant
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_supporter
+			}
+			text = BTWK_britannia_high_king.0012.a.was_supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_opponent
+				scope:claimant = { is_alive = no }
+			}
+			text = BTWK_britannia_high_king.0012.a.was_opponent_death
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_opponent
+				scope:claimant = { is_alive = yes }
+			}
+			text = BTWK_britannia_high_king.0012.a.was_opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+				}
+			}
+			text = BTWK_britannia_high_king.0012.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0012.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_supporter
+					has_variable = BTWK_britannia_high_king_was_opponent
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
+					}
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0012.a.other
+		}
+		remove_variable = BTWK_britannia_high_king_was_supporter
+		remove_variable = BTWK_britannia_high_king_was_opponent
 	}
 }
 
