@@ -43,6 +43,10 @@
 				NOT = { is_defender_in_war = scope:war } 
 			}
 			remove_variable = HK_britannia_opponent
+			remove_list_global_variable = {
+				name = HK_britannia_opponent_list
+				target = THIS
+			}
 		}
 		scope:war = {
 			every_war_defender = {
@@ -127,8 +131,13 @@
 		# Resolve white peace (claim fails, but only 5 years before you can try again)
 		scope:attacker = {
 			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_white_peace_tt
-			set_variable = dispute_high_kingship_war_wp
-			trigger_event = BTWK_britannia_high_king.0011
+			# For loc
+			title:e_britannia = { set_variable = { name = HK_britannia_opponent_leader value = scope:defender days = 1 } }
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				set_variable = dispute_high_kingship_war_wp
+				end_story = yes
+			}
 		}
 		
 		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
@@ -166,6 +175,34 @@
 			else = {
 				# If the war was invalidated for reasons other than the attacker dying / becoming ineligible,
 				# restart the war (with potentially different targets)
+				
+				# Make sure all enemies are properly flagged as opponents
+				every_independent_ruler = {
+					limit = {
+						has_variable = HK_britannia_opponent
+						NOT = { is_defender_in_war = scope:war } 
+					}
+					remove_variable = HK_britannia_opponent
+					remove_list_global_variable = {
+						name = HK_britannia_opponent_list
+						target = THIS
+					}
+				}
+				scope:war = {
+					every_war_defender = {
+						limit = {
+							is_independent_ruler = yes
+							BTWK_britannia_high_kingship_is_elector_trigger = yes
+						}
+						set_variable = HK_britannia_opponent
+						add_to_global_variable_list = {
+							name = HK_britannia_opponent_list
+							target = THIS
+						}
+					}
+				}
+				title:e_britannia = { set_variable = britannia_high_kingship_dispute_war_second_try }
+				trigger_event = BTWK_britannia_high_king.0006
 			}
 		}
 	}
@@ -205,7 +242,13 @@
 		scope:attacker = {
 			add_prestige_level = -1
 			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_defeat_tt
-			trigger_event = BTWK_britannia_high_king.0011
+			# For loc
+			title:e_britannia = { set_variable = { name = HK_britannia_opponent_leader value = scope:defender days = 1 } }
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				set_variable = dispute_high_kingship_war_defeat
+				end_story = yes
+			}
 		}
 
 		# Allies on both sides get full prestige value for helping in the war, based on their war participation.

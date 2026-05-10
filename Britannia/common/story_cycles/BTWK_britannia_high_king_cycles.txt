@@ -20,12 +20,6 @@
 	}
 
 	on_end = {
-		# Cleanup variables
-		title:e_britannia = {
-			remove_variable = britannia_high_kingship_claimant
-			remove_variable = britannia_high_kingship_dispute_war
-		}
-		setup_britannia_high_king_window_lists_effect = yes
 		# If the High Kingdom was not successfully claimed, notify everyone
 		story_owner = {
 			if = {
@@ -43,17 +37,41 @@
 						trigger_event = BTWK_britannia_high_king.0007
 					}
 				}
+				# Notify white peace
+				else_if = {
+					limit = { prev = { has_variable = dispute_high_kingship_war_wp } }
+					trigger_event = BTWK_britannia_high_king.0011
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0011
+					}
+				}
+				# Notify defeat
+				else_if = {
+					limit = { prev = { has_variable = dispute_high_kingship_war_defeat } }
+					trigger_event = BTWK_britannia_high_king.0012
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0012
+					}
+				}
 				# Notify death / ineligibility
 				else = {
 					if = {
 						limit = { is_alive = no }
 						player_heir ?= {
 							set_variable = BTWK_britannia_high_king_was_supporter
-							trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+							trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
 						}
 					}
 					else = {
-						trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+						trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
 					}
 					every_player = {
 						limit = { 
@@ -71,11 +89,19 @@
 							limit = { has_variable = HK_britannia_opponent }
 							set_variable = BTWK_britannia_high_king_was_opponent
 						}
-						trigger_event = { id = BTWK_britannia_high_king.0012 delayed = yes }
+						trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
 					}
 				}
 			}
 		}
+		
+		# Cleanup variables
+		title:e_britannia = {
+			remove_variable = britannia_high_kingship_claimant
+			remove_variable = britannia_high_kingship_dispute_war
+			remove_variable = britannia_high_kingship_dispute_war_second_try
+		}
+		setup_britannia_high_king_window_lists_effect = yes
 		every_in_global_list = {
 			variable = HK_britannia_supporter_list
 			remove_variable = HK_britannia_supporter
