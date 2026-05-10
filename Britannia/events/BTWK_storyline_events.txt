@@ -1601,7 +1601,10 @@ BTWK_story_event.0111 = {  # Event for Mordred: Player gets to choose to play Ar
 	}
 }
 
-BTWK_story_event.0112 = {  # Event for Arthur: Flavour text for the player. 
+# Event for Arthur: Flavour text for the player. 
+# Called from on_death rather than from inside the story cycle since that causes wars to invalidate
+# for some reason
+BTWK_story_event.0112 = {  
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_story_event.0112.t
@@ -1616,24 +1619,77 @@ BTWK_story_event.0112 = {  # Event for Arthur: Flavour text for the player.
 	option = {
 		name = BTWK_story_event.0112.a
 		if = {
-			limit = {
-				NOT = { has_character_modifier = story_death_oath }
+			limit = { NOT = { has_variable = received_BTWK_story_event_0112 } }
+			create_title_and_vassal_change = {
+				type = granted
+				save_scope_as = arthur_pendragon_durnac
+				add_claim_on_loss = no
 			}
-			add_character_modifier = {
-				modifier = story_death_oath
+			title:d_centdumnonia = {
+				every_de_jure_county = {
+					limit = {
+						holder = character:1
+					}
+					change_title_holder = {
+						holder = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							NOT = { exists = holder }
+							holder = character:1
+						}
+					}
+					change_title_holder = {
+						holder = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
+				every_de_jure_county_holder = {
+					limit = {
+						primary_title = {
+							tier < tier_duchy
+							duchy = title:d_centdumnonia
+						}
+						liege = title:k_dumnonia.holder					
+					}
+					change_liege = {
+						liege = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
 			}
-		}
-		
-		spawn_army = {
-			name = "Arthur's Company"
-			men_at_arms = {
-				type = gendarme
-				men = 40
+			change_liege = {
+				liege = title:k_dumnonia.holder
+				change = scope:arthur_pendragon_durnac
 			}
-			war_keep_on_attacker_victory = yes
-			inheritable = no
-			location = province:12
-			origin = province:12
+			resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
+			
+			if = {
+				limit = {
+					NOT = { has_character_modifier = story_death_oath }
+				}
+				add_character_modifier = {
+					modifier = story_death_oath
+				}
+			}
+			
+			spawn_army = {
+				name = "Arthur's Company"
+				men_at_arms = {
+					type = gendarme
+					men = 40
+				}
+				war_keep_on_attacker_victory = yes
+				inheritable = no
+				location = province:12
+				origin = province:12
+			}
+			
+			# Don't trigger this twice if the event happens twice (will happen if you switch from Uther)
+			set_variable = received_BTWK_story_event_0112
 		}
 	}
 }
