@@ -2,6 +2,11 @@
 	NOT = { has_global_variable = end_of_britannia }
 }
 
+BTWK_britannia_subject_kings_active_trigger = {
+	NOT = { title:e_britannia = { has_variable = HK_reform_empower_high_council_passed } }
+	BTWK_britannia_high_kingship_active_trigger = yes
+}
+
 BTWK_britannia_high_kingship_can_claim_trigger = {
 	is_independent_ruler = yes
 	custom_description = {
@@ -132,4 +137,16 @@ BTWK_britannia_high_kingship_is_relevant_culture_trigger = {
 			}
 		}
 	}
+}
+
+BTWK_britannia_subject_king_eligible_trigger = {
+	culture = {
+		OR = {
+			has_same_heritage_group_as = { TARGET = culture:briton }
+			has_cultural_pillar = heritage_latin
+			has_cultural_pillar = heritage_romance
+			culture_is_romanized_barbarian_culture_trigger = yes
+		}
+	}
+	primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 }

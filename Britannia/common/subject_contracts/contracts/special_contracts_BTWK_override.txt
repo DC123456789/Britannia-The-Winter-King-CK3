@@ -297,11 +297,23 @@ special_contract = {
 }
 
 suzerain_war_participation_guarantee = {
-	display_mode = checkbox
+	display_mode = radiobutton		# Checkbox doesn't have proper GUI support if there conditions for disabling
 	obligation_levels = {
 		suzerain_war_participation_guarantee_none = {
 			position = { 0 0 }
 
+			is_valid = {
+				trigger_if = {
+					limit = {
+						scope:subject = { has_subject_contract_group = tributary_britannia_subject_king }
+					}
+					custom_tooltip = {
+						text = britannia_subject_king_guarantee_always
+						always = no
+					}
+				}
+			}
+			
 			ai_liege_desire = @ai_standard_liege_desire
 			ai_subject_desire = 0
 			score = -2
@@ -311,7 +323,7 @@ suzerain_war_participation_guarantee = {
 			default = yes
 			position = { 1 0 }
 
-			subject_opinion = 25
+			subject_opinion = 15
 
 			# flag referenced in code, do not change without approval
 			flag = tributary_contract_suzerain_guarantee_override
