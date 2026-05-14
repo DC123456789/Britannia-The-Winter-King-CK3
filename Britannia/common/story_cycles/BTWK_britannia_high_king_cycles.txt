@@ -116,3 +116,125 @@
 		end_story = yes
 	}
 }
+
+BTWK_britannia_high_kingship_story = {
+	on_setup = {
+	}
+
+	on_end = {
+		story_owner = { save_scope_as = former_high_king }
+		# Notify High King deposed
+		if = {
+			limit = { has_variable = high_king_deposed }
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0024 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner.player_heir ?= this }
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0024
+			}
+		}
+		# Notify High King died before first reform
+		else_if = {
+			limit = { has_variable = high_king_died }
+			story_owner.player_heir ?= {
+				trigger_event = { id = BTWK_britannia_high_king.0023 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner.player_heir ?= this }
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0023
+			}
+		}
+		# Notify Unfit to Rule / Fallback
+		else = {
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0022 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner = this } 
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				if = {
+					limit = { 
+						is_tributary_of = prev
+						has_subject_contract_group = tributary_britannia_subject_king
+					}
+					set_variable = was_subject_king
+				}
+				trigger_event = { id = BTWK_britannia_high_king.0022 }
+			}
+		}
+	}
+
+	on_owner_death = {
+		if = {
+			limit = { BTWK_britannia_high_kingship_can_inherit_trigger = no }
+			set_variable = high_king_died
+			end_story = yes
+		}
+	}
+	
+	# Check if Unfit to Rule
+	effect_group = {
+		months = 1
+		
+		trigger = {
+			BTWK_britannia_high_kingship_can_inherit_trigger = no
+		}
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { story_owner = { BTWK_britannia_high_kingship_is_fit_to_rule_trigger = no } }
+				effect = {
+					if = {
+						limit = { story_owner = { NOT = { has_variable = BTWK_britannia_high_king_unfit_to_rule } } }
+						story_owner = {
+							trigger_event = BTWK_britannia_high_king.0020
+						}
+					}
+					else_if = {
+						limit = { story_owner.var:BTWK_britannia_high_king_unfit_to_rule_months_remaining > 0 }
+						story_owner = {
+							change_variable = {
+								name = BTWK_britannia_high_king_unfit_to_rule_months_remaining
+								subtract = 1
+							}
+						}
+					}
+					else = {
+						set_variable = high_king_unfit_to_rule
+						end_story = yes
+					}
+				}
+			}
+			triggered_effect = {
+				trigger = { 
+					story_owner = { 
+						BTWK_britannia_high_kingship_is_fit_to_rule_trigger = yes 
+						has_variable = BTWK_britannia_high_king_unfit_to_rule
+					} 
+				}
+				effect = {
+					story_owner = {
+						remove_variable = BTWK_britannia_high_king_unfit_to_rule
+						remove_variable = BTWK_britannia_high_king_unfit_to_rule_months_remaining
+						trigger_event = BTWK_britannia_high_king.0021
+					}
+				}
+			}
+		}
+		
+		fallback = {
+			story_owner = { set_variable = fallback }
+		}
+	}
+	
+	# TODO Authority counter
+}

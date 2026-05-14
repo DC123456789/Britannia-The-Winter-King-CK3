@@ -176,13 +176,10 @@ window = {
 					expand = {}
 				}
 				
-				# TODO Only show this once the 1st reform has been passed
-				# Otherwise display a message that the High Kingship will 
-				# not be inherited on succession
 				container = {
 					name = "heir_high_king"
 					datacontext = "[Title.GetHeir]"
-					visible = "[Title.HasHolder]"
+					visible = "[And(Title.HasHolder, GetScriptedGui('BTWK_high_kingship_is_inheritable').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End))]"
 					parentanchor = top|right
 					position = { 0 45 }
 					scale = 1.5
@@ -205,6 +202,41 @@ window = {
 						scale = 0.8
 						text = "Current [heir|E]"
 					}
+				}
+				
+				button_standard = {
+					parentanchor = top|right
+					position = { -10 60 }
+					size = { 165 100 }
+					enabled = no
+					visible = "[And(Title.HasHolder, Not(GetScriptedGui('BTWK_high_kingship_is_inheritable').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)))]"
+					tooltip = "HIGH_KINGSHIP_NOT_INHERITABLE_TT"
+					
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						margin_top = -20
+						margin_left = -30
+					
+						text_single = {
+							name = "title_name"
+							alwaystransparent = yes
+							text = "HIGH_KINGSHIP_NOT_INHERITABLE"
+							scale = 1.25
+							max_width = 200
+							align = center
+						}
+					}
+				}
+				
+				text_single = {
+					alwaystransparent = yes
+					text = "UNFIT_TO_RULE"
+					scale = 1.5
+					parentanchor = top|hcenter
+					position = { 0 80 }
+					visible = "[And(Title.HasHolder, Title.GetHolder.MakeScope.Var('BTWK_britannia_high_king_unfit_to_rule').IsSet)]"
+					tooltip = "[GetScriptedGui('BTWK_unfit_to_rule').BuildTooltip(GuiScope.SetRoot(Title.GetHolder.MakeScope).End)]"
 				}
 				
 				text_single = {

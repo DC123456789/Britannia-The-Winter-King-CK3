@@ -258,3 +258,46 @@ BTWK_britannia_claim_high_kingship_effect = {
 	}
 	trigger_event = { id = BTWK_britannia_high_king.0001 }
 }
+
+BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
+	if = {
+		limit = { NOT = { BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.culture
+	}
+	if = {
+		limit = { NOT = { any_held_title = { tier = tier_kingdom } } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.kingdom
+	}
+	if = {
+		limit = { NOT = { prestige_level >= high_prestige_level } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.prestige_level
+	}
+	if = {
+		limit = { NOT = { martial >= 10 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.martial
+	}
+	if = {
+		limit = { NOT = { diplomacy >= 8 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.diplomacy
+	}
+	if = {
+		limit = { NOT = { realm_size >= 10 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.realm_size
+	}
+	if = {
+		limit = { NOT = { is_incapable = no } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.incapable
+	}
+}
+
+BTWK_britannia_high_kingship_destroy_effect = {
+	destroy_title = title:e_britannia
+	every_tributary = {
+		limit = { has_subject_contract_group = tributary_britannia_subject_king }
+		end_tributary = yes
+	}
+	add_character_modifier = {
+		modifier = BTWK_was_recently_high_king_modifier
+		years = 15
+	}
+}

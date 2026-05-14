@@ -39,6 +39,11 @@
 						NOT = {
 							government_has_flag = government_is_nomadic
 						}
+						NAND = {
+							has_title = title:e_britannia
+							BTWK_britannia_subject_kings_active_trigger = yes
+							scope:defender = { BTWK_britannia_subject_king_eligible_trigger = yes }
+						}
 					}
 					scope:defender.realm_size <= {
 						value = scope:attacker.realm_size
@@ -526,6 +531,26 @@
 			multiply = 0.1
 		}
 
+		# High kings should avoid northern Britain until you at least pass the first reform
+		if = {
+			limit = {
+				scope:attacker = {
+					has_title = title:e_britannia
+					BTWK_britannia_subject_kings_active_trigger = yes
+				}
+				scope:defender = { 
+					BTWK_britannia_subject_king_eligible_trigger = yes
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+					NOT = {
+						any_held_title = {
+							tier >= tier_kingdom
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+			}
+			multiply = 0.2
+		}
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 
@@ -566,12 +591,21 @@
 					}
 				}
 
+				# High Kings should absolutely weight this cb on potential subject kings highly
 				if = {
+					limit = {
+						has_title = title:e_britannia
+						BTWK_britannia_subject_kings_active_trigger = yes
+						scope:defender = { BTWK_britannia_subject_king_eligible_trigger = yes }
+					}
+					add = 100
+				}
+				else_if = {
 					limit = {
 						NOT = { government_has_flag = government_is_mandala }
 					}
 					add = -1000
-				} 
+				}				
 			}
 		}
 	}

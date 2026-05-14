@@ -2,6 +2,10 @@
 	NOT = { has_global_variable = end_of_britannia }
 }
 
+BTWK_britannia_high_kingship_can_inherit_trigger = {
+	title:e_britannia = { has_variable = HK_reform_formalize_high_kingship_passed }
+}
+
 BTWK_britannia_subject_kings_active_trigger = {
 	NOT = { title:e_britannia = { has_variable = HK_reform_empower_high_council_passed } }
 	BTWK_britannia_high_kingship_active_trigger = yes
@@ -11,7 +15,7 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	is_independent_ruler = yes
 	custom_description = {
 		text = claim_britannia_high_kingship_culture_requirement_w_britannic
-		BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	}
 	custom_description = {
 		text = claim_britannia_high_kingship_kingdom_requirement
@@ -66,6 +70,20 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	}
 }
 
+BTWK_britannia_high_kingship_is_allowed_culture_trigger = {
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_brythonic
+			has_cultural_pillar = heritage_latin
+			AND = {
+				has_cultural_pillar = heritage_romance
+				NOT = { has_variable = ancestral_non_roman_culture }
+				var:ancestral_starting_culture ?= culture:romanobritish
+			}
+		}
+	}
+}
+
 BTWK_britannia_high_kingship_is_elector_trigger = {
 	culture = {
 		OR = {
@@ -99,7 +117,7 @@ BTWK_britannia_high_kingship_is_eligible_trigger = {
 	is_tributary = no
 	is_independent_ruler = yes
 	is_incapable = no
-	BTWK_britannia_high_kingship_is_relevant_culture_trigger = yes
+	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	any_held_title = {
 		OR = {
 			tier = tier_kingdom
@@ -118,24 +136,21 @@ BTWK_britannia_high_kingship_is_eligible_trigger = {
 	}
 }
 
+# If this is changed, must adjust BTWK_britannia_high_king.0020 as well!
+BTWK_britannia_high_kingship_is_fit_to_rule_trigger = {
+	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	any_held_title = { tier = tier_kingdom }
+	prestige_level >= high_prestige_level
+	martial >= 10
+	diplomacy >= 8
+	is_incapable = no
+	realm_size >= 10
+}
+
 BTWK_britannia_high_kingship_is_relevant_trigger = {
 	OR = {
 		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 		capital_province = { geographical_region = btwk_world_britannia }
-	}
-}
-
-BTWK_britannia_high_kingship_is_relevant_culture_trigger = {
-	culture = {
-		OR = {
-			has_cultural_pillar = heritage_brythonic
-			has_cultural_pillar = heritage_latin
-			AND = {
-				has_cultural_pillar = heritage_romance
-				NOT = { has_variable = ancestral_non_roman_culture }
-				var:ancestral_starting_culture ?= culture:romanobritish
-			}
-		}
 	}
 }
 
