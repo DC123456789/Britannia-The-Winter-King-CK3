@@ -64,15 +64,10 @@
 				# Notify death / ineligibility
 				else = {
 					if = {
-						limit = { is_alive = no }
-						player_heir ?= {
-							set_variable = BTWK_britannia_high_king_was_supporter
-							trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
-						}
+						limit = { is_alive = yes }
+						trigger_event = { id = BTWK_britannia_high_king.0013 }
 					}
-					else = {
-						trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
-					}
+					# If dead, the event is called by on_death instead
 					every_player = {
 						limit = { 
 							NOR = { 
@@ -123,15 +118,42 @@ BTWK_britannia_high_kingship_story = {
 
 	on_end = {
 		story_owner = { save_scope_as = former_high_king }
-		# Notify High King deposed
+		# Notify High King deposed by cb
 		if = {
 			limit = { has_variable = high_king_deposed }
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0025 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner ?= this }
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0025
+			}
+		}
+		# Notify High King otherwise abdicated before first reform
+		else_if = {
+			limit = { has_variable = high_king_abdicated }
+			if = {
+				limit = { exists = title:e_britannia.holder }
+				title:e_britannia.holder = { 
+					BTWK_britannia_high_kingship_destroy_effect = yes
+					save_scope_as = background_throne_room_scope 
+					save_scope_as = former_high_king_player_heir
+				}
+			}
+			else = {
+				story_owner = {
+					BTWK_britannia_high_kingship_destroy_effect = yes
+				}
+			}
 			story_owner = {
 				trigger_event = { id = BTWK_britannia_high_king.0024 }
 			}
 			every_player = {
-				limit = { 
-					NOT = { prev.story_owner.player_heir ?= this }
+				limit = {
+					NOT = { prev.story_owner ?= this }
 					BTWK_britannia_high_kingship_is_relevant_trigger = yes
 				}
 				trigger_event = BTWK_britannia_high_king.0024
@@ -140,12 +162,18 @@ BTWK_britannia_high_kingship_story = {
 		# Notify High King died before first reform
 		else_if = {
 			limit = { has_variable = high_king_died }
-			story_owner.player_heir ?= {
-				trigger_event = { id = BTWK_britannia_high_king.0023 }
+			# Don't show event to the High King himself as that event is triggered by on_death
+			# But need to call the actual effect here to have the title destroyed during succession
+			# and not at some point before death
+			story_owner = {
+				BTWK_britannia_high_kingship_destroy_effect = yes
 			}
 			every_player = {
 				limit = { 
-					NOT = { prev.story_owner.player_heir ?= this }
+					NOR = {
+						prev.story_owner ?= this
+						prev.story_owner.player_heir ?= this 
+					}
 					BTWK_britannia_high_kingship_is_relevant_trigger = yes
 				}
 				trigger_event = BTWK_britannia_high_king.0023
@@ -164,7 +192,7 @@ BTWK_britannia_high_kingship_story = {
 				if = {
 					limit = { 
 						is_tributary_of = prev
-						has_subject_contract_group = tributary_britannia_subject_king
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
 					}
 					set_variable = was_subject_king
 				}

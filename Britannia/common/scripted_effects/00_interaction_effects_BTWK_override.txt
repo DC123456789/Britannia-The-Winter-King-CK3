@@ -16,9 +16,18 @@ start_tributary_interaction_effect = {
 			$TRIBUTARY$ = { BTWK_britannia_subject_king_eligible_trigger = yes }
 		}
 		$TRIBUTARY$ = {
-			start_tributary = {
-				contract_group = tributary_britannia_subject_king
-				suzerain = $SUZERAIN$
+			if = {
+				limit = { BTWK_britannia_high_kingship_can_inherit_trigger = yes }
+				start_tributary = {
+					contract_group = tributary_britannia_subject_king_permanent
+					suzerain = $SUZERAIN$
+				}
+			}
+			else = {
+				start_tributary = {
+					contract_group = tributary_britannia_subject_king
+					suzerain = $SUZERAIN$
+				}
 			}
 			if = {
 				limit = { scope:low_obligations ?= yes }

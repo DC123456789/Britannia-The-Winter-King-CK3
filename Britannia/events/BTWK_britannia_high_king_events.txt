@@ -592,7 +592,7 @@ BTWK_britannia_high_king.0007 = {
 	}
 	theme = war
 	override_background = {
-		reference = throne_room
+		reference = throne_room_scope
 	}
 
 	left_portrait = {
@@ -611,6 +611,7 @@ BTWK_britannia_high_king.0007 = {
 	}
 	
 	immediate = {
+		scope:claimant = { save_scope_as = background_throne_room_scope }
 		if = {
 			limit = { title:e_britannia = { has_variable = britannia_high_kingship_dispute_war } }
 			custom_tooltip = BTWK_britannia_high_king.0007.a.tt.1
@@ -1176,7 +1177,7 @@ BTWK_britannia_high_king.0013 = {
 	}
 	theme = war
 	override_background = {
-		reference = throne_room
+		reference = throne_room_scope
 	}
 
 	left_portrait = {
@@ -1185,8 +1186,15 @@ BTWK_britannia_high_king.0013 = {
 	}
 	
 	immediate = {
+		scope:claimant = { save_scope_as = background_throne_room_scope }
 		if = {
-			limit = { this = scope:claimant }
+			limit = { 
+				this = scope:claimant 
+				scope:claimant = { 
+					is_alive = yes 
+					NOT = { has_variable = BTWK_britannia_high_king_dying_claimant }
+				}
+			}
 			custom_tooltip = BTWK_britannia_high_king_abandon_claim_claimant.tt
 			add_character_modifier = {
 				modifier = BTWK_recently_claimed_high_kingship_modifier
@@ -1194,7 +1202,12 @@ BTWK_britannia_high_king.0013 = {
 			}
 		}
 		else_if = {
-			limit = { scope:claimant = { is_alive = yes } }
+			limit = { 
+				scope:claimant = { 
+					is_alive = yes 
+					NOT = { has_variable = BTWK_britannia_high_king_dying_claimant }
+				} 
+			}
 			custom_tooltip = BTWK_britannia_high_king_abandon_claim.tt
 		}
 	}
@@ -1203,6 +1216,7 @@ BTWK_britannia_high_king.0013 = {
 		name = {
 			trigger = { 
 				this = scope:claimant
+				NOT = { has_variable = BTWK_britannia_high_king_dying_claimant }
 			}
 			text = BTWK_britannia_high_king.0013.a.claimant
 		}
@@ -1215,14 +1229,22 @@ BTWK_britannia_high_king.0013 = {
 		name = {
 			trigger = { 
 				has_variable = BTWK_britannia_high_king_was_opponent
-				scope:claimant = { is_alive = no }
+				scope:claimant = { 
+					OR = {
+						has_variable = BTWK_britannia_high_king_dying_claimant
+						is_alive = no 
+					}
+				}
 			}
 			text = BTWK_britannia_high_king.0013.a.was_opponent_death
 		}
 		name = {
 			trigger = { 
 				has_variable = BTWK_britannia_high_king_was_opponent
-				scope:claimant = { is_alive = yes }
+				scope:claimant = { 
+					is_alive = yes
+					NOT = { has_variable = BTWK_britannia_high_king_dying_claimant }
+				}
 			}
 			text = BTWK_britannia_high_king.0013.a.was_opponent
 		}
@@ -1270,8 +1292,9 @@ BTWK_britannia_high_king.0013 = {
 # BTWK_britannia_high_king.0020 - Unfit to Rule (warning)
 # BTWK_britannia_high_king.0021 - No Longer Unfit to Rule
 # BTWK_britannia_high_king.0022 - Unfit to Rule, High Kingship lost
-# BTWK_britannia_high_king.0023 - Death / Abdication of the High King before first reform (CK2: 314480 / 314481)
-# BTWK_britannia_high_king.0024 - High King deposed by war
+# BTWK_britannia_high_king.0023 - Death of the High King before first reform (CK2: 314480)
+# BTWK_britannia_high_king.0024 - Abdication of the High King before first reform (CK2: 314481)
+# BTWK_britannia_high_king.0025 - High King deposed by war
 
 # Unfit to Rule (warning)
 BTWK_britannia_high_king.0020 = { 
@@ -1372,7 +1395,7 @@ BTWK_britannia_high_king.0022 = {
 	}
 	theme = martial
 	override_background = {
-		reference = throne_room
+		reference = throne_room_scope
 	}
 
 	left_portrait = {
@@ -1381,6 +1404,7 @@ BTWK_britannia_high_king.0022 = {
 	}
 	
 	immediate = {
+		scope:former_high_king = { save_scope_as = background_throne_room_scope }
 		if = {
 			limit = { this != scope:former_high_king }
 			show_as_tooltip = { destroy_title = title:e_britannia }
@@ -1393,6 +1417,10 @@ BTWK_britannia_high_king.0022 = {
 		trigger = { this = scope:former_high_king }
 		custom_tooltip = BTWK_britannia_high_king.0022.a.tt
 		BTWK_britannia_high_kingship_destroy_effect = yes
+		add_character_modifier = {
+			modifier = BTWK_was_recently_high_king_modifier
+			years = 15
+		}
 		prestige = -500
 	}
 
@@ -1425,6 +1453,198 @@ BTWK_britannia_high_king.0022 = {
 				is_unromanized_germanic_culture_trigger = no
 			}
 			text = BTWK_britannia_high_king.0022.b.other
+		}
+		trigger = { this != scope:former_high_king }
+		remove_variable = was_subject_king
+	}
+}
+
+# Death of the High King
+BTWK_britannia_high_king.0023 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0023.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_high_king
+					is_close_or_extended_family_of = scope:former_high_king_player_heir
+				}
+				desc = BTWK_britannia_high_king.0023.desc.high_king_relative
+			}
+			triggered_desc = {
+				trigger = {
+					root = scope:former_high_king
+				}
+				desc = BTWK_britannia_high_king.0023.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0023.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:former_high_king
+		animation = sadness
+	}
+	
+	immediate = {
+		scope:former_high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:former_high_king }
+			scope:former_high_king = {
+				player_heir = { save_scope_as = former_high_king_player_heir }
+				custom_tooltip = BTWK_britannia_high_king.0023.a.tt
+				show_as_tooltip = { destroy_title = title:e_britannia }
+			}
+		}
+		else = {
+			show_as_tooltip = { destroy_title = title:e_britannia }
+			custom_tooltip = BTWK_britannia_high_king.0023.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0023.a
+		# The event is written from the PoV of the heir, but it actually triggers from the dead High King
+		trigger = { this = scope:former_high_king }
+	}
+
+	option = {
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0023.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0023.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0023.b.other
+		}
+		trigger = { this != scope:former_high_king }
+	}
+}
+
+# Abdication of the High King
+BTWK_britannia_high_king.0024 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0024.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_high_king
+				}
+				desc = BTWK_britannia_high_king.0024.desc.high_king
+			}
+			triggered_desc = {
+				trigger = {
+					scope:former_high_king_player_heir ?= root
+					is_close_or_extended_family_of = scope:former_high_king
+				}
+				desc = BTWK_britannia_high_king.0024.desc.high_king_heir_relative
+			}
+			triggered_desc = {
+				trigger = {
+					scope:former_high_king_player_heir ?= root
+				}
+				desc = BTWK_britannia_high_king.0024.desc.high_king_heir
+			}
+			desc = BTWK_britannia_high_king.0024.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+		trigger = {
+			exists = scope:background_throne_room_scope
+		}
+	}
+	override_background = {
+		reference = throne_room_west
+		trigger = {
+			NOT = { exists = scope:background_throne_room_scope }
+		}
+	}
+
+	left_portrait = {
+		character = scope:former_high_king
+		animation = war_over_loss
+	}
+	
+	immediate = {
+		# We use the new holder of e_britannia instead as the former High King may be unlanded,
+		# which breaks the background
+		# scope:former_high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:former_high_king }
+			scope:former_high_king = {
+				custom_tooltip = BTWK_britannia_high_king.0024.a.tt
+				show_as_tooltip = { destroy_title = title:e_britannia }
+			}
+		}
+		else = {
+			show_as_tooltip = { destroy_title = title:e_britannia }
+			custom_tooltip = BTWK_britannia_high_king.0024.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0024.a
+		trigger = { this = scope:former_high_king }
+		add_character_modifier = {
+			modifier = BTWK_was_recently_high_king_modifier
+			years = 15
+		}
+		prestige = -300
+	}
+
+	option = {
+		name = {
+			trigger = {
+				scope:former_high_king_player_heir ?= this
+			}
+			text = BTWK_britannia_high_king.0024.b.former_high_king_player_heir
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_high_king_player_heir ?= this }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0024.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_high_king_player_heir ?= this }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0024.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_high_king_player_heir ?= this }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0024.b.other
 		}
 		trigger = { this != scope:former_high_king }
 	}

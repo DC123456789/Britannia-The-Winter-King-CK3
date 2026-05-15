@@ -48,7 +48,7 @@ setup_britannia_high_king_window_lists_effect = {
 					top_liege = { has_title = title:e_britannia }
 					AND = {
 						is_tributary = yes
-						has_subject_contract_group = tributary_britannia_subject_king
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
 						suzerain = { has_title = title:e_britannia }
 					}
 				}
@@ -293,11 +293,7 @@ BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
 BTWK_britannia_high_kingship_destroy_effect = {
 	destroy_title = title:e_britannia
 	every_tributary = {
-		limit = { has_subject_contract_group = tributary_britannia_subject_king }
+		limit = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
 		end_tributary = yes
-	}
-	add_character_modifier = {
-		modifier = BTWK_was_recently_high_king_modifier
-		years = 15
 	}
 }

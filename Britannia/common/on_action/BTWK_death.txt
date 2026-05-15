@@ -26,7 +26,7 @@ BTWK_on_death = {
 		}
 		clear_variable_list = britannia_potential_neutral_kings_linked_list
 		if = {
-			limit { 
+			limit = { 
 				this = character:1 
 				has_variable = has_BTWK_story_uther_high_council_story
 			}
@@ -35,6 +35,24 @@ BTWK_on_death = {
 					id = BTWK_story_event.0112
 				}
 			}
+		}
+		# Handle High King death events
+		if = {
+			limit = { 
+				owns_story_of_type = BTWK_britannia_claim_high_kingship_story
+			}
+			save_scope_as = claimant
+			set_variable = BTWK_britannia_high_king_dying_claimant
+			set_variable = BTWK_britannia_high_king_was_supporter
+			trigger_event = BTWK_britannia_high_king.0013
+		}
+		if = {
+			limit = { 
+				owns_story_of_type = BTWK_britannia_high_kingship_story
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			save_scope_as = former_high_king
+			trigger_event = BTWK_britannia_high_king.0023
 		}
 	}
 }
