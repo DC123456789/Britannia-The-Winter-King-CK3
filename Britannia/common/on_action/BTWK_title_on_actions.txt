@@ -72,6 +72,22 @@ btwk_on_title_lost = {
 	}
 }
 
+# A title change makes the character rank up in the landed tiers (eg Duke -> King)
+# root = character ranking up
+# scope:title = old primary title
+on_rank_up = { # Will not fire during history execution or for dying characters
+	on_actions = {
+		btwk_on_rank_up
+	}
+}
+
+btwk_on_rank_up = {
+	effect = {
+		# Turn king-level vassals of Britannia into subject kingdoms before the Empower the High Council reform
+		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes		
+	}
+}
+
 # A vassal changes their liege
 # root = vassal changing their status
 # scope:old_liege = the previous liege of the vassal
@@ -89,5 +105,8 @@ btwk_on_vassal_change = {
 	effect = {
 		# Update cultural redoubts
 		BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
+		
+		# Turn king-level vassals of Britannia into subject kingdoms before the Empower the High Council reform
+		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes	
 	}
 }

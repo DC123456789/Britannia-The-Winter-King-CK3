@@ -1650,6 +1650,88 @@ BTWK_britannia_high_king.0024 = {
 	}
 }
 
+# High King Deposed
+BTWK_britannia_high_king.0025 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0025.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_high_king
+				}
+				desc = BTWK_britannia_high_king.0025.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0025.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:former_high_king
+		animation = war_over_loss
+	}
+	
+	immediate = {
+		scope:former_high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this != scope:former_high_king }
+			show_as_tooltip = { destroy_title = title:e_britannia }
+			custom_tooltip = BTWK_britannia_high_king.0025.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0025.a
+		trigger = { this = scope:former_high_king }
+		custom_tooltip = BTWK_britannia_high_king.0025.a.tt
+		BTWK_britannia_high_kingship_destroy_effect = yes
+		add_character_modifier = {
+			modifier = BTWK_was_recently_high_king_modifier
+			years = 15
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				has_variable = was_subject_king
+			}
+			text = BTWK_britannia_high_king.0025.b.subject_king
+		}
+		name = {
+			trigger = {
+				NOT = { has_variable = was_subject_king }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0025.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { has_variable = was_subject_king }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0025.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOT = { has_variable = was_subject_king }
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0025.b.other
+		}
+		trigger = { this != scope:former_high_king }
+		remove_variable = was_subject_king
+	}
+}
+
 ############################################################################
 # BTWK_britannia_high_king.0100 - 0199: High Kingship Reforms
 ############################################################################

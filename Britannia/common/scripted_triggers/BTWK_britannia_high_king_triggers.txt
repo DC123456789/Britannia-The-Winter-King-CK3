@@ -95,20 +95,25 @@ BTWK_britannia_high_kingship_is_elector_trigger = {
 			}
 		}
 	}
-	any_held_title = {
-		OR = {
-			tier = tier_kingdom
-			AND = {
-				tier = tier_duchy
-				PREV = { 
-					is_independent_ruler = yes
-					highest_held_title_tier = tier_duchy
+	BTWK_britannia_high_kingship_is_elector_title_requirements_trigger = yes
+}
+
+BTWK_britannia_high_kingship_is_elector_title_requirements_trigger = {
+	is_independent_ruler = yes
+	holds_landed_title = yes
+	custom_description = {
+		text = BTWK_britannia_high_kingship_is_elector_title_requirements
+		any_held_title = {
+			OR = {
+				tier = tier_kingdom
+				AND = {
+					tier = tier_duchy
+					PREV = { 
+						highest_held_title_tier = tier_duchy
+					}
 				}
 			}
-		}
-		OR = {
-			target_is_de_jure_liege_or_above = title:e_britannia
-			target_is_de_jure_liege_or_above = title:e_roman_britannia
+			title_capital_county.capital_province = { geographical_region = btwk_world_britannia }
 		}
 	}
 }
@@ -116,6 +121,7 @@ BTWK_britannia_high_kingship_is_elector_trigger = {
 BTWK_britannia_high_kingship_is_eligible_trigger = {
 	is_tributary = no
 	is_independent_ruler = yes
+	holds_landed_title = yes
 	is_incapable = no
 	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	any_held_title = {
@@ -129,10 +135,7 @@ BTWK_britannia_high_kingship_is_eligible_trigger = {
 				}
 			}
 		}
-		OR = {
-			target_is_de_jure_liege_or_above = title:e_britannia
-			target_is_de_jure_liege_or_above = title:e_roman_britannia
-		}
+		title_capital_county.capital_province = { geographical_region = btwk_world_britannia }
 	}
 }
 

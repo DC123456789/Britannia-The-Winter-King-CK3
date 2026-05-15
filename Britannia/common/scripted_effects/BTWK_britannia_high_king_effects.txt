@@ -297,3 +297,49 @@ BTWK_britannia_high_kingship_destroy_effect = {
 		end_tributary = yes
 	}
 }
+
+BTWK_britannia_high_kingship_check_king_tier_vassals_effect = {
+	if = {
+		limit = {
+			highest_held_title_tier >= tier_kingdom
+			is_independent_ruler = no
+			liege = {
+				has_title = title:e_britannia
+				BTWK_britannia_subject_kings_active_trigger = yes
+				NOT = {
+					any_held_title = {
+						this != title:e_britannia
+						tier >= tier_empire
+					}
+				}
+			}
+		}
+		liege = { save_scope_as = former_liege }
+		create_title_and_vassal_change = {
+			type = independency
+			save_scope_as = change
+			add_claim_on_loss = yes
+		}
+		becomes_independent = {
+			change = scope:change
+		}
+		resolve_title_and_vassal_change = scope:change
+		BTWK_britannia_high_kingship_make_subject_king_effect = { SUZERAIN = scope:former_liege }
+	}	
+}
+
+BTWK_britannia_high_kingship_make_subject_king_effect = {
+	if = {
+		limit = { BTWK_britannia_high_kingship_can_inherit_trigger = yes }
+		start_tributary = {
+			contract_group = tributary_britannia_subject_king_permanent
+			suzerain = $SUZERAIN$
+		}
+	}
+	else = {
+		start_tributary = {
+			contract_group = tributary_britannia_subject_king
+			suzerain = $SUZERAIN$
+		}
+	}
+}
