@@ -31,9 +31,6 @@ watermills_01 = {
 			is_county_capital = yes
 		}
 		trigger_else = {
-			culture = {
-				has_cultural_parameter = watermills_windmills_cities
-			}
 			OR = {
 				is_county_capital = yes
 				AND = {
@@ -58,7 +55,6 @@ watermills_01 = {
 					has_cultural_parameter = watermills_windmills_cities
 				}
 			}
-			has_building_or_higher = city_01
 			NOR = {
 				has_building_or_higher = windmills_01
 				has_building_or_higher = caravanserai_01
@@ -691,28 +687,20 @@ windmills_01 = {
 		trigger_if = {
 			limit = {
 				has_holding_type = city_holding
+				is_county_capital = no
+				culture = {
+					has_cultural_parameter = watermills_windmills_cities
+				}
 			}
 			has_building_or_higher = city_01
-			culture = {
-				has_cultural_parameter = watermills_windmills_cities
-			}
 			NOR = {
 				has_building_or_higher = watermills_01
 				has_building_or_higher = caravanserai_01
 			}
 		}
-		trigger_else_if = {
-			limit = {
-				OR = {
-					has_holding_type = castle_holding
-					has_holding_type = church_holding
-					has_holding_type = temple_citadel_holding
-				}
-			}
-			is_county_capital = yes
-		}
 		trigger_else = {
-			always = no
+			building_requirement_castle_city_church = { LEVEL = 01 }
+			is_county_capital = yes
 		}
 		OR = {
 			culture = { # Standard unlock from inovation (High medieval)
@@ -1353,13 +1341,13 @@ orchards_02 = {
 	can_construct_potential = {
 		building_orchards_requirement_terrain = yes
 		building_requirement_castle_city_church = { LEVEL = 01 }
-		scope:holder.culture = {
-			has_innovation = innovation_crop_rotation
-		}
 	}
 
 	can_construct_showing_failures_only = {
 		building_requirement_tribal = no
+		scope:holder.culture = {
+			has_innovation = innovation_crop_rotation
+		}
 	}
 	
 	cost_gold = normal_building_tier_2_cost
@@ -1827,13 +1815,13 @@ peat_quarries_02 = {
 	can_construct_potential = {
 		building_peat_quarries_requirement_terrain = yes
 		building_requirement_castle_city_church = { LEVEL = 01 }
-		scope:holder.culture = {
-			has_innovation = innovation_crop_rotation
-		}
 	}
 
 	can_construct_showing_failures_only = {
 		building_requirement_tribal = no
+		scope:holder.culture = {
+			has_innovation = innovation_crop_rotation
+		}
 	}
 	
 	cost_gold = cheap_building_tier_2_cost

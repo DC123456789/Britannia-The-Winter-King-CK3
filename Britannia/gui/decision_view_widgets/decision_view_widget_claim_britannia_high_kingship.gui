@@ -1,13 +1,130 @@
 # Required controller: decision_option_list_controller
 
-vbox = {
+hbox = {
 	name = "decision_view_widget_claim_britannia_high_kingship"
 	margin_top = 10
+	spacing = 30
+	
+	vbox = {
+		
+		text_single = {
+			text = "CLAIMANT_POTENTIAL"
+			default_format = "#bold"
+			position = { 30 65 }
+			parentanchor = top|left
+			align = center
+		}
+		
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 10
+			vbox = {
+				text_single = {
+					text = "CLAIMANT_PREDICTED_SUPPORTERS"
+					default_format = "#bold"
+					position = { 30 100 }
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_PREDICTED_OPPONENTS"
+					default_format = "#bold"
+					position = { 30 135 }
+					parentanchor = top|left
+				}
+				
+				text_single = {
+					text = "CLAIMANT_PREDICTED_NEUTRALS"
+					default_format = "#bold"
+					parentanchor = top|left
+				}
+			}
+			
+			vbox = {
+				text_single = {
+					text = "CLAIMANT_SUPPORTER_COUNT"
+					parentanchor = top|vcenter
+					# tooltip = "CLAIMANT_SUPPORTER_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_SUPPORTERS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_supporter_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#P"
+						}
+					}
+				}
+			
+				text_single = {
+					text = "CLAIMANT_OPPONENT_COUNT"
+					parentanchor = top|vcenter
+					# tooltip = "CLAIMANT_OPPONENT_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_OPPONENTS_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_opponent_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#N"
+						}
+					}
+				}
+				
+				text_single = {
+					text = "CLAIMANT_NEUTRAL_COUNT"
+					parentanchor = top|vcenter
+					# tooltip = "CLAIMANT_NEUTRAL_LIST_TT"
+					using = tooltip_se
+
+					tooltipwidget = {
+						using = HighKingStanceListTooltipWidget
+						blockoverride "header_text" {
+							text = "CLAIMANT_NEUTRAL_DESCRIPTION"
+						}
+						blockoverride "list_datamodel" {
+							datamodel = "[GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')]"
+						}
+						blockoverride "none_text_visible" {
+							visible = "[LessThanOrEqualTo_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('britannia_potential_neutral_kings_list')), '(int32)0')]"
+						}
+						blockoverride "text_format" {
+							default_format = "#V"
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	button_standard = {
 		size = { 250 50 }
 		margin = { 10 10 }	
 		text = "OPEN_BRITANNIA_HIGH_KING_WINDOW"
 		onclick = "[GetVariableSystem.Set('show_high_king_window', 'true')]"
+	}
+	
+	state = {
+		name = init_state
+		trigger_on_create = yes
+		block "box_create_state" {
+			on_start = "[GetScriptedGui('BTWK_window_high_king_init').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+		}
 	}
 }

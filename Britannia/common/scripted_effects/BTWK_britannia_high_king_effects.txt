@@ -1,26 +1,46 @@
-﻿setup_britannia_high_king_window_lists_effect = {
+﻿# Sets up all the necessary variables for viewing the High King window and its associated tooltips
+setup_britannia_high_king_window_lists_effect = {
+	save_scope_as = claimant
+
+	# Clear old lists
 	clear_global_variable_list = britannia_subject_kings_list
 	clear_global_variable_list = britannia_independent_kings_list
+	clear_variable_list = britannia_potential_supporter_kings_list
+	clear_variable_list = britannia_potential_opponent_kings_list
+	clear_variable_list = britannia_potential_neutral_kings_list
 	clear_global_variable_list = britannia_supporter_kings_list
 	clear_global_variable_list = britannia_opponent_kings_list
 	clear_global_variable_list = britannia_neutral_kings_list
+	
+	# These stories are also cleared on the death of the owner to avoid bloat
+	every_in_list = {
+		variable = britannia_potential_supporter_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_supporter_kings_linked_list
+	every_in_list = {
+		variable = britannia_potential_opponent_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_opponent_kings_linked_list
+	every_in_list = {
+		variable = britannia_potential_neutral_kings_linked_list
+		end_story = yes
+	}
+	clear_variable_list = britannia_potential_neutral_kings_linked_list
 
 	every_ruler = {
 		limit = {
-			any_held_title = {
-				OR = {
-					tier = tier_kingdom
-					AND = {
-						tier = tier_duchy
-						PREV = { 
-							is_independent_ruler = yes
-							highest_held_title_tier = tier_duchy
-						}
-					}
-				}
-				target_is_de_jure_liege_or_above = title:e_britannia
-			}
+			BTWK_britannia_high_kingship_is_elector_trigger = yes
 		}
+		add_to_temporary_list = britannia_all_kings_list
+	}
+	
+	ordered_in_list = {
+		list = britannia_all_kings_list
+		max = list_size:britannia_all_kings_list
+		order_by = sub_realm_size
+
 		# Sort independent vs. subject kings
 		if = {
 			limit = {
@@ -28,14 +48,17 @@
 					top_liege = { has_title = title:e_britannia }
 					AND = {
 						is_tributary = yes
-						has_subject_contract_group = tributary_britannia_subject_king
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
 						suzerain = { has_title = title:e_britannia }
 					}
 				}
 			}
-			add_to_global_variable_list = {
-				name = britannia_subject_kings_list
-				target = THIS
+			if = {
+				limit = { NOT = { has_title = title:e_britannia } }		# High king himself shouldn't be here
+				add_to_global_variable_list = {
+					name = britannia_subject_kings_list
+					target = THIS
+				}
 			}
 		}
 		else = {
@@ -44,10 +67,45 @@
 				target = THIS
 			}
 		}
-		# Sort supporter vs. opponent vs. neutral kings
+		# Calculate potential supporter vs. opponent vs. neutral kings
+		if = {
+			limit = { this != scope:claimant }
+			if = {
+				limit = { 
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
+				}
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_supporter_kings_list
+						target = PREV
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold
+				}
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_neutral_kings_list
+						target = PREV
+					}
+				}
+			}
+			else = {
+				scope:claimant = {
+					add_to_variable_list = {
+						name = britannia_potential_opponent_kings_list
+						target = PREV
+					}
+				}
+			}
+		}
+		
+		# Sort declared supporter vs. opponent vs. neutral kings
 		if = {
 			limit = {
-				has_variable = HK_britannia_supporter		# Temp
+				has_variable = HK_britannia_supporter
 			}
 			add_to_global_variable_list = {
 				name = britannia_supporter_kings_list
@@ -56,46 +114,232 @@
 		}
 		else_if = {
 			limit = {
-				has_variable = HK_britannia_opponent		# Temp
+				has_variable = HK_britannia_opponent
 			}
 			add_to_global_variable_list = {
 				name = britannia_opponent_kings_list
 				target = THIS
 			}
 		}
-		else = {
+		else_if = {
+			limit = {
+				OR = {
+					NOT = { exists = title:e_britannia.var:britannia_high_kingship_claimant }
+					title:e_britannia.var:britannia_high_kingship_claimant != this
+				}
+			}
 			add_to_global_variable_list = {
 				name = britannia_neutral_kings_list
 				target = THIS
 			}
 		}
 	}
-	# TODO Should turn these into script values
-	set_global_variable = {
-		name = britannia_supporter_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_supporter_kings_list
-				add = 1
+	
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_global_variable = last_high_king_window_view_num }
+				global_var:BTWK_last_high_king_window_view_num = 10
+			}
+		}
+		set_global_variable = { name = BTWK_last_high_king_window_view_num value = 1 }
+		set_global_variable = { name = BTWK_high_king_claimant_1 value = scope:claimant }
+		scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 1 } }
+	}
+	else = {
+		change_global_variable = { name = BTWK_last_high_king_window_view_num add = 1 }
+		if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 2 }
+			set_global_variable = { name = BTWK_high_king_claimant_2 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 2 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 3 }
+			set_global_variable = { name = BTWK_high_king_claimant_3 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 3 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 4 }
+			set_global_variable = { name = BTWK_high_king_claimant_4 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 4 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 5 }
+			set_global_variable = { name = BTWK_high_king_claimant_5 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 5 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 6 }
+			set_global_variable = { name = BTWK_high_king_claimant_6 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 6 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 7 }
+			set_global_variable = { name = BTWK_high_king_claimant_7 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 7 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 8 }
+			set_global_variable = { name = BTWK_high_king_claimant_8 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 8 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 9 }
+			set_global_variable = { name = BTWK_high_king_claimant_9 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 9 } }
+		}
+		else_if = {
+			limit = { global_var:BTWK_last_high_king_window_view_num = 10 }
+			set_global_variable = { name = BTWK_high_king_claimant_10 value = scope:claimant }
+			scope:claimant = { set_variable = { name = BTWK_high_king_window_view_num value = 10 } }
+		}
+	}
+	if = {
+		limit = { 
+			exists = title:e_britannia.var:britannia_high_kingship_claimant
+			title:e_britannia.var:britannia_high_kingship_claimant != scope:claimant
+		}
+		title:e_britannia.var:britannia_high_kingship_claimant = {
+			save_scope_as = claimant
+			clear_variable_list = britannia_potential_supporter_kings_list
+			clear_variable_list = britannia_potential_opponent_kings_list
+			clear_variable_list = britannia_potential_neutral_kings_list
+			ordered_in_list = {
+				list = britannia_all_kings_list
+				max = list_size:britannia_all_kings_list
+				order_by = sub_realm_size
+				# If there is an actual claimant, calculate potential stances for them too
+				if = {
+					limit = {
+						title:e_britannia.var:britannia_high_kingship_claimant != this
+					}
+					if = {
+						limit = { 
+							BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
+						}
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_supporter_kings_list
+								target = PREV
+							}
+						}
+					}
+					else_if = {
+						limit = { 
+							BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_opponent_threshold
+						}
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_neutral_kings_list
+								target = PREV
+							}
+						}
+					}
+					else = {
+						title:e_britannia.var:britannia_high_kingship_claimant = {
+							add_to_variable_list = {
+								name = britannia_potential_opponent_kings_list
+								target = PREV
+							}
+						}
+					}
+				}
 			}
 		}
 	}
-	set_global_variable = {
-		name = britannia_opponent_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_opponent_kings_list
-				add = 1
+}
+
+BTWK_britannia_claim_high_kingship_effect = {
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_effect_tt_0
+	}
+	custom_tooltip = {
+		text = claim_britannia_high_kingship_decision_effect_tt_1
+	}
+	trigger_event = { id = BTWK_britannia_high_king.0001 }
+}
+
+BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
+	if = {
+		limit = { NOT = { BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.culture
+	}
+	if = {
+		limit = { NOT = { any_held_title = { tier = tier_kingdom } } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.kingdom
+	}
+	if = {
+		limit = { NOT = { prestige_level >= high_prestige_level } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.prestige_level
+	}
+	if = {
+		limit = { NOT = { martial >= 10 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.martial
+	}
+	if = {
+		limit = { NOT = { diplomacy >= 8 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.diplomacy
+	}
+	if = {
+		limit = { NOT = { realm_size >= 10 } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.realm_size
+	}
+	if = {
+		limit = { NOT = { is_incapable = no } }
+		custom_tooltip = BTWK_britannia_high_king.0020.a.tt.incapable
+	}
+}
+
+BTWK_britannia_high_kingship_destroy_effect = {
+	destroy_title = title:e_britannia
+	every_tributary = {
+		limit = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
+		end_tributary = yes
+	}
+}
+
+BTWK_britannia_high_kingship_check_king_tier_vassals_effect = {
+	if = {
+		limit = {
+			highest_held_title_tier >= tier_kingdom
+			is_independent_ruler = no
+			liege = {
+				has_title = title:e_britannia
+				BTWK_britannia_subject_kings_active_trigger = yes
+				NOT = {
+					any_held_title = {
+						this != title:e_britannia
+						tier >= tier_empire
+					}
+				}
 			}
 		}
+		liege = { save_scope_as = former_liege }
+		create_title_and_vassal_change = {
+			type = independency
+			save_scope_as = change
+			add_claim_on_loss = yes
+		}
+		becomes_independent = {
+			change = scope:change
+		}
+		resolve_title_and_vassal_change = scope:change
+		BTWK_britannia_high_kingship_make_subject_king_effect = { SUZERAIN = scope:former_liege }
+	}	
+}
+
+BTWK_britannia_high_kingship_make_subject_king_effect = {
+	if = {
+		limit = { BTWK_britannia_high_kingship_can_inherit_trigger = yes }
+		start_tributary = {
+			contract_group = tributary_britannia_subject_king_permanent
+			suzerain = $SUZERAIN$
+		}
 	}
-	set_global_variable = {
-		name = britannia_neutral_kings_list_size
-		value = {
-			every_in_global_list = {
-				variable = britannia_neutral_kings_list
-				add = 1
-			}
+	else = {
+		start_tributary = {
+			contract_group = tributary_britannia_subject_king
+			suzerain = $SUZERAIN$
 		}
 	}
 }

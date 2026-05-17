@@ -297,11 +297,23 @@ special_contract = {
 }
 
 suzerain_war_participation_guarantee = {
-	display_mode = checkbox
+	display_mode = radiobutton		# Checkbox doesn't have proper GUI support if there conditions for disabling
 	obligation_levels = {
 		suzerain_war_participation_guarantee_none = {
 			position = { 0 0 }
 
+			is_valid = {
+				trigger_if = {
+					limit = {
+						scope:subject = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
+					}
+					custom_tooltip = {
+						text = britannia_subject_king_guarantee_always
+						always = no
+					}
+				}
+			}
+			
 			ai_liege_desire = @ai_standard_liege_desire
 			ai_subject_desire = 0
 			score = -2
@@ -311,7 +323,7 @@ suzerain_war_participation_guarantee = {
 			default = yes
 			position = { 1 0 }
 
-			subject_opinion = 25
+			subject_opinion = 15
 
 			# flag referenced in code, do not change without approval
 			flag = tributary_contract_suzerain_guarantee_override
@@ -319,6 +331,71 @@ suzerain_war_participation_guarantee = {
 			ai_liege_desire = 0
 			ai_subject_desire = @ai_standard_vassal_desire
 			score = 2
+		}
+	}
+}
+
+# Do not add any more levels to this, code checks only for non-default to determine behavior
+tributary_war_participation_obligation = {
+	display_mode = checkbox
+	obligation_levels = {
+		tributary_war_participation_obligation_none = {
+			default = yes
+			position = { 0 0 }
+
+			ai_liege_desire = 0
+			ai_subject_desire = @ai_standard_vassal_desire
+			score = 1
+		}
+		tributary_war_participation_obligation_forced = {
+			parent = tributary_war_participation_obligation_none
+			position = { 1 0 }
+
+			is_valid = {
+				trigger_if = {
+					limit = {
+						scope:subject = { has_subject_contract_group = tributary_foederatus }
+					}
+					always = yes
+				}
+				trigger_else_if = {
+					limit = { scope:subject = { has_government = herder_government } }
+					custom_tooltip = {
+						text = herder_cannot_war_tt
+						always = no
+					}
+				}
+				trigger_else_if = {
+					limit = {
+						scope:subject.suzerain ?= { government_has_flag = government_is_steppe_admin } 
+					}
+					always = yes
+				}
+				trigger_else_if = {
+					limit = { NOT = { scope:subject = { has_relation_blood_brother = overlord } } }
+					custom_tooltip = {
+						text = war_support_obligation_conditions_unmet_tt
+						scope:subject = {
+							OR = {
+								is_ai = no # human players cannot be obedient, so this is always valid for them
+								is_obedient = yes
+							}
+							vassal_contract_obligation_level:suzerain_war_participation_guarantee > 0
+						}
+					}
+				}
+				trigger_else = {
+					scope:subject = { has_relation_blood_brother = overlord }
+				}
+			}
+
+			subject_opinion = -25
+
+			flag = tributary_contract_tributary_forced_war_override
+
+			ai_liege_desire = @ai_standard_liege_desire
+			ai_subject_desire = 0
+			score = -3
 		}
 	}
 }

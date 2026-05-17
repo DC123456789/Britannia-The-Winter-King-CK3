@@ -1,0 +1,44 @@
+﻿# Modify (multiply) the doctrine cost when creating a faith.
+# The returned value is interpreted as a multiplicative modifier (e.g. 0.5 means +50% cost).
+# scope:character = the creation character
+# scope:old_faith = the faith the character is converting from
+faith_creation_cost_mult = {
+	subtract = {
+		value = scope:old_faith.faith_conversion_fervor_mult
+		desc = "faith_creation_cost_fervor_impact"
+		format = "BREAKDOWN_FORMAT_PIETY_PERCENTAGE_POSITIVE_IS_BAD"
+	}
+	if = {
+		limit = {
+			num_realm_holy_sites_faithful_holders = {
+				CHARACTER = root
+				COUNT = 3
+			}
+		}
+		subtract = {
+			value = 0.2
+			desc = "faith_creation_cost_controlled_holy_sites_impact"
+			format = "BREAKDOWN_FORMAT_PIETY_PERCENTAGE_POSITIVE_IS_BAD"
+		}
+	}
+	else_if = {
+		limit = {
+			num_realm_holy_sites_faithful_holders = {
+				CHARACTER = root
+				COUNT = 2
+			}
+		}
+		add = {
+			value = 0
+			desc = "faith_creation_cost_controlled_holy_sites_impact"
+			format = "BREAKDOWN_FORMAT_PIETY_PERCENTAGE_POSITIVE_IS_BAD"
+		}
+	}
+	else = {
+		add = {
+			value = 0.2
+			desc = "faith_creation_cost_controlled_holy_sites_impact"
+			format = "BREAKDOWN_FORMAT_PIETY_PERCENTAGE_POSITIVE_IS_BAD"
+		}
+	}
+}

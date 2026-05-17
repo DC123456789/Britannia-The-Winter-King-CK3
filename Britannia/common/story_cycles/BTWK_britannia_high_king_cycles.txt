@@ -1,0 +1,269 @@
+﻿BTWK_britannia_claim_high_kingship_story = {
+	on_setup = {
+		story_owner = { save_scope_as = claimant }
+		# Notify other players
+		every_player = {
+			limit = { 
+				NOT = { this = prev.story_owner }
+				BTWK_britannia_high_kingship_is_relevant_trigger = yes
+			}
+			trigger_event = BTWK_britannia_high_king.0002
+		}
+		story_owner = { 
+			# Wait a few days before actually asking the other kings for support
+			trigger_event = { id = BTWK_britannia_high_king.0003 days = 4 }
+			# Followup event is triggered a day later to make sure all other kings have been asked
+			trigger_event = { id = BTWK_britannia_high_king.0006 days = 5 }
+		}
+		clear_global_variable_list = HK_britannia_supporter_list
+		clear_global_variable_list = HK_britannia_opponent_list
+	}
+
+	on_end = {
+		# If the High Kingdom was not successfully claimed, notify everyone
+		story_owner = {
+			if = {
+				limit = { NOT = { has_title = title:e_britannia } }
+				save_scope_as = claimant
+				# Notify backing down
+				if = {
+					limit = { prev = { has_variable = claimant_backed_down } }
+					# Claimant doesn't need a notification of the decision they just made
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0007
+					}
+				}
+				# Notify white peace
+				else_if = {
+					limit = { prev = { has_variable = dispute_high_kingship_war_wp } }
+					trigger_event = BTWK_britannia_high_king.0011
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0011
+					}
+				}
+				# Notify defeat
+				else_if = {
+					limit = { prev = { has_variable = dispute_high_kingship_war_defeat } }
+					trigger_event = BTWK_britannia_high_king.0012
+					every_player = {
+						limit = { 
+							NOT = { this = scope:claimant }
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						trigger_event = BTWK_britannia_high_king.0012
+					}
+				}
+				# Notify death / ineligibility
+				else = {
+					if = {
+						limit = { is_alive = yes }
+						trigger_event = { id = BTWK_britannia_high_king.0013 }
+					}
+					# If dead, the event is called by on_death instead
+					every_player = {
+						limit = { 
+							NOR = { 
+								prev.story_owner = this
+								prev.story_owner.player_heir ?= this
+							} 
+							BTWK_britannia_high_kingship_is_relevant_trigger = yes
+						}
+						if = {
+							limit = { has_variable = HK_britannia_supporter }
+							set_variable = BTWK_britannia_high_king_was_supporter
+						}
+						else_if = {
+							limit = { has_variable = HK_britannia_opponent }
+							set_variable = BTWK_britannia_high_king_was_opponent
+						}
+						trigger_event = { id = BTWK_britannia_high_king.0013 delayed = yes }
+					}
+				}
+			}
+		}
+		
+		# Cleanup variables
+		title:e_britannia = {
+			remove_variable = britannia_high_kingship_claimant
+			remove_variable = britannia_high_kingship_dispute_war
+			remove_variable = britannia_high_kingship_dispute_war_second_try
+		}
+		setup_britannia_high_king_window_lists_effect = yes
+		every_in_global_list = {
+			variable = HK_britannia_supporter_list
+			remove_variable = HK_britannia_supporter
+		}
+		every_in_global_list = {
+			variable = HK_britannia_opponent_list
+			remove_variable = HK_britannia_opponent
+		}
+	}
+
+	on_owner_death = {
+		end_story = yes
+	}
+}
+
+BTWK_britannia_high_kingship_story = {
+	on_setup = {
+	}
+
+	on_end = {
+		story_owner = { save_scope_as = former_high_king }
+		# Notify High King deposed by cb
+		if = {
+			limit = { has_variable = high_king_deposed }
+			this.var:high_king_deposer = { save_scope_as = high_king_deposer }
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0025 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner ?= this }
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0025
+			}
+		}
+		# Notify High King otherwise abdicated before first reform
+		else_if = {
+			limit = { has_variable = high_king_abdicated }
+			if = {
+				limit = { exists = title:e_britannia.holder }
+				title:e_britannia.holder = { 
+					BTWK_britannia_high_kingship_destroy_effect = yes
+					save_scope_as = background_throne_room_scope 
+					save_scope_as = former_high_king_player_heir
+				}
+			}
+			else = {
+				story_owner = {
+					BTWK_britannia_high_kingship_destroy_effect = yes
+				}
+			}
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0024 }
+			}
+			every_player = {
+				limit = {
+					NOT = { prev.story_owner ?= this }
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0024
+			}
+		}
+		# Notify High King died before first reform
+		else_if = {
+			limit = { has_variable = high_king_died }
+			# Don't show event to the High King himself as that event is triggered by on_death
+			# But need to call the actual effect here to have the title destroyed during succession
+			# and not at some point before death
+			story_owner = {
+				BTWK_britannia_high_kingship_destroy_effect = yes
+			}
+			every_player = {
+				limit = { 
+					NOR = {
+						prev.story_owner ?= this
+						prev.story_owner.player_heir ?= this 
+					}
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_britannia_high_king.0023
+			}
+		}
+		# Notify Unfit to Rule / Fallback
+		else = {
+			story_owner = {
+				trigger_event = { id = BTWK_britannia_high_king.0022 }
+			}
+			every_player = {
+				limit = { 
+					NOT = { prev.story_owner = this } 
+					BTWK_britannia_high_kingship_is_relevant_trigger = yes
+				}
+				if = {
+					limit = { 
+						is_tributary_of = prev
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+					}
+					set_variable = was_subject_king
+				}
+				trigger_event = { id = BTWK_britannia_high_king.0022 }
+			}
+		}
+	}
+
+	on_owner_death = {
+		if = {
+			limit = { BTWK_britannia_high_kingship_can_inherit_trigger = no }
+			set_variable = high_king_died
+			end_story = yes
+		}
+	}
+	
+	# Check if Unfit to Rule
+	effect_group = {
+		months = 1
+		
+		trigger = {
+			BTWK_britannia_high_kingship_can_inherit_trigger = no
+		}
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { story_owner = { BTWK_britannia_high_kingship_is_fit_to_rule_trigger = no } }
+				effect = {
+					if = {
+						limit = { story_owner = { NOT = { has_variable = BTWK_britannia_high_king_unfit_to_rule } } }
+						story_owner = {
+							trigger_event = BTWK_britannia_high_king.0020
+						}
+					}
+					else_if = {
+						limit = { story_owner.var:BTWK_britannia_high_king_unfit_to_rule_months_remaining > 0 }
+						story_owner = {
+							change_variable = {
+								name = BTWK_britannia_high_king_unfit_to_rule_months_remaining
+								subtract = 1
+							}
+						}
+					}
+					else = {
+						set_variable = high_king_unfit_to_rule
+						end_story = yes
+					}
+				}
+			}
+			triggered_effect = {
+				trigger = { 
+					story_owner = { 
+						BTWK_britannia_high_kingship_is_fit_to_rule_trigger = yes 
+						has_variable = BTWK_britannia_high_king_unfit_to_rule
+					} 
+				}
+				effect = {
+					story_owner = {
+						remove_variable = BTWK_britannia_high_king_unfit_to_rule
+						remove_variable = BTWK_britannia_high_king_unfit_to_rule_months_remaining
+						trigger_event = BTWK_britannia_high_king.0021
+					}
+				}
+			}
+		}
+		
+		fallback = {
+			story_owner = { set_variable = fallback }
+		}
+	}
+	
+	# TODO Authority counter
+}

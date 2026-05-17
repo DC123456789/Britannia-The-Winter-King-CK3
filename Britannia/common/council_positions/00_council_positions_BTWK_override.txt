@@ -255,7 +255,6 @@ councillor_chancellor = {
 		trigger_else = {
 			can_be_chancellor_trigger = { COURT_OWNER = root.liege_or_court_owner }
 		}
-		NOT = { this = character:528 }
 		tgp_is_ceremonial_liege_trigger = no
 	}
 
@@ -523,7 +522,6 @@ councillor_steward = {
 		trigger_else = {
 			can_be_steward_trigger = { COURT_OWNER = root.liege_or_court_owner }
 		}
-		NOT = { this = character:528 }
 		tgp_is_ceremonial_liege_trigger = no
 	}
 
@@ -807,7 +805,6 @@ councillor_marshal = {
 		trigger_else = {
 			can_be_marshal_trigger = { COURT_OWNER = root.liege_or_court_owner }
 		}
-		NOT = { this = character:528 }
 		tgp_is_ceremonial_liege_trigger = no
 	}
 
@@ -1090,38 +1087,6 @@ councillor_spymaster = {
 		trigger_else = {
 			can_be_spymaster_trigger = { COURT_OWNER = root.liege_or_court_owner }
 		}
-		# Gender must follow laws in merit based realms
-		trigger_if = {
-			limit = {
-				root.liege_or_court_owner = {
-					is_landed = yes
-					government_has_flag = government_has_merit
-				}
-			}
-			trigger_if = {
-				limit = {
-					root.liege_or_court_owner = {
-						OR = {
-							has_realm_law = male_only_law
-							has_realm_law = male_preference_law
-						}
-					}
-				}
-				is_male = yes
-			}
-			trigger_if = {
-				limit = {
-					root.liege_or_court_owner = {
-						OR = {
-							has_realm_law = female_only_law
-							has_realm_law = female_preference_law
-						}
-					}
-				}
-				is_female = yes
-			}
-		}
-		NOT = { this = character:528 }
 		tgp_is_ceremonial_liege_trigger = no
 	}
 

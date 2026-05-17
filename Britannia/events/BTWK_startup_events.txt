@@ -1,0 +1,207 @@
+﻿namespace = BTWK_startup
+
+##################################################
+
+### Game start introduction events
+
+##################################################
+
+BTWK_startup.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event_w_portraits
+	title = {
+		first_valid = {
+			# Uther
+			triggered_desc = {
+				trigger = { this = character:1 }
+				desc = BTWK_startup.0001.t.uther_pendragon
+			}
+			# Northern Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				}
+				desc = BTWK_startup.0001.t.cumbrian
+			}
+			# Southern Britons / Romano-Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						AND = {
+							culture = { has_cultural_pillar = heritage_latin }
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+				}
+				desc = BTWK_startup.0001.t.briton
+			}
+			# Default/fallback
+			desc = BTWK_startup.0001.t
+		}
+	}
+	desc = {
+		first_valid = {
+			# Uther
+			triggered_desc = {
+				trigger = { this = character:1 }
+				desc = BTWK_startup.0001.desc.uther_pendragon
+			}
+			# Arthur
+			# Tewdric
+			# Gorfyddyd
+			# Aelle
+			# Cerdic
+			# Ambrosii
+			# Northern Britons
+			triggered_desc = {
+				trigger = { 
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				}
+				desc = BTWK_startup.0001.desc.cumbrian
+			}
+			# Southern Britons
+			triggered_desc = {
+				trigger = { 
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				desc = BTWK_startup.0001.desc.briton
+			}
+			# Romano-Britons
+			triggered_desc = {
+				trigger = { 
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+				desc = BTWK_startup.0001.desc.romanobritish
+			}
+			# Anglo-Saxons
+			# Irish
+			# Romanized Germanics
+			# Default/fallback
+			desc = BTWK_startup.0001.desc
+		}
+	}
+	theme = realm 
+
+	override_background = {
+		trigger = { root = character:1 }
+		reference = bp3_plains_winter
+	}
+	
+	left_portrait = {
+		character = root
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		character:1 = { save_scope_as = uther_pendragon }
+		character:80 = { save_scope_as = aelle_of_anglia }
+		character:300 = { save_scope_as = coel_hen }
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					# Uther
+					triggered_desc = {
+						trigger = { this = character:1 }
+						desc = BTWK_startup.0001.a.uther_pendragon
+					}
+					# Northern Britons
+					triggered_desc = {
+						trigger = {
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								culture = { has_cultural_pillar = heritage_latin }
+							}
+							capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+						}
+						desc = BTWK_startup.0001.a.cumbrian
+					}
+					# Southern Britons / Romano-Britons
+					triggered_desc = {
+						trigger = { 
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = BTWK_startup.0001.a.briton
+					}
+					desc = BTWK_startup.0001.a
+				}
+			}
+		}
+		
+		# Uther - explain starting situation, succession issues / regency event chain
+		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
+		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
+		# Everyone else in southeastern Britain - warn about threat of Aelle
+		if = {
+			limit = {
+				OR = {
+					primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_south_lloegyr
+					}
+					any_realm_county = {
+						title_province = { geographical_region = btwk_world_britannia_south_lloegyr }
+					}
+					# Also relevant for these rulers
+					has_title = title:k_powys
+					has_title = title:d_the_peak
+				}
+			}
+			custom_tooltip = { text = BTWK_startup.0001.aelle_warning_tooltip }
+		}
+		
+		# Britons + Romano-Britons - explain High King mechanic, warn about Anglo-Saxon invasions
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_latin }
+					trigger_if = {
+						limit = { culture:britannic = { has_variable = culture_has_emerged } }
+						culture = culture:britannic
+					}
+				}
+			}
+			custom_tooltip = { text = BTWK_startup.0001.britannia_high_kingship_tooltip }
+		}
+		
+		# Northern Britons - talk about Yr Hen Ogledd and how you will need to unite that before claiming the High Kingship
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_latin }
+					trigger_if = {
+						limit = { culture:britannic = { has_variable = culture_has_emerged } }
+						culture = culture:britannic
+					}
+				}
+			}
+			custom_tooltip = { text = BTWK_startup.0001.hen_ogledd_tooltip }
+		}
+		
+		# Anglo-Saxons - explain Bretwalda mechanic
+	}
+}

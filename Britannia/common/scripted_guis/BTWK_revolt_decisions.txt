@@ -1,0 +1,44 @@
+﻿## Kingdom Region Integration
+BTWK_pacify_cultural_redoubt_list_init = {
+	scope = character
+	
+	effect = {
+		BTWK_generate_pacify_cultural_redoubt_list = yes
+	}
+}
+
+BTWK_pacify_cultural_redoubt_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_list = {
+				variable = BTWK_pacify_cultural_redoubt_list
+			}
+		}
+	}
+}
+
+BTWK_pacify_cultural_redoubt_pacify = {
+	scope = character
+	
+	is_valid = {
+		custom_description = {
+			text = government_can_pacify_cultural_redoubts_trigger
+			NOT = { government_has_flag = government_cannot_pacify_cultural_redoubts }
+		}
+		gold >= 200
+	}
+	
+	effect = {
+		remove_short_term_gold = BTWK_cultural_redoubt_pacification_gold_cost
+		scope:scoped_title = { 
+			BTWK_start_pacify_cultural_redoubt = yes
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+		BTWK_generate_pacify_cultural_redoubt_list = yes
+	}
+}

@@ -1,0 +1,30 @@
+﻿county_levies_to_raise = {
+	value = total_county_levies
+
+	# Will summon between 75% and 175% of total county levy strength, depending on how much they hate you (most commonly will be 95-110% though, scores between -20 and -35 are the most common)
+	multiply = {
+		value = county_opinion
+		multiply = -0.01
+		add = 0.5
+	}
+	if = {
+		limit = {
+			culture != holder.culture
+			culture = { has_cultural_parameter = county_peasant_and_populist_factions_more_common }
+		}
+		multiply = 1.5
+	}
+	# Significantly increased by cultural redoubt modifiers
+	if = {
+		limit = { has_county_modifier = BTWK_cultural_redoubt_negative_1_modifier }
+		multiply = 1.5
+	}
+	else_if = {
+		limit = { has_county_modifier = BTWK_cultural_redoubt_negative_2_modifier }
+		multiply = 1.25
+	}
+	min = {
+		value = building_max_garrison
+		multiply = 1.2
+	}
+}

@@ -21,3 +21,28 @@ BTWK_religion_visible = {
 		}
 	}
 }
+
+BTWK_list_visible_faiths_for_each_religion = {
+	scope = character
+	
+	effect = {
+		every_religion_global = {
+			save_scope_as = current_religion
+			clear_variable_list = religion_visible_faiths
+			every_faith = {
+				limit = {
+					NOR = {
+						has_variable = block_conversion
+						has_variable = block_conversion_till_founded
+					}
+				}
+				scope:current_religion = {
+					add_to_variable_list = {
+						name = religion_visible_faiths
+						target = prev
+					}
+				}
+			}
+		}
+	}
+}

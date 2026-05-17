@@ -1,0 +1,590 @@
+﻿BTWK_dispute_britannia_high_kingship_cb = {
+	icon = dissolution_war
+	group = BTWK_high_king_britannia	
+	combine_into_one = yes
+	allow_hostages = no
+	should_show_war_goal_subview = no
+
+	allowed_for_character = {
+		always = no # Started by script
+	}
+
+	should_invalidate = {
+		scope:attacker = { 
+			OR = {
+				BTWK_britannia_high_kingship_is_eligible_trigger = no 
+				NOT = { title:e_britannia = { has_variable = britannia_high_kingship_claimant } }
+				title:e_britannia.var:britannia_high_kingship_claimant != scope:attacker
+			}
+		}
+	}
+	
+	on_declaration = {
+		on_declared_war = yes
+	}
+
+	on_victory_desc = {
+		desc = BTWK_dispute_britannia_high_kingship_cb_victory_desc
+	}
+	
+	on_victory = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+		
+		# Legitimacy
+		add_legitimacy_attacker_victory_effect = yes
+
+		#EP2 accolade glory gain for winning against higher ranked enemy
+		scope:attacker = { accolade_attacker_war_end_glory_gain_high_effect = yes }
+		
+		# Make sure all defeated enemies are properly flagged as opponents
+		every_independent_ruler = {
+			limit = {
+				has_variable = HK_britannia_opponent
+				NOT = { is_defender_in_war = scope:war } 
+			}
+			remove_variable = HK_britannia_opponent
+			remove_list_global_variable = {
+				name = HK_britannia_opponent_list
+				target = THIS
+			}
+		}
+		scope:war = {
+			every_war_defender = {
+				limit = {
+					is_independent_ruler = yes
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+				}
+				set_variable = HK_britannia_opponent
+				add_to_global_variable_list = {
+					name = HK_britannia_opponent_list
+					target = THIS
+				}
+			}
+		}
+		
+		# Trigger event
+		scope:attacker = {
+			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_victory_tt
+			trigger_event = BTWK_britannia_high_king.0008
+		}
+		
+		# Prestige level progress for the attacker
+		scope:attacker = {
+			add_prestige_experience = {
+				value = major_prestige_value
+			}
+		}
+
+		# Prestige loss for the defender
+		scope:defender = {
+			add_prestige = {
+				value = major_prestige_value
+				multiply = -1.0
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		
+		# Truce
+		add_truce_attacker_victory_effect = yes
+
+		# FP1: note the victory for future memorialisation via stele (if applicable).
+		scope:attacker = { fp1_remember_recent_conquest_victory_effect = yes }
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+
+		#Mandalas gain or lose piety/devotion depending on Decree
+		mandala_war_victory_effects = yes
+	}
+
+	on_white_peace_desc = {
+		desc = BTWK_dispute_britannia_high_kingship_cb_white_peace_desc
+	}
+	
+	on_white_peace = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+
+		#EP2 accolade glory gain for doing ok against higher ranked enemy
+		scope:attacker = { accolade_attacker_war_end_glory_gain_low_effect = yes }
+		scope:defender = { accolade_defender_war_end_glory_gain_med_effect = yes }
+
+		# Prestige loss for the attacker
+		scope:attacker = {
+			add_prestige = {
+				value = medium_prestige_value
+				multiply = -1.0
+			}
+			stress_impact = {
+				ambitious = medium_stress_impact_gain
+				arrogant = medium_stress_impact_gain
+			}
+		}
+
+		# Resolve white peace (claim fails, but only 5 years before you can try again)
+		scope:attacker = {
+			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_white_peace_tt
+			# For loc
+			title:e_britannia = { set_variable = { name = HK_britannia_opponent_leader value = scope:defender days = 1 } }
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				set_variable = dispute_high_kingship_war_wp
+				end_story = yes
+			}
+		}
+		
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker # Not important as the scales are identical
+			FAME_BASE = medium_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		scope:defender = {
+			stress_impact = {
+				arrogant = medium_stress_impact_gain
+			}
+		}
+		
+		add_truce_white_peace_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_invalidated_desc = msg_dispute_britannia_high_kingship_war_invalidated_message
+	
+	on_invalidated = {
+		title:e_britannia.var:britannia_high_kingship_claimant ?= {
+			if = {
+				limit = { BTWK_britannia_high_kingship_is_eligible_trigger = no }
+				every_owned_story = {
+					limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+					end_story = yes
+				}
+			}
+			else = {
+				# If the war was invalidated for reasons other than the attacker dying / becoming ineligible,
+				# restart the war (with potentially different targets)
+				
+				# Make sure all enemies are properly flagged as opponents
+				every_independent_ruler = {
+					limit = {
+						has_variable = HK_britannia_opponent
+						NOT = { is_defender_in_war = scope:war } 
+					}
+					remove_variable = HK_britannia_opponent
+					remove_list_global_variable = {
+						name = HK_britannia_opponent_list
+						target = THIS
+					}
+				}
+				scope:war = {
+					every_war_defender = {
+						limit = {
+							is_independent_ruler = yes
+							BTWK_britannia_high_kingship_is_elector_trigger = yes
+						}
+						set_variable = HK_britannia_opponent
+						add_to_global_variable_list = {
+							name = HK_britannia_opponent_list
+							target = THIS
+						}
+					}
+				}
+				title:e_britannia = { set_variable = britannia_high_kingship_dispute_war_second_try }
+				trigger_event = BTWK_britannia_high_king.0006
+			}
+		}
+	}
+
+	on_defeat_desc = {
+		desc = BTWK_dispute_britannia_high_kingship_cb_defeat_desc
+	}
+	
+	on_defeat = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+		
+		# Legitimacy
+		add_legitimacy_attacker_defeat_effect = yes
+
+		scope:defender = { 
+			mandala_peacemaker_perk_serenity_effect = yes
+			#EP2 accolade glory gain for winning against higher ranked enemy
+			accolade_defender_war_end_glory_gain_high_effect = yes
+			# Prestige for Defender
+			add_prestige_war_defender_effect = {
+				PRESTIGE_VALUE = medium_prestige_value
+			}
+		}
+		
+		# Prestige loss for the attacker
+		scope:attacker = {
+			pay_short_term_gold_reparations_effect = {
+				GOLD_VALUE = 3
+			}
+			add_prestige = {
+				value = major_prestige_value
+				multiply = -1.0
+			}
+		}
+		
+		# Lose prestige level, trigger event
+		scope:attacker = {
+			add_prestige_level = -1
+			custom_tooltip = BTWK_dispute_britannia_high_kingship_cb_defeat_tt
+			# For loc
+			title:e_britannia = { set_variable = { name = HK_britannia_opponent_leader value = scope:defender days = 1 } }
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_claim_high_kingship_story }
+				set_variable = dispute_high_kingship_war_defeat
+				end_story = yes
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:defender
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		
+		scope:attacker = {
+			save_temporary_scope_as = loser
+		}
+		
+		# Truce
+		add_truce_attacker_defeat_effect = yes
+		
+		on_lost_aggression_war_discontent_loss = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+
+		#Mandalas gain or lose piety/devotion depending on Decree
+		mandala_war_defeat_effects = yes
+	}
+	
+	on_primary_attacker_death = invalidate
+	on_primary_defender_death = inherit
+	transfer_behavior = transfer
+	
+	attacker_allies_inherit = yes
+	defender_allies_inherit = yes
+	
+	war_name = "BTWK_DISPUTE_BRITANNIA_HIGH_KINGSHIP_WAR_NAME"
+	war_name_base = "BTWK_DISPUTE_BRITANNIA_HIGH_KINGSHIP_WAR_NAME_BASE"
+	cb_name = "BTWK_DISPUTE_BRITANNIA_HIGH_KINGSHIP_CB_NAME"
+	interface_priority = 80
+	
+	ticking_war_score_targets_entire_realm = yes
+	max_defender_score_from_occupation = 150
+	max_attacker_score_from_occupation = 150
+	attacker_ticking_warscore = 0.01
+	attacker_wargoal_percentage = 0.01
+	attacker_score_from_occupation_scale = 50
+	defender_score_from_occupation_scale = 50
+	attacker_score_from_battles_scale = 250
+	defender_score_from_battles_scale = 250
+
+	max_attacker_score_from_battles = 200
+	max_defender_score_from_battles = 200
+	
+	max_defender_score_from_occupation = 50
+	max_attacker_score_from_occupation = 50
+	
+	full_occupation_by_attacker_gives_victory = no
+}
+
+BTWK_depose_britannia_high_king_cb = {
+	icon = dissolution_war
+	group = BTWK_high_king_britannia	
+	combine_into_one = yes
+	allow_hostages = yes
+	should_show_war_goal_subview = no
+	ai_only_against_neighbors = yes
+
+	allowed_for_character = {
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	}
+
+	allowed_for_character_display_regardless = {
+		BTWK_britannia_high_kingship_is_elector_title_requirements_trigger = yes
+	}
+	
+	allowed_against_character = {
+		BTWK_britannia_high_kingship_active_trigger = yes
+		scope:defender = {
+			has_title = title:e_britannia
+			BTWK_britannia_high_kingship_can_inherit_trigger = no
+		}
+	}
+	
+	should_invalidate = {
+		scope:defender = { 
+			NOT = { has_title = title:e_britannia }
+		}
+	}
+	
+	cost = {
+		prestige = {
+			value = 0
+			add = {
+				value = 400
+				desc = CB_BASE_COST
+			}
+			multiply = common_cb_prestige_cost_multiplier
+		}
+	}
+	
+	on_declaration = {
+		on_declared_war = yes
+	}
+
+	on_victory_desc = {
+		desc = BTWK_depose_britannia_high_king_cb_victory_desc
+	}
+	
+	on_victory = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+		
+		# Legitimacy
+		add_legitimacy_attacker_victory_effect = yes
+
+		#EP2 accolade glory gain for winning against higher ranked enemy
+		scope:attacker = { accolade_attacker_war_end_glory_gain_high_effect = yes }
+		
+		# Make sure all defeated enemies are properly flagged as opponents
+		every_independent_ruler = {
+			limit = {
+				has_variable = HK_britannia_opponent
+				NOT = { is_defender_in_war = scope:war } 
+			}
+			remove_variable = HK_britannia_opponent
+			remove_list_global_variable = {
+				name = HK_britannia_opponent_list
+				target = THIS
+			}
+		}
+		scope:war = {
+			every_war_defender = {
+				limit = {
+					is_independent_ruler = yes
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+				}
+				set_variable = HK_britannia_opponent
+				add_to_global_variable_list = {
+					name = HK_britannia_opponent_list
+					target = THIS
+				}
+			}
+		}
+		
+		# End High Kingship
+		scope:defender = {
+			show_as_tooltip = { destroy_title = title:e_britannia }
+			custom_tooltip = BTWK_depose_britannia_high_king_cb_victory_tt
+			every_owned_story = {
+				limit = { story_type = BTWK_britannia_high_kingship_story }
+				set_variable = high_king_deposed
+				set_variable = { name = high_king_deposer value = scope:attacker }
+				end_story = yes
+			}
+		}
+		
+		# Prestige level progress for the attacker
+		scope:attacker = {
+			add_prestige_experience = {
+				value = major_prestige_value
+			}
+		}
+
+		# Prestige loss for the defender
+		scope:defender = {
+			add_prestige = {
+				value = major_prestige_value
+				multiply = -1.0
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		
+		# Truce
+		add_truce_attacker_victory_effect = yes
+
+		# FP1: note the victory for future memorialisation via stele (if applicable).
+		scope:attacker = { fp1_remember_recent_conquest_victory_effect = yes }
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+
+		#Mandalas gain or lose piety/devotion depending on Decree
+		mandala_war_victory_effects = yes
+	}
+
+	on_white_peace_desc = {
+		desc = BTWK_depose_britannia_high_king_cb_white_peace_desc
+	}
+	
+	on_white_peace = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+
+		#EP2 accolade glory gain for doing ok against higher ranked enemy
+		scope:attacker = { accolade_attacker_war_end_glory_gain_low_effect = yes }
+		scope:defender = { accolade_defender_war_end_glory_gain_med_effect = yes }
+
+		# Prestige loss for the attacker
+		scope:attacker = {
+			add_prestige = {
+				value = medium_prestige_value
+				multiply = -1.0
+			}
+			stress_impact = {
+				ambitious = medium_stress_impact_gain
+				arrogant = medium_stress_impact_gain
+			}
+		}
+		
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:attacker # Not important as the scales are identical
+			FAME_BASE = medium_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+
+		scope:defender = {
+			stress_impact = {
+				arrogant = medium_stress_impact_gain
+			}
+		}
+		
+		add_truce_white_peace_effect = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+	}
+
+	on_invalidated_desc = msg_depose_britannia_high_king_war_invalidated_message
+
+	on_defeat_desc = {
+		desc = BTWK_depose_britannia_high_king_cb_defeat_desc
+	}
+	
+	on_defeat = {
+		scope:attacker = { show_pow_release_message_effect = yes }
+		
+		# Legitimacy
+		add_legitimacy_attacker_defeat_effect = yes
+
+		scope:defender = { 
+			mandala_peacemaker_perk_serenity_effect = yes
+			#EP2 accolade glory gain for winning against higher ranked enemy
+			accolade_defender_war_end_glory_gain_high_effect = yes
+			# Prestige for Defender
+			add_prestige_war_defender_effect = {
+				PRESTIGE_VALUE = medium_prestige_value
+			}
+		}
+		
+		# Prestige loss for the attacker
+		scope:attacker = {
+			pay_short_term_gold_reparations_effect = {
+				GOLD_VALUE = 3
+			}
+			add_prestige = {
+				value = major_prestige_value
+				multiply = -1.0
+			}
+		}
+
+		# Allies on both sides get full prestige value for helping in the war, based on their war participation.
+		modify_allies_of_participants_fame_values = {
+			WINNER = scope:defender
+			FAME_BASE = major_prestige_value
+			IS_RELIGIOUS_WAR = no
+			WINNER_ALLY_FAME_SCALE = 1
+			LOSER_ALLY_FAME_SCALE = 1
+		}
+		
+		scope:attacker = {
+			save_temporary_scope_as = loser
+		}
+		
+		# Truce
+		add_truce_attacker_defeat_effect = yes
+		
+		on_lost_aggression_war_discontent_loss = yes
+
+		# EP3: note gold gained from military assistance/join war contracts and their war contribution threshold
+		laamp_as_mercenary_payout_tooltip_effect = yes
+
+		#Mandalas gain or lose piety/devotion depending on Decree
+		mandala_war_defeat_effects = yes
+	}
+	
+	on_primary_attacker_death = inherit
+	on_primary_defender_death = invalidate
+	transfer_behavior = transfer
+	
+	attacker_allies_inherit = yes
+	defender_allies_inherit = yes
+	
+	war_name = "BTWK_DEPOSE_BRITANNIA_HIGH_KING_WAR_NAME"
+	war_name_base = "BTWK_DEPOSE_BRITANNIA_HIGH_KING_WAR_NAME_BASE"
+	cb_name = "BTWK_DEPOSE_BRITANNIA_HIGH_KING_CB_NAME"
+	interface_priority = 80
+	
+	ticking_war_score_targets_entire_realm = yes
+	max_defender_score_from_occupation = 150
+	max_attacker_score_from_occupation = 150
+	attacker_ticking_warscore = 0.25
+	attacker_score_from_battles_scale = 150
+	defender_score_from_battles_scale = 150
+
+	max_attacker_score_from_battles = 80
+	max_defender_score_from_battles = 100
+
+	ai_score_mult = {
+		value = 1
+		# Increase odds if the attacker is ambitious
+		add = {
+			if = {
+				limit = {
+					scope:attacker = { has_trait = ambitious }
+				}
+				add = 2
+			}
+		}
+		# Increase odds if the attacker is able to claim the High Kingship themselves
+		add = {
+			if = {
+				limit = {
+					scope:attacker = { BTWK_britannia_high_kingship_can_claim_trigger = yes }
+				}
+				add = 1
+			}
+		}
+
+		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+	}
+}

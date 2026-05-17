@@ -6,6 +6,7 @@
 				id = BTWK_story_event.0101
 				days = { 60 90 }
 			}
+			set_variable = has_BTWK_story_uther_high_council_story		# For the on_death check
 		}
 	}
 
@@ -22,38 +23,6 @@
 
 	on_owner_death = {
 		set_global_variable = uther_is_dead
-		
-		create_title_and_vassal_change = {
-			type = granted
-			save_scope_as = arthur_pendragon_durnac
-			add_claim_on_loss = yes
-		}
-		title:d_centdumnonia = {
-			every_de_jure_county = {
-				limit = {
-						holder = character:1
-				}
-				change_title_holder = {
-					holder = character:3
-					change = scope:arthur_pendragon_durnac
-				}
-			}
-			change_title_holder = {
-				holder = character:3
-				change = scope:arthur_pendragon_durnac
-			}
-			every_de_jure_county_holder = {
-				limit = {
-					primary_title.duchy = title:d_centdumnonia
-					liege = title:k_dumnonia.holder					
-				}
-				change_liege = {
-					liege = character:3
-					change = scope:arthur_pendragon_durnac
-				}
-			}
-		}
-		resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
 
 		# Mordred - Arthur character flags #
 		# Will need to add liege change when King Ban added, OR, destroy Arthur's Company, then change employer of all chars in Arthur's Company.
@@ -89,7 +58,7 @@
 		}
 		character:19 = {
 			remove_trait = restricted_marriage
-			scope:spouse = {
+			scope:spouse ?= {
 				if = {
 					limit = {
 						has_trait = deceitful
@@ -162,6 +131,18 @@
 			}
 		}	
 		
+		# Can't be triggered inside this story for some reason or it causes all of Dumnonia's
+		# wars to invalidate...
+		# character:3 = {
+			# trigger_event = {
+				# id = BTWK_story_event.0112
+			# }
+		# }
+		character:5 = {
+			trigger_event = {
+				id = BTWK_story_event.0111
+			}
+		}
 		#  Fires "Uther is dead & Arthur returns" event 
 		every_ruler = {
 			limit = { 
@@ -170,23 +151,13 @@
 				OR = {
 					capital_province = { geographical_region = btwk_world_britannia_south }
 					capital_province = { geographical_region = btwk_world_britannia_hen_ogledd }
-						#geographical_region = world_hibernia
-						#geographical_region = btwk_world_caledonia
-						#geographical_region = world_gaul_armorica
+					#geographical_region = world_hibernia
+					#geographical_region = btwk_world_caledonia
+					#geographical_region = world_gaul_armorica
 				}
 			}
 			trigger_event = {  
 				id = BTWK_story_event.0110
-			}
-		}
-		character:5 = {
-			trigger_event = {
-				id = BTWK_story_event.0111
-			}
-		}
-		character:3 = {
-			trigger_event = {
-				id = BTWK_story_event.0113
 			}
 		}
 		end_story = yes

@@ -12,21 +12,15 @@ claim_britannia_high_kingship_decision = {
 		barony = 0
 		county = 0
 		duchy = 0
-		kingdom = 12
-		empire = 12
-		hegemony = 12
+		kingdom = 24
+		empire = 24
+		hegemony = 0
 	}
 
 	desc = claim_britannia_high_kingship_decision_desc
 
 	is_shown = {
-		culture = {
-			OR = {
-				has_same_heritage_group_as = { TARGET = culture:briton }
-				has_cultural_pillar = heritage_latin
-				this = culture:britannic
-			}
-		}
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 		any_held_title = {
 			tier = root.primary_title.tier
 			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
@@ -37,60 +31,11 @@ claim_britannia_high_kingship_decision = {
 	}
 
 	is_valid = {
-		is_independent_ruler = yes
-		OR = {
-			culture = { has_cultural_pillar = heritage_brythonic }
-			culture = { has_cultural_pillar = heritage_latin }
-			trigger_if = {
-				limit = { culture:britannic = { has_variable = culture_has_emerged } }
-				culture = culture:britannic
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = claim_britannia_high_kingship_kingdom_requirement_tt
-				any_held_title = {
-					tier = tier_kingdom
-					target_is_de_jure_liege_or_above = title:e_britannia
-					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
-				}
-			}
-			has_title = title:e_hen_ogledd
-		}
-		NOT = { exists = title:e_britannia.holder }
-		prestige_level >= high_prestige_level
-		age >= 25
-		realm_size >= 10
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_military_requirement_tt
-			current_military_strength >= 750
-		}
-		diplomacy >= 10
-		martial >= 12
-		stewardship >= 7
-		OR = {
-			custom_tooltip = {
-				text = claim_britannia_high_kingship_king_ruled_years_requirement_tt
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 15 
-				}
-			}
-			prestige_level >= very_high_prestige_level
-			diplomacy >= 25
-			martial >= 25
-			prowess >= 30
-		}
+		BTWK_britannia_high_kingship_can_claim_trigger = yes
 	}
 
 	effect = {
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_decision_effect_tt_0
-		}
-		custom_tooltip = {
-			text = claim_britannia_high_kingship_decision_effect_tt_1
-		}
-		# trigger_event = { id = britannia_high_king.0001 }
+		BTWK_britannia_claim_high_kingship_effect = yes
 	}
 	
 	cost = {
@@ -103,7 +48,11 @@ claim_britannia_high_kingship_decision = {
 	}
 
 	ai_will_do = {
-		base = 0		# Want AI to calculate if it's actually going to win or not
+		base = 100
+		modifier = {
+			factor = 0
+			BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio < 1.1
+		}		
 	}
 	
 	widget = {
@@ -157,6 +106,7 @@ create_deheubarth_decision = {
 
 	effect = {
 		add_prestige = 200
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
 		add_legitimacy = 25	
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
@@ -260,6 +210,7 @@ reunite_dumnonia_decision = {
 
 	effect = {
 		add_prestige = 200
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
 		add_legitimacy = 25
 		destroy_title = title:k_kernow
 		title:k_dumnonia = { 
@@ -342,6 +293,7 @@ form_strathclyde_decision = {
 
 	effect = {
 		add_prestige = 300
+		dynasty = { add_dynasty_prestige = major_dynasty_prestige_value }
 		add_legitimacy = 50
 		title:k_strathclyde = {		
 			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
@@ -683,29 +635,45 @@ create_hen_ogledd_decision = {
 
 	is_valid = {
 		is_independent_ruler = yes
-		highest_held_title_tier < tier_empire
+		highest_held_title_tier == tier_kingdom
 		prestige_level >= high_prestige_level
-		control_region_fraction_trigger = {
-			FRACTION_REQUIRED = 0.75
-			REGION = geographical_region:btwk_world_britannia_hen_ogledd
+		OR = {
+			control_region_fraction_trigger = {
+				FRACTION_REQUIRED = 0.70
+				REGION = geographical_region:btwk_world_britannia_hen_ogledd
+			}
+			AND = {
+				government_is_not_tribal_trigger = yes
+				prestige_level >= 4
+				OR = {
+					martial >= 20
+					diplomacy >= 20
+				}
+				control_region_fraction_including_tributaries_trigger = {
+					FRACTION_REQUIRED = 0.70
+					REGION = geographical_region:btwk_world_britannia_hen_ogledd
+				}
+				custom_tooltip = {
+					text = has_controlled_hen_ogledd_for_20_years
+					this.var:hen_ogledd_control_years >= 20
+				}
+			}
 		}
 	}
 
 	effect = {
 		add_prestige = 500
+		dynasty = { add_dynasty_prestige = massive_dynasty_prestige_value }
 		add_legitimacy = 75
-		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
 			get_title = title:e_hen_ogledd
 		}
-		title:e_hen_ogledd = {
-			every_in_list = {
-				variable = base_kingdom_regions
-				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
-					REGION_BASE = this
-					NEW_DE_JURE_LIEGE = title:e_hen_ogledd
-				}
-			}
+		custom_tooltip = {
+			text = vassalize_all_hen_ogledd_tributaries
+			set_variable = { name = vassalize_all_hen_ogledd_tributaries days = 1 }
+		}
+		custom_tooltip = {
+			text = hen_ogledd_de_jure_shift_tt
 		}
 		# Need to set these scopes to trigger the event
 		title:e_hen_ogledd = { save_scope_as = title }
@@ -780,6 +748,7 @@ reunite_the_britons_decision = {
 
 	effect = {
 		add_prestige = 1000
+		dynasty = { add_dynasty_prestige = monumental_dynasty_prestige_value }
 		add_legitimacy = 150
 		# This makes the de jure change show up in the decision window, but doesn't actually do anything
 		show_as_tooltip = {
@@ -846,6 +815,7 @@ britannia_claim_imperial_title_decision = {
 		culture = {
 			OR = {
 				has_cultural_pillar = heritage_romanized_germanic
+				has_cultural_pillar = heritage_frankish
 				has_cultural_pillar = heritage_latin
 			}
 		}
@@ -873,6 +843,7 @@ britannia_claim_imperial_title_decision = {
 
 	effect = {
 		add_prestige = 1000
+		dynasty = { add_dynasty_prestige = monumental_dynasty_prestige_value }
 		add_legitimacy = 100
 		save_scope_as = founder
 		show_as_tooltip = {

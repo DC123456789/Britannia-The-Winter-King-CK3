@@ -73,7 +73,7 @@
  claim_aengland_bretwalda_kingdom_requirement_tt: "You hold at least one [kingdom|E] title that is a [de_jure|E] vassal of the [GetTitleByKey('e_aengland').GetName] with its [capital|E] in the [GetGeographicalRegion('btwk_world_britannia').GetName] region"
  claim_aengland_bretwalda_military_requirement_tt: "Your military strength is at least #value 1000#!"
  claim_aengland_bretwalda_king_ruled_years_requirement_tt: "You have held a [kingdom|E] tier or higher title for at least #value 10#! years"
- claim_aengland_bretwalda_king_hegemony_score_tt: "Your Hegemony Score is at least #value 120#! #weak (Currently: [ROOT.Var('hegemony_score').GetValue|0])#!"
+ claim_aengland_bretwalda_king_hegemony_score_tt: "Your Hegemony Score is at least #value 120#! #weak (Currently: [THIS.Var('hegemony_score').GetValue|0])#!"
  claim_aengland_bretwalda_decision_effect_tt: "While our influence over our subject kings is currently limited, if we can secure our hegemony over the Anglo-Saxon kingdoms for long enough we may eventually be able to gain enough control over our subject kings to usurp their authority and #high Subjugate#! or #high Seize Control#! of their kingdoms."
  OPEN_AENGLAND_BRETWALDA_WINDOW: "Open Bretwalda Window"
  
@@ -152,11 +152,6 @@
  claim_britannia_high_kingship_decision_desc: "Britannia may be divided into warring kingdoms, but the memory of a united province endures. A powerful enough king who holds one of the traditional kingdoms of Britain can claim the vacant [GetTitleByKey('e_britannia').GetName] for himself and attempt to unite the other kings under his banner. Other kings may not be willing to give their independence so easily, however..."
  claim_britannia_high_kingship_decision_tooltip: "Stake your claim as the first of the Britons"
  claim_britannia_high_kingship_decision_confirm: "We will lead the Britons to victory!"
- claim_britannia_high_kingship_kingdom_requirement_tt: "You hold at least one [kingdom|E] title that is a [de_jure|E] vassal of the [GetTitleByKey('e_britannia').GetName] with its [capital|E] in the [GetGeographicalRegion('btwk_world_britannia_south').GetName] region"
- claim_britannia_high_kingship_military_requirement_tt: "Your military strength is at least #value 750#!"
- claim_britannia_high_kingship_king_ruled_years_requirement_tt: "You have held a [kingdom|E] tier or higher title for at least #value 15#! years"
- claim_britannia_high_kingship_decision_effect_tt_0: "Every other independent British king will be given a choice to #high support#! you as High King and may either swear fealty as a #high Subject Kingdom#!, #high accept#! your claim in name but remain independent, or directly #high oppose#! your claim to the High Kingship. Important factors in their decision include their [opinion|E] of you, [alliances|E] with you, your [army|E] strength, and differing [culture|E] and [religion|E]."
- claim_britannia_high_kingship_decision_effect_tt_1: "Any kings that oppose your claim will band against you and attempt to challenge your claim on the battlefield. Only once you are victorious against your opponents will you be recognized as High King."
  OPEN_BRITANNIA_HIGH_KING_WINDOW: "Open High King Window"
  
  create_deheubarth_decision: "Form $k_deheubarth$"
@@ -180,10 +175,10 @@
  FIRST_IF_CONTROLS_C_DIN_EIDYN_EFFECT: "If the [GetTitleByKey('c_din_eidyn').GetName] is [completely_controlled]:"
  FIRST_IF_CONTROLS_C_DESNES_MOR_EFFECT: "If the [GetTitleByKey('c_desnes_mor').GetName] is [completely_controlled]:"
  
- rheged_annex_novant_decision: "Annex $k_ynys_man$"
- rheged_annex_novant_decision_desc: "TODO"
- rheged_annex_novant_decision_confirm: "TODO"
- rheged_annex_novant_decision_tooltip: "TODO"
+ rheged_annex_novant_decision: "Annex [GetTitleByKey('d_galloway').GetNameNoTierNoTooltip]"
+ rheged_annex_novant_decision_desc: "The Kings at [GetTitleByKey('k_ynys_man').GetPreferredCapital.GetCountyData.GetCapital.GetBaronyNameExplicitly] have long been a thorn on our side, yet their strongholds sit vulnerable and close to our border. Let us drive them from the mainland and claim the lands of [GetTitleByKey('d_galloway').GetNameNoTier] for ourselves!"
+ rheged_annex_novant_decision_confirm: "Lay claim to [GetTitleByKey('d_galloway').GetNameNoTierNoTooltip]"
+ rheged_annex_novant_decision_tooltip: "Expand the [GetTitleByKey('k_rheged').GetName] into [GetTitleByKey('d_galloway').GetNameNoTier]"
  
  strathclyde_annex_aeron_decision: "Annex $d_aeron$"
  strathclyde_annex_aeron_decision_desc: "TODO"
@@ -194,7 +189,10 @@
  create_hen_ogledd_decision_desc: "A powerful enough Cumbrian king can reclaim the vacant title of #high High King of [GetTitleByKey('e_hen_ogledd').GetNameNoTier]#!, 'The Old North', for himself. The true Kings of the North were prophesied to regain their dominion and expand their rule over all of Britannia. Will a unified Cumbrian North be able to repel the Germanic invaders from Britain once and for all?"
  create_hen_ogledd_decision_confirm: "Unite the North!"
  create_hen_ogledd_decision_tooltip: "$e_hen_ogledd$ will be reunited!"
-
+ has_controlled_hen_ogledd_for_20_years: "You have controlled or held [tributary|E] #high 70%#! of [GetGeographicalRegion('btwk_world_britannia_hen_ogledd').GetName] for #high 20#! years #weak (currently: [THIS.Var('hen_ogledd_control_years').GetValue|0])#!"
+ vassalize_all_hen_ogledd_tributaries: "All [GetCulturePillar('heritage_brythonic').GetName] or [GetCulturePillar('heritage_latin').GetName] [heritage|e] [tributaries|E] in [GetGeographicalRegion('btwk_world_britannia_hen_ogledd').GetName] will be vassalized"
+ hen_ogledd_de_jure_shift_tt: "The [GetTitleByKey('e_hen_ogledd').GetName] becomes [de_jure|E] liege of all Brythonic kingdoms in the region of [GetGeographicalRegion('btwk_world_britannia_hen_ogledd').GetName]"
+ 
  reunite_the_britons_decision: "Reunite the Britons"
  reunite_the_britons_decision_desc: "The last few centuries have dealt us defeat upon defeat, forcing us to retreat to isolated redoubts while invaders enjoy the fruits of our former heartlands. But not all hope is lost. In these lands where Britons still reign, people speak of 'Y Mab Darogan' - the prophesied child - a second Arthur destined to drive the Saxons back into the sea and reclaim Britannia for its rightful heirs. Will that be us?"
  reunite_the_britons_decision_confirm: "Prydain am byth!"
@@ -232,14 +230,14 @@
  found_romanized_germanic_kingdom_britannia_decision_tooltip: "The Kingdom of the [ROOT.Char.GetCulture.MakeScope.Var('ancestral_non_roman_culture').Culture.GetCollectiveNounNoTooltip] will be founded"
  holds_no_kingdoms_outside_of_britannia_tt: "You do not hold any [kingdoms|e] outside of the region of [GetGeographicalRegion('btwk_world_britannia').GetName]"
  primary_title_is_in_britannia_tt: "The [de_jure_capital|e] of your [primary_title|e] is in the region of [GetGeographicalRegion('btwk_world_britannia').GetName]"
- controls_capital_of_capital_briton_kingdom_tt: "You [completely_control|E] the [de_jure_capital|e] of your local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e] ([capital_briton_kingdom.GetPreferredCapital.GetNameNoTier])"
- controls_capital_of_capital_briton_kingdom_placeholder_tt: "You [completely_control|E] the [de_jure_capital|e] of your local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e]"
- holds_capital_briton_kingdom_tt: "You hold the local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e] ([capital_briton_kingdom.GetName])" 
- holds_capital_briton_kingdom_placeholder_tt: "You hold the local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e]" 
- controls_75_percent_of_briton_kingdom_tt: "You [completely_control|E] at least #value 75%#! of the local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e] ([capital_briton_kingdom.GetName])"
- controls_75_percent_of_briton_kingdom_placeholder_tt: "You [completely_control|E] at least #value 75%#! of the local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e]"
- briton_kingdom_has_no_de_jure_counties_tt: "The local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e] ([capital_briton_kingdom.GetName]) has no [de_jure|e] territory"
- briton_kingdom_has_no_de_jure_counties_placeholder_tt: "The local [GetCulturePillar('heritage_brythonic').GetName] [kingdom|e] has no [de_jure|e] territory"
+ controls_capital_of_capital_briton_kingdom_tt: "You [completely_control|E] the [de_jure_capital|e] of your local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e] ([capital_briton_kingdom.GetPreferredCapital.GetNameNoTier])"
+ controls_capital_of_capital_briton_kingdom_placeholder_tt: "You [completely_control|E] the [de_jure_capital|e] of your local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e]"
+ holds_capital_briton_kingdom_tt: "You hold the local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e] ([capital_briton_kingdom.GetName])" 
+ holds_capital_briton_kingdom_placeholder_tt: "You hold the local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e]" 
+ controls_75_percent_of_briton_kingdom_tt: "You [completely_control|E] at least #value 75%#! of the local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e] ([capital_briton_kingdom.GetName])"
+ controls_75_percent_of_briton_kingdom_placeholder_tt: "You [completely_control|E] at least #value 75%#! of the local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e]"
+ briton_kingdom_has_no_de_jure_counties_tt: "The local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e] ([capital_briton_kingdom.GetName]) has no [de_jure|e] territory"
+ briton_kingdom_has_no_de_jure_counties_placeholder_tt: "The local [GetCulturePillar('heritage_brythonic').GetNameNoTooltip] [kingdom|e] has no [de_jure|e] territory"
  found_romanized_germanic_kingdom_britannia_decision_tt: "The [de_jure|e] [kingdom|e] of your [primary_title|e]'s [de_jure_capital|e] will be reorganized into a new #high Kingdom of the [THIS.Char.GetCulture.MakeScope.Var('ancestral_non_roman_culture').Culture.GetCollectiveNounNoTooltip]#!" 
  
  found_romanized_germanic_empire_britannia_decision: "Claim the Imperial Crown"
@@ -253,6 +251,11 @@
  romanized_germanic_britannia_de_jure_shift_tt: "The #high $e_romanized_germanic_britannia_TOOLTIP$#! becomes [de_jure|E] liege of all Brythonic kingdoms in the region of [GetGeographicalRegion('btwk_world_britannia').GetName]"
  
  ############# OTHER MAJOR DECISIONS ##############
+ # Briton
+ BTWK_HK_britannia_formalize_high_kingship: "Formalize the High Kingship"
+ 
+ BTWK_HK_britannia_empower_the_high_council: "Empower the High Council"
+ 
  # Anglo-Saxon
  embrace_anglo_saxon_culture_decision: "Create a Unified Anglo-Saxon Identity"
  embrace_anglo_saxon_culture_decision_desc: "TODO"
@@ -278,7 +281,7 @@
  begin_restoration_antonine_wall_decision_confirm: "For the Empire!"  # Unsure on this. Put some fancy Latin in it?
  
  restore_hadrians_wall_decision: "Restore Hadrian's Wall"
- restore_hadrians_wall_decision_desc: "Hadrian's Wall is one of the many marvels of engineering left behind by the Romans after their departure from Britannia. It generally marked the northernmost border of the Roman Empire, beyond which inhabited the various Brythonic & Pictish tribes of #italic Caledonia#!. \n\nAfter the collapse of Roman Britannia, the wall no longer served any defensive purpose and was gradually abandoned to its fate. Most of the forts and stonework remain intact, however, and it would be possible - albeit expensive - to restore the wall to its former glory."
+ restore_hadrians_wall_decision_desc: "Hadrian's Wall is one of the many marvels of engineering left behind by the Romans after their departure from Britannia. It generally marked the northernmost border of the Roman Empire, beyond which lay various Brythonic client kingdoms, and even further the Pictish tribes of #italic Caledonia#!. \n\nAfter the collapse of Roman Britannia, the wall no longer served any defensive purpose and was gradually abandoned to its fate. Most of the forts and stonework remain intact, however, and it would be possible - albeit expensive - to restore the wall to its former glory."
  restore_hadrians_wall_decision_tooltip: "Rebuild the northern wall"
  restore_hadrians_wall_decision_confirm: "Let the restoration begin!"
  is_restoring_hadrians_wall_tt: "Hadrian's Wall is being restored"
@@ -287,3 +290,15 @@
  ruin_hadrians_wall_decision_desc: "Once the northern frontier of Roman Britannia, Hadrian's Wall was largely abandoned with the withdrawal of the Roman legions and since then has served little defensive or political purpose. Most of the construction remains, however, and locals have begun to use the abandoned walls as a convenient source of stone for new buildings. Perhaps it would be beneficial to follow suit, and make this into our official policy?"
  ruin_hadrians_wall_decision_tooltip: "Tear down the old Roman wall for resources"
  ruin_hadrians_wall_decision_confirm: "Send for the engineers"
+ 
+ ############# REVOLT DECISIONS ############## 
+ BTWK_pacify_cultural_redoubt_decision: "Pacify Redoubts"
+ BTWK_pacify_cultural_redoubt_decision_desc: "The highland redoubts that we have brought under our rule are proving difficult to control and highly prone to revolt. If we are to increase our authority over the area and properly pacify these provinces, we must invest in building fortresses and reigning in the local nobility in order to properly bring the local population to heel."
+ BTWK_pacify_cultural_redoubt_decision_tooltip: "Bring the $BTWK_cultural_redoubt_modifier$s under our control"
+ BTWK_pacify_cultural_redoubt_decision_confirm: "Pacify Redoubts"
+ BTWK_pacify_cultural_redoubt_decision_government_tt: "Your [government|E] is #bold not#! [tribal_i|E] [tribal|E] or [pre_feudal_i|E] [pre_feudal|E]"
+ BTWK_pacify_cultural_redoubt_decision_effect_tt: "You start pacifying as many [counties|E] as you can afford #weak ([THIS.Char.Custom('BTWKPacifyCulturalRedoubtCount')])#!"
+ BTWK_pacify_cultural_redoubt_decision_1_redoubt: "#bold 1#! Redoubt"
+ BTWK_pacify_cultural_redoubt_decision_x_redoubts: "#bold [ROOT.ScriptValue('BTWK_cultural_redoubt_num_can_pacify_min_1')]#! Redoubts"
+ BTWK_pacify_cultural_redoubt_decision_all_redoubts: "All #bold [ROOT.ScriptValue('BTWK_cultural_redoubt_num_can_pacify_min_1')]#! Redoubts"
+ BTWK_start_pacify_cultural_redoubt_tt: "The pacification process will take #high [EmptyScope.ScriptValue('BTWK_cultural_redoubt_pacification_stage_2_years')|0]#! years to fully finish. Progress can be interrupted if holdings in the province are occupied and set back if taken by revolts, and will be lost completely if the [county|E] is retaken by native rulers. Once the process is finished, all negative effects of the $BTWK_cultural_redoubt_modifier$ modifier will be removed."

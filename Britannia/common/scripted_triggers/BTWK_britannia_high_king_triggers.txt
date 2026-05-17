@@ -1,3 +1,177 @@
 ﻿BTWK_britannia_high_kingship_active_trigger = {
 	NOT = { has_global_variable = end_of_britannia }
 }
+
+BTWK_britannia_high_kingship_can_inherit_trigger = {
+	title:e_britannia = { has_variable = HK_reform_formalize_high_kingship_passed }
+}
+
+BTWK_britannia_subject_kings_active_trigger = {
+	NOT = { title:e_britannia = { has_variable = HK_reform_empower_high_council_passed } }
+	BTWK_britannia_high_kingship_active_trigger = yes
+}
+
+BTWK_britannia_high_kingship_can_claim_trigger = {
+	is_independent_ruler = yes
+	custom_description = {
+		text = claim_britannia_high_kingship_culture_requirement_w_britannic
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	}
+	custom_description = {
+		text = claim_britannia_high_kingship_kingdom_requirement
+		OR = {
+			any_held_title = {
+				tier = tier_kingdom
+				target_is_de_jure_liege_or_above = title:e_britannia
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+			}
+			has_title = title:e_hen_ogledd
+		}
+	}
+	title:e_britannia = { is_title_created = no }
+	prestige_level >= high_prestige_level
+	age >= 25
+	realm_size >= 10
+	is_tributary = no
+	custom_description = {
+		text = claim_britannia_high_kingship_military_requirement
+		current_military_strength >= 750
+	}
+	diplomacy >= 10
+	martial >= 12
+	stewardship >= 7
+	custom_description = {
+		text = claim_britannia_high_kingship_skill_requirement
+		OR = {
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+	}
+	is_incapable = no
+	NOT = { has_diarchy_type = regency }
+	is_at_war = no
+	custom_description = {
+		text = claim_britannia_high_kingship_no_current_claimant
+		NOT = { title:e_britannia = { has_variable = britannia_high_kingship_claimant } }
+	}
+	trigger_if = {
+		limit = { has_character_modifier = BTWK_recently_claimed_high_kingship_modifier }
+		NOT = { has_character_modifier = BTWK_recently_claimed_high_kingship_modifier }
+	}
+	trigger_if = {
+		limit = { has_character_modifier = BTWK_was_recently_high_king_modifier }
+		NOT = { has_character_modifier = BTWK_was_recently_high_king_modifier }
+	}
+}
+
+BTWK_britannia_high_kingship_is_allowed_culture_trigger = {
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_brythonic
+			has_cultural_pillar = heritage_latin
+			AND = {
+				has_cultural_pillar = heritage_romance
+				NOT = { has_variable = ancestral_non_roman_culture }
+				var:ancestral_starting_culture ?= culture:romanobritish
+			}
+		}
+	}
+}
+
+BTWK_britannia_high_kingship_is_elector_trigger = {
+	culture = {
+		OR = {
+			has_same_heritage_group_as = { TARGET = culture:briton }
+			has_cultural_pillar = heritage_latin
+			AND = {
+				has_cultural_pillar = heritage_romance
+				NOT = { has_variable = ancestral_non_roman_culture }
+			}
+		}
+	}
+	BTWK_britannia_high_kingship_is_elector_title_requirements_trigger = yes
+}
+
+BTWK_britannia_high_kingship_is_elector_title_requirements_trigger = {
+	is_independent_ruler = yes
+	holds_landed_title = yes
+	custom_description = {
+		text = BTWK_britannia_high_kingship_is_elector_title_requirements
+		any_held_title = {
+			OR = {
+				tier = tier_kingdom
+				AND = {
+					tier = tier_duchy
+					PREV = { 
+						highest_held_title_tier = tier_duchy
+					}
+				}
+			}
+			title_capital_county.capital_province = { geographical_region = btwk_world_britannia }
+		}
+	}
+}
+
+BTWK_britannia_high_kingship_is_eligible_trigger = {
+	is_tributary = no
+	is_independent_ruler = yes
+	holds_landed_title = yes
+	is_incapable = no
+	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	any_held_title = {
+		OR = {
+			tier = tier_kingdom
+			AND = {
+				tier = tier_duchy
+				PREV = { 
+					is_independent_ruler = yes
+					highest_held_title_tier = tier_duchy
+				}
+			}
+		}
+		title_capital_county.capital_province = { geographical_region = btwk_world_britannia }
+	}
+}
+
+# If this is changed, must adjust BTWK_britannia_high_king.0020 as well!
+BTWK_britannia_high_kingship_is_fit_to_rule_trigger = {
+	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	any_held_title = { tier = tier_kingdom }
+	prestige_level >= high_prestige_level
+	martial >= 10
+	diplomacy >= 8
+	is_incapable = no
+	realm_size >= 10
+}
+
+BTWK_britannia_high_kingship_is_relevant_trigger = {
+	OR = {
+		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		capital_province = { geographical_region = btwk_world_britannia }
+	}
+}
+
+BTWK_britannia_subject_king_eligible_trigger = {
+	culture = {
+		OR = {
+			has_same_heritage_group_as = { TARGET = culture:briton }
+			has_cultural_pillar = heritage_latin
+			has_cultural_pillar = heritage_romance
+			culture_is_romanized_barbarian_culture_trigger = yes
+		}
+	}
+	primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+}
+
+BTWK_britannia_high_kingship_is_subject_king_trigger = {
+	OR = {
+		has_subject_contract_group = tributary_britannia_subject_king 
+		has_subject_contract_group = tributary_britannia_subject_king_permanent
+	}
+}
