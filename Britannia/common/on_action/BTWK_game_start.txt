@@ -1,5 +1,9 @@
 ﻿# Called from code after history generation
 # Empty scope
+on_game_start = {
+	on_actions = { BTWK_on_game_start }
+}
+
 BTWK_on_game_start = {
 	on_actions = {
 		BTWK_de_jure_setup
@@ -2940,68 +2944,88 @@ BTWK_de_jure_setup = {
 BTWK_roman_walls_upgrade = {
 	effect = {
 		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = farmlands
-					terrain = plains
-					terrain = wetlands
-					terrain = floodplains
+			if = {
+				limit = { 
+					has_holding_type = castle_holding
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				if = {
+					limit = { 
+						OR = {
+							duchy.title_capital_county.title_province = this # Is duchy capital
+							kingdom.title_capital_county.title_province = this # Is kingdom capital							
+						}
+					}	
+					add_building = castle_02
+				}					
+				if = {
+					limit = {
+						OR = {
+							terrain = farmlands
+							terrain = plains
+							terrain = wetlands
+							terrain = floodplains
+						}
+					}
+					add_building = curtain_walls_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = curtain_walls_03
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = taiga
+							terrain = forest
+							terrain = jungle
+						}
+					}
+					add_building = ramparts_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = ramparts_03
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = mountains
+							terrain = desert_mountains
+							terrain = hills
+						}
+					}
+					add_building = hill_forts_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = hill_forts_03
+						}
+					}
 				}
 			}
-			add_building = curtain_walls_03
-			random = {
-				chance = 50
-				add_building = curtain_walls_04
-			}
-		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = taiga
-					terrain = forest
-					terrain = jungle
+			else_if = {
+				limit = { 
+					culture = { has_cultural_pillar = heritage_brythonic }
+					has_holding_type = castle_holding
+					OR = {
+						terrain = mountains
+						terrain = desert_mountains
+						terrain = hills
+					}
 				}
-			}
-			add_building = ramparts_03
-			random = {
-				chance = 50
-				add_building = ramparts_04
-			}
-		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = mountains
-					terrain = desert_mountains
-					terrain = hills
+				add_building = hill_forts_01
+				random = {
+					chance = 50
+					add_building = hill_forts_02
 				}
-			}
-			add_building = hill_forts_03
-			random = {
-				chance = 50
-				add_building = hill_forts_04
-			}
-		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_brythonic }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = mountains
-					terrain = desert_mountains
-					terrain = hills
-				}
-			}
-			add_building = hill_forts_01
-			random = {
-				chance = 50
-				add_building = hill_forts_02
 			}
 		}
 	}
