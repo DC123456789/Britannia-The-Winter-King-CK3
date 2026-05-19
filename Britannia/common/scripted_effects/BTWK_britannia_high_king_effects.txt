@@ -259,6 +259,15 @@ BTWK_britannia_claim_high_kingship_effect = {
 	trigger_event = { id = BTWK_britannia_high_king.0001 }
 }
 
+BTWK_britannia_become_high_king_effect = {
+	get_title = title:e_britannia
+	if = {
+		limit = { NOT = { has_variable = britannia_high_kingship_authority } }
+		set_variable = { name = britannia_high_kingship_authority value = 0 }
+	}
+	create_story = BTWK_britannia_high_kingship_story
+}
+
 BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
 	if = {
 		limit = { NOT = { BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes } }

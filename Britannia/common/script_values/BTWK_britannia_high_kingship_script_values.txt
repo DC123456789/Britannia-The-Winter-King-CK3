@@ -654,3 +654,100 @@ BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio = {
 		min = 1
 	}
 }
+
+BTWK_britannia_high_king_region_control_share = {
+	value = 0
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			holder.top_liege = { 
+				OR = {
+					this = root
+					AND = {
+						is_tributary = yes
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+						suzerain = root
+					}
+				}
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = 0
+		every_county_in_region = {
+			region = btwk_world_britannia
+			add = 1
+		}
+	}
+}
+
+BTWK_britannia_legitimacy_level_modifier = {
+	value = legitimacy_level
+	subtract = legitimacy_title_tier_value
+	multiply = 0.10
+	add = 1
+}
+
+BTWK_britannia_high_king_authority_minor_struggle_phase_boost = 0.1
+BTWK_britannia_high_king_authority_minor_struggle_phase_boost_modifier = {
+	value = BTWK_britannia_high_king_authority_minor_struggle_phase_boost
+	add = 1
+}
+BTWK_britannia_high_king_authority_struggle_phase_boost = 0.25
+BTWK_britannia_high_king_authority_struggle_phase_boost_modifier = {
+	value = BTWK_britannia_high_king_authority_struggle_phase_boost
+	add = 1
+}
+
+BTWK_britannia_high_king_authority_change = {
+	value = 0
+	add = {
+		value = 0.75
+		desc = BASE_VALUE
+	}
+	add = {
+		value = BTWK_britannia_high_king_region_control_share
+		multiply = 0.75
+		desc = BRITANNIA_AUTHORITY_REGION_CONTROL
+	}
+	if = {
+		limit = { has_legitimacy = yes }
+		multiply = {
+			value = BTWK_britannia_legitimacy_level_modifier
+			desc = BRITANNIA_AUTHORITY_LEGITIMACY
+		}
+	}
+	if = {
+		limit = { government_has_flag = government_is_tribal }
+		multiply = {
+			value = 0.66
+			desc = BRITANNIA_AUTHORITY_TRIBAL_GOVERNMENT
+		}
+	}
+	else_if = {
+		limit = { NOT = { government_has_flag = government_is_pre_feudal } }
+		multiply = {
+			value = 1.2
+			desc = BRITANNIA_AUTHORITY_ADVANCED_GOVERNMENT
+		}
+	}
+	if = {
+		limit = {
+			struggle:britannia_struggle ?= { has_struggle_phase_parameter = britannia_high_king_authority_minor_boost }
+		}
+		multiply = {
+			value = BTWK_britannia_high_king_authority_minor_struggle_phase_boost_modifier
+			desc = BRITANNIA_AUTHORITY_STRUGGLE_PHASE_MINOR_BOOST
+		}
+	}
+	else_if = {
+		limit = {
+			struggle:britannia_struggle ?= { has_struggle_phase_parameter = britannia_high_king_authority_boost }
+		}
+		multiply = {
+			value = BTWK_britannia_high_king_authority_struggle_phase_boost_modifier
+			desc = BRITANNIA_AUTHORITY_STRUGGLE_PHASE_BOOST
+		}
+	}	
+}

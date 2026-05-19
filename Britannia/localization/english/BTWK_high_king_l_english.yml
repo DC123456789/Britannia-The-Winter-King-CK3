@@ -2,6 +2,7 @@
  CURRENT_HIGH_KING: "The [high_kingship|E]"
  NO_HIGH_KING: "#X There is no current [high_king|E]#!"
  CREATE_TITLE_HK: "Claim the\nHigh Kingship"
+ already_high_king_tt: "You are already High King"
  USURP_TITLE_HK: "Usurp Title"
  CANNOT_USURP_HK: "#X You can only claim the [high_kingship|E] by first deposing the current High King#!"
  HIGH_KING_NAME: "[Title.GetHolder.GetNameNoTooltip]"
@@ -109,7 +110,16 @@
  BRITANNIA_PROVINCES_CONTROLLED_NUMBER_BAD: "#N [EmptyScope.ScriptValue('BTWK_britannia_romanized_control_share')|1%]#!"
  BRITANNIA_PROVINCES_CONTROLLED_NUMBER_COLLAPSE: "#N [EmptyScope.ScriptValue('BTWK_britannia_romanized_control_share')|1%]#! @warning_icon!"
  BRITANNIA_PROVINCES_CONTROLLED_TT: "This is the share of [counties|E] in [GetGeographicalRegion('btwk_world_britannia').GetName] that are controlled by rulers with a [top_liege|E] of a Romanized culture ([GetCulturePillar('heritage_brythonic').GetName], [GetCulturePillar('heritage_latin').GetName], [GetCulturePillar('heritage_romanized_germanic').GetName], [GetCulturePillar('heritage_romanized_sarmatian').GetName], [GetCulturePillar('heritage_frankish').GetName], or [GetCulturePillar('heritage_romance').GetName] [heritage|E]). If Romanized control over [GetGeographicalRegion('btwk_world_britannia').GetName] falls below #high [EmptyScope.ScriptValue('BTWK_britannia_ruin_of_britannia_trigger_share')|0%]#! for at least #high 10#! years, that will spell #N $titular_titles_briton.0052.t$#! and an end to any dreams of reunification."
- CURRENT_AUTHORITY: "Authority: 55" #number is placeholder
+ 
+ CURRENT_AUTHORITY: "[britannia_authority|E]"
+ CURRENT_AUTHORITY_VALUE: "[Title.GetHolder.MakeScope.Var('britannia_high_kingship_authority').GetValue|2] ([Title.GetHolder.MakeScope.ScriptValue('BTWK_britannia_high_king_authority_change')|+=2])"
+ CURRENT_AUTHORITY_GROWTH_BREAKDOWN: "#bold Monthly Authority Growth:#!\n[Title.GetHolder.MakeScope.GetScriptValueDesc('BTWK_britannia_high_king_authority_change')]"
+ BRITANNIA_AUTHORITY_REGION_CONTROL: "Controls #bold [GetTitleByKey('e_britannia').GetHolder.MakeScope.ScriptValue('BTWK_britannia_high_king_region_control_share')|1%]#! of [GetGeographicalRegion('btwk_world_britannia').GetName]"
+ BRITANNIA_AUTHORITY_LEGITIMACY: "[legitimacy_level|E] (#high ×[GetTitleByKey('e_britannia').GetHolder.MakeScope.ScriptValue('BTWK_britannia_legitimacy_level_modifier')|2]#!)"
+ BRITANNIA_AUTHORITY_TRIBAL_GOVERNMENT: "Tribal Government (#high ×0.66#!)"
+ BRITANNIA_AUTHORITY_ADVANCED_GOVERNMENT: "[GetTitleByKey('e_britannia').GetHolder.GetGovernment.GetName] Government (#high ×1.2#!)"
+ BRITANNIA_AUTHORITY_STRUGGLE_PHASE_MINOR_BOOST: "[britannia_struggle|E] [struggle_phase|E] (#high ×[GetTitleByKey('e_britannia').GetHolder.MakeScope.ScriptValue('BTWK_britannia_high_king_authority_minor_struggle_phase_boost_modifier')|2]#!)"
+ BRITANNIA_AUTHORITY_STRUGGLE_PHASE_BOOST: "[britannia_struggle|E] [struggle_phase|E] (#high ×[GetTitleByKey('e_britannia').GetHolder.MakeScope.ScriptValue('BTWK_britannia_high_king_authority_struggle_phase_boost_modifier')|2]#!)"
  
  claim_britannia_high_kingship_decision_effect_tt_0: "Every other independent British king will be given a choice to #high support#! you as [high_king|E] and #high swear fealty#! as a [GetSubjectContractGroup('tributary_britannia_subject_king').GetName], #high accept#! your claim in name but remain independent, or directly #high oppose#! your claim to the [high_kingship|E]. Important factors in their decision include their [opinion|E] of you, [alliances|E] with you, your [army|E] strength, and differing [culture|E] and [religion|E]."
  claim_britannia_high_kingship_decision_effect_tt_1: "Any kings that oppose your claim will band against you and attempt to challenge your claim on the battlefield, with supporters joining you as allies. Only once you are victorious against your opponents will you be recognized as [high_king|E], with all supporters and defeated opponents becoming [britannia_subject_kings|E]."

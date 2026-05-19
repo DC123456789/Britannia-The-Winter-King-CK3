@@ -23,11 +23,26 @@ BTWK_claim_high_kingship = {
 	scope = character
 	
 	is_valid = {
-		BTWK_britannia_high_kingship_can_claim_trigger = yes
+		trigger_if = {
+			limit = { has_title = title:e_britannia }
+			custom_tooltip = {
+				text = already_high_king_tt
+				always = no
+			}
+		}
+		trigger_else = {
+			BTWK_britannia_high_kingship_can_claim_trigger = yes
+		}
 	}
 	
 	effect = {
-		BTWK_britannia_claim_high_kingship_effect = yes
+		if = {
+			limit = { has_title = title:e_britannia }
+			# Nothing
+		}
+		else = {
+			BTWK_britannia_claim_high_kingship_effect = yes
+		}
 	}
 }
 
