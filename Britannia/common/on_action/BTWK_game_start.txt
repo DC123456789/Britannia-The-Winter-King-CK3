@@ -15,7 +15,7 @@ BTWK_on_game_start = {
 		BTWK_character_setup
 		BTWK_roman_walls_upgrade
 		BTWK_laeti_setup
-		BTWK_high_king_electors_setup
+		BTWK_britannia_high_kingship_setup
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
@@ -667,35 +667,6 @@ BTWK_character_setup = {
 					scope:current_char = { remove_claim = PREV }
 				}
 			}
-			
-			# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
-			character:1 ?= {			# High King Uther Pendragon
-				add_pressed_claim = title:e_britannia
-				dynasty = {
-					set_variable = {
-						name = britannia_high_kingship_authority
-						value = 80		# Uther was High King very recently for a while
-					}
-				}
-			}
-			character:40 ?= {			# Agricola, brother of High King Ambrosius Aurelianus
-				add_pressed_claim = title:e_britannia
-				dynasty = {
-					set_variable = {
-						name = britannia_high_kingship_authority
-						value = 60		# Ambrosius Aurelianus was High King for a while, but it has been a few years since
-					}
-				}
-			}
-			character:16 ?= {			# Gorfyddyd, descendant of High King Vortigern
-				add_unpressed_claim = title:e_britannia		# Has been a few generations
-				dynasty = {
-					set_variable = {
-						name = britannia_high_kingship_authority
-						value = 20		# Has been a long time since Vortigern and Vortimer were High King
-					}
-				}
-			}
 		}
 	}
 }
@@ -703,7 +674,7 @@ BTWK_character_setup = {
 BTWK_de_jure_setup = {
 	effect = {		
 		# Arbitary character for convenience purposes
-		title:k_papal_state.holder = { save_temporary_scope_as = story_holder }
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
 		
 		### DEFAULT SETUP ###
 		every_county = {
@@ -3089,32 +3060,49 @@ BTWK_laeti_setup = {
 	}
 }
 
-BTWK_high_king_electors_setup = {
+BTWK_britannia_high_kingship_setup = {
 	effect = {
-		title:e_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_kingdom }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
+		# Arbitary character for convenience purposes
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
+		
+		# Initialize reform story cycles
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_high_kingship }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = establish_central_mint }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = empower_high_council }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = centralize_the_church }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_succession }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = unify_legal_codes }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = reclaim_caratacus_legacy }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = restore_imperial_dignity }
+			
+		# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1 ?= {			# High King Uther Pendragon
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 80		# Uther was High King very recently for a while
+					}
 				}
 			}
-		}
-		title:e_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_duchy }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
+			character:40 ?= {			# Agricola, brother of High King Ambrosius Aurelianus
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 60		# Ambrosius Aurelianus was High King for a while, but it has been a few years since
+					}
 				}
 			}
-		}
-		title:e_roman_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_kingdom }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
+			character:16 ?= {			# Gorfyddyd, descendant of High King Vortigern
+				add_unpressed_claim = title:e_britannia		# Has been a few generations
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 20		# Has been a long time since Vortigern and Vortimer were High King
+					}
 				}
 			}
 		}

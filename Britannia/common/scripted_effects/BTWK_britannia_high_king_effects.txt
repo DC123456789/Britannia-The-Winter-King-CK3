@@ -1,4 +1,24 @@
-﻿# Sets up all the necessary variables for viewing the High King window and its associated tooltips
+﻿BTWK_britannia_high_king_create_reform_struct_story_effect = {
+	scope:story_holder = {
+		create_story = {
+			type = BTWK_britannia_high_kingship_reform_struct_story
+			save_temporary_scope_as = $REFORM_NAME$_story
+		}
+		scope:$REFORM_NAME$_story = {
+			set_variable = { name = reform_id value = flag:BTWK_HK_reform_$REFORM_NAME$ }
+			set_variable = { name = reform_button_text value = flag:BTWK_HK_reform_$REFORM_NAME$_button_text }
+			set_variable = { name = reform_desc value = flag:BTWK_HK_reform_$REFORM_NAME$_desc }
+		}
+		title:e_britannia = { 
+			set_variable = {
+				name = HK_reform_$REFORM_NAME$
+				value = scope:$REFORM_NAME$_story
+			}
+		}
+	}
+}
+
+# Sets up all the necessary variables for viewing the High King window and its associated tooltips
 setup_britannia_high_king_window_lists_effect = {
 	save_scope_as = claimant
 
