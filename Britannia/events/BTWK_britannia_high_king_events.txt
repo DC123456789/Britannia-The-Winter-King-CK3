@@ -783,17 +783,22 @@ BTWK_britannia_high_king.0009 = {
 		add_prestige = 200
 		BTWK_britannia_become_high_king_effect = yes
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.1
+		if = {
+			limit = { dynasty.var:britannia_high_kingship_authority > 0 }
+			custom_tooltip = BTWK_britannia_high_king.0009.a.tt.1a
+		}
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.2
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.3
 		# Make subject kingdoms
 		every_independent_ruler = {
 			limit = {
-				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				BTWK_britannia_subject_king_eligible_trigger = yes
 				OR = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
+					suzerain ?= root
 				}
-				# If a tributary, only make them a subject king if they are already you tributary,
+				# If a tributary, only make them a subject king if they are already your tributary,
 				# or their suzerain has already submitted (voluntarily or not)
 				OR = {
 					is_tributary = no

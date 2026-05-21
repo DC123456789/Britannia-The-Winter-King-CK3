@@ -667,6 +667,35 @@ BTWK_character_setup = {
 					scope:current_char = { remove_claim = PREV }
 				}
 			}
+			
+			# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
+			character:1 ?= {			# High King Uther Pendragon
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 80		# Uther was High King very recently for a while
+					}
+				}
+			}
+			character:40 ?= {			# Agricola, brother of High King Ambrosius Aurelianus
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 60		# Ambrosius Aurelianus was High King for a while, but it has been a few years since
+					}
+				}
+			}
+			character:16 ?= {			# Gorfyddyd, descendant of High King Vortigern
+				add_unpressed_claim = title:e_britannia		# Has been a few generations
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 20		# Has been a long time since Vortigern and Vortimer were High King
+					}
+				}
+			}
 		}
 	}
 }

@@ -128,6 +128,22 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			max = 10
 			desc = CLAIMANT_SUPPORT_PROWESS
 		}
+		# Claimant claims
+		if = {
+			limit = { scope:claimant = { has_strong_claim_on = title:e_britannia } }
+			add = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_PRESSED_CLAIM
+			}
+		}
+		else_if = {
+			limit = { scope:claimant = { has_weak_claim_on = title:e_britannia } }
+			add = {
+				value = 5
+				desc = CLAIMANT_SUPPORT_UNPRESSED_CLAIM
+			}
+		}
+			
 		# Scope traits
 		if = {
 			limit = { has_trait = ambitious }
@@ -317,7 +333,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 		save_temporary_scope_value_as = current_score
 		if = {
 			limit = {
-				current_score < BTWK_britannia_high_king_scope_opponent_threshold
+				scope:current_score < BTWK_britannia_high_king_scope_opponent_threshold
 				is_at_war = yes
 			}
 			if = {
@@ -657,16 +673,17 @@ BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio = {
 
 BTWK_britannia_high_king_region_control_share = {
 	value = 0
+	save_temporary_scope_as = current_high_king
 	every_county_in_region = {
 		region = btwk_world_britannia
 		limit = {
 			holder.top_liege = { 
 				OR = {
-					this = root
+					this = scope:current_high_king
 					AND = {
 						is_tributary = yes
 						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
-						suzerain = root
+						suzerain = scope:current_high_king
 					}
 				}
 			}
@@ -751,3 +768,12 @@ BTWK_britannia_high_king_authority_change = {
 		}
 	}	
 }
+
+BTWK_britannia_high_king_authority_min = 0
+BTWK_britannia_high_king_authority_max = 750
+BTWK_britannia_high_king_authority_inherited_penalty = 0.25
+BTWK_britannia_high_king_authority_inherited_proportion = {
+	value = 1
+	subtract = BTWK_britannia_high_king_authority_inherited_penalty
+}
+BTWK_britannia_high_king_authority_yearly_decay_value = 3

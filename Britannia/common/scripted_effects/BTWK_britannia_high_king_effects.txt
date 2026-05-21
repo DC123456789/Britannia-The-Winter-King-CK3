@@ -260,12 +260,27 @@ BTWK_britannia_claim_high_kingship_effect = {
 }
 
 BTWK_britannia_become_high_king_effect = {
+	BTWK_britannia_initialize_high_kingship_effect = yes
 	get_title = title:e_britannia
-	if = {
-		limit = { NOT = { has_variable = britannia_high_kingship_authority } }
-		set_variable = { name = britannia_high_kingship_authority value = 0 }
+}
+
+BTWK_britannia_initialize_high_kingship_effect = {
+	dynasty = { 
+		if = {
+			limit = { NOT = { has_variable = britannia_high_kingship_authority } }
+			set_variable = { name = britannia_high_kingship_authority value = 0 }
+		}
 	}
-	create_story = BTWK_britannia_high_kingship_story
+	if = {
+		limit = { NOT = { owns_story_of_type = BTWK_britannia_high_kingship_story } }
+		if = {
+			limit = { title:e_britannia = { has_variable = high_kingship_story } }
+			title:e_britannia.var:high_kingship_story = { make_story_owner = prev }
+		}
+		else = {
+			create_story = BTWK_britannia_high_kingship_story
+		}
+	}
 }
 
 BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
@@ -301,6 +316,7 @@ BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = {
 
 BTWK_britannia_high_kingship_destroy_effect = {
 	destroy_title = title:e_britannia
+	add_pressed_claim = title:e_britannia
 	every_tributary = {
 		limit = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
 		end_tributary = yes

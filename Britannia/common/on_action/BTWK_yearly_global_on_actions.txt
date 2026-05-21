@@ -1,10 +1,17 @@
 ﻿yearly_global_pulse = {
 	on_actions = {
-		btwk_yearly_major_event_on_action
+		BTWK_yearly_global_pulse
 	}
 }
 
-btwk_yearly_major_event_on_action = {
+BTWK_yearly_global_pulse = {
+	on_actions = {
+		BTWK_yearly_major_event_on_action
+		BTWK_yearly_global_pulse_effects
+	}
+}
+
+BTWK_yearly_major_event_on_action = {
 	events = {
 		titular_titles_briton.0011 # Glywyssing rename
 		titular_titles_briton.0050 # Fall of Britannia
@@ -13,11 +20,39 @@ btwk_yearly_major_event_on_action = {
 		culture_shifts.0030			# Brithenig culture emergence
 		culture_shifts.0032			# Britanno-[Romanized Germanic] hybrid culture emergence
 	}
-	effects = {
+}
+
+BTWK_yearly_global_pulse_effects = {
+	effect = {
+		# Check Cultural Redoubt Pacification
 		every_county = {
 			limit = { BTWK_has_cultural_redoubt_modifier_trigger = yes }
 			BTWK_cultural_redoubt_yearly_pacification_progress_effect = yes
 			BTWK_update_cultural_redoubt_modifier_effect = yes
+		}
+		
+		# High Kingship Authority decays
+		if = {
+			limit = { BTWK_britannia_high_kingship_active_trigger = yes }
+			every_dynasty = {
+				include_inactive = yes
+				if = {
+					limit = {
+						has_variable = britannia_high_kingship_authority
+						this.var:britannia_high_kingship_authority > 0
+						NOT = { title:e_britannia.holder.dynasty ?= this }
+					}
+					change_variable = {
+						name = britannia_high_kingship_authority
+						subtract = BTWK_britannia_high_king_authority_yearly_decay_value
+					}
+					clamp_variable = {
+						name = britannia_high_kingship_authority
+						min = BTWK_britannia_high_king_authority_min
+						max = BTWK_britannia_high_king_authority_max
+					}
+				}
+			}
 		}
 	}
 }
