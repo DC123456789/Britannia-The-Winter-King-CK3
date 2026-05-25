@@ -1756,6 +1756,107 @@ BTWK_britannia_high_king.0025 = {
 # BTWK_britannia_high_king.0173 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
 # BTWK_britannia_high_king.0174 - Restore Imperial Dignity (defeat / white peace in civil war, reform not passed)
 
+BTWK_britannia_high_king.0100 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0100.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0100.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0100.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0100.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0100.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0100.a.tt
+		# Convert subject kingdoms to permanent version
+		every_tributary = {
+			limit = {
+				has_subject_contract_group = tributary_britannia_subject_king
+			}
+			hidden_effect = {
+				# Copy contract over to permanent type
+				set_variable = {
+					name = default_tributary_levies_value
+					value = vassal_contract_obligation_level:default_tributary_levies
+				}
+				set_variable = {
+					name = default_tributary_prestige_value
+					value = vassal_contract_obligation_level:default_tributary_prestige
+				}
+				start_tributary = {
+					contract_group = tributary_britannia_subject_king_permanent
+					suzerain = root
+				}
+				tributary_contract_set_obligation_level = { 
+					type = default_tributary_levies level = this.var:default_tributary_levies_value
+				}
+				remove_variable = default_tributary_levies_value
+				tributary_contract_set_obligation_level = { 
+					type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+				}
+				remove_variable = default_tributary_prestige_value
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0100.b.other
+		}
+	}
+}
+
 ##################################################
 # Debug Test Events
 ##################################################
