@@ -294,7 +294,9 @@ BTWK_britannia_initialize_high_kingship_effect = {
 	if = {
 		limit = { NOT = { owns_story_of_type = BTWK_britannia_high_kingship_story } }
 		if = {
-			limit = { title:e_britannia = { has_variable = high_kingship_story } }
+			# This check returns false if the high_kingship_story variable exists but points to
+			# an empty/ended story, which shouldn't ever happen but is good to check against anyways
+			limit = { title:e_britannia.var:high_kingship_story ?= { always = yes } }
 			title:e_britannia.var:high_kingship_story = { make_story_owner = prev }
 		}
 		else = {
