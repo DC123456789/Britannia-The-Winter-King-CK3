@@ -642,6 +642,17 @@ tributary_independence_war = {
 
 	on_declaration = {
 		on_declared_war = yes # this will also break the tributary agreement immediately
+		
+		hidden_effect = {
+			# Check mint modifiers
+			if = {
+				limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+			}
+		}
 	}
 
 	on_victory_desc = {

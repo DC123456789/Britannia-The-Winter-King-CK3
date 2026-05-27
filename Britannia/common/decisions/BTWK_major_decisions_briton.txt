@@ -93,7 +93,7 @@ BTWK_HK_britannia_formalize_high_kingship_decision = {
 	is_shown = {
 		has_title = title:e_britannia
 		BTWK_britannia_high_kingship_active_trigger = yes
-		NOT = { title:e_britannia.var:HK_reform_formalize_high_kingship ?= { has_variable = reform_passed } }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship } }
 	}
 
 	is_valid = {
@@ -114,10 +114,65 @@ BTWK_HK_britannia_formalize_high_kingship_decision = {
 
 	ai_will_do = {
 		base = 100
-		modifier = {
-			factor = 0
-			BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio < 1.1
-		}		
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_establish_central_mint_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_smith.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 1
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_establish_central_mint_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_establish_central_mint_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_establish_central_mint_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = 500 }
+		gold = { value = BTWK_britannia_high_king_reform_establish_central_mint_gold_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
 	}
 	
 	widget = {

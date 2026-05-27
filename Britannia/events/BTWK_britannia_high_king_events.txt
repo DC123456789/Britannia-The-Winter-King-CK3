@@ -1857,6 +1857,98 @@ BTWK_britannia_high_king.0100 = {
 	}
 }
 
+BTWK_britannia_high_king.0101 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0101.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0101.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0101.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = market }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { capital_barony = { save_scope_as = high_king_capital_barony } }
+		if = {
+			limit = { root != scope:high_king }
+			show_as_tooltip = {
+				scope:high_king = {
+					add_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+					custom_tooltip = BTWK_britannia_high_king.0101.a.tt
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0101.a
+		trigger = { this = scope:high_king }
+		add_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+		custom_tooltip = BTWK_britannia_high_king.0101.a.tt
+		hidden_effect = {
+			every_vassal_or_below = {
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			}
+			every_tributary = {
+				limit = {
+					BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+				}
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0101.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0101.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0101.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0101.b.other
+		}
+	}
+}
 ##################################################
 # Debug Test Events
 ##################################################
