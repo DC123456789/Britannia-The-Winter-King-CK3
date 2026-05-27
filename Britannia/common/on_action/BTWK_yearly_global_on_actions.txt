@@ -54,5 +54,32 @@ BTWK_yearly_global_pulse_effects = {
 				}
 			}
 		}
+		
+		# Check mint modifiers for independent rulers (necessary as it is possible that subject kings may break away)
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			every_independent_ruler = {
+				if = {
+					limit = { 
+						BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger = yes
+						NOT = { has_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier }
+					}
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+				}
+				else_if = {
+					limit = {
+						BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger = no
+						has_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+					}
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+				}
+			}
+		}
 	}
 }

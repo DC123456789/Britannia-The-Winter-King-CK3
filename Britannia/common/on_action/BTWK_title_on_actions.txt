@@ -25,6 +25,12 @@ BTWK_on_title_destroyed = {
 					}
 				}
 			}
+			
+			# Revoke all reforms + effects if any were passed
+			if = {
+				limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship } }
+				BTWK_britannia_high_king_revoke_all_reforms_effect = yes
+			}
 		}
 	}
 }
@@ -65,6 +71,43 @@ BTWK_on_title_gain = {
 		if = {
 			limit = { is_independent_ruler = yes }
 			BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
+		}
+		
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			if = {
+				limit = { scope:title = title:e_britannia }
+				# If the High Kingship title itself changed hands, check everything
+				scope:previous_holder = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+					every_tributary = {
+						limit = {
+							BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+						}
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+						every_vassal_or_below = {
+							BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+						}
+					}
+				}
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+				every_tributary = {
+					limit = {
+						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+					}
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+				}				
+			}
 		}
 		
 		# Transfer High Kingship story once the High Kingship becomes inheritable
@@ -109,7 +152,6 @@ on_title_lost = {
 # Note - Isn't triggered when a title gets destroyed!
 BTWK_on_title_lost = {
 	effect = {
-		set_variable = got_btwk_on_title_lost
 		if = {
 			limit = {
 				is_playable_character = no
@@ -145,6 +187,12 @@ BTWK_on_title_lost = {
 					}
 				}
 			}
+		}
+		
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 		}
 	}
 }
@@ -184,6 +232,12 @@ btwk_on_vassal_change = {
 		BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
 		
 		# Turn king-level vassals of Britannia into subject kingdoms before the Empower the High Council reform
-		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes	
+		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes
+
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+		}
 	}
 }

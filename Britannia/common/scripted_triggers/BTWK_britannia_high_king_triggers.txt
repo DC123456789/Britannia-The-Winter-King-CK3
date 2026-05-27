@@ -4,11 +4,11 @@
 }
 
 BTWK_britannia_high_kingship_can_inherit_trigger = {
-	title:e_britannia.var:HK_reform_formalize_high_kingship = { has_variable = reform_passed }
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
 }
 
 BTWK_britannia_subject_kings_active_trigger = {
-	NOT = { title:e_britannia.var:HK_reform_empower_high_council = { has_variable = reform_passed } }
+	NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council } }
 	BTWK_britannia_high_kingship_active_trigger = yes
 }
 
@@ -217,12 +217,21 @@ BTWK_britannia_high_king_reform_common_trigger = {
 	prestige_level >= 3
 	prestige >= 1000
 	title:e_britannia = { title_held_years >= 10 }
-	NOT = { government_has_flag = government_is_tribal }
+	government_is_not_tribal_trigger = yes
 	age >= 30
 	is_at_war = no
 	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	is_incapable = no
 	NOT = { has_diarchy_type = regency }
+}
+
+BTWK_britannia_high_king_reform_is_passed_trigger = {
+	title:e_britannia.var:HK_reform_$REFORM_NAME$ = {
+		custom_tooltip = {
+			text = BTWK_britannia_high_king_reform_must_be_passed
+			has_variable = reform_passed
+		}
+	}
 }
 
 # All reforms should be written in the scope of the High King
@@ -235,58 +244,91 @@ BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = {
 }
 
 BTWK_britannia_high_king_reform_establish_central_mint_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 55 
 	}
+	gold >= BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
+	culture = { has_innovation = innovation_currency_02 }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
+BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
+	is_landed = yes
+	OR = {
+		has_title = title:e_britannia
+		any_liege_or_above = { has_title = title:e_britannia }
+		top_liege = {
+			is_tributary = yes
+			BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+			suzerain = { has_title = title:e_britannia }
+		}
+	}
+	any_held_title = {
+		tier = tier_county
+		title_province ?= { geographical_region = btwk_world_britannia }
+	}
+}
+
 BTWK_britannia_high_king_reform_empower_high_council_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 60 
 	}
+	culture = { has_innovation = innovation_royal_prerogative }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 65 
 	}
+	culture = { has_innovation = innovation_development_02 }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_formalize_succession_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 75 
 	}
+	culture = { has_innovation = innovation_hereditary_rule }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_unify_legal_codes_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_succession }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 250 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 85 
 	}
+	culture = { has_innovation = innovation_chronicle_writing }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 95
 	}
+	BTWK_reform_from_pre_feudal_innovations_trigger = yes
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 95
 	}
+	BTWK_reform_from_pre_feudal_innovations_trigger = yes
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 		
