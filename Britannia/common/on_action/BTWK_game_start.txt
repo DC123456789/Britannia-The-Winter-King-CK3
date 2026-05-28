@@ -667,6 +667,22 @@ BTWK_character_setup = {
 					scope:current_char = { remove_claim = PREV }
 				}
 			}
+			character:1388 ?= {			# King Anwrid of Manaw
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_lleyn 
+								has_title = title:k_gwynedd 
+							} 
+						}
+						# As a grandson of Cunedda it makes sense for him to have a weak claim
+						NOT = { this = title:k_gwynedd }
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
 		}
 	}
 }

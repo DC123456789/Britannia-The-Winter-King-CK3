@@ -250,7 +250,13 @@ BTWK_britannia_high_king_reform_establish_central_mint_trigger = {
 		FRACTION_REQUIRED = 55 
 	}
 	gold >= BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
-	culture = { has_innovation = innovation_currency_02 }
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_establish_central_mint_innovation_or_fallback
+		OR = {
+			stewardship >= 20
+			culture = { has_innovation = innovation_currency_02 }
+		}
+	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
@@ -278,7 +284,17 @@ BTWK_britannia_high_king_reform_empower_high_council_trigger = {
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 60 
 	}
-	culture = { has_innovation = innovation_royal_prerogative }
+	# TODO Some sort of bypass in case you aren't cultural head (prestige, diplomacy, martial?)
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_empower_high_council_innovation_or_fallback
+		OR = {
+			culture = { has_innovation = innovation_royal_prerogative }
+			AND = {
+				diplomacy >= 20
+				prestige_level >= 4
+			}
+		}
+	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
