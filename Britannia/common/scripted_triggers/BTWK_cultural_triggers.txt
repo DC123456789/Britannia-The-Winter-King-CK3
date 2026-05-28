@@ -277,6 +277,29 @@ BTWK_ai_should_promote_culture_trigger = {
 			}
 		}
 		AND = {
+			# Britons / Romano-Britons should try to reconvert Anglo-Saxon provinces
+			OR = {
+				culture = culture:romanobritish
+				culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			OR = {
+				scope:county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+		AND = {
 			# Briton/Welsh should try to reconvert Irish in Wales
 			culture = { has_cultural_pillar = heritage_brythonic }
 			scope:county = {
@@ -302,6 +325,12 @@ BTWK_ai_should_aggressively_promote_culture_trigger = {
 				}
 				scope:county.culture = { has_cultural_pillar = heritage_brythonic }
 				scope:county.culture = { has_cultural_pillar = heritage_pictish }
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
 			}
 		}
 	}

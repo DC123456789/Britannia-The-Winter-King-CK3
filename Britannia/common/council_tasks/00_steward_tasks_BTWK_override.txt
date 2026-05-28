@@ -478,11 +478,11 @@ task_promote_culture = {
 					gold > 0
 					OR = {
 						gold >= steward_convert_culture_value
-						AND = {
-							culture = culture:anglo_saxon
-							top_liege.primary_title = title:e_aengland
-							capital_county.kingdom = title:e_aengland
-						}
+						# AND = {
+							# culture = culture:anglo_saxon
+							# top_liege.primary_title = title:e_aengland
+							# capital_county.kingdom = title:e_aengland
+						# }
 						AND = {
 							culture = {
 								OR = {
@@ -520,10 +520,34 @@ task_promote_culture = {
 								count < 35
 							}
 						}
+						# Anglo-Saxons should be very aggressive about converting culture in Britannia
+						AND = {
+							culture = { has_cultural_pillar = heritage_west_germanic }
+							capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
 					}
 				}
 			}
 			add = 500
+		}
+		else_if = {
+			# Britons should be somewhat aggressive about converting culture in Britannia
+			limit = {
+				OR = {
+					culture = culture:romanobritish
+					culture = {
+						has_cultural_pillar = heritage_romance
+						var:ancestral_starting_culture ?= culture:romanobritish
+					}
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				capital_county.title_province = { geographical_region = btwk_world_britannia }
+				any_realm_county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			add = 250			
 		}
 		if = {
 			limit = {
