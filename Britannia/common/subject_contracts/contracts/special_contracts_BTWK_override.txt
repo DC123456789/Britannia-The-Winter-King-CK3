@@ -9,6 +9,10 @@ special_contract = {
 	}
 	obligation_levels = {
 		special_contract_none = {
+			is_valid = {
+				BTWK_can_switch_away_from_subject_kingdom_contract_trigger = yes
+			}
+			
 			position = { 0 1 }
 			default = yes
 			score = 0
@@ -94,6 +98,7 @@ special_contract = {
 			}
 			is_valid = { #disabled
 				always = no
+				BTWK_can_switch_away_from_subject_kingdom_contract_trigger = yes
 			}
 			parent = special_contract_none
 			position = { 1 1 }
@@ -139,6 +144,7 @@ special_contract = {
 		special_contract_march = {
 			is_shown = {
 				scope:subject.primary_title.tier >= tier_duchy
+				scope:subject = { government_is_not_tribal_trigger = yes }
 			}
 			is_valid = {
 				scope:liege.culture = {
@@ -158,6 +164,7 @@ special_contract = {
 						}
 					}
 				}
+				BTWK_can_switch_away_from_subject_kingdom_contract_trigger = yes
 			}
 			parent = special_contract_none
 			position = { 1 0 }
@@ -200,11 +207,13 @@ special_contract = {
 		special_contract_castellan = {
 			is_shown = {
 				scope:subject.primary_title.tier = tier_county
+				scope:subject = { government_is_not_tribal_trigger = yes }
 			}
 			is_valid = {
 				scope:liege.culture = {
 					has_innovation = innovation_bannus
 				}
+				BTWK_can_switch_away_from_subject_kingdom_contract_trigger = yes
 			}
 			
 			parent = special_contract_none
@@ -257,6 +266,7 @@ special_contract = {
 				#scope:liege.culture = {
 				#	has_innovation = innovation_rightful_ownership
 				#}
+				BTWK_can_switch_away_from_subject_kingdom_contract_trigger = yes
 			}
 			parent = special_contract_none
 			position = { 1 2 }
@@ -290,6 +300,40 @@ special_contract = {
 					}
 					add = @ai_standard_liege_desire
 				}
+			}
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+		special_contract_subject_kingdom = {
+			is_shown = {
+				# scope:liege = { has_title = title:e_britannia }
+				# BTWK_britannia_subject_king_vassals_active_trigger = yes
+				# OR = {
+					# scope:subject.primary_title.tier >= tier_kingdom
+					# scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+				# }
+			}
+			is_valid = {
+				scope:liege = { has_title = title:e_britannia }
+				BTWK_britannia_subject_king_vassals_active_trigger = yes
+				trigger_if = {
+					limit = { 
+						NOT = { scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract } }
+					}
+					scope:subject = { highest_held_title_tier >= tier_kingdom }
+				}
+			}
+			parent = special_contract_none
+			position = { 1 0 }
+			score = 0
+
+			tax_factor = -0.33
+			subject_opinion = 5
+			
+			flag = has_subject_kingdom_vassal_contract
+			flag = vassal_contract_cannot_revoke_titles
+
+			ai_liege_desire = {
+				value = 0
 			}
 			ai_subject_desire = @ai_standard_vassal_desire
 		}

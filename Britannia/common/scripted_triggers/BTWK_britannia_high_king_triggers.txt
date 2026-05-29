@@ -7,9 +7,21 @@ BTWK_britannia_high_kingship_can_inherit_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
 }
 
-BTWK_britannia_subject_kings_active_trigger = {
+BTWK_britannia_subject_king_tributaries_active_trigger = {
 	NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council } }
 	BTWK_britannia_high_kingship_active_trigger = yes
+}
+
+BTWK_britannia_subject_king_vassals_active_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+	OR = {
+		BTWK_britannia_high_kingship_active_trigger = yes
+		title:e_britannia = { has_variable = britannia_united }		# If you really want you can keep them
+	}
+}
+
+BTWK_britannia_subject_king_vassals_forced_trigger = {
+	NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes } }
 }
 
 BTWK_britannia_high_kingship_can_claim_trigger = {
@@ -173,10 +185,48 @@ BTWK_britannia_subject_king_eligible_trigger = {
 	primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 }
 
+BTWK_britannia_can_use_high_king_subjugation_trigger = {
+	scope:attacker = {
+		has_title = title:e_britannia
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
+	}
+}
+
+BTWK_britannia_is_high_king_subjugation_trigger = {
+	scope:attacker = {
+		has_title = title:e_britannia
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
+	}
+	scope:defender = { 
+		BTWK_britannia_subject_king_eligible_trigger = yes
+	}
+}
+
 BTWK_britannia_high_kingship_is_subject_king_trigger = {
 	OR = {
 		has_subject_contract_group = tributary_britannia_subject_king 
 		has_subject_contract_group = tributary_britannia_subject_king_permanent
+	}
+}
+
+BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = {
+	trigger_if = {
+		limit = {
+			scope:liege = { has_title = title:e_britannia }
+			BTWK_britannia_subject_king_vassals_active_trigger = yes
+			scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+		}
+		NOT = { BTWK_britannia_subject_king_vassals_forced_trigger = yes }
+	}
+}
+
+BTWK_britannia_high_king_de_jure_cb_check_trigger = {
+	trigger_if = {
+		limit = {
+			this = title:e_britannia
+			BTWK_britannia_high_kingship_active_trigger = yes
+		}
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
 	}
 }
 
@@ -284,7 +334,6 @@ BTWK_britannia_high_king_reform_empower_high_council_trigger = {
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 60 
 	}
-	# TODO Some sort of bypass in case you aren't cultural head (prestige, diplomacy, martial?)
 	custom_description = {
 		text = BTWK_britannia_high_king_reform_empower_high_council_innovation_or_fallback
 		OR = {

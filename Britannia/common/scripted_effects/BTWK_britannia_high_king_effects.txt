@@ -346,36 +346,76 @@ BTWK_britannia_high_kingship_destroy_effect = {
 }
 
 BTWK_britannia_high_kingship_check_king_tier_vassals_effect = {
+	# Check if is a potential subject kingdom
 	if = {
 		limit = {
 			highest_held_title_tier >= tier_kingdom
 			is_independent_ruler = no
 			liege = {
 				has_title = title:e_britannia
-				BTWK_britannia_subject_kings_active_trigger = yes
+			}
+			BTWK_britannia_high_kingship_active_trigger = yes
+		}
+		# Check if should be converted into a subject kingdom tributary
+		if = {
+			limit = {
+				BTWK_britannia_subject_king_tributaries_active_trigger = yes
 				NOT = {
-					any_held_title = {
-						this != title:e_britannia
-						tier >= tier_empire
+					liege = {
+						any_held_title = {
+							this != title:e_britannia
+							tier >= tier_empire
+						}
 					}
 				}
 			}
+			liege = { save_scope_as = former_liege }
+			create_title_and_vassal_change = {
+				type = independency
+				save_scope_as = change
+				add_claim_on_loss = yes
+			}
+			becomes_independent = {
+				change = scope:change
+			}
+			resolve_title_and_vassal_change = scope:change
+			BTWK_britannia_high_kingship_make_subject_king_tributary_effect = { SUZERAIN = scope:former_liege }
 		}
-		liege = { save_scope_as = former_liege }
-		create_title_and_vassal_change = {
-			type = independency
-			save_scope_as = change
-			add_claim_on_loss = yes
+		# Check if should be converted into a subject kingdom vassal
+		else_if = {
+			limit = {
+				BTWK_britannia_subject_king_vassals_forced_trigger = yes
+				NOT = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+				OR = {
+					NOT = {
+						liege = {
+							any_held_title = {
+								this != title:e_britannia
+								tier >= tier_empire
+							}
+						}
+					}
+					liege = { save_temporary_scope_as = liege_scope }
+					primary_title = {
+						title_capital_county.title_province = {
+							geoographical_region = btwk_world_britannia
+						}
+						NOT = {
+							empire.holder ?= {
+								this = scope:liege_scope
+							}
+						}
+					}
+				}
+			}
+			vassal_contract_set_obligation_level = { 
+				type = special_contract level = special_contract_subject_kingdom
+			}
 		}
-		becomes_independent = {
-			change = scope:change
-		}
-		resolve_title_and_vassal_change = scope:change
-		BTWK_britannia_high_kingship_make_subject_king_effect = { SUZERAIN = scope:former_liege }
 	}	
 }
 
-BTWK_britannia_high_kingship_make_subject_king_effect = {
+BTWK_britannia_high_kingship_make_subject_king_tributary_effect = {
 	if = {
 		limit = { BTWK_britannia_high_kingship_can_inherit_trigger = yes }
 		start_tributary = {
@@ -388,6 +428,12 @@ BTWK_britannia_high_kingship_make_subject_king_effect = {
 			contract_group = tributary_britannia_subject_king
 			suzerain = $SUZERAIN$
 		}
+	}
+}
+
+BTWK_britannia_high_kingship_make_subject_king_vassal_effect = {
+	vassal_contract_set_obligation_level = {
+		type = special_contract level = special_contract_subject_kingdom
 	}
 }
 
@@ -430,10 +476,10 @@ BTWK_britannia_high_king_reform_establish_central_mint_effect = {
 	}
 	custom_tooltip = BTWK_HK_britannia_establish_central_mint_tt
 	save_scope_as = high_king
-	trigger_event = BTWK_britannia_high_king.0101
+	trigger_event = BTWK_britannia_high_king.0110
 	every_player = {
 		limit = { this != prev }
-		trigger_event = BTWK_britannia_high_king.0101
+		trigger_event = BTWK_britannia_high_king.0110
 	}
 }
 
@@ -460,6 +506,14 @@ BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = {
 BTWK_britannia_high_king_reform_empower_high_council_effect = {
 	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 150 }
 	# title:e_britannia.var:HK_reform_empower_high_council ?= { set_variable = reform_passed }
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_empower_high_council_war
+	}
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+	}
+	save_scope_as = high_king
+	trigger_event = BTWK_britannia_high_king.0120
 }
 
 BTWK_britannia_high_king_reform_centralize_the_church_effect = {
