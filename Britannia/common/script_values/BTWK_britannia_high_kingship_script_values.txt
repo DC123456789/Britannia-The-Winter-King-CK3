@@ -153,6 +153,19 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			max = 10
 			desc = CLAIMANT_SUPPORT_PROWESS
 		}
+		# Claimant Tribal Fame
+		if = {
+			limit = { scope:claimant = { government_has_flag = government_has_tribal_fame } }
+			add = {
+				value = scope:claimant.tribal_fame_value
+				save_temporary_scope_value_as = claimant_tribal_fame_value
+				if = {
+					limit = { scope:claimant_tribal_fame_value > 0 }
+					multiply = 0.5
+				}
+				desc = CLAIMANT_SUPPORT_TRIBAL_FAME
+			}
+		}
 		# Claimant claims
 		if = {
 			limit = { scope:claimant = { has_strong_claim_on = title:e_britannia } }
