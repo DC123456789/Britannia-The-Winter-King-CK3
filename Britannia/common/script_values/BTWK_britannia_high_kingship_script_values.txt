@@ -168,7 +168,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 				desc = CLAIMANT_SUPPORT_UNPRESSED_CLAIM
 			}
 		}
-			
+		
 		# Scope traits
 		if = {
 			limit = { has_trait = ambitious }
@@ -809,3 +809,54 @@ BTWK_britannia_high_king_reform_default_prestige_cost_negative = {
 	multiply = -1
 }
 BTWK_britannia_high_king_reform_establish_central_mint_gold_cost = 750
+
+BTWK_britannia_high_king_reform_empower_high_council_support_score = {
+	# Base value (generally quite reluctant)
+	value = -50
+	
+	# Opinion
+	add = "opinion(scope:high_king)"
+	
+	# Scope traits
+	if = {
+		limit = { has_trait = ambitious }
+		subtract = 15
+	}
+	
+	# Same House/Dynasty (minor boost)
+	if = {
+		limit = { house = scope:high_king.house }
+		add = 10
+	}
+	else_if = {
+		limit = { dynasty = scope:high_king.dynasty }
+		add = 5
+	}
+	
+	# Alliances
+	if = {
+		limit = { is_allied_to = scope:high_king }
+		add = 20
+	}
+	
+	# Cultural Differences
+	if = {
+		limit = { this.culture != scope:high_king.culture }
+		subtract = 10
+	}
+	else_if = {
+		limit = { NOT = { this.culture = { has_same_culture_heritage = scope:claimant.culture } } }
+		subtract = 20
+	}
+	
+	# Religious Differences
+	subtract = {
+		value = "faith.faith_hostility_level(scope:high_king.faith)"
+		multiply = 10
+		max = 25		# Hostile vs. Evil isn't fundamentally a big difference
+		if = {
+			limit = { has_trait = zealous }
+			multiply = 1.5
+		}
+	}
+}
