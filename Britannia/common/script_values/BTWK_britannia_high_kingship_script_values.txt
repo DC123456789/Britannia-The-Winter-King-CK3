@@ -75,6 +75,21 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			}
 			desc = CLAIMANT_SUPPORT_OPINION
 		}
+		# Hooks
+		if = {
+			limit = { scope:claimant = { has_strong_hook = prev } }
+			add = {
+				value = 25
+				desc = CLAIMANT_SUPPORT_STRONG_HOOK
+			}
+		}
+		else_if = {
+			limit = { scope:high_king = { has_hook = prev } }
+			add = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_HOOK
+			}
+		}
 		# Relative Power
 		# 20 * (scope:claimant.military_power / military_power - 1.25 ) if the claimant is at least 1.25x stronger
 		# -50 * (military_power / scope:claimant.military_power - 0.8) if the claimant is not at least 1.25x stronger
@@ -829,6 +844,16 @@ BTWK_britannia_high_king_reform_empower_high_council_support_score = {
 	
 	# Opinion
 	add = "opinion(scope:high_king)"
+	
+	# Hooks
+	if = {
+		limit = { scope:high_king = { has_strong_hook = prev } }
+		add = 40
+	}
+	else_if = {
+		limit = { scope:high_king = { has_hook = prev } }
+		add = 15
+	}
 	
 	# Scope traits
 	if = {

@@ -269,10 +269,14 @@ BTWK_britannia_high_king_reform_common_trigger = {
 	title:e_britannia = { title_held_years >= 10 }
 	government_is_not_tribal_trigger = yes
 	age >= 30
-	is_at_war = no
+	is_at_war = no		# If this is ever changed, need to add a specific block for subject king revolt wars
 	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	is_incapable = no
 	NOT = { has_diarchy_type = regency }
+	trigger_if = {
+		limit = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
+		NOT = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
+	}
 }
 
 BTWK_britannia_high_king_reform_is_passed_trigger = {

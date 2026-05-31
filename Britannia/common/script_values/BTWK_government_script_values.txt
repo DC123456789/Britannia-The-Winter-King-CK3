@@ -154,18 +154,36 @@ tribal_fame_value = {
 		divide = 5
 		desc = TRIBAL_FAME_VALUE_PROWESS
 	}
-	subtract = {
-		value = sub_realm_size
-		subtract = 4
-		divide = 1.5
-		multiply = tribal_fame_government_law_realm_size_multiplier
-		min = 0
-		desc = TRIBAL_FAME_VALUE_REALM_SIZE
+	if = {
+		limit = {
+			has_title = title:e_britannia
+			BTWK_britannia_subject_king_vassals_active_trigger = yes
+			NOT = { title:e_britannia = { has_variable = britannia_united } }
+		}
+		subtract = {
+			value = sub_realm_size
+			subtract = 4
+			divide = 1.5
+			multiply = tribal_fame_government_law_realm_size_multiplier
+			multiply = 0.33
+			min = 0
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_BRITANNIA_HIGH_KING
+		}
+	}
+	else = {
+		subtract = {
+			value = sub_realm_size
+			subtract = 4
+			divide = 1.5
+			multiply = tribal_fame_government_law_realm_size_multiplier
+			min = 0
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE
+		}
 	}
 	if = {
 		limit = {
 			has_title = title:e_britannia
-			BTWK_britannia_high_kingship_active_trigger = yes
+			BTWK_britannia_subject_king_tributaries_active_trigger = yes
 		}
 		subtract = {
 			value = {
