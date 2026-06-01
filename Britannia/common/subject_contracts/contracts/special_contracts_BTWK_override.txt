@@ -317,7 +317,12 @@ special_contract = {
 				BTWK_britannia_subject_king_vassals_active_trigger = yes
 				trigger_if = {
 					limit = { 
-						NOT = { scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract } }
+						scope:subject = { 
+							NOT = {
+								vassal_contract_has_flag = has_subject_kingdom_vassal_contract 
+								has_variable = force_subject_kingdom
+							}
+						}
 					}
 					scope:subject = { highest_held_title_tier >= tier_kingdom }
 				}
@@ -349,7 +354,7 @@ suzerain_war_participation_guarantee = {
 			is_valid = {
 				trigger_if = {
 					limit = {
-						scope:subject = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
+						scope:subject = { BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes }
 					}
 					custom_tooltip = {
 						text = britannia_subject_king_guarantee_always

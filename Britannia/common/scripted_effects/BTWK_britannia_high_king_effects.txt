@@ -51,7 +51,10 @@ setup_britannia_high_king_window_lists_effect = {
 
 	every_ruler = {
 		limit = {
-			BTWK_britannia_high_kingship_is_elector_trigger = yes
+			OR = {
+				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				BTWK_britannia_high_kingship_is_subject_king_vassal_or_tributary_trigger = yes
+			}
 		}
 		add_to_temporary_list = britannia_all_kings_list
 	}
@@ -68,7 +71,7 @@ setup_britannia_high_king_window_lists_effect = {
 					top_liege = { has_title = title:e_britannia }
 					AND = {
 						is_tributary = yes
-						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+						BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 						suzerain = { has_title = title:e_britannia }
 					}
 				}
@@ -340,7 +343,7 @@ BTWK_britannia_high_kingship_destroy_effect = {
 	destroy_title = title:e_britannia
 	add_pressed_claim = title:e_britannia
 	every_tributary = {
-		limit = { BTWK_britannia_high_kingship_is_subject_king_trigger = yes }
+		limit = { BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes }
 		end_tributary = yes
 	}
 }
@@ -398,7 +401,7 @@ BTWK_britannia_high_kingship_check_king_tier_vassals_effect = {
 					liege = { save_temporary_scope_as = liege_scope }
 					primary_title = {
 						title_capital_county.title_province = {
-							geoographical_region = btwk_world_britannia
+							geographical_region = btwk_world_britannia
 						}
 						NOT = {
 							empire.holder ?= {
@@ -430,9 +433,11 @@ BTWK_britannia_high_kingship_make_subject_king_tributary_effect = {
 }
 
 BTWK_britannia_high_kingship_make_subject_king_vassal_effect = {
+	set_variable = force_subject_kingdom
 	vassal_contract_set_obligation_level = {
 		type = special_contract level = special_contract_subject_kingdom
 	}
+	remove_variable = force_subject_kingdom
 }
 
 BTWK_britannia_high_kingship_remove_authority_effect = {
@@ -517,6 +522,121 @@ BTWK_britannia_high_king_reform_empower_high_council_effect = {
 BTWK_britannia_high_king_reform_centralize_the_church_effect = {
 	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 200 }
 	title:e_britannia.var:HK_reform_centralize_the_church ?= { set_variable = reform_passed }
+	save_scope_as = high_king
+	if = {
+		limit = { has_religion = religion:christianity_religion }
+		if = {
+			limit = { NOT = { title:b_londiniumcastle = { is_holy_site_of = prev.faith } } }
+			custom_tooltip = BTWK_HK_britannia_establish_centralize_the_church_tt_1
+		}
+		title:c_londinium = { save_scope_as = BTWK_britannia_high_king_state_church_seat }
+	}
+	else = {
+		if = {
+			limit = {
+				capital_county = {
+					title_province = { geographical_region = btwk_world_britannia }
+					any_direct_de_jure_vassal_title = { is_holy_site_of = scope:high_king.faith }
+				}
+			}
+			capital_county = { save_scope_as = BTWK_britannia_high_king_state_church_seat }
+		}
+		else_if = {
+			limit = {
+				faith = {
+					any_holy_site = {
+						title_province = { geographical_region = btwk_world_britannia }
+						holder.top_liege = scope:high_king
+					}
+				}
+			}
+			faith = {
+				random_holy_site = {
+					limit = {
+						title_province = { geographical_region = btwk_world_britannia }
+						holder.top_liege = scope:high_king
+					}
+					county = { save_scope_as = BTWK_britannia_high_king_state_church_seat }
+				}
+			}
+		}
+		else_if = {
+			limit = { capital_county = { title_province = { geographical_region = btwk_world_britannia } } }
+			capital_county = { save_scope_as = BTWK_britannia_high_king_state_church_seat }
+		}
+		else = {
+			random_realm_county = {
+				limit = {
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				save_scope_as = BTWK_britannia_high_king_state_church_seat
+			}
+		}
+	}
+	show_as_tooltip = {
+		if = {
+			limit = { has_religion = religion:christianity_religion }
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				# Always Londinium, so safe for Christians
+				add_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+				custom_tooltip = BTWK_HK_britannia_establish_centralize_the_church_tt_3.christian
+			}
+		}
+		else = {
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				custom_tooltip = BTWK_HK_britannia_establish_centralize_the_church_tt_2.nonchristian
+				custom_tooltip = BTWK_HK_britannia_establish_centralize_the_church_tt_3.nonchristian
+			}
+		}
+	}
+	trigger_event = BTWK_britannia_high_king.0140
+	every_player = {
+		limit = { this != prev }
+		trigger_event = BTWK_britannia_high_king.0140
+	}
+}
+
+BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = {
+	save_scope_as = current_char
+	if = {
+		limit = {
+			has_title = title:e_britannia
+			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+			title:e_britannia.var:HK_reform_centralize_the_church = {
+				this.var:BTWK_britannia_high_king_state_church_seat_county = {
+					holder = {
+						OR = {
+							this = scope:current_char
+							any_liege_or_above = {
+								this = scope:current_char
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { 
+				title:e_britannia.var:HK_reform_centralize_the_church = {
+					this.var:BTWK_britannia_high_king_state_church_faith.religion = religion:christianity_religion
+				}
+				add_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier
+			}
+		}
+		else = {
+			add_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier
+		}
+	}
+	else = {
+		if = {
+			limit = { has_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier }
+			remove_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier
+		}
+		else_if = {
+			limit = { has_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier }
+			remove_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier
+		}
+	}
 }
 
 BTWK_britannia_high_king_reform_formalize_succession_effect = {
@@ -552,6 +672,14 @@ BTWK_britannia_high_king_revoke_all_reforms_effect = {
 	every_ruler = {
 		limit = { has_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier }
 		remove_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+	}	
+	title:e_britannia.holder ?= {
+		remove_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier
+		remove_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier
+	}
+	every_county = {
+		remove_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+		remove_county_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_modifier
 	}
 }
 	

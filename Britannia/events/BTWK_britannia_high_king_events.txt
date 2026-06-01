@@ -1833,20 +1833,20 @@ BTWK_britannia_high_king.0100 = {
 		trigger = { this != scope:high_king }
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0100.b.subject_king
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0100.b.briton_roman
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = yes
 			}
@@ -1854,7 +1854,7 @@ BTWK_britannia_high_king.0100 = {
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = no
 			}
@@ -1911,7 +1911,7 @@ BTWK_britannia_high_king.0110 = {
 			}
 			every_tributary = {
 				limit = {
-					BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 				}
 				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 				every_vassal_or_below = {
@@ -1926,20 +1926,20 @@ BTWK_britannia_high_king.0110 = {
 		trigger = { this != scope:high_king }
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0110.b.subject_king
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0110.b.briton_roman
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = yes
 			}
@@ -1947,7 +1947,7 @@ BTWK_britannia_high_king.0110 = {
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_trigger = no
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = no
 			}
@@ -1999,7 +1999,7 @@ BTWK_britannia_high_king.0121 = {
 		save_scope_as = scope:high_king
 		every_tributary = {
 			limit = { 
-				BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 			}
 			# In case there is leftovers from a previous attempt
 			remove_variable = HK_reform_empower_high_council_supporter
@@ -2344,7 +2344,7 @@ BTWK_britannia_high_king.0126 = {
 			
 			every_tributary = {
 				limit = {
-					BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 				}
 				end_tributary = yes
 				
@@ -2697,6 +2697,166 @@ BTWK_britannia_high_king.0129 = {
 				}
 			}
 			text = BTWK_britannia_high_king.0129.a.other
+		}
+	}
+}
+
+# Reform Passed - Restore the Archbishopric of Londinium / Establish a State Church
+BTWK_britannia_high_king.0140 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+				}
+				desc = BTWK_britannia_high_king.0140.t.christian
+			}
+			desc = BTWK_britannia_high_king.0140.t.nonchristian
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.christian.high_king
+			}
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+					root != scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.christian
+			}
+			triggered_desc = {
+				trigger = {
+					NOT = { scope:high_king = { has_religion = religion:christianity_religion } }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.nonchristian.high_king
+			}
+			desc = BTWK_britannia_high_king.0140.desc.nonchristian
+		}
+	}
+	theme = faith
+
+	left_portrait = {
+		character = scope:high_king
+		animation = personality_zealous
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			show_as_tooltip = {
+				if = {
+					limit = { 
+						scope:high_king = {
+							has_religion = religion:christianity_religion 
+							NOT = { title:b_londiniumcastle = { is_holy_site_of = prev.faith } }
+						}
+					}
+					custom_tooltip = BTWK_britannia_high_king.0140.a.tt.1
+				}
+				if = {
+					limit = { scope:high_king = { has_religion = religion:christianity_religion } }
+					scope:BTWK_britannia_high_king_state_church_seat = {
+						add_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+						custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.christian
+					}
+				}
+				else = {
+					scope:BTWK_britannia_high_king_state_church_seat = {
+						add_county_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_modifier
+						custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.nonchristian
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0140.a
+		trigger = { this = scope:high_king }
+		if = {
+			limit = { 
+				has_religion = religion:christianity_religion 
+				NOT = { title:b_londiniumcastle = { is_holy_site_of = prev.faith } }
+			}
+			custom_tooltip = BTWK_britannia_high_king.0140.a.tt.1
+			title:b_londiniumcastle = {
+				set_variable = {
+					name = BTWK_britannia_high_king_state_church_seat_faith
+					value = scope:high_king.faith
+				}
+			}
+		}
+		title:e_britannia.var:HK_reform_centralize_the_church = {
+			set_variable = {
+				name = BTWK_britannia_high_king_state_church_seat_county
+				value = scope:BTWK_britannia_high_king_state_church_seat.county
+			}
+			set_variable = {
+				name = BTWK_britannia_high_king_state_church_faith
+				value = scope:high_king.faith
+			}
+		}
+		if = {
+			limit = { has_religion = religion:christianity_religion }
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				add_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+				custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.christian
+			}
+			hidden_effect = {
+				add_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier
+			}
+		}
+		else = {
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				add_county_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_modifier
+				custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.nonchristian
+			}
+			hidden_effect = {
+				add_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0140.b.other
 		}
 	}
 }

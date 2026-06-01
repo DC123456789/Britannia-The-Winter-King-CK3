@@ -13,7 +13,7 @@ BTWK_on_game_start = {
 		BTWK_government_setup
 		BTWK_county_setup
 		BTWK_character_setup
-		BTWK_roman_walls_upgrade
+		BTWK_building_setup
 		BTWK_laeti_setup
 		BTWK_britannia_high_kingship_setup
 		BTWK_tribal_fame_calc
@@ -2957,7 +2957,7 @@ BTWK_de_jure_setup = {
 
 #Make sure Roman castles start with at least wall upgrade 3
 
-BTWK_roman_walls_upgrade = {
+BTWK_building_setup = {
 	effect = {
 		every_province = {
 			if = {
@@ -3041,6 +3041,21 @@ BTWK_roman_walls_upgrade = {
 				random = {
 					chance = 50
 					add_building = hill_forts_02
+				}
+			}
+		}
+		
+		# Londinium needs a holy site building for the religious high king reform
+		# This is here in case we move all the faith holy sites away at some point
+		b_londiniumcastle = {
+			if = {
+				limit = {
+					title_province = {
+						has_special_building_slot = no
+					}
+				}
+				title_province = {
+					add_special_building_slot = holy_site_cathedral_01
 				}
 			}
 		}

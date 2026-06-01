@@ -87,7 +87,7 @@ BTWK_on_title_gain = {
 					}
 					every_tributary = {
 						limit = {
-							BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 						}
 						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 						every_vassal_or_below = {
@@ -100,7 +100,7 @@ BTWK_on_title_gain = {
 				}
 				every_tributary = {
 					limit = {
-						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+						BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 					}
 					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 					every_vassal_or_below = {
@@ -108,6 +108,15 @@ BTWK_on_title_gain = {
 					}
 				}				
 			}
+		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+				has_title = title:e_britannia
+			}
+			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
 		}
 		
 		# Transfer High Kingship story once the High Kingship becomes inheritable
@@ -196,6 +205,18 @@ BTWK_on_title_lost = {
 			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
 			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+				OR = {
+					has_title = title:e_britannia
+					scope:title = title:e_britannia
+				}
+			}
+			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+		}
 	}
 }
 
@@ -240,6 +261,25 @@ btwk_on_vassal_change = {
 		if = {
 			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
 			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church } }
+			every_liege_or_above = {
+				limit = {
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+			}
+			scope:old_liege = {
+				if = {
+					limit = {
+						has_title = title:e_britannia
+					}
+					BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+				}
+			}
 		}
 	}
 }

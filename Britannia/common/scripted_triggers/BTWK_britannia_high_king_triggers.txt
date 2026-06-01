@@ -202,10 +202,24 @@ BTWK_britannia_is_high_king_subjugation_trigger = {
 	}
 }
 
-BTWK_britannia_high_kingship_is_subject_king_trigger = {
+BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = {
 	OR = {
 		has_subject_contract_group = tributary_britannia_subject_king 
 		has_subject_contract_group = tributary_britannia_subject_king_permanent
+	}
+}
+
+BTWK_britannia_high_kingship_is_subject_king_vassal_or_tributary_trigger = {
+	OR = {
+		BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+		AND = {
+			is_independent_ruler = no
+			liege = { has_title = title:e_britannia }
+			OR = {
+				vassal_contract_has_flag = has_subject_kingdom_vassal_contract
+				highest_held_title_tier >= tier_kingdom
+			}
+		}
 	}
 }
 
@@ -322,7 +336,7 @@ BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger
 		any_liege_or_above = { has_title = title:e_britannia }
 		top_liege = {
 			is_tributary = yes
-			BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+			BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 			suzerain = { has_title = title:e_britannia }
 		}
 	}
@@ -366,7 +380,28 @@ BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 65 
 	}
+	piety >= BTWK_britannia_high_king_reform_centralize_the_church_cost
 	culture = { has_innovation = innovation_development_02 }
+	custom_description = {
+		text = faith_is_reformed
+		subject = root
+		faith = { NOT = { has_doctrine_parameter = unreformed } }
+	}
+	trigger_if = {
+		limit = { NOT = { faith = { has_doctrine = doctrine_no_head } } }
+		custom_description = {
+			text = BTWK_HK_britannia_high_king_reform_centralize_the_church_religious_head_condition
+			exists = faith.religious_head
+		}
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_centralize_the_church_religious_head_opinion
+			faith.religious_head ?= { opinion = { target = prev value >= 60 } }
+		}
+	}
+	trigger_if = {
+		limit = { has_religion = religion:christianity_religion }
+		completely_controls = title:c_londinium
+	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
