@@ -2339,9 +2339,18 @@ BTWK_britannia_high_king.0126 = {
 			limit = { government_has_flag = government_has_tribal_fame }
 			custom_tooltip = BTWK_britannia_high_king.0126.a.tt.3
 		}
+		if = {
+			limit = {
+				OR = {
+					has_realm_law = crown_authority_2
+					has_realm_law = crown_authority_3
+				}
+			}
+			add_realm_law_skip_effects = crown_authority_1
+		}
+		custom_tooltip = BTWK_britannia_high_king.0126.a.tt.4
 		# Make subject kingdom tributaries into vassals
 		hidden_effect = {
-			
 			every_tributary = {
 				limit = {
 					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
@@ -2719,6 +2728,14 @@ BTWK_britannia_high_king.0140 = {
 	desc = {
 		first_valid = {
 			triggered_desc = {
+				trigger = {					
+					scope:high_king = { has_religion = religion:christianity_religion }
+					scope:high_king.faith.religious_head = { has_title = title:k_papal_state }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.catholic.high_king
+			}
+			triggered_desc = {
 				trigger = {
 					scope:high_king = { has_religion = religion:christianity_religion }
 					root = scope:high_king
@@ -2775,6 +2792,12 @@ BTWK_britannia_high_king.0140 = {
 						custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.nonchristian
 					}
 				}
+			}
+		}
+		scope:BTWK_britannia_high_king_state_church_seat = {
+			random_direct_de_jure_vassal_title = {
+				limit = { title_province = { is_county_capital = yes } }
+				save_scope_as = state_church_seat_barony
 			}
 		}
 	}
