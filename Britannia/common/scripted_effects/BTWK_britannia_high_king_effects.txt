@@ -481,7 +481,10 @@ BTWK_britannia_high_king_reform_establish_central_mint_effect = {
 	save_scope_as = high_king
 	trigger_event = BTWK_britannia_high_king.0110
 	every_player = {
-		limit = { this != prev }
+		limit = { 
+			this != prev
+			BTWK_britannia_high_kingship_is_relevant_trigger = yes
+		}
 		trigger_event = BTWK_britannia_high_king.0110
 	}
 }
@@ -589,7 +592,10 @@ BTWK_britannia_high_king_reform_centralize_the_church_effect = {
 	}
 	trigger_event = BTWK_britannia_high_king.0140
 	every_player = {
-		limit = { this != prev }
+		limit = {
+			this != prev
+			BTWK_britannia_high_kingship_is_relevant_trigger = yes
+		}
 		trigger_event = BTWK_britannia_high_king.0140
 	}
 }
@@ -639,12 +645,33 @@ BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = {
 
 BTWK_britannia_high_king_reform_formalize_succession_effect = {
 	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 200 }
+	custom_tooltip = BTWK_HK_britannia_formalize_succession_tt_1
+	custom_tooltip = BTWK_HK_britannia_formalize_succession_tt_2
 	title:e_britannia.var:HK_reform_formalize_succession ?= { set_variable = reform_passed }
+	save_scope_as = high_king
+	trigger_event = BTWK_britannia_high_king.0150
+	every_player = {
+		limit = {
+			this != prev
+			BTWK_britannia_high_kingship_is_relevant_trigger = yes
+		}
+		trigger_event = BTWK_britannia_high_king.0150
+	}
 }
 
 BTWK_britannia_high_king_reform_unify_legal_codes_effect = {
 	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 250 }
+	custom_tooltip = BTWK_HK_britannia_unify_legal_codes_tt
 	title:e_britannia.var:HK_reform_unify_legal_codes ?= { set_variable = reform_passed }
+	save_scope_as = high_king
+	trigger_event = BTWK_britannia_high_king.0160
+	every_player = {
+		limit = {
+			this != prev
+			BTWK_britannia_high_kingship_is_relevant_trigger = yes
+		}
+		trigger_event = BTWK_britannia_high_king.0160
+	}
 }
 
 BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_effect = {

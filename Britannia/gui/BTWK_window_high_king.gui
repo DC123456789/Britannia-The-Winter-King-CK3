@@ -1423,6 +1423,7 @@ template HighKingReformTooltipWidget {
 				using = DefaultTooltipText
 				margin = { 20 0 }
 				margin_top = 15
+				margin_bottom = 20
 				text = "[GetScriptedGui('BTWK_high_kingship_pass_reform').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)]"
 
 				fonttintcolor = "[TooltipInfo.GetTintColor]"
@@ -1432,7 +1433,7 @@ template HighKingReformTooltipWidget {
 			textbox = {
 				using = DefaultTooltipText
 				margin = { 20 0 }
-				margin_top = 15
+				# margin_top = 15
 				text = "REFORM_PASSED"
 				visible = "[Story.MakeScope.Var('reform_passed').IsSet]"
 
@@ -1510,7 +1511,6 @@ types HighKingWindowTypes
 			enabled = yes
 			onclick = "[GetScriptedGui('BTWK_high_kingship_pass_reform').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)]"
 			visible = "[And(Not(Story.MakeScope.Var('reform_passed').IsSet), GetScriptedGui('BTWK_high_kingship_pass_reform').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End))]"
-			tooltip = "[GetScriptedGui('BTWK_high_kingship_pass_reform').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)]"
 			hbox = {
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
@@ -1526,6 +1526,10 @@ types HighKingWindowTypes
 					max_width = 260
 					align = center
 				}
+			}
+			
+			tooltipwidget = {
+				using = HighKingReformTooltipWidget
 			}
 		}
 		button_standard = {

@@ -170,6 +170,7 @@ BTWK_britannia_high_kingship_is_relevant_trigger = {
 	OR = {
 		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 		capital_province = { geographical_region = btwk_world_britannia }
+		any_liege_or_above = { has_title = title:e_britannia }
 	}
 }
 
@@ -411,6 +412,15 @@ BTWK_britannia_high_king_reform_formalize_succession_trigger = {
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 75 
 	}
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_formalize_succession_vassal_opinion_condition
+		NOT = {
+			any_vassal = {
+				is_powerful_vassal = yes
+				opposes_succession_law_change_trigger = yes
+			}
+		}
+	}
 	culture = { has_innovation = innovation_hereditary_rule }
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
@@ -420,6 +430,19 @@ BTWK_britannia_high_king_reform_unify_legal_codes_trigger = {
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 250 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 85 
+	}
+	trigger_if = {
+		limit = { government_has_flag = government_is_administrative }
+		NOT = { has_realm_law = imperial_bureaucracy_0 }
+	}
+	trigger_else = {
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_unify_legal_codes_feudal_law_condition
+			OR = {
+				has_realm_law = crown_authority_2
+				has_realm_law = crown_authority_3
+			}
+		}
 	}
 	culture = { has_innovation = innovation_chronicle_writing }
 	BTWK_britannia_high_king_reform_common_trigger = yes

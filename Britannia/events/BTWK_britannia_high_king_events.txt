@@ -2884,6 +2884,152 @@ BTWK_britannia_high_king.0140 = {
 	}
 }
 
+# Reform Passed - Codify the Succession
+BTWK_britannia_high_king.0150 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0150.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0150.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0150.desc
+		}
+	}
+	theme = realm
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0150.a.tt.1
+			custom_tooltip = BTWK_britannia_high_king.0150.a.tt.2
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0150.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0150.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0150.a.tt.2
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0150.b.other
+		}
+	}
+}
+
+# Reform Passed - Unify the Legal Codes
+BTWK_britannia_high_king.0160 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0160.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0160.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0160.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = council_chamber }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { capital_barony = { save_scope_as = high_king_capital_barony } }
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0160.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0160.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0160.a.tt
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0160.b.other
+		}
+	}
+}
+
 ##################################################
 # Debug Test Events
 ##################################################
