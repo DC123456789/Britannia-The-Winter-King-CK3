@@ -308,6 +308,17 @@ BTWK_britannia_high_king_reform_is_passed_trigger = {
 	}
 }
 
+# Needs to be seperate as custom_description can't handle stories, so we have to use custom_tooltip
+# which doesn't invert
+BTWK_britannia_high_king_reform_is_not_passed_trigger = {
+	title:e_britannia.var:HK_reform_$REFORM_NAME$ = {
+		custom_tooltip = {
+			text = BTWK_britannia_high_king_reform_must_not_be_passed
+			NOT = { has_variable = reform_passed }
+		}
+	}
+}
+
 # All reforms should be written in the scope of the High King
 BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = {
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 600 }
@@ -455,6 +466,7 @@ BTWK_britannia_high_king_reform_unify_legal_codes_trigger = {
 
 BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+	BTWK_britannia_high_king_reform_is_not_passed_trigger = { REFORM_NAME = restore_imperial_dignity }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 0.95
@@ -465,6 +477,8 @@ BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = {
 
 BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+	BTWK_britannia_high_king_reform_is_not_passed_trigger = { REFORM_NAME = reclaim_caratacus_legacy }
+	culture = { has_cultural_pillar = heritage_latin }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 0.95
