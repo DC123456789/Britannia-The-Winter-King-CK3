@@ -676,7 +676,23 @@ BTWK_britannia_high_king_reform_unify_legal_codes_effect = {
 
 BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_effect = {
 	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 300 }
+	custom_tooltip = BTWK_HK_britannia_reclaim_caratacus_legacy_tt
+	struggle:britannia_struggle = { end_struggle = BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle }
 	title:e_britannia.var:HK_reform_reclaim_caratacus_legacy ?= { set_variable = reform_passed }
+	title:e_britannia = { set_variable = britannia_united }
+	show_as_tooltip = {
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+		}
+	}
+	save_scope_as = high_king
+	trigger_event = BTWK_britannia_high_king.0170
+	every_player = {
+		limit = {
+			this != prev
+		}
+		trigger_event = BTWK_britannia_high_king.0170
+	}
 }
 
 BTWK_britannia_high_king_reform_restore_imperial_dignity_effect = {

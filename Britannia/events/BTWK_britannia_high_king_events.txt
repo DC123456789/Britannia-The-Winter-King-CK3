@@ -1756,10 +1756,14 @@ BTWK_britannia_high_king.0025 = {
 # BTWK_britannia_high_king.0160 - Unify the Legal Codes
 # BTWK_britannia_high_king.0170 - Reclaim the Legacy of Caratacus
 # BTWK_britannia_high_king.0180 - Restore Imperial Dignity (initial event)
-# BTWK_britannia_high_king.0181 - Restore Imperial Dignity (demand to subject kings)
-# BTWK_britannia_high_king.0182 - Restore Imperial Dignity (response to demands)
-# BTWK_britannia_high_king.0183 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
-# BTWK_britannia_high_king.0184 - Restore Imperial Dignity (defeat / white peace in civil war, reform not passed)
+# BTWK_britannia_high_king.0181 - Restore Imperial Dignity (bounce event to issue demand)
+# BTWK_britannia_high_king.0182 - Restore Imperial Dignity (demand to subject kings)
+# BTWK_britannia_high_king.0183 - Restore Imperial Dignity (response to demands)
+# BTWK_britannia_high_king.0184 - Restore Imperial Dignity (war declared / all agreed)
+# BTWK_britannia_high_king.0185 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
+# BTWK_britannia_high_king.0186 - Restore Imperial Dignity (victory in civil war, notify all other rulers)
+# BTWK_britannia_high_king.0187 - Restore Imperial Dignity (defeat in civil war, reform not passed)
+# BTWK_britannia_high_king.0188 - Restore Imperial Dignity (white peace in civil war, reform not passed)
 
 # Reform Passed - Formalize the High Kingship
 BTWK_britannia_high_king.0100 = { 
@@ -3034,6 +3038,7 @@ BTWK_britannia_high_king.0160 = {
 BTWK_britannia_high_king.0170 = { 
 	type = character_event
 	content_source = dlc_BTWK
+	window = fullscreen_event
 	title = BTWK_britannia_high_king.0170.t
 	desc = {
 		first_valid = {
@@ -3047,12 +3052,7 @@ BTWK_britannia_high_king.0170 = {
 		}
 	}
 	theme = realm
-	override_background = { reference = council_chamber }
-
-	left_portrait = {
-		character = scope:high_king
-		animation = war_over_win
-	}
+	override_background = { reference = ce1_fullscreen_legitimizing_legend }
 	
 	immediate = {
 		if = {
@@ -3064,7 +3064,8 @@ BTWK_britannia_high_king.0170 = {
 	option = {
 		name = BTWK_britannia_high_king.0170.a
 		trigger = { this = scope:high_king }
-		custom_tooltip = BTWK_britannia_high_king.0170.a.tt
+		custom_tooltip = BTWK_britannia_high_king.0170.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0170.a.tt.2
 		if = {
 			limit = { has_dlc_feature = legends }
 			legend_seed_struggle_ending_effect = {
@@ -3072,35 +3073,57 @@ BTWK_britannia_high_king.0170 = {
 				STRUGGLE = britannia_struggle
 			}
 		}
-		dynasty = { add_dynasty_prestige = massive_dynasty_prestige_gain }
+		give_nickname = nick_wledig_britannia
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+			add_dynasty_prestige = 10000
+		}
 	}
 
 	option = {
 		trigger = { this != scope:high_king }
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+				top_liege = scope:high_king
 			}
-			text = BTWK_britannia_high_king.0170.b.subject_king
+			text = BTWK_britannia_high_king.0170.b.high_king_vassals
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
-				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+				top_liege != scope:high_king
+				culture = { has_cultural_pillar = heritage_brythonic }
 			}
-			text = BTWK_britannia_high_king.0170.b.briton_roman
+			text = BTWK_britannia_high_king.0170.b.other_briton
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
-				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				top_liege != scope:high_king
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = BTWK_britannia_high_king.0170.b.roman
+		}
+		name = {
+			trigger = {
+				top_liege != scope:high_king
 				is_unromanized_germanic_culture_trigger = yes
 			}
 			text = BTWK_britannia_high_king.0170.b.anglo_saxon
 		}
 		name = {
 			trigger = {
-				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				top_liege != scope:high_king
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_goidelic
+						has_cultural_pillar = heritage_pictish
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0170.b.other_celtic
+		}
+		name = {
+			trigger = {
+				top_liege != scope:high_king
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = no
 			}
