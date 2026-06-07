@@ -4,7 +4,7 @@
 }
 
 BTWK_britannia_high_kingship_can_inherit_trigger = {
-	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
 }
 
 BTWK_britannia_subject_king_tributaries_active_trigger = {
@@ -53,17 +53,38 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	diplomacy >= 10
 	martial >= 12
 	stewardship >= 7
-	custom_description = {
-		text = claim_britannia_high_kingship_skill_requirement
-		OR = {
-			any_held_title = {
-				tier >= tier_kingdom
-				title_held_years >= 15 
+	trigger_if = {
+		limit = {
+			has_claim_on = title:e_britannia
+			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+		}
+		custom_description = {
+			text = claim_britannia_high_kingship_skill_requirement_reduced
+			OR = {
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 10
+				}
+				prestige_level >= 4
+				diplomacy >= 21
+				martial >= 21
+				prowess >= 25
 			}
-			prestige_level >= 4
-			diplomacy >= 25
-			martial >= 25
-			prowess >= 30
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = claim_britannia_high_kingship_skill_requirement
+			OR = {
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 15 
+				}
+				prestige_level >= 4
+				diplomacy >= 25
+				martial >= 25
+				prowess >= 30
+			}
 		}
 	}
 	is_incapable = no
@@ -282,12 +303,11 @@ BTWK_britannia_high_kingship_britannia_region_control_trigger = {
 	}
 }
 
-BTWK_britannia_high_king_reform_common_trigger = {
+BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = {
 	# has_title = title:e_britannia			# This trigger is included elsewhere, would duplicate
 	prestige_level >= 3
 	prestige >= 1000
 	title:e_britannia = { title_held_years >= 10 }
-	government_is_not_tribal_trigger = yes
 	age >= 30
 	is_at_war = no		# If this is ever changed, need to add a specific block for subject king revolt wars
 	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
@@ -297,6 +317,11 @@ BTWK_britannia_high_king_reform_common_trigger = {
 		limit = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
 		NOT = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
 	}
+}
+
+BTWK_britannia_high_king_reform_common_trigger = {
+	government_is_not_tribal_trigger = yes
+	BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_is_passed_trigger = {
@@ -321,18 +346,22 @@ BTWK_britannia_high_king_reform_is_not_passed_trigger = {
 
 # All reforms should be written in the scope of the High King
 BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = {
-	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 600 }
+}
+
+BTWK_britannia_high_king_reform_establish_coregency_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 450 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
-		FRACTION_REQUIRED = 0.50
+		FRACTION_REQUIRED = 0.55 
 	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }
 
 BTWK_britannia_high_king_reform_establish_central_mint_trigger = {
-	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
-	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 100 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
-		FRACTION_REQUIRED = 0.55 
+		FRACTION_REQUIRED = 0.60 
 	}
 	gold >= BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
 	custom_description = {
@@ -365,9 +394,9 @@ BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger
 
 BTWK_britannia_high_king_reform_empower_high_council_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
-	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
-		FRACTION_REQUIRED = 0.60 
+		FRACTION_REQUIRED = 0.65 
 	}
 	custom_description = {
 		text = BTWK_britannia_high_king_reform_empower_high_council_innovation_or_fallback
@@ -395,7 +424,7 @@ BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
-		FRACTION_REQUIRED = 0.65 
+		FRACTION_REQUIRED = 0.70 
 	}
 	piety >= BTWK_britannia_high_king_reform_centralize_the_church_cost
 	culture = { has_innovation = innovation_development_02 }
@@ -482,6 +511,13 @@ BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
 	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 0.95
+	}
+	trigger_if = {
+		limit = { government_has_flag = government_is_administrative }
+		NOT = { has_realm_law = imperial_bureaucracy_0 }
+	}
+	trigger_else = {
+		has_realm_law = crown_authority_3
 	}
 	BTWK_reform_from_pre_feudal_innovations_trigger = yes
 	BTWK_britannia_high_king_reform_common_trigger = yes

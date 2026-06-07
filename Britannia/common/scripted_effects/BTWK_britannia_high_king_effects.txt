@@ -458,9 +458,10 @@ BTWK_britannia_high_kingship_remove_authority_effect = {
 
 # All reforms should be written in the scope of the High King
 BTWK_britannia_high_king_reform_formalize_high_kingship_effect = {
-	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 600 }
+	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 150 }
 	title:e_britannia.var:HK_reform_formalize_high_kingship ?= { set_variable = reform_passed }
-	custom_tooltip = BTWK_HK_britannia_formalize_high_kingship_tt
+	custom_tooltip = BTWK_HK_britannia_formalize_high_kingship_tt_1
+	custom_tooltip = BTWK_HK_britannia_formalize_high_kingship_tt_2
 	save_scope_as = high_king
 	trigger_event = BTWK_britannia_high_king.0100
 	every_player = {
@@ -468,9 +469,20 @@ BTWK_britannia_high_king_reform_formalize_high_kingship_effect = {
 		trigger_event = BTWK_britannia_high_king.0100
 	}
 }
+BTWK_britannia_high_king_reform_establish_coregency_effect = {
+	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 400 }
+	title:e_britannia.var:HK_reform_establish_coregency ?= { set_variable = reform_passed }
+	custom_tooltip = BTWK_HK_britannia_establish_coregency_tt
+	save_scope_as = high_king
+	trigger_event = BTWK_britannia_high_king.0105
+	every_player = {
+		limit = { this != prev }
+		trigger_event = BTWK_britannia_high_king.0105
+	}
+}
 
 BTWK_britannia_high_king_reform_establish_central_mint_effect = {
-	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 150 }
+	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 100 }
 	title:e_britannia.var:HK_reform_establish_central_mint ?= { set_variable = reform_passed }
 	# This is either done in the window effect, or implicit in the decision cost
 	# remove_short_term_gold = BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
@@ -510,7 +522,7 @@ BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = {
 }
 
 BTWK_britannia_high_king_reform_empower_high_council_effect = {
-	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 150 }
+	BTWK_britannia_high_kingship_remove_authority_effect = { AMOUNT = 200 }
 	# title:e_britannia.var:HK_reform_empower_high_council ?= { set_variable = reform_passed }
 	custom_description = {
 		text = BTWK_britannia_high_king_reform_empower_high_council_war
@@ -701,7 +713,9 @@ BTWK_britannia_high_king_reform_restore_imperial_dignity_effect = {
 }
 
 BTWK_britannia_high_king_revoke_all_reforms_effect = {
-	title:e_britannia.var:HK_reform_formalize_high_kingship ?= { remove_variable = reform_passed }
+	# First reform never gets revoked
+	# title:e_britannia.var:HK_reform_formalize_high_kingship ?= { remove_variable = reform_passed }
+	title:e_britannia.var:HK_reform_establish_coregency ?= { remove_variable = reform_passed }
 	title:e_britannia.var:HK_reform_establish_central_mint ?= { remove_variable = reform_passed }
 	title:e_britannia.var:HK_reform_empower_high_council ?= { remove_variable = reform_passed }
 	title:e_britannia.var:HK_reform_centralize_the_church ?= { remove_variable = reform_passed }

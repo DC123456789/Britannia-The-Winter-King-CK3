@@ -1740,7 +1740,8 @@ BTWK_britannia_high_king.0025 = {
 # BTWK_britannia_high_king.0100 - 0199: High Kingship Reforms
 ############################################################################
 # BTWK_britannia_high_king.0100 - Formalize the High Kingship
-# BTWK_britannia_high_king.0110 - Establish Britannic Coinage
+# BTWK_britannia_high_king.0105 - Establish the Right of Coregency
+# BTWK_britannia_high_king.0110 - Reintroduce Britannic Coinage
 # BTWK_britannia_high_king.0120 - Empower the High Council (initial event)
 # BTWK_britannia_high_king.0121 - Empower the High Council (bounce event to issue demand)
 # BTWK_britannia_high_king.0122 - Empower the High Council (demand to subject kings)
@@ -1769,7 +1770,6 @@ BTWK_britannia_high_king.0025 = {
 BTWK_britannia_high_king.0100 = { 
 	type = character_event
 	content_source = dlc_BTWK
-	window = big_event_window
 	title = BTWK_britannia_high_king.0100.t
 	desc = {
 		first_valid = {
@@ -1783,6 +1783,85 @@ BTWK_britannia_high_king.0100 = {
 		}
 	}
 	theme = realm
+	override_background = { reference = council_chamber }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0100.a.tt.1
+			custom_tooltip = BTWK_britannia_high_king.0100.a.tt.2
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0100.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0100.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0100.a.tt.2
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_high_king.0100.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_high_king.0100.b.other
+		}
+	}
+}
+
+# Reform Passed - Establish the Right of Coregency
+BTWK_britannia_high_king.0105 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0105.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0105.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0105.desc
+		}
+	}
+	theme = realm
 	override_background = { reference = throne_room }
 
 	left_portrait = {
@@ -1793,14 +1872,14 @@ BTWK_britannia_high_king.0100 = {
 	immediate = {
 		if = {
 			limit = { root != scope:high_king }
-			custom_tooltip = BTWK_britannia_high_king.0100.b.tt
+			custom_tooltip = BTWK_britannia_high_king.0105.b.tt
 		}
 	}
 
 	option = {
-		name = BTWK_britannia_high_king.0100.a
+		name = BTWK_britannia_high_king.0105.a
 		trigger = { this = scope:high_king }
-		custom_tooltip = BTWK_britannia_high_king.0100.a.tt
+		custom_tooltip = BTWK_britannia_high_king.0105.a.tt
 		# Convert subject kingdoms to permanent version
 		every_tributary = {
 			limit = {
@@ -1839,30 +1918,34 @@ BTWK_britannia_high_king.0100 = {
 			trigger = {
 				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 			}
-			text = BTWK_britannia_high_king.0100.b.subject_king
+			text = BTWK_britannia_high_king.0105.b.subject_king
 		}
 		name = {
 			trigger = {
 				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 			}
-			text = BTWK_britannia_high_king.0100.b.briton_roman
+			text = BTWK_britannia_high_king.0105.b.briton_roman
 		}
 		name = {
 			trigger = {
 				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
 				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
 			}
-			text = BTWK_britannia_high_king.0100.b.anglo_saxon
+			text = BTWK_britannia_high_king.0105.b.anglo_saxon
 		}
 		name = {
 			trigger = {
 				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
 				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
-				is_unromanized_germanic_culture_trigger = no
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
 			}
-			text = BTWK_britannia_high_king.0100.b.other
+			text = BTWK_britannia_high_king.0105.b.other
 		}
 	}
 }
@@ -2482,6 +2565,7 @@ BTWK_britannia_high_king.0127 = {
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 				}
 				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
 			}
 			text = BTWK_britannia_high_king.0127.a.anglo_saxon
 		}
@@ -2491,7 +2575,10 @@ BTWK_britannia_high_king.0127 = {
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
-					is_unromanized_germanic_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
 				}
 			}
 			text = BTWK_britannia_high_king.0127.a.other
@@ -3085,6 +3172,10 @@ BTWK_britannia_high_king.0170 = {
 		name = {
 			trigger = {
 				top_liege = scope:high_king
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
 			}
 			text = BTWK_britannia_high_king.0170.b.high_king_vassals
 		}
@@ -3104,8 +3195,8 @@ BTWK_britannia_high_king.0170 = {
 		}
 		name = {
 			trigger = {
-				top_liege != scope:high_king
 				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
 			}
 			text = BTWK_britannia_high_king.0170.b.anglo_saxon
 		}
@@ -3123,9 +3214,36 @@ BTWK_britannia_high_king.0170 = {
 		}
 		name = {
 			trigger = {
-				top_liege != scope:high_king
-				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
-				is_unromanized_germanic_culture_trigger = no
+				NOR = {
+					AND = {
+						top_liege = scope:high_king
+						NAND = {
+							is_unromanized_germanic_culture_trigger = yes
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { has_cultural_pillar = heritage_brythonic }
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { 
+							OR = {
+								has_cultural_pillar = heritage_goidelic
+								has_cultural_pillar = heritage_pictish
+							}
+						}
+					}
+				}
 			}
 			text = BTWK_britannia_high_king.0170.b.other
 		}
