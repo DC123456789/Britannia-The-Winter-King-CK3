@@ -84,7 +84,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			}
 		}
 		else_if = {
-			limit = { scope:high_king = { has_hook = prev } }
+			limit = { scope:claimant = { has_hook = prev } }
 			add = {
 				value = 10
 				desc = CLAIMANT_SUPPORT_HOOK
@@ -926,4 +926,22 @@ BTWK_britannia_high_king_reform_centralize_the_church_cost = 600
 BTWK_britannia_high_king_reform_centralize_the_church_cost_negative = {
 	value = BTWK_britannia_high_king_reform_centralize_the_church_cost
 	multiply = -1
+}
+
+BTWK_britannia_high_king_reform_restore_imperial_dignity_support_score = {
+	value = BTWK_britannia_high_king_reform_empower_high_council_support_score
+	# Will almost always rebel
+	if = {
+		limit = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+		subtract = -30
+	}
+	# Not as interested in rebelling
+	else_if = {
+		limit = { highest_held_title_tier = tier_duchy }
+		add = 20
+	}
+	else_if = {
+		limit = { highest_held_title_tier = tier_county }
+		add = 40
+	}
 }

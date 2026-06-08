@@ -563,8 +563,8 @@ BTWK_depose_britannia_high_king_cb = {
 	}
 }
 
-# 
-# Only used for event wars
+
+# Only used for event Britannia reform civil wars
 BTWK_depose_britannia_high_king_reform_cb = {
 	icon = dissolution_war
 	group = BTWK_high_king_britannia	
@@ -643,13 +643,27 @@ BTWK_depose_britannia_high_king_reform_cb = {
 			}
 			show_as_tooltip = { depose_effect = { DEPOSER = scope:attacker } }
 			save_scope_as = high_king
-			trigger_event = BTWK_britannia_high_king.0129
-			every_player = {
-				limit = { 
-					NOT = { this = scope:high_king }
-					BTWK_britannia_high_kingship_is_relevant_trigger = yes
-				}
+			if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_empower_high_council }
 				trigger_event = BTWK_britannia_high_king.0129
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+						BTWK_britannia_high_kingship_is_relevant_trigger = yes
+					}
+					trigger_event = BTWK_britannia_high_king.0129
+				}
+			}
+			else_if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_restore_imperial_dignity }
+				trigger_event = BTWK_britannia_high_king.0189
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+						BTWK_britannia_high_kingship_is_relevant_trigger = yes
+					}
+					trigger_event = BTWK_britannia_high_king.0189
+				}
 			}
 		}
 		
@@ -759,13 +773,27 @@ BTWK_depose_britannia_high_king_reform_cb = {
 		scope:defender = {
 			custom_tooltip = BTWK_depose_britannia_high_king_reform_cb_white_peace_tt
 			save_scope_as = high_king
-			trigger_event = BTWK_britannia_high_king.0128
-			every_player = {
-				limit = { 
-					NOT = { this = scope:high_king }
-					BTWK_britannia_high_kingship_is_relevant_trigger = yes
-				}
+			if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_empower_high_council }
 				trigger_event = BTWK_britannia_high_king.0128
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+						BTWK_britannia_high_kingship_is_relevant_trigger = yes
+					}
+					trigger_event = BTWK_britannia_high_king.0128
+				}
+			}
+			else_if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_restore_imperial_dignity }
+				trigger_event = BTWK_britannia_high_king.0188
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+						BTWK_britannia_high_kingship_is_relevant_trigger = yes
+					}
+					trigger_event = BTWK_britannia_high_king.0188
+				}
 			}
 		}
 
@@ -813,12 +841,25 @@ BTWK_depose_britannia_high_king_reform_cb = {
 		scope:defender = {
 			custom_tooltip = BTWK_depose_britannia_high_king_reform_cb_defeat_tt
 			save_scope_as = high_king
-			trigger_event = BTWK_britannia_high_king.0126
-			every_player = {
-				limit = { 
-					NOT = { this = scope:high_king }
+			if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_empower_high_council }
+				trigger_event = BTWK_britannia_high_king.0126
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+					}
+					trigger_event = BTWK_britannia_high_king.0127
 				}
-				trigger_event = BTWK_britannia_high_king.0127
+			}
+			else_if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_restore_imperial_dignity }
+				trigger_event = BTWK_britannia_high_king.0186
+				every_player = {
+					limit = { 
+						NOT = { this = scope:high_king }
+					}
+					trigger_event = BTWK_britannia_high_king.0187
+				}
 			}
 		}
 

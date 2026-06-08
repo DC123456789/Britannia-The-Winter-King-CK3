@@ -310,6 +310,7 @@ special_contract = {
 				OR = {
 					scope:subject.primary_title.tier >= tier_kingdom
 					scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+					scope:subject = { has_variable = force_subject_kingdom }
 				}
 			}
 			is_valid = {
@@ -318,7 +319,7 @@ special_contract = {
 				trigger_if = {
 					limit = { 
 						scope:subject = { 
-							NOT = {
+							NOR = {
 								vassal_contract_has_flag = has_subject_kingdom_vassal_contract 
 								has_variable = force_subject_kingdom
 							}
@@ -329,7 +330,7 @@ special_contract = {
 			}
 			parent = special_contract_none
 			position = { 1 0 }
-			score = 0
+			score = 1
 
 			tax_factor = -0.33
 			subject_opinion = 5
@@ -337,9 +338,7 @@ special_contract = {
 			flag = has_subject_kingdom_vassal_contract
 			flag = vassal_contract_cannot_revoke_titles
 
-			ai_liege_desire = {
-				value = 0
-			}
+			ai_liege_desire = 0
 			ai_subject_desire = @ai_standard_vassal_desire
 		}
 	}

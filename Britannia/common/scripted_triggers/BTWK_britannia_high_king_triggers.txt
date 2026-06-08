@@ -317,6 +317,15 @@ BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = {
 		limit = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
 		NOT = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
 	}
+	trigger_if = {
+		limit = { has_variable = BTWK_britannia_high_king_reform_trying_to_pass }
+		NOT = {
+			custom_description = {
+				text = BTWK_HK_britannia_reform_trying_to_pass
+				has_variable = BTWK_britannia_high_king_reform_trying_to_pass
+			}
+		}
+	}
 }
 
 BTWK_britannia_high_king_reform_common_trigger = {
@@ -414,15 +423,6 @@ BTWK_britannia_high_king_reform_empower_high_council_trigger = {
 		}
 	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
-	trigger_if = {
-		limit = { has_variable = BTWK_britannia_high_king_reform_empower_high_council_trying_to_pass }
-		NOT = {
-			custom_description = {
-				text = BTWK_HK_britannia_reform_trying_to_pass
-				has_variable = BTWK_britannia_high_king_reform_empower_high_council_trying_to_pass
-			}
-		}
-	}
 }
 
 BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
@@ -523,6 +523,16 @@ BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
 	}
 	trigger_else = {
 		has_realm_law = crown_authority_3
+	}
+	trigger_if = {
+		limit = { exists = title:e_roman_britannia.holder }
+		NOT = {
+			custom_description = {
+				text = BTWK_title_has_holder
+				subject = title:e_roman_britannia
+				exists = title:e_roman_britannia.holder
+			}
+		}
 	}
 	BTWK_reform_from_pre_feudal_innovations_trigger = yes
 	BTWK_britannia_high_king_reform_common_trigger = yes
