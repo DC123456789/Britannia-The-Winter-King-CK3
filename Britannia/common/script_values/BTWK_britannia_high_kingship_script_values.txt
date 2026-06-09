@@ -930,12 +930,17 @@ BTWK_britannia_high_king_reform_centralize_the_church_cost_negative = {
 
 BTWK_britannia_high_king_reform_restore_imperial_dignity_support_score = {
 	value = BTWK_britannia_high_king_reform_empower_high_council_support_score
-	# Will almost always rebel
+	# Tribal rulers are more parochial
+	if = {
+		limit = { government_has_flag = government_is_tribal }
+		subtract = -15
+	}
+	# Subject kings will almost always rebel
 	if = {
 		limit = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
 		subtract = -30
 	}
-	# Not as interested in rebelling
+	# Lower tier rulers are not as interested in rebelling as they have less to lose and more to gain
 	else_if = {
 		limit = { highest_held_title_tier = tier_duchy }
 		add = 20
