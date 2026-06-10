@@ -79,3 +79,275 @@ embrace_anglo_saxon_culture_decision = {
 		base = 100
 	}
 }
+
+BTWK_rise_of_anglo_saxon_kingdom_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_decision_varangian_guard.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 24
+		duchy = 24
+		kingdom = 0
+		empire = 0
+		hegemony = 0
+	}
+
+	desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
+
+	is_shown = {
+		exists = struggle:britannia_struggle
+		is_unromanized_germanic_culture_trigger = yes
+		highest_held_title_tier <= tier_duchy
+		primary_title.title_capital_county.title_province = { geographical_region = btwk_custom_aengland }
+		trigger_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
+			}
+			NOR = {
+				title:k_bernicia = { has_variable = title_has_been_created }
+				title:k_northumbria = { has_variable = title_has_been_created }
+			}
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_deira
+				primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+			}
+			NOR = {
+				title:k_deira = { has_variable = title_has_been_created }
+				title:k_northumbria = { has_variable = title_has_been_created }
+			}
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			NOR = {
+				title:k_lindsey = { has_variable = title_has_been_created }
+				title:d_lindsey = { has_variable = title_has_been_created }
+			}
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
+			}
+			NOT = { title:k_mercia = { has_variable = title_has_been_created } }
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_wessex
+			}
+			NOT = { title:k_wessex = { has_variable = title_has_been_created } }
+		}
+		trigger_else = {
+			always = no
+		}
+	}
+
+	is_valid = {
+		custom_tooltip = {
+			text = BTWK_rise_of_anglo_saxon_kingdom_decision_year_tt
+			current_year >= 530
+		}
+		custom_tooltip = {
+			text = BTWK_britannia_struggle_not_detente_phase
+			struggle:britannia_struggle ?= { has_struggle_phase_parameter = allow_rise_of_anglo_saxon_kingdoms }
+		}
+		OR = {
+			is_independent_ruler = yes
+			custom_tooltip = {
+				text = BTWK_rise_of_anglo_saxon_kingdom_decision_liege_culture_tt
+				NOT = { top_liege = { is_unromanized_germanic_culture_trigger = yes } }
+			}
+		}
+		is_adult = yes
+		prestige_level >= 2
+		is_at_war = no
+		is_imprisoned = no
+		trigger_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
+			}
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_bernicia } }
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_northumbria } }
+			NOT = { BTWK_title_has_ongoing_rise_of_anglo_saxon_kingdom_story_trigger = { TARGET = title:k_bernicia } }
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_deira
+				primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+			}
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_deira } }
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_northumbria } }
+			NOT = { BTWK_title_has_ongoing_rise_of_anglo_saxon_kingdom_story_trigger = { TARGET = title:k_deira } }
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_lindsey } }
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:d_lindsey } }
+			NOT = { BTWK_title_has_ongoing_rise_of_anglo_saxon_kingdom_story_trigger = { TARGET = title:k_lindsey } }
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
+			}
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_mercia } }
+			NOT = { BTWK_title_has_ongoing_rise_of_anglo_saxon_kingdom_story_trigger = { TARGET = title:k_mercia } }
+		}
+		trigger_else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_wessex
+			}
+			NOT = { BTWK_title_has_been_created_trigger = { TARGET = title:k_wessex } }
+			NOT = { BTWK_title_has_ongoing_rise_of_anglo_saxon_kingdom_story_trigger = { TARGET = title:k_wessex } }
+		}
+		trigger_else = {
+			always = no
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.1
+		spawn_army = {
+			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+			men_at_arms = {
+				type = pikemen_unit
+				men = 100
+			}
+			men_at_arms = {
+				type = landsknecht
+				men = 50
+			}
+			location = this.capital_province
+			inheritable = no
+		}
+		if = {
+			limit = { 
+				is_independent_ruler = no
+				top_liege = { realm_size <= 12 }
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.a
+		}
+		else_if = {
+			limit = { is_independent_ruler = no }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.b
+		}
+		else_if = {
+			limit = { is_tributary = yes }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.c
+		}
+		else = {
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.d
+		}
+		if = {
+			limit = { 
+				government_has_flag = government_allow_pre_feudal_subjugation_limited
+				NOT = { primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey }
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3
+		}
+		create_story = {
+			type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+			save_scope_as = new_story
+		}
+		if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
+			}
+			scope:new_story = {
+				set_variable = {
+					name = target_kingdom
+					value = title:k_bernicia
+				}
+			}
+			title:k_bernicia = {
+				set_variable = {
+					name = rise_of_anglo_saxon_kingdom_story
+					value = scope:new_story
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_deira
+				primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+			}
+			scope:new_story = {
+				set_variable = {
+					name = target_kingdom
+					value = title:k_deira
+				}
+			}
+			title:k_deira = {
+				set_variable = {
+					name = rise_of_anglo_saxon_kingdom_story
+					value = scope:new_story
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			scope:new_story = {
+				set_variable = {
+					name = target_kingdom
+					value = title:k_lindsey
+				}
+			}
+			title:k_lindsey = {
+				set_variable = {
+					name = rise_of_anglo_saxon_kingdom_story
+					value = scope:new_story
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
+			}
+			scope:new_story = {
+				set_variable = {
+					name = target_kingdom
+					value = title:k_mercia
+				}
+			}
+			title:k_mercia = {
+				set_variable = {
+					name = rise_of_anglo_saxon_kingdom_story
+					value = scope:new_story
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_wessex
+			}
+			scope:new_story = {
+				set_variable = {
+					name = target_kingdom
+					value = title:k_wessex
+				}
+			}
+			title:k_wessex = {
+				set_variable = {
+					name = rise_of_anglo_saxon_kingdom_story
+					value = scope:new_story
+				}
+			}
+		}
+	}
+	
+	ai_potential = {
+		# is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
