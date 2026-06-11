@@ -641,6 +641,10 @@ tributary_independence_war = {
 	}
 
 	on_declaration = {
+		if = {
+			limit = { scope:attacker = { has_subject_contract_group = tributary_foederatus } }
+			war = { set_variable = was_foederatus }
+		}
 		on_declared_war = yes # this will also break the tributary agreement immediately
 		
 		hidden_effect = {
@@ -747,6 +751,10 @@ tributary_independence_war = {
 
 	on_white_peace = {
 		save_scope_value_as = { name = low_obligations value = yes } # sets low obligations in the resulting tributary contract
+		if = {
+			limit = { war = { has_variable = was_foederatus } }
+			save_scope_value_as = { name = make_tributary_foederati value = yes }
+		}
 		start_tributary_from_war_effect = {
 			TRIBUTARY = scope:attacker
 			SUZERAIN = scope:defender
@@ -796,6 +804,10 @@ tributary_independence_war = {
 	}
 
 	on_defeat = {
+		if = {
+			limit = { war = { has_variable = was_foederatus } }
+			save_scope_value_as = { name = make_tributary_foederati value = yes }
+		}
 		start_tributary_from_war_effect = {
 			TRIBUTARY = scope:attacker
 			SUZERAIN = scope:defender

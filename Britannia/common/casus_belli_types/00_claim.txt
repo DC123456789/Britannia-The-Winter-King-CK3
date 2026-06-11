@@ -401,6 +401,15 @@
 			order_by = tier
 			save_scope_as = target
 		}
+			
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
 
 		scope:attacker = {
 			if = {
@@ -654,6 +663,15 @@
 			}
 		}
 
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
+			
 		# Create an 'helper' claim CB which we won't execute, but can use to determine how much Prestige should be given to war participants.
 		setup_claim_cb = {
 			titles = target_titles

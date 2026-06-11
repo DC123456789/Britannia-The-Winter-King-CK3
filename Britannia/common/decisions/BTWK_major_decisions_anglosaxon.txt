@@ -88,8 +88,8 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 
 	ai_check_interval_by_tier = {
 		barony = 0
-		county = 24
-		duchy = 24
+		county = 0
+		duchy = 0
 		kingdom = 0
 		empire = 0
 		hegemony = 0
@@ -102,6 +102,7 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 		is_unromanized_germanic_culture_trigger = yes
 		highest_held_title_tier <= tier_duchy
 		primary_title.title_capital_county.title_province = { geographical_region = btwk_custom_aengland }
+		NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
 		trigger_if = {
 			limit = {
 				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
@@ -163,6 +164,14 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 				NOT = { top_liege = { is_unromanized_germanic_culture_trigger = yes } }
 			}
 		}
+		trigger_if = {
+			limit = { is_tributary = yes }
+			NOT = { has_truce = suzerain }
+		}
+		trigger_if = {
+			limit = { is_independent_ruler = no }
+			NOT = { has_truce = top_liege }
+		}
 		is_adult = yes
 		prestige_level >= 2
 		is_at_war = no
@@ -213,18 +222,20 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 
 	effect = {
 		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.1
-		spawn_army = {
-			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-			men_at_arms = {
-				type = pikemen_unit
-				men = 100
+		show_as_tooltip = {
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				men_at_arms = {
+					type = pikemen_unit
+					men = 100
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 50
+				}
+				location = this.capital_province
+				inheritable = no
 			}
-			men_at_arms = {
-				type = landsknecht
-				men = 50
-			}
-			location = this.capital_province
-			inheritable = no
 		}
 		if = {
 			limit = { 
@@ -251,103 +262,17 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 			}
 			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3
 		}
-		create_story = {
-			type = BTWK_rise_of_new_anglo_saxon_kingdom_story
-			save_scope_as = new_story
-		}
-		if = {
-			limit = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
-			}
-			scope:new_story = {
-				set_variable = {
-					name = target_kingdom
-					value = title:k_bernicia
-				}
-			}
-			title:k_bernicia = {
-				set_variable = {
-					name = rise_of_anglo_saxon_kingdom_story
-					value = scope:new_story
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_deira
-				primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
-			}
-			scope:new_story = {
-				set_variable = {
-					name = target_kingdom
-					value = title:k_deira
-				}
-			}
-			title:k_deira = {
-				set_variable = {
-					name = rise_of_anglo_saxon_kingdom_story
-					value = scope:new_story
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
-			}
-			scope:new_story = {
-				set_variable = {
-					name = target_kingdom
-					value = title:k_lindsey
-				}
-			}
-			title:k_lindsey = {
-				set_variable = {
-					name = rise_of_anglo_saxon_kingdom_story
-					value = scope:new_story
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
-			}
-			scope:new_story = {
-				set_variable = {
-					name = target_kingdom
-					value = title:k_mercia
-				}
-			}
-			title:k_mercia = {
-				set_variable = {
-					name = rise_of_anglo_saxon_kingdom_story
-					value = scope:new_story
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_wessex
-			}
-			scope:new_story = {
-				set_variable = {
-					name = target_kingdom
-					value = title:k_wessex
-				}
-			}
-			title:k_wessex = {
-				set_variable = {
-					name = rise_of_anglo_saxon_kingdom_story
-					value = scope:new_story
-				}
-			}
-		}
+	}
+	
+	cost = {
+		prestige = 250
 	}
 	
 	ai_potential = {
-		# is_independent_ruler = yes
+		always = no
 	}
 
 	ai_will_do = {
-		base = 100
+		base = 0		# Handled by event
 	}
 }

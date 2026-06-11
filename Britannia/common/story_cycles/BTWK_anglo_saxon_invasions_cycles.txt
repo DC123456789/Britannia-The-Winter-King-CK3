@@ -1,9 +1,416 @@
 ﻿# Relevant kingdom is stored in var:target_kingdom
 BTWK_rise_of_new_anglo_saxon_kingdom_story = {
+	visible = yes
+	
+	icon = {
+		trigger = {
+			always = yes
+		}
+		reference = "gfx/interface/icons/artifact/artifact_icons_constantine.dds"
+	}
+	
+	# Visualization
+	visualization = {
+		title = { variable_name = "target_title" }
+		basic_counter = {
+			variable_name = "years_remaining"
+			min = 0
+			max = 20
+			label = "MY_COOL_VALUE"
+		}
+	}
+	
 	on_setup = {
+		save_scope_as = current_story
+	
+		# Save target kingdom
+		set_variable = {
+			name = target_kingdom
+			value = global_var:BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+		}
+		this.var:target_kingdom = {
+			set_variable = {
+				name = rise_of_anglo_saxon_kingdom_story
+				value = prev
+			}
+		}
+		
+		# Target title may not be the same as the target kingdom
+		if = {
+			limit = { this.var:target_kingdom = title:k_lindsey }
+			set_variable = {
+				name = target_title
+				value = title:d_lindsey
+			}
+		}
+		else = {
+			set_variable = {
+				name = target_title
+				value = this.var:target_kingdom
+			}
+		}
+		
+		# Get target areas
+		if = {
+			limit = { this.var:target_kingdom = title:k_bernicia }
+			# Core is coastal Bernicia
+			title:d_tynedale = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					limit = {
+						OR = {
+							is_coastal_county = yes
+							this = title:c_vindobala
+							this = title:c_old_tyne
+						}
+					}
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_bernicia = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					limit = {
+						OR = {
+							is_coastal_county = yes
+							this = title:c_gefrin
+						}
+						NOT = { this = title:c_merse }
+					}
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			# Extended is all of Tynedale and Bamburgh
+			title:d_tynedale = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_bernicia = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { this.var:target_kingdom = title:k_deira }
+			# Core is Deira proper
+			title:d_deira = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			# Extended is Deira proper + Eoforwic
+			title:d_eoforwic = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { this.var:target_kingdom = title:k_lindsey }
+			# Both Core + Extended is just Lindsey
+			title:d_lindsey = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { this.var:target_kingdom = title:k_mercia }
+			# Core is whatever your starting duchy is
+			if = {
+				limit = { story_owner = { is_landed = yes } }
+				story_owner.primary_title.title_capital_county = { save_scope_as = starting_county }
+			}
+			else = {
+				# TODO Will attempt to invade from a neighbouring Anglo-Saxon controlled area
+			}
+			starting_county.var:anglo_saxon_duchy = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			# Extended is your starting duchy + two neighbouring duchies, including Tomsaete if possible
+			if = {
+				limit = { starting_county.var:anglo_saxon_duchy = title:d_hiccas }
+				title:d_south_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+				title:d_middle_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else = {
+				title:d_mercia = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { 
+					OR = {
+						starting_county.var:anglo_saxon_duchy = title:d_middle_angles
+						starting_county.var:anglo_saxon_duchy = title:d_south_angles
+					}
+				}
+				title:d_south_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+				title:d_middle_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						starting_county.var:anglo_saxon_duchy = title:d_mercia
+						starting_county.var:anglo_saxon_duchy = title:d_pecsaete
+					}
+				}
+				title:d_pecsaete = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+				title:d_middle_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { starting_county.var:anglo_saxon_duchy = title:d_wrocensaete }
+				title:d_pecsaete = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { starting_county.var:anglo_saxon_duchy = title:d_magonsaete }
+				title:d_wrocensaete = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { starting_county.var:anglo_saxon_duchy = title:d_hwicce }
+				title:d_middle_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { this.var:target_kingdom = title:k_wessex }
+			# Core is Dorcicshire and Cilternsaete
+			title:d_berkshire = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_cilternsaete = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			# Extended is Dorcicshire, Cilternsaete, Winchestershire, and Wiltshire
+			title:d_berkshire = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_cilternsaete = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = core_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_winchestershire = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+			title:d_wiltshire = {
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					scope:current_story = {
+						add_to_variable_list = {
+							name = extended_target_counties
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+		
+		set_variable = {
+			name = years_remaining
+			value = 20
+		}
 	}
 
 	on_end = {
+		# TODO Disband all associated event troops
 	}
 
 	on_owner_death = {
@@ -13,5 +420,19 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 	# Check for next target / war
 	effect_group = {
 		months = 6
+		
+		trigger = {
+			story_owner = { is_at_war = no }
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			# TODO If you can, declare war on random neighbouring target in core area
+			# TODO Otherwise, if you can, declare war on random neighbouring target in extended area
+		}
+		
+		# TODO For AI, end story if we completely control the core + extended areas
+		# TODO For human, end story once we create the relevant kingdom (or duchy for Lindsey)
+		# TODO Story also times out after 20(?) years
 	}
 }
