@@ -6,18 +6,12 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		trigger = {
 			always = yes
 		}
-		reference = "gfx/interface/icons/artifact/artifact_icons_constantine.dds"
+		reference = "gfx/interface/icons/story_cycles/story_icon_sword.dds"
 	}
 	
 	# Visualization
 	visualization = {
 		title = { variable_name = "target_title" }
-		basic_counter = {
-			variable_name = "years_remaining"
-			min = 0
-			max = 20
-			label = "MY_COOL_VALUE"
-		}
 	}
 	
 	on_setup = {
@@ -410,6 +404,18 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 	}
 
 	on_end = {
+		save_scope_as = ending_story
+		if = {
+			limit = { story_owner = { is_landed = no } }
+			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0113 }
+		}
+		else_if = {
+			limit = { NOT = { has_variable = created_target_title } }
+			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0112 }
+		}
+		# If the story ended by creating the target title, end silently
+		# TODO Add tooltip in the event for creating the title though
+		
 		# TODO Disband all associated event troops
 	}
 
@@ -434,5 +440,28 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		# TODO For AI, end story if we completely control the core + extended areas
 		# TODO For human, end story once we create the relevant kingdom (or duchy for Lindsey)
 		# TODO Story also times out after 20(?) years
+	}
+	
+	# Story times out after 20 years
+	effect_group = {
+		years = 1
+		
+		trigger = {
+			always = yes
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			change_variable = {
+				name = years_remaining
+				subtract = 1
+			}
+			if = {
+				limit = {
+					this.var:years_remaining <= 0
+				}
+				end_story = yes
+			}
+		}
 	}
 }

@@ -129,7 +129,7 @@ BTWK_anglo_saxon_invasions.0002 = {
 ##################################################################################################
 # BTWK_anglo_saxon_invasions.0100 - 0199: Rise of Bernicia/Deira/Lindsey/Mercia/Wessex Events
 ##################################################################################################
-# BTWK_anglo_saxon_invasions.0100 - Yearly master controller event, decides if any of the event chains should start
+# BTWK_anglo_saxon_invasions.0100 - Yearly master controller event, decides if any of the story cycles should start
 # BTWK_anglo_saxon_invasions.0101 - AI target selection, triggered a few months after the master controller event
 
 # BTWK_anglo_saxon_invasions.0110 - Start of Rise of Kingdom event chain/story
@@ -137,6 +137,168 @@ BTWK_anglo_saxon_invasions.0002 = {
 # BTWK_anglo_saxon_invasions.0112 - Rise of Kingdom ended (timeout)
 # BTWK_anglo_saxon_invasions.0113 - Rise of Kingdom ended (unlanded)
 
+# Yearly master controller event, decides if any of the story cycles should start
+BTWK_anglo_saxon_invasions.0100 = {
+	scope = none
+	hidden = yes
+	
+	trigger = {
+		exists = struggle:britannia_struggle
+		BTWK_rise_of_anglo_saxon_kingdom_time_trigger = yes
+	}
+	
+	immediate = {
+		# One roll for each kingdom
+		title:k_bernicia = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_deira = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_lindsey = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_mercia = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_wessex = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+	}
+}
+
+BTWK_anglo_saxon_invasions.0101 = {
+	scope = none
+	hidden = yes
+	
+	trigger = {
+		exists = struggle:britannia_struggle
+		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_eligible_trigger = {
+			KINGDOM = scope:event_target_kingdom
+		}
+	}
+	
+	immediate = {
+		# Roll for chance of actually triggering the event
+		random = {
+			chance = {
+				value = 5
+				if = {
+					limit = { year >= 540 }
+					add = 5
+				}
+				if = {
+					limit = { year >= 545 }
+					add = 10
+				}
+				if = {
+					limit = { year >= 550 }
+					add = 20
+				}
+				if = {
+					limit = {
+						scope:target_kingdom = title:k_mercia
+						year <= 545
+					}
+					divide = 2
+				}
+				# If we already passed the check but are waiting for the historical dynasty to
+				# become available, then we ignore this roll
+				if = {
+					limit = { 
+						scope:event_target_kingdom = {							
+							has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+						}
+					}
+					add = 100
+				}
+			}
+			
+			# If the roll goes through, try to choose an eligible ruler
+			random_ruler = {
+				limit = {
+					is_landed = yes
+					is_ai = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_excluding_temp_factors_trigger = yes
+					scope:event_target_kingdom = scope:target_kingdom
+					# Prioritize historical dynasties if possible
+					trigger_if = {
+						limit = { scope:target_kingdom = title:k_bernicia }
+						dynasty = dynasty:662
+					}
+					trigger_else_if = {
+						limit = { scope:target_kingdom = title:k_deira }
+						dynasty = dynasty:663
+					}
+					trigger_else_if = {
+						limit = { scope:target_kingdom = title:k_lindsey }
+						dynasty = dynasty:817
+					}
+					trigger_else_if = {
+						limit = { scope:target_kingdom = title:k_mercia }
+						dynasty = dynasty:660
+					}
+					trigger_else_if = {
+						limit = { scope:target_kingdom = title:k_wessex }
+						dynasty = dynasty:816
+					}
+					trigger_else = {
+						always = no
+					}
+				}
+				alternative_limit = {
+					is_landed = yes
+					is_ai = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
+					scope:event_target_kingdom = scope:target_kingdom
+					NOT = { 
+						scope:event_target_kingdom = {
+							has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+						}
+					}
+				}
+				save_scope_as = target_character
+			}
+			
+			# If the historical choice is eligible except for truce/war, then we flag that
+			# and for each of the next 5 years we put this kingdom in a "holding pattern" waiting
+			# for them to be eligible
+			# If after that they're *still* not eligible, then the event will be able to trigger for 
+			# someone else
+			if = {
+				limit = { exists = scope:target_character }
+				if = {
+					limit = {
+						scope:target_character = {
+							BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
+						}
+					}
+					scope:target_character = {
+						trigger_event = BTWK_anglo_saxon_invasions.0110
+					}
+				}
+				else_if = {
+					limit = { 
+						scope:event_target_kingdom = { 
+							NOT = { has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char }
+						}
+					}
+					scope:event_target_kingdom = { 
+						set_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+						set_variable = {
+							name = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+							years = 5
+						}
+					}
+				}
+			}
+			else = {
+				# TODO If there are no eligible rulers, spawn an adventurer
+			}
+		}
+	}
+}
+
+# Start of Rise of Kingdom story cycle + initial war (if relevant)
 BTWK_anglo_saxon_invasions.0110 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -220,6 +382,23 @@ BTWK_anglo_saxon_invasions.0110 = {
 			}
 			set_variable = { name = keep_tributary_when_attacking value = suzerain days = 1 }
 		}
+		
+		every_player = {
+			limit = {
+				NOT = { this = root }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					culture = culture:romanobritish
+					culture = { 
+						has_cultural_pillar = heritage_romance
+						any_parent_culture_or_above = { culture = culture:romanobritish }
+					}
+					any_sub_realm_county = { title_province = { geographical_region = btwk_world_britannia } }
+				}
+			}
+			trigger_event = BTWK_anglo_saxon_invasions.0111
+		}
 	}
 
 	option = {
@@ -250,17 +429,22 @@ BTWK_anglo_saxon_invasions.0110 = {
 		else = {
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 400
 				men_at_arms = {
 					type = bowmen
-					men = 150
+					men = 100
 				}
 				men_at_arms = {
 					type = pikemen_unit
-					men = 150
+					men = 100
 				}
 				men_at_arms = {
 					type = landsknecht
 					men = 200
+				}
+				men_at_arms = {
+					type = onager
+					men = 20
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
@@ -474,7 +658,12 @@ BTWK_anglo_saxon_invasions.0110 = {
 			limit = { is_independent_ruler = no }
 			# If a vassal, claim the entire liege realm if it's 12 counties or smaller
 			if = {
-				limit = { top_liege = { realm_size <= 12 } }
+				limit = { 
+					top_liege = {
+						realm_size <= 12 
+						is_unromanized_germanic_culture_trigger = no
+					}
+				}
 				top_liege = {
 					every_held_title = {
 						limit = { tier = prev.highest_held_title_tier }
@@ -709,7 +898,7 @@ BTWK_anglo_saxon_invasions.0110 = {
 						}
 					}
 				}
-					
+				
 				# Make sure to break free on victory
 				random_character_war = {
 					limit = { 
@@ -720,8 +909,15 @@ BTWK_anglo_saxon_invasions.0110 = {
 					set_variable = BTWK_break_vassal_on_victory_or_wp 
 				}
 			}
-			# Otherwise, do a duchy invasion on your capital duchy
-			else = {
+			# Otherwise, do a duchy invasion on your capital duchy, unless it is part of
+			# another Anglo-Saxon kingdom
+			else_if = {
+				limit = { 
+					OR = {
+						primary_title.title_capital_county.kingdom = target_kingdom
+						primary_title.title_capital_county.empire != title:e_aengland
+					}
+				}
 				start_war = {
 					cb = duchy_conquest_cb
 					target = top_liege
@@ -733,9 +929,16 @@ BTWK_anglo_saxon_invasions.0110 = {
 					limit = { 
 						primary_attacker = root
 						primary_defender = root.top_liege
-						using_cb = claim_cb
+						using_cb = duchy_conquest_cb
 					}
 					set_variable = BTWK_break_vassal_on_victory_or_wp 
+				}
+			}
+			# Otherwise, just declare independence
+			else = {
+				start_war = {
+					cb = independence_war
+					target = top_liege
 				}
 			}
 		}
@@ -744,3 +947,72 @@ BTWK_anglo_saxon_invasions.0110 = {
 	}
 }
 
+# Notify other rulers
+BTWK_anglo_saxon_invasions.0111 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0111.t
+	desc = BTWK_anglo_saxon_invasions.0111.desc
+	theme = war
+
+	left_portrait = {
+		character = scope:rise_of_kingdom_leader
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:new_story.var:target_kingdom = {
+			save_scope_as = target_kingdom
+		}
+		scope:new_story.story_owner = {
+			save_scope_as = rise_of_kingdom_leader
+		}
+		scope:new_story.var:target_title = {
+			save_scope_as = target_title
+		}
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0111.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.1
+		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2
+	}
+}
+
+# Rise of Kingdom ended (timeout)
+BTWK_anglo_saxon_invasions.0112 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0112.t
+	desc = BTWK_anglo_saxon_invasions.0112.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_tie
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0112.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0112.a.tt
+	}
+}
+
+# Rise of Kingdom ended (unlanded)
+BTWK_anglo_saxon_invasions.0113 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0113.t
+	desc = BTWK_anglo_saxon_invasions.0113.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_loss
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0113.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0113.a.tt
+	}
+}

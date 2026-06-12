@@ -1066,6 +1066,15 @@ duchy_conquest_cb = {
 			save_scope_as = change
 			add_claim_on_loss = yes
 		}
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { becomes_independent = { change = scope:change } }
+		}
 
 		# EP3 Laamp possibility warning
 		scope:defender = { ep3_war_loss_adventurer_tt_effect = yes }
@@ -1190,6 +1199,23 @@ duchy_conquest_cb = {
 	on_white_peace = {
 		scope:attacker = { show_pow_release_message_effect = yes }
 		# Prestige loss for the attacker
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { 
+				create_title_and_vassal_change = {
+					type = independency
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				becomes_independent = { change = scope:change }
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
 
 		#EP2 accolade glory gain for doing pretty good against higher ranked enemy
 		scope:defender = { accolade_defender_war_end_glory_gain_low_effect = yes }

@@ -416,3 +416,22 @@ character_is_barbarian_culture_or_descendant_trigger = {
 		}
 	}
 }
+
+
+BTWK_culture_allowed_to_diverge_at_county_trigger = {
+	NOR = {
+		AND = {
+			$CULTURE$ = culture:briton		# Has its own culture split
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		$CULTURE$ = { has_cultural_pillar = heritage_latin } 	# Romans have their own system
+		AND = {
+			OR = {
+				$CULTURE$ = culture:angle
+				$CULTURE$ = culture:old_saxon
+				$CULTURE$ = culture:jute
+			}
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+	}
+}
