@@ -214,6 +214,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 			}
 			
 			# If the roll goes through, try to choose an eligible ruler
+			# Always try to select the historical dynasty first
 			random_ruler = {
 				limit = {
 					is_landed = yes
@@ -245,54 +246,66 @@ BTWK_anglo_saxon_invasions.0101 = {
 						always = no
 					}
 				}
-				alternative_limit = {
-					is_landed = yes
-					is_ai = yes
-					BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
-					scope:event_target_kingdom = scope:target_kingdom
-					NOT = { 
-						scope:event_target_kingdom = {
-							has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
-						}
-					}
-				}
 				save_scope_as = target_character
 			}
 			
-			# If the historical choice is eligible except for truce/war, then we flag that
-			# and for each of the next 5 years we put this kingdom in a "holding pattern" waiting
-			# for them to be eligible
-			# If after that they're *still* not eligible, then the event will be able to trigger for 
-			# someone else
+			# If a historical dynasty character is fully eligible, fire the event
 			if = {
-				limit = { exists = scope:target_character }
-				if = {
-					limit = {
-						scope:target_character = {
-							BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
-						}
+				limit = {
+					scope:target_character ?= {
+						BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
 					}
+				}
+				scope:target_character = {
+					trigger_event = BTWK_anglo_saxon_invasions.0110
+				}
+			}
+			# TODO For Mercia specifically, the Scylding adventurers are next priority for selection
+			# If a historical dynasty character is eligible but busy (e.g. at war), wait up
+			# to 5 years for them to become available
+			else_if = {
+				limit = {
+					exists = scope:target_character
+					NOT = { has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char }
+				}
+				scope:event_target_kingdom = { 
+					set_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+					set_variable = {
+						name = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+						years = 5
+					}
+				}
+			}
+			# If a historical dynasty character is eligible but busy and the timer is still ongoing, just wait
+			else_if = {
+				limit = {
+					exists = scope:target_character
+					has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+					has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+				}
+				# Do nothing
+			}
+			# If there are no historical dynasty characters eligible, or they are all busy and the
+			# timer is up, try to look for any eligible ruler
+			else = {
+				random_ruler = {
+					limit = {
+						is_landed = yes
+						is_ai = yes
+						BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
+						scope:event_target_kingdom = scope:target_kingdom
+					}
+					save_scope_as = target_character
+				}
+				if = {
+					limit = { exists = scope:target_character }
 					scope:target_character = {
 						trigger_event = BTWK_anglo_saxon_invasions.0110
 					}
 				}
-				else_if = {
-					limit = { 
-						scope:event_target_kingdom = { 
-							NOT = { has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char }
-						}
-					}
-					scope:event_target_kingdom = { 
-						set_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
-						set_variable = {
-							name = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
-							years = 5
-						}
-					}
+				else = {
+					# TODO If there are no eligible rulers, grab or spawn an adventurer
 				}
-			}
-			else = {
-				# TODO If there are no eligible rulers, spawn an adventurer
 			}
 		}
 	}
@@ -408,22 +421,17 @@ BTWK_anglo_saxon_invasions.0110 = {
 			limit = { is_ai = no }
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 250
 				men_at_arms = {
 					type = pikemen_unit
 					men = 100
 				}
 				men_at_arms = {
 					type = landsknecht
-					men = 50
+					men = 100
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-			}
-			scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
-				set_variable = {
-					name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-					value = scope:new_story
-				}
 			}
 		}
 		else = {
@@ -449,11 +457,13 @@ BTWK_anglo_saxon_invasions.0110 = {
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
 			}
-			scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
-				set_variable = {
-					name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-					value = scope:new_story
-				}
+			add_prestige = 1000
+			add_gold = 300
+		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:new_story
 			}
 		}
 		if = {
@@ -636,6 +646,7 @@ BTWK_anglo_saxon_invasions.0110 = {
 							primary_defender = root.suzerain
 							using_cb = claim_cb
 						}
+						set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
 						set_variable = BTWK_break_tributary_on_victory_or_wp 
 					}
 				}
@@ -906,6 +917,7 @@ BTWK_anglo_saxon_invasions.0110 = {
 						primary_defender = root.top_liege
 						using_cb = claim_cb
 					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
 					set_variable = BTWK_break_vassal_on_victory_or_wp 
 				}
 			}
@@ -931,6 +943,7 @@ BTWK_anglo_saxon_invasions.0110 = {
 						primary_defender = root.top_liege
 						using_cb = duchy_conquest_cb
 					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
 					set_variable = BTWK_break_vassal_on_victory_or_wp 
 				}
 			}
@@ -1014,5 +1027,31 @@ BTWK_anglo_saxon_invasions.0113 = {
 	option = {
 		name = BTWK_anglo_saxon_invasions.0113.a
 		custom_tooltip = BTWK_anglo_saxon_invasions.0113.a.tt
+		if = {
+			limit = { has_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier }
+			remove_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier
+		}
+	}
+}
+
+# Won first war - get modifier
+BTWK_anglo_saxon_invasions.0114 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0114.t
+	desc = BTWK_anglo_saxon_invasions.0114.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0114.a
+		add_character_modifier = {
+			modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier
+			years = 20
+		}
 	}
 }

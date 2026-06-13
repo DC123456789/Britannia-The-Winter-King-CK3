@@ -420,26 +420,222 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 	}
 
 	on_owner_death = {
-		make_story_owner = story_owner.primary_heir			
+		# Doesn't work properly, handled in on_actions instead
+		# if = {
+			# limit = {
+				# exists = story_owner.primary_heir
+			# }
+			# make_story_owner = story_owner.primary_heir
+		# }
+		# else = {
+			# make_story_owner = story_owner.primary_title.current_heir
+		# }
 	}
 	
 	# Check for next target / war
 	effect_group = {
-		months = 6
+		months = 3
 		
 		trigger = {
-			story_owner = { is_at_war = no }
+			always = yes
 		}
 		
 		triggered_effect = {
-			trigger = { always = yes }
+			trigger = { story_owner = { is_at_war = no } }
 			# TODO If you can, declare war on random neighbouring target in core area
+			save_scope_as = current_story
+			ai_start_best_war = {
+				cb = {
+					claim_cb
+					county_conquest_cb
+					duchy_conquest_cb
+					pre_feudal_subjugation_cb
+					de_jure_cb
+				}
+				is_valid = {
+					scope:target_character = {
+						current_military_strength < root.one_and_a_quarter_times_current_military_strength
+					}
+					trigger_if = {
+						limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
+						scope:target_character = {
+							any_realm_county = {
+								scope:current_story = {
+									is_target_in_variable_list = {
+										name = core_target_counties
+										target = prev
+									}
+								}
+							}
+						}
+					}
+					trigger_else_if = {
+						limit = { scope:target_title.tier > tier_county }
+						scope:target_title = {
+							any_de_jure_county = {
+								scope:current_story = {
+									is_target_in_variable_list = {
+										name = core_target_counties
+										target = prev
+									}
+								}
+							}
+						}
+					}
+					trigger_else = {
+						limit = { scope:target_title.tier > tier_county }
+						scope:target_title = {
+							scope:current_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+						}
+					}
+				}
+				on_success = {
+					if = {
+						limit = {
+							scope:target_character = {
+								current_military_strength > root.current_military_strength
+							}
+						}
+						spawn_army = {
+							name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+							levies = 300
+							men_at_arms = {
+								type = pikemen_unit
+								men = 100
+							}
+							men_at_arms = {
+								type = landsknecht
+								men = 75
+							}
+							location = this.capital_province
+							save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+						}
+						scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+							set_variable = {
+								name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+								value = scope:current_story
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							scope:target_character = {
+								current_military_strength > root.eighty_percent_of_current_military_strength
+							}
+						}
+						spawn_army = {
+							name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+							levies = 150
+							men_at_arms = {
+								type = pikemen_unit
+								men = 50
+							}
+							location = this.capital_province
+							save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+						}
+						scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+							set_variable = {
+								name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+								value = scope:current_story
+							}
+						}
+					}
+				}
+				on_failure = {
+					ai_start_best_war = {
+						cb = {
+							claim_cb
+							county_conquest_cb
+							duchy_conquest_cb
+							pre_feudal_subjugation_cb
+							de_jure_cb
+						}
+						is_valid = {
+							scope:target_character = {
+								current_military_strength < root.current_military_strength
+							}
+							trigger_if = {
+								limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
+								scope:target_character = {
+									any_realm_county = {
+										scope:current_story = {
+											is_target_in_variable_list = {
+												name = extended_target_counties
+												target = prev
+											}
+										}
+									}
+								}
+							}
+							trigger_else_if = {
+								limit = { scope:target_title.tier > tier_county }
+								scope:target_title = {
+									any_de_jure_county = {
+										scope:current_story = {
+											is_target_in_variable_list = {
+												name = extended_target_counties
+												target = prev
+											}
+										}
+									}
+								}
+							}
+							trigger_else = {
+								limit = { scope:target_title.tier > tier_county }
+								scope:target_title = {
+									scope:current_story = {
+										is_target_in_variable_list = {
+											name = extended_target_counties
+											target = prev
+										}
+									}
+								}
+							}
+						}
+						on_success = {
+							# TODO Spawn event troops if necessary
+						}
+					}
+				}
+			}
 			# TODO Otherwise, if you can, declare war on random neighbouring target in extended area
 		}
 		
-		# TODO For AI, end story if we completely control the core + extended areas
-		# TODO For human, end story once we create the relevant kingdom (or duchy for Lindsey)
-		# TODO Story also times out after 20(?) years
+		# Check for story ending triggers
+		# TODO End story if the story owner is not Unromanized Germanic
+		# TODO End story if defeated too many times? Or ends up tributary/vassalized, and loses an attempt to revolt?
+		triggered_effect = {
+			trigger = { always = yes }
+			# For AI, end story if we completely control the core + extended areas
+			if = {
+				limit = {
+					story_owner = { is_ai = yes }
+					any_in_list = {
+						variable = extended_target_counties
+						count = all
+						story_owner = { completely_controls = prev }
+					}
+				}
+				end_story = yes
+			}
+			# For human, end story once we hold the target title
+			# TODO Also do a check in the relevant events
+			if = {
+				limit = {
+					story_owner = { is_ai = no }
+					OR = {
+						story_owner = { has_title = prev.var:target_title }
+						any_vassal_or_below = { has_title = prev.var:target_title }
+					}
+				}
+				end_story = yes
+			}
+		}
 	}
 	
 	# Story times out after 20 years

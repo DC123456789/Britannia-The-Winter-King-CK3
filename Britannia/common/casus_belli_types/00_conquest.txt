@@ -1060,6 +1060,17 @@ duchy_conquest_cb = {
 
 		#EP2 accolade glory gain for winning against higher ranked enemy
 		scope:attacker = { accolade_attacker_war_end_glory_gain_med_effect = yes }
+		
+		# Initial laeti revolt automatically creates their duchy title, so they can vassalize counts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war }
+				NOT = { exists = scope:attacker.primary_title.title_capital_county.var:anglo_saxon_duchy.holder }
+			}
+			scope:attacker = {
+				get_title = primary_title.title_capital_county.var:anglo_saxon_duchy
+			}
+		}
 
 		create_title_and_vassal_change = {
 			type = conquest
@@ -1107,6 +1118,22 @@ duchy_conquest_cb = {
 		}
 
 		resolve_title_and_vassal_change = scope:change
+		
+		# For initial laeti revolt, apply de jure change afterwards to avoid screwing up the war results
+		if = {
+			limit = {
+				war = { has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war }
+				scope:attacker = { has_title = primary_title.title_capital_county.var:anglo_saxon_duchy }
+				scope:attacker.primary_title.title_capital_county.var:anglo_saxon_duchy = {
+					NOT = { has_variable = title_created_de_jure }
+				}
+			}
+			scope:attacker = {
+				create_anglo_saxon_duchy_effect = {
+					TITLE = primary_title.title_capital_county.var:anglo_saxon_duchy
+				}
+			}
+		}
 
 		# Prestige Progress for the Attacker
 		every_in_list = {
