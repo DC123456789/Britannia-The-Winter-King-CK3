@@ -163,6 +163,29 @@
 		
 		# BTWK AI cultural redoubt blocks
 		scope:target = { BTWK_ai_cb_target_title_block_on_cultural_redoubts_trigger = yes }
+		
+		trigger_if = {
+			limit = { 
+				scope:attacker = {
+					culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
+					any_character_struggle = {
+						involvement = involved
+						has_struggle_phase_parameter = unromanized_germanic_conquest_cb_on_laeti_blocked
+					}
+				} 
+			}
+			scope:target = {
+				custom_tooltip = {
+					text = BTWK_cannot_attack_laeti_during_struggle_phase_tt
+					NOT = {
+						holder = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							vassal_contract_has_flag = has_laetus_contract
+						}
+					}
+				}
+			}
+		}
 	}
 
 	should_invalidate = {

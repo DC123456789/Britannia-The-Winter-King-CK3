@@ -168,7 +168,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			else = {
 				# TODO Will attempt to invade from a neighbouring Anglo-Saxon controlled area
 			}
-			starting_county.var:anglo_saxon_duchy = {
+			scope:starting_county.var:anglo_saxon_duchy = {
 				every_in_list = {
 					variable = dynamic_de_jure_territory
 					scope:current_story = {
@@ -185,7 +185,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			}
 			# Extended is your starting duchy + two neighbouring duchies, including Tomsaete if possible
 			if = {
-				limit = { starting_county.var:anglo_saxon_duchy = title:d_hiccas }
+				limit = { scope:starting_county.var:anglo_saxon_duchy = title:d_hiccas }
 				title:d_south_angles = {
 					every_in_list = {
 						variable = dynamic_de_jure_territory
@@ -225,8 +225,8 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			if = {
 				limit = { 
 					OR = {
-						starting_county.var:anglo_saxon_duchy = title:d_middle_angles
-						starting_county.var:anglo_saxon_duchy = title:d_south_angles
+						scope:starting_county.var:anglo_saxon_duchy = title:d_middle_angles
+						scope:starting_county.var:anglo_saxon_duchy = title:d_south_angles
 					}
 				}
 				title:d_south_angles = {
@@ -255,8 +255,8 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			else_if = {
 				limit = { 
 					OR = {
-						starting_county.var:anglo_saxon_duchy = title:d_mercia
-						starting_county.var:anglo_saxon_duchy = title:d_pecsaete
+						scope:starting_county.var:anglo_saxon_duchy = title:d_mercia
+						scope:starting_county.var:anglo_saxon_duchy = title:d_pecsaete
 					}
 				}
 				title:d_pecsaete = {
@@ -283,7 +283,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				}
 			}
 			else_if = {
-				limit = { starting_county.var:anglo_saxon_duchy = title:d_wrocensaete }
+				limit = { scope:starting_county.var:anglo_saxon_duchy = title:d_wrocensaete }
 				title:d_pecsaete = {
 					every_in_list = {
 						variable = dynamic_de_jure_territory
@@ -297,7 +297,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				}
 			}
 			else_if = {
-				limit = { starting_county.var:anglo_saxon_duchy = title:d_magonsaete }
+				limit = { scope:starting_county.var:anglo_saxon_duchy = title:d_magonsaete }
 				title:d_wrocensaete = {
 					every_in_list = {
 						variable = dynamic_de_jure_territory
@@ -311,7 +311,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				}
 			}
 			else_if = {
-				limit = { starting_county.var:anglo_saxon_duchy = title:d_hwicce }
+				limit = { scope:starting_county.var:anglo_saxon_duchy = title:d_hwicce }
 				title:d_middle_angles = {
 					every_in_list = {
 						variable = dynamic_de_jure_territory
@@ -399,24 +399,45 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		
 		set_variable = {
 			name = years_remaining
-			value = 20
+			value = 25
 		}
 	}
 
 	on_end = {
 		save_scope_as = ending_story
 		if = {
-			limit = { story_owner = { is_landed = no } }
+			limit = { 
+				OR = {
+					story_owner = { is_landed = no }
+					has_variable = rise_of_anglo_saxon_kingdom_story_defeated
+				}
+			}
 			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0113 }
+			# If the story owner becomes unlanded, non-Unromanized Germanic, or is vassalized
+			# and cannot break free, get a second chance at a rising
+			this.var:target_kingdom = { 
+				if = {
+					limit = { has_variable = rise_of_anglo_saxon_kingdom_story_failed_once }
+					set_variable = rise_of_anglo_saxon_kingdom_story_failed
+				}
+				else = {
+					set_variable = rise_of_anglo_saxon_kingdom_story_failed_once
+					story_owner = { set_variable = failed_rise_of_anglo_saxon_kingdom_story_claimant }
+				}
+			}
 		}
 		else_if = {
 			limit = { NOT = { has_variable = created_target_title } }
 			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0112 }
+			this.var:target_kingdom = { 
+				set_variable = rise_of_anglo_saxon_kingdom_story_failed
+			}
 		}
 		# If the story ended by creating the target title, end silently
 		# TODO Add tooltip in the event for creating the title though
 		
 		# TODO Disband all associated event troops
+		# TODO Not for now as frankly the AI wastes them so quickly it barely matters
 	}
 
 	on_owner_death = {
@@ -434,211 +455,212 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 	
 	# Check for next target / war
 	effect_group = {
-		months = 3
+		months = 2
 		
 		trigger = {
 			always = yes
 		}
 		
-		triggered_effect = {
-			trigger = { story_owner = { is_at_war = no } }
-			# TODO If you can, declare war on random neighbouring target in core area
-			save_scope_as = current_story
-			ai_start_best_war = {
-				cb = {
-					claim_cb
-					county_conquest_cb
-					duchy_conquest_cb
-					pre_feudal_subjugation_cb
-					de_jure_cb
-				}
-				is_valid = {
-					scope:target_character = {
-						current_military_strength < root.one_and_a_quarter_times_current_military_strength
-					}
-					trigger_if = {
-						limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
-						scope:target_character = {
-							any_realm_county = {
-								scope:current_story = {
-									is_target_in_variable_list = {
-										name = core_target_counties
-										target = prev
-									}
-								}
-							}
-						}
-					}
-					trigger_else_if = {
-						limit = { scope:target_title.tier > tier_county }
-						scope:target_title = {
-							any_de_jure_county = {
-								scope:current_story = {
-									is_target_in_variable_list = {
-										name = core_target_counties
-										target = prev
-									}
-								}
-							}
-						}
-					}
-					trigger_else = {
-						limit = { scope:target_title.tier > tier_county }
-						scope:target_title = {
-							scope:current_story = {
-								is_target_in_variable_list = {
-									name = core_target_counties
-									target = prev
-								}
-							}
-						}
-					}
-				}
-				on_success = {
-					if = {
-						limit = {
-							scope:target_character = {
-								current_military_strength > root.current_military_strength
-							}
-						}
-						spawn_army = {
-							name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-							levies = 300
-							men_at_arms = {
-								type = pikemen_unit
-								men = 100
-							}
-							men_at_arms = {
-								type = landsknecht
-								men = 75
-							}
-							location = this.capital_province
-							save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-						}
-						scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
-							set_variable = {
-								name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-								value = scope:current_story
-							}
-						}
-					}
-					else_if = {
-						limit = {
-							scope:target_character = {
-								current_military_strength > root.eighty_percent_of_current_military_strength
-							}
-						}
-						spawn_army = {
-							name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-							levies = 150
-							men_at_arms = {
-								type = pikemen_unit
-								men = 50
-							}
-							location = this.capital_province
-							save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-						}
-						scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
-							set_variable = {
-								name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-								value = scope:current_story
-							}
-						}
-					}
-				}
-				on_failure = {
-					ai_start_best_war = {
-						cb = {
-							claim_cb
-							county_conquest_cb
-							duchy_conquest_cb
-							pre_feudal_subjugation_cb
-							de_jure_cb
-						}
-						is_valid = {
-							scope:target_character = {
-								current_military_strength < root.current_military_strength
-							}
-							trigger_if = {
-								limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
-								scope:target_character = {
-									any_realm_county = {
-										scope:current_story = {
-											is_target_in_variable_list = {
-												name = extended_target_counties
-												target = prev
-											}
-										}
-									}
-								}
-							}
-							trigger_else_if = {
-								limit = { scope:target_title.tier > tier_county }
-								scope:target_title = {
-									any_de_jure_county = {
-										scope:current_story = {
-											is_target_in_variable_list = {
-												name = extended_target_counties
-												target = prev
-											}
-										}
-									}
-								}
-							}
-							trigger_else = {
-								limit = { scope:target_title.tier > tier_county }
-								scope:target_title = {
-									scope:current_story = {
-										is_target_in_variable_list = {
-											name = extended_target_counties
-											target = prev
-										}
-									}
-								}
-							}
-						}
-						on_success = {
-							# TODO Spawn event troops if necessary
-						}
-					}
-				}
-			}
-			# TODO Otherwise, if you can, declare war on random neighbouring target in extended area
-		}
-		
-		# Check for story ending triggers
-		# TODO End story if the story owner is not Unromanized Germanic
-		# TODO End story if defeated too many times? Or ends up tributary/vassalized, and loses an attempt to revolt?
-		triggered_effect = {
-			trigger = { always = yes }
-			# For AI, end story if we completely control the core + extended areas
-			if = {
-				limit = {
-					story_owner = { is_ai = yes }
-					any_in_list = {
-						variable = extended_target_counties
-						count = all
-						story_owner = { completely_controls = prev }
-					}
-				}
-				end_story = yes
-			}
-			# For human, end story once we hold the target title
-			# TODO Also do a check in the relevant events
-			if = {
-				limit = {
-					story_owner = { is_ai = no }
+		first_valid = {
+			# Check for story ending triggers
+			# TODO End story if defeated too many times? Or ends up tributary/vassalized, and loses an attempt to revolt?
+			triggered_effect = {
+				trigger = {
+					save_temporary_scope_as = current_story
 					OR = {
-						story_owner = { has_title = prev.var:target_title }
-						any_vassal_or_below = { has_title = prev.var:target_title }
+						# End story if the story owner is not Unromanized Germanic
+						story_owner = { is_unromanized_germanic_culture_trigger = no }
+						# For AI, end story if we completely control the core + extended areas
+						AND = {
+							story_owner = { is_ai = yes }
+							any_in_list = {
+								variable = extended_target_counties
+								count = all
+								scope:current_story.story_owner = { completely_controls = prev }
+							}
+						}
+						# For human, end story once we hold the target title
+						# TODO Also do a check in the relevant events
+						AND = {
+							story_owner = {
+								is_ai = no
+								OR = {
+									has_title = prev.var:target_title
+									any_vassal_or_below = { has_title = prev.var:target_title }
+								}
+							}
+						}
 					}
 				}
-				end_story = yes
+				effect = {
+					end_story = yes
+				}
+			}
+			triggered_effect = {
+				trigger = { story_owner = { is_at_war = no } }
+				effect = {
+					# If you are a vassal or tributary, prioritize becoming independent first
+					story_owner = {
+						ai_start_best_war = {
+							cb = {
+								tributary_independence_war
+								independence_war
+							}
+							is_valid = {
+								trigger_if = {
+									limit = { scope:casus_belli_type = casus_belli_type:tributary_independence_war }
+									is_tributary = yes
+								}
+								trigger_if = {
+									limit = { scope:casus_belli_type = casus_belli_type:independence_war }
+									is_independent_ruler = no
+								}
+							}
+							on_success = {
+								BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+								BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+							}
+							on_failure = {
+								if = {
+									limit = { prestige < 200 }
+									add_prestige = 200
+								}
+								# If you can, declare war on random neighbouring target in core area
+								ai_start_best_war = {
+									cb = {
+										claim_cb
+										county_conquest_cb
+										duchy_conquest_cb
+										pre_feudal_subjugation_cb
+										de_jure_cb
+									}
+									is_valid = {
+										scope:target_character = {
+											current_military_strength < prev.one_and_a_quarter_times_current_military_strength
+										}
+										# Doesn't inherit scopes for some reason so we need to fetch the story again
+										any_owned_story = {
+											limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+											save_temporary_scope_as = current_story
+										}
+										trigger_if = {
+											limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
+											scope:target_character = {
+												any_realm_county = {
+													scope:current_story = {
+														is_target_in_variable_list = {
+															name = core_target_counties
+															target = prev
+														}
+													}
+												}
+											}
+										}
+										trigger_else_if = {
+											limit = { scope:target_title.tier > tier_county }
+											scope:target_title = {
+												any_de_jure_county = {
+													scope:current_story = {
+														is_target_in_variable_list = {
+															name = core_target_counties
+															target = prev
+														}
+													}
+												}
+											}
+										}
+										trigger_else = {
+											scope:target_title = {
+												scope:current_story = {
+													is_target_in_variable_list = {
+														name = core_target_counties
+														target = prev
+													}
+												}
+											}
+										}
+									}
+									on_success = {
+										random_owned_story = {
+											limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+											save_scope_as = current_story
+										}
+										BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+									}
+									on_failure = {
+										# Otherwise, if you can, declare war on random neighbouring target in extended area
+										ai_start_best_war = {
+											cb = {
+												claim_cb
+												county_conquest_cb
+												duchy_conquest_cb
+												pre_feudal_subjugation_cb
+												de_jure_cb
+											}
+											is_valid = {
+												scope:target_character = {
+													current_military_strength < prev.current_military_strength
+												}
+												any_owned_story = {
+													limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+													save_temporary_scope_as = current_story
+												}
+												trigger_if = {
+													limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
+													scope:target_character = {
+														any_realm_county = {
+															scope:current_story = {
+																is_target_in_variable_list = {
+																	name = extended_target_counties
+																	target = prev
+																}
+															}
+														}
+													}
+												}
+												trigger_else_if = {
+													limit = { scope:target_title.tier > tier_county }
+													scope:target_title = {
+														any_de_jure_county = {
+															scope:current_story = {
+																is_target_in_variable_list = {
+																	name = extended_target_counties
+																	target = prev
+																}
+															}
+														}
+													}
+												}
+												trigger_else = {
+													scope:target_title = {
+														scope:current_story = {
+															is_target_in_variable_list = {
+																name = extended_target_counties
+																target = prev
+															}
+														}
+													}
+												}
+											}
+											on_success = {
+												random_owned_story = {
+													limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+													save_scope_as = current_story
+												}
+												BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 	
-	# Story times out after 20 years
+	# Story times out after 25 years
 	effect_group = {
 		years = 1
 		
@@ -648,15 +670,17 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		
 		triggered_effect = {
 			trigger = { always = yes }
-			change_variable = {
-				name = years_remaining
-				subtract = 1
-			}
-			if = {
-				limit = {
-					this.var:years_remaining <= 0
+			effect = {
+				change_variable = {
+					name = years_remaining
+					subtract = 1
 				}
-				end_story = yes
+				if = {
+					limit = {
+						this.var:years_remaining <= 0
+					}
+					end_story = yes
+				}
 			}
 		}
 	}

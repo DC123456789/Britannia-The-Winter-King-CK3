@@ -98,17 +98,13 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 	desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
 
 	is_shown = {
-		exists = struggle:britannia_struggle
-		is_unromanized_germanic_culture_trigger = yes
-		highest_held_title_tier <= tier_duchy
-		primary_title.title_capital_county.title_province = { geographical_region = btwk_custom_aengland }
-		NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+		BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
 		BTWK_rise_of_anglo_saxon_kingdom_get_target_kingdom_trigger = yes
 		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_visible_trigger = { KINGDOM = scope:target_kingdom }
 	}
 
 	is_valid = {
-		BTWK_rise_of_anglo_saxon_kingdom_is_character_eligible_trigger = yes
+		BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
 		is_adult = yes
 		prestige_level >= 2
 		trigger_if = {
@@ -158,9 +154,11 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 		}
 		if = {
 			limit = { 
-				government_has_flag = government_allow_pre_feudal_subjugation_limited
-				NOT = { primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey }
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
 			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3.lindsey
+		}
+		else = {
 			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3
 		}
 		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.4

@@ -3069,6 +3069,63 @@ BTWK_building_setup = {
 
 BTWK_laeti_setup = {
 	effect = {
+		# Set up Laeti
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1258 = {		# Winta of Winteringas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:14119 = {		# Ethelwine of Billingas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:10058 = {		# Waltheof of Chilternsaete
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:3007 = {		# Esla Gewissson of Wallingford
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+		}
+		every_ruler = {
+			limit = {
+				is_independent_ruler = no
+				vassal_contract_has_flag = has_laetus_contract
+			}
+			every_directly_owned_province = {
+				limit = {
+					has_holding_type = tribal_holding
+					has_holding = yes
+				}
+				add_province_modifier = { 
+					modifier = laeti_settlement 
+					years = 100 
+				}
+				add_building = palisades_01
+				add_building = war_camps_01
+				random_list = {
+					50 = {
+						add_building = palisades_02
+					}
+					50 = {
+						add_building = war_camps_02
+					}
+				}
+			}
+			create_maa_regiment = {
+				type = light_footmen
+				check_can_recruit = no
+				size = 2
+			}
+		}
+		
+		# Set up Foederati (they are defined elsewhere)
 		every_ruler = {
 			limit = {
 				is_tributary = yes
@@ -3076,12 +3133,15 @@ BTWK_laeti_setup = {
 			}
 			every_directly_owned_province = {
 				limit = {
+					has_holding_type = tribal_holding
 					has_holding = yes
 				}
 				add_province_modifier = { 
 					modifier = laeti_settlement 
-					years = 50 
+					years = 100 
 				}
+				add_building = palisades_01
+				add_building = war_camps_01
 			}
 			create_maa_regiment = {
 				type = light_footmen
