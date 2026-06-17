@@ -325,6 +325,13 @@ BTWK_anglo_saxon_invasions.0101 = {
 								is_unromanized_germanic_culture_trigger = yes
 							}
 							save_scope_as = target_character
+							scope:target_character = {
+								create_landless_adventurer_title_effect = {
+									REASON = flag:voluntary
+									FLAVOR_CHAR = scope:target_character
+								}
+							}
+							scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
 						}
 					}
 				}
@@ -358,6 +365,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 							}
 						}
 						save_scope_as = target_character
+						scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
 					}
 				}
 				
@@ -369,7 +377,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 						gender_female_chance = 0
 						culture = scope:target_culture
 						faith = faith:anglo_saxon_pagan
-						location = scope:target_kingdom.title_capital_county.title_province
+						location = scope:event_target_kingdom.title_capital_county.title_province
 						save_scope_as = target_character
 					}
 					scope:target_character = {
@@ -378,6 +386,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 							FLAVOR_CHAR = scope:target_character
 						}
 					}
+					scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
 				}
 				
 				# Then fire the event for the new adventurer
@@ -403,6 +412,13 @@ BTWK_anglo_saxon_invasions.0110 = {
 	}
 	
 	immediate = {
+		if = {
+			limit = { exists = scope:force_target_kingdom }
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = scope:force_target_kingdom
+			}
+		}
 		if = {
 			limit = {
 				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
