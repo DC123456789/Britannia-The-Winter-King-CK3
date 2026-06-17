@@ -27,6 +27,10 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				name = rise_of_anglo_saxon_kingdom_story
 				value = prev
 			}
+			set_variable = {
+				name = rise_of_anglo_saxon_kingdom_story_recently_started
+				years = 15		# 15 years reprieve before second try
+			}
 		}
 		
 		# Target title may not be the same as the target kingdom
@@ -41,6 +45,327 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			set_variable = {
 				name = target_title
 				value = this.var:target_kingdom
+			}
+		}
+		
+		# Get starting county
+		if = {
+			limit = { story_owner = { is_landed = yes } }
+			story_owner.primary_title.title_capital_county = { 
+				save_scope_as = starting_county 
+				scope:current_story = { set_variable = { name = starting_county value = prev } }
+			}
+		}
+		else = {
+			# Will attempt to invade from a coastal or neighbouring Anglo-Saxon controlled area
+			random_county_in_region = {
+				region = btwk_world_britannia
+				# Prefer certain historically important counties if possible
+				limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					OR = {
+						this.var:anglo_saxon_duchy.kingdom = scope:current_story.var:target_kingdom
+						AND = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+							this.var:anglo_saxon_duchy = title:d_lindsey
+						}
+					}
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+					trigger_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_bernicia
+						}
+						OR = {
+							this = title:c_bernicia
+							this = title:c_jarrow
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_deira
+						}
+						OR = {
+							this = title:c_praetorium
+							this = title:c_petuaria
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+						}
+						OR = {
+							this = title:c_ad_abum
+							this = title:c_lindum
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_mercia
+						}
+						OR = {
+							this = title:c_tamworth
+							this = title:c_letocetum
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_wessex
+						}
+						OR = {
+							this = title:c_dorchester
+							this = title:c_abingdon
+							this = title:c_vedonium
+						}
+					}
+					trigger_else = {
+						always = no
+					}
+				}
+				# Otherwise, prefer certain duchies
+				alternative_limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					OR = {
+						this.var:anglo_saxon_duchy.kingdom = scope:current_story.var:target_kingdom
+						AND = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+							this.var:anglo_saxon_duchy = title:d_lindsey
+						}
+					}
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+					trigger_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_bernicia
+						}
+						OR = {
+							this.var:anglo_saxon_duchy = title:d_bernicia
+							this.var:anglo_saxon_duchy = title:d_tynedale
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_deira
+						}
+						this.var:anglo_saxon_duchy = title:d_deira
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+						}
+						this.var:anglo_saxon_duchy = title:d_lindsey
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_mercia
+						}
+						this.var:anglo_saxon_duchy = title:d_mercia
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_wessex
+						}
+						this.var:anglo_saxon_duchy = title:d_berkshire
+					}
+					trigger_else = {
+						always = no
+					}
+				}
+				# Otherwise, check for secondary priority duchies
+				alternative_limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					OR = {
+						this.var:anglo_saxon_duchy.kingdom = scope:current_story.var:target_kingdom
+						AND = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+							this.var:anglo_saxon_duchy = title:d_lindsey
+						}
+					}
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+					trigger_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_bernicia
+						}
+						always = no		# No secondary priority duchies
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_deira
+						}
+						this.var:anglo_saxon_duchy = title:d_eoforwic
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+						}
+						always = no		# No secondary priority duchies
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_mercia
+						}
+						OR = {
+							this.var:anglo_saxon_duchy = title:d_pecsaete
+							this.var:anglo_saxon_duchy = title:d_middle_angles
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_wessex
+						}
+						OR = {
+							this.var:anglo_saxon_duchy = title:d_cilternsaete
+							this.var:anglo_saxon_duchy = title:d_winchestershire
+							this.var:anglo_saxon_duchy = title:d_wiltshire
+						}
+					}
+					trigger_else = {
+						always = no
+					}
+				}
+				# Otherwise, check for tertiary priority duchies
+				alternative_limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					OR = {
+						this.var:anglo_saxon_duchy.kingdom = scope:current_story.var:target_kingdom
+						AND = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+							this.var:anglo_saxon_duchy = title:d_lindsey
+						}
+					}
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+					trigger_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_bernicia
+						}
+						always = no		# None
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_deira
+						}
+						always = no		# None
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+						}
+						always = no		# None
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_mercia
+						}
+						OR = {
+							this.var:anglo_saxon_duchy = title:d_south_angles
+							this.var:anglo_saxon_duchy = title:d_hiccas
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							scope:current_story.var:target_kingdom = title:k_wessex
+						}
+						OR = {
+							this.var:anglo_saxon_duchy = title:d_dorset
+							this.var:anglo_saxon_duchy = title:d_hampshire
+						}
+					}
+					trigger_else = {
+						always = no
+					}
+				}
+				# Otherwise, any county in the kingdom
+				alternative_limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					OR = {
+						this.var:anglo_saxon_duchy.kingdom = scope:current_story.var:target_kingdom
+						AND = {
+							scope:current_story.var:target_kingdom = title:k_lindsey
+							this.var:anglo_saxon_duchy = title:d_lindsey
+						}
+					}
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+				}
+				# Absolute fallback for Mercia, invade into Gyrwas as Mercia has no eastern
+				# coastal counties
+				alternative_limit = {
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+					scope:current_story.var:target_kingdom = title:k_mercia
+					OR = {
+						any_county_province = {
+							any_neighboring_province = {
+								OR = {
+									geographical_region = sea_north_sea
+									geographical_region = sea_english_channel
+								}
+							}
+						}
+						any_neighboring_county = {
+							holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+						}
+					}
+					this.var:anglo_saxon_duchy = title:d_gyrwas
+				}
+				save_scope_as = starting_county
+				scope:current_story = { set_variable = { name = starting_county value = prev } }
 			}
 		}
 		
@@ -161,13 +486,6 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		else_if = {
 			limit = { this.var:target_kingdom = title:k_mercia }
 			# Core is whatever your starting duchy is
-			if = {
-				limit = { story_owner = { is_landed = yes } }
-				story_owner.primary_title.title_capital_county = { save_scope_as = starting_county }
-			}
-			else = {
-				# TODO Will attempt to invade from a neighbouring Anglo-Saxon controlled area
-			}
 			scope:starting_county.var:anglo_saxon_duchy = {
 				every_in_list = {
 					variable = dynamic_de_jure_territory
@@ -240,6 +558,20 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 						}
 					}
 				}
+				title:d_middle_angles = {
+					every_in_list = {
+						variable = dynamic_de_jure_territory
+						scope:current_story = {
+							add_to_variable_list = {
+								name = extended_target_counties
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { scope:starting_county.var:anglo_saxon_duchy = title:d_gyrwas }
 				title:d_middle_angles = {
 					every_in_list = {
 						variable = dynamic_de_jure_territory
@@ -399,7 +731,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		
 		set_variable = {
 			name = years_remaining
-			value = 25
+			value = 30
 		}
 	}
 
@@ -436,8 +768,9 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		# If the story ended by creating the target title, end silently
 		# TODO Add tooltip in the event for creating the title though
 		
-		# TODO Disband all associated event troops
-		# TODO Not for now as frankly the AI wastes them so quickly it barely matters
+		# Disband all associated event troops
+		# Not for now as frankly the AI wastes them so quickly it barely matters
+		# And human players don't get that many
 	}
 
 	on_owner_death = {
@@ -546,6 +879,9 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 										trigger_if = {
 											limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
 											scope:target_character = {
+												# Ignore anyone else that has the Rise of Anglo-Saxon kingdom story,
+												# so we don't get e.g. Bernicia and Deira fighting each other
+												NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story } 
 												any_realm_county = {
 													scope:current_story = {
 														is_target_in_variable_list = {
@@ -660,7 +996,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		}
 	}
 	
-	# Story times out after 25 years
+	# Story times out after 30 years
 	effect_group = {
 		years = 1
 		

@@ -34,7 +34,11 @@
 			trigger_if = {
 				limit = {
 					government_has_flag = government_allow_pre_feudal_subjugation_limited
-					NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+					NAND = { 
+						owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+						# Deira cannot subjugate Lindsey early
+						scope:defender.primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+					}					
 				}
 				BTWK_reform_from_tribal_innovations_trigger = yes
 			}

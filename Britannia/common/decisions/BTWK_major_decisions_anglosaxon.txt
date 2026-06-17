@@ -95,7 +95,17 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 		hegemony = 0
 	}
 
-	desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					primary_title = title:d_laamp_scyldings
+				}
+				desc = BTWK_rise_of_anglo_saxon_kingdom_decision_d_laamp_scyldings_desc
+			}
+			desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
+		}
+	}
 
 	is_shown = {
 		BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
@@ -122,14 +132,18 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 		show_as_tooltip = {
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 200
+				levies = 300
 				men_at_arms = {
 					type = pikemen_unit
-					men = 100
+					men = 150
 				}
 				men_at_arms = {
 					type = landsknecht
-					men = 50
+					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
 				}
 				location = this.capital_province
 			}
@@ -149,7 +163,11 @@ BTWK_rise_of_anglo_saxon_kingdom_decision = {
 			limit = { is_tributary = yes }
 			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.c
 		}
-		else = {
+		else_if = {
+			limit = { 
+				is_landless_adventurer = yes
+				primary_title = title:d_laamp_scyldings
+			}
 			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.d
 		}
 		if = {
