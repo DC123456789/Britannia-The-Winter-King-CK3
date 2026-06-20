@@ -200,3 +200,46 @@ BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = {
 	is_at_war = no
 	is_imprisoned = no
 }
+
+BTWK_rise_of_anglo_saxon_kingdom_should_revolt_trigger = {
+	OR = {
+		is_independent_ruler = no
+		AND = {
+			is_tributary = yes
+			# Suzerain controls a lot of their target territories
+			# Or at least one and no other targets
+			# Or is a foederati
+			OR = {
+				has_subject_contract_group = tributary_foederatus
+				suzerain = {
+					any_realm_county = {
+						count >= 3
+						scope:current_story = {
+							is_target_in_variable_list = {
+								name = extended_target_counties
+								target = prev
+							}
+						}
+					}
+				}
+				AND = {
+					suzerain = {
+						any_realm_county = {
+							scope:current_story = {
+								is_target_in_variable_list = {
+									name = extended_target_counties
+									target = prev
+								}
+							}
+						}
+					}
+					NOT = {
+						any_neighboring_top_liege_realm_owner = {
+							this != prev.suzerain
+						}
+					}
+				}
+			}
+		}
+	}
+}
