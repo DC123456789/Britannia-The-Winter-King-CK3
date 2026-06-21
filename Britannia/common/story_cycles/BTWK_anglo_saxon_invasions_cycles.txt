@@ -737,16 +737,14 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 
 	on_end = {
 		save_scope_as = ending_story
+		this.var:target_kingdom = { save_scope_as = target_kingdom }
 		if = {
-			limit = { 
-				OR = {
-					story_owner = { is_landed = no }
-					has_variable = rise_of_anglo_saxon_kingdom_story_defeated
-				}
+			limit = {
+				has_variable = rise_of_anglo_saxon_kingdom_story_defeated
 			}
 			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0113 }
-			# If the story owner becomes unlanded, non-Unromanized Germanic, or is vassalized
-			# and cannot break free, get a second chance at a rising
+			# If the story owner was defeated or disqualified, then we get a second chance to trigger
+			# the story again
 			this.var:target_kingdom = { 
 				if = {
 					limit = { has_variable = rise_of_anglo_saxon_kingdom_story_failed_once }
@@ -760,7 +758,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		}
 		# If the story timed out, then it cannot happen again
 		else_if = {
-			limit = { NOT = { has_variable = created_target_title } }
+			limit = { has_variable = rise_of_anglo_saxon_kingdom_story_timed_out }
 			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0112 }
 			this.var:target_kingdom = { 
 				set_variable = rise_of_anglo_saxon_kingdom_story_failed
@@ -797,10 +795,56 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		
 		first_valid = {
 			# Check for story ending triggers
+			# Victory endings
 			triggered_effect = {
 				trigger = {
 					save_temporary_scope_as = current_story
 					OR = {
+						# For AI, end story if we completely control the core + extended areas
+						# Or if someone ELSE holds the target title
+						AND = {
+							story_owner = { is_ai = yes }
+							any_in_list = {
+								variable = extended_target_counties
+								count = all
+								scope:current_story.story_owner = { completely_controls = prev }
+							}
+						}
+						AND = {
+							story_owner = { is_ai = yes }
+							OR = {
+								this.var:target_kingdom.holder ?= { this != prev.story_owner }
+								this.var:target_title.holder ?= { this != prev.story_owner }
+							}
+						}
+						# For human, end story once we hold the target title
+						AND = {
+							story_owner = {
+								is_ai = no
+								OR = {
+									has_title = prev.var:target_title
+									has_title = prev.var:target_kingdom
+									any_vassal_or_below = { has_title = prev.var:target_title }
+									any_vassal_or_below = { has_title = prev.var:target_kingdom }
+								}
+							}
+						}
+					}
+				}
+				effect = {
+					end_story = yes
+				}
+			}
+			# Defeat/Disqualification endings
+			triggered_effect = {
+				trigger = {
+					save_temporary_scope_as = current_story
+					OR = {
+						# End story if the story owner is unlanded and not at war
+						story_owner = {
+							is_landed = no
+							is_at_war = no
+						}
 						# End story if the story owner is not Unromanized Germanic
 						story_owner = { is_unromanized_germanic_culture_trigger = no }
 						# End story if the story owner owns a kingdom title that is not the target title
@@ -813,50 +857,23 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 								}
 							}
 						}
-						# For AI, end story if we completely control the core + extended areas
-						AND = {
-							story_owner = { is_ai = yes }
-							any_in_list = {
-								variable = extended_target_counties
-								count = all
-								scope:current_story.story_owner = { completely_controls = prev }
-							}
-						}
-						# For human, end story once we hold the target title
-						# TODO Also do a check in the relevant events
-						AND = {
-							story_owner = {
-								is_ai = no
-								OR = {
-									has_title = prev.var:target_title
-									any_vassal_or_below = { has_title = prev.var:target_title }
+						# End story if end up tributary/vassalized, and loses an attempts to revolt
+						# Human player automatically loses the story without needing the initial attempt
+						story_owner = {
+							is_at_war = no
+							OR = {
+								AND = {
+									is_ai = no
+									OR = {
+										is_independent_ruler = no
+										is_tributary = yes
+									}
 								}
-							}
-						}
-					}
-				}
-				effect = {
-					end_story = yes
-				}
-			}
-			# End story if end up tributary/vassalized, and loses an attempts to revolt
-			# Human player automatically loses the story without needing the initial attempt
-			triggered_effect = {
-				trigger = {
-					story_owner = {
-						is_at_war = no
-						OR = {
-							AND = {
-								is_ai = no
-								OR = {
-									is_independent_ruler = no
-									is_tributary = yes
+								AND = {
+									is_ai = yes
+									prev = { has_variable = attempting_second_revolt }
+									BTWK_rise_of_anglo_saxon_kingdom_should_revolt_trigger = yes
 								}
-							}
-							AND = {
-								is_ai = yes
-								prev = { has_variable = attempting_second_revolt }
-								BTWK_rise_of_anglo_saxon_kingdom_should_revolt_trigger = yes
 							}
 						}
 					}
@@ -865,7 +882,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 					set_variable = rise_of_anglo_saxon_kingdom_story_defeated
 					end_story = yes
 				}
-			}			
+			}	
 			# If you are a vassal or tributary, prioritize becoming independent first
 			triggered_effect = {
 				trigger = { 
@@ -923,6 +940,8 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 							add_prestige = 200
 						}
 						# If you can, declare war on random neighbouring target in core area
+						# TODO May be too slow, maybe have 50% chance of getting a claim on two counties
+						# and declaring for both at once?
 						ai_start_best_war = {
 							cb = {
 								claim_cb
@@ -1081,6 +1100,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 					limit = {
 						this.var:years_remaining <= 0
 					}
+					set_variable = rise_of_anglo_saxon_kingdom_story_timed_out
 					end_story = yes
 				}
 			}
