@@ -1,5 +1,9 @@
 ﻿# Called from code after history generation
 # Empty scope
+on_game_start = {
+	on_actions = { BTWK_on_game_start }
+}
+
 BTWK_on_game_start = {
 	on_actions = {
 		BTWK_de_jure_setup
@@ -9,9 +13,9 @@ BTWK_on_game_start = {
 		BTWK_government_setup
 		BTWK_county_setup
 		BTWK_character_setup
-		BTWK_roman_walls_upgrade
+		BTWK_building_setup
 		BTWK_laeti_setup
-		BTWK_high_king_electors_setup
+		BTWK_britannia_high_kingship_setup
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
@@ -663,6 +667,22 @@ BTWK_character_setup = {
 					scope:current_char = { remove_claim = PREV }
 				}
 			}
+			character:1388 ?= {			# King Anwrid of Manaw
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_lleyn 
+								has_title = title:k_gwynedd 
+							} 
+						}
+						# As a grandson of Cunedda it makes sense for him to have a weak claim
+						NOT = { this = title:k_gwynedd }
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
 		}
 	}
 }
@@ -670,7 +690,7 @@ BTWK_character_setup = {
 BTWK_de_jure_setup = {
 	effect = {		
 		# Arbitary character for convenience purposes
-		title:k_papal_state.holder = { save_temporary_scope_as = story_holder }
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
 		
 		### DEFAULT SETUP ###
 		every_county = {
@@ -2922,6 +2942,11 @@ BTWK_de_jure_setup = {
 			}
 		}
 		
+		title:e_roman_britannia = { set_variable = is_roman_empire_or_claimant_title }
+		title:e_romanized_germanic_britannia = { set_variable = is_roman_empire_or_claimant_title }
+		title:h_western_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
+		title:h_eastern_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
+		
 		# This forces Britannic and Brythonic characters to use "Emperor" for these titles
 		title:e_roman_britannia = { set_variable = emperor_flag }
 		title:e_romanized_germanic_britannia = { set_variable = emperor_flag }
@@ -2937,71 +2962,106 @@ BTWK_de_jure_setup = {
 
 #Make sure Roman castles start with at least wall upgrade 3
 
-BTWK_roman_walls_upgrade = {
+BTWK_building_setup = {
 	effect = {
 		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = farmlands
-					terrain = plains
-					terrain = wetlands
-					terrain = floodplains
+			if = {
+				limit = { 
+					has_holding_type = castle_holding
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				if = {
+					limit = { 
+						OR = {
+							duchy.title_capital_county.title_province = this # Is duchy capital
+							kingdom.title_capital_county.title_province = this # Is kingdom capital							
+						}
+					}	
+					add_building = castle_02
+				}					
+				if = {
+					limit = {
+						OR = {
+							terrain = farmlands
+							terrain = plains
+							terrain = wetlands
+							terrain = floodplains
+						}
+					}
+					add_building = curtain_walls_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = curtain_walls_03
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = taiga
+							terrain = forest
+							terrain = jungle
+						}
+					}
+					add_building = ramparts_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = ramparts_03
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = mountains
+							terrain = desert_mountains
+							terrain = hills
+						}
+					}
+					add_building = hill_forts_02
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = hill_forts_03
+						}
+					}
 				}
 			}
-			add_building = curtain_walls_03
-			random = {
-				chance = 50
-				add_building = curtain_walls_04
+			else_if = {
+				limit = { 
+					culture = { has_cultural_pillar = heritage_brythonic }
+					has_holding_type = castle_holding
+					OR = {
+						terrain = mountains
+						terrain = desert_mountains
+						terrain = hills
+					}
+				}
+				add_building = hill_forts_01
+				random = {
+					chance = 50
+					add_building = hill_forts_02
+				}
 			}
 		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = taiga
-					terrain = forest
-					terrain = jungle
+		
+		# Londinium needs a holy site building for the religious high king reform
+		# This is here in case we move all the faith holy sites away at some point
+		title:b_londiniumcastle = {
+			if = {
+				limit = {
+					title_province = {
+						has_special_building_slot = no
+					}
 				}
-			}
-			add_building = ramparts_03
-			random = {
-				chance = 50
-				add_building = ramparts_04
-			}
-		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_latin }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = mountains
-					terrain = desert_mountains
-					terrain = hills
+				title_province = {
+					add_special_building_slot = holy_site_cathedral_01
 				}
-			}
-			add_building = hill_forts_03
-			random = {
-				chance = 50
-				add_building = hill_forts_04
-			}
-		}
-		every_province = {
-			limit = { 
-				culture = { has_cultural_pillar = heritage_brythonic }
-				has_holding_type = castle_holding
-				OR = {
-					terrain = mountains
-					terrain = desert_mountains
-					terrain = hills
-				}
-			}
-			add_building = hill_forts_01
-			random = {
-				chance = 50
-				add_building = hill_forts_02
 			}
 		}
 	}
@@ -3009,6 +3069,63 @@ BTWK_roman_walls_upgrade = {
 
 BTWK_laeti_setup = {
 	effect = {
+		# Set up Laeti
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1258 = {		# Winta of Winteringas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:14119 = {		# Ethelwine of Billingas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:10058 = {		# Waltheof of Chilternsaete
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:3007 = {		# Esla Gewissson of Wallingford
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+		}
+		every_ruler = {
+			limit = {
+				is_independent_ruler = no
+				vassal_contract_has_flag = has_laetus_contract
+			}
+			every_directly_owned_province = {
+				limit = {
+					has_holding_type = tribal_holding
+					has_holding = yes
+				}
+				add_province_modifier = { 
+					modifier = laeti_settlement 
+					years = 100 
+				}
+				add_building = palisades_01
+				add_building = war_camps_01
+				random_list = {
+					50 = {
+						add_building = palisades_02
+					}
+					50 = {
+						add_building = war_camps_02
+					}
+				}
+			}
+			create_maa_regiment = {
+				type = light_footmen
+				check_can_recruit = no
+				size = 2
+			}
+		}
+		
+		# Set up Foederati (they are defined elsewhere)
 		every_ruler = {
 			limit = {
 				is_tributary = yes
@@ -3016,12 +3133,15 @@ BTWK_laeti_setup = {
 			}
 			every_directly_owned_province = {
 				limit = {
+					has_holding_type = tribal_holding
 					has_holding = yes
 				}
 				add_province_modifier = { 
 					modifier = laeti_settlement 
-					years = 50 
+					years = 100 
 				}
+				add_building = palisades_01
+				add_building = war_camps_01
 			}
 			create_maa_regiment = {
 				type = light_footmen
@@ -3036,33 +3156,59 @@ BTWK_laeti_setup = {
 	}
 }
 
-BTWK_high_king_electors_setup = {
+BTWK_britannia_high_kingship_setup = {
 	effect = {
-		title:e_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_kingdom }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
+		# Arbitary character for convenience purposes
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
+		
+		# Initialize reform story cycles
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_high_kingship }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = establish_coregency }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = establish_central_mint }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = empower_high_council }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = centralize_the_church }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_succession }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = unify_legal_codes }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = reclaim_caratacus_legacy }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = restore_imperial_dignity }
+			
+		# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1 ?= {			# High King Uther Pendragon
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 80		# Uther was High King very recently for a while
+					}
+				}
+			}
+			character:40 ?= {			# Agricola, brother of High King Ambrosius Aurelianus
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 60		# Ambrosius Aurelianus was High King for a while, but it has been a few years since
+					}
+				}
+			}
+			character:16 ?= {			# Gorfyddyd, descendant of High King Vortigern
+				add_unpressed_claim = title:e_britannia		# Has been a few generations
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 20		# Has been a long time since Vortigern and Vortimer were High King
+					}
 				}
 			}
 		}
+		
+		# Save Macsen Wledig for tooltip purposes
 		title:e_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_duchy }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
-				}
-			}
-		}
-		title:e_roman_britannia = {
-			every_in_de_jure_hierarchy = {
-				limit = { tier = tier_kingdom }
-				add_to_global_variable_list = {
-					name = high_king_electors_list
-					target = THIS
-				}
+			set_variable = {
+				name = macsen_wledig_char
+				value = character:1513
 			}
 		}
 	}

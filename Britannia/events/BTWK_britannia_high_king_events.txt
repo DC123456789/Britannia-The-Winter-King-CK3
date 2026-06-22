@@ -25,7 +25,7 @@ namespace = BTWK_britannia_high_king_test
 # BTWK_britannia_high_king.0013 - Claim attempt ends inconclusively due to claimant dying or losing their throne
 
 # High Kingship claimed, awaiting responses
-BTWK_britannia_high_king.0001 = { 
+BTWK_britannia_high_king.0001 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_britannia_high_king.0001.t
@@ -781,24 +781,35 @@ BTWK_britannia_high_king.0009 = {
 	option = {
 		name = BTWK_britannia_high_king.0009.a
 		add_prestige = 200
-		get_title = title:e_britannia
+		BTWK_britannia_become_high_king_effect = yes
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.1
+		if = {
+			limit = { dynasty.var:britannia_high_kingship_authority > 0 }
+			custom_tooltip = BTWK_britannia_high_king.0009.a.tt.1a
+		}
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.2
 		custom_tooltip = BTWK_britannia_high_king.0009.a.tt.3
 		# Make subject kingdoms
 		every_independent_ruler = {
 			limit = {
-				BTWK_britannia_high_kingship_is_elector_trigger = yes
+				BTWK_britannia_subject_king_eligible_trigger = yes
 				OR = {
 					has_variable = HK_britannia_supporter
 					has_variable = HK_britannia_opponent
-				}
-				# If a tributary, only make them a subject king if they are already you tributary,
-				# or their suzerain has already submitted (voluntarily or not)
-				OR = {
-					is_tributary = no
-					suzerain = {
+					suzerain ?= {
 						OR = {
+							this = root
+							has_variable = HK_britannia_supporter
+							has_variable = HK_britannia_opponent
+						}
+					}
+				}
+				# If a tributary, only make them a subject king if they are already your tributary,
+				# or their suzerain has already submitted (voluntarily or not)
+				NAND = {
+					is_tributary = yes
+					suzerain = {
+						NOR = {
 							this = root
 							has_variable = HK_britannia_supporter
 							has_variable = HK_britannia_opponent
@@ -825,7 +836,6 @@ BTWK_britannia_high_king.0009 = {
 			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
 			end_story = yes
 		}
-		create_story = BTWK_britannia_high_kingship_story
 	}
 }
 
@@ -1016,7 +1026,7 @@ BTWK_britannia_high_king.0011 = {
 BTWK_britannia_high_king.0012 = { 
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_britannia_high_king.0011.t
+	title = BTWK_britannia_high_king.0012.t
 	desc = {
 		first_valid = {
 			triggered_desc = {
@@ -1736,21 +1746,2312 @@ BTWK_britannia_high_king.0025 = {
 # BTWK_britannia_high_king.0100 - 0199: High Kingship Reforms
 ############################################################################
 # BTWK_britannia_high_king.0100 - Formalize the High Kingship
-# BTWK_britannia_high_king.0110 - Establish a Central Mint
+# BTWK_britannia_high_king.0105 - Establish the Right of Coregency
+# BTWK_britannia_high_king.0110 - Reintroduce Britannic Coinage
 # BTWK_britannia_high_king.0120 - Empower the High Council (initial event)
-# BTWK_britannia_high_king.0121 - Empower the High Council (demand to subject kings)
-# BTWK_britannia_high_king.0122 - Empower the High Council (response to demands)
-# BTWK_britannia_high_king.0123 - Empower the High Council (victory in civil war, vassalize all subject kings)
-# BTWK_britannia_high_king.0124 - Empower the High Council (defeat / white peace in civil war, reform not passed)
-# BTWK_britannia_high_king.0130 - Restore the Archbishopric of London / Establish a State Church
-# BTWK_britannia_high_king.0140 - Codify the Succession
-# BTWK_britannia_high_king.0150 - Unify the Legal Codes
-# BTWK_britannia_high_king.0160 - Reclaim the Legacy of Caratacus
-# BTWK_britannia_high_king.0170 - Restore Imperial Dignity (initial event)
-# BTWK_britannia_high_king.0171 - Restore Imperial Dignity (demand to subject kings)
-# BTWK_britannia_high_king.0172 - Restore Imperial Dignity (response to demands)
-# BTWK_britannia_high_king.0173 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
-# BTWK_britannia_high_king.0174 - Restore Imperial Dignity (defeat / white peace in civil war, reform not passed)
+# BTWK_britannia_high_king.0121 - Empower the High Council (bounce event to issue demand)
+# BTWK_britannia_high_king.0122 - Empower the High Council (demand to subject kings)
+# BTWK_britannia_high_king.0123 - Empower the High Council (response to demands)
+# BTWK_britannia_high_king.0124 - Empower the High Council (war declared / all agreed)
+# BTWK_britannia_high_king.0125 - Empower the High Council (war declared, notify all)
+# BTWK_britannia_high_king.0126 - Empower the High Council (victory in civil war, vassalize all subject kings)
+# BTWK_britannia_high_king.0127 - Empower the High Council (victory in civil war, notify all other rulers)
+# BTWK_britannia_high_king.0128 - Empower the High Council (white peace in civil war, reform not passed)
+# BTWK_britannia_high_king.0129 - Empower the High Council (defeat in civil war, reform not passed)
+# BTWK_britannia_high_king.0140 - Restore the Archbishopric of London / Establish a State Church
+# BTWK_britannia_high_king.0150 - Codify the Succession
+# BTWK_britannia_high_king.0160 - Unify the Legal Codes
+# BTWK_britannia_high_king.0170 - Reclaim the Legacy of Caratacus
+# BTWK_britannia_high_king.0180 - Restore Imperial Dignity (initial event)
+# BTWK_britannia_high_king.0181 - Restore Imperial Dignity (bounce event to issue demand)
+# BTWK_britannia_high_king.0182 - Restore Imperial Dignity (demand to subject kings)
+# BTWK_britannia_high_king.0183 - Restore Imperial Dignity (response to demands)
+# BTWK_britannia_high_king.0184 - Restore Imperial Dignity (war declared / all agreed)
+# BTWK_britannia_high_king.0185 - Empower the High Council (war declared, notify all)
+# BTWK_britannia_high_king.0186 - Restore Imperial Dignity (victory in civil war, claim Imperial Britanniarum)
+# BTWK_britannia_high_king.0187 - Restore Imperial Dignity (victory in civil war, notify all other rulers)
+# BTWK_britannia_high_king.0188 - Restore Imperial Dignity (defeat in civil war, reform not passed)
+# BTWK_britannia_high_king.0189 - Restore Imperial Dignity (white peace in civil war, reform not passed)
+
+# Reform Passed - Formalize the High Kingship
+BTWK_britannia_high_king.0100 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0100.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0100.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0100.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = council_chamber }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0100.a.tt.1
+			custom_tooltip = BTWK_britannia_high_king.0100.a.tt.2
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0100.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0100.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0100.a.tt.2
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0100.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_high_king.0100.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_high_king.0100.b.other
+		}
+	}
+}
+
+# Reform Passed - Establish the Right of Coregency
+BTWK_britannia_high_king.0105 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0105.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0105.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0105.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0105.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0105.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0105.a.tt
+		# Convert subject kingdoms to permanent version
+		every_tributary = {
+			limit = {
+				has_subject_contract_group = tributary_britannia_subject_king
+			}
+			hidden_effect = {
+				# Copy contract over to permanent type
+				set_variable = {
+					name = default_tributary_levies_value
+					value = vassal_contract_obligation_level:default_tributary_levies
+				}
+				set_variable = {
+					name = default_tributary_prestige_value
+					value = vassal_contract_obligation_level:default_tributary_prestige
+				}
+				start_tributary = {
+					contract_group = tributary_britannia_subject_king_permanent
+					suzerain = root
+				}
+				tributary_contract_set_obligation_level = { 
+					type = default_tributary_levies level = this.var:default_tributary_levies_value
+				}
+				remove_variable = default_tributary_levies_value
+				tributary_contract_set_obligation_level = { 
+					type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+				}
+				remove_variable = default_tributary_prestige_value
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0105.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0105.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_high_king.0105.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_high_king.0105.b.other
+		}
+	}
+}
+
+# Reform Passed - Establish a Central Mint
+BTWK_britannia_high_king.0110 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0110.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0110.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0110.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = market }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { capital_barony = { save_scope_as = high_king_capital_barony } }
+		if = {
+			limit = { root != scope:high_king }
+			show_as_tooltip = {
+				scope:high_king = {
+					add_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+					custom_tooltip = BTWK_britannia_high_king.0110.a.tt
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0110.a
+		trigger = { this = scope:high_king }
+		add_character_modifier = BTWK_britannia_high_king_central_mint_established_modifier
+		custom_tooltip = BTWK_britannia_high_king.0110.a.tt
+		hidden_effect = {
+			every_vassal_or_below = {
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			}
+			every_tributary = {
+				limit = {
+					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+				}
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0110.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0110.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0110.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0110.b.other
+		}
+	}
+}
+
+# Reform Started - Empower the High Council (initial event)
+BTWK_britannia_high_king.0120 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0120.t
+	desc = BTWK_britannia_high_king.0120.desc
+	theme = realm
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		hidden_effect = {
+			trigger_event = { id = BTWK_britannia_high_king.0121 days = 3 }
+			trigger_event = { id = BTWK_britannia_high_king.0124 days = 4 }
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0120.a
+		custom_tooltip = BTWK_britannia_high_king.0120.a.tt
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+		}
+	}
+}
+
+# Trigger actual Empower the High Council vassalization request event for subject kings
+BTWK_britannia_high_king.0121 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		has_title = title:e_britannia
+	}
+
+	immediate = {
+		save_scope_as = high_king
+		every_tributary = {
+			limit = { 
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			# In case there is leftovers from a previous attempt
+			remove_variable = HK_reform_empower_high_council_supporter
+			remove_variable = HK_reform_empower_high_council_opponent
+			trigger_event = BTWK_britannia_high_king.0122
+		}
+	}
+}
+
+# Subject kings receive request for vassalization, decide stance
+BTWK_britannia_high_king.0122 = {
+	type = letter_event
+	opening = BTWK_britannia_high_king.0122.opening
+	desc = BTWK_britannia_high_king.0122.desc
+	
+	sender = {
+		character = scope:high_king
+		animation = personality_rational
+	}
+	
+	immediate = {
+		save_scope_as = subject_king
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0122.a
+		custom_tooltip = BTWK_britannia_high_king.0122.a.tt
+		set_variable = HK_reform_empower_high_council_supporter
+		scope:high_king = { trigger_event = BTWK_britannia_high_king.0123 }
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_reform_empower_high_council_support_score >= 0 
+			}
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0122.b
+		custom_tooltip = BTWK_britannia_high_king.0122.b.tt
+		set_variable = HK_reform_empower_high_council_opponent
+		scope:high_king = { trigger_event = BTWK_britannia_high_king.0123 }
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_reform_empower_high_council_support_score < 0 
+			}
+		}
+	}
+}
+
+
+# Claimant receives responses from other kings
+BTWK_britannia_high_king.0123 = {
+	type = letter_event
+	opening = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:subject_king = { has_variable = HK_reform_empower_high_council_supporter } }
+				desc = BTWK_britannia_high_king.0123.opening.supporter
+			}
+			desc = BTWK_britannia_high_king.0123.opening.opponent
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:subject_king = { has_variable = HK_reform_empower_high_council_supporter } }
+				desc = BTWK_britannia_high_king.0123.desc.supporter
+			}
+			desc = BTWK_britannia_high_king.0123.desc.opponent
+		}
+	}
+	
+	sender = {
+		character = scope:subject_king
+		animation = personality_rational
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0123.a
+		trigger = { scope:subject_king = { has_variable = HK_reform_empower_high_council_supporter } }
+		custom_tooltip = BTWK_britannia_high_king.0123.a.tt
+	}
+	option = {
+		name = BTWK_britannia_high_king.0123.b
+		trigger = { scope:subject_king = { has_variable = HK_reform_empower_high_council_opponent } }
+		custom_tooltip = BTWK_britannia_high_king.0123.b.tt
+	}
+}
+
+# All responses recieved, decide what to do now
+BTWK_britannia_high_king.0124 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } } }
+				desc = BTWK_britannia_high_king.0124.t.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0124.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } } }
+				desc = BTWK_britannia_high_king.0124.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0124.desc
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
+	
+	immediate = {
+		ordered_tributary = {
+			limit = { has_variable = HK_reform_empower_high_council_opponent }
+			order_by = military_power
+			save_scope_as = HK_britannia_opponent_leader
+		}
+		save_scope_as = high_king
+	}
+
+	option = {		# To war!
+		name = BTWK_britannia_high_king.0124.a
+		trigger = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } }
+		# Your strongest opponent declares war on you
+		hidden_effect = {
+			scope:HK_britannia_opponent_leader = {
+				if = {
+					limit = { has_truce = root }
+					cancel_truce_one_way = root
+				}
+			}
+		}
+		scope:HK_britannia_opponent_leader = {
+			start_war = {
+				cb = BTWK_depose_britannia_high_king_reform_cb
+				target = root
+			}
+		}
+		random_character_war = {
+			limit = {
+				primary_defender = root
+				primary_attacker = scope:HK_britannia_opponent_leader
+				using_cb = BTWK_depose_britannia_high_king_reform_cb
+			}
+			set_variable = {
+				name = HK_depose_war_reform
+				value = title:e_britannia.var:HK_reform_empower_high_council
+			}
+			save_scope_as = HK_reform_empower_high_council_war
+		}
+		custom_tooltip = BTWK_britannia_high_king.0124.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0124.a.tt.2
+		custom_tooltip = BTWK_britannia_high_king.0124.a.tt.3
+		# All opponents join the enemy
+		every_tributary = {
+			limit = { 
+				has_variable = HK_reform_empower_high_council_opponent
+				NOT = { this = scope:HK_britannia_opponent_leader }
+			}
+			scope:HK_reform_empower_high_council_war ?= { add_attacker = prev }
+		}
+		# Notify other players
+		every_player = {
+			limit = { 
+				NOT = { this = root }
+				BTWK_britannia_high_kingship_is_relevant_trigger = yes
+			}
+			trigger_event = BTWK_britannia_high_king.0125
+		}
+		every_tributary = {
+			limit = {
+				is_ai = yes
+			}
+			remove_variable = HK_reform_empower_high_council_supporter
+			remove_variable = HK_reform_empower_high_council_opponent
+		}
+		
+		# Reform is still blocked as the High King will be at war
+		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+	option = {		# No opponents, automatically win
+		name = BTWK_britannia_high_king.0124.b
+		trigger = { NOT = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } } }
+		custom_tooltip = BTWK_britannia_high_king.0124.b.tt
+		set_variable = {
+			name = BTWK_britannia_high_king_0126_no_opponents
+			days = 1
+		}
+		trigger_event = BTWK_britannia_high_king.0126
+		every_player = {
+			limit = { 
+				NOT = { this = scope:high_king }
+			}
+			trigger_event = BTWK_britannia_high_king.0127
+		}
+		
+		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+}
+
+# Notify other rulers in Britannia of civil war
+BTWK_britannia_high_king.0125 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0125.t
+	desc = BTWK_britannia_high_king.0125.desc
+	theme = war
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { root != scope:HK_britannia_opponent_leader }
+			custom_tooltip = BTWK_britannia_high_king.0125.a.tt
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0125.a.tt.a
+		}
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = HK_reform_empower_high_council_supporter
+			}
+			text = BTWK_britannia_high_king.0125.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = HK_reform_empower_high_council_opponent
+			}
+			text = BTWK_britannia_high_king.0125.a.opponent
+		}
+		name = {
+			trigger = {
+				NOT = {
+					has_variable = HK_reform_empower_high_council_supporter
+					has_variable = HK_reform_empower_high_council_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0125.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				NOT = {
+					has_variable = HK_reform_empower_high_council_supporter
+					has_variable = HK_reform_empower_high_council_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0125.a.anglo_saxon
+		}
+		name = {
+			trigger = { 
+				NOR = {
+					has_variable = HK_reform_empower_high_council_supporter
+					has_variable = HK_reform_empower_high_council_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0125.a.other
+		}
+		remove_variable = HK_reform_empower_high_council_supporter
+		remove_variable = HK_reform_empower_high_council_opponent
+	}
+}
+
+# Reform Passed - Empower the High Council
+BTWK_britannia_high_king.0126 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0126.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:high_king = { has_variable = BTWK_britannia_high_king_0126_no_opponents } }
+				desc = BTWK_britannia_high_king.0126.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0126.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		title:e_britannia.var:HK_reform_empower_high_council ?= { set_variable = reform_passed }
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0126.a
+		custom_tooltip = BTWK_britannia_high_king.0126.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0126.a.tt.2
+		if = {
+			limit = { government_has_flag = government_has_tribal_fame }
+			custom_tooltip = BTWK_britannia_high_king.0126.a.tt.3
+		}
+		if = {
+			limit = {
+				OR = {
+					has_realm_law = crown_authority_2
+					has_realm_law = crown_authority_3
+				}
+			}
+			add_realm_law_skip_effects = crown_authority_1
+		}
+		custom_tooltip = BTWK_britannia_high_king.0126.a.tt.4
+		# Make subject kingdom tributaries into vassals
+		hidden_effect = {
+			every_tributary = {
+				limit = {
+					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+				}
+				end_tributary = yes
+				
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				if = {
+					limit = {
+						primary_title.tier < root.primary_title.tier
+					}
+					change_liege = {
+						liege = root
+						change = scope:change
+					}
+				}
+				else = {
+					# Break up any empire-tier Subject Kings so they can be vassalized
+					every_held_title = {
+						if = {
+							limit = {
+								tier < root.primary_title.tier
+								OR = {
+									NOT = { exists = scope:secondary_title }
+									tier > scope:secondary_title.tier
+								}
+							}
+							save_temporary_scope_as = secondary_title
+						}
+					}
+					every_vassal = {
+						limit = {
+							primary_title.tier >= scope:secondary_title.tier
+						}
+						change_liege = {
+							liege = root
+							change = scope:change
+						}
+					}
+					every_held_title = {
+						if = {
+							limit = {
+								tier >= root.primary_title.tier
+							}
+							save_scope_as = empire_title
+							prev = { destroy_title = scope:empire_title }
+						}
+					}			
+					change_liege = {
+						liege = root
+						change = scope:change
+					}
+				}
+				resolve_title_and_vassal_change = scope:change
+				
+				BTWK_britannia_high_kingship_make_subject_king_vassal_effect = yes
+			}
+			
+		}
+		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
+	}
+}
+
+# Notify other rulers
+BTWK_britannia_high_king.0127 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_high_king.0127.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:high_king = { has_variable = BTWK_britannia_high_king_0126_no_opponents } }
+				desc = BTWK_britannia_high_king.0127.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0127.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { 
+			save_scope_as = background_throne_room_scope
+		}
+		custom_tooltip = BTWK_britannia_high_king.0127.a.tt
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_supporter
+			}
+			text = BTWK_britannia_high_king.0127.a.was_supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_opponent
+			}
+			text = BTWK_britannia_high_king.0127.a.was_opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0127.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_high_king.0127.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0127.a.other
+		}
+	}
+}
+
+# High King white peaced
+BTWK_britannia_high_king.0128 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0128.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:high_king = root }
+				desc = BTWK_britannia_high_king.0128.desc.high_king
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_supporter }
+				desc = BTWK_britannia_high_king.0128.desc.supporter
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_opponent }
+				desc = BTWK_britannia_high_king.0128.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0128.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_tie
+	}
+	
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0128.tt.a
+			add_character_modifier = {
+				modifier = BTWK_britannia_high_king_reform_blocked_modifier
+				years = 5
+			}
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0128.tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:high_king
+			}
+			text = BTWK_britannia_high_king.0128.a.high_king
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_supporter
+			}
+			text = BTWK_britannia_high_king.0128.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_opponent
+			}
+			text = BTWK_britannia_high_king.0128.a.opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0128.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0128.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0128.a.other
+		}
+	}
+}
+
+
+# High King Defeated, forced to abdicate
+BTWK_britannia_high_king.0129 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0129.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:claimant = root }
+				desc = BTWK_britannia_high_king.0129.desc.high_king
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_supporter }
+				desc = BTWK_britannia_high_king.0129.desc.supporter
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_opponent }
+				desc = BTWK_britannia_high_king.0129.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0129.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_loss
+	}
+	
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:high_king }
+			BTWK_britannia_high_kingship_remove_authority_effect = { 
+				AMOUNT = dynasty.var:britannia_high_kingship_authority
+			}
+			set_variable = {
+				name = deposed_primary_title
+				value = primary_title
+				months = 1
+			}
+			depose_effect = { DEPOSER = scope:attacker }
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0129.tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:high_king
+			}
+			text = BTWK_britannia_high_king.0129.a.high_king
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_supporter
+			}
+			text = BTWK_britannia_high_king.0129.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_opponent
+			}
+			text = BTWK_britannia_high_king.0129.a.opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0129.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0129.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0129.a.other
+		}
+	}
+}
+
+# Reform Passed - Restore the Archbishopric of Londinium / Establish a State Church
+BTWK_britannia_high_king.0140 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+				}
+				desc = BTWK_britannia_high_king.0140.t.christian
+			}
+			desc = BTWK_britannia_high_king.0140.t.nonchristian
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {					
+					scope:high_king = { has_religion = religion:christianity_religion }
+					scope:high_king.faith.religious_head = { has_title = title:k_papal_state }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.catholic.high_king
+			}
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.christian.high_king
+			}
+			triggered_desc = {
+				trigger = {
+					scope:high_king = { has_religion = religion:christianity_religion }
+					root != scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.christian
+			}
+			triggered_desc = {
+				trigger = {
+					NOT = { scope:high_king = { has_religion = religion:christianity_religion } }
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0140.desc.nonchristian.high_king
+			}
+			desc = BTWK_britannia_high_king.0140.desc.nonchristian
+		}
+	}
+	theme = faith
+
+	left_portrait = {
+		character = scope:high_king
+		animation = personality_zealous
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			show_as_tooltip = {
+				if = {
+					limit = { 
+						scope:high_king = {
+							has_religion = religion:christianity_religion 
+							NOT = { title:b_londiniumcastle = { is_holy_site_of = prev.faith } }
+						}
+					}
+					custom_tooltip = BTWK_britannia_high_king.0140.a.tt.1
+				}
+				if = {
+					limit = { scope:high_king = { has_religion = religion:christianity_religion } }
+					scope:BTWK_britannia_high_king_state_church_seat = {
+						add_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+						custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.christian
+					}
+				}
+				else = {
+					scope:BTWK_britannia_high_king_state_church_seat = {
+						add_county_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_modifier
+						custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.nonchristian
+					}
+				}
+			}
+		}
+		scope:BTWK_britannia_high_king_state_church_seat = {
+			random_direct_de_jure_vassal_title = {
+				limit = { title_province = { is_county_capital = yes } }
+				save_scope_as = state_church_seat_barony
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0140.a
+		trigger = { this = scope:high_king }
+		if = {
+			limit = { 
+				has_religion = religion:christianity_religion 
+				NOT = { title:b_londiniumcastle = { is_holy_site_of = prev.faith } }
+			}
+			custom_tooltip = BTWK_britannia_high_king.0140.a.tt.1
+			title:b_londiniumcastle = {
+				set_variable = {
+					name = BTWK_britannia_high_king_state_church_seat_faith
+					value = scope:high_king.faith
+				}
+			}
+		}
+		title:e_britannia.var:HK_reform_centralize_the_church = {
+			set_variable = {
+				name = BTWK_britannia_high_king_state_church_seat_county
+				value = scope:BTWK_britannia_high_king_state_church_seat.county
+			}
+			set_variable = {
+				name = BTWK_britannia_high_king_state_church_faith
+				value = scope:high_king.faith
+			}
+		}
+		if = {
+			limit = { has_religion = religion:christianity_religion }
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				add_county_modifier = BTWK_britannia_high_king_state_church_seat_christian_modifier
+				custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.christian
+			}
+			hidden_effect = {
+				add_character_modifier = BTWK_britannia_high_king_state_church_seat_christian_character_modifier
+			}
+		}
+		else = {
+			scope:BTWK_britannia_high_king_state_church_seat = {
+				add_county_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_modifier
+				custom_tooltip = BTWK_britannia_high_king.0140.a.tt.2.nonchristian
+			}
+			hidden_effect = {
+				add_character_modifier = BTWK_britannia_high_king_state_church_seat_nonchristian_character_modifier
+			}
+		}
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0140.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0140.b.other
+		}
+	}
+}
+
+# Reform Passed - Codify the Succession
+BTWK_britannia_high_king.0150 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0150.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0150.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0150.desc
+		}
+	}
+	theme = realm
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0150.a.tt.1
+			custom_tooltip = BTWK_britannia_high_king.0150.a.tt.2
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0150.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0150.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0150.a.tt.2
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0150.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0150.b.other
+		}
+	}
+}
+
+# Reform Passed - Unify the Legal Codes
+BTWK_britannia_high_king.0160 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0160.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0160.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0160.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = council_chamber }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { capital_barony = { save_scope_as = high_king_capital_barony } }
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0160.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0160.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0160.a.tt
+		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_gain }
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.subject_king
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.briton_roman
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0160.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = no
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_britannia_high_king.0160.b.other
+		}
+	}
+}
+
+# Reform Passed - Reclaim the Legacy of Caratacus
+BTWK_britannia_high_king.0170 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_britannia_high_king.0170.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:high_king
+				}
+				desc = BTWK_britannia_high_king.0170.desc.high_king
+			}
+			desc = BTWK_britannia_high_king.0170.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = ce1_fullscreen_legitimizing_legend }
+	
+	immediate = {
+		if = {
+			limit = { root != scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0170.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0170.a
+		trigger = { this = scope:high_king }
+		custom_tooltip = BTWK_britannia_high_king.0170.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0170.a.tt.2
+		if = {
+			limit = { has_dlc_feature = legends }
+			legend_seed_struggle_ending_effect = {
+				ENDER = root
+				STRUGGLE = britannia_struggle
+			}
+		}
+		give_nickname = nick_wledig_britannia
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+			add_dynasty_prestige = monumental_dynasty_prestige_value
+		}
+	}
+
+	option = {
+		trigger = { this != scope:high_king }
+		name = {
+			trigger = {
+				top_liege = scope:high_king
+				NAND = {
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_high_king.0170.b.high_king_vassals
+		}
+		name = {
+			trigger = {
+				top_liege != scope:high_king
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			text = BTWK_britannia_high_king.0170.b.other_briton
+		}
+		name = {
+			trigger = {
+				top_liege != scope:high_king
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = BTWK_britannia_high_king.0170.b.roman
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				capital_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_high_king.0170.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				top_liege != scope:high_king
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_goidelic
+						has_cultural_pillar = heritage_pictish
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0170.b.other_celtic
+		}
+		name = {
+			trigger = {
+				NOR = {
+					AND = {
+						top_liege = scope:high_king
+						NAND = {
+							is_unromanized_germanic_culture_trigger = yes
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { has_cultural_pillar = heritage_brythonic }
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { has_cultural_pillar = heritage_latin }
+					}
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+					AND = {
+						top_liege != scope:high_king
+						culture = { 
+							OR = {
+								has_cultural_pillar = heritage_goidelic
+								has_cultural_pillar = heritage_pictish
+							}
+						}
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0170.b.other
+		}
+	}
+}
+
+# Reform Started - Restore Imperial Dignity (initial event)
+BTWK_britannia_high_king.0180 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0180.t
+	desc = BTWK_britannia_high_king.0180.desc
+	theme = martial
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		hidden_effect = {
+			trigger_event = { id = BTWK_britannia_high_king.0181 days = 3 }
+			trigger_event = { id = BTWK_britannia_high_king.0184 days = 4 }
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0180.a
+		custom_tooltip = BTWK_britannia_high_king.0180.a.tt
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_restore_imperial_dignity_war_victory
+		}
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_restore_imperial_dignity_war_defeat
+		}
+	}
+}
+
+# Trigger actual Restore Imperial Dignity vassalization request event for subject kings
+BTWK_britannia_high_king.0181 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		has_title = title:e_britannia
+	}
+
+	immediate = {
+		save_scope_as = high_king
+		every_vassal_or_below = {
+			# In case there is leftovers from a previous attempt
+			remove_variable = HK_reform_restore_imperial_dignity_supporter
+			remove_variable = HK_reform_restore_imperial_dignity_opponent
+		}
+		every_vassal = {
+			limit = { 
+				highest_held_title_tier >= tier_county
+			}
+			trigger_event = BTWK_britannia_high_king.0182
+		}
+	}
+}
+
+# Subject kings receive request for vassalization, decide stance
+BTWK_britannia_high_king.0182 = {
+	type = letter_event
+	opening = BTWK_britannia_high_king.0182.opening
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					OR = {
+						highest_held_title_tier >= tier_kingdom
+						vassal_contract_has_flag = has_subject_kingdom_vassal_contract
+					}
+				}
+				desc = BTWK_britannia_high_king.0182.desc.king
+			}
+			desc = BTWK_britannia_high_king.0182.desc
+		}
+	}
+	
+	sender = {
+		character = scope:high_king
+		animation = personality_rational
+	}
+	
+	immediate = {
+		save_scope_as = subject_king
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0182.a
+		custom_tooltip = BTWK_britannia_high_king.0182.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0182.a.tt.2
+		set_variable = HK_reform_restore_imperial_dignity_supporter
+		if = {		# Only notify for important vassals
+			limit = {
+				OR = {
+					highest_held_title_tier >= tier_kingdom
+					vassal_contract_has_flag = has_subject_kingdom_vassal_contract
+				}
+			}
+			scope:high_king = { trigger_event = BTWK_britannia_high_king.0183 }
+		}
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_reform_restore_imperial_dignity_support_score >= 0 
+			}
+		}
+	}
+	option = {
+		name = BTWK_britannia_high_king.0182.b
+		custom_tooltip = BTWK_britannia_high_king.0182.b.tt
+		set_variable = HK_reform_restore_imperial_dignity_opponent
+		if = {		# Only notify for important vassals
+			limit = {
+				OR = {
+					highest_held_title_tier >= tier_kingdom
+					vassal_contract_has_flag = has_subject_kingdom_vassal_contract
+				}
+			}
+			scope:high_king = { trigger_event = BTWK_britannia_high_king.0183 }
+		}
+		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				BTWK_britannia_high_king_reform_restore_imperial_dignity_support_score < 0 
+			}
+		}
+	}
+}
+
+
+# Claimant receives responses from other kings
+BTWK_britannia_high_king.0183 = {
+	type = letter_event
+	opening = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:subject_king = { has_variable = HK_reform_restore_imperial_dignity_supporter } }
+				desc = BTWK_britannia_high_king.0183.opening.supporter
+			}
+			desc = BTWK_britannia_high_king.0183.opening.opponent
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:subject_king = { has_variable = HK_reform_restore_imperial_dignity_supporter } }
+				desc = BTWK_britannia_high_king.0183.desc.supporter
+			}
+			desc = BTWK_britannia_high_king.0183.desc.opponent
+		}
+	}
+	
+	sender = {
+		character = scope:subject_king
+		animation = personality_rational
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0183.a
+		trigger = { scope:subject_king = { has_variable = HK_reform_restore_imperial_dignity_supporter } }
+		custom_tooltip = BTWK_britannia_high_king.0183.a.tt
+	}
+	option = {
+		name = BTWK_britannia_high_king.0183.b
+		trigger = { scope:subject_king = { has_variable = HK_reform_restore_imperial_dignity_opponent } }
+		custom_tooltip = BTWK_britannia_high_king.0183.b.tt
+	}
+}
+
+# All responses received, decide what to do now
+BTWK_britannia_high_king.0184 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } } }
+				desc = BTWK_britannia_high_king.0184.t.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0184.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } } }
+				desc = BTWK_britannia_high_king.0184.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0184.desc
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room }
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
+	
+	immediate = {
+		ordered_vassal = {
+			limit = { has_variable = HK_reform_restore_imperial_dignity_opponent }
+			order_by = military_power
+			save_scope_as = HK_britannia_opponent_leader
+		}
+		save_scope_as = high_king
+	}
+
+	option = {		# To war!
+		name = BTWK_britannia_high_king.0184.a
+		trigger = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } }
+		# Your strongest opponent declares war on you
+		hidden_effect = {
+			scope:HK_britannia_opponent_leader = {
+				if = {
+					limit = { has_truce = root }
+					cancel_truce_one_way = root
+				}
+			}
+		}
+		scope:HK_britannia_opponent_leader = {
+			start_war = {
+				cb = BTWK_depose_britannia_high_king_reform_cb
+				target = root
+			}
+		}
+		random_character_war = {
+			limit = {
+				primary_defender = root
+				primary_attacker = scope:HK_britannia_opponent_leader
+				using_cb = BTWK_depose_britannia_high_king_reform_cb
+			}
+			set_variable = {
+				name = HK_depose_war_reform
+				value = title:e_britannia.var:HK_reform_restore_imperial_dignity
+			}
+			save_scope_as = HK_reform_restore_imperial_dignity_war
+		}
+		custom_tooltip = BTWK_britannia_high_king.0184.a.tt.1
+		custom_tooltip = BTWK_britannia_high_king.0184.a.tt.2
+		custom_tooltip = BTWK_britannia_high_king.0184.a.tt.3
+		# All opponents join the enemy
+		every_vassal = {
+			limit = { 
+				has_variable = HK_reform_restore_imperial_dignity_opponent
+				NOT = { this = scope:HK_britannia_opponent_leader }
+			}
+			scope:HK_reform_restore_imperial_dignity_war ?= { add_attacker = prev }
+		}
+		# Notify other players
+		every_player = {
+			limit = { 
+				NOT = { this = root }
+				BTWK_britannia_high_kingship_is_relevant_trigger = yes
+			}
+			trigger_event = BTWK_britannia_high_king.0185
+		}
+		# Don't clear the supporter/opponent flags as we need them for postwar rewards
+		
+		# Reform is still blocked as the High King will be at war
+		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+	option = {		# No opponents, automatically win
+		name = BTWK_britannia_high_king.0184.b
+		trigger = { NOT = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } } }
+		custom_tooltip = BTWK_britannia_high_king.0184.b.tt
+		set_variable = {
+			name = BTWK_britannia_high_king_0186_no_opponents
+			days = 1
+		}
+		trigger_event = BTWK_britannia_high_king.0186
+		every_player = {
+			limit = { 
+				NOT = { this = scope:high_king }
+			}
+			trigger_event = BTWK_britannia_high_king.0187
+		}
+		
+		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+}
+
+# Notify other rulers in Britannia of civil war
+BTWK_britannia_high_king.0185 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0185.t
+	desc = BTWK_britannia_high_king.0185.desc
+	theme = war
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_defender
+		trigger = { exists = scope:HK_britannia_opponent_leader }
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { root != scope:HK_britannia_opponent_leader }
+			custom_tooltip = BTWK_britannia_high_king.0185.a.tt
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0185.a.tt.a
+		}
+		scope:high_king = {
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_restore_imperial_dignity_war_victory
+			}
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_restore_imperial_dignity_war_defeat
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_variable = HK_reform_restore_imperial_dignity_supporter
+			}
+			text = BTWK_britannia_high_king.0185.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = HK_reform_restore_imperial_dignity_opponent
+			}
+			text = BTWK_britannia_high_king.0185.a.opponent
+		}
+		name = {
+			trigger = {
+				NOT = {
+					has_variable = HK_reform_restore_imperial_dignity_supporter
+					has_variable = HK_reform_restore_imperial_dignity_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0185.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				NOT = {
+					has_variable = HK_reform_restore_imperial_dignity_supporter
+					has_variable = HK_reform_restore_imperial_dignity_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0185.a.anglo_saxon
+		}
+		name = {
+			trigger = { 
+				NOR = {
+					has_variable = HK_reform_restore_imperial_dignity_supporter
+					has_variable = HK_reform_restore_imperial_dignity_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0185.a.other
+		}
+	}
+}
+
+# Reform Passed - Restore Imperial Dignity
+BTWK_britannia_high_king.0186 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_britannia_high_king.0186.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:high_king = { has_variable = BTWK_britannia_high_king_0186_no_opponents } }
+				desc = BTWK_britannia_high_king.0186.desc.no_opponents
+			}
+			desc = BTWK_britannia_high_king.0186.desc
+		}
+	}
+	theme = realm
+	override_background = { reference = ep3_fullscreen_restore_rome }
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		title:e_britannia.var:HK_reform_restore_imperial_dignity ?= { set_variable = reform_passed }
+		title:e_britannia = { set_variable = britannia_united }
+		struggle:britannia_struggle = { end_struggle = BTWK_HK_britannia_restore_imperial_dignity_decision_struggle }
+	}
+
+	option = {
+		name = BTWK_britannia_high_king.0186.a
+		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.1
+		# Gain e_roman_britannia and destroy e_britannia
+		get_title = title:e_roman_britannia
+		destroy_title = title:e_britannia
+		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.2
+		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.3
+		hidden_effect = {
+			# Revoke subject kingdom contract from every tributary
+			every_vassal = {
+				limit = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = none
+				}
+			}
+			# Destroy all kingdoms in your realm (including yours!)
+			every_held_title = {
+				limit = { tier = tier_kingdom }
+				root = { destroy_title = prev }
+			}
+			every_vassal = {
+				limit = {
+					highest_held_title_tier >= tier_kingdom
+				}
+				save_scope_as = current_vassal
+				every_held_title = {
+					limit = { tier = tier_kingdom }
+					scope:current_vassal = { destroy_title = prev }
+				}
+			}
+			# Flip all controlled areas in Britannia to Roman de jure titles
+			every_in_global_list = {
+				variable = roman_duchy_list
+				limit = { 
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					root = { can_create_formable_title = { TITLE = prev } }
+				}
+				set_variable = roman_title_created_de_jure
+				check_de_jure_liege_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		# Free conversion to Sub-Roman
+		if = {
+			limit = { NOT = { government_has_flag = government_is_administrative } }
+			convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:sub_roman }
+		}
+		dynasty = { 
+			add_dynasty_modifier = BTWK_britannia_high_king_restore_imperial_dignity_modifier
+			add_dynasty_prestige = monumental_dynasty_prestige_value
+		}
+	}
+}
+
+# Notify other rulers
+BTWK_britannia_high_king.0187 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_britannia_high_king.0187.t
+	desc = BTWK_britannia_high_king.0187.desc
+	theme = realm
+	override_background = { reference = ep3_byzantium_throneroom }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_win
+	}
+	
+	immediate = {
+		custom_tooltip = BTWK_britannia_high_king.0187.a.tt.1
+		if = {
+			limit = { top_liege = scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0187.a.tt.2
+		}
+		custom_tooltip = BTWK_britannia_high_king.0187.a.tt.3
+	}
+
+	option = {
+		name = {
+			trigger = {
+				top_liege = scope:high_king
+				OR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				NOT = { has_variable = BTWK_britannia_high_king_was_reform_opponent }
+			}
+			text = BTWK_britannia_high_king.0187.a.roman_vassals
+		}
+		name = {
+			trigger = { 
+				top_liege = scope:high_king
+				OR = {
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				NOT = { has_variable = BTWK_britannia_high_king_was_reform_supporter }
+			}
+			text = BTWK_britannia_high_king.0187.a.briton_vassals
+		}
+		name = {
+			trigger = { 
+				top_liege = scope:high_king
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					culture = { has_cultural_pillar = heritage_latin }
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+			}
+			text = BTWK_britannia_high_king.0187.a.other_vassals
+		}
+		name = {
+			trigger = {
+				top_liege = {
+					this != scope:high_king
+					NOT = {
+						any_held_title = {
+							has_variable = is_roman_empire_or_claimant_title
+						}
+					}
+				}
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = BTWK_britannia_high_king.0187.a.other_roman
+		}
+		name = {
+			trigger = {
+				top_liege = this
+				any_held_title = {
+					has_variable = is_roman_empire_or_claimant_title
+				}
+			}
+			text = BTWK_britannia_high_king.0187.a.other_emperor
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						capital_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = BTWK_britannia_high_king.0187.a.other
+		}
+		if = {
+			limit = {
+				any_liege_or_above = { this = scope:high_king }
+				has_variable = HK_reform_restore_imperial_dignity_supporter
+				NOT = { government_has_flag = government_is_tribal }
+			}
+			flag:sub_roman = { # sub_roman_government / Sub-Roman
+				save_scope_value_as = {
+					name = has_selected_a_government
+					value = flag:sub_roman
+				}
+			}
+			change_to_administrative_effect = yes
+			save_scope_as = recipient
+			change_to_administrative_hereditary_effect = yes
+			change_influence = massive_influence_gain
+		}
+	}
+}
+
+# High King white peaced
+BTWK_britannia_high_king.0188 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0188.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:high_king = root }
+				desc = BTWK_britannia_high_king.0188.desc.high_king
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_supporter }
+				desc = BTWK_britannia_high_king.0188.desc.supporter
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_opponent }
+				desc = BTWK_britannia_high_king.0188.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0188.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_tie
+	}
+	
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:high_king }
+			custom_tooltip = BTWK_britannia_high_king.0188.tt.a
+			add_character_modifier = {
+				modifier = BTWK_britannia_high_king_reform_blocked_modifier
+				years = 5
+			}
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0188.tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:high_king
+			}
+			text = BTWK_britannia_high_king.0188.a.high_king
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_supporter
+			}
+			text = BTWK_britannia_high_king.0188.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_opponent
+			}
+			text = BTWK_britannia_high_king.0188.a.opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0188.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0188.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0188.a.other
+		}
+	}
+}
+
+
+# High King Defeated, forced to abdicate
+BTWK_britannia_high_king.0189 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_britannia_high_king.0189.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:claimant = root }
+				desc = BTWK_britannia_high_king.0189.desc.high_king
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_supporter }
+				desc = BTWK_britannia_high_king.0189.desc.supporter
+			}
+			triggered_desc = {
+				trigger = { has_variable = BTWK_britannia_high_king_was_reform_opponent }
+				desc = BTWK_britannia_high_king.0189.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0189.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:high_king
+		animation = war_over_loss
+	}
+	
+	right_portrait = {
+		character = scope:HK_britannia_opponent_leader
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:high_king = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:high_king }
+			BTWK_britannia_high_kingship_remove_authority_effect = { 
+				AMOUNT = dynasty.var:britannia_high_kingship_authority
+			}
+			set_variable = {
+				name = deposed_primary_title
+				value = primary_title
+				months = 1
+			}
+			depose_effect = { DEPOSER = scope:attacker }
+		}
+		else = {
+			custom_tooltip = BTWK_britannia_high_king.0189.tt
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:high_king
+			}
+			text = BTWK_britannia_high_king.0189.a.high_king
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_supporter
+			}
+			text = BTWK_britannia_high_king.0189.a.supporter
+		}
+		name = {
+			trigger = { 
+				has_variable = BTWK_britannia_high_king_was_reform_opponent
+			}
+			text = BTWK_britannia_high_king.0189.a.opponent
+		}
+		name = {
+			trigger = {
+				NOR = {
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0189.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+				}
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_britannia_high_king.0189.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:claimant
+					has_variable = BTWK_britannia_high_king_was_reform_supporter
+					has_variable = BTWK_britannia_high_king_was_reform_opponent
+					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			text = BTWK_britannia_high_king.0189.a.other
+		}
+	}
+}
 
 ##################################################
 # Debug Test Events

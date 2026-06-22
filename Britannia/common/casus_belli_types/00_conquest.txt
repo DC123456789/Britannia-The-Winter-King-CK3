@@ -50,19 +50,37 @@
 					government_has_flag = government_limited_conquest_cb
 				}
 				OR = {
-					# You are an unromanized Germanic, and you are attacking someone who is not unromanized Germanic
+					# You are an unromanized Germanic who is not a foederati of someone who is not an unromanized Germanic,
+					# and you are attacking someone who is not unromanized Germanic
 					# Or you are not tribal (Folkright unromanized Germanic can declare on anyone)
 					AND = {
 						culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+						NOT = {
+							AND = {
+								is_tributary = yes
+								has_subject_contract_group = tributary_foederatus
+								suzerain ?= { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+							}
+						}
 						OR = {
 							scope:defender.top_liege.culture = { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
 							NOT = { government_has_flag = government_is_tribal }
 						}
 					}
 					# Or you are not an unromanized Germanic, and you are attacking an unromanized Germanic 
+					# who is not a foederati of someone who is not an unromanized Germanic
 					AND = {
 						NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
-						scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+						scope:defender.top_liege = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							NOT = {
+								AND = {
+									is_tributary = yes
+									has_subject_contract_group = tributary_foederatus
+									suzerain ?= { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+								}
+							}
+						}
 					}
 					# Or you have the Adventurer Warlord modifier, and you are attacking someone outside your heritage
 					AND = {
@@ -145,6 +163,29 @@
 		
 		# BTWK AI cultural redoubt blocks
 		scope:target = { BTWK_ai_cb_target_title_block_on_cultural_redoubts_trigger = yes }
+		
+		trigger_if = {
+			limit = { 
+				scope:attacker = {
+					culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
+					any_character_struggle = {
+						involvement = involved
+						has_struggle_phase_parameter = unromanized_germanic_conquest_cb_on_laeti_blocked
+					}
+				} 
+			}
+			scope:target = {
+				custom_tooltip = {
+					text = BTWK_cannot_attack_laeti_during_struggle_phase_tt
+					NOT = {
+						holder = {
+							culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
+							vassal_contract_has_flag = has_laetus_contract
+						}
+					}
+				}
+			}
+		}
 	}
 
 	should_invalidate = {
@@ -1042,11 +1083,31 @@ duchy_conquest_cb = {
 
 		#EP2 accolade glory gain for winning against higher ranked enemy
 		scope:attacker = { accolade_attacker_war_end_glory_gain_med_effect = yes }
+		
+		# Initial laeti revolt automatically creates their duchy title, so they can vassalize counts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war }
+				NOT = { exists = scope:attacker.primary_title.title_capital_county.var:anglo_saxon_duchy.holder }
+			}
+			scope:attacker = {
+				get_title = primary_title.title_capital_county.var:anglo_saxon_duchy
+			}
+		}
 
 		create_title_and_vassal_change = {
 			type = conquest
 			save_scope_as = change
 			add_claim_on_loss = yes
+		}
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { becomes_independent = { change = scope:change } }
 		}
 
 		# EP3 Laamp possibility warning
@@ -1080,6 +1141,22 @@ duchy_conquest_cb = {
 		}
 
 		resolve_title_and_vassal_change = scope:change
+		
+		# For initial laeti revolt, apply de jure change afterwards to avoid screwing up the war results
+		if = {
+			limit = {
+				war = { has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war }
+				scope:attacker = { has_title = primary_title.title_capital_county.var:anglo_saxon_duchy }
+				scope:attacker.primary_title.title_capital_county.var:anglo_saxon_duchy = {
+					NOT = { has_variable = title_created_de_jure }
+				}
+			}
+			scope:attacker = {
+				create_anglo_saxon_duchy_effect = {
+					TITLE = primary_title.title_capital_county.var:anglo_saxon_duchy
+				}
+			}
+		}
 
 		# Prestige Progress for the Attacker
 		every_in_list = {
@@ -1172,6 +1249,23 @@ duchy_conquest_cb = {
 	on_white_peace = {
 		scope:attacker = { show_pow_release_message_effect = yes }
 		# Prestige loss for the attacker
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { 
+				create_title_and_vassal_change = {
+					type = independency
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				becomes_independent = { change = scope:change }
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
 
 		#EP2 accolade glory gain for doing pretty good against higher ranked enemy
 		scope:defender = { accolade_defender_war_end_glory_gain_low_effect = yes }

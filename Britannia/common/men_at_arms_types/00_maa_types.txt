@@ -51,7 +51,7 @@ light_footmen = {
 
 	holy_order_fallback = yes
 	
-	stack = 60
+	stack = 50
 	ai_quality = { value = culture_ai_weight_skirmishers }
 
 	illustration = {
@@ -104,7 +104,7 @@ bowmen = {
 
 	holy_order_fallback = yes
 	
-	stack = 25
+	stack = 20
 	ai_quality = { 
 		value = culture_ai_weight_archers
 		add = counter_synergy_ai_weight_archers
@@ -129,7 +129,7 @@ light_horsemen = {
 	damage = 10
 	toughness = 15
 	pursuit = 40
-	screen = 120
+	screen = 95
 	
 	terrain_bonus = {
 		plains = { damage = 1 }
@@ -139,6 +139,12 @@ light_horsemen = {
 		desert_mountains = { damage = 1 pursuit = 1 }
 		wetlands = { damage = 1 toughness = 1 pursuit = 1 screen = 1 }
 	}
+	
+	counters = {
+		light_cavalry = .25
+		archers = .25
+		gunpowder = 1
+	}	
 
 	can_recruit = {
 		NOR = {
@@ -185,19 +191,18 @@ light_horsemen = {
 pikemen_unit = {
 	type = pikemen
 	
-	damage = 21
-	toughness = 25
+	damage = 35
+	toughness = 40
 	pursuit = 0
-	screen = 0	
+	screen = 10	
 
 	counters = {
 		pikemen = 1
-		heavy_infantry = .5
+		heavy_infantry = .75
 		light_cavalry = 3
-		heavy_cavalry = 2
-		camel_cavalry = 1
-		elephant_cavalry = 1
-		archer_cavalry = 1	
+		heavy_cavalry = 1.5
+		
+		archer_cavalry = .75	
 	}
 
 	can_recruit = {
@@ -241,8 +246,8 @@ pikemen_unit = {
 armored_footmen = { 
 	type = heavy_infantry
 	
-	damage = 15
-	toughness = 15
+	damage = 25
+	toughness = 40
 	pursuit = 0
 	screen = 0
 
@@ -326,31 +331,24 @@ onager = {
 	high_maintenance_cost = { gold = onager_high_maint_cost }
 	provision_cost = @provisions_cost_special_cheap
 
-	stack = 10
+	stack = 5
 	allowed_in_hired_troops = no
 }
 
-#Medieval Era    #Future Placeholder for Late Unit
+#Medieval Era    #Mercenary Cavalry from Gaul (Medium)
 armored_horsemen = {
 	type = heavy_cavalry
 	
-	damage = 50
-	toughness = 35
-	pursuit = 20
-	screen = 0
+	damage = 32
+	toughness = 40
+	pursuit = 65
+	screen = 55
+	
 	
 	can_recruit = {
 		culture = {
-			has_innovation = innovation_armored_horsemen
-		}
-		NOT = {
-			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
-		}
-	}
-
-	can_recruit = {
-		culture = {
-			has_innovation = innovation_armored_horsemen
+			has_innovation = innovation_house_soldiers
+			has_innovation = innovation_sahel_horsemen
 		}
 		NOR = {
 			government_has_flag = government_is_nomadic
@@ -381,8 +379,13 @@ armored_horsemen = {
 	}
 
 	counters = {
-		
-	}
+		light_cavalry = 1
+		archer_cavalry = .50
+		archers = 1
+		heavy_cavalry = .25
+		skirmishers = .5
+		gunpowder = 1
+	}	
 
 	winter_bonus = {
 		normal_winter = { damage = -10 toughness = -5 }
@@ -394,7 +397,7 @@ armored_horsemen = {
 	high_maintenance_cost = { gold = heavy_cavalry_high_maint_cost }
 	provision_cost = @provisions_cost_cavalry_expensive
 	
-	stack = 25
+	stack = 15
 	ai_quality = { value = culture_ai_weight_heavy_cavalry }
 
 	illustration = {
@@ -445,7 +448,7 @@ mangonel = {
 	high_maintenance_cost = { gold = mangonel_high_maint_cost }
 	provision_cost = @provisions_cost_special_moderate
 
-	stack = 10	
+	stack = 5	
 }
 
 #High Medieval Era
@@ -494,7 +497,7 @@ crossbowmen = {
 		value = culture_ai_weight_crossbowmen
 	}
 	
-	stack = 25
+	stack = 10
 
 	illustration = {
 		trigger = {
@@ -545,7 +548,7 @@ trebuchet = {
 	high_maintenance_cost = { gold = trebuchet_high_maint_cost }
 	provision_cost = @provisions_cost_special_expensive
 
-	stack = 10
+	stack = 5
 	allowed_in_hired_troops = no
 
 }
@@ -639,8 +642,8 @@ house_guard = {
 		}
 	}
 
-	damage = 40
-	toughness = 32
+	damage = 45
+	toughness = 45
 	pursuit = 0
 	screen = 24
 
@@ -657,7 +660,7 @@ house_guard = {
 
 	max_regiments = 1
 
-	stack = 25
+	stack = 5
 	ai_quality = { value = 100 }
 
 	illustration = {
@@ -703,7 +706,7 @@ pikemen_militia = {
 	high_maintenance_cost = { gold = 0 }
 	provision_cost = @provisions_cost_infantry_expensive
 
-	stack = 25
+	stack = 75
 	ai_quality = { value = -100 }
 
 	allowed_in_hired_troops = no

@@ -9,8 +9,8 @@ soc_phase_2_base_spread = 0
 soc_phase_3_base_spread = 0.125
 soc_phase_4_base_spread = 0.25
 
-soc_internal_missionaries_holder_base_spread = 0.50
-soc_internal_missionaries_realm_base_spread = 0.25
+soc_internal_missionaries_holder_base_spread = 0.40
+soc_internal_missionaries_realm_base_spread = 0.20
 soc_external_missionaries_base_spread = 0.20
 soc_encourage_missionaries_holder_base_spread = 0.40
 soc_encourage_missionaries_realm_base_spread = 0.20
@@ -83,7 +83,7 @@ soc_proselytization_monthly_progress_value = {
 			holder.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.25
+			value = 0.20
 			desc = PROSELYTIZATION_PROGRESS_HOLDER_CHRISTIAN
 		}
 	}
@@ -92,7 +92,7 @@ soc_proselytization_monthly_progress_value = {
 			holder.top_liege.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.15
+			value = 0.10
 			desc = PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN
 		}
 	}
@@ -101,9 +101,16 @@ soc_proselytization_monthly_progress_value = {
 			any_neighboring_county = { religion = religion:christianity_religion }
 		}
 		add = {
-			value = 0.25
+			value = 0.10
 			desc = PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY
 		}
+	}
+	else_if = {
+		limit = { NOT = { holder.religion = religion:christianity_religion } }
+		subtract = {
+			value = 0.10
+			desc = PROSELYTIZATION_PROGRESS_NO_NEIGBOURING_CHRISTIAN_COUNTY_OR_CHRISTIAN_HOLDER
+		}		
 	}
 	if = {
 		limit = { 
@@ -340,10 +347,48 @@ soc_proselytization_monthly_progress_value = {
 			save_temporary_value_as = current_harmonic_sum
 			value = 1
 			save_temporary_value_as = current_index
+			# Full contribution if same heritage group, or both are Imperial-like cultures
+			culture = { save_temporary_scope_as = current_county_culture }
 			every_in_list = {
 				variable = nearby_external_missionary_sponsors
+				limit = { 
+					OR = {
+						culture = { has_same_heritage_group_as = { TARGET = scope.current_county_culture } }
+						AND = {
+							is_imperial_like_culture_trigger = yes
+							prev = { is_imperial_like_culture_trigger = yes }
+						}
+					}
+				}
 				value = 0
 				add = 1
+				divide = scope:current_index
+				add = scope:current_harmonic_sum
+				save_temporary_value_as = current_harmonic_sum
+				value = scope:current_index
+				add = 1
+				save_temporary_value_as = current_index
+			}
+			# Half contribution if not
+			every_in_list = {
+				variable = nearby_external_missionary_sponsors
+				limit = { 
+					NOR = {
+						culture = { has_same_heritage_group_as = { TARGET = scope.current_county_culture } }
+						AND = {
+							is_imperial_like_culture_trigger = yes
+							prev = { is_imperial_like_culture_trigger = yes }
+						}
+					}
+				}
+				value = 0
+				add = {
+					value = 0.75
+					if = {
+						limit = { prev.title_province = { has_holding_type = tribal_holding } }
+						subtract = 0.25
+					}
+				}
 				divide = scope:current_index
 				add = scope:current_harmonic_sum
 				save_temporary_value_as = current_harmonic_sum
@@ -596,9 +641,58 @@ BTWK_soc_ban_missionaries_score = {
 			limit = { monthly_character_income > 0 }
 			divide = monthly_character_income
 		}
-		subtract = 0.25
+		subtract = 0.5
+		multiply = 50
+		max = 0
+		min = -50
+	}
+}
+
+BTWK_convert_to_reformed_faith_score = {
+	value = -50
+	if = {
+		limit = {
+			ai_zeal > 0
+		}
+		subtract = ai_zeal
+	}
+	else = {
+		subtract = {
+			value = ai_zeal
+			divide = 2
+			min = -25
+		}
+	}
+	if = {
+		limit = {
+			government_has_flag = government_is_tribal
+			BTWK_reform_from_tribal_innovations_trigger = yes
+			faith = { has_doctrine_parameter = unreformed }
+		}
+		add = 25
+	}
+	if = {
+		limit = {
+			capital_county.faith = {
+				this != prev.faith
+				NOT = { has_doctrine_parameter = unreformed }
+			}
+		}
+		add = 20
+	}
+	add = {
+		value = 0
+		every_sub_realm_county = {
+			limit = {
+				faith != prev.faith
+				NOT = { faith = { has_doctrine_parameter = unreformed } }
+			}
+			add = 1
+		}
+		if = {
+			limit = { sub_realm_size > 0 }
+			divide = sub_realm_size
+		}
 		multiply = 100
-		max = 50
-		min = -25
 	}
 }

@@ -1,4 +1,11 @@
-﻿BTWK_britannia_claim_high_kingship_story = {
+﻿# Used as a generic object in store information about individual High Kingship reforms
+# var:reform_id (flag, localized)
+# var:reform_desc (flag, localized)
+# var:reform_passed (bool)
+BTWK_britannia_high_kingship_reform_struct_story = {
+}
+
+BTWK_britannia_claim_high_kingship_story = {
 	on_setup = {
 		story_owner = { save_scope_as = claimant }
 		# Notify other players
@@ -114,6 +121,10 @@
 
 BTWK_britannia_high_kingship_story = {
 	on_setup = {
+		title:e_britannia = {
+			set_variable = { name = high_kingship_story value = prev }
+		}
+		set_variable = { name = monthly_tick_day value = current_day }
 	}
 
 	on_end = {
@@ -193,13 +204,14 @@ BTWK_britannia_high_kingship_story = {
 				if = {
 					limit = { 
 						is_tributary_of = prev
-						BTWK_britannia_high_kingship_is_subject_king_trigger = yes
+						BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
 					}
 					set_variable = was_subject_king
 				}
 				trigger_event = { id = BTWK_britannia_high_king.0022 }
 			}
 		}
+		title:e_britannia = { remove_variable = high_kingship_story }
 	}
 
 	on_owner_death = {
@@ -265,5 +277,29 @@ BTWK_britannia_high_kingship_story = {
 		}
 	}
 	
-	# TODO Authority counter
+	# Monthly Authority counter
+	effect_group = {
+		days = 1
+		
+		trigger = {
+			current_day = this.var:monthly_tick_day
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			effect = {
+				story_owner.dynasty = {
+					change_variable = {
+						name = britannia_high_kingship_authority
+						add = BTWK_britannia_high_king_authority_change
+					}
+					clamp_variable = {
+						name = britannia_high_kingship_authority
+						min = BTWK_britannia_high_king_authority_min
+						max = BTWK_britannia_high_king_authority_max
+					}
+				}
+			}
+		}
+	}
 }

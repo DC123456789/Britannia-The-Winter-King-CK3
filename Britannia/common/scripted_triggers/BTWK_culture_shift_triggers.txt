@@ -416,3 +416,51 @@ character_is_barbarian_culture_or_descendant_trigger = {
 		}
 	}
 }
+
+
+BTWK_culture_allowed_to_diverge_at_county_trigger = {
+	# Britons have their own culture split
+	trigger_if = {
+		limit = {
+			$CULTURE$ = culture:briton		
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		custom_tooltip = {
+			text = BTWK_heritage_briton_cannot_diverge_in_britannia_tt
+			NAND = {
+				$CULTURE$ = culture:briton		
+				$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+	}
+	# Romans have their own system
+	trigger_if = {
+		limit = { $CULTURE$ = { has_cultural_pillar = heritage_latin } } 
+		custom_tooltip = {
+			text = BTWK_heritage_latin_cannot_diverge_tt
+			NOT = { $CULTURE$ = { has_cultural_pillar = heritage_latin } }
+		}
+	}
+	# Angle/Old Saxon/Jutish have their own culture split/evolution
+	trigger_if = {
+		limit = { 
+			OR = {
+				$CULTURE$ = culture:angle
+				$CULTURE$ = culture:old_saxon
+				$CULTURE$ = culture:jute
+			}
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		custom_tooltip = {
+			text = BTWK_heritage_anglo_saxon_cannot_diverge_in_britannia_tt
+			NAND = {
+				OR = {
+					$CULTURE$ = culture:angle
+					$CULTURE$ = culture:old_saxon
+					$CULTURE$ = culture:jute
+				}
+				$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+	}
+}

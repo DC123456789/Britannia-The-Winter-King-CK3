@@ -34,6 +34,11 @@
 			trigger_if = {
 				limit = {
 					government_has_flag = government_allow_pre_feudal_subjugation_limited
+					NAND = { 
+						owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+						# Deira cannot subjugate Lindsey early
+						scope:defender.primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+					}					
 				}
 				BTWK_reform_from_tribal_innovations_trigger = yes
 			}
@@ -117,6 +122,19 @@
 				multiply = scope:attacker.realm_size
 				desc = CB_REALM_SIZE_COST
 				max = 4000
+			}
+			
+			# More expensive if you are bypassing innovation requirements
+			if = {
+				limit = {
+					government_has_flag = government_allow_pre_feudal_subjugation_limited
+					NOT = { BTWK_reform_from_tribal_innovations_trigger = yes }
+					owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+				}
+				add = {
+					value = 1000
+					desc = CB_BTWK_BYPASS_INNOVATION_REQUIREMENTS				
+				}
 			}
 
 			# Cheaper in the later phases of the Britannia struggle

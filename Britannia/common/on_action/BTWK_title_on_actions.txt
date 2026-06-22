@@ -1,14 +1,56 @@
-﻿# A title is usurped by a character
+﻿# A title is destroyed
+# root = the holder before destruction
+# scope:landed_title = the title that is being destroyed
+# Does *not* provide scope:transfer_type
+on_title_destroyed = {
+	on_actions = {
+		BTWK_on_title_destroyed
+	}
+}
+
+BTWK_on_title_destroyed = {
+	effect = {
+		if = {
+			limit = {
+				scope:landed_title = title:e_britannia
+				BTWK_britannia_high_kingship_active_trigger = yes
+			}
+			# Apply penalty to dynastic High King Authority
+			dynasty = {
+				if = {
+					limit = { has_variable = britannia_high_kingship_authority }
+					change_variable = {
+						name = britannia_high_kingship_authority
+						multiply = BTWK_britannia_high_king_authority_inherited_current_proportion
+					}
+				}
+			}
+			
+			# Revoke all reforms + effects if any were passed
+			if = {
+				limit = { 
+					BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+					BTWK_britannia_high_kingship_active_trigger = yes
+				}
+				BTWK_britannia_high_king_revoke_all_reforms_effect = yes
+			}
+		}
+	}
+}
+
+# A title is usurped by a character
 # root = the new holder
 # scope:title = the title that changes hands
 # scope:previous_holder = previous holder. Shouldn't be dead
 on_title_gain = {
 	on_actions = {
-		btwk_on_title_gain
+		BTWK_on_title_gain
+		delay = { days = 1 }
+		BTWK_on_title_gain_delayed
 	}
 }
 
-btwk_on_title_gain = {
+BTWK_on_title_gain = {
 	events = {
 		titular_titles_anglosaxon.0100 	# Anglo-Saxon Kingdoms
 		titular_titles_roman.0003 		# Roman Provinces
@@ -33,6 +75,99 @@ btwk_on_title_gain = {
 			limit = { is_independent_ruler = yes }
 			BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
 		}
+		
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			if = {
+				limit = { scope:title = title:e_britannia }
+				# If the High Kingship title itself changed hands, check everything
+				scope:previous_holder = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+					every_tributary = {
+						limit = {
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+						}
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+						every_vassal_or_below = {
+							BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+						}
+					}
+				}
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+				every_tributary = {
+					limit = {
+						BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+					}
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					every_vassal_or_below = {
+						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+				}				
+			}
+		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+				has_title = title:e_britannia
+			}
+			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+		}
+		
+		# Transfer High Kingship story once the High Kingship becomes inheritable
+		if = {
+			limit = {
+				scope:title = title:e_britannia
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = yes
+			}
+			BTWK_britannia_initialize_high_kingship_effect = yes
+		}
+		
+		# Transfer Rise of Anglo-Saxon Kingdom story
+		if = {
+			limit = { 
+				scope:previous_holder = { 
+					owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+					OR = {
+						is_alive = no
+						scope:title.tier > highest_held_title_tier
+					}
+				}
+			}
+			save_scope_as = new_holder
+			scope:previous_holder = { 
+				every_owned_story = {
+					limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+					make_story_owner = scope:new_holder
+				}
+			}
+		}
+	}
+}
+
+BTWK_on_title_gain_delayed = {
+	effect = {		
+		# Make sure the High King is always properly initialized - if the High Kingship is not yet
+		# inheritable, we do this one day later to make sure that we don't accidentally fire this for
+		# the heir who will have the title immediately destroyed
+		if = {
+			limit = {
+				scope:title = title:e_britannia
+				has_title = title:e_britannia
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			BTWK_britannia_initialize_high_kingship_effect = yes
+		}
 	}
 }
 
@@ -42,11 +177,12 @@ btwk_on_title_gain = {
 # scope:new_holder = new holder.
 on_title_lost = {
 	on_actions = {
-		btwk_on_title_lost
+		BTWK_on_title_lost
 	}
 }
 
-btwk_on_title_lost = {
+# Note - Isn't triggered when a title gets destroyed!
+BTWK_on_title_lost = {
 	effect = {
 		if = {
 			limit = {
@@ -54,20 +190,58 @@ btwk_on_title_lost = {
 			}
 			remove_tribal_fame_effect = yes
 		}
-		# Destroy High Kingship on succession
 		if = {
 			limit = {
 				scope:title = title:e_britannia
-				owns_story_of_type = BTWK_britannia_high_kingship_story
-				BTWK_britannia_high_kingship_can_inherit_trigger = no
+				BTWK_britannia_high_kingship_active_trigger = yes
 			}
-			save_scope_as = former_high_king
-			set_variable = { name = player_heir_char target = this.player_heir }
-			every_owned_story = {
-				limit = { story_type = BTWK_britannia_high_kingship_story }
-				set_variable = high_king_abdicated
-				end_story = yes
+			# Destroy High Kingship on succession
+			if = {
+				limit = { 
+					owns_story_of_type = BTWK_britannia_high_kingship_story 
+					BTWK_britannia_high_kingship_can_inherit_trigger = no
+				}
+				save_scope_as = former_high_king
+				set_variable = { name = player_heir_char value = this.player_heir }
+				every_owned_story = {
+					limit = { story_type = BTWK_britannia_high_kingship_story }
+					set_variable = high_king_abdicated
+					end_story = yes
+				}
 			}
+			# Apply penalty to dynastic High King Authority
+			dynasty = {
+				if = {
+					limit = { 
+						has_variable = britannia_high_kingship_authority
+						NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_succession } }
+					}
+					change_variable = {
+						name = britannia_high_kingship_authority
+						multiply = BTWK_britannia_high_king_authority_inherited_proportion
+					}
+				}
+			}
+			# Other cleanup
+			remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+		}
+		
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+				OR = {
+					has_title = title:e_britannia
+					scope:title = title:e_britannia
+				}
+			}
+			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
 		}
 	}
 }
@@ -107,6 +281,31 @@ btwk_on_vassal_change = {
 		BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
 		
 		# Turn king-level vassals of Britannia into subject kingdoms before the Empower the High Council reform
-		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes	
+		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes
+
+		# Update Britannia Mint/Coinage modifer
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+		}
+		
+		# Update Britannia State Church Modifier
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church } }
+			every_liege_or_above = {
+				limit = {
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+			}
+			scope:old_liege = {
+				if = {
+					limit = {
+						has_title = title:e_britannia
+					}
+					BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+				}
+			}
+		}
 	}
 }

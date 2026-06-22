@@ -8,15 +8,45 @@ start_tributary_interaction_effect = {
 	$TRIBUTARY$ = { save_scope_as = tributary_loc }
 	$SUZERAIN$ = { save_scope_as = suzerain_loc }
 
-	# BTWK - Subject King Tributaries
+	# BTWK - Foederati
 	if = {
 		limit = {
-			BTWK_britannia_subject_kings_active_trigger = yes
+			OR = {
+				scope:make_tributary_foederati ?= yes
+				AND = {
+					$TRIBUTARY$.suzerain ?= $SUZERAIN$
+					$TRIBUTARY$ = { has_subject_contract_group = tributary_foederatus }
+				}
+			}
+		}
+		$TRIBUTARY$ = {
+			make_foederati_tributary_effect = { SUZERAIN = scope:suzerain_loc }
+			if = {
+				limit = { scope:low_obligations ?= yes }
+				if = {
+					limit = { is_tributary = yes } # suppress error logging
+					hidden_effect = {
+						tributary_contract_set_obligation_level = { type = foederatus_subsidies level = foederatus_large_subsidies }
+					}
+				}
+				custom_tooltip = foederatus_large_subsidies_tt
+			}
+			else = {
+				custom_tooltip = foederatus_small_subsidies_tt		# Default
+			}
+			custom_tooltip = tributary_war_obligations
+			custom_tooltip = suzerain_guarantee
+		}
+	}
+	# BTWK - Subject King Tributaries
+	else_if = {
+		limit = {
+			BTWK_britannia_subject_king_tributaries_active_trigger = yes
 			$SUZERAIN$ = { has_title = title:e_britannia }
 			$TRIBUTARY$ = { BTWK_britannia_subject_king_eligible_trigger = yes }
 		}
 		$TRIBUTARY$ = {
-			BTWK_britannia_high_kingship_make_subject_king_effect = { SUZERAIN = scope:suzerain_loc }
+			BTWK_britannia_high_kingship_make_subject_king_tributary_effect = { SUZERAIN = scope:suzerain_loc }
 			if = {
 				limit = { scope:low_obligations ?= yes }
 				if = {
@@ -733,4 +763,15 @@ start_tributary_interaction_effect = {
 		}
 	}
 	setup_tributary_truces_effect = { SUZERAIN = $SUZERAIN$ TRIBUTARY = $TRIBUTARY$ }
+	
+	# Check mint modifiers - subject king relationship could be made or broken here
+	$TRIBUTARY$ = {
+		if = {
+			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+			BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			every_vassal_or_below = {
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+			}
+		}
+	}
 }

@@ -19,15 +19,38 @@ BTWK_high_king_tab_visible = {
 	}
 }
 
+BTWK_high_king_window_visible = {
+	scope = character
+	
+	is_shown = {
+		BTWK_britannia_high_kingship_active_trigger = yes
+	}
+}
+
 BTWK_claim_high_kingship = {
 	scope = character
 	
 	is_valid = {
-		BTWK_britannia_high_kingship_can_claim_trigger = yes
+		trigger_if = {
+			limit = { has_title = title:e_britannia }
+			custom_tooltip = {
+				text = already_high_king_tt
+				always = no
+			}
+		}
+		trigger_else = {
+			BTWK_britannia_high_kingship_can_claim_trigger = yes
+		}
 	}
 	
 	effect = {
-		BTWK_britannia_claim_high_kingship_effect = yes
+		if = {
+			limit = { has_title = title:e_britannia }
+			# Nothing
+		}
+		else = {
+			BTWK_britannia_claim_high_kingship_effect = yes
+		}
 	}
 }
 
@@ -48,5 +71,125 @@ BTWK_unfit_to_rule = {
 	effect = {
 		BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect = yes
 		custom_tooltip = BTWK_unfit_to_rule_months_remaining_warning_tt
+	}
+}
+
+BTWK_high_kingship_pass_reform = {
+	scope = character
+	
+	is_valid = {
+		custom_tooltip = {
+			text = only_high_king_can_pass_reforms
+			has_title = title:e_britannia
+		}
+		
+		trigger_if = {
+			limit = {
+				exists = title:e_britannia.holder
+			}
+			title:e_britannia.holder = { save_temporary_scope_as = reform_taker_scope }
+		}
+		trigger_else = {
+			save_temporary_scope_as = reform_taker_scope
+		}
+		
+		scope:reform_taker_scope = {
+			trigger_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_formalize_high_kingship }
+				BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_establish_coregency }
+				BTWK_britannia_high_king_reform_establish_coregency_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_establish_central_mint }
+				BTWK_britannia_high_king_reform_establish_central_mint_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_empower_high_council }
+				BTWK_britannia_high_king_reform_empower_high_council_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_centralize_the_church }
+				BTWK_britannia_high_king_reform_centralize_the_church_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_formalize_succession }
+				BTWK_britannia_high_king_reform_formalize_succession_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_unify_legal_codes }
+				BTWK_britannia_high_king_reform_unify_legal_codes_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_reclaim_caratacus_legacy }
+				BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = yes
+			}
+			trigger_else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_restore_imperial_dignity }
+				BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = yes
+			}
+			trigger_else = {
+				always = no
+			}
+		}
+	}
+	
+	effect = {
+		if = {
+			limit = {
+				exists = title:e_britannia.holder
+			}
+			title:e_britannia.holder = { save_scope_as = reform_taker_scope }
+		}
+		else = {
+			save_scope_as = reform_taker_scope
+		}
+		
+		scope:reform_taker_scope = {
+			add_prestige = BTWK_britannia_high_king_reform_default_prestige_cost_negative
+			if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_formalize_high_kingship }
+				BTWK_britannia_high_king_reform_formalize_high_kingship_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_establish_coregency }
+				BTWK_britannia_high_king_reform_establish_coregency_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_establish_central_mint }
+				remove_short_term_gold = BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
+				BTWK_britannia_high_king_reform_establish_central_mint_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_empower_high_council }
+				BTWK_britannia_high_king_reform_empower_high_council_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_centralize_the_church }
+				add_piety = BTWK_britannia_high_king_reform_centralize_the_church_cost_negative
+				BTWK_britannia_high_king_reform_centralize_the_church_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_formalize_succession }
+				BTWK_britannia_high_king_reform_formalize_succession_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_unify_legal_codes }
+				BTWK_britannia_high_king_reform_unify_legal_codes_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_reclaim_caratacus_legacy }
+				BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_effect = yes
+			}
+			else_if = {
+				limit = { scope:reform_story.var:reform_id = flag:BTWK_HK_reform_restore_imperial_dignity }
+				BTWK_britannia_high_king_reform_restore_imperial_dignity_effect = yes
+			}
+			else = {
+				# Nothing
+			}
+		}
 	}
 }

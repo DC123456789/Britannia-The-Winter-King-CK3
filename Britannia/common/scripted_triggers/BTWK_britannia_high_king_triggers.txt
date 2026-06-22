@@ -1,14 +1,27 @@
 ﻿BTWK_britannia_high_kingship_active_trigger = {
 	NOT = { has_global_variable = end_of_britannia }
+	NOT = { title:e_britannia = { has_variable = britannia_united } }
 }
 
 BTWK_britannia_high_kingship_can_inherit_trigger = {
-	title:e_britannia = { has_variable = HK_reform_formalize_high_kingship_passed }
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
 }
 
-BTWK_britannia_subject_kings_active_trigger = {
-	NOT = { title:e_britannia = { has_variable = HK_reform_empower_high_council_passed } }
+BTWK_britannia_subject_king_tributaries_active_trigger = {
+	NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council } }
 	BTWK_britannia_high_kingship_active_trigger = yes
+}
+
+BTWK_britannia_subject_king_vassals_active_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+	OR = {
+		BTWK_britannia_high_kingship_active_trigger = yes
+		title:e_britannia = { has_variable = britannia_united }		# If you really want you can keep them
+	}
+}
+
+BTWK_britannia_subject_king_vassals_forced_trigger = {
+	NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes } }
 }
 
 BTWK_britannia_high_kingship_can_claim_trigger = {
@@ -40,17 +53,38 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	diplomacy >= 10
 	martial >= 12
 	stewardship >= 7
-	custom_description = {
-		text = claim_britannia_high_kingship_skill_requirement
-		OR = {
-			any_held_title = {
-				tier >= tier_kingdom
-				title_held_years >= 15 
+	trigger_if = {
+		limit = {
+			has_claim_on = title:e_britannia
+			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+		}
+		custom_description = {
+			text = claim_britannia_high_kingship_skill_requirement_reduced
+			OR = {
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 10
+				}
+				prestige_level >= 4
+				diplomacy >= 21
+				martial >= 21
+				prowess >= 25
 			}
-			prestige_level >= 4
-			diplomacy >= 25
-			martial >= 25
-			prowess >= 30
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = claim_britannia_high_kingship_skill_requirement
+			OR = {
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 15 
+				}
+				prestige_level >= 4
+				diplomacy >= 25
+				martial >= 25
+				prowess >= 30
+			}
 		}
 	}
 	is_incapable = no
@@ -71,14 +105,17 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 }
 
 BTWK_britannia_high_kingship_is_allowed_culture_trigger = {
-	culture = {
-		OR = {
-			has_cultural_pillar = heritage_brythonic
-			has_cultural_pillar = heritage_latin
-			AND = {
-				has_cultural_pillar = heritage_romance
-				NOT = { has_variable = ancestral_non_roman_culture }
-				var:ancestral_starting_culture ?= culture:romanobritish
+	custom_description = {
+		text = BTWK_britannia_high_kingship_is_allowed_culture
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_brythonic
+				has_cultural_pillar = heritage_latin
+				AND = {
+					has_cultural_pillar = heritage_romance
+					NOT = { has_variable = ancestral_non_roman_culture }
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
 			}
 		}
 	}
@@ -154,6 +191,7 @@ BTWK_britannia_high_kingship_is_relevant_trigger = {
 	OR = {
 		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 		capital_province = { geographical_region = btwk_world_britannia }
+		any_liege_or_above = { has_title = title:e_britannia }
 	}
 }
 
@@ -169,9 +207,334 @@ BTWK_britannia_subject_king_eligible_trigger = {
 	primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 }
 
-BTWK_britannia_high_kingship_is_subject_king_trigger = {
+BTWK_britannia_can_use_high_king_subjugation_trigger = {
+	scope:attacker = {
+		has_title = title:e_britannia
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
+	}
+}
+
+BTWK_britannia_is_high_king_subjugation_trigger = {
+	scope:attacker = {
+		has_title = title:e_britannia
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
+	}
+	scope:defender = { 
+		BTWK_britannia_subject_king_eligible_trigger = yes
+	}
+}
+
+BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = {
 	OR = {
 		has_subject_contract_group = tributary_britannia_subject_king 
 		has_subject_contract_group = tributary_britannia_subject_king_permanent
 	}
 }
+
+BTWK_britannia_high_kingship_is_subject_king_vassal_or_tributary_trigger = {
+	OR = {
+		BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+		AND = {
+			is_independent_ruler = no
+			liege = { has_title = title:e_britannia }
+			OR = {
+				vassal_contract_has_flag = has_subject_kingdom_vassal_contract
+				highest_held_title_tier >= tier_kingdom
+			}
+		}
+	}
+}
+
+BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = {
+	trigger_if = {
+		limit = {
+			scope:liege = { has_title = title:e_britannia }
+			BTWK_britannia_subject_king_vassals_active_trigger = yes
+			scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+		}
+		NOT = { BTWK_britannia_subject_king_vassals_forced_trigger = yes }
+	}
+}
+
+BTWK_britannia_high_king_de_jure_cb_check_trigger = {
+	trigger_if = {
+		limit = {
+			this = title:e_britannia
+			BTWK_britannia_high_kingship_active_trigger = yes
+		}
+		BTWK_britannia_subject_king_vassals_active_trigger = yes
+	}
+}
+
+BTWK_britannia_high_kingship_has_authority_trigger = {
+	custom_description = {
+		text = BTWK_britannia_high_kingship_has_authority
+		value = $AMOUNT$
+		dynasty = {
+			has_variable = britannia_high_kingship_authority
+			this.var:britannia_high_kingship_authority > $AMOUNT$
+		}
+	}
+}
+
+BTWK_britannia_high_kingship_britannia_region_control_trigger = {
+	save_temporary_scope_as = current_ruler
+	save_temporary_scope_value_as = {
+		name = fraction_required_percentage
+		value = {
+			value = $FRACTION_REQUIRED$
+			multiply = 100
+		}
+	}
+	custom_description = {
+		text = BTWK_britannia_high_kingship_britannia_region_control
+		value = scope:fraction_required_percentage
+		any_county_in_region = {
+			percent >= $FRACTION_REQUIRED$
+			region = btwk_world_britannia
+			OR = {
+				scope:current_ruler = { completely_controls = prev }
+				holder.top_liege = {					
+					is_tributary_of_suzerain_or_above = scope:current_ruler 
+					BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+				}
+			}
+		}
+	}
+}
+
+BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = {
+	# has_title = title:e_britannia			# This trigger is included elsewhere, would duplicate
+	prestige_level >= 3
+	prestige >= 1000
+	title:e_britannia = { title_held_years >= 10 }
+	age >= 30
+	is_at_war = no		# If this is ever changed, need to add a specific block for subject king revolt wars
+	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+	is_incapable = no
+	NOT = { has_diarchy_type = regency }
+	trigger_if = {
+		limit = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
+		NOT = { has_character_modifier = BTWK_britannia_high_king_reform_blocked_modifier }
+	}
+	trigger_if = {
+		limit = { has_variable = BTWK_britannia_high_king_reform_trying_to_pass }
+		NOT = {
+			custom_description = {
+				text = BTWK_HK_britannia_reform_trying_to_pass
+				has_variable = BTWK_britannia_high_king_reform_trying_to_pass
+			}
+		}
+	}
+}
+
+BTWK_britannia_high_king_reform_common_trigger = {
+	government_is_not_tribal_trigger = yes
+	BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_is_passed_trigger = {
+	title:e_britannia.var:HK_reform_$REFORM_NAME$ = {
+		custom_tooltip = {
+			text = BTWK_britannia_high_king_reform_must_be_passed
+			has_variable = reform_passed
+		}
+	}
+}
+
+# Needs to be seperate as custom_description can't handle stories, so we have to use custom_tooltip
+# which doesn't invert
+BTWK_britannia_high_king_reform_is_not_passed_trigger = {
+	title:e_britannia.var:HK_reform_$REFORM_NAME$ = {
+		custom_tooltip = {
+			text = BTWK_britannia_high_king_reform_must_not_be_passed
+			NOT = { has_variable = reform_passed }
+		}
+	}
+}
+
+# All reforms should be written in the scope of the High King
+BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = {
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.50
+	}
+	BTWK_britannia_high_king_reform_common_no_non_tribal_requirement_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_establish_coregency_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 450 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.55 
+	}
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_establish_central_mint_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 100 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.60 
+	}
+	gold >= BTWK_britannia_high_king_reform_establish_central_mint_gold_cost
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_establish_central_mint_innovation_or_fallback
+		OR = {
+			stewardship >= 20
+			culture = { has_innovation = innovation_currency_02 }
+		}
+	}
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_establish_central_mint_modifier_eligible_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
+	is_landed = yes
+	OR = {
+		has_title = title:e_britannia
+		any_liege_or_above = { has_title = title:e_britannia }
+		top_liege = {
+			is_tributary = yes
+			BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+			suzerain = { has_title = title:e_britannia }
+		}
+	}
+	any_held_title = {
+		tier = tier_county
+		title_province ?= { geographical_region = btwk_world_britannia }
+	}
+}
+
+BTWK_britannia_high_king_reform_empower_high_council_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.65 
+	}
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_empower_high_council_innovation_or_fallback
+		OR = {
+			culture = { has_innovation = innovation_royal_prerogative }
+			AND = {
+				diplomacy >= 20
+				prestige_level >= 4
+			}
+		}
+	}
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.70 
+	}
+	piety >= BTWK_britannia_high_king_reform_centralize_the_church_cost
+	culture = { has_innovation = innovation_development_02 }
+	custom_description = {
+		text = faith_is_reformed
+		subject = root
+		faith = { NOT = { has_doctrine_parameter = unreformed } }
+	}
+	trigger_if = {
+		limit = { NOT = { faith = { has_doctrine = doctrine_no_head } } }
+		custom_description = {
+			text = BTWK_HK_britannia_high_king_reform_centralize_the_church_religious_head_condition
+			exists = faith.religious_head
+		}
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_centralize_the_church_religious_head_opinion
+			faith.religious_head ?= { opinion = { target = prev value >= 60 } }
+		}
+	}
+	trigger_if = {
+		limit = { has_religion = religion:christianity_religion }
+		completely_controls = title:c_londinium
+	}
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_formalize_succession_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 200 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.75 
+	}
+	custom_description = {
+		text = BTWK_britannia_high_king_reform_formalize_succession_vassal_opinion_condition
+		NOT = {
+			any_vassal = {
+				is_powerful_vassal = yes
+				opposes_succession_law_change_trigger = yes
+			}
+		}
+	}
+	culture = { has_innovation = innovation_hereditary_rule }
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_unify_legal_codes_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_succession }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 250 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.85 
+	}
+	trigger_if = {
+		limit = { government_has_flag = government_is_administrative }
+		NOT = { has_realm_law = imperial_bureaucracy_0 }
+	}
+	trigger_else = {
+		custom_description = {
+			text = BTWK_britannia_high_king_reform_unify_legal_codes_feudal_law_condition
+			OR = {
+				has_realm_law = crown_authority_2
+				has_realm_law = crown_authority_3
+			}
+		}
+	}
+	culture = { has_innovation = innovation_chronicle_writing }
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+	BTWK_britannia_high_king_reform_is_not_passed_trigger = { REFORM_NAME = restore_imperial_dignity }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.95
+	}
+	BTWK_reform_from_pre_feudal_innovations_trigger = yes
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+
+BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
+	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+	BTWK_britannia_high_king_reform_is_not_passed_trigger = { REFORM_NAME = reclaim_caratacus_legacy }
+	culture = { has_cultural_pillar = heritage_latin }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 300 }
+	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
+		FRACTION_REQUIRED = 0.95
+	}
+	trigger_if = {
+		limit = { government_has_flag = government_is_administrative }
+		NOT = { has_realm_law = imperial_bureaucracy_0 }
+	}
+	trigger_else = {
+		has_realm_law = crown_authority_3
+	}
+	trigger_if = {
+		limit = { exists = title:e_roman_britannia.holder }
+		NOT = {
+			custom_description = {
+				text = BTWK_title_has_holder
+				subject = title:e_roman_britannia
+				exists = title:e_roman_britannia.holder
+			}
+		}
+	}
+	BTWK_reform_from_pre_feudal_innovations_trigger = yes
+	BTWK_britannia_high_king_reform_common_trigger = yes
+}
+		

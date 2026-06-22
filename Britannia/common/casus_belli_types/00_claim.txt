@@ -180,7 +180,7 @@
 			}
 		}
 		
-		# BTWK - Cannot process claim on Britannia before the first reform
+		# BTWK - Cannot press claim on Britannia before the first reform
 		trigger_if = {
 			limit = {
 				this = title:e_britannia
@@ -401,6 +401,15 @@
 			order_by = tier
 			save_scope_as = target
 		}
+		
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
 
 		scope:attacker = {
 			if = {
@@ -491,6 +500,15 @@
 			type = conquest_claim
 			save_scope_as = change
 			add_claim_on_loss = yes
+		}
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { becomes_independent = { change = scope:change } }
 		}
 		
 		# Create a claim CB which is executed to handle title/vassal changes, in addition to being used to calculate Prestige awards for war participants.
@@ -654,6 +672,32 @@
 			}
 		}
 
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker.any_liege_or_above = { this = scope:defender }
+			}
+			scope:attacker = { 
+				create_title_and_vassal_change = {
+					type = independency
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				becomes_independent = { change = scope:change }
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+			
 		# Create an 'helper' claim CB which we won't execute, but can use to determine how much Prestige should be given to war participants.
 		setup_claim_cb = {
 			titles = target_titles

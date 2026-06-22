@@ -7,9 +7,9 @@ namespace = BTWK_anglo_saxon_invasions
 
 ##################################################
 
-##################################################
-# Debug Test Events
-##################################################
+##################################################################
+# BTWK_anglo_saxon_invasions.0001 - 0099: Aelle/Anglia Events
+##################################################################
 
 # trigger Anglian Invasion event
 BTWK_anglo_saxon_invasions.0001 = {
@@ -121,6 +121,1226 @@ BTWK_anglo_saxon_invasions.0002 = {
 					}
 					desc = BTWK_anglo_saxon_invasions.0002.a
 				}
+			}
+		}
+	}
+}
+
+##################################################################################################
+# BTWK_anglo_saxon_invasions.0100 - 0199: Rise of Bernicia/Deira/Lindsey/Mercia/Wessex Events
+##################################################################################################
+# BTWK_anglo_saxon_invasions.0100 - Yearly master controller event, decides if any of the story cycles should start
+# BTWK_anglo_saxon_invasions.0101 - AI target selection, triggered a few months after the master controller event
+
+# BTWK_anglo_saxon_invasions.0110 - Start of Rise of Kingdom event chain/story
+# BTWK_anglo_saxon_invasions.0111 - Notify other rulers
+# BTWK_anglo_saxon_invasions.0112 - Rise of Kingdom ended (timeout)
+# BTWK_anglo_saxon_invasions.0113 - Rise of Kingdom ended (defeat)
+# BTWK_anglo_saxon_invasions.0114 - Won first war, get Foederati Heritage modifier
+
+# Yearly master controller event, decides if any of the story cycles should start
+BTWK_anglo_saxon_invasions.0100 = {
+	scope = none
+	hidden = yes
+	
+	trigger = {
+		exists = struggle:britannia_struggle
+		BTWK_rise_of_anglo_saxon_kingdom_time_trigger = yes
+	}
+	
+	immediate = {
+		# One roll for each kingdom
+		title:k_bernicia = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_deira = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_lindsey = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_mercia = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+		
+		title:k_wessex = { save_scope_as = event_target_kingdom }
+		trigger_event = { id = BTWK_anglo_saxon_invasions.0101 days = { 1 350 } }
+	}
+}
+
+BTWK_anglo_saxon_invasions.0101 = {
+	scope = none
+	hidden = yes
+	
+	trigger = {
+		exists = struggle:britannia_struggle
+		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_visible_trigger = {
+			KINGDOM = scope:event_target_kingdom
+		}
+		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_eligible_trigger = {
+			KINGDOM = scope:event_target_kingdom
+		}
+	}
+	
+	immediate = {
+		# Roll for chance of actually triggering the event
+		random = {
+			chance = {
+				value = 2.5
+				if = {
+					limit = { year >= 540 }
+					add = 2.5
+				}
+				if = {
+					limit = { year >= 545 }
+					add = 5
+				}
+				if = {
+					limit = { year >= 550 }
+					add = 10
+				}
+				if = {
+					limit = { year >= 560 }
+					add = 20
+				}
+				if = {
+					limit = {
+						scope:event_target_kingdom = title:k_mercia
+						year <= 545
+					}
+					divide = 2
+				}
+				# If we already passed the check but are waiting for the historical dynasty to
+				# become available, then we ignore this roll
+				if = {
+					limit = { 
+						scope:event_target_kingdom = {							
+							has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+						}
+					}
+					add = 100
+				}
+			}
+			
+			# If the roll goes through, try to choose an eligible ruler
+			# Always try to select the historical dynasty first
+			if = {
+				limit = { scope:event_target_kingdom = title:k_bernicia }
+				dynasty:662 = { save_scope_as = historical_dynasty }
+			}
+			else_if = {
+				limit = { scope:event_target_kingdom = title:k_deira }
+				dynasty:663 = { save_scope_as = historical_dynasty }
+			}
+			else_if = {
+				limit = { scope:event_target_kingdom = title:k_lindsey }
+				dynasty:817 = { save_scope_as = historical_dynasty }
+			}
+			else_if = {
+				limit = { scope:event_target_kingdom = title:k_mercia }
+				dynasty:660 = { save_scope_as = historical_dynasty }
+			}
+			else_if = {
+				limit = { scope:event_target_kingdom = title:k_wessex }
+				dynasty:816 = { save_scope_as = historical_dynasty }
+			}
+			random_ruler = {
+				limit = {
+					is_landed = yes
+					is_ai = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+					scope:event_target_kingdom = scope:target_kingdom
+					# Prioritize historical dynasties if possible
+					scope:historical_dynasty ?= dynasty
+				}
+				alternative_limit = {
+					is_landed = yes
+					is_ai = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_excluding_temp_factors_trigger = yes
+					scope:event_target_kingdom = scope:target_kingdom
+					# Prioritize historical dynasties if possible
+					scope:historical_dynasty ?= dynasty
+				}
+				save_scope_as = target_character
+			}
+			# Scylding adventurers are specifically chosen here for Mercia 
+			# (they're not a ruler so they don't get caught in the above)
+			if = {
+				limit = { 
+					scope:event_target_kingdom = title:k_mercia
+					NOT = { exists = scope:target_character } 
+				}
+				title:d_laamp_scyldings.holder ?= {
+					if = {
+						limit = {
+							is_ai = yes
+							BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+							BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_excluding_temp_factors_trigger = yes
+							scope:historical_dynasty ?= dynasty
+						}
+						save_scope_as = target_character
+					}
+				}
+			}
+			
+			# If a historical dynasty character is fully eligible, fire the event
+			if = {
+				limit = {
+					scope:target_character ?= {
+						BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+						BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+					}
+				}
+				scope:target_character = {
+					trigger_event = BTWK_anglo_saxon_invasions.0110
+				}
+			}
+			# If a historical dynasty character is eligible but busy (e.g. at war), wait up
+			# to 5 years for them to become available
+			else_if = {
+				limit = {
+					exists = scope:target_character
+					NOT = { has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char }
+				}
+				scope:event_target_kingdom = { 
+					set_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+					set_variable = {
+						name = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+						years = 5
+					}
+				}
+			}
+			# If a historical dynasty character is eligible but busy and the timer is still ongoing, just wait
+			else_if = {
+				limit = {
+					exists = scope:target_character
+					has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
+					has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char_timer
+				}
+				# Do nothing
+			}
+			# If there are no historical dynasty characters eligible, or they are all busy and the
+			# timer is up, try to look for any eligible ruler
+			else = {
+				random_ruler = {
+					limit = {
+						is_landed = yes
+						is_ai = yes
+						BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+						BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+						NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+						scope:event_target_kingdom = scope:target_kingdom
+					}
+					save_scope_as = target_character
+				}
+				if = {
+					limit = { NOT = { exists = scope:target_character } }
+					# If there are no eligible rulers, try to find a character of the historical dynasty and
+					# make them an adventurer 
+					scope:historical_dynasty ?= {
+						random_dynasty_member = {
+							limit = {
+								is_adult = yes
+								is_female = no
+								is_landless_adventurer = yes
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							alternative_limit = {
+								is_adult = yes
+								is_female = no
+								is_landed = no
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							save_scope_as = target_character
+							scope:target_character = {
+								create_landless_adventurer_title_effect = {
+									REASON = flag:voluntary
+									FLAVOR_CHAR = scope:target_character
+								}
+							}
+							scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
+						}
+					}
+				}
+				
+				# If there are none, grab an adventurer of the right culture
+				if = {
+					limit = {	
+						scope:event_target_kingdom = title:k_wessex
+					}
+					culture:old_saxon = { save_scope_as = target_culture }
+				}
+				else = {
+					culture:angle = { save_scope_as = target_culture }
+				}
+				if = {
+					limit = { NOT = { exists = scope:target_character } }
+					random_in_global_list = {
+						variable = laamps_tally
+						limit = {
+							title_domicile.domicile_location = { geographical_region = btwk_world_britannia }
+							culture = scope:target_culture
+							is_adult = yes
+							is_female = no
+							NOR = {
+								any_close_or_extended_family_member = {
+									highest_held_title_tier >= tier_county
+								}
+								any_spouse = {
+									highest_held_title_tier >= tier_county
+								}
+							}
+						}
+						save_scope_as = target_character
+						scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
+					}
+				}
+				
+				# If there are still none, just spawn a new adventurer
+				if = {
+					limit = { NOT = { exists = scope:target_character } }
+					create_character = {
+						template = pool_repopulate_martial
+						gender_female_chance = 0
+						culture = scope:target_culture
+						faith = faith:anglo_saxon_pagan
+						location = scope:event_target_kingdom.title_capital_county.title_province
+						save_scope_as = target_character
+					}
+					scope:target_character = {
+						create_landless_adventurer_title_effect = {
+							REASON = flag:voluntary
+							FLAVOR_CHAR = scope:target_character
+						}
+					}
+					scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
+				}
+				
+				# Then fire the event for the new adventurer
+				scope:target_character = {
+					trigger_event = BTWK_anglo_saxon_invasions.0110
+				}
+			}
+		}
+	}
+}
+
+# Start of Rise of Kingdom story cycle + initial war (if relevant)
+BTWK_anglo_saxon_invasions.0110 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0110.t
+	desc = BTWK_anglo_saxon_invasions.0110.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { exists = scope:force_target_kingdom }
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = scope:force_target_kingdom
+			}
+		}
+		if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
+			}
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = title:k_bernicia
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_deira
+				primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+			}
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = title:k_deira
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = title:k_lindsey
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
+					primary_title = title:d_laamp_scyldings
+				}
+			}
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = title:k_mercia
+			}
+		}
+		else_if = {
+			limit = {
+				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_wessex
+			}
+			set_global_variable = { 
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+				value = title:k_wessex
+			}
+		}
+		global_var:BTWK_rise_of_new_anglo_saxon_kingdom_story_target = {
+			save_scope_as = target_kingdom
+		}
+		# Initialize story
+		create_story = {
+			type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+			save_scope_as = new_story
+		}
+		# Set this here in the immediate so that the break tributary tooltip doesn't appear
+		if = {
+			limit = {
+				is_tributary = yes 
+				has_subject_contract_group = tributary_foederatus
+				any_character_to_title_neighboring_county = {
+					holder.top_liege = prev.suzerain
+					scope:new_story = {
+						is_target_in_variable_list = {
+							name = extended_target_counties
+							target = prev
+						}
+					}
+				}
+			}
+			set_variable = { name = keep_tributary_when_attacking value = suzerain days = 1 }
+		}
+		
+		every_player = {
+			limit = {
+				NOT = { this = root }
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					culture = culture:romanobritish
+					culture = { 
+						has_cultural_pillar = heritage_romance
+						any_parent_culture_or_above = { culture = culture:romanobritish }
+					}
+					any_sub_realm_county = { title_province = { geographical_region = btwk_world_britannia } }
+				}
+			}
+			trigger_event = BTWK_anglo_saxon_invasions.0111
+		}
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0110.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0110.a.tt.1
+		if = {
+			limit = { is_landless_adventurer = yes }
+			domicile = { move_domicile = scope:new_story.var:starting_county.title_province }
+		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:new_story
+			}
+		}
+		if = {
+			limit = { global_var:BTWK_rise_of_new_anglo_saxon_kingdom_story_target = title:k_lindsey }
+			add_pressed_claim = title:d_lindsey
+		}
+		else = {
+			add_pressed_claim = global_var:BTWK_rise_of_new_anglo_saxon_kingdom_story_target
+		}
+		if = {
+			limit = { global_var:BTWK_rise_of_new_anglo_saxon_kingdom_story_target = title:k_lindsey }
+			custom_tooltip = BTWK_anglo_saxon_invasions.0110.a.tt.2.lindsey
+			custom_tooltip = BTWK_anglo_saxon_invasions.0110.a.tt.3.lindsey
+		}
+		else = {
+			custom_tooltip = BTWK_anglo_saxon_invasions.0110.a.tt.2
+			custom_tooltip = BTWK_anglo_saxon_invasions.0110.a.tt.3
+		}
+		
+		if = {
+			limit = { is_tributary = yes }
+			# If foederati, get claim on and start war for up to 3 neighbouring counties belonging to your 
+			# suzerain in the core/extended area
+			if = {
+				limit = { has_subject_contract_group = tributary_foederatus }
+				random_character_to_title_neighboring_county = {
+					limit = { 
+						holder.top_liege = prev.suzerain
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+						# Want Bernicia to conquer north first
+						trigger_if = {
+							limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+							NOT = { this = title:c_billingham }
+						}
+					}
+					alternative_limit = {
+						holder.top_liege = prev.suzerain
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+					}
+					alternative_limit = {
+						holder.top_liege = prev.suzerain
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = extended_target_counties
+								target = prev
+							}
+						}
+					}
+					save_scope_as = target_county_1
+				}
+				if = {
+					limit = { exists = scope:target_county_1 }
+					random_character_to_title_neighboring_county = {
+						limit = { 
+							holder.top_liege = prev.suzerain
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							trigger_if = {
+								limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+								NOT = { this = title:c_billingham }
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						alternative_limit = {
+							holder.top_liege = prev.suzerain
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						alternative_limit = {
+							holder.top_liege = prev.suzerain
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = extended_target_counties
+									target = prev
+								}
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						save_scope_as = target_county_2
+					}
+					if = {
+						limit = { exists = scope:target_county_2 }
+						random_character_to_title_neighboring_county = {
+							limit = { 
+								holder.top_liege = prev.suzerain
+								scope:new_story = {
+									is_target_in_variable_list = {
+										name = core_target_counties
+										target = prev
+									}
+								}
+								trigger_if = {
+									limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+									NOT = { this = title:c_billingham }
+								}
+								NOT = { this = scope:target_county_1 }
+								NOT = { this = scope:target_county_2 }
+							}
+							alternative_limit = {
+								holder.top_liege = prev.suzerain
+								scope:new_story = {
+									is_target_in_variable_list = {
+										name = core_target_counties
+										target = prev
+									}
+								}
+								NOT = { this = scope:target_county_1 }
+								NOT = { this = scope:target_county_2 }
+							}
+							alternative_limit = {
+								holder.top_liege = prev.suzerain
+								scope:new_story = {
+									is_target_in_variable_list = {
+										name = extended_target_counties
+										target = prev
+									}
+								}
+								NOT = { this = scope:target_county_1 }
+								NOT = { this = scope:target_county_2 }
+							}
+							save_scope_as = target_county_3
+						}
+						if = {
+							limit = { exists = scope:target_county_3 }
+							add_pressed_claim = scope:target_county_1
+							add_pressed_claim = scope:target_county_2
+							add_pressed_claim = scope:target_county_3
+							start_war = {
+								cb = claim_cb
+								claimant = this
+								target = suzerain
+								target_title = scope:target_county_1
+								target_title = scope:target_county_2
+								target_title = scope:target_county_3
+							}
+						}
+						else = {
+							add_pressed_claim = scope:target_county_1
+							add_pressed_claim = scope:target_county_2
+							start_war = {
+								cb = claim_cb
+								claimant = this
+								target = suzerain
+								target_title = scope:target_county_1
+								target_title = scope:target_county_2
+							}
+						}	
+					}
+					else = {
+						add_pressed_claim = scope:target_county_1
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = suzerain
+							target_title = scope:target_county_1
+						}
+					}
+					
+					# Make sure to break free on victory
+					random_character_war = {
+						limit = { 
+							primary_attacker = root
+							primary_defender = root.suzerain
+							using_cb = claim_cb
+						}
+						set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+						set_variable = BTWK_break_tributary_on_victory_or_wp 
+					}
+				}
+				else = {
+					start_war = {
+						cb = tributary_independence_war
+						target = suzerain
+					}
+				}
+			}
+			# Otherwise, just break free
+			else = {
+				start_war = {
+					cb = tributary_independence_war
+					target = suzerain
+				}
+			}
+		}
+		else_if = {
+			limit = { is_independent_ruler = no }
+			# If a vassal, claim the entire liege realm if it's 12 counties or smaller
+			if = {
+				limit = { 
+					top_liege = {
+						realm_size <= 12 
+						is_unromanized_germanic_culture_trigger = no
+					}
+				}
+				top_liege = {
+					every_held_title = {
+						limit = { tier = prev.highest_held_title_tier }
+						if = {
+							limit = { NOT = { exists = scope:top_liege_primary_title_1 } }
+							root = { add_pressed_claim = prev }
+							save_scope_as = top_liege_primary_title_1
+						}
+						else_if = {
+							limit = { NOT = { exists = scope:top_liege_primary_title_2 } }
+							root = { add_pressed_claim = prev }
+							save_scope_as = top_liege_primary_title_2
+						}
+						else_if = {
+							limit = { NOT = { exists = scope:top_liege_primary_title_3 } }
+							root = { add_pressed_claim = prev }
+							save_scope_as = top_liege_primary_title_3
+						}
+					}
+				}
+				# Also grab up to 2 counties within the realm for yourself
+				random_character_to_title_neighboring_county = {
+					limit = { 
+						holder.top_liege = prev.top_liege
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+						# Try to take duchy capital if possible
+						root.primary_title.title_capital_county.var:anglo_saxon_duchy.title_capital_county = this
+					}
+					alternative_limit = {
+						holder.top_liege = prev.top_liege
+						holder.culture = { NOT = { has_same_heritage_group_as = { TARGET = root.culture } } }
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+						trigger_if = {
+							limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+							NOT = { this = title:c_billingham }
+						}
+					}
+					alternative_limit = {
+						holder.top_liege = prev.top_liege
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+						trigger_if = {
+							limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+							NOT = { this = title:c_billingham }
+						}
+					}
+					alternative_limit = {
+						holder.top_liege = prev.top_liege
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = extended_target_counties
+								target = prev
+							}
+						}
+					}
+					root = { add_pressed_claim = prev }
+					save_scope_as = target_county_1
+				}
+				if = {
+					limit = { exists = scope:target_county_1 }
+					random_character_to_title_neighboring_county = {
+						limit = { 
+							holder.top_liege = prev.top_liege
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							# Try to take duchy capital if possible
+							root.primary_title.title_capital_county.var:anglo_saxon_duchy.title_capital_county = this
+							NOT = { this = scope:target_county_1 }
+						}
+						alternative_limit = {
+							holder.top_liege = prev.top_liege
+							holder.culture = { NOT = { has_same_heritage_group_as = { TARGET = root.culture } } }
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							trigger_if = {
+								limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+								NOT = { this = title:c_billingham }
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						alternative_limit = {
+							holder.top_liege = prev.top_liege
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							trigger_if = {
+								limit = { scope:new_story.var:target_kingdom = title:k_bernicia }
+								NOT = { this = title:c_billingham }
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						alternative_limit = {
+							holder.top_liege = prev.top_liege
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = extended_target_counties
+									target = prev
+								}
+							}
+							NOT = { this = scope:target_county_1 }
+						}
+						root = { add_pressed_claim = prev }
+						save_scope_as = target_county_2
+					}
+				}
+				if = {
+					limit = { exists = scope:top_liege_primary_title_3 }
+					if = {
+						limit = { exists = scope:target_county_2 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+							target_title = scope:top_liege_primary_title_3
+							target_title = scope:target_county_1
+							target_title = scope:target_county_2
+						}
+					}
+					else_if = {
+						limit = { exists = scope:target_county_1 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+							target_title = scope:top_liege_primary_title_3
+							target_title = scope:target_county_1
+						}
+					}
+					else = {
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+							target_title = scope:top_liege_primary_title_3
+						}
+					}
+				}
+				else_if = {
+					limit = { exists = scope:top_liege_primary_title_2 }
+					if = {
+						limit = { exists = scope:target_county_2 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+							target_title = scope:target_county_1
+							target_title = scope:target_county_2
+						}
+					}
+					else_if = {
+						limit = { exists = scope:target_county_1 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+							target_title = scope:target_county_1
+						}
+					}
+					else = {
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:top_liege_primary_title_2
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { exists = scope:target_county_2 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:target_county_1
+							target_title = scope:target_county_2
+						}
+					}
+					else_if = {
+						limit = { exists = scope:target_county_1 }
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+							target_title = scope:target_county_1
+						}
+					}
+					else = {
+						start_war = {
+							cb = claim_cb
+							claimant = this
+							target = top_liege
+							target_title = scope:top_liege_primary_title_1
+						}
+					}
+				}
+				
+				# Make sure to break free on victory
+				random_character_war = {
+					limit = { 
+						primary_attacker = root
+						primary_defender = root.top_liege
+						using_cb = claim_cb
+					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+					set_variable = BTWK_break_vassal_on_victory_or_wp 
+				}
+			}
+			# Otherwise, do a duchy invasion on your capital duchy, unless it is part of
+			# another Anglo-Saxon kingdom
+			else_if = {
+				limit = { 
+					OR = {
+						primary_title.title_capital_county.kingdom = target_kingdom
+						primary_title.title_capital_county.empire != title:e_aengland
+					}
+				}
+				start_war = {
+					cb = duchy_conquest_cb
+					target = top_liege
+					target_title = primary_title.title_capital_county.duchy
+				}
+					
+				# Make sure to break free on victory
+				random_character_war = {
+					limit = { 
+						primary_attacker = root
+						primary_defender = root.top_liege
+						using_cb = duchy_conquest_cb
+					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+					set_variable = BTWK_break_vassal_on_victory_or_wp 
+				}
+			}
+			# Otherwise, just declare independence
+			else = {
+				start_war = {
+					cb = independence_war
+					target = top_liege
+				}
+			}
+		}
+		# If a landless adventurer, invade for a target coastal/frontier county + some neighbours
+		else_if = {
+			limit = { is_landless_adventurer = yes }
+			scope:new_story.var:starting_county = {
+				save_scope_as = target_county_1
+				root = { add_pressed_claim = scope:target_county_1 }
+				random_neighboring_county = {
+					limit = {
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = prev
+							}
+						}
+						holder.top_liege = prev.holder.top_liege
+					}
+					alternative_limit = {
+						scope:new_story = {
+							is_target_in_variable_list = {
+								name = extended_target_counties
+								target = prev
+							}
+						}
+						holder.top_liege = prev.holder.top_liege
+					}
+					save_scope_as = target_county_2
+					root = { add_pressed_claim = scope:target_county_2 }
+				}
+				if = {
+					limit = { exists = scope:target_county_2 }
+					random_neighboring_county = {
+						limit = {
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = core_target_counties
+									target = prev
+								}
+							}
+							holder.top_liege = prev.holder.top_liege
+							NOT = { this = scope:target_county_2 }
+						}
+						alternative_limit = {
+							scope:new_story = {
+								is_target_in_variable_list = {
+									name = extended_target_counties
+									target = prev
+								}
+							}
+							holder.top_liege = prev.holder.top_liege
+							NOT = { this = scope:target_county_2 }
+						}
+						save_scope_as = target_county_3
+						root = { add_pressed_claim = scope:target_county_3 }
+					}
+					if = {
+						limit = { exists = scope:target_county_3 }
+						random_neighboring_county = {
+							limit = {
+								scope:new_story = {
+									is_target_in_variable_list = {
+										name = core_target_counties
+										target = prev
+									}
+								}
+								holder.top_liege = prev.holder.top_liege
+								NOT = { this = scope:target_county_2 }
+								NOT = { this = scope:target_county_3 }
+							}
+							alternative_limit = {
+								scope:new_story = {
+									is_target_in_variable_list = {
+										name = extended_target_counties
+										target = prev
+									}
+								}
+								holder.top_liege = prev.holder.top_liege
+								NOT = { this = scope:target_county_2 }
+								NOT = { this = scope:target_county_3 }
+							}
+							save_scope_as = target_county_4
+							root = { add_pressed_claim = scope:target_county_4 }
+						}
+					}
+				}
+			}
+			set_character_flag = temp_no_claim_war_cost
+			if = {
+				limit = { exists = scope:target_county_4 }
+				start_war = {
+					cb = claim_cb
+					claimant = this
+					target = scope:target_county_1.holder.top_liege
+					target_title = scope:target_county_1
+					target_title = scope:target_county_2
+					target_title = scope:target_county_3
+					target_title = scope:target_county_4
+				}
+			}
+			else_if = {
+				limit = { exists = scope:target_county_3 }
+				start_war = {
+					cb = claim_cb
+					claimant = this
+					target = scope:target_county_1.holder.top_liege
+					target_title = scope:target_county_1
+					target_title = scope:target_county_2
+					target_title = scope:target_county_3
+				}
+			}
+			else_if = {
+				limit = { exists = scope:target_county_2 }
+				start_war = {
+					cb = claim_cb
+					claimant = this
+					target = scope:target_county_1.holder.top_liege
+					target_title = scope:target_county_1
+					target_title = scope:target_county_2
+				}
+			}
+			else = {
+				start_war = {
+					cb = claim_cb
+					claimant = this
+					target = scope:target_county_1.holder.top_liege
+					target_title = scope:target_county_1
+				}
+			}
+			remove_character_flag = temp_no_claim_war_cost
+		}
+		if = {
+			limit = { is_ai = no }
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 300
+				men_at_arms = {
+					type = pikemen_unit
+					men = 150
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
+				}
+				location = this.capital_province
+				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+			}
+		}
+		else = {
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 500
+				men_at_arms = {
+					type = bowmen
+					men = 150
+				}
+				men_at_arms = {
+					type = pikemen_unit
+					men = 100
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 200
+				}
+				men_at_arms = {
+					type = onager
+					men = 20
+				}
+				location = this.capital_province
+				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+			}
+			add_prestige = 1000
+			add_gold = 300
+			random_character_war = {
+				limit = {
+					primary_attacker = root
+				}
+				primary_defender = { save_scope_as = target_character }
+			}
+			scope:new_story = { save_scope_as = current_story }
+			BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+		}
+		# TODO Add hook to immediate take decision after winning war if AI
+	}
+}
+
+# Notify other rulers
+BTWK_anglo_saxon_invasions.0111 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0111.t
+	desc = BTWK_anglo_saxon_invasions.0111.desc
+	theme = war
+
+	left_portrait = {
+		character = scope:rise_of_kingdom_leader
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:new_story.var:target_kingdom = {
+			save_scope_as = target_kingdom
+		}
+		scope:new_story.story_owner = {
+			save_scope_as = rise_of_kingdom_leader
+		}
+		scope:new_story.var:target_title = {
+			save_scope_as = target_title
+		}
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0111.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.1
+		if = {
+			limit = { scope:rise_of_kingdom_leader = { is_landed = yes } }
+			custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2
+		}
+		else = {
+			custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2.unlanded
+		}
+	}
+}
+
+# Rise of Kingdom ended (timeout)
+BTWK_anglo_saxon_invasions.0112 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0112.t
+	desc = BTWK_anglo_saxon_invasions.0112.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_tie
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0112.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0112.a.tt
+	}
+}
+
+# Rise of Kingdom ended (defeated)
+BTWK_anglo_saxon_invasions.0113 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0113.t
+	# TODO Want different loc for the different cases:
+	#	- Becomes unlanded
+	#	- Is subjugated and cannot break free
+	#	- Converts to a non-unromanized Germanic culture
+	#	- Gains a different kingdom or higher title
+	desc = BTWK_anglo_saxon_invasions.0113.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_loss
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0113.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0113.a.tt
+		if = {
+			limit = { has_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier }
+			remove_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier
+		}
+	}
+}
+
+# Won first war - get modifier
+BTWK_anglo_saxon_invasions.0114 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0114.t
+	desc = BTWK_anglo_saxon_invasions.0114.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0114.a
+		add_character_modifier = {
+			modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier
+			years = 20
+		}
+		if = {
+			limit = { NOT = { any_sub_realm_county = { is_unromanized_germanic_culture_trigger = yes } } }
+			capital_county = {
+				set_county_culture = root.culture
+				set_county_faith = root.faith
 			}
 		}
 	}

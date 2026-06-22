@@ -275,6 +275,32 @@ germanic_controlled_trigger = {
 	}
 }
 
+BTWK_anglo_saxon_kingdom_title_creation_trigger = {
+	save_temporary_scope_as = current_char
+	trigger_if = {
+		limit = { 
+			struggle:britannia_struggle ?= {
+				has_struggle_phase_parameter = anglo_saxon_kings_cannot_create_new_kingdoms
+			}
+		}
+		custom_tooltip = {
+			text = BTWK_anglo_saxon_kingdom_title_creation_trigger
+			NOT = { highest_held_title_tier >= tier_kingdom }
+		}
+	}
+	custom_description = {
+		text = BTWK_control_num_de_jure_counties_in_title
+		object = $TITLE$
+		value = $NUM_COUNTIES$
+		$TITLE$ = {
+			any_de_jure_county = {
+				count = $NUM_COUNTIES$
+				scope:current_char = { completely_controls = prev }
+			}
+		}
+	}
+}
+
 is_roman_ruler_trigger = {
 	custom_description = {
 		text = is_roman_ruler_trigger

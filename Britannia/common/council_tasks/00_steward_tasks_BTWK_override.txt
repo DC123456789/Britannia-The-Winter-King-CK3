@@ -212,18 +212,18 @@ task_promote_culture = {
 				desc = bp2_devoted_to_tradition_modifier_conversion_task_desc
 			}
 		}
-		if = {
-			limit = {
-				scope:councillor_liege = {
-					has_title = title:c_byzantion
-					title:c_byzantion = { has_county_modifier = pandidakterion_university_modifier }
-				}
-			}
-			multiply = {
-				value = 1.25
-				desc = pandidakterion_university_modifier
-			}
-		}
+		# if = {
+			# limit = {
+				# scope:councillor_liege = {
+					# has_title = title:c_byzantion
+					# title:c_byzantion = { has_county_modifier = pandidakterion_university_modifier }
+				# }
+			# }
+			# multiply = {
+				# value = 1.25
+				# desc = pandidakterion_university_modifier
+			# }
+		# }
 		if = {
 			limit = {
 				scope:county = { has_county_modifier = improve_promote_culture_modifier }
@@ -232,6 +232,15 @@ task_promote_culture = {
 			multiply = {
 				value = 1.20
 				desc = improve_promote_culture_modifier
+			}
+		}
+		if = { # Cultural Redoubts cannot be converted by hostile cultures
+			limit = {
+				scope:county = { BTWK_has_negative_cultural_redoubt_modifier_trigger = yes }
+			}
+			multiply = {
+				value = 0
+				desc = BTWK_negative_cultural_redoubt_culture_conversion_modifier
 			}
 		}
 	}
@@ -255,6 +264,12 @@ task_promote_culture = {
 				scope:councillor_liege = { has_government = tribal_government }
 			}
 			scope:county.holder = scope:councillor_liege
+		}
+		trigger_if = {		# Prevent AI from fruitlessly trying to convert a hostile redoubt
+			limit = {
+				scope:councillor_liege = { is_ai = yes }
+			}
+			scope:county = { BTWK_has_negative_cultural_redoubt_modifier_trigger = no }
 		}
 		trigger_if = {
 			limit = {
@@ -302,36 +317,7 @@ task_promote_culture = {
 							}
 						}
 					}
-					AND = {
-						# The Gaels want to convert the Picts and Cumbrians
-						culture = culture:gaelic
-						OR = {
-							scope:county.culture = culture:cumbrian
-							scope:county.culture = culture:pictish
-						}
-					}
-					AND = {
-						# Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
-						culture = { has_variable = is_anglo_saxon_unified_culture }
-						OR = {
-							scope:county.culture = culture:old_saxon
-							scope:county.culture = culture:jute
-							scope:county.culture = culture:angle
-							scope:county.culture = { 
-								has_variable = anglo_saxon_regional_culture_kingdom
-							}
-						}
-					}
-					AND = {
-						# Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
-						has_cultural_pillar = heritage_west_germanic
-						OR = {
-							scope:county.culture = culture:romanobritish
-							scope:county.culture = culture:britannic
-							scope:county.culture = { has_cultural_pillar = heritage_brythonic }
-							scope:county.culture = { has_cultural_pillar = heritage_pictish }
-						}
-					}
+					BTWK_ai_should_promote_culture_trigger = yes
 				}
 				OR = {
 					is_independent_ruler = yes
@@ -375,33 +361,7 @@ task_promote_culture = {
 							count < 35
 						}
 					}
-					AND = { # The Gaels want to convert the Picts and Cumbrians
-						culture = culture:gaelic
-						OR = {
-							scope:county.culture = culture:cumbrian
-							scope:county.culture = culture:pictish
-						}
-					}
-					AND = { # Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
-						culture = { has_variable = is_anglo_saxon_unified_culture }
-						OR = {
-							scope:county.culture = culture:old_saxon
-							scope:county.culture = culture:jute
-							scope:county.culture = culture:angle
-							scope:county.culture = { 
-								has_variable = anglo_saxon_regional_culture_kingdom
-							}
-						}
-					}
-					AND = { # Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
-						has_cultural_pillar = heritage_west_germanic
-						OR = {
-							scope:county.culture = culture:romanobritish
-							scope:county.culture = culture:britannic
-							scope:county.culture = { has_cultural_pillar = heritage_brythonic }
-							scope:county.culture = { has_cultural_pillar = heritage_pictish }
-						}
-					}
+					BTWK_ai_should_promote_culture_trigger = yes
 				}
 			}
 			OR = {
@@ -410,24 +370,7 @@ task_promote_culture = {
 						culture = scope:councillor_liege.culture # The AI only wants to convert counties bordering their own culture
 					}
 				}
-				AND = { # The Gaels want to convert the Picts and Cumbrians
-					scope:councillor_liege.culture = culture:gaelic
-					OR = {
-						scope:county.culture = culture:cumbrian
-						scope:county.culture = culture:pictish
-					}
-				}
-				AND = { # Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
-					scope:councillor_liege = {
-						has_cultural_pillar = heritage_west_germanic
-					}
-					OR = {
-						scope:county.culture = culture:romanobritish
-						scope:county.culture = culture:britannic
-						scope:county.culture = { has_cultural_pillar = heritage_brythonic }
-						scope:county.culture = { has_cultural_pillar = heritage_pictish }
-					}
-				}
+				BTWK_ai_should_aggressively_promote_culture_trigger = yes
 			}
 		}
 		trigger_else_if = { # But AI Directives should still try to look pretty
@@ -535,11 +478,11 @@ task_promote_culture = {
 					gold > 0
 					OR = {
 						gold >= steward_convert_culture_value
-						AND = {
-							culture = culture:anglo_saxon
-							top_liege.primary_title = title:e_aengland
-							capital_county.kingdom = title:e_aengland
-						}
+						# AND = {
+							# culture = culture:anglo_saxon
+							# top_liege.primary_title = title:e_aengland
+							# capital_county.kingdom = title:e_aengland
+						# }
 						AND = {
 							culture = {
 								OR = {
@@ -577,10 +520,34 @@ task_promote_culture = {
 								count < 35
 							}
 						}
+						# Anglo-Saxons should be very aggressive about converting culture in Britannia
+						AND = {
+							culture = { has_cultural_pillar = heritage_west_germanic }
+							capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
 					}
 				}
 			}
 			add = 500
+		}
+		else_if = {
+			# Britons should be somewhat aggressive about converting culture in Britannia
+			limit = {
+				OR = {
+					culture = culture:romanobritish
+					culture = {
+						has_cultural_pillar = heritage_romance
+						var:ancestral_starting_culture ?= culture:romanobritish
+					}
+					culture = { has_cultural_pillar = heritage_brythonic }
+				}
+				capital_county.title_province = { geographical_region = btwk_world_britannia }
+				any_realm_county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			add = 250			
 		}
 		if = {
 			limit = {

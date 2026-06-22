@@ -1,0 +1,765 @@
+﻿#########################################################################
+# Briton Title Decisions												#
+#########################################################################
+
+claim_britannia_high_kingship_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 24
+		empire = 24
+		hegemony = 0
+	}
+
+	desc = claim_britannia_high_kingship_decision_desc
+
+	is_shown = {
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		}
+		NOT = { has_title = title:e_britannia }
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_kingship_can_inherit_trigger = no
+	}
+
+	is_valid = {
+		BTWK_britannia_high_kingship_can_claim_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_claim_high_kingship_effect = yes
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+		modifier = {
+			factor = 0
+			BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio < 1.1
+		}		
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+# TODO BTWK_get_claim_on_britannia_decision
+# Allows you to get a claim on e_britannia after the High Kingship has been made inheritable,
+# but before the succession has been codified
+
+BTWK_HK_britannia_formalize_high_kingship_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_formalize_high_kingship_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_formalize_high_kingship_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_establish_coregency_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_found_kingdom.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_establish_coregency_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_establish_coregency_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_establish_coregency_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_establish_central_mint_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_smith.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_establish_central_mint_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_establish_central_mint_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_establish_central_mint_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+		gold = { value = BTWK_britannia_high_king_reform_establish_central_mint_gold_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_empower_high_council_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_empower_high_council_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_empower_high_council_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_empower_high_council_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_centralize_the_church_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_major_religion.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+	
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_religion = religion:christianity_religion
+				}
+				desc = BTWK_HK_britannia_centralize_the_church_decision_christian
+			}
+			desc = BTWK_HK_britannia_centralize_the_church_decision_nonchristian
+		}
+	}
+
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_religion = religion:christianity_religion
+				}
+				desc = BTWK_HK_britannia_centralize_the_church_decision_desc_christian
+			}
+			desc = BTWK_HK_britannia_centralize_the_church_decision_desc_nonchristian
+		}
+	}
+
+	selection_tooltip = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_religion = religion:christianity_religion
+				}
+				desc = BTWK_HK_britannia_centralize_the_church_decision_tooltip_christian
+			}
+			desc = BTWK_HK_britannia_centralize_the_church_decision_tooltip_nonchristian
+		}
+	}
+
+	confirm_text = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_religion = religion:christianity_religion
+				}
+				desc = BTWK_HK_britannia_centralize_the_church_decision_confirm_christian
+			}
+			desc = BTWK_HK_britannia_centralize_the_church_decision_confirm_nonchristian
+		}
+	}
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_centralize_the_church_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_centralize_the_church_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+		piety = { value = BTWK_britannia_high_king_reform_centralize_the_church_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_formalize_succession_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_formalize_succession_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = centralize_the_church }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_succession } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_formalize_succession_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_formalize_succession_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_unify_legal_codes_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_unify_legal_codes_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_succession }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_unify_legal_codes_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_unify_legal_codes_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_reclaim_caratacus_legacy_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_legitimacy.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_reclaim_caratacus_legacy_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = reclaim_caratacus_legacy } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle = {
+	decision_group_type = major
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_legitimacy.dds"
+	}
+	extra_picture = "gfx/interface/illustrations/decisions/decision_legitimacy.dds"
+	selection_tooltip = BTWK_HK_britannia_reclaim_caratacus_legacy_decision_tooltip
+	is_invisible = yes
+	sort_order = 80
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_reclaim_caratacus_legacy_decision_desc
+
+	is_shown = {
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+		BTWK_britannia_high_kingship_active_trigger = yes
+	}
+
+	is_valid = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_reclaim_caratacus_legacy_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_restore_imperial_dignity_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_decision_roman_restoration.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_restore_imperial_dignity_decision_desc
+
+	is_shown = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_kingship_active_trigger = yes
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = unify_legal_codes }
+		NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = restore_imperial_dignity } }
+	}
+
+	is_valid = {
+		BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_restore_imperial_dignity_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_britannia_restore_imperial_dignity_decision_struggle = {
+	decision_group_type = major
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_decision_roman_restoration.dds"
+	}
+	extra_picture = "gfx/interface/illustrations/decisions/ep3_decision_roman_restoration.dds"
+	selection_tooltip = BTWK_HK_britannia_restore_imperial_dignity_decision_tooltip
+	is_invisible = yes
+	sort_order = 80
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 0
+	}
+
+	desc = BTWK_HK_britannia_restore_imperial_dignity_decision_desc
+
+	is_shown = {
+		BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+		BTWK_britannia_high_kingship_active_trigger = yes
+	}
+
+	is_valid = {
+		has_title = title:e_britannia
+		BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = yes
+	}
+
+	effect = {
+		BTWK_britannia_high_king_reform_restore_imperial_dignity_effect = yes
+	}
+	
+	cost = {
+		prestige = { value = BTWK_britannia_high_king_reform_default_prestige_cost }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_britannia_high_kingship_button_only"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}

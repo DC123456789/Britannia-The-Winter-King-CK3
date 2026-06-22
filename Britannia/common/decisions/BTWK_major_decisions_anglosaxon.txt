@@ -79,3 +79,119 @@ embrace_anglo_saxon_culture_decision = {
 		base = 100
 	}
 }
+
+BTWK_rise_of_anglo_saxon_kingdom_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_decision_varangian_guard.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 0
+		hegemony = 0
+	}
+
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					primary_title = title:d_laamp_scyldings
+				}
+				desc = BTWK_rise_of_anglo_saxon_kingdom_decision_d_laamp_scyldings_desc
+			}
+			desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
+		}
+	}
+
+	is_shown = {
+		BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+		BTWK_rise_of_anglo_saxon_kingdom_get_target_kingdom_trigger = yes
+		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_visible_trigger = { KINGDOM = scope:target_kingdom }
+	}
+
+	is_valid = {
+		BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+		is_adult = yes
+		prestige_level >= 2
+		trigger_if = {
+			limit = { is_tributary = yes }
+			NOT = { has_truce = suzerain }
+		}
+		trigger_if = {
+			limit = { is_independent_ruler = no }
+			NOT = { has_truce = top_liege }
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.1
+		show_as_tooltip = {
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 300
+				men_at_arms = {
+					type = pikemen_unit
+					men = 150
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
+				}
+				location = this.capital_province
+			}
+		}
+		if = {
+			limit = { 
+				is_independent_ruler = no
+				top_liege = { realm_size <= 12 }
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.a
+		}
+		else_if = {
+			limit = { is_independent_ruler = no }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.b
+		}
+		else_if = {
+			limit = { is_tributary = yes }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.c
+		}
+		else_if = {
+			limit = { 
+				is_landless_adventurer = yes
+				primary_title = title:d_laamp_scyldings
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.d
+		}
+		if = {
+			limit = { 
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3.lindsey
+		}
+		else = {
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3
+		}
+		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.4
+		trigger_event = BTWK_anglo_saxon_invasions.0110
+	}
+	
+	cost = {
+		prestige = 250
+	}
+	
+	ai_potential = {
+		always = no
+	}
+
+	ai_will_do = {
+		base = 0		# Handled by event
+	}
+}

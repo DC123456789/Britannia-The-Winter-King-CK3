@@ -7,7 +7,7 @@
  tribal_obligations_none: "No $tribal_obligations$"
  tribal_obligations_none_short: "None"
  tribal_obligations_granted: "$tribal_obligations$ Granted"
- tribal_obligations_granted_desc: "#emphasis #bold [vassal|E]:#!#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s #high [GetSubjectContractType( 'feudal_government_levies' ).GetName]#! Contract is fixed to #high [GetSubjectContractType( 'feudal_government_levies' ).GetObligationName( 'feudal_levies_normal' )]#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s #high [GetSubjectContractType( 'feudal_government_taxes' ).GetName]#! Contract is fixed to #high [GetSubjectContractType( 'feudal_government_taxes' ).GetObligationName( 'feudal_tax_normal' )]#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s obligations get a baseline modifier of #high [EmptyScope.ScriptValue('tribal_obligations_levies_baseline')|1%]#! [levies|E] and #high [EmptyScope.ScriptValue('tribal_obligations_taxes_baseline')|1%]#! [tax|E]\n$EFFECT_LIST_BULLET$ The [vassal|E]'s obligations are increased by #high [EmptyScope.ScriptValue('tribal_obligations_levies_per_prestige_level')|1%]#! [levies|E] and #high [EmptyScope.ScriptValue('tribal_obligations_taxes_per_prestige_level')|1%]#! [tax|E] per [prestige_level|E] of the [liege|E]\n\n#flavor The vassal does not have fixed obligations but instead provides a variable amount of [levies|E] and [tax|E] depending on the [prestige_level|E] of the [liege|E], analagously to in [tribal_government|E] governments.#!"
+ tribal_obligations_granted_desc: "#emphasis #bold [vassal|E]:#!#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s #high [GetSubjectContractType( 'feudal_government_levies' ).GetName]#! Contract is fixed to #high [GetSubjectContractType( 'feudal_government_levies' ).GetObligationName( 'feudal_levies_normal' )]#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s #high [GetSubjectContractType( 'feudal_government_taxes' ).GetName]#! Contract is fixed to #high [GetSubjectContractType( 'feudal_government_taxes' ).GetObligationName( 'feudal_tax_normal' )]#!\n$EFFECT_LIST_BULLET$ The [vassal|E]'s obligations get a baseline modifier of #high [EmptyScope.ScriptValue('tribal_obligations_levies_baseline')|1%]#! [levies|E] and #high [EmptyScope.ScriptValue('tribal_obligations_taxes_baseline')|1%]#! [tax|E]\n$EFFECT_LIST_BULLET$ The [vassal|E]'s obligations are increased by #high [EmptyScope.ScriptValue('tribal_obligations_levies_per_prestige_level')|1%]#! [levies|E] and #high [EmptyScope.ScriptValue('tribal_obligations_taxes_per_prestige_level')|1%]#! [tax|E] per [prestige_level|E] of the [liege|E]\n\n#flavor The vassal does not have fixed obligations but instead provides a variable amount of [levies|E] and [tax|E] depending on the [prestige_level|E] of the [liege|E], analagously to [tribal_government|E] vassals.#!"
  tribal_obligations_granted_short: "Granted"
  pre_feudal_government_vassal_contribution_prestige_level: "[liege|E] is [GetPrestigeLevelName(liege.GetPrestigeLevel)|L]"
  
@@ -29,6 +29,9 @@
  foederatus_large_subsidies: "High Foederati Subsidies"
  foederatus_large_subsidies_short: "High"
  foederatus_large_subsidies_desc: "The [foederati|E] will be paid a high amount of gold in return for their service. Although it costs the employer a significant amount of their income, the Foederati will provide a much higher amount of levies to their [suzerain|E]."
+ 
+ foederatus_large_subsidies_tt: "$tributary_contract_starts_with_common$ [GetSubjectContractType( 'foederatus_subsidies' ).GetObligationName( 'foederatus_large_subsidies' )]"
+ foederatus_small_subsidies_tt: "$tributary_contract_starts_with_common$ [GetSubjectContractType( 'foederatus_subsidies' ).GetObligationName( 'foederatus_small_subsidies' )]"
  
  tributary_foederatus_contract_foederatus: "Foederati Status"
  tributary_foederatus_contract_none_foederatus: "Revoked Foederati Status"
@@ -60,3 +63,13 @@
  tributary_britannia_subject_king_desc: "Subject Kings are kings that have submitted to the authority of the [high_king_britannia|E] and are represented as [tributaries|E]. They provide [levies|E] and may provide [prestige|E] to their [suzerain|E], but in exchange the [high_king|E] is obligated to come to their defense when needed.\n\nIf the High King can accumulate enough [britannia_authority|E], they will eventually be able to pass [britannia_reforms|E] to increase their hold over their subject kings and transform them into direct [vassals|E]."
  tributary_britannia_subject_king_permanent: "$tributary_britannia_subject_king$"
  tributary_britannia_subject_king_permanent_desc: "$tributary_britannia_subject_king_desc$"
+ 
+ special_contract_subject_kingdom: "Subject Kingdom"
+ special_contract_subject_kingdom_desc: "\n#emphasis #bold [vassal|E] Privilege:#!#!\n$EFFECT_LIST_BULLET$ The [liege|E] cannot revoke the [vassals_possessive|E] [titles|E]\n\n#flavor $special_contract_subject_kingdom$s are formerly independent kingdoms that have been brought under the formal suzerainty of the [high_king|E], but retain substantial autonomy over their realms. Their [titles] cannot be revoked, even if the [liege|E] has a [revoke_title_reason], and they pay #V 33%#! less [tax|E] than what their obligations would otherwise indicate. This Contract cannot be revoked before the #V $BTWK_HK_reform_unify_legal_codes$#! [britannia_reform|E] has been passed.#!"
+ special_contract_subject_kingdom_short: "Subject King"
+ 
+ special_contract_laetus: "Laetus"
+ special_contract_laetus_desc: "\n#emphasis #bold [vassal|E] Privilege:#!#!\n$EFFECT_LIST_BULLET$ The [liege|E] cannot revoke the [vassals_possessive|E] [titles|E]\n$EFFECT_LIST_BULLET$ The [liege|E] cannot [demand_conversion|E] of the [vassal|E]\n$EFFECT_LIST_BULLET$ The [liege|E] cannot use [convert_county|E] in the [vassals|E]' lands\n$EFFECT_LIST_BULLET$ The [liege|E] cannot use [faith|E] as a reason to avoid [tyranny|E] when revoking titles\n\n#flavor Laeti are foreign communities, typically from Germanic tribes, allowed to settle on Roman territory in return for providing recruits for the army. Their [titles] cannot be revoked, even if the [liege|E] has a [revoke_title_reason], and their suzerain provides them with a subsidy instead of being paid [tax|E], giving substantially improved military capabilities, in return for a large proportion of their [levies|E] and some minor military bounses. This Contract can only be revoked by special interaction.#!"
+ special_contract_laetus_short: "Laetus"
+ revoke_laetus_interaction_only: "Laeti status may only be revoked via decision or character interaction."
+ 

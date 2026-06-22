@@ -254,6 +254,88 @@ is_independent_domicile_holder_for_culture_shift_trigger = {
 	}
 }
 
+BTWK_ai_should_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# The Gaels want to convert the Picts and Cumbrians
+			culture = culture:gaelic
+			OR = {
+				scope:county.culture = culture:cumbrian
+				scope:county.culture = culture:pictish
+			}
+		}
+		AND = {
+			# Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			OR = {
+				scope:county.culture = culture:old_saxon
+				scope:county.culture = culture:jute
+				scope:county.culture = culture:angle
+				scope:county.culture = { 
+					has_variable = anglo_saxon_regional_culture_kingdom
+				}
+			}
+		}
+		AND = {
+			# Britons / Romano-Britons should try to reconvert Anglo-Saxon provinces
+			OR = {
+				culture = culture:romanobritish
+				culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			OR = {
+				scope:county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+		AND = {
+			# Briton/Welsh should try to reconvert Irish in Wales
+			culture = { has_cultural_pillar = heritage_brythonic }
+			scope:county = {
+				culture = culture:irish
+				title_province = { geographical_region = btwk_world_britannia_south_cymry }
+			}
+		}
+		BTWK_ai_should_aggressively_promote_culture_trigger = yes
+	}
+}
+
+# For if the AI should ignore even adjacency requirements when converting culture
+BTWK_ai_should_aggressively_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			OR = {
+				scope:county.culture = culture:romanobritish
+				scope:county.culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+				scope:county.culture = { has_cultural_pillar = heritage_pictish }
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+	}
+}
+
 bg_game_type_region_tabula_trigger = { #For Roman and Romanized cultures and as fallback for pre-chess cultures
 	OR = {
 		has_cultural_pillar = heritage_latin

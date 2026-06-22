@@ -1,7 +1,7 @@
 window = {
 	name = "high_king_window"
 	widgetid = "high_king_window"
-	visible = "[GetVariableSystem.Exists('show_high_king_window')]"
+	visible = "[And(GetVariableSystem.Exists('show_high_king_window'), GetScriptedGui('BTWK_high_king_window_visible').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End))]"
 	
 	size = { 1200 750 }
 	layer = middle
@@ -155,7 +155,7 @@ window = {
 				}
 				
 				button_primary = {
-					visible = "[Not(ObjectsEqual(Title.GetHolder.GetID, GetPlayer.GetID))]"
+					# visible = "[Not(ObjectsEqual(Title.GetHolder.GetID, GetPlayer.GetID))]"
 					onclick = "[GetScriptedGui('BTWK_claim_high_kingship').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 					enabled = "[GetScriptedGui('BTWK_claim_high_kingship').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 					tooltip = "[GetScriptedGui('BTWK_claim_high_kingship').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
@@ -234,7 +234,7 @@ window = {
 					text = "UNFIT_TO_RULE"
 					scale = 1.5
 					parentanchor = top|hcenter
-					position = { 0 80 }
+					position = { 180 175 }
 					visible = "[And(Title.HasHolder, Title.GetHolder.MakeScope.Var('BTWK_britannia_high_king_unfit_to_rule').IsSet)]"
 					tooltip = "[GetScriptedGui('BTWK_unfit_to_rule').BuildTooltip(GuiScope.SetRoot(Title.GetHolder.MakeScope).End)]"
 				}
@@ -265,13 +265,21 @@ window = {
 					parentanchor = bottom|hcenter
 					margin_bottom = 50
 				}
-				
+						
 				text_single = {
 					text = "CURRENT_AUTHORITY"
 					visible = "[Title.HasHolder]"
-					scale = 1.5
 					parentanchor = top|left
 					position = { 30 75 }
+					scale = 1.5
+				}
+				
+				text_single = {
+					text = "CURRENT_AUTHORITY_VALUE"
+					visible = "[Title.HasHolder]"
+					tooltip = "CURRENT_AUTHORITY_VALUE_TT"
+					position = { 30 110 }
+					scale = 1.5
 				}
 				
 				text_single = {
@@ -589,6 +597,7 @@ window = {
 						parentanchor = top|hcenter
 					}
 					
+					# Reforms
 					hbox = {
 						# layoutpolicy_horizontal = expanding
 						# layoutpolicy_vertical = expanding
@@ -601,55 +610,19 @@ window = {
 							# layoutpolicy_vertical = expanding
 							spacing = 7
 							
-							button_standard = {
-								size = { 175 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_1"
-										fontsize = 15
-										max_width = 260
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_formalize_high_kingship').Story]"
 								}
 							}
-							button_standard = {
-								size = { 175 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_2"
-										max_width = 260
-										align = center
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_establish_coregency').Story]"
 								}
 							}
-							button_standard = {
-								size = { 175 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_3"
-										max_width = 260
-										align = center
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_establish_central_mint').Story]"
 								}
 							}
 						}
@@ -658,55 +631,19 @@ window = {
 							# layoutpolicy_vertical = expanding
 							spacing = 7
 							
-							button_standard = {
-								size = { 180 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_4A"
-										max_width = 260
-										align = center
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_empower_high_council').Story]"
 								}
 							}
-							button_standard = {
-								size = { 180 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_5"
-										max_width = 260
-										align = center
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_centralize_the_church').Story]"
 								}
 							}
-							button_standard = {
-								size = { 180 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_6"
-										max_width = 260
-										align = center
-									}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_formalize_succession').Story]"
 								}
 							}
 						}
@@ -715,50 +652,82 @@ window = {
 							# layoutpolicy_vertical = expanding
 							spacing = 6
 							
-							button_primary = {
-								size = { 180 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_7A"
-										default_format = "#bold;color_green"
-										max_width = 260
-										align = center
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_unify_legal_codes').Story]"
+								}
+							}
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_reclaim_caratacus_legacy').Story]"
+								}
+								blockoverride "button_size" {
+									size = { 180 50 }
+								}
+								blockoverride "reform_not_passed_format" { 
+									default_format = "#bold;color_green"
+								}
+								blockoverride "reform_unavailable_background" { 
+									background = {
+										texture = "gfx/interface/buttons/button_standard.dds"
+										framesize = { 252 80 }
+										frame = 4
+									}
+									icon = {
+										size = { 100% 100% }
+										texture = "gfx/interface/colors/black.dds"
+										alpha = 0.2
+										using = Mask_Rough_Edges
+
+										modify_texture = {
+											texture = "gfx/interface/skinned/mask_pattern.dds"
+											blend_mode = alphaMultiply
+											spriteType = Corneredtiled
+											texture_density = 3
+										}
 									}
 								}
 							}
-							button_primary = {
-								size = { 180 50 }
-								enabled = no
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									margin_top = -8
-								
-									text_single = {
-										name = "title_name"
-										alwaystransparent = yes
-										text = "BRITANNIA_REFORM_7B"
-										default_format = "#bold;color_porple"
-										max_width = 260
-										align = center
+							HighKingReformButton = {
+								blockoverride "reform_datacontext" {
+									datacontext = "[GetTitleByKey('e_britannia').MakeScope.Var('HK_reform_restore_imperial_dignity').Story]"
+								}
+								blockoverride "button_size" {
+									size = { 180 50 }
+								}
+								blockoverride "reform_not_passed_format" { 
+									default_format = "#bold;color_porple"
+								}
+								blockoverride "reform_unavailable_background" { 
+									background = {
+										texture = "gfx/interface/buttons/button_standard.dds"
+										framesize = { 252 80 }
+										frame = 4
+									}
+									icon = {
+										size = { 100% 100% }
+										texture = "gfx/interface/colors/black.dds"
+										alpha = 0.2
+										using = Mask_Rough_Edges
+
+										modify_texture = {
+											texture = "gfx/interface/skinned/mask_pattern.dds"
+											blend_mode = alphaMultiply
+											spriteType = Corneredtiled
+											texture_density = 3
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-				# If there is a high king, then two boxes - Subject Kings and Independent Kings
+				# If there is a high king, AND there are any Independent kings,
+				# then two boxes - Subject Kings and Independent Kings
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
-					visible = "[Title.HasHolder]"
+					visible = "[And(Title.HasHolder, GreaterThan_int32(GetDataModelSize( GetGlobalList('britannia_independent_kings_list') ), '(int32)0' ))]"
 					
 					widget = {
 						name = "vassal_kingdom_view"
@@ -837,6 +806,58 @@ window = {
 									flipdirection = yes
 									
 									datamodel = "[GetGlobalList('britannia_independent_kings_list')]"
+									
+									item = {											
+										portrait_head_small = {
+											name = "support_king_portrait"
+											datacontext = "[Scope.Char]"
+										}
+									}
+								}
+							}
+                            blockoverride "scrollbox_margins" {
+                                margin_left = -6
+                            }
+							blockoverride "scrollbox_expand" {
+								expand = {}
+							}
+						}
+					}
+				}
+				# If there is a high king, AND there are NO Independent kings,
+				# then only one box - Subject Kings
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[And(Title.HasHolder, EqualTo_int32(GetDataModelSize( GetGlobalList('britannia_independent_kings_list') ), '(int32)0' ))]"
+					
+					widget = {
+						name = "all_vassal_kingdom_view"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 275 0 }
+						
+						text_label_center = {
+							text = "HIGH_KING_VASSALS"
+							scale = 1.5
+							parentanchor = top|hcenter
+						}
+						
+						scrollbox = {
+							name = "high_king_all_vassal_list"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							size = { 550 325 }
+
+							position = { 0 46 }
+							
+							blockoverride "scrollbox_content" {
+								dynamicgridbox = {
+									name = "high_king_subjects_gridbox"
+									datamodel_wrap = 6
+									flipdirection = yes
+									
+									datamodel = "[GetGlobalList('britannia_subject_kings_list')]"
 									
 									item = {											
 										portrait_head_small = {
@@ -1014,7 +1035,7 @@ window = {
 						}
 					}
 				}
-				# If there is no high king or claimant, then just one list with all the kings
+				# If there is no high king or claimant, then just one list with all the (independent) kings
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
@@ -1378,6 +1399,64 @@ template HighKingCurrentClaimantStanceListTooltipWidget {
 	}
 }
 
+template HighKingReformTooltipWidget {
+	container = {
+		using = GeneralTooltipSetup
+		alwaystransparent = no
+
+		widget = {
+			name = "background"
+			using = DefaultTooltipBackground
+			size = { 100% 100% }
+			alwaystransparent = no
+		}
+
+		flowcontainer = {
+			direction = vertical
+			margin_top = 12
+			margin_bottom = 18
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				text = "[Story.MakeScope.Var('reform_desc').GetFlagName]"
+
+				alwaystransparent = no
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				margin_top = 15
+				margin_bottom = 20
+				text = "[GetScriptedGui('BTWK_high_kingship_pass_reform').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)]"
+
+				fonttintcolor = "[TooltipInfo.GetTintColor]"
+				alwaystransparent = no
+			}
+
+			textbox = {
+				using = DefaultTooltipText
+				margin = { 20 0 }
+				# margin_top = 15
+				text = "REFORM_PASSED"
+				visible = "[Story.MakeScope.Var('reform_passed').IsSet]"
+
+				alwaystransparent = no
+			}
+			
+			textbox = {
+				name = "TooltipTextShortcut" # named used in code
+				using = DefaultTooltipText
+				parentanchor = right
+				margin_top = -20
+				margin_bottom = 15
+				margin_right = 15
+			}
+		}
+	}
+}
+
 types HighKingWindowTypes
 {
 	type HighKingStanceSupportValueText = textbox {
@@ -1392,6 +1471,99 @@ types HighKingWindowTypes
 		alwaystransparent = no
 		
 		tooltipwidget = {
+		}
+	}
+	
+	type HighKingReformButton = hbox {
+		block "reform_datacontext" { }
+		
+		button_standard = {
+			block "button_size" { 
+				size = { 175 50 }
+			}
+			enabled = no
+			visible = "[Story.MakeScope.Var('reform_passed').IsSet]"
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				margin_top = -8
+			
+				text_single = {
+					name = "title_name"
+					alwaystransparent = yes
+					text = "[Story.MakeScope.Var('reform_button_text').GetFlagName]"
+					max_width = 260
+					default_format = "#italic;bold;clickable"
+					alpha = 0.5
+					align = center
+				}
+				
+				background = { 
+					using = Background_Area_Dark
+					using = Background_Frame_Gold
+					alpha = 0.5
+				}
+			}
+			
+			tooltipwidget = {
+				using = HighKingReformTooltipWidget
+			}
+		}
+		button_primary = {
+			block "button_size" { 
+				size = { 175 50 }
+			}
+			enabled = yes
+			onclick = "[GetScriptedGui('BTWK_high_kingship_pass_reform').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)]"
+			visible = "[And(Not(Story.MakeScope.Var('reform_passed').IsSet), GetScriptedGui('BTWK_high_kingship_pass_reform').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End))]"
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				margin_top = -8
+			
+				text_single = {
+					name = "title_name"
+					alwaystransparent = yes
+					text = "[Story.MakeScope.Var('reform_button_text').GetFlagName]"
+					block "reform_not_passed_format" { 
+						default_format = "#bold"
+					}
+					max_width = 260
+					align = center
+				}
+			}
+			
+			tooltipwidget = {
+				using = HighKingReformTooltipWidget
+			}
+		}
+		button_standard = {
+			block "button_size" { 
+				size = { 175 50 }
+			}
+			enabled = no
+			visible = "[And(Not(Story.MakeScope.Var('reform_passed').IsSet), Not(GetScriptedGui('BTWK_high_kingship_pass_reform').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('reform_story', Story.MakeScope).End)))]"
+			
+			block "reform_unavailable_background" { }
+			
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				margin_top = -8
+			
+				text_single = {
+					name = "title_name"
+					alwaystransparent = yes
+					text = "[Story.MakeScope.Var('reform_button_text').GetFlagName]"
+					block "reform_not_passed_format" { }
+					max_width = 260
+					align = center
+				}
+			}
+			
+			tooltipwidget = {
+				using = HighKingReformTooltipWidget
+			}
 		}
 	}
 }
