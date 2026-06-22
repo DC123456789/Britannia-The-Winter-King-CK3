@@ -36,6 +36,12 @@ BTWK_rise_of_anglo_saxon_kingdom_time_trigger = {
 BTWK_rise_of_anglo_saxon_kingdom_get_target_kingdom_trigger = {
 	trigger_if = {
 		limit = {
+			primary_title = title:d_laamp_scyldings		# Gets checked first as a special case
+		}
+		title:k_mercia = { save_temporary_scope_as = target_kingdom }
+	}
+	trigger_else_if = {
+		limit = {
 			primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_bernicia
 		}
 		title:k_bernicia = { save_temporary_scope_as = target_kingdom }
@@ -55,10 +61,7 @@ BTWK_rise_of_anglo_saxon_kingdom_get_target_kingdom_trigger = {
 	}
 	trigger_else_if = {
 		limit = {
-			OR = {
-				primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
-				primary_title = title:d_laamp_scyldings
-			}
+			primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom = title:k_mercia
 		}
 		title:k_mercia = { save_temporary_scope_as = target_kingdom }
 	}

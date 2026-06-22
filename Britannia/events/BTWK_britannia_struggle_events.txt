@@ -135,7 +135,8 @@ BTWK_anglo_saxon_invasions.0002 = {
 # BTWK_anglo_saxon_invasions.0110 - Start of Rise of Kingdom event chain/story
 # BTWK_anglo_saxon_invasions.0111 - Notify other rulers
 # BTWK_anglo_saxon_invasions.0112 - Rise of Kingdom ended (timeout)
-# BTWK_anglo_saxon_invasions.0113 - Rise of Kingdom ended (unlanded)
+# BTWK_anglo_saxon_invasions.0113 - Rise of Kingdom ended (defeat)
+# BTWK_anglo_saxon_invasions.0114 - Won first war, get Foederati Heritage modifier
 
 # Yearly master controller event, decides if any of the story cycles should start
 BTWK_anglo_saxon_invasions.0100 = {
@@ -222,29 +223,37 @@ BTWK_anglo_saxon_invasions.0101 = {
 			
 			# If the roll goes through, try to choose an eligible ruler
 			# Always try to select the historical dynasty first
-			# Scylding adventurers are specifically chosen here for Mercia
 			if = {
-				limit = { scope:target_kingdom = title:k_bernicia }
+				limit = { scope:event_target_kingdom = title:k_bernicia }
 				dynasty:662 = { save_scope_as = historical_dynasty }
 			}
 			else_if = {
-				limit = { scope:target_kingdom = title:k_deira }
+				limit = { scope:event_target_kingdom = title:k_deira }
 				dynasty:663 = { save_scope_as = historical_dynasty }
 			}
 			else_if = {
-				limit = { scope:target_kingdom = title:k_lindsey }
+				limit = { scope:event_target_kingdom = title:k_lindsey }
 				dynasty:817 = { save_scope_as = historical_dynasty }
 			}
 			else_if = {
-				limit = { scope:target_kingdom = title:k_mercia }
+				limit = { scope:event_target_kingdom = title:k_mercia }
 				dynasty:660 = { save_scope_as = historical_dynasty }
 			}
 			else_if = {
-				limit = { scope:target_kingdom = title:k_wessex }
+				limit = { scope:event_target_kingdom = title:k_wessex }
 				dynasty:816 = { save_scope_as = historical_dynasty }
 			}
 			random_ruler = {
 				limit = {
+					is_landed = yes
+					is_ai = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+					BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+					scope:event_target_kingdom = scope:target_kingdom
+					# Prioritize historical dynasties if possible
+					scope:historical_dynasty ?= dynasty
+				}
+				alternative_limit = {
 					is_landed = yes
 					is_ai = yes
 					BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
@@ -254,6 +263,25 @@ BTWK_anglo_saxon_invasions.0101 = {
 					scope:historical_dynasty ?= dynasty
 				}
 				save_scope_as = target_character
+			}
+			# Scylding adventurers are specifically chosen here for Mercia 
+			# (they're not a ruler so they don't get caught in the above)
+			if = {
+				limit = { 
+					scope:event_target_kingdom = title:k_mercia
+					NOT = { exists = scope:target_character } 
+				}
+				title:d_laamp_scyldings.holder ?= {
+					if = {
+						limit = {
+							is_ai = yes
+							BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+							BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_excluding_temp_factors_trigger = yes
+							scope:historical_dynasty ?= dynasty
+						}
+						save_scope_as = target_character
+					}
+				}
 			}
 			
 			# If a historical dynasty character is fully eligible, fire the event
@@ -339,7 +367,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 				# If there are none, grab an adventurer of the right culture
 				if = {
 					limit = {	
-						scope:target_kingdom = title:k_wessex
+						scope:event_target_kingdom = title:k_wessex
 					}
 					culture:old_saxon = { save_scope_as = target_culture }
 				}
@@ -518,53 +546,6 @@ BTWK_anglo_saxon_invasions.0110 = {
 		if = {
 			limit = { is_landless_adventurer = yes }
 			domicile = { move_domicile = scope:new_story.var:starting_county.title_province }
-		}
-		if = {
-			limit = { is_ai = no }
-			spawn_army = {
-				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 300
-				men_at_arms = {
-					type = pikemen_unit
-					men = 150
-				}
-				men_at_arms = {
-					type = landsknecht
-					men = 150
-				}
-				men_at_arms = {
-					type = onager
-					men = 10
-				}
-				location = this.capital_province
-				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-			}
-		}
-		else = {
-			spawn_army = {
-				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 500
-				men_at_arms = {
-					type = bowmen
-					men = 150
-				}
-				men_at_arms = {
-					type = pikemen_unit
-					men = 100
-				}
-				men_at_arms = {
-					type = landsknecht
-					men = 200
-				}
-				men_at_arms = {
-					type = onager
-					men = 20
-				}
-				location = this.capital_province
-				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
-			}
-			add_prestige = 1000
-			add_gold = 300
 		}
 		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
 			set_variable = {
@@ -1192,6 +1173,61 @@ BTWK_anglo_saxon_invasions.0110 = {
 			}
 			remove_character_flag = temp_no_claim_war_cost
 		}
+		if = {
+			limit = { is_ai = no }
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 300
+				men_at_arms = {
+					type = pikemen_unit
+					men = 150
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
+				}
+				location = this.capital_province
+				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+			}
+		}
+		else = {
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 500
+				men_at_arms = {
+					type = bowmen
+					men = 150
+				}
+				men_at_arms = {
+					type = pikemen_unit
+					men = 100
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 200
+				}
+				men_at_arms = {
+					type = onager
+					men = 20
+				}
+				location = this.capital_province
+				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+			}
+			add_prestige = 1000
+			add_gold = 300
+			random_character_war = {
+				limit = {
+					primary_attacker = root
+				}
+				primary_defender = { save_scope_as = target_character }
+			}
+			scope:new_story = { save_scope_as = current_story }
+			BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+		}
 		# TODO Add hook to immediate take decision after winning war if AI
 	}
 }
@@ -1224,7 +1260,13 @@ BTWK_anglo_saxon_invasions.0111 = {
 	option = {
 		name = BTWK_anglo_saxon_invasions.0111.a
 		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.1
-		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2
+		if = {
+			limit = { scope:rise_of_kingdom_leader = { is_landed = yes } }
+			custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2
+		}
+		else = {
+			custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.2.unlanded
+		}
 	}
 }
 
