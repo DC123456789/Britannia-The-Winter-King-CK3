@@ -83,17 +83,26 @@
 						# Realm effects
 						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
 						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
-						catalyst_bretwalda_died_violently = massive_struggle_catalyst_gain
-						catalyst_bretwalda_died_naturally = major_struggle_catalyst_gain
+						catalyst_bretwalda_died_violently = monumental_struggle_catalyst_gain
+						catalyst_bretwalda_died_naturally = massive_struggle_catalyst_gain
 						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
 					}
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
-						catalyst_vassalize_independent_ruler = minor_struggle_catalyst_gain
-						catalyst_create_new_anglo_saxon_kingdom = major_struggle_catalyst_gain
-						catalyst_pass_britannia_reform = massive_struggle_catalyst_gain
-						catalyst_convert_to_reformed_religion = medium_struggle_catalyst_gain
+						# Realm effects
+						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = excessive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_reformed_religion = major_struggle_catalyst_gain
+						catalyst_convert_to_pre_feudal = massive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						
+						# TODO over time gain depending on the size of largest realms in Britannia?
+						# TODO over time gain depending on number of outsider-controlled counties in Britannia
 					}
 				}
 			}
@@ -150,11 +159,11 @@
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
-						# TODO
+						# TODO Copy from Invasion
 					}
 				}
 			}
-
+				
 			war_effects = {
 				name = WAR_EFFECTS_NAME
 				# TODO
@@ -164,6 +173,15 @@
 					duchy_conquest_cb_blocked = yes
 					more_expensive_unromanized_germanic_mutual_conquest_cb = yes
 					unromanized_germanic_conquest_cb_on_laeti_blocked = yes
+					white_peace_acceptance_between_involved_or_interloper_with_region_easier = yes
+					truces_by_involved_or_interlopers_within_region_longer = yes
+					struggle_cheaper_buy_truce = yes
+					more_expensive_conquest_cb = yes
+				}
+				
+				involved_character_modifier = {
+					ai_war_chance = -0.25
+					ai_war_cooldown = 0.25
 				}
 			}
 
@@ -201,8 +219,17 @@
 			# General Set-Up
 			future_phases = {
 				struggle_britannia_phase_unification = {
-					catalysts = {
-						# TODO
+					catalysts = {						
+						# Realm effects
+						catalyst_create_new_anglo_saxon_kingdom = massive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = monumental_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						
+						# TODO Similar to consolidation, also have ticking progress depending 
+						# on size of largest realms
 					}
 				}
 			}
@@ -245,6 +272,7 @@
 				###### Involved
 				involved_parameters = {
 					britannia_high_king_authority_minor_boost = yes
+					aengland_bretwalda_hegemony_score_minor_boost = yes
 				}
 			}
 
@@ -295,6 +323,8 @@
 				###### Involved
 				involved_parameters = {
 					britannia_high_king_authority_boost = yes
+					aengland_bretwalda_hegemony_score_boost = yes
+					# TODO Cheaper client kingdom enforce vassalage
 				}
 			}
 
