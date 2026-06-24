@@ -10,8 +10,14 @@ namespace = BTWK_anglo_saxon_invasions
 ##################################################################
 # BTWK_anglo_saxon_invasions.0001 - 0099: Aelle/Anglia Events
 ##################################################################
+# BTWK_anglo_saxon_invasions.0001 - Trigger Anglian Invasion event
+# BTWK_anglo_saxon_invasions.0002 - Start of the Anglian Invasions
 
-# trigger Anglian Invasion event
+# BTWK_anglo_saxon_invasions.0010 - Death/Fall of Aelle
+# BTWK_anglo_saxon_invasions.0011 - Collapse of East Anglia
+# BTWK_anglo_saxon_invasions.0012 - Aelle's Legacy Secured
+
+# Trigger Anglian Invasion event
 BTWK_anglo_saxon_invasions.0001 = {
 	hidden = yes
 	content_source = dlc_BTWK
@@ -1341,6 +1347,285 @@ BTWK_anglo_saxon_invasions.0114 = {
 			capital_county = {
 				set_county_culture = root.culture
 				set_county_faith = root.faith
+			}
+		}
+	}
+}
+
+
+##################################################################################################
+# BTWK_anglo_saxon_invasions.9000 - 9099: Misc Cultural Conversion Events
+##################################################################################################
+# BTWK_anglo_saxon_invasions.9000 - Roll for Tribal Settlements event
+# BTWK_anglo_saxon_invasions.9001 - Tribal Settlements in Brythonic/Imperial province, convert to tribal
+
+# BTWK_anglo_saxon_invasions.9002 - Roll for Anglo-Saxon culture conversion event
+# BTWK_anglo_saxon_invasions.9003 - Tribal County converts to Anglo-Saxon culture + religion
+
+# Roll for Tribal Settlements event
+BTWK_anglo_saxon_invasions.9000 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+		scope:target_county = {
+			title_province = {
+				OR = {
+					has_holding_type = castle_holding
+					has_holding_type = city_holding
+				}
+			}
+			holder = {
+				is_unromanized_germanic_culture_trigger = yes
+				government_has_flag = government_is_tribal
+				top_liege = { government_has_flag = government_is_tribal }
+			}
+		}
+	}
+
+	immediate = {
+		scope:target_county = {
+			random = {
+				chance = {
+					value = 20
+					add = {
+						value = this.var:BTWK_britannia_county_tribal_control
+						subtract = 6		# First roll occurs when the var is 6
+						multiply = 2.5
+					}
+					if = {
+						limit = { 
+							NOR = {
+								any_neighboring_county = { title_province = { has_holding_type = tribal_holding } }
+								holder.top_liege = {
+									owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						divide = 4
+					}
+					if = {
+						limit = { is_unromanized_germanic_culture_trigger = yes }
+						multiply = 2
+					}
+					if = {
+						limit = {
+							holder = {
+								any_owned_story = {
+									story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+									this.var:target_kingdom = title:k_lindsey
+								}
+							}
+						}
+						divide = 3
+					}
+					if = {
+						limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = no } }
+						divide = 2
+					}
+				}
+				holder = { trigger_event = BTWK_anglo_saxon_invasions.9001 }
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9001 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.9001.t
+	desc = BTWK_anglo_saxon_invasions.9001.desc
+	theme = realm	
+	override_background = farmland
+
+	left_portrait = {
+		character = root
+		animation = steward
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.9001.a
+		scope:target_county = {
+			title_province = {
+				save_scope_as = county_capital
+				if = {
+					limit = { has_building_or_higher = castle_02 }
+					save_scope_as = build_tribal_02
+				}
+				save_scope_value_as = {
+					name = num_tribal_buildings_to_build
+					value = {
+						value = combined_building_level
+						subtract = 1
+						if = {
+							limit = { has_building_or_higher = castle_02 }
+							subtract = 1
+						}
+						if = {
+							limit = { has_building_or_higher = castle_03 }
+							subtract = 1
+						}
+						if = {
+							limit = { has_building_or_higher = castle_04 }
+							subtract = 1
+						}
+					}
+				}
+			}
+			custom_tooltip = BTWK_anglo_saxon_invasions.9001.a.tt.1
+			custom_tooltip = BTWK_anglo_saxon_invasions.9001.a.tt.2
+			hidden_effect = {
+				raze_county = {
+					holding_type = tribal_holding
+					purge_secondary_holdings = yes
+					excluded_holding_type = church_holding
+				}
+				title_province = {
+					hidden_effect = {
+						if = {
+							limit = { exists = scope:build_tribal_02 }
+							add_building = tribe_02
+						}
+						while = {
+							count = scope:num_tribal_buildings_to_build
+							generate_building = yes
+						}
+						refill_garrison = yes
+						refill_levy = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9002 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+		scope:target_county = {
+			title_province = { has_holding_type = tribal_holding }
+			is_germanic_culture_trigger = no
+			holder = {
+				is_unromanized_germanic_culture_trigger = yes
+				government_has_flag = government_is_tribal
+			}
+		}
+	}
+
+	immediate = {
+		scope:target_county = {
+			random = {
+				chance = {
+					value = 5
+					add = {
+						value = this.var:BTWK_britannia_tribal_county_anglo_saxon_control
+						subtract = 11		# First roll occurs when the var is 6
+						multiply = 1.5
+					}
+					if = {
+						limit = { 
+							NOR = {
+								any_neighboring_county = { is_unromanized_germanic_culture_trigger = yes }
+								holder.top_liege = {
+									owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						divide = 4
+					}
+					if = {
+						limit = {
+							holder.top_liege = {
+								any_owned_story = {
+									story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						multiply = 1.5
+					}
+					if = {
+						limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = no } }
+						divide = 1.5
+					}
+				}
+				holder = { trigger_event = BTWK_anglo_saxon_invasions.9003 }
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9003 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.9003.t
+	desc = BTWK_anglo_saxon_invasions.9003.desc
+	theme = culture_change	
+	override_background = farmland
+
+	left_portrait = {
+		character = root
+		animation = idle
+	}
+	
+	immediate = {
+		scope:target_county = { 
+			save_scope_as = current_county 
+			culture = { save_scope_as = old_culture }
+			faith = { save_scope_as = old_faith }
+		}
+		culture = { save_scope_as = new_culture }
+		faith = { save_scope_as = new_faith }
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.9003.a
+		scope:target_county = {
+			set_county_culture = holder.culture
+			set_county_faith = root.faith
+		}
+		# Send toasts to lieges
+		hidden_effect = {
+			every_liege_or_above = { 
+				send_interface_toast = {
+					type = msg_culture_conversion
+					title = culture_shifts.9999.t
+					custom_tooltip = culture_shifts.9999.desc
+					right_icon = scope:current_county
+				}
+				if = {
+					limit = { scope:old_faith != scope:new_faith }
+					switch = {
+						trigger = faith
+						scope:current_county.faith = { # Good if same as new faith
+							send_interface_message = {
+								type = msg_council_conversion_good
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+						scope:old_faith = {
+							send_interface_message = { # Bad if same faith as county
+								type = msg_council_conversion_bad
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+						fallback = {
+							send_interface_message = { # Neutral otherwise
+								type = msg_council_conversion_neutral
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+					}
+				}
 			}
 		}
 	}
