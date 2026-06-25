@@ -3,6 +3,184 @@ namespace = BTWK_anglo_saxon_invasions
 
 ##################################################
 
+### Britannia Struggle Events
+
+##################################################
+
+# Handle yearly tick catalysts
+# Complements but does not replace/override neutral_struggle.0001
+BTWK_britannia_struggle.0001 = {
+	hidden = yes
+	scope = struggle
+
+	immediate = {
+		save_scope_as = current_struggle
+		
+		# Other time-based catalysts.
+		## Britannia High Kingship Reform Status
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_can_inherit_trigger = yes
+				exists = title:e_britannia.holder
+			}
+			if = {
+				limit = { phase_has_catalyst = catalyst_high_king_britannia_is_inheritable }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_high_king_britannia_is_inheritable
+					character = title:e_britannia.holder
+				}
+			}
+		}
+		if = {
+			limit = {
+				BTWK_britannia_subject_king_vassals_active_trigger = yes
+				exists = title:e_britannia.holder
+			}
+			if = {
+				limit = { phase_has_catalyst = catalyst_high_king_britannia_vassalized_subject_kings }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_high_king_britannia_vassalized_subject_kings
+					character = title:e_britannia.holder
+				}
+			}
+		}
+		# Aengland Centralization Status
+		# TODO
+		# Britannia realm sizes
+		every_independent_ruler = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			if = {
+				limit = { 
+					realm_size >= 130
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_6 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_6
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 100
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_5 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_5
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 80
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_4 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_4
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 60
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_3 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_3
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 45
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_2 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_2
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 30
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_1 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_1
+						character = prev
+					}
+				}
+			}
+		}
+		# Britannia uninvolved control
+		save_scope_value_as = {
+			name = britannia_uninvolved_control
+			value = {
+				value = 0
+				every_involved_county = {
+					limit = { holder.top_liege = { NOT = { any_character_struggle = { this = scope:current_struggle } } } }
+					add = 1
+				}
+			}
+		}
+		if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 80
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_5
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_5
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 40
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_4
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_4
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 20
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_3
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_3
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 10
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_2
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_2
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 5
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_1
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_1
+		}
+
+		# Finally, queue the event up again for a year hence.
+		trigger_event = {
+			id = BTWK_britannia_struggle.0001
+			years = 1
+		}
+	}
+}
+
+##################################################
+
 ### Anglo-Saxon Invasions
 
 ##################################################

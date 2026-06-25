@@ -1,0 +1,53 @@
+﻿# scope:first = Character in relation
+# scope:second = Other character in relation
+# This is run once, so anything applied on both characters must be done on both root and scope:second here
+on_alliance_added = {
+	on_actions = {
+		btwk_on_alliance_added
+	}
+}
+
+btwk_on_alliance_added = {
+	effect = {
+		# Struggle Catalysts.
+		if = {
+			limit = {
+				scope:first = {
+					NOT = { culture = { has_same_culture_heritage = scope:second.culture } }
+					NOR = {
+						AND = {
+							has_cultural_pillar = heritage_latin
+							scope:second.culture = { has_cultural_pillar = heritage_brythonic }
+						}
+						AND = {
+							has_cultural_pillar = heritage_brythonic
+							scope:second.culture = { has_cultural_pillar = heritage_latin }
+						}
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_formed_intercultural_alliance_with_important_character
+							CHAR = scope:second
+						}
+					}
+				}
+			}
+			scope:first = {
+				every_character_struggle = {
+					involvement = involved
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_formed_intercultural_alliance_with_important_character
+							CHAR = scope:second
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_formed_intercultural_alliance_with_important_character
+						character = scope:first
+					}
+				}
+			}
+		}
+	}
+}

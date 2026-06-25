@@ -1,7 +1,57 @@
 # root - Character who changed government
 # scope:old_government - Character's old government type
 on_government_change = {
+	on_actions = {
+		BTWK_on_government_change
+	}
+}
+
+BTWK_on_government_change = {
 	effect = {
 		tribal_fame_government_change_effect = yes
+		
+		# Britannia struggle catalysts
+		if = {
+			limit = {
+				scope:old_government = government_type:tribal_government
+				government_has_flag = government_is_pre_feudal
+				is_independent_ruler = yes
+				any_character_struggle = {
+					involvement = involved
+					phase_has_catalyst = catalyst_convert_to_pre_feudal
+				}
+			}
+			every_character_struggle = {
+				involvement = involved
+				activate_struggle_catalyst = {
+					catalyst = catalyst_convert_to_pre_feudal
+					character = root
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:old_government = government_type:pre_feudal_government
+				OR = {
+					AND = {
+						government_has_flag = government_is_feudal
+						NOT = { government_has_flag = government_is_pre_feudal }
+					}
+					government_has_flag = government_is_administrative
+				}
+				is_independent_ruler = yes
+				any_character_struggle = {
+					involvement = involved
+					phase_has_catalyst = catalyst_convert_to_advanced_government
+				}
+			}
+			every_character_struggle = {
+				involvement = involved
+				activate_struggle_catalyst = {
+					catalyst = catalyst_convert_to_advanced_government
+					character = root
+				}
+			}
+		}
 	}
 }

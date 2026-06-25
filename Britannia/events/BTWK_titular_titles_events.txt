@@ -145,6 +145,20 @@ titular_titles_anglosaxon.0001 = {
 				}
 			}
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:new_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_create_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_create_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
+				}
+			}
+		}
 	}
 
 	option = {
@@ -216,6 +230,20 @@ titular_titles_anglosaxon.0002 = {
 				every_in_list = {
 					variable = de_jure_affected_territory
 					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:old_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_destroy_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_destroy_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
 				}
 			}
 		}
@@ -708,6 +736,16 @@ titular_titles_anglosaxon.0010 = {
 				}
 			}
 		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
 	}
 }
 
@@ -803,6 +841,16 @@ titular_titles_anglosaxon.0012 = {
 					INTEGRATION_KINGDOM = title:k_lindsey
 				}
 				check_de_jure_liege_effect = yes
+			}
+		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
 			}
 		}
 	}
@@ -917,6 +965,16 @@ titular_titles_anglosaxon.0100 = {
 			trigger_event = { id = titular_titles_anglosaxon.0101 }
 		}
 		scope:title = { set_variable = title_has_been_created }
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
 	}
 }
 

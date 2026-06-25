@@ -13,12 +13,16 @@
 		angle
 		old_saxon
 		jute
+		
+		# Goidelic
+		irish
 	}
 	faiths = {
 		catholic
 		briton_pagan
 		romano_celtic_pagan
 		anglo_saxon_pagan
+		gael_pagan
 	}
 	regions = { btwk_world_britannia }
 
@@ -29,7 +33,8 @@
 
 	on_start = {
 		# Starting Events
-		# trigger_event = { on_action = fp2_iberian_struggle_starting_events }
+		trigger_event = neutral_struggle.0001
+		trigger_event = BTWK_britannia_struggle.0001
 	}
 
 	on_change_phase = {
@@ -70,26 +75,38 @@
 						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
 						
 						# War effects
-						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
 						catalyst_sign_truce_outside_war = medium_struggle_catalyst_gain
-						catalyst_end_any_war_within_the_region = medium_struggle_catalyst_gain
+						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_end_any_war_within_the_region = minimal_struggle_catalyst_gain
 						
 						# Diplomatic effects
+						catalyst_became_best_friend_soulmate_with_very_important_character = major_struggle_catalyst_gain # AI done
+						catalyst_grant_privilege_to_diff_faith_culture_vassal = medium_struggle_catalyst_gain
+						catalyst_grant_land_local_noble = medium_struggle_catalyst_gain
+						catalyst_release_important = medium_struggle_catalyst_gain
+						catalyst_invite_diff_faith_culture_to_feast = minor_struggle_catalyst_gain
 						catalyst_learned_new_language_important = minor_struggle_catalyst_gain
-						catalyst_formed_intercultural_alliance_with_important_character = major_struggle_catalyst_gain
+						catalyst_formed_intercultural_alliance_with_important_character = minor_struggle_catalyst_gain
 						catalyst_gift_independent_ruler = minor_struggle_catalyst_gain
 						catalyst_became_friend_lover_with_character = minor_struggle_catalyst_gain
+						catalyst_improve_development_vassal_diff_faith_culture = minimal_struggle_catalyst_gain # How to do AI?
+						catalyst_ransom_important = minimal_struggle_catalyst_gain
 						
 						# Realm effects
-						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
-						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
-						catalyst_bretwalda_died_violently = monumental_struggle_catalyst_gain
-						catalyst_bretwalda_died_naturally = massive_struggle_catalyst_gain
-						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_create_anglo_saxon_duchy = massive_struggle_catalyst_gain
+						catalyst_destroy_anglo_saxon_duchy = massive_struggle_catalyst_gain
+						catalyst_bretwalda_died_violently = excessive_struggle_catalyst_gain
+						catalyst_bretwalda_died_naturally = monumental_struggle_catalyst_gain
+						catalyst_conqueror_died_violently = excessive_struggle_catalyst_gain
+						catalyst_conqueror_died_naturally = monumental_struggle_catalyst_gain
+						catalyst_east_anglia_collapses = excessive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = massive_struggle_catalyst_gain
 					}
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
 						# Realm effects
 						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
 						catalyst_create_new_anglo_saxon_kingdom = excessive_struggle_catalyst_gain
@@ -101,8 +118,22 @@
 						catalyst_convert_to_pre_feudal = massive_struggle_catalyst_gain
 						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
 						
-						# TODO over time gain depending on the size of largest realms in Britannia?
-						# TODO over time gain depending on number of outsider-controlled counties in Britannia
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = monumental_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = monumental_struggle_catalyst_over_time_gain
+						
+						# Gain over time depending on number of outsider-controlled counties in Britannia
+						catalyst_uninvolved_presence_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_5 = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
@@ -154,12 +185,62 @@
 			future_phases = {
 				struggle_britannia_phase_invasion = {						
 					catalysts = {
-						# TODO
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# War effects
+						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_end_any_war_within_the_region = minor_struggle_catalyst_gain
+						catalyst_broke_truce_against_important_character = massive_struggle_catalyst_gain
+						
+						# Diplo effects
+						catalyst_gain_claim_on_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_becomes_rival_with_involved = major_struggle_catalyst_gain
+						catalyst_unnatural_death_important_character = medium_struggle_catalyst_gain
+						catalyst_using_a_hook_on_very_important_character = medium_struggle_catalyst_gain # good
+						catalyst_reveal_secret_important = major_struggle_catalyst_gain
+						
+						# Realm effects
+						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_high_king_britannia_died_violently = monumental_struggle_catalyst_gain
+						catalyst_high_king_britannia_died_naturally = massive_struggle_catalyst_gain
+						catalyst_high_king_britannia_dissolved = massive_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						
+						# TODO Massive gain from from the Plague of Justinian / Crisis of the 6th Century
 					}
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
-						# TODO Copy from Invasion
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# Realm effects
+						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = excessive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_reformed_religion = major_struggle_catalyst_gain
+						catalyst_convert_to_pre_feudal = massive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = monumental_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = monumental_struggle_catalyst_over_time_gain
+						
+						# Gain over time depending on number of outsider-controlled counties in Britannia
+						catalyst_uninvolved_presence_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_5 = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
@@ -227,9 +308,19 @@
 						catalyst_pass_britannia_reform = monumental_struggle_catalyst_gain
 						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
 						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						catalyst_vassalize_client_kingdom = massive_struggle_catalyst_gain
+						catalyst_vassalize_large_client_kingdom = excessive_struggle_catalyst_gain
 						
-						# TODO Similar to consolidation, also have ticking progress depending 
-						# on size of largest realms
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_2 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_6 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_vassalized_subject_kings = massive_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
