@@ -1,0 +1,66 @@
+﻿#########################################################################
+# Anglo-Saxon Major Decisions											#
+#########################################################################
+
+BTWK_britannia_struggle_outsider_ending_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/fp2_decision_struggle_opening.dds"
+	}
+	extra_picture = "gfx/interface/illustrations/decisions/fp2_decision_struggle_opening.dds"
+	selection_tooltip = BTWK_britannia_struggle_outsider_ending_decision_tooltip
+	is_invisible = yes
+	sort_order = 80
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	is_shown = {
+		# Not if you are eligible for another, more specific decision
+		NOR = {
+			is_britannic_culture_trigger = yes
+			is_unromanized_germanic_culture_trigger = yes
+			is_romanized_barbarian_culture_or_romance_descendant_trigger = yes
+		}
+		exists = struggle:britannia_struggle
+	}
+
+	is_valid = {
+		highest_held_title_tier >= tier_empire
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.85
+			REGION = geographical_region:btwk_world_britannia
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_britannia_struggle_outsider_ending_decision_struggle_effect_tt
+		struggle:britannia_struggle = { end_struggle = found_romanized_germanic_empire_britannia_decision }
+		show_as_tooltip = {
+			dynasty = {
+				add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+			}
+		}
+		add_prestige = 1000
+		dynasty = { add_dynasty_prestige = excessive_dynasty_prestige_value }
+		save_scope_as = conqueror
+		trigger_event = { id = BTWK_britannia_struggle.0020 }
+		every_player = {
+			limit = { this != scope:conqueror }
+			trigger_event = { id = BTWK_britannia_struggle.0020 }
+		}
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

@@ -94,12 +94,7 @@ reunite_dumnonia_decision = {
 			has_title = title:k_dumnonia
 			has_title = title:k_kernow
 		}
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_britannic_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		title:k_dumnonia = {
 			NOT = { has_variable = title_expanded_de_jure }
@@ -191,12 +186,7 @@ form_strathclyde_decision = {
 
 	is_shown = {
 		has_title = title:k_strathclyde
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_britannic_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		title:k_strathclyde = {
 			NOT = { has_variable = formed_strathclyde }
@@ -553,12 +543,7 @@ create_hen_ogledd_decision = {
 			}
 			primary_title = { title_capital_county = { title_province = { geographical_region = btwk_world_britannia_hen_ogledd } } }
 		}
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_britannic_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		# title:k_ebrauc = {
 			# NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
@@ -658,12 +643,7 @@ reunite_the_britons_decision = {
 			}
 		}
 		has_global_variable = end_of_britannia
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_britannic_culture_trigger = yes
 	}
 
 	is_valid = {
@@ -770,16 +750,15 @@ britannia_claim_imperial_title_decision = {
 		has_title = title:e_britannia
 		culture = {
 			OR = {
-				has_cultural_pillar = heritage_romanized_germanic
-				has_cultural_pillar = heritage_frankish
+				is_romanized_barbarian_culture_trigger = yes
 				has_cultural_pillar = heritage_latin
+				has_cultural_pillar = heritage_romance
 			}
 		}
 		NOT = { title:e_britannia = { has_variable = emperor_flag } }
 		# If the High King mechanic is still active, then you should be taking the Roman path after
 		# unification instead - this is basically for if a Britannic character/realm survives the Fall of 
 		# Britannia and then unifies Britannia
-		# TODO Take another look at this once the High King system has been implemented
 		has_global_variable = end_of_britannia
 	}
 

@@ -6,6 +6,13 @@ namespace = BTWK_anglo_saxon_invasions
 ### Britannia Struggle Events
 
 ##################################################
+# BTWK_britannia_struggle.0001 - Yearly tick catalysts
+# BTWK_britannia_struggle.0011 - Join struggle event
+# BTWK_britannia_struggle.0012 - Invasion Phase event
+# BTWK_britannia_struggle.0013 - Detente Phase event
+# BTWK_britannia_struggle.0014 - Consolidation Phase event
+# BTWK_britannia_struggle.0015 - Unification Phase event
+# BTWK_britannia_struggle.0020 - Outsider Conquest ending event
 
 # Handle yearly tick catalysts
 # Complements but does not replace/override neutral_struggle.0001
@@ -443,6 +450,105 @@ BTWK_britannia_struggle.0014 = {
 			}
 		}
 		custom_tooltip = BTWK_britannia_struggle.0014.a.tt
+	}
+}
+
+# Outsider Unification Ending event
+BTWK_britannia_struggle.0020 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_britannia_struggle.0020.t
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:conqueror
+		        }
+		        desc = BTWK_britannia_struggle.0020.desc.conqueror
+		    }
+		    desc = BTWK_britannia_struggle.0020.desc
+		}
+	}
+	theme = war
+	override_background = fp2_fullscreen_intro
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { this != scope:conqueror }
+			custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_struggle.0020.a.conqueror
+		trigger = {
+			this = scope:conqueror
+		}
+		custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+		struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
+		dynasty = {
+			add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					is_britannic_culture_trigger = yes
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = BTWK_britannia_struggle.0020.a.briton
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_struggle.0020.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				culture = { has_cultural_pillar = heritage_latin }
+				is_britannic_culture_trigger = no
+				NOT = { primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia } }
+			}
+			text = BTWK_britannia_struggle.0020.a.roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_struggle.0020.a.other_in_britannia
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					culture = { has_cultural_pillar = heritage_latin }
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_struggle.0020.a
+		}
+		trigger = {
+			NOT = { this = scope:conqueror }
+		}
 	}
 }
 
