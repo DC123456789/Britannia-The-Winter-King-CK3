@@ -38,8 +38,50 @@
 	}
 
 	on_change_phase = {
-		# Set up AI Intent
-		# trigger_event = fp2_struggle.0003
+		if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_invasion }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_detente }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_consolidation }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_unification }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+		}
 	}
 	
 	# Root = the current struggle
@@ -140,7 +182,6 @@
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -162,7 +203,6 @@
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -175,6 +215,9 @@
 			ending_decisions = {
 				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
 				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
+				reunite_the_britons_decision
 			}
 		}
 
@@ -247,7 +290,6 @@
 				
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -277,7 +319,6 @@
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -290,12 +331,17 @@
 			ending_decisions = {
 				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
 				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
 			}
         }
 
 		# Consolidation is triggered as the Anglo-Saxon kingdoms become better organized and/or a powerful Briton/Roman/Romanized Germanic(?) realm starts to consolidate
-        # This triggers the beginning of larger-scale wars(?) and the unification of the Anglo-Saxons into larger kingdoms
+        # This triggers the beginning of larger-scale wars and the unification of the Anglo-Saxons into larger kingdoms
 		struggle_britannia_phase_consolidation = {
+			save_progress = yes
+			
 			##################################################
 			# General Set-Up
 			future_phases = {
@@ -327,7 +373,6 @@
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -338,7 +383,6 @@
 
 			faith_effects = {
 				name = FAITH_EFFECTS_NAME
-				# TODO
 			}
 
 			culture_effects = {
@@ -358,7 +402,6 @@
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
 
 				###### Involved
 				involved_parameters = {
@@ -371,6 +414,9 @@
 			ending_decisions = {
 				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
 				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
 			}
 		}
 
@@ -381,7 +427,6 @@
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
@@ -392,12 +437,10 @@
 
 			faith_effects = {
 				name = FAITH_EFFECTS_NAME
-				# TODO
 			}
 
 			culture_effects = {
 				name = CULTURE_EFFECTS_NAME
-				# TODO
 
 				###### Involved
 				involved_parameters = {
@@ -409,7 +452,6 @@
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
 
 				###### Involved
 				involved_parameters = {
@@ -423,6 +465,9 @@
 			ending_decisions = {
 				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
 				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
 			}
 		}
 	}

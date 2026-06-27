@@ -1925,6 +1925,9 @@ titular_titles_briton.0010 = {
 				REGION = geographical_region:btwk_world_britannia
 			}
 		}
+		else = {
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+		}
 		custom_tooltip = {
 			text = britannia_de_jure_shift_happened_tt
 		}
@@ -1934,6 +1937,14 @@ titular_titles_briton.0010 = {
 		name = titular_titles_briton.0010.a.founder
 		trigger = {
 			this = scope:founder
+		}
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+			struggle:britannia_struggle = { end_struggle = reunite_the_britons_decision }
+		}
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
 		}
 	}
 
@@ -3271,6 +3282,9 @@ titular_titles_romanized_germanic.0004 = {
 				REGION = geographical_region:btwk_world_britannia
 			}
 		}
+		else = {
+			scope:founder = { custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt }
+		}
 		custom_tooltip = {
 			text = romanized_germanic_britannia_de_jure_shift_happened_tt
 		}
@@ -3328,6 +3342,17 @@ titular_titles_romanized_germanic.0004 = {
 		}
 		name = {
 			text = titular_titles_romanized_germanic.0004.a
+		}
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { exists = struggle:britannia_struggle }
+				custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt
+				struggle:britannia_struggle = { end_struggle = found_romanized_germanic_empire_britannia_decision }
+			}
+			dynasty = {
+				add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+			}
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿#########################################################################
-# Romanized Germanic Title Decisions										#
+# Romanized Germanic Title Decisions									#
 #########################################################################
 
 found_romanized_germanic_kingdom_britannia_decision = {
@@ -186,6 +186,7 @@ found_romanized_germanic_empire_britannia_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
 	}
+	extra_picture = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
 	decision_group_type = major
 
 	ai_check_interval_by_tier = {
@@ -253,6 +254,15 @@ found_romanized_germanic_empire_britannia_decision = {
 	}
 
 	effect = {
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt
+		}
+		show_as_tooltip = {
+			dynasty = {
+				add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+			}
+		}
 		add_prestige = 1000
 		dynasty = { add_dynasty_prestige = excessive_dynasty_prestige_value }
 		add_legitimacy = 100

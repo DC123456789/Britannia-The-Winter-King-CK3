@@ -3,6 +3,37 @@ BTWK_aengland_bretwalda_active_trigger = {
 	NOT = { title:e_aengland = { has_variable = aengland_united } }
 }
 
+BTWK_aengland_bretwalda_has_declared_supremacy_trigger = {
+	title:e_aengland = { has_variable = aengland_declared_supremacy }
+}
+
+BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = {
+	is_independent_ruler = yes
+	government_is_not_tribal_trigger = yes
+	is_unromanized_germanic_culture_trigger = yes
+	prestige_level >= high_prestige_level
+	OR = {
+		title:e_aengland = {
+			title_held_years >= 15 
+		}
+		prestige_level >= 4
+		diplomacy >= 20
+		martial >= 20
+		prowess >= 25
+	}
+	control_region_fraction_trigger = {
+		FRACTION_REQUIRED = 0.95
+		REGION = geographical_region:btwk_custom_aengland
+	}
+	control_anglo_saxon_provinces_fraction_trigger = {
+		FRACTION_REQUIRED = 1.0
+	}
+	custom_tooltip = {
+		text = BTWK_HK_aengland_unite_aengland_decision_hegemony_score_tt
+		this.var:aengland_hegemony_score >= 500
+	}
+}
+
 # Is an Anglo-Saxon province for the purposes of Bretwalda score calculations
 is_anglo_saxon_province_trigger = {
 	OR = {
@@ -23,6 +54,65 @@ is_anglo_saxon_province_trigger = {
 			}
 		}
 	}
+}
+
+# Mostly for the custom tooltip
+control_anglo_saxon_provinces_fraction_trigger = {
+	save_temporary_scope_as = current_scope
+	save_temporary_scope_value_as = { 
+		name = percent_required 
+		value = {
+			value = $FRACTION_REQUIRED$
+			multiply = 100
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_total_counties 
+		value = {
+			value = 0
+			every_county_in_region = {
+				region = btwk_world_britannia
+				limit = { is_anglo_saxon_province_trigger = yes }
+				add = 1
+			}
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_required_counties 
+		value = {
+			value = scope:region_total_counties
+			multiply = $FRACTION_REQUIRED$
+			ceiling = yes
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_controlled_counties
+		value = {
+			value = 0
+			every_county_in_region = {
+				region = btwk_world_britannia
+				limit = {
+					is_anglo_saxon_province_trigger = yes
+					scope:current_scope = { completely_controls = prev }
+				}
+				add = 1
+			}
+		}
+	}
+	save_temporary_scope_value_as = { 
+		name = region_controlled_percent
+		value = {
+			value = scope:region_controlled_counties
+			divide = scope:region_total_counties
+			multiply = 100
+		}
+	}
+	geographical_region:btwk_world_britannia = { save_temporary_scope_as = region_scope }
+	custom_tooltip = {
+		text = control_anglo_saxon_provinces_fraction_trigger_tt
+		scope:region_controlled_counties >= scope:region_required_counties
+	}
+	# No reduced AI calc because we need to figure out the number of Anglo-Saxon counties in the denominator
 }
 
 # Mostly for the custom tooltip

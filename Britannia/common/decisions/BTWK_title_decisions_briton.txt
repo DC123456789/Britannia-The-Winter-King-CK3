@@ -632,6 +632,7 @@ reunite_the_britons_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
 	}
+	extra_picture = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
 	decision_group_type = major
 
 	ai_check_interval_by_tier = {
@@ -646,11 +647,14 @@ reunite_the_britons_decision = {
 	desc = reunite_the_britons_decision_desc
 
 	is_shown = {
-		any_held_title = {
-			OR = {
-				this.var:kingdom_region ?= title:k_ebrauc
-				this.var:kingdom_region ?= title:k_gwynedd
-				this.var:kingdom_region ?= title:k_londinium
+		OR = {
+			any_character_struggle = {
+				struggle:britannia_struggle ?= this
+			}
+			primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			any_held_title = {
+				tier >= tier_kingdom
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 			}
 		}
 		has_global_variable = end_of_britannia
@@ -663,10 +667,20 @@ reunite_the_britons_decision = {
 	}
 
 	is_valid = {
+		custom_tooltip = {
+			text = reunite_the_britons_decision_kingdom_tt
+			any_held_title = {
+				OR = {
+					this.var:kingdom_region ?= title:k_ebrauc
+					this.var:kingdom_region ?= title:k_gwynedd
+					this.var:kingdom_region ?= title:k_londinium
+				}
+			}
+		}
 		is_independent_ruler = yes
 		prestige_level >= high_prestige_level
 		control_region_fraction_trigger = {
-			FRACTION_REQUIRED = 0.80
+			FRACTION_REQUIRED = 0.85
 			REGION = geographical_region:btwk_world_britannia
 		}
 		OR = {
@@ -680,6 +694,15 @@ reunite_the_britons_decision = {
 	}
 
 	effect = {
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+		}
+		show_as_tooltip = {
+			dynasty = {
+				add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+			}
+		}
 		add_prestige = 1000
 		dynasty = { add_dynasty_prestige = monumental_dynasty_prestige_value }
 		add_legitimacy = 150

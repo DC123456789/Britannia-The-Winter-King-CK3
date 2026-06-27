@@ -179,6 +179,273 @@ BTWK_britannia_struggle.0001 = {
 	}
 }
 
+# BTWK_britannia_struggle.0011 - Join event
+
+# Struggle phase events
+# Invasion
+BTWK_britannia_struggle.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0011.t
+	desc = BTWK_britannia_struggle.0011.desc
+	theme = battle
+	
+	left_portrait = {
+		character = scope:strongest_anglo_saxon
+		animation = aggressive_sword
+	}
+	
+	right_portrait = {
+		character = scope:strongest_briton_roman
+		animation = war_over_win
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				order_by = sub_realm_size
+				save_scope_as = strongest_anglo_saxon
+			}
+			ordered_involved_ruler = {
+				limit = {
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_brythonic
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = strongest_briton_roman
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0011.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0011.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0011.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0011.a.tt
+	}
+}
+
+# Detente
+BTWK_britannia_struggle.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0012.t
+	desc = BTWK_britannia_struggle.0012.desc
+	theme = diplomacy
+	override_background = farmland
+	
+	left_portrait = {
+		character = scope:strongest_anglo_saxon
+		animation = war_over_tie
+	}
+	
+	right_portrait = {
+		character = scope:strongest_briton_roman
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				order_by = sub_realm_size
+				save_scope_as = strongest_anglo_saxon
+			}
+			ordered_involved_ruler = {
+				limit = {
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_brythonic
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = strongest_briton_roman
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0012.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0012.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0012.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0012.a.tt
+	}
+}
+
+# Consolidation
+BTWK_britannia_struggle.0013 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0013.t
+	desc = BTWK_britannia_struggle.0013.desc
+	theme = realm
+	override_background = { reference = throne_room_scope }
+	
+	left_portrait = {
+		character = scope:strongest_ruler
+		animation = war_over_win
+	}
+	
+	right_portrait = {
+		character = scope:second_strongest_ruler
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				order_by = sub_realm_size
+				save_scope_as = strongest_ruler
+				save_scope_as = background_throne_room_scope 
+			}
+			ordered_involved_ruler = {
+				limit = {
+					NOT = { this = scope:strongest_ruler }
+				}
+				order_by = sub_realm_size
+				save_scope_as = second_strongest_ruler
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0013.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0013.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0013.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0013.a.tt
+	}
+}
+
+# Unification
+BTWK_britannia_struggle.0014 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0014.t
+	desc = BTWK_britannia_struggle.0014.desc
+	theme = realm
+	override_background = { reference = fp2_fullscreen_intro }
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				order_by = sub_realm_size
+				save_scope_as = strongest_ruler
+				save_scope_as = background_throne_room_scope 
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0014.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0014.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0014.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0014.a.tt
+	}
+}
+
 ##################################################
 
 ### Anglo-Saxon Invasions
