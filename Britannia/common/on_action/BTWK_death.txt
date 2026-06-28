@@ -56,6 +56,22 @@ BTWK_on_death = {
 			trigger_event = BTWK_britannia_high_king.0023
 		}
 		
+		# Trigger Fall of Aelle event
+		if = {
+			limit = { 
+				this = character:80
+				has_title = title:k_east_anglia
+				title:k_east_anglia = { has_variable = aelle_ruling_anglia }
+			}
+			character:80 = { save_scope_as = aelle_of_anglia }
+			title:k_east_anglia.current_heir = { save_scope_as = new_holder }
+			scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }
+			every_player = {
+				limit = { this != scope:new_holder }
+				trigger_event = BTWK_anglo_saxon_invasions.0010
+			}
+		}
+		
 		# Struggle catalysts
 		## High King deaths.
 		if = {
@@ -139,7 +155,10 @@ BTWK_on_death = {
 		}
 		## Conquerer deaths - may stack with one of the above!
 		if = {
-			limit = { owns_story_of_type = story_conqueror }
+			limit = { 
+				owns_story_of_type = story_conqueror
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
 			## Did they die violently?
 			### Checked against the struggle directly
 			if = {

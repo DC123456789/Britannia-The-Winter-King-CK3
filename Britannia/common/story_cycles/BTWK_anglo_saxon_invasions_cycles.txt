@@ -1107,3 +1107,43 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		}
 	}
 }
+
+BTWK_collapse_of_anglia_story = {	
+	on_setup = {
+		save_scope_as = current_story
+		
+		set_variable = {
+			name = years_remaining
+			value = 10
+		}
+	}
+
+	on_end = {
+	}
+	
+	# Story times out after 10 years
+	effect_group = {
+		years = 1
+		
+		trigger = {
+			always = yes
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			effect = {
+				change_variable = {
+					name = years_remaining
+					subtract = 1
+				}
+				if = {
+					limit = {
+						this.var:years_remaining <= 0
+					}
+					title:k_east_anglia.holder = { trigger_event = BTWK_anglo_saxon_invasions.0012 }
+					end_story = yes
+				}
+			}
+		}
+	}
+}

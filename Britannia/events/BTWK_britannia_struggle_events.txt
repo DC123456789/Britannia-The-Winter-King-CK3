@@ -482,6 +482,10 @@ BTWK_britannia_struggle.0020 = {
 		if = {
 			limit = { this != scope:conqueror }
 			custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
+		else = {
+			struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
 		}
 	}
 
@@ -491,6 +495,7 @@ BTWK_britannia_struggle.0020 = {
 			this = scope:conqueror
 		}
 		custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+		BTWK_end_britannia_struggle_effect = yes
 		struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
 		dynasty = {
 			add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
@@ -680,6 +685,280 @@ BTWK_anglo_saxon_invasions.0002 = {
 				}
 			}
 		}
+	}
+}
+
+# Death / Fall of Aelle
+BTWK_anglo_saxon_invasions.0010 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:aelle_of_anglia = { is_alive = no } }
+				desc = BTWK_anglo_saxon_invasions.0010.t.aelle_dead
+			}
+			desc = BTWK_anglo_saxon_invasions.0010.t.aelle_deposed
+		}
+	}
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:anglia_heir
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_dead
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:anglia_heir
+					scope:aelle_of_anglia = { is_alive = yes }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_deposed
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:aelle_of_anglia
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_dead
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:aelle_of_anglia
+					scope:aelle_of_anglia = { is_alive = yes }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_deposed
+		    }
+		    triggered_desc = {
+		        trigger = {
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_dead
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_deposed
+		}
+	}
+	theme = war
+	override_background = battlefield
+	
+	left_portrait = {
+		character = scope:aelle_of_anglia
+		animation = shame
+	}
+	
+	right_portrait = {
+		character = scope:new_holder
+		animation = worry
+	}
+	
+	immediate = {
+		title:k_east_anglia = {
+			remove_variable = aelle_ruling_anglia
+			set_variable = anglia_post_aelle_crisis
+		}
+		if = {
+			limit = {
+				OR = {
+					this = scope:new_holder 
+					this = scope:aelle_of_anglia
+				}
+			}
+			# Remove vassals from their current factions so they join the dissolution faction
+			if = {
+				limit = {
+					joined_faction ?= { 
+						NOR = { 
+							faction_is_type = nation_fracturing_faction_war 
+							faction_is_at_war = yes
+						}
+					}
+				}
+				leave_faction = this.joined_faction
+			}
+		}
+		else_if = {
+			limit = {
+				this.top_liege = scope:new_holder 
+			}
+			custom_tooltip = BTWK_anglo_saxon_invasions.0010.b.tt.vassal
+		}
+		else = {
+			custom_tooltip = BTWK_anglo_saxon_invasions.0010.b.tt.other
+		}
+	}
+	
+	option = {
+		name = BTWK_anglo_saxon_invasions.0010.a
+		trigger = { this = scope:new_holder }
+		add_legitimacy = -100
+		add_character_modifier = BTWK_anglia_unstable_realm
+		custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
+		create_story = BTWK_collapse_of_anglia_story
+	}
+	
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_alive = no
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.a.aelle_dead
+					}
+					desc = BTWK_anglo_saxon_invasions.0010.a.aelle
+				}
+			}
+		}
+		trigger = { this = scope:aelle_of_anglia }
+		show_as_tooltip = {
+			scope:new_holder = {
+				add_legitimacy = -100
+				add_character_modifier = BTWK_anglia_unstable_realm
+				custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
+				create_story = BTWK_collapse_of_anglia_story
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							liege = scope:new_holder
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.vassal
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								is_unromanized_germanic_culture_trigger = no
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0010.b
+				}
+			}
+		}
+		trigger = { 
+			this != scope:new_holder
+			this != scope:aelle_of_anglia
+		}
+	}
+}
+
+# Collapse of East Anglia
+BTWK_anglo_saxon_invasions.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_anglo_saxon_invasions.0011.t
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:former_king
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0011.desc.former_king
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0011.desc
+		}
+	}
+	theme = war
+	override_background = burning_building
+	
+	left_portrait = {
+		character = scope:former_king
+		animation = shame
+	}
+	
+	immediate = {
+		character:80 = { save_scope_as = aelle_of_anglia }
+		title:k_east_anglia = {
+			remove_variable = anglia_post_aelle_crisis
+			remove_variable = title_has_been_created
+		}
+		activate_struggle_catalyst = {
+			catalyst = catalyst_east_anglia_collapses
+			character = scope:former_king
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							liege = scope:former_king
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.former_king
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								is_unromanized_germanic_culture_trigger = no
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0011.a
+				}
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0012.t
+	desc = BTWK_anglo_saxon_invasions.0012.desc
+	theme = war
+	override_background = throne_room
+	
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		character:80 = { save_scope_as = aelle_of_anglia }
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0012.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0012.a.tt
+		remove_character_modifier = BTWK_anglia_unstable_realm
+		title:k_east_anglia = { remove_variable = anglia_post_aelle_crisis }
+		add_prestige = 200
+		add_legitimacy = 100
 	}
 }
 
