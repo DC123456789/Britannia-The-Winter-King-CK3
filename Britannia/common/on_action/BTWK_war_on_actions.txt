@@ -50,6 +50,37 @@ btwk_on_war_won_attacker = {
 				}
 			}
 		}
+		
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
 	}
 }
 
@@ -63,5 +94,128 @@ btwk_check_conquest_events = {
 		conquest_flavour_briton.0001 				# e_britannia
 		conquest_flavour_irish.0001 				# e_cymru, Irish versions
 		conquest_flavour_romanized_germanic.0001	# e_romanized_germanic_britannia
+	}
+}
+
+on_war_won_defender = {
+	on_actions = {
+		btwk_on_war_won_defender
+	}
+}
+
+btwk_on_war_won_defender = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
+	}
+}
+
+on_war_white_peace = {
+	on_actions = {
+		btwk_on_war_white_peace
+	}
+}
+
+btwk_on_war_white_peace = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
+	}
+}
+
+on_war_invalidated = {
+	on_actions = {
+		btwk_on_war_invalidated
+	}
+}
+
+btwk_on_war_invalidated = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
 	}
 }

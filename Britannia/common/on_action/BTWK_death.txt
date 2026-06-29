@@ -55,5 +55,156 @@ BTWK_on_death = {
 			save_scope_as = former_high_king
 			trigger_event = BTWK_britannia_high_king.0023
 		}
+		
+		# Trigger Fall of Aelle event
+		if = {
+			limit = { 
+				this = character:80
+				has_title = title:k_east_anglia
+				title:k_east_anglia = { has_variable = aelle_ruling_anglia }
+			}
+			character:80 = { save_scope_as = aelle_of_anglia }
+			title:k_east_anglia.current_heir = { save_scope_as = new_holder }
+			scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }
+			every_player = {
+				limit = { this != scope:new_holder }
+				trigger_event = BTWK_anglo_saxon_invasions.0010
+			}
+		}
+		
+		# Struggle catalysts
+		## High King deaths.
+		if = {
+			limit = { has_title = title:e_britannia }
+			## Did they die violently?
+			### Checked against the struggle directly
+			if = {
+				limit = {
+					exists = scope:killer
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_high_king_britannia_died_violently
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_high_king_britannia_died_violently
+						character = root
+					}
+					# We set the flag at the very end because we *do* want it 
+					# to potentially stack for the same character
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+			## If not, give the natural version.
+			### Checked against the struggle directly
+			else_if = {
+				limit = {
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_high_king_britannia_died_naturally
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_high_king_britannia_died_naturally
+						character = root
+					}
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+		}
+		## Bretwalda deaths.
+		if = {
+			limit = { has_title = title:e_aengland }
+			## Did they die violently?
+			### Checked against the struggle directly
+			if = {
+				limit = {
+					exists = scope:killer
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_bretwalda_died_violently
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_bretwalda_died_violently
+						character = root
+					}
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+			## If not, give the natural version.
+			### Checked against the struggle directly
+			else_if = {
+				limit = {
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_bretwalda_died_naturally
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_bretwalda_died_naturally
+						character = root
+					}
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+		}
+		## Conquerer deaths - may stack with one of the above!
+		if = {
+			limit = { 
+				owns_story_of_type = story_conqueror
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			## Did they die violently?
+			### Checked against the struggle directly
+			if = {
+				limit = {
+					exists = scope:killer
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_conqueror_died_violently
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_conqueror_died_violently
+						character = root
+					}
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+			## If not, give the natural version.
+			### Checked against the struggle directly
+			else_if = {
+				limit = {
+					struggle:britannia_struggle ?= {
+						phase_has_catalyst = catalyst_conqueror_died_naturally
+						NOT = { has_variable = significant_character_death_cooldown }
+					}
+				}
+				struggle:britannia_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_conqueror_died_naturally
+						character = root
+					}
+					save_scope_as = flag_significant_character_death_cooldown
+				}
+			}
+		}
+		# We set the flag at the very end because we *do* want it to potentially stack for the same character
+		if = {
+			limit = { scope:flag_significant_character_death_cooldown ?= struggle:britannia_struggle }
+			struggle:britannia_struggle = {
+				set_variable = {
+					name = significant_character_death_cooldown
+					value = yes
+					years = catalyst_cooldown_between_significant_character_deaths_years_value
+				}
+			}
+		}
 	}
 }

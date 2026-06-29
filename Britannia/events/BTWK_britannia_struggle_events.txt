@@ -3,6 +3,562 @@ namespace = BTWK_anglo_saxon_invasions
 
 ##################################################
 
+### Britannia Struggle Events
+
+##################################################
+# BTWK_britannia_struggle.0001 - Yearly tick catalysts
+# BTWK_britannia_struggle.0011 - Join struggle event
+# BTWK_britannia_struggle.0012 - Invasion Phase event
+# BTWK_britannia_struggle.0013 - Detente Phase event
+# BTWK_britannia_struggle.0014 - Consolidation Phase event
+# BTWK_britannia_struggle.0015 - Unification Phase event
+# BTWK_britannia_struggle.0020 - Outsider Conquest ending event
+
+# Handle yearly tick catalysts
+# Complements but does not replace/override neutral_struggle.0001
+BTWK_britannia_struggle.0001 = {
+	hidden = yes
+	scope = struggle
+
+	immediate = {
+		save_scope_as = current_struggle
+		
+		# Other time-based catalysts.
+		## Britannia High Kingship Reform Status
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_can_inherit_trigger = yes
+				exists = title:e_britannia.holder
+			}
+			if = {
+				limit = { phase_has_catalyst = catalyst_high_king_britannia_is_inheritable }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_high_king_britannia_is_inheritable
+					character = title:e_britannia.holder
+				}
+			}
+		}
+		if = {
+			limit = {
+				BTWK_britannia_subject_king_vassals_active_trigger = yes
+				exists = title:e_britannia.holder
+			}
+			if = {
+				limit = { phase_has_catalyst = catalyst_high_king_britannia_vassalized_subject_kings }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_high_king_britannia_vassalized_subject_kings
+					character = title:e_britannia.holder
+				}
+			}
+		}
+		# Aengland Centralization Status
+		# TODO
+		# Britannia realm sizes
+		every_independent_ruler = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			if = {
+				limit = { 
+					realm_size >= 130
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_6 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_6
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 100
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_5 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_5
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 80
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_4 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_4
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 60
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_3 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_3
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 45
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_2 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_2
+						character = prev
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					realm_size >= 30
+					scope:current_struggle = { phase_has_catalyst = catalyst_large_realm_in_britannia_1 }
+				}
+				scope:current_struggle = {
+					activate_struggle_catalyst = {
+						catalyst = catalyst_large_realm_in_britannia_1
+						character = prev
+					}
+				}
+			}
+		}
+		# Britannia uninvolved control
+		save_scope_value_as = {
+			name = britannia_uninvolved_control
+			value = {
+				value = 0
+				every_involved_county = {
+					limit = { holder.top_liege = { NOT = { any_character_struggle = { this = scope:current_struggle } } } }
+					add = 1
+				}
+			}
+		}
+		if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 80
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_5
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_5
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 40
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_4
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_4
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 20
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_3
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_3
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 10
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_2
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_2
+		}
+		else_if = {
+			limit = { 
+				scope:britannia_uninvolved_control >= 5
+				phase_has_catalyst = catalyst_uninvolved_presence_in_britannia_1
+			}
+			activate_struggle_catalyst = catalyst_uninvolved_presence_in_britannia_1
+		}
+
+		# Finally, queue the event up again for a year hence.
+		trigger_event = {
+			id = BTWK_britannia_struggle.0001
+			years = 1
+		}
+	}
+}
+
+# BTWK_britannia_struggle.0011 - Join event
+
+# Struggle phase events
+# Invasion
+BTWK_britannia_struggle.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0011.t
+	desc = BTWK_britannia_struggle.0011.desc
+	theme = battle
+	
+	left_portrait = {
+		character = scope:strongest_anglo_saxon
+		animation = aggressive_sword
+	}
+	
+	right_portrait = {
+		character = scope:strongest_briton_roman
+		animation = war_over_win
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				order_by = sub_realm_size
+				save_scope_as = strongest_anglo_saxon
+			}
+			ordered_involved_ruler = {
+				limit = {
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_brythonic
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = strongest_briton_roman
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0011.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0011.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0011.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0011.a.tt
+	}
+}
+
+# Detente
+BTWK_britannia_struggle.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0012.t
+	desc = BTWK_britannia_struggle.0012.desc
+	theme = diplomacy
+	override_background = farmland
+	
+	left_portrait = {
+		character = scope:strongest_anglo_saxon
+		animation = war_over_tie
+	}
+	
+	right_portrait = {
+		character = scope:strongest_briton_roman
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				order_by = sub_realm_size
+				save_scope_as = strongest_anglo_saxon
+			}
+			ordered_involved_ruler = {
+				limit = {
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_brythonic
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = strongest_briton_roman
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0012.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0012.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0012.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0012.a.tt
+	}
+}
+
+# Consolidation
+BTWK_britannia_struggle.0013 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0013.t
+	desc = BTWK_britannia_struggle.0013.desc
+	theme = realm
+	override_background = { reference = throne_room_scope }
+	
+	left_portrait = {
+		character = scope:strongest_ruler
+		animation = war_over_win
+	}
+	
+	right_portrait = {
+		character = scope:second_strongest_ruler
+		animation = war_over_tie
+	}
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				order_by = sub_realm_size
+				save_scope_as = strongest_ruler
+				save_scope_as = background_throne_room_scope 
+			}
+			ordered_involved_ruler = {
+				limit = {
+					NOT = { this = scope:strongest_ruler }
+				}
+				order_by = sub_realm_size
+				save_scope_as = second_strongest_ruler
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0013.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0013.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0013.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0013.a.tt
+	}
+}
+
+# Unification
+BTWK_britannia_struggle.0014 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_britannia_struggle.0014.t
+	desc = BTWK_britannia_struggle.0014.desc
+	theme = realm
+	override_background = { reference = fp2_fullscreen_intro }
+	
+	immediate = {
+		struggle:britannia_struggle = {
+			ordered_involved_ruler = {
+				order_by = sub_realm_size
+				save_scope_as = strongest_ruler
+				save_scope_as = background_throne_room_scope 
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+						}
+						desc = BTWK_britannia_struggle.0014.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = {
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_britannia_struggle.0014.a.briton_roman
+					}
+					desc = BTWK_britannia_struggle.0014.a
+				}
+			}
+		}
+		custom_tooltip = BTWK_britannia_struggle.0014.a.tt
+	}
+}
+
+# Outsider Unification Ending event
+BTWK_britannia_struggle.0020 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_britannia_struggle.0020.t
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:conqueror
+		        }
+		        desc = BTWK_britannia_struggle.0020.desc.conqueror
+		    }
+		    desc = BTWK_britannia_struggle.0020.desc
+		}
+	}
+	theme = war
+	override_background = fp2_fullscreen_intro
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_war_over_win
+	}
+	
+	immediate = {
+		if = {
+			limit = { this != scope:conqueror }
+			custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
+		else = {
+			struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
+		}
+	}
+
+	option = {
+		name = BTWK_britannia_struggle.0020.a.conqueror
+		trigger = {
+			this = scope:conqueror
+		}
+		custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+		BTWK_end_britannia_struggle_effect = yes
+		struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
+		dynasty = {
+			add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					is_britannic_culture_trigger = yes
+					AND = {
+						culture = { has_cultural_pillar = heritage_latin }
+						primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+			}
+			text = BTWK_britannia_struggle.0020.a.briton
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_struggle.0020.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				culture = { has_cultural_pillar = heritage_latin }
+				is_britannic_culture_trigger = no
+				NOT = { primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia } }
+			}
+			text = BTWK_britannia_struggle.0020.a.roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					is_unromanized_germanic_culture_trigger = yes
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			text = BTWK_britannia_struggle.0020.a.other_in_britannia
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					culture = { has_cultural_pillar = heritage_latin }
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_britannia_struggle.0020.a
+		}
+		trigger = {
+			NOT = { this = scope:conqueror }
+		}
+	}
+}
+
+##################################################
+
 ### Anglo-Saxon Invasions
 
 ##################################################
@@ -10,8 +566,14 @@ namespace = BTWK_anglo_saxon_invasions
 ##################################################################
 # BTWK_anglo_saxon_invasions.0001 - 0099: Aelle/Anglia Events
 ##################################################################
+# BTWK_anglo_saxon_invasions.0001 - Trigger Anglian Invasion event
+# BTWK_anglo_saxon_invasions.0002 - Start of the Anglian Invasions
 
-# trigger Anglian Invasion event
+# BTWK_anglo_saxon_invasions.0010 - Death/Fall of Aelle
+# BTWK_anglo_saxon_invasions.0011 - Collapse of East Anglia
+# BTWK_anglo_saxon_invasions.0012 - Aelle's Legacy Secured
+
+# Trigger Anglian Invasion event
 BTWK_anglo_saxon_invasions.0001 = {
 	hidden = yes
 	content_source = dlc_BTWK
@@ -123,6 +685,280 @@ BTWK_anglo_saxon_invasions.0002 = {
 				}
 			}
 		}
+	}
+}
+
+# Death / Fall of Aelle
+BTWK_anglo_saxon_invasions.0010 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:aelle_of_anglia = { is_alive = no } }
+				desc = BTWK_anglo_saxon_invasions.0010.t.aelle_dead
+			}
+			desc = BTWK_anglo_saxon_invasions.0010.t.aelle_deposed
+		}
+	}
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:anglia_heir
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_dead
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:anglia_heir
+					scope:aelle_of_anglia = { is_alive = yes }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_deposed
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:aelle_of_anglia
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_dead
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:aelle_of_anglia
+					scope:aelle_of_anglia = { is_alive = yes }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_deposed
+		    }
+		    triggered_desc = {
+		        trigger = {
+					scope:aelle_of_anglia = { is_alive = no }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_dead
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_deposed
+		}
+	}
+	theme = war
+	override_background = battlefield
+	
+	left_portrait = {
+		character = scope:aelle_of_anglia
+		animation = shame
+	}
+	
+	right_portrait = {
+		character = scope:new_holder
+		animation = worry
+	}
+	
+	immediate = {
+		title:k_east_anglia = {
+			remove_variable = aelle_ruling_anglia
+			set_variable = anglia_post_aelle_crisis
+		}
+		if = {
+			limit = {
+				OR = {
+					this = scope:new_holder 
+					this = scope:aelle_of_anglia
+				}
+			}
+			# Remove vassals from their current factions so they join the dissolution faction
+			if = {
+				limit = {
+					joined_faction ?= { 
+						NOR = { 
+							faction_is_type = nation_fracturing_faction_war 
+							faction_is_at_war = yes
+						}
+					}
+				}
+				leave_faction = this.joined_faction
+			}
+		}
+		else_if = {
+			limit = {
+				this.top_liege = scope:new_holder 
+			}
+			custom_tooltip = BTWK_anglo_saxon_invasions.0010.b.tt.vassal
+		}
+		else = {
+			custom_tooltip = BTWK_anglo_saxon_invasions.0010.b.tt.other
+		}
+	}
+	
+	option = {
+		name = BTWK_anglo_saxon_invasions.0010.a
+		trigger = { this = scope:new_holder }
+		add_legitimacy = -100
+		add_character_modifier = BTWK_anglia_unstable_realm
+		custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
+		create_story = BTWK_collapse_of_anglia_story
+	}
+	
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_alive = no
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.a.aelle_dead
+					}
+					desc = BTWK_anglo_saxon_invasions.0010.a.aelle
+				}
+			}
+		}
+		trigger = { this = scope:aelle_of_anglia }
+		show_as_tooltip = {
+			scope:new_holder = {
+				add_legitimacy = -100
+				add_character_modifier = BTWK_anglia_unstable_realm
+				custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
+				create_story = BTWK_collapse_of_anglia_story
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							liege = scope:new_holder
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.vassal
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								is_unromanized_germanic_culture_trigger = no
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.b.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0010.b
+				}
+			}
+		}
+		trigger = { 
+			this != scope:new_holder
+			this != scope:aelle_of_anglia
+		}
+	}
+}
+
+# Collapse of East Anglia
+BTWK_anglo_saxon_invasions.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_anglo_saxon_invasions.0011.t
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = {
+					this = scope:former_king
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0011.desc.former_king
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0011.desc
+		}
+	}
+	theme = war
+	override_background = burning_building
+	
+	left_portrait = {
+		character = scope:former_king
+		animation = shame
+	}
+	
+	immediate = {
+		character:80 = { save_scope_as = aelle_of_anglia }
+		title:k_east_anglia = {
+			remove_variable = anglia_post_aelle_crisis
+			remove_variable = title_has_been_created
+		}
+		activate_struggle_catalyst = {
+			catalyst = catalyst_east_anglia_collapses
+			character = scope:former_king
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							liege = scope:former_king
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.former_king
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = { 
+								is_unromanized_germanic_culture_trigger = yes
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								is_unromanized_germanic_culture_trigger = no
+							}
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_anglo_saxon_invasions.0011.a.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0011.a
+				}
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0012.t
+	desc = BTWK_anglo_saxon_invasions.0012.desc
+	theme = war
+	override_background = throne_room
+	
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		character:80 = { save_scope_as = aelle_of_anglia }
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0012.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0012.a.tt
+		remove_character_modifier = BTWK_anglia_unstable_realm
+		title:k_east_anglia = { remove_variable = anglia_post_aelle_crisis }
+		add_prestige = 200
+		add_legitimacy = 100
 	}
 }
 
@@ -1341,6 +2177,285 @@ BTWK_anglo_saxon_invasions.0114 = {
 			capital_county = {
 				set_county_culture = root.culture
 				set_county_faith = root.faith
+			}
+		}
+	}
+}
+
+
+##################################################################################################
+# BTWK_anglo_saxon_invasions.9000 - 9099: Misc Cultural Conversion Events
+##################################################################################################
+# BTWK_anglo_saxon_invasions.9000 - Roll for Tribal Settlements event
+# BTWK_anglo_saxon_invasions.9001 - Tribal Settlements in Brythonic/Imperial province, convert to tribal
+
+# BTWK_anglo_saxon_invasions.9002 - Roll for Anglo-Saxon culture conversion event
+# BTWK_anglo_saxon_invasions.9003 - Tribal County converts to Anglo-Saxon culture + religion
+
+# Roll for Tribal Settlements event
+BTWK_anglo_saxon_invasions.9000 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+		scope:target_county = {
+			title_province = {
+				OR = {
+					has_holding_type = castle_holding
+					has_holding_type = city_holding
+				}
+			}
+			holder = {
+				is_unromanized_germanic_culture_trigger = yes
+				government_has_flag = government_is_tribal
+				top_liege = { government_has_flag = government_is_tribal }
+			}
+		}
+	}
+
+	immediate = {
+		scope:target_county = {
+			random = {
+				chance = {
+					value = 20
+					add = {
+						value = this.var:BTWK_britannia_county_tribal_control
+						subtract = 6		# First roll occurs when the var is 6
+						multiply = 2.5
+					}
+					if = {
+						limit = { 
+							NOR = {
+								any_neighboring_county = { title_province = { has_holding_type = tribal_holding } }
+								holder.top_liege = {
+									owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						divide = 4
+					}
+					if = {
+						limit = { is_unromanized_germanic_culture_trigger = yes }
+						multiply = 2
+					}
+					if = {
+						limit = {
+							holder = {
+								any_owned_story = {
+									story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+									this.var:target_kingdom = title:k_lindsey
+								}
+							}
+						}
+						divide = 3
+					}
+					if = {
+						limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = no } }
+						divide = 2
+					}
+				}
+				holder = { trigger_event = BTWK_anglo_saxon_invasions.9001 }
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9001 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.9001.t
+	desc = BTWK_anglo_saxon_invasions.9001.desc
+	theme = realm	
+	override_background = farmland
+
+	left_portrait = {
+		character = root
+		animation = steward
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.9001.a
+		scope:target_county = {
+			title_province = {
+				save_scope_as = county_capital
+				if = {
+					limit = { has_building_or_higher = castle_02 }
+					save_scope_as = build_tribal_02
+				}
+				save_scope_value_as = {
+					name = num_tribal_buildings_to_build
+					value = {
+						value = combined_building_level
+						subtract = 1
+						if = {
+							limit = { has_building_or_higher = castle_02 }
+							subtract = 1
+						}
+						if = {
+							limit = { has_building_or_higher = castle_03 }
+							subtract = 1
+						}
+						if = {
+							limit = { has_building_or_higher = castle_04 }
+							subtract = 1
+						}
+					}
+				}
+			}
+			custom_tooltip = BTWK_anglo_saxon_invasions.9001.a.tt.1
+			custom_tooltip = BTWK_anglo_saxon_invasions.9001.a.tt.2
+			hidden_effect = {
+				raze_county = {
+					holding_type = tribal_holding
+					purge_secondary_holdings = yes
+					excluded_holding_type = church_holding
+				}
+				title_province = {
+					hidden_effect = {
+						if = {
+							limit = { exists = scope:build_tribal_02 }
+							add_building = tribe_02
+						}
+						while = {
+							count = scope:num_tribal_buildings_to_build
+							generate_building = yes
+						}
+						refill_garrison = yes
+						refill_levy = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9002 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	trigger = {
+		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+		scope:target_county = {
+			title_province = { has_holding_type = tribal_holding }
+			is_germanic_culture_trigger = no
+			holder = {
+				is_unromanized_germanic_culture_trigger = yes
+				government_has_flag = government_is_tribal
+			}
+		}
+	}
+
+	immediate = {
+		scope:target_county = {
+			random = {
+				chance = {
+					value = 5
+					add = {
+						value = this.var:BTWK_britannia_tribal_county_anglo_saxon_control
+						subtract = 11		# First roll occurs when the var is 6
+						multiply = 1.5
+					}
+					if = {
+						limit = { 
+							NOR = {
+								any_neighboring_county = { is_unromanized_germanic_culture_trigger = yes }
+								holder.top_liege = {
+									owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						divide = 4
+					}
+					if = {
+						limit = {
+							holder.top_liege = {
+								any_owned_story = {
+									story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+								}
+							}
+						}
+						multiply = 1.5
+					}
+					if = {
+						limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = no } }
+						divide = 1.5
+					}
+				}
+				holder = { trigger_event = BTWK_anglo_saxon_invasions.9003 }
+			}
+		}
+	}
+}
+
+BTWK_anglo_saxon_invasions.9003 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.9003.t
+	desc = BTWK_anglo_saxon_invasions.9003.desc
+	theme = culture_change	
+	override_background = farmland
+
+	left_portrait = {
+		character = root
+		animation = idle
+	}
+	
+	immediate = {
+		scope:target_county = { 
+			save_scope_as = current_county 
+			culture = { save_scope_as = old_culture }
+			faith = { save_scope_as = old_faith }
+		}
+		culture = { save_scope_as = new_culture }
+		faith = { save_scope_as = new_faith }
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.9003.a
+		scope:target_county = {
+			set_county_culture = holder.culture
+			set_county_faith = root.faith
+		}
+		# Send toasts to lieges
+		hidden_effect = {
+			every_liege_or_above = { 
+				send_interface_toast = {
+					type = msg_culture_conversion
+					title = culture_shifts.9999.t
+					custom_tooltip = culture_shifts.9999.desc
+					right_icon = scope:current_county
+				}
+				if = {
+					limit = { scope:old_faith != scope:new_faith }
+					switch = {
+						trigger = faith
+						scope:current_county.faith = { # Good if same as new faith
+							send_interface_message = {
+								type = msg_council_conversion_good
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+						scope:old_faith = {
+							send_interface_message = { # Bad if same faith as county
+								type = msg_council_conversion_bad
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+						fallback = {
+							send_interface_message = { # Neutral otherwise
+								type = msg_council_conversion_neutral
+								title = BTWK_anglo_saxon_invasions.9003.toast.t
+								desc = BTWK_anglo_saxon_invasions.9003.toast.desc
+								right_icon = scope:current_county
+							}
+						}
+					}
+				}
 			}
 		}
 	}

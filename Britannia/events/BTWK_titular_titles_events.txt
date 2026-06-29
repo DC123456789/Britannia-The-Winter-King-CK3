@@ -145,6 +145,20 @@ titular_titles_anglosaxon.0001 = {
 				}
 			}
 		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:new_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_create_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_create_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
+				}
+			}
+		}
 	}
 
 	option = {
@@ -216,6 +230,20 @@ titular_titles_anglosaxon.0002 = {
 				every_in_list = {
 					variable = de_jure_affected_territory
 					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:old_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_destroy_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_destroy_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
 				}
 			}
 		}
@@ -708,6 +736,16 @@ titular_titles_anglosaxon.0010 = {
 				}
 			}
 		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
 	}
 }
 
@@ -803,6 +841,16 @@ titular_titles_anglosaxon.0012 = {
 					INTEGRATION_KINGDOM = title:k_lindsey
 				}
 				check_de_jure_liege_effect = yes
+			}
+		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
 			}
 		}
 	}
@@ -917,6 +965,16 @@ titular_titles_anglosaxon.0100 = {
 			trigger_event = { id = titular_titles_anglosaxon.0101 }
 		}
 		scope:title = { set_variable = title_has_been_created }
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
 	}
 }
 
@@ -1867,6 +1925,10 @@ titular_titles_briton.0010 = {
 				REGION = geographical_region:btwk_world_britannia
 			}
 		}
+		else = {
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
 		custom_tooltip = {
 			text = britannia_de_jure_shift_happened_tt
 		}
@@ -1877,13 +1939,22 @@ titular_titles_briton.0010 = {
 		trigger = {
 			this = scope:founder
 		}
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+			BTWK_end_britannia_struggle_effect = yes
+			struggle:britannia_struggle = { end_struggle = reunite_the_britons_decision }
+		}
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+		}
 	}
 
 	option = {
 		name = titular_titles_briton.0010.a.briton
 		trigger = {
 			NOT = { this = scope:founder }
-			is_brythonic_culture_trigger = yes
+			is_britannic_culture_trigger = yes
 		}
 	}
 	
@@ -2345,13 +2416,13 @@ titular_titles_briton.0051 = {
 		else_if = {
 			limit = {
 				any_independent_ruler = {
-					is_brythonic_culture_trigger = yes
+					is_britannic_culture_trigger = yes
 					capital_province = { geographical_region = btwk_world_britannia_south }
 				}
 			}
 			ordered_independent_ruler = {
 				limit = {
-					is_brythonic_culture_trigger = yes
+					is_britannic_culture_trigger = yes
 					capital_province = { geographical_region = btwk_world_britannia_south }
 				}
 				order_by = sub_realm_size
@@ -2362,13 +2433,13 @@ titular_titles_briton.0051 = {
 		else_if = {
 			limit = {
 				any_independent_ruler = {
-					is_brythonic_culture_trigger = yes
+					is_britannic_culture_trigger = yes
 					capital_province = { geographical_region = btwk_world_britannia }
 				}
 			}
 			ordered_independent_ruler = {
 				limit = {
-					is_brythonic_culture_trigger = yes
+					is_britannic_culture_trigger = yes
 					capital_province = { geographical_region = btwk_world_britannia }
 				}
 				order_by = sub_realm_size
@@ -2379,7 +2450,7 @@ titular_titles_briton.0051 = {
 		else = {
 			ordered_ruler = {
 				limit = {
-					is_brythonic_culture_trigger = yes
+					is_britannic_culture_trigger = yes
 				}
 				order_by = sub_realm_size
 				position = 0
@@ -2518,7 +2589,7 @@ titular_titles_briton.0052 = {
 	option = {
 		name = titular_titles_briton.0052.a.briton
 		trigger = {
-			is_brythonic_culture_trigger = yes
+			is_britannic_culture_trigger = yes
 			NOT = { culture = { has_cultural_pillar = heritage_latin } }
 		}
 	}
@@ -3213,6 +3284,10 @@ titular_titles_romanized_germanic.0004 = {
 				REGION = geographical_region:btwk_world_britannia
 			}
 		}
+		else = {
+			scope:founder = { custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt }
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
 		custom_tooltip = {
 			text = romanized_germanic_britannia_de_jure_shift_happened_tt
 		}
@@ -3270,6 +3345,18 @@ titular_titles_romanized_germanic.0004 = {
 		}
 		name = {
 			text = titular_titles_romanized_germanic.0004.a
+		}
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { exists = struggle:britannia_struggle }
+				custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt
+				BTWK_end_britannia_struggle_effect = yes
+				struggle:britannia_struggle = { end_struggle = found_romanized_germanic_empire_britannia_decision }
+			}
+			dynasty = {
+				add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+			}
 		}
 	}
 }

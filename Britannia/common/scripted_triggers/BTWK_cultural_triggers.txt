@@ -24,14 +24,14 @@ culture_is_romanobritish_culture_trigger = {
 
 # Determines access to Brythonic titles and mechanics
 # Does the culture derive primarily from Briton, Cumbrian, or Romano-British?
-is_brythonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_brythonic_culture_trigger_desc
-        culture = { culture_is_brythonic_culture_trigger = yes }
+is_britannic_culture_trigger = {
+    custom_description = {
+		text = BTWK_is_britannic_culture
+        culture = { culture_is_britannic_culture_trigger = yes }
 	}
 }
 
-culture_is_brythonic_culture_trigger = {
+culture_is_britannic_culture_trigger = {
 	OR = {
 		has_cultural_pillar = heritage_brythonic
         AND = {
@@ -40,16 +40,9 @@ culture_is_brythonic_culture_trigger = {
         }
         AND = {
             has_cultural_pillar = heritage_romance
-			this.var:ancestral_starting_culture = culture:romanobritish
+			this.var:ancestral_starting_culture ?= culture:romanobritish
 			NOT = { has_variable = ancestral_non_roman_culture }
         }
-	}
-}
-
-is_brythonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_brythonic_culture_trigger_desc
-        culture = { culture_is_brythonic_culture_trigger = yes }
 	}
 }
 
@@ -80,6 +73,20 @@ culture_is_romanized_barbarian_culture_trigger = {
 		has_cultural_pillar = heritage_romanized_germanic
 		has_cultural_pillar = heritage_romanized_sarmatian
 		has_cultural_pillar = heritage_frankish
+	}
+}
+
+is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	culture = { culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = yes }
+}
+
+culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	OR = {
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_romance
+	}
+	this.var:ancestral_non_roman_culture ?= {
+		culture_is_romanized_barbarian_culture_trigger = yes
 	}
 }
 
@@ -123,7 +130,7 @@ is_imperial_like_culture_trigger = {
 	custom_tooltip = {
 		text = is_imperial_like_culture_trigger_desc
 		OR = {
-			is_brythonic_culture_trigger = yes
+			is_britannic_culture_trigger = yes
 			is_imperial_culture_trigger = yes
 			is_romanized_barbarian_culture_trigger = yes
 			culture = { has_cultural_pillar = heritage_romance }

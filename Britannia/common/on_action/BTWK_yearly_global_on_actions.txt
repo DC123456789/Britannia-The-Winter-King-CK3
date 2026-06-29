@@ -8,6 +8,7 @@ BTWK_yearly_global_pulse = {
 	on_actions = {
 		BTWK_yearly_major_event_on_action
 		BTWK_yearly_global_pulse_effects
+		BTWK_yearly_britannia_struggle_effects
 	}
 }
 
@@ -79,6 +80,114 @@ BTWK_yearly_global_pulse_effects = {
 					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
 					every_vassal_or_below = {
 						BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_yearly_britannia_struggle_effects = {
+	effect = {
+		if = {
+			limit = {
+				struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+			}
+			struggle:britannia_struggle = {
+				every_involved_county = {
+					# Trigger tribalization event at some point after at least 5 years 
+					# of tribal Anglo-Saxon control
+					if = {
+						limit = {
+							title_province = {
+								OR = {
+									has_holding_type = castle_holding
+									has_holding_type = city_holding
+								}
+							}
+						}
+						if = {
+							limit = {
+								holder = {
+									is_unromanized_germanic_culture_trigger = yes
+									government_has_flag = government_is_tribal
+								}
+							}
+							if = {
+								limit = { has_variable = BTWK_britannia_county_tribal_control }
+								change_variable = {
+									name = BTWK_britannia_county_tribal_control
+									add = 1
+								}
+							}
+							else = {
+								set_variable = {
+									name = BTWK_britannia_county_tribal_control
+									value = 1
+								}
+							}
+							if = {
+								limit = { 
+									this.var:BTWK_britannia_county_tribal_control > 5
+									holder.top_liege = {
+										government_has_flag = government_is_tribal
+									}
+								}
+								save_scope_as = target_county
+								holder = { trigger_event = { id = BTWK_anglo_saxon_invasions.9000 days = { 1 360 } } }
+							}
+						}
+						else_if = {
+							limit = { has_variable = BTWK_britannia_county_tribal_control }
+							change_variable = {
+								name = BTWK_britannia_county_tribal_control
+								subtract = 1
+							}
+						}
+					}
+					
+					# Trigger culture conversion event at some point after at least 5 years 
+					# of tribal Anglo-Saxon control
+					if = {
+						limit = {
+							title_province = { has_holding_type = tribal_holding }
+							is_germanic_culture_trigger = no
+						}
+						if = {
+							limit = {
+								holder = {
+									is_unromanized_germanic_culture_trigger = yes
+									government_has_flag = government_is_tribal
+								}
+							}
+							if = {
+								limit = { has_variable = BTWK_britannia_tribal_county_anglo_saxon_control }
+								change_variable = {
+									name = BTWK_britannia_tribal_county_anglo_saxon_control
+									add = 1
+								}
+							}
+							else = {
+								set_variable = {
+									name = BTWK_britannia_tribal_county_anglo_saxon_control
+									value = 1
+								}
+							}
+							if = {
+								limit = { 
+									this.var:BTWK_britannia_tribal_county_anglo_saxon_control > 10
+								}
+								save_scope_as = target_county
+								holder = { trigger_event = { id = BTWK_anglo_saxon_invasions.9002 } }
+							}
+						}
+						else_if = {
+							limit = { has_variable = BTWK_britannia_tribal_county_anglo_saxon_control }
+							change_variable = {
+								name = BTWK_britannia_tribal_county_anglo_saxon_control
+								subtract = 1
+							}
+						}
 					}
 				}
 			}

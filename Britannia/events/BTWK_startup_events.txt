@@ -106,10 +106,28 @@ BTWK_startup.0001 = {
 		animation = personality_honorable
 	}
 	
+	widgets = {
+		widget = {
+ 			gui = "event_window_widget_struggle_info"
+ 			container = "dynamic_content_widget"
+ 			controller = struggle_info
+ 			setup_scope = { struggle:britannia_struggle = { save_scope_as = struggle } }
+			is_shown = { any_character_struggle = { this = struggle:britannia_struggle } }
+		}
+	}
+	
 	immediate = {
 		character:1 = { save_scope_as = uther_pendragon }
+		character:3 = { save_scope_as = arthur_pendragon }
+		character:5 = { save_scope_as = mordred_pendragon }
+		character:7 = { save_scope_as = mordred_ap_uther }
 		character:80 = { save_scope_as = aelle_of_anglia }
 		character:300 = { save_scope_as = coel_hen }
+		play_music_cue = "mx_Struggle_Opening"
+		save_scope_value_as = {
+			name = start
+			value = yes
+		}
 	}
 
 	option = {
@@ -150,25 +168,12 @@ BTWK_startup.0001 = {
 			}
 		}
 		
-		# Uther - explain starting situation, succession issues / regency event chain
-		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
-		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
-		# Everyone else in southeastern Britain - warn about threat of Aelle
+		# Britannia Struggle
 		if = {
 			limit = {
-				OR = {
-					primary_title.title_capital_county.title_province = { 
-						geographical_region = btwk_world_britannia_south_lloegyr
-					}
-					any_realm_county = {
-						title_province = { geographical_region = btwk_world_britannia_south_lloegyr }
-					}
-					# Also relevant for these rulers
-					has_title = title:k_powys
-					has_title = title:d_the_peak
-				}
+				any_character_struggle = { this = struggle:britannia_struggle }
 			}
-			custom_tooltip = { text = BTWK_startup.0001.aelle_warning_tooltip }
+			custom_tooltip = { text = BTWK_startup.0001.britannia_struggle_tt }
 		}
 		
 		# Britons + Romano-Britons - explain High King mechanic, warn about Anglo-Saxon invasions
@@ -204,5 +209,49 @@ BTWK_startup.0001 = {
 		}
 		
 		# Anglo-Saxons - explain Bretwalda mechanic
+		
+		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
+		if = {
+			limit = {
+				OR = {
+					primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_south_lloegyr
+					}
+					any_realm_county = {
+						title_province = { geographical_region = btwk_world_britannia_south_lloegyr }
+					}
+					# Also relevant for these rulers
+					has_title = title:k_powys
+					has_title = title:d_the_peak
+				}
+			}
+			if = {
+				limit = { this = scope:aelle_of_anglia }
+				custom_tooltip = { text = BTWK_startup.0001.aelle_tooltip }
+			}
+			# Everyone else in southeastern Britain - warn about threat of Aelle
+			else = {
+				custom_tooltip = { text = BTWK_startup.0001.aelle_warning_tooltip }
+			}
+		}
+		
+		# Southern Britons - warn about Rise of Mercia / Wessex
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+			}
+			custom_tooltip = { text = BTWK_startup.0001.rise_of_mercia_wessex_warning_tt }
+		}
+		
+		# Northern Britons - warn about Rise of Bernicia / Deira
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+			}
+			custom_tooltip = { text = BTWK_startup.0001.rise_of_bernicia_deira_warning_tt }
+		}
+		
+		# Uther - explain starting situation, succession issues / regency event chain
+		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
 	}
 }

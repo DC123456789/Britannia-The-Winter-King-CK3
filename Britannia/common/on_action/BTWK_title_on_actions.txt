@@ -35,6 +35,20 @@ BTWK_on_title_destroyed = {
 				BTWK_britannia_high_king_revoke_all_reforms_effect = yes
 			}
 		}
+		
+		# Check for Fall of Anglia event
+		if = {
+			limit = {
+				scope:landed_title = title:k_east_anglia
+				title:k_east_anglia = { has_variable = anglia_post_aelle_crisis }
+			}
+			save_scope_as = former_king
+			scope:former_king = { trigger_event = BTWK_anglo_saxon_invasions.0011 }
+			every_player = {
+				limit = { this != scope:former_king }
+				trigger_event = BTWK_anglo_saxon_invasions.0011
+			}
+		}
 	}
 }
 
@@ -135,7 +149,7 @@ BTWK_on_title_gain = {
 		# Transfer Rise of Anglo-Saxon Kingdom story
 		if = {
 			limit = { 
-				scope:previous_holder = { 
+				scope:previous_holder ?= { 
 					owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
 					OR = {
 						is_alive = no
@@ -144,11 +158,32 @@ BTWK_on_title_gain = {
 				}
 			}
 			save_scope_as = new_holder
-			scope:previous_holder = { 
+			scope:previous_holder ?= { 
 				every_owned_story = {
 					limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
 					make_story_owner = scope:new_holder
 				}
+			}
+		}
+		
+		# Trigger Fall of Aelle event
+		if = {
+			limit = { scope:title = title:k_east_anglia }
+			if = {
+				limit = { title:k_east_anglia = { has_variable = aelle_ruling_anglia } }
+				character:80 = { save_scope_as = aelle_of_anglia }
+				save_scope_as = new_holder
+				scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }
+				every_player = {
+					limit = { this != scope:new_holder }
+					trigger_event = BTWK_anglo_saxon_invasions.0010
+				}
+			}
+			# Pass on modifier if the crisis is ongoing
+			else_if = {
+				limit = { title:k_east_anglia = { has_variable = anglia_post_aelle_crisis } }
+				scope:new_holder = { add_character_modifier = BTWK_anglia_unstable_realm }
+				scope:previous_holder ?= { remove_character_modifier = BTWK_anglia_unstable_realm }
 			}
 		}
 	}
@@ -171,6 +206,56 @@ BTWK_on_title_gain_delayed = {
 	}
 }
 
+# A title is usurped by a character
+# root = the new holder
+# scope:title = the title that changes hands
+# scope:previous_holder = previous holder. Shouldn't be dead
+on_title_gain_usurpation = {
+	on_actions = {
+		BTWK_on_title_gain_usurpation
+		delay = { days = 1 }
+		BTWK_on_title_gain_delayed
+	}
+}
+
+BTWK_on_title_gain_usurpation = {
+	effect = {
+		if = {
+			limit = { # FP2
+				# We are only interested in the title within the Struggle Region
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				# Only for usurpation
+				scope:transfer_type = flag:usurped
+
+				root = {
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_usurp_title_britannia_region
+							CHAR = root
+						}
+					}
+				}
+			}
+			root = {
+				every_character_struggle = {
+					involvement = involved
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_usurp_title_britannia_region
+							CHAR = root
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_usurp_title_britannia_region
+						character = root
+					}
+				}
+			}
+		}
+	}
+}
+
 # A title is lost by a character
 # root = the old holder
 # scope:title = the title that changes hands
@@ -189,6 +274,16 @@ BTWK_on_title_lost = {
 				is_playable_character = no
 			}
 			remove_tribal_fame_effect = yes
+			
+			# End Rise of Anglo-Saxon Kingdom story
+			if = {
+				limit = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+				every_owned_story = {
+					limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+					set_variable = rise_of_anglo_saxon_kingdom_story_defeated
+					end_story = yes
+				}
+			}
 		}
 		if = {
 			limit = {
@@ -242,6 +337,52 @@ BTWK_on_title_lost = {
 				}
 			}
 			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
+		}
+	}
+}
+
+# A claim is gained by a character
+# root = the claimant
+# scope:title = the title that is claimed
+# scope:transfer_type = flag:inheritance or none
+on_explicit_claim_gain = {
+	on_actions = {
+		btwk_on_explicit_claim_gain
+	}
+}
+
+btwk_on_explicit_claim_gain = {
+	effect = {
+		# Struggle Catalyst
+		if = { # BTWK - Britannia Struggle
+			limit = {
+				NOT = { scope:transfer_type = flag:inheritance }
+				
+				root = {
+					any_character_struggle = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_gain_claim_on_title_britannia_region
+							CHAR = root
+						}
+					}
+				}
+				scope:title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+			root = {
+				every_character_struggle = {
+					involvement = involved
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_gain_claim_on_title_britannia_region
+							CHAR = root
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_gain_claim_on_title_britannia_region
+						character = root
+					}
+				}
+			}
 		}
 	}
 }

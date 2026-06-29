@@ -836,6 +836,17 @@ BTWK_britannia_high_king.0009 = {
 			limit = { story_type = BTWK_britannia_claim_high_kingship_story }
 			end_story = yes
 		}
+		hidden_effect = {
+			struggle:britannia_struggle ?= {
+				if = {
+					limit = { phase_has_catalyst = catalyst_become_high_king_britannia }
+					activate_struggle_catalyst = {
+						catalyst = catalyst_become_high_king_britannia
+						character = root
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -1420,6 +1431,20 @@ BTWK_britannia_high_king.0022 = {
 			show_as_tooltip = { destroy_title = title:e_britannia }
 			custom_tooltip = BTWK_britannia_high_king.0022.b.tt
 		}
+		hidden_effect = {
+			if = {
+				limit = { this = scope:former_high_king }
+				struggle:britannia_struggle ?= {
+					if = {
+						limit = { phase_has_catalyst = catalyst_high_king_britannia_lost_throne }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_high_king_britannia_lost_throne
+							character = scope:former_high_king
+						}
+					}
+				}
+			}
+		}
 	}
 
 	option = {
@@ -1614,6 +1639,20 @@ BTWK_britannia_high_king.0024 = {
 			show_as_tooltip = { destroy_title = title:e_britannia }
 			custom_tooltip = BTWK_britannia_high_king.0024.b.tt
 		}
+		hidden_effect = {
+			if = {
+				limit = { this = scope:former_high_king }
+				struggle:britannia_struggle ?= {
+					if = {
+						limit = { phase_has_catalyst = catalyst_high_king_britannia_lost_throne }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_high_king_britannia_lost_throne
+							character = scope:former_high_king
+						}
+					}
+				}
+			}
+		}
 	}
 
 	option = {
@@ -1693,6 +1732,20 @@ BTWK_britannia_high_king.0025 = {
 			limit = { this != scope:former_high_king }
 			show_as_tooltip = { destroy_title = title:e_britannia }
 			custom_tooltip = BTWK_britannia_high_king.0025.b.tt
+		}
+		hidden_effect = {
+			if = {
+				limit = { this = scope:former_high_king }
+				struggle:britannia_struggle ?= {
+					if = {
+						limit = { phase_has_catalyst = catalyst_high_king_britannia_lost_throne }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_high_king_britannia_lost_throne
+							character = scope:former_high_king
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -2421,7 +2474,7 @@ BTWK_britannia_high_king.0126 = {
 	}
 	
 	immediate = {
-		title:e_britannia.var:HK_reform_empower_high_council ?= { set_variable = reform_passed }
+		BTWK_britannia_pass_reform_effect = { REFORM = empower_high_council }
 	}
 
 	option = {
@@ -3151,6 +3204,7 @@ BTWK_britannia_high_king.0170 = {
 		if = {
 			limit = { root != scope:high_king }
 			custom_tooltip = BTWK_britannia_high_king.0170.b.tt
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
 		}
 	}
 
@@ -3171,6 +3225,8 @@ BTWK_britannia_high_king.0170 = {
 			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
 			add_dynasty_prestige = monumental_dynasty_prestige_value
 		}
+		BTWK_end_britannia_struggle_effect = yes
+		struggle:britannia_struggle = { end_struggle = BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle }
 	}
 
 	option = {
@@ -3659,9 +3715,8 @@ BTWK_britannia_high_king.0186 = {
 	}
 	
 	immediate = {
-		title:e_britannia.var:HK_reform_restore_imperial_dignity ?= { set_variable = reform_passed }
+		BTWK_britannia_pass_reform_effect = { REFORM = restore_imperial_dignity }
 		title:e_britannia = { set_variable = britannia_united }
-		struggle:britannia_struggle = { end_struggle = BTWK_HK_britannia_restore_imperial_dignity_decision_struggle }
 	}
 
 	option = {
@@ -3719,6 +3774,8 @@ BTWK_britannia_high_king.0186 = {
 			add_dynasty_modifier = BTWK_britannia_high_king_restore_imperial_dignity_modifier
 			add_dynasty_prestige = monumental_dynasty_prestige_value
 		}
+		BTWK_end_britannia_struggle_effect = yes
+		struggle:britannia_struggle = { end_struggle = BTWK_HK_britannia_restore_imperial_dignity_decision_struggle }
 	}
 }
 
@@ -3744,6 +3801,7 @@ BTWK_britannia_high_king.0187 = {
 			custom_tooltip = BTWK_britannia_high_king.0187.a.tt.2
 		}
 		custom_tooltip = BTWK_britannia_high_king.0187.a.tt.3
+		show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
 	}
 
 	option = {
