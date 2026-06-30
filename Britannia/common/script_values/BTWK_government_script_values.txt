@@ -26,6 +26,122 @@ percent_count_or_higher_vassals_with_tribal_obligations = {
 	}
 }
 
+BTWK_tribal_fame_effective_realm_size = {
+	value = 0
+	add = {
+		value = realm_size
+		desc = TRIBAL_FAME_VALUE_REALM_SIZE
+		format = TRIBAL_FAME_NEGATIVE_FORMAT
+	}
+	subtract = {
+		value = 4
+		desc = TRIBAL_FAME_VALUE_REALM_SIZE_BASELINE_ALLOWANCE
+		format = TRIBAL_FAME_NEGATIVE_FORMAT
+	}
+	if = {
+		limit = { 
+			has_realm_law = tribal_authority_0
+		}
+		multiply = {
+			value = 1.2
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TRIBAL_AUTHORITY_0
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_1
+		}
+		multiply = {
+			value = 1.1
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TRIBAL_AUTHORITY_1
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_2
+		}
+		multiply = {
+			value = 1.0
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TRIBAL_AUTHORITY_2
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = tribal_authority_3
+		}
+		multiply = {
+			value = 0.9
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TRIBAL_AUTHORITY_3
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_0
+		}
+		multiply = {
+			value = 0.8
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TRIBAL_AUTHORITY_0
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_1
+		}
+		multiply = {
+			value = 0.7
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_CROWN_AUTHORITY_1
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_2
+		}
+		multiply = {
+			value = 0.6
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_CROWN_AUTHORITY_2
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	else_if = {
+		limit = { 
+			has_realm_law = crown_authority_3
+		}
+		multiply = {
+			value = 0.5
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_CROWN_AUTHORITY_3
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	if = {
+		limit = {
+			culture = { has_cultural_era_or_later = culture_era_high_medieval }
+		}
+		multiply = {
+			value = 0.85
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_ERA_2_OR_3
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	if = {
+		limit = {
+			has_title = title:e_britannia
+			BTWK_britannia_subject_king_vassals_active_trigger = yes
+			NOT = { title:e_britannia = { has_variable = britannia_united } }
+		}
+		multiply = {
+			value = 0.33
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_BRITANNIA_HIGH_KING
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+}
+
 tribal_fame_government_law_realm_size_multiplier = {
 	value = 1
 	if = {
@@ -154,31 +270,11 @@ tribal_fame_value = {
 		divide = 5
 		desc = TRIBAL_FAME_VALUE_PROWESS
 	}
-	if = {
-		limit = {
-			has_title = title:e_britannia
-			BTWK_britannia_subject_king_vassals_active_trigger = yes
-			NOT = { title:e_britannia = { has_variable = britannia_united } }
-		}
-		subtract = {
-			value = sub_realm_size
-			subtract = 4
-			divide = 1.5
-			multiply = tribal_fame_government_law_realm_size_multiplier
-			multiply = 0.33
-			min = 0
-			desc = TRIBAL_FAME_VALUE_REALM_SIZE_BRITANNIA_HIGH_KING
-		}
-	}
-	else = {
-		subtract = {
-			value = sub_realm_size
-			subtract = 4
-			divide = 1.5
-			multiply = tribal_fame_government_law_realm_size_multiplier
-			min = 0
-			desc = TRIBAL_FAME_VALUE_REALM_SIZE
-		}
+	subtract = {
+		value = BTWK_tribal_fame_effective_realm_size
+		divide = 1.5
+		min = 0
+		desc = TRIBAL_FAME_VALUE_EFFECTIVE_REALM_SIZE
 	}
 	if = {
 		limit = {
