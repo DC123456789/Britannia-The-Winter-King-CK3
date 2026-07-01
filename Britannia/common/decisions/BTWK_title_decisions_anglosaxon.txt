@@ -20,11 +20,7 @@ claim_aengland_bretwalda_decision = {
 	desc = claim_aengland_bretwalda_decision_desc
 
 	is_shown = {
-		culture = {
-			has_same_heritage_group_as = { TARGET = culture:angle }
-			NOT = { has_cultural_pillar = heritage_romanized_germanic }
-			NOT = { has_cultural_pillar = heritage_frankish }
-		}
+		is_unromanized_germanic_culture_trigger = yes
 		any_held_title = {
 			tier = root.primary_title.tier
 			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
@@ -35,14 +31,7 @@ claim_aengland_bretwalda_decision = {
 
 	is_valid = {
 		is_independent_ruler = yes
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_culture_requirement_tt
-			culture = {
-				has_same_heritage_group_as = { TARGET = culture:angle }
-				NOT = { has_cultural_pillar = heritage_romanized_germanic }
-				NOT = { has_cultural_pillar = heritage_frankish }
-			}
-		}
+		is_unromanized_germanic_culture_trigger = yes
 		custom_tooltip = {
 			text = claim_aengland_bretwalda_kingdom_requirement_tt
 			any_held_title = {
@@ -72,12 +61,16 @@ claim_aengland_bretwalda_decision = {
 			martial >= 25
 			prowess >= 30
 		}
+		BTWK_aengland_bretwalda_britannia_region_control_min_counties_trigger = {
+			COUNTIES_REQUIRED = 60
+		}
 		control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
 			FRACTION_REQUIRED = 0.5
 		}
 		custom_tooltip = {
 			text = claim_aengland_bretwalda_king_hegemony_score_tt
-			this.var:aengland_hegemony_score >= 120
+			has_variable = aengland_bretwalda_hegemony_score
+			this.var:aengland_bretwalda_hegemony_score >= 180
 		}
 	}
 
@@ -101,7 +94,7 @@ claim_aengland_bretwalda_decision = {
 	}
 
 	ai_will_do = {
-		base = 0		# Want AI to calculate if it's actually going to win or not
+		base = 100
 	}
 	
 	widget = {

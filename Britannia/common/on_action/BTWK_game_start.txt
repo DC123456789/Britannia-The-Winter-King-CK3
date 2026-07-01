@@ -19,6 +19,8 @@ BTWK_on_game_start = {
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
+		delay = { months = 1 }
+		BTWK_start_monthly_global_pulse
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
@@ -53,6 +55,12 @@ BTWK_story_trigger_on_game_start_479 = {
 				}
 			}
 		}
+	}
+}
+
+BTWK_start_monthly_global_pulse = {
+	effect = {
+		title:c_londinium.holder = { create_story = BTWK_monthly_global_pulse_story }
 	}
 }
 
@@ -681,6 +689,20 @@ BTWK_character_setup = {
 						NOT = { this = title:k_gwynedd }
 					}
 					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
 				}
 			}
 		}
@@ -3291,6 +3313,6 @@ BTWK_startup_events = {
 	effect = {
 		every_player = {
 			trigger_event = BTWK_startup.0001
-		}
+		}	
 	}
 }

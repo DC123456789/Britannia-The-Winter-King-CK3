@@ -31,7 +31,29 @@ BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = {
 	}
 	custom_tooltip = {
 		text = BTWK_HK_aengland_unite_aengland_decision_hegemony_score_tt
-		this.var:aengland_hegemony_score >= 500
+		this.var:aengland_bretwalda_hegemony_score >= 350
+	}
+}
+
+BTWK_aengland_bretwalda_britannia_region_control_min_counties_trigger = {
+	save_temporary_scope_as = current_ruler
+	save_temporary_scope_value_as = {
+		name = counties_required
+		value = $COUNTIES_REQUIRED$
+	}
+	custom_description = {
+		text = BTWK_controls_num_counties_in_britannia_including_tributaries
+		value = scope:counties_required
+		any_county_in_region = {
+			count >= $COUNTIES_REQUIRED$
+			region = btwk_world_britannia
+			OR = {
+				scope:current_ruler = { completely_controls = prev }
+				holder.top_liege = {					
+					is_tributary_of_suzerain_or_above = scope:current_ruler
+				}
+			}
+		}
 	}
 }
 
@@ -48,11 +70,7 @@ is_anglo_saxon_province_trigger = {
 					target_is_de_jure_liege_or_above = title:e_aengland
 				}
 			}
-			AND = {
-				has_same_heritage_group_as = { TARGET = culture:angle }
-				NOT = { has_cultural_pillar = heritage_romanized_germanic }
-				NOT = { has_cultural_pillar = heritage_frankish }
-			}
+			is_unromanized_germanic_culture_trigger = yes
 		}
 	}
 }

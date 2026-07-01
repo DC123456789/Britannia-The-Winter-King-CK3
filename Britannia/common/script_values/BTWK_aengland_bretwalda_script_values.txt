@@ -8,3 +8,241 @@ BTWK_aengland_bretwalda_hegemony_score_struggle_phase_boost_modifier = {
 	value = BTWK_aengland_bretwalda_hegemony_score_struggle_phase_boost
 	add = 1
 }
+
+BTWK_aengland_bretwalda_region_control_share = {
+	value = 0
+	save_temporary_scope_as = current_bretwalda
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			holder.top_liege = { 
+				OR = {
+					this = scope:current_bretwalda
+					AND = {
+						is_tributary = yes
+						is_tributary_of_suzerain_or_above = scope:current_bretwalda
+					}
+				}
+			}
+		}
+		if = {
+			limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = yes } }
+			add = 1
+		}
+		else = {
+			add = 0.5
+		}
+	}
+	divide = {
+		value = 0
+		every_county_in_region = {
+			region = btwk_world_britannia
+			add = 1
+		}
+	}
+}
+
+BTWK_britannia_controlled_counties_including_tributaries = {
+	value = 0
+	save_temporary_scope_as = current_ruler
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			holder.top_liege = { 
+				OR = {
+					this = scope:current_ruler
+					AND = {
+						is_tributary = yes
+						is_tributary_of_suzerain_or_above = scope:current_ruler
+					}
+				}
+			}
+		}
+		add = 1
+	}
+}
+
+BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share = {
+	value = 0
+	save_temporary_scope_as = current_bretwalda
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			OR = {
+				is_unromanized_germanic_culture_trigger = yes
+				holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+			}
+			holder.top_liege = { 
+				OR = {
+					this = scope:current_bretwalda
+					AND = {
+						is_tributary = yes
+						is_tributary_of_suzerain_or_above = scope:current_bretwalda
+					}
+				}
+			}
+		}
+		if = {
+			limit = { holder.top_liege = { is_unromanized_germanic_culture_trigger = yes } }
+			add = 1
+		}
+		else = {
+			add = 0.5
+		}
+	}
+	divide = {
+		value = 0
+		every_county_in_region = {
+			region = btwk_world_britannia
+			limit = {
+				OR = {
+					is_unromanized_germanic_culture_trigger = yes
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
+				}
+			}
+			add = 1
+		}
+	}
+}
+
+BTWK_aengland_bretwalda_hegemony_score_gain = {
+	value = 0
+	if = {
+		limit = { 
+			exists = this.var:aengland_bretwalda_hegemony_score
+			this.var:aengland_bretwalda_hegemony_score == BTWK_aengland_bretwalda_hegemony_max
+		}
+		add = {
+			value = 0.0001		# For tooltip purposes
+			desc = AENGLAND_HEGEMONY_SCORE_AT_MAX
+		}
+		multiply = 0		# Makes it 0
+	}
+	else_if = {
+		limit = { 
+			exists = this.var:aengland_bretwalda_hegemony_score
+			this.var:aengland_bretwalda_hegemony_score > BTWK_aengland_bretwalda_hegemony_max
+		}
+		if = {
+			limit = { BTWK_aengland_bretwalda_hegemony_value_over_max > BTWK_aengland_bretwalda_hegemony_over_max_loss_cap }
+			subtract = {
+				value = BTWK_aengland_bretwalda_hegemony_over_max_loss_cap
+				desc = AENGLAND_HEGEMONY_SCORE_OVER_MAX
+			}
+		}
+		else = {
+			subtract = {
+				value = BTWK_aengland_bretwalda_hegemony_value_over_max
+				desc = AENGLAND_HEGEMONY_SCORE_OVER_MAX
+			}
+		}
+	}
+	else = {
+		add = {		# 5 * share of provinces in Britannia controlled (including by Unromanized Germanic tributaries)
+			value = BTWK_aengland_bretwalda_region_control_share
+			multiply = 5
+			desc = AENGLAND_HEGEMONY_SCORE_SHARE_BRITANNIA_PROVINCES_CONTROLLED
+		}
+		add = {		# 2.5 * share of Unromanized Germanic provinces in Britannia controlled
+			value = BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share
+			multiply = 2.5
+			desc = AENGLAND_HEGEMONY_SCORE_SHARE_ANGLO_SAXON_PROVINCES_CONTROLLED
+		}
+		if = {		# x0.75 if you are not West Germanic
+			limit = { NOT = { culture = { has_cultural_pillar = heritage_west_germanic } } }
+			multiply = 0.75
+			desc = AENGLAND_HEGEMONY_SCORE_NOT_WEST_GERMANIC
+		}
+		# Legitimacy modifier
+		if = {
+			limit = { has_legitimacy = yes }
+			multiply = {
+				value = BTWK_britannia_legitimacy_level_modifier
+				desc = AENGLAND_HEGEMONY_SCORE_LEGITIMACY
+			}
+		}
+		# x0.67 if Tribal
+		if = {
+			limit = { government_has_flag = government_is_tribal }
+			multiply = {
+				value = 0.67
+				desc = AENGLAND_HEGEMONY_SCORE_TRIBAL_GOVERNMENT
+			}
+		}
+		# x1.2 if advanced government
+		else_if = {
+			limit = { NOT = { government_has_flag = government_is_pre_feudal } }
+			multiply = {
+				value = 0.67
+				desc = AENGLAND_HEGEMONY_SCORE_ADVANCED_GOVERNMENT
+			}
+		}
+		if = {
+			limit = {
+				struggle:britannia_struggle ?= { has_struggle_phase_parameter = aengland_bretwalda_hegemony_score_minor_boost }
+			}
+			multiply = {
+				value = BTWK_aengland_bretwalda_hegemony_score_minor_struggle_phase_boost_modifier
+				desc = AENGLAND_HEGEMONY_SCORE_STRUGGLE_PHASE_MINOR_BOOST
+			}
+		}
+		else_if = {
+			limit = {
+				struggle:britannia_struggle ?= { has_struggle_phase_parameter = aengland_bretwalda_hegemony_score_boost }
+			}
+			multiply = {
+				value = BTWK_aengland_bretwalda_hegemony_score_struggle_phase_boost_modifier
+				desc = AENGLAND_HEGEMONY_SCORE_STRUGGLE_PHASE_BOOST
+			}
+		}
+	}
+	# Big malus if tributary
+	if = {
+		limit = { is_tributary = yes }
+		subtract = {
+			value = 20
+			desc = AENGLAND_HEGEMONY_SCORE_IS_TRIBUTARY
+		}
+	}
+}
+
+BTWK_aengland_bretwalda_hegemony_max = {
+	value = 0
+	if = {
+		limit = { is_independent_ruler = yes }
+		add = {		# 300 * share of provinces in Britannia controlled (including by Unromanized Germanic tributaries)
+			value = BTWK_aengland_bretwalda_region_control_share
+			multiply = 300
+			desc = AENGLAND_HEGEMONY_SCORE_SHARE_BRITANNIA_PROVINCES_CONTROLLED
+		}
+		add = {		# 150 * share of Unromanized Germanic provinces in Britannia controlled
+			value = BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share
+			multiply = 150
+			desc = AENGLAND_HEGEMONY_SCORE_SHARE_ANGLO_SAXON_PROVINCES_CONTROLLED
+		}
+		if = {
+			limit = { is_tributary = yes }
+			multiply = {
+				value = 0.5
+				desc = AENGLAND_HEGEMONY_SCORE_IS_TRIBUTARY
+			}
+		}
+	}
+	else = {
+		subtract = {
+			value = 0.0001		# For tooltip purposes
+			desc = AENGLAND_HEGEMONY_SCORE_IS_VASSAL
+		}
+		multiply = 0		# Makes it 0
+	}
+}
+
+BTWK_aengland_bretwalda_hegemony_over_max_loss_cap = {
+	value = BTWK_aengland_bretwalda_hegemony_max
+	divide = 20
+}
+
+BTWK_aengland_bretwalda_hegemony_value_over_max = {
+	value = this.var:aengland_bretwalda_hegemony_score
+	subtract = BTWK_aengland_bretwalda_hegemony_max
+}

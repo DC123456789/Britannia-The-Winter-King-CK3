@@ -1,0 +1,34 @@
+﻿btwk_monthly_global_pulse = {
+	on_actions = {
+		btwk_aengland_bretwalda_hegemony_score_pulse
+	}
+}
+
+btwk_aengland_bretwalda_hegemony_score_pulse = {
+	effect = {
+		if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = yes }
+			every_ruler = {
+				limit = {
+					is_unromanized_germanic_culture_trigger = yes
+					any_held_title = {
+						tier = prev.primary_title.tier
+						title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+					}
+				}
+				set_variable = hi
+				if = {
+					limit = { NOT = { has_variable = aengland_bretwalda_hegemony_score } }
+					set_variable = {
+						name = aengland_bretwalda_hegemony_score
+						value = 0
+					}
+				}
+				change_variable = {
+					name = aengland_bretwalda_hegemony_score
+					add = BTWK_aengland_bretwalda_hegemony_score_gain
+				}
+			}
+		}
+	}
+}
