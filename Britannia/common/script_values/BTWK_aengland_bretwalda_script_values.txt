@@ -196,6 +196,34 @@ BTWK_aengland_bretwalda_hegemony_score_gain = {
 			}
 		}
 	}
+	# Maluses if you don't control enough provinces as Bretwalda
+	if = {
+		limit = { has_title = title:e_aengland }
+		subtract = {		# If you control < 40% of Britannia, lose up to 2 Hegemony Score
+			value = 0.40
+			subtract = BTWK_aengland_bretwalda_region_control_share
+			divide = 0.40
+			multiply = 2
+			min = 0
+			desc = AENGLAND_HEGEMONY_SCORE_SHARE_BRITANNIA_PROVINCES_CONTROLLED_PENALTY
+		}
+		subtract = {		# If you control < 65% of Anglo-Saxon provinces, lose up to 1.5 Hegemony Score
+			value = 0.65
+			subtract = BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share
+			divide = 0.65
+			multiply = 1.5
+			min = 0
+			desc = AENGLAND_HEGEMONY_SCORE_BRETWALDA_SHARE_ANGLO_SAXON_PROVINCES_CONTROLLED_PENALTY
+		}
+		subtract = {		# If you control < 50% of Anglo-Saxon provinces, you get an additional, more severe penalty up to 3.5 Hegemony Score
+			value = 0.5
+			subtract = BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share
+			divide = 0.5
+			multiply = 3.5
+			min = 0
+			desc = AENGLAND_HEGEMONY_SCORE_BRETWALDA_SHARE_ANGLO_SAXON_PROVINCES_CONTROLLED_SEVERE_PENALTY
+		}
+	}
 	# Big malus if tributary
 	if = {
 		limit = { is_tributary = yes }
@@ -210,14 +238,14 @@ BTWK_aengland_bretwalda_hegemony_max = {
 	value = 0
 	if = {
 		limit = { is_independent_ruler = yes }
-		add = {		# 300 * share of provinces in Britannia controlled (including by Unromanized Germanic tributaries)
+		add = {		# 600 * share of provinces in Britannia controlled (including by Unromanized Germanic tributaries)
 			value = BTWK_aengland_bretwalda_region_control_share
-			multiply = 300
+			multiply = 600
 			desc = AENGLAND_HEGEMONY_SCORE_SHARE_BRITANNIA_PROVINCES_CONTROLLED
 		}
-		add = {		# 150 * share of Unromanized Germanic provinces in Britannia controlled
+		add = {		# 300 * share of Unromanized Germanic provinces in Britannia controlled
 			value = BTWK_aengland_bretwalda_anglo_saxon_province_region_control_share
-			multiply = 150
+			multiply = 300
 			desc = AENGLAND_HEGEMONY_SCORE_SHARE_ANGLO_SAXON_PROVINCES_CONTROLLED
 		}
 		if = {
@@ -225,6 +253,13 @@ BTWK_aengland_bretwalda_hegemony_max = {
 			multiply = {
 				value = 0.5
 				desc = AENGLAND_HEGEMONY_SCORE_IS_TRIBUTARY
+			}
+		}
+		if = {
+			limit = { NOT = { has_title = title:e_aengland } }
+			multiply = {
+				value = 0.5
+				desc = AENGLAND_HEGEMONY_SCORE_NOT_BRETWALDA
 			}
 		}
 	}
@@ -245,4 +280,11 @@ BTWK_aengland_bretwalda_hegemony_over_max_loss_cap = {
 BTWK_aengland_bretwalda_hegemony_value_over_max = {
 	value = this.var:aengland_bretwalda_hegemony_score
 	subtract = BTWK_aengland_bretwalda_hegemony_max
+}
+
+# Unification reward
+BTWK_HK_aengland_unite_aengland_modifier_conversion_factor = 0.2
+BTWK_HK_aengland_unite_aengland_modifier_conversion_value = {
+	value = 0
+	add = BTWK_HK_aengland_unite_aengland_modifier_conversion_factor
 }

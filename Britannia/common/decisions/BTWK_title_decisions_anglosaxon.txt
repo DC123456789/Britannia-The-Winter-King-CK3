@@ -40,7 +40,7 @@ claim_aengland_bretwalda_decision = {
 				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 			}
 		}
-		NOT = { exists = title:e_aengland.holder }
+		title:e_aengland = { is_title_created = no }
 		prestige_level >= high_prestige_level
 		age >= 25
 		realm_size >= 15
@@ -81,7 +81,13 @@ claim_aengland_bretwalda_decision = {
 		custom_tooltip = {
 			text = claim_aengland_bretwalda_decision_effect_tt
 		}
-		# trigger_event = { id = aengland_bretwalda.0001 }
+		save_scope_as = new_bretwalda
+		primary_title = { save_scope_as = old_primary_title }
+		trigger_event = { id = BTWK_aengland_bretwalda.0001 }
+		every_player = {
+			limit = { this != prev }
+			trigger_event = { id = BTWK_aengland_bretwalda.0001 }
+		}
 	}
 	
 	cost = {

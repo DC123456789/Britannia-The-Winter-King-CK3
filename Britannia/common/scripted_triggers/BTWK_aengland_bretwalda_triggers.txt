@@ -8,9 +8,20 @@ BTWK_aengland_bretwalda_has_declared_supremacy_trigger = {
 	title:e_aengland = { has_variable = aengland_declared_supremacy }
 }
 
+BTWK_aengland_united_trigger = {
+	OR = {
+		title:e_aengland = { has_variable = aengland_united }
+		NOT = { exists = struggle:britannia_struggle }
+	}
+}
+
 BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = {
 	is_independent_ruler = yes
 	government_is_not_tribal_trigger = yes
+	custom_tooltip = {
+		text = follows_reformed_faith_tt
+		faith = { NOT = { has_doctrine_parameter = unreformed } }
+	}
 	is_unromanized_germanic_culture_trigger = yes
 	prestige_level >= high_prestige_level
 	OR = {
@@ -31,7 +42,7 @@ BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = {
 	}
 	custom_tooltip = {
 		text = BTWK_HK_aengland_unite_aengland_decision_hegemony_score_tt
-		this.var:aengland_bretwalda_hegemony_score >= 350
+		this.var:aengland_bretwalda_hegemony_score >= 700
 	}
 }
 

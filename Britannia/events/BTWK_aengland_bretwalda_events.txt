@@ -1,0 +1,393 @@
+﻿namespace = BTWK_aengland_bretwalda
+
+##################################################
+
+### Events for the Bretwalda of Aengland
+
+##################################################
+
+############################################################################
+# BTWK_aengland_bretwalda.0001 - 0020: Bretwalda Events + Reforms
+############################################################################
+# BTWK_aengland_bretwalda.0001 - King becomes Bretwalda
+# BTWK_aengland_bretwalda.0002 - Bretwalda Proclaims Supremacy
+# BTWK_aengland_bretwalda.0003 - King of the Anglo-Saxons
+
+# Claimant proclaimed High King
+BTWK_aengland_bretwalda.0001 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_aengland_bretwalda.0001.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:new_bretwalda = root }
+				desc = BTWK_aengland_bretwalda.0001.desc.bretwalda
+			}
+			desc = BTWK_aengland_bretwalda.0001.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:new_bretwalda
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:new_bretwalda = { 
+			save_scope_as = background_throne_room_scope 
+			capital_barony = { save_scope_as = new_bretwalda_capital_barony }
+		}
+		if = {
+			limit = { scope:new_bretwalda = root }
+			title:e_aengland = {
+				set_variable = {
+					name = aengland_primary_kingdom
+					value = scope:old_primary_title
+				}
+				set_capital_county = scope:old_primary_title.title_capital_county
+			}
+		}
+		else = {
+			show_as_tooltip = {
+				scope:new_bretwalda = { get_title = title:e_aengland }
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0001.a
+		trigger = { scope:new_bretwalda = root }
+		add_prestige = 200
+		get_title = title:e_aengland
+		custom_tooltip = {
+			text = BTWK_aengland_bretwalda.0001.a.gain_hegemony_score.tt
+			change_variable = {
+				name = aengland_bretwalda_hegemony_score
+				add = 30
+			}
+		}
+		custom_tooltip = BTWK_aengland_bretwalda.0001.a.tt.1
+		custom_tooltip = BTWK_aengland_bretwalda.0001.a.tt.2
+		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
+		hidden_effect = {
+			struggle:britannia_struggle ?= {
+				if = {
+					limit = { phase_has_catalyst = catalyst_become_bretwalda_aengland }
+					activate_struggle_catalyst = {
+						catalyst = catalyst_become_bretwalda_aengland
+						character = root
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				top_liege = {
+					OR = {
+						this = scope:new_bretwalda
+						suzerain = scope:new_bretwalda
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0001.a.anglo_saxon_vassal
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				is_independent_ruler = yes
+				NOT = {
+					is_tributary = yes
+					suzerain = scope:new_bretwalda
+				}
+			}
+			text = BTWK_aengland_bretwalda.0001.a.anglo_saxon_other_king
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				NAND = {
+					is_independent_ruler = yes
+					NOT = {
+						is_tributary = yes
+						suzerain = scope:new_bretwalda
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0001.a.anglo_saxon
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0001.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						any_held_title = {
+							tier = root.primary_title.tier
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0001.a.other
+		}
+		trigger = { scope:new_bretwalda != root }
+	}
+}
+
+# Bretwalda Declares Supremacy
+BTWK_aengland_bretwalda.0002 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_aengland_bretwalda.0002.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:bretwalda = root }
+				desc = BTWK_aengland_bretwalda.0002.desc.bretwalda
+			}
+			desc = BTWK_aengland_bretwalda.0002.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = throne_room_scope }
+
+	left_portrait = {
+		character = scope:bretwalda
+		animation = war_over_win
+	}
+	
+	immediate = {
+		scope:bretwalda = { 
+			save_scope_as = background_throne_room_scope 
+		}
+		if = {
+			limit = { scope:bretwalda = root }
+			title:e_aengland = {
+				set_variable = aengland_declared_supremacy
+			}
+		}
+		else = {
+			custom_tooltip = BTWK_aengland_bretwalda.0002.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0002.a
+		trigger = { scope:bretwalda = root }
+		custom_tooltip = BTWK_aengland_bretwalda.0002.a.tt.1
+		custom_tooltip = BTWK_aengland_bretwalda.0002.a.tt.2
+		dynasty = { add_dynasty_prestige = major_dynasty_prestige_gain }
+		hidden_effect = {
+			struggle:britannia_struggle ?= {
+				if = {
+					limit = { phase_has_catalyst = catalyst_bretwalda_aengland_has_declared_supremacy }
+					activate_struggle_catalyst = {
+						catalyst = catalyst_bretwalda_aengland_has_declared_supremacy
+						character = root
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				top_liege = {
+					OR = {
+						this = scope:bretwalda
+						suzerain = scope:bretwalda
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0002.b.anglo_saxon_vassal
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				is_independent_ruler = yes
+				NOT = {
+					is_tributary = yes
+					suzerain = scope:bretwalda
+				}
+			}
+			text = BTWK_aengland_bretwalda.0002.b.anglo_saxon_other_king
+		}
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+				NAND = {
+					is_independent_ruler = yes
+					NOT = {
+						is_tributary = yes
+						suzerain = scope:bretwalda
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0002.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0002.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						any_held_title = {
+							tier = root.primary_title.tier
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0002.b.other
+		}
+		trigger = { scope:bretwalda != root }
+	}
+}
+
+# King of the English
+BTWK_aengland_bretwalda.0003 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	title = BTWK_aengland_bretwalda.0003.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:bretwalda = root }
+				desc = BTWK_aengland_bretwalda.0003.desc.bretwalda
+			}
+			desc = BTWK_aengland_bretwalda.0003.desc.other
+		}
+	}
+	theme = war
+	override_background = { reference = fp2_fullscreen_intro }
+	
+	immediate = {
+		scope:bretwalda = { 
+			save_scope_as = background_throne_room_scope 
+			capital_barony = { save_scope_as = bretwalda_capital_barony }
+		}
+		if = {
+			limit = { scope:bretwalda = root }
+			title:e_aengland = {
+				set_variable = aengland_united
+			}
+		}
+		else = {
+			custom_tooltip = BTWK_aengland_bretwalda.0003.a.tt.1
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0003.a
+		trigger = { scope:bretwalda = root }
+		custom_tooltip = BTWK_aengland_bretwalda.0003.a.tt.1
+		custom_tooltip = BTWK_aengland_bretwalda.0003.a.tt.2
+		if = {
+			limit = { has_dlc_feature = legends }
+			legend_seed_struggle_ending_effect = {
+				ENDER = root
+				STRUGGLE = britannia_struggle
+			}
+		}
+		dynasty = {
+			add_dynasty_modifier = BTWK_HK_aengland_unite_aengland_modifier
+			custom_tooltip = BTWK_aengland_bretwalda.0003.a.tt.3
+			add_dynasty_prestige = monumental_dynasty_prestige_value
+		}
+		BTWK_end_britannia_struggle_effect = yes
+		struggle:britannia_struggle = { end_struggle = BTWK_HK_aengland_unite_aengland_decision_struggle }
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_aengland_bretwalda.0003.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0003.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					is_britannic_culture_trigger = yes
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						any_held_title = {
+							tier = root.primary_title.tier
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+				}
+			}
+			text = BTWK_aengland_bretwalda.0003.b.other
+		}
+		trigger = { scope:bretwalda != root }
+	}
+}
+
+############################################################################
+# BTWK_aengland_bretwalda.0020 - 0029: Losing the title of Bretwalda
+############################################################################
+# BTWK_aengland_bretwalda.0020 - Bretwalda dies before Supremacy is Proclaimed
+# BTWK_aengland_bretwalda.0021 - Bretwalda abdicates before Supremacy is Proclaimed
+# BTWK_aengland_bretwalda.0022 - Hegemony Score dropping too low, warning
+# BTWK_aengland_bretwalda.0023 - Hegemony Score too low for too long, Bretwalda title lost
+# TODO Make Hegemony Score partly inheritable?
