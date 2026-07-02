@@ -451,7 +451,13 @@ suzerain_war_participation_guarantee = {
 				}
 			}
 			
-			ai_liege_desire = @ai_standard_liege_desire
+			ai_liege_desire = {
+				value = 0
+				if = {		# AI wants to centralize so they can vassalize
+					limit = { NOT = { scope:subject = { has_subject_contract_group = tributary_BTWK_client_kingdom } } }
+					add = @ai_standard_liege_desire
+				}
+			}
 			ai_subject_desire = 0
 			score = -2
 		}
@@ -465,7 +471,13 @@ suzerain_war_participation_guarantee = {
 			# flag referenced in code, do not change without approval
 			flag = tributary_contract_suzerain_guarantee_override
 
-			ai_liege_desire = 0
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = { scope:subject = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					add = @ai_standard_liege_desire
+				}
+			}
 			ai_subject_desire = @ai_standard_vassal_desire
 			score = 2
 		}

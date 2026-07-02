@@ -1,0 +1,238 @@
+﻿#Interactions relating to tributary relationship management
+
+BTWK_enforce_vassalage_client_kingdom_interaction = {
+	category = interaction_category_vassal
+	common_interaction = yes
+	icon = icon_vassal
+
+	desc = BTWK_enforce_vassalage_client_kingdom_interaction_desc
+
+	is_shown = {
+		scope:actor = { is_independent_ruler = yes }
+		scope:recipient = {
+			#is_tributary_of = scope:actor # excludes vassals by default
+			#has_subject_contract_group = tributary_BTWK_client_kingdom
+			culture = { has_same_culture_heritage = scope:actor.culture }
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:recipient = {
+			is_at_war = no
+			custom_tooltip = {
+				text = contract_has_suzerain_war_participation_guarantee_tt
+				vassal_contract_obligation_level:suzerain_war_participation_guarantee = 1
+			}
+			custom_tooltip = {
+				text = contract_has_high_tributary_taxes_tt
+				vassal_contract_obligation_level:default_tributary_taxes = 2
+			}
+			custom_tooltip = {
+				text = contract_has_high_tributary_levies_tt
+				vassal_contract_obligation_level:default_tributary_levies = 2
+			}
+			custom_tooltip = {
+				text = contract_has_high_tributary_prestige_tt
+				vassal_contract_obligation_level:default_tributary_prestige = 2
+			}
+			NOT = { highest_held_title_tier > scope:actor.highest_held_title_tier }
+			# If you change the numbers here, make sure to change BTWK_client_kingdom_can_enforce_vassalage_trigger too
+			custom_tooltip = {
+				text = BTWK_enforce_vassalage_client_kingdom_interaction_tier_tt
+				OR = {
+					highest_held_title_tier < scope:actor.highest_held_title_tier
+					AND = {
+						highest_held_title_tier = scope:actor.highest_held_title_tier
+						realm_size <= 10
+					}
+				}
+			}
+			trigger_if = {
+				limit = {
+					highest_held_title_tier >= scope:actor.highest_held_title_tier
+				}
+				custom_tooltip = {
+					text = BTWK_enforce_vassalage_client_kingdom_interaction_same_tier_actor_realm_size_tt
+					realm_size >= 50
+				}
+			}
+			# Britannia + Aengland block
+			trigger_if = {
+				limit = {
+					scope:recipient.highest_held_title_tier >= tier_kingdom
+					scope:recipient.realm_size > 10
+				}
+				trigger_if = {
+					limit = {
+						scope:actor = {
+							has_title = title:e_britannia
+							NOT = {
+								any_held_title = {
+									this != title:e_britannia
+									tier >= tier_empire
+								}
+							}						
+						}
+					}
+					custom_tooltip = {
+						text = BTWK_enforce_vassalage_client_kingdom_interaction_high_king_block_tt
+						BTWK_britannia_king_tier_vassals_allowed_trigger = yes
+					}
+				}
+				trigger_if = {
+					limit = {
+						scope:actor = {
+							has_title = title:e_aengland
+							NOT = {
+								any_held_title = {
+									this != title:e_aengland
+									tier >= tier_empire
+								}
+							}						
+						}
+					}
+					custom_tooltip = {
+						text = BTWK_enforce_vassalage_client_kingdom_interaction_bretwalda_block_tt
+						BTWK_aengland_bretwalda_king_tier_vassals_allowed_trigger = yes
+					}
+				}
+			}
+		}
+		scope:actor = {
+			government_is_not_tribal_trigger = yes
+			highest_held_title_tier >= tier_duchy
+		}
+	}
+
+	auto_accept = yes
+
+	greeting = positive
+	notification_text = BTWK_ENFORCE_VASSALAGE_CLIENT_KINGDOM_INTERACTION_NOTIFICATION
+
+	on_accept = {
+		scope:actor = {
+			create_title_and_vassal_change = {
+				type = swear_fealty
+				save_scope_as = change
+				add_claim_on_loss = no
+			}
+			
+			if = {
+				limit = {
+					scope:recipient.primary_title.tier < scope:actor.primary_title.tier
+				}
+				scope:recipient = {
+					change_liege = {
+						liege = scope:actor
+						change = scope:change
+					}
+				}
+			}
+			else = {
+				scope:recipient = {
+					every_held_title = {
+						if = {
+							limit = {
+								tier < scope:recipient.primary_title.tier
+								OR = {
+									NOT = { exists = scope:secondary_title }
+									tier > scope:secondary_title.tier
+								}
+							}
+							save_temporary_scope_as = secondary_title
+						}
+					}
+					
+					if = {
+						limit = {
+							exists = scope:secondary_title
+						}
+						every_vassal = {
+							limit = {
+								primary_title.tier >= scope:secondary_title.tier
+								NOT = {
+									primary_title.tier = tier_barony
+								}
+							}
+							change_liege = {
+								liege = scope:actor
+								change = scope:change
+							}
+						}
+					}
+					
+					every_held_title = {
+						if = {
+							limit = {
+								tier = scope:recipient.primary_title.tier
+							}
+							scope:recipient = { destroy_title = prev }
+						}
+					}
+				}
+				
+				scope:recipient = {
+					change_liege = {
+						liege = scope:actor
+						change = scope:change
+					}
+				}
+			}
+			
+			resolve_title_and_vassal_change = scope:change
+		}
+	}
+
+	is_available = {
+		NOT = { government_has_flag = cannot_be_vassal_or_liege }
+		top_liege = this # You have to be independent - This check exists to prevent a lot of edge-cases where you can change liege
+	}
+
+	ai_targets = {
+		ai_recipients = tributaries
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 60
+		kingdom = 36
+		empire = 24
+		hegemony = 24
+	}
+
+	force_notification = yes
+
+	ai_will_do = {		# Always do
+		base = 100
+	}
+	
+	cost = {
+		prestige = {
+			value = 0
+			add = {
+				value = 500
+				desc = BASE
+			}
+			add = {
+				value = scope:recipient.realm_size
+				multiply = 25
+				if = {
+					limit = { scope:actor = { is_ai = yes } }
+					max = 1500
+				}
+				else = {
+					max = 3000
+				}
+				desc = BTWK_enforce_vassalage_client_kingdom_interaction_REALM_SIZE
+			}
+			if = {
+				limit = { NOT = { government_has_flag = government_is_pre_feudal } }
+				multiply = {
+					value = 0.75
+					desc = BTWK_enforce_vassalage_client_kingdom_interaction_ADVANCED_GOVERNMENT
+				}
+			}
+		}
+	}
+}

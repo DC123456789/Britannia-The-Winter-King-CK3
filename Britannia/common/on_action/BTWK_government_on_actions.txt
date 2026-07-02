@@ -10,6 +10,85 @@ BTWK_on_government_change = {
 	effect = {
 		tribal_fame_government_change_effect = yes
 		
+		# Convert from subjugated tributary to client kingdom
+		if = {
+			limit = { 
+				is_tributary = yes
+				has_subject_contract_group = tributary_subjugated
+				should_be_BTWK_client_kingdom_tributary_trigger = {
+					SUZERAIN = suzerain
+					TRIBUTARY = this
+				}
+			}
+			# Copy contract over to permanent type
+			set_variable = {
+				name = default_tributary_taxes_value
+				value = vassal_contract_obligation_level:default_tributary_taxes
+			}
+			set_variable = {
+				name = default_tributary_levies_value
+				value = vassal_contract_obligation_level:default_tributary_levies
+			}
+			set_variable = {
+				name = default_tributary_prestige_value
+				value = vassal_contract_obligation_level:default_tributary_prestige
+			}
+			start_tributary = {
+				contract_group = tributary_BTWK_client_kingdom
+				suzerain = root
+			}
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_taxes level = this.var:default_tributary_taxes_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_levies level = this.var:default_tributary_levies_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+			}
+			remove_variable = default_tributary_prestige_value
+		}
+		every_tributary = {
+			limit = {
+				has_subject_contract_group = tributary_subjugated
+				should_be_BTWK_client_kingdom_tributary_trigger = {
+					SUZERAIN = suzerain
+					TRIBUTARY = this
+				}
+			}
+			# Copy contract over to permanent type
+			set_variable = {
+				name = default_tributary_taxes_value
+				value = vassal_contract_obligation_level:default_tributary_taxes
+			}
+			set_variable = {
+				name = default_tributary_levies_value
+				value = vassal_contract_obligation_level:default_tributary_levies
+			}
+			set_variable = {
+				name = default_tributary_prestige_value
+				value = vassal_contract_obligation_level:default_tributary_prestige
+			}
+			start_tributary = {
+				contract_group = tributary_BTWK_client_kingdom
+				suzerain = root
+			}
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_taxes level = this.var:default_tributary_taxes_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_levies level = this.var:default_tributary_levies_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+			}
+			remove_variable = default_tributary_prestige_value
+		}
+		
 		# Britannia struggle catalysts
 		if = {
 			limit = {

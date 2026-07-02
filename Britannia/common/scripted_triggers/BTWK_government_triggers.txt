@@ -165,3 +165,26 @@ BTWK_reform_from_tribal_innovations_trigger = {
 		}
 	}
 }
+
+should_be_BTWK_client_kingdom_tributary_trigger = {
+	$SUZERAIN$ = { NOT = { government_has_flag = government_is_tribal } }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	OR = {
+		$TRIBUTARY$ = { NOT = { government_has_flag = government_is_tribal } }
+		$SUZERAIN$.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	}
+}
+
+BTWK_client_kingdom_can_enforce_vassalage_trigger = {
+	$SUZERAIN$ = { save_temporary_scope_as = suzerain_scope }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	scope:suzerain_scope.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	OR = {
+		scope:tributary_scope.highest_held_title_tier < scope:suzerain_scope.highest_held_title_tier
+		AND = {
+			scope:tributary_scope.highest_held_title_tier = scope:suzerain_scope.highest_held_title_tier
+			scope:tributary_scope.realm_size <= 10
+			scope:suzerain_scope.realm_size >= 50
+		}
+	}
+}

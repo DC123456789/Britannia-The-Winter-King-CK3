@@ -2042,6 +2042,8 @@ suzerain_modify_tributary_contract_interaction = {
 				scope:recipient = {
 					subject_contract_is_blocked_from_modification = yes
 				}
+				# Client kingdoms can change every 10 years
+				NOT = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
 			}
 			scope:recipient = {
 				subject_contract_is_blocked_from_modification = no
@@ -2050,7 +2052,27 @@ suzerain_modify_tributary_contract_interaction = {
 		trigger_else = {
 			scope:actor = {
 				has_changed_contract_obligation_trigger = yes
-
+				
+				
+				trigger_if = {
+					limit = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					# Restrictions on how quickly you can change contract on client kingdoms
+					custom_tooltip = {
+						text = suzerain_modify_subject_contract_BTWK_client_kingdom_cooldown
+						NOT = {
+							scope:recipient = { var:suzerain_recently_adjusted_BTWK_client_kingdom_subject_contract ?= scope:actor }
+						}
+					}
+					
+					custom_description = {
+						text = "liege_modify_vassal_contract_cannot_exceed_tyranny_cap"
+						object = scope:actor
+						NOT = {
+							vassal_obligation_increase_tyranny_gain_multiplier > 1
+						}
+					}
+				}
+				
 				# Cannot change more than three things at once
 				custom_description = {
 					text = "vassal_modify_vassal_contract_obligation_change_limit"
@@ -2119,6 +2141,19 @@ suzerain_modify_tributary_contract_interaction = {
 					use_hook = scope:recipient
 					add_achievement_flag_effect = { FLAG = achievement_fine_print_flag }
 				}
+				
+				# BTWK - 50% tyranny gain from increasing obligations on client kingdoms
+				if = {
+					limit = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					save_scope_value_as = {
+						name = tyranny_gain
+						value = {
+							value = vassal_obligation_increase_tyranny_gain
+							divide = 2
+						}
+					}
+					add_tyranny = scope:tyranny_gain
+				}
 
 				# Prestige and opinion cost of making an unequal contract without a hook
 				if = {
@@ -2166,6 +2201,11 @@ suzerain_modify_tributary_contract_interaction = {
 				scope:recipient = {
 					hidden_effect = {
 						set_subject_contract_modification_blocked = yes
+					}
+					set_variable = {
+						name = suzerain_recently_adjusted_BTWK_client_kingdom_subject_contract
+						value = scope:actor
+						years = 10
 					}
 					set_variable = {
 						name = suzerain_recently_adjusted_mandala_subject_contract
