@@ -58,6 +58,22 @@ BTWK_yearly_global_pulse_effects = {
 			}
 		}
 		
+		# Inherited Hegemony Score decays
+		if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = yes }
+			every_kingdom = {
+				limit = { has_variable = inherited_aengland_bretwalda_hegemony_score }
+				change_variable = {
+					name = inherited_aengland_bretwalda_hegemony_score
+					subtract = BTWK_aengland_bretwalda_hegemony_score_yearly_decay
+				}
+				if = {
+					limit = { this.var:inherited_aengland_bretwalda_hegemony_score < 0 }
+					remove_variable = inherited_aengland_bretwalda_hegemony_score
+				}
+			}
+		}
+		
 		# Check mint modifiers for independent rulers (necessary as it is possible that subject kings may break away)
 		if = {
 			limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }

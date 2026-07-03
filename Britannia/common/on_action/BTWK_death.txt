@@ -56,6 +56,26 @@ BTWK_on_death = {
 			trigger_event = BTWK_britannia_high_king.0023
 		}
 		
+		# Handle Bretwalda death events
+		if = {
+			limit = { 
+				has_title = title:e_aengland
+				BTWK_aengland_bretwalda_can_inherit_trigger = no
+			}
+			save_scope_as = former_bretwalda
+			trigger_event = BTWK_aengland_bretwalda.0020
+			every_player = {
+				limit = { 
+					NOR = {
+						scope:former_bretwalda ?= this
+						scope:former_bretwalda.player_heir ?= this 
+					}
+					BTWK_aengland_bretwalda_is_relevant_trigger = yes
+				}
+				trigger_event = BTWK_aengland_bretwalda.0020
+			}
+		}
+		
 		# Trigger Fall of Aelle event
 		if = {
 			limit = { 

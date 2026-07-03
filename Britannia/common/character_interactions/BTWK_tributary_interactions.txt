@@ -216,13 +216,13 @@ BTWK_enforce_vassalage_client_kingdom_interaction = {
 			}
 			add = {
 				value = scope:recipient.realm_size
-				multiply = 25
+				multiply = 30
 				if = {
 					limit = { scope:actor = { is_ai = yes } }
 					max = 1500
 				}
 				else = {
-					max = 3000
+					max = 3500
 				}
 				desc = BTWK_enforce_vassalage_client_kingdom_interaction_REALM_SIZE
 			}
@@ -231,6 +231,33 @@ BTWK_enforce_vassalage_client_kingdom_interaction = {
 				multiply = {
 					value = 0.75
 					desc = BTWK_enforce_vassalage_client_kingdom_interaction_ADVANCED_GOVERNMENT
+				}
+			}
+			if = {
+				limit = { 
+					scope:actor = {
+						any_character_struggle = {
+							involvement = involved
+							has_struggle_phase_parameter = BTWK_client_state_enforce_vassalage_cost_reduction
+							save_temporary_scope_as = current_struggle
+							scope:recipient = {
+								OR = {
+									any_character_struggle = {
+										involvement = involved
+										this = scope:current_struggle
+									}
+									any_character_struggle = {
+										involvement = interloper
+										this = scope:current_struggle
+									}
+								}
+							}
+						}
+					}
+				}
+				multiply = {
+					value = 0.75
+					desc = BTWK_enforce_vassalage_client_kingdom_interaction_STRUGGLE_PHASE
 				}
 			}
 		}

@@ -13,7 +13,7 @@
 # BTWK_aengland_bretwalda.0002 - Bretwalda Proclaims Supremacy
 # BTWK_aengland_bretwalda.0003 - King of the Anglo-Saxons
 
-# Claimant proclaimed High King
+# King becomes Bretwalda
 BTWK_aengland_bretwalda.0001 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -63,12 +63,45 @@ BTWK_aengland_bretwalda.0001 = {
 		trigger = { scope:new_bretwalda = root }
 		add_prestige = 200
 		get_title = title:e_aengland
-		custom_tooltip = {
-			text = BTWK_aengland_bretwalda.0001.a.gain_hegemony_score.tt
-			change_variable = {
-				name = aengland_bretwalda_hegemony_score
-				add = 30
+		save_scope_value_as = {
+			name = hegemony_score_starting_boost
+			value = 30
+		}
+		every_held_title = {
+			limit = { has_variable = inherited_aengland_bretwalda_hegemony_score }
+			if = {
+				limit = { this.var:inherited_aengland_bretwalda_hegemony_score > scope:hegemony_score_starting_boost }
+				save_scope_value_as = {
+					name = hegemony_score_starting_boost
+					value = this.var:inherited_aengland_bretwalda_hegemony_score
+				}
+				save_scope_as = inherited_hegemony_score
 			}
+		}
+		if = {
+			limit = { exists = scope:inherited_hegemony_score }
+			custom_tooltip = {
+				text = BTWK_aengland_bretwalda.0001.a.gain_hegemony_score_inherited.tt
+				change_variable = {
+					name = aengland_bretwalda_hegemony_score
+					add = scope:hegemony_score_starting_boost
+				}
+			}
+		}
+		else = {
+			custom_tooltip = {
+				text = BTWK_aengland_bretwalda.0001.a.gain_hegemony_score.tt
+				change_variable = {
+					name = aengland_bretwalda_hegemony_score
+					add = scope:hegemony_score_starting_boost
+				}
+			}
+		}
+		every_kingdom = {
+			limit = {
+				has_variable = inherited_aengland_bretwalda_hegemony_score
+			}
+			remove_variable = inherited_aengland_bretwalda_hegemony_score
 		}
 		custom_tooltip = BTWK_aengland_bretwalda.0001.a.tt.1
 		custom_tooltip = BTWK_aengland_bretwalda.0001.a.tt.2
@@ -319,6 +352,10 @@ BTWK_aengland_bretwalda.0003 = {
 			title:e_aengland = {
 				set_variable = aengland_united
 			}
+			every_owned_story = {
+				limit = { story_type = BTWK_aengland_bretwalda_story }
+				end_story = yes
+			}
 		}
 		else = {
 			custom_tooltip = BTWK_aengland_bretwalda.0003.a.tt.1
@@ -389,5 +426,387 @@ BTWK_aengland_bretwalda.0003 = {
 # BTWK_aengland_bretwalda.0020 - Bretwalda dies before Supremacy is Proclaimed
 # BTWK_aengland_bretwalda.0021 - Bretwalda abdicates before Supremacy is Proclaimed
 # BTWK_aengland_bretwalda.0022 - Hegemony Score dropping too low, warning
-# BTWK_aengland_bretwalda.0023 - Hegemony Score too low for too long, Bretwalda title lost
-# TODO Make Hegemony Score partly inheritable?
+# BTWK_aengland_bretwalda.0023 - Hegemony Score recovered
+# BTWK_aengland_bretwalda.0024 - Hegemony Score too low for too long, Bretwalda title lost
+
+# Death of the Bretwalda
+# TODO Use destroy_on_succession instead
+BTWK_aengland_bretwalda.0020 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_aengland_bretwalda.0020.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_bretwalda
+					is_close_or_extended_family_of = scope:former_bretwalda_player_heir
+				}
+				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda_relative
+			}
+			triggered_desc = {
+				trigger = {
+					root = scope:former_bretwalda
+				}
+				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda
+			}
+			desc = BTWK_aengland_bretwalda.0020.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:former_bretwalda
+		animation = sadness
+	}
+	
+	immediate = {
+		scope:former_bretwalda = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this = scope:former_bretwalda }
+			scope:former_bretwalda = {
+				player_heir = { save_scope_as = former_bretwalda_player_heir }
+				custom_tooltip = BTWK_aengland_bretwalda.0020.a.tt
+				destroy_title = title:e_aengland
+				every_owned_story = {
+					limit = { story_type = BTWK_aengland_bretwalda_story }
+					end_story = yes
+				}
+			}
+			every_held_title = {
+				limit = {
+					tier = tier_kingdom
+					is_anglo_saxon_kingdom_trigger = yes
+				}
+				set_variable = {
+					name = inherited_aengland_bretwalda_hegemony_score
+					value = {
+						value = scope:former_bretwalda.var:aengland_bretwalda_hegemony_score
+						multiply = BTWK_aengland_bretwalda_hegemony_score_multiplier_on_succession
+					}
+				}
+			}
+		}
+		else = {
+			show_as_tooltip = { destroy_title = title:e_aengland }
+			custom_tooltip = BTWK_aengland_bretwalda.0020.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0020.a
+		# The event is written from the PoV of the heir, but it actually triggers from the dead High King
+		trigger = { this = scope:former_bretwalda }
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = BTWK_aengland_bretwalda.0020.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0020.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = {
+					AND = {
+						is_unromanized_germanic_culture_trigger = yes
+						any_held_title = {
+							tier = root.primary_title.tier
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+						}
+					}
+					is_britannic_culture_trigger = yes
+				}
+			}
+			text = BTWK_aengland_bretwalda.0020.b.other
+		}
+		trigger = { this != scope:former_bretwalda }
+	}
+}
+
+# Abdication of the Bretwalda
+BTWK_aengland_bretwalda.0021 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_aengland_bretwalda.0021.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_bretwalda
+				}
+				desc = BTWK_aengland_bretwalda.0021.desc.bretwalda
+			}
+			triggered_desc = {
+				trigger = {
+					scope:former_bretwalda_player_heir ?= root
+					is_close_or_extended_family_of = scope:former_bretwalda
+				}
+				desc = BTWK_aengland_bretwalda.0021.desc.bretwalda_heir_relative
+			}
+			triggered_desc = {
+				trigger = {
+					scope:former_bretwalda_player_heir ?= root
+				}
+				desc = BTWK_aengland_bretwalda.0021.desc.bretwalda_heir
+			}
+			desc = BTWK_aengland_bretwalda.0021.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+		trigger = {
+			exists = scope:background_throne_room_scope
+		}
+	}
+	override_background = {
+		reference = throne_room_west
+		trigger = {
+			NOT = { exists = scope:background_throne_room_scope }
+		}
+	}
+
+	left_portrait = {
+		character = scope:former_bretwalda
+		animation = war_over_loss
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:former_bretwalda }
+			scope:former_bretwalda = {
+				custom_tooltip = BTWK_aengland_bretwalda.0021.a.tt
+				show_as_tooltip = { destroy_title = title:e_aengland }
+				every_held_title = {
+					limit = {
+						tier = tier_kingdom
+						is_anglo_saxon_kingdom_trigger = yes
+					}
+					set_variable = {
+						name = inherited_aengland_bretwalda_hegemony_score
+						value = {
+							value = scope:former_bretwalda.var:aengland_bretwalda_hegemony_score
+							multiply = BTWK_aengland_bretwalda_hegemony_score_multiplier_on_succession
+						}
+					}
+				}
+				title:e_aengland.var:aengland_primary_kingdom = {
+					set_variable = {
+						name = inherited_aengland_bretwalda_hegemony_score
+						value = {
+							value = scope:former_bretwalda.var:aengland_bretwalda_hegemony_score
+							multiply = BTWK_aengland_bretwalda_hegemony_score_multiplier_on_succession
+						}
+					}
+				}
+				every_owned_story = {
+					limit = { story_type = BTWK_aengland_bretwalda_story }
+					end_story = yes
+				}
+			}
+		}
+		else = {
+			show_as_tooltip = { destroy_title = title:e_aengland }
+			custom_tooltip = BTWK_aengland_bretwalda.0021.b.tt
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0021.a
+		trigger = { this = scope:former_bretwalda }
+		add_prestige = -300
+	}
+
+	option = {
+		name = {
+			trigger = {
+				scope:former_bretwalda_player_heir ?= this
+			}
+			text = BTWK_aengland_bretwalda.0021.b.former_bretwalda_player_heir
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_bretwalda_player_heir ?= this }
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0021.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_bretwalda_player_heir ?= this }
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0021.b.briton_roman
+		}
+		name = {
+			trigger = {
+				NOT = { scope:former_bretwalda_player_heir ?= this }
+				is_britannic_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_aengland_bretwalda.0021.b.other
+		}
+		trigger = { this != scope:former_bretwalda }
+	}
+}
+
+# Unfit to Rule (warning)
+BTWK_aengland_bretwalda.0022 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_aengland_bretwalda.0022.t
+	desc = BTWK_aengland_bretwalda.0022.desc
+	theme = martial
+	override_background = {
+		reference = throne_room
+	}
+
+	left_portrait = {
+		character = root
+		animation = dismissal
+	}
+	
+	immediate = {
+		set_variable = BTWK_aengland_bretwalda_unfit_to_rule
+		set_variable = { 
+			name = BTWK_aengland_bretwalda_unfit_to_rule_months_remaining 
+			value = 12
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0022.a
+		custom_tooltip = BTWK_aengland_bretwalda.0022.a.tt.1
+	}
+}
+
+# No Longer Unfit to Rule
+BTWK_aengland_bretwalda.0023 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_aengland_bretwalda.0023.t
+	desc = BTWK_aengland_bretwalda.0023.desc
+	theme = martial
+	override_background = {
+		reference = throne_room
+	}
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	immediate = {
+		remove_variable = BTWK_aengland_bretwalda_unfit_to_rule
+		remove_variable = BTWK_aengland_bretwalda_unfit_to_rule_months_remaining
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0023.a
+		custom_tooltip = BTWK_aengland_bretwalda.0023.a.tt
+	}
+}
+
+# Unfit to Rule, Bretwalda Title Lost
+BTWK_aengland_bretwalda.0024 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = BTWK_aengland_bretwalda.0024.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					root = scope:former_bretwalda
+				}
+				desc = BTWK_aengland_bretwalda.0024.desc.bretwalda
+			}
+			desc = BTWK_aengland_bretwalda.0024.desc
+		}
+	}
+	theme = martial
+	override_background = {
+		reference = throne_room_scope
+	}
+
+	left_portrait = {
+		character = scope:former_bretwalda
+		animation = war_over_loss
+	}
+	
+	immediate = {
+		scope:former_bretwalda = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { this != scope:former_bretwalda }
+			show_as_tooltip = { destroy_title = title:e_aengland }
+			custom_tooltip = BTWK_aengland_bretwalda.0024.b.tt
+		}
+		else = {
+			every_held_title = {
+				limit = {
+					tier = tier_kingdom
+					is_anglo_saxon_kingdom_trigger = yes
+				}
+				set_variable = {
+					name = inherited_aengland_bretwalda_hegemony_score
+					value = {
+						value = scope:former_bretwalda.var:aengland_bretwalda_hegemony_score
+						multiply = BTWK_aengland_bretwalda_hegemony_score_multiplier_on_succession
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_aengland_bretwalda.0024.a
+		trigger = { this = scope:former_bretwalda }
+		custom_tooltip = BTWK_aengland_bretwalda.0024.a.tt
+		destroy_title = title:e_aengland
+		add_prestige = -500
+		every_owned_story = {
+			limit = { story_type = BTWK_aengland_bretwalda_story }
+			end_story = yes
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0024.b.anglo_saxon
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = yes
+			}
+			text = BTWK_aengland_bretwalda.0024.b.briton_roman
+		}
+		name = {
+			trigger = {
+				is_britannic_culture_trigger = no
+				is_unromanized_germanic_culture_trigger = no
+			}
+			text = BTWK_aengland_bretwalda.0024.b.other
+		}
+		trigger = { this != scope:former_bretwalda }
+	}
+}

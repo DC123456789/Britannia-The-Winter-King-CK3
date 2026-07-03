@@ -15,6 +15,13 @@ BTWK_aengland_bretwalda_king_tier_vassals_allowed_trigger = {
 	}
 }
 
+BTWK_aengland_bretwalda_can_inherit_trigger = {
+	OR = {
+		BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+		BTWK_aengland_bretwalda_active_trigger = no
+	}
+}
+
 BTWK_aengland_bretwalda_de_jure_cb_check_trigger = {
 	trigger_if = {
 		limit = {
@@ -30,6 +37,19 @@ BTWK_aengland_united_trigger = {
 		title:e_aengland = { has_variable = aengland_united }
 		NOT = { exists = struggle:britannia_struggle }
 	}
+}
+
+BTWK_aengland_bretwalda_is_relevant_trigger = {
+	OR = {
+		primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		capital_province = { geographical_region = btwk_world_britannia }
+		any_liege_or_above = { has_title = title:e_aengland }
+		suzerain ?= { has_title = title:e_aengland }
+	}
+}
+
+BTWK_aengland_bretwalda_is_fit_to_rule_trigger = {
+	this.var:aengland_bretwalda_hegemony_score >= 200
 }
 
 BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = {

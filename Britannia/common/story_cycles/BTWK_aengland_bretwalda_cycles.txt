@@ -1,0 +1,75 @@
+﻿BTWK_aengland_bretwalda_story = {
+	on_setup = {
+	}
+
+	on_end = {
+	}
+
+	on_owner_death = {
+		end_story = yes
+	}
+	
+	# Check if Unfit to Rule
+	effect_group = {
+		months = 1
+		
+		trigger = {
+			BTWK_aengland_bretwalda_active_trigger = yes
+		}
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { story_owner = { BTWK_aengland_bretwalda_is_fit_to_rule_trigger = no } }
+				effect = {
+					if = {
+						limit = { story_owner = { NOT = { has_variable = BTWK_aengland_bretwalda_unfit_to_rule } } }
+						story_owner = {
+							trigger_event = BTWK_aengland_bretwalda.0022
+						}
+					}
+					else_if = {
+						limit = { story_owner.var:BTWK_aengland_bretwalda_unfit_to_rule_months_remaining > 0 }
+						story_owner = {
+							change_variable = {
+								name = BTWK_aengland_bretwalda_unfit_to_rule_months_remaining
+								subtract = 1
+							}
+						}
+					}
+					else = {
+						story_owner = {
+							save_scope_as = former_bretwalda
+							trigger_event = BTWK_aengland_bretwalda.0024
+							every_player = {
+								limit = { 
+									scope:former_bretwalda != this
+									BTWK_aengland_bretwalda_is_relevant_trigger = yes
+								}
+								trigger_event = BTWK_aengland_bretwalda.0024
+							}
+						}
+					}
+				}
+			}
+			triggered_effect = {
+				trigger = { 
+					story_owner = { 
+						BTWK_aengland_bretwalda_is_fit_to_rule_trigger = yes 
+						has_variable = BTWK_aengland_bretwalda_unfit_to_rule
+					} 
+				}
+				effect = {
+					story_owner = {
+						remove_variable = BTWK_aengland_bretwalda_unfit_to_rule
+						remove_variable = BTWK_aengland_bretwalda_unfit_to_rule_months_remaining
+						trigger_event = BTWK_britannia_high_king.0023
+					}
+				}
+			}
+		}
+		
+		fallback = {
+			story_owner = { set_variable = fallback }
+		}
+	}
+}
