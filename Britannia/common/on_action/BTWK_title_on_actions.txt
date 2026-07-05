@@ -473,6 +473,19 @@ on_rank_up = { # Will not fire during history execution or for dying characters
 
 btwk_on_rank_up = {
 	effect = {
+		# Courtiers getting granted titles by tribal rulers granting titles should 
+		# remain tribal instead of becoming feudal, even if the holding has a castle
+		if = {
+			limit = {
+				scope:transfer_type = flag:granted
+				NOT = { exists = scope:title }
+				government_has_flag = government_is_feudal
+				primary_title.previous_holder ?= { government_has_flag = government_is_tribal }
+			}
+			set_variable = changed_to_tribal
+			change_government = primary_title.previous_holder.government_type
+		}
+		
 		# Turn king-level vassals of Britannia into subject kingdoms before the Empower the High Council reform
 		BTWK_britannia_high_kingship_check_king_tier_vassals_effect = yes
 		# Turn king-level vassals of Aengland into tributaries before Declaring Supremacy

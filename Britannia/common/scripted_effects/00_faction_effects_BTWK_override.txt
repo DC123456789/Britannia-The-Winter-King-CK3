@@ -285,6 +285,72 @@ successful_popular_revolt_outcome_effect = {
 						}
 					}
 				}
+				# Step 4.2: Save the government form of the current holder of our new capital,
+				# in case we completely unland him later on and so can't recover the government form
+				scope:capital_county = {
+					scope:attacker = { add_to_variable_list = { name = capital_county target = prev } }
+					holder ?= {
+						if = {
+							limit = {
+								is_alive = yes
+							}
+							save_scope_as = old_holder
+							switch = {
+								trigger = government_has_flag
+								government_is_administrative = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_clan = {
+									save_scope_value_as = { name = old_government value = flag:clan }
+								}
+								government_is_tribal = {
+									save_scope_value_as = { name = old_government value = flag:tribal }
+								}
+								government_is_wanua = {
+									save_scope_value_as = { name = old_government value = flag:wanua }
+								}
+								government_is_nomadic = {
+									save_scope_value_as = { name = old_government value = flag:nomad }
+								}
+								government_is_celestial = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_steppe_admin = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_meritocratic = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_japan_administrative = {
+									save_scope_value_as = { name = old_government value = flag:admin }
+								}
+								government_is_japan_feudal = {
+									save_scope_value_as = { name = old_government value = flag:japan_feudal }
+								}
+								government_is_mandala = {
+									save_scope_value_as = { name = old_government value = flag:mandala }
+								}
+								# BTWK
+								government_is_pre_feudal = {
+									save_scope_value_as = { name = old_government value = flag:pre_feudal }
+								}
+								government_is_sub_roman_admin = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
+								}
+								government_is_sub_roman_feudal = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_feudal }
+								}
+								government_is_germanic_admin = {
+									save_scope_value_as = { name = old_government value = flag:germanic_admin }
+								}
+								government_is_germanic_feudal = {
+									save_scope_value_as = { name = old_government value = flag:germanic_feudal }
+								}
+							}
+							scope:next_leader = { set_variable = { name = old_government target = scope:old_government } }
+						}
+					}
+				}
 				# Step 5: CHANGE ONE - Give them the selected county and make them go independent
 				create_title_and_vassal_change = {
 					type = conquest_populist
@@ -377,69 +443,7 @@ successful_popular_revolt_outcome_effect = {
 					destroy_title = var:peasant_title
 				}
 				# Step 8: Set up government type correctly.
-				scope:capital_county = {
-					previous_holder ?= {
-						if = {
-							limit = {
-								is_alive = yes
-							}
-							save_scope_as = old_holder
-							switch = {
-								trigger = government_has_flag
-								government_is_administrative = {
-									save_scope_value_as = { name = old_government value = flag:admin }
-								}
-								government_is_clan = {
-									save_scope_value_as = { name = old_government value = flag:clan }
-								}
-								government_is_tribal = {
-									save_scope_value_as = { name = old_government value = flag:tribal }
-								}
-								government_is_wanua = {
-									save_scope_value_as = { name = old_government value = flag:wanua }
-								}
-								government_is_nomadic = {
-									save_scope_value_as = { name = old_government value = flag:nomad }
-								}
-								government_is_celestial = {
-									save_scope_value_as = { name = old_government value = flag:admin }
-								}
-								government_is_steppe_admin = {
-									save_scope_value_as = { name = old_government value = flag:admin }
-								}
-								government_is_meritocratic = {
-									save_scope_value_as = { name = old_government value = flag:admin }
-								}
-								government_is_japan_administrative = {
-									save_scope_value_as = { name = old_government value = flag:admin }
-								}
-								government_is_japan_feudal = {
-									save_scope_value_as = { name = old_government value = flag:japan_feudal }
-								}
-								government_is_mandala = {
-									save_scope_value_as = { name = old_government value = flag:mandala }
-								}
-								# BTWK
-								government_is_pre_feudal = {
-									save_scope_value_as = { name = old_government value = flag:pre_feudal }
-								}
-								government_is_sub_roman_admin = {
-									save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
-								}
-								government_is_sub_roman_feudal = {
-									save_scope_value_as = { name = old_government value = flag:sub_roman_feudal }
-								}
-								government_is_germanic_admin = {
-									save_scope_value_as = { name = old_government value = flag:germanic_admin }
-								}
-								government_is_germanic_feudal = {
-									save_scope_value_as = { name = old_government value = flag:germanic_feudal }
-								}
-							}
-						}
-					}
-				}
-				# Change our government according to the government of our liege.
+				# Change our government according to the government of the previous holder of our selected capital.
 				## Nomad.
 				if = {
 					limit = {
@@ -536,10 +540,40 @@ successful_popular_revolt_outcome_effect = {
 					}
 					change_to_administrative_effect = yes
 				}
+				## Only do tribal if there is a tribal holding in your chosen capital
+				## Otherwise, fall back to Pre-Feudal
+				else_if = {
+					limit = {
+						OR = {
+							scope:old_government ?= flag:tribal
+						}
+					}
+					if = {
+						limit = {
+							scope:capital_county.title_province = {
+								has_holding_type = tribal_holding
+							}
+						}
+						change_government = tribal_government
+					}
+					else = {
+						change_government = pre_feudal_government
+					}
+				}
 				## Sub-Roman Brythonic
 				else_if = {
 					limit = {
-						scope:old_government ?= flag:pre_feudal
+						OR = {
+							scope:old_government ?= flag:pre_feudal
+							AND = {
+								scope:old_government ?= flag:tribal
+								NOT = {
+									scope:capital_county.title_province = {
+										has_holding_type = tribal_holding
+									}
+								}
+							}
+						}
 					}
 					change_government = pre_feudal_government
 				}
