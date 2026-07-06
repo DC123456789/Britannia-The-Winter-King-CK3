@@ -22,33 +22,24 @@
 
 huscarl = {
 	type = heavy_infantry
-
 	damage = 60
-	toughness = 40
+	toughness = 50
 	pursuit = 0
-	screen = 0
+	screen = 20
 	
 	counters = {
-		pikemen = 0.5
-		peasant_militia = 2
+		skirmishers = 2
+		pikemen = .75
 		heavy_infantry = 1
+		light_cavalry = .5
+				
 	}
-
 	can_recruit = {
-		culture = {
-			has_innovation = innovation_pole_vault
-			has_innovation = innovation_quilted_armor
-			has_innovation = innovation_zweihanders
-		}
 		NOT = {
 			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
 	}
-
-	winter_bonus = {
-		normal_winter = { toughness = 6 screen = 6 }
-		harsh_winter = { toughness = 6 screen = 6 }
-	}
+	
 	
 	buy_cost = { gold = huscarls_recruitment_cost }
 	low_maintenance_cost = { gold = huscarls_low_maint_cost }
@@ -70,16 +61,16 @@ landsknecht = {
 	screen = 10
 	
 	counters = {
-		pikemen = 0.5
-		peasant_militia = 2
+		skirmishers = 2
+		pikemen = .75
 		heavy_infantry = 1
+		light_cavalry = .5
+				
 	}
 
 	can_recruit = {
 		valid_for_maa_trigger = { PARAMETER = unlock_maa_landsknecht }	
-		culture = {
-			has_innovation = innovation_quilted_armor					
-		}
+		
 		NOT = {
 			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
@@ -90,7 +81,7 @@ landsknecht = {
 	high_maintenance_cost = { gold = landsknecht_high_maint_cost }
 	provision_cost = @provisions_cost_infantry_expensive
 	
-	stack = 10
+	stack = 20
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = heavy_infantry
 }
@@ -158,23 +149,22 @@ gendarme = {
 	screen = 75
 	
 	counters = {
-		heavy_infantry = 3
-		heavy_cavalry = .25
-		skirmishers = .50
-		archers = .50
-		peasant_militia = 2
-		pikemen = 3
-		light_cavalry = .50
-		camel_cavalry = .50
-		archer_cavalry = .25		
-	}	
-
+		skirmishers = 3
+		pikemen = 1.5
+		heavy_infantry = 2
+		light_cavalry = 1
+		heavy_cavalry = 1
+		archers = 1
+				
+	}
 	can_recruit = {
+		culture = {
+			has_innovation = innovation_valets
+		}
 		NOT = {
 			culture = { has_cultural_parameter = strength_in_numbers_heavy_maa_ban }
 		}
 	}
-
 	buy_cost = { gold = gendarme_recruitment_cost }
 	low_maintenance_cost = { gold = gendarme_low_maint_cost }
 	high_maintenance_cost = { gold = gendarme_high_maint_cost }
@@ -256,41 +246,42 @@ picchieri = {
 	icon = skirmishers
 }
 
-#Auxilia Palatini
+#Auxilia Palatini  (For Imperial players without DLC)
 praetorian = {
 	type = heavy_infantry
-	
+
 	damage = 35
 	toughness = 45
 	pursuit = 0
-	screen = 15
-	
+	screen = 10
+
 	can_recruit = {
 		valid_for_maa_trigger = { PARAMETER = heritage_latin }
 		culture = {
-			has_innovation = innovation_barracks
 			NOT = {
 				has_cultural_parameter = strength_in_numbers_heavy_maa_ban
 			}
 		}
 	}
 	counters = {
-		pikemen = .5
+		skirmishers = 2
+		pikemen = .75
 		heavy_infantry = 1
-		peasant_militia = 2
+		light_cavalry = .5
+				
 	}
-	
+
 	buy_cost = { gold = praetorian_recruitment_cost }
 	low_maintenance_cost = { gold = praetorian_low_maint_cost }
 	high_maintenance_cost = { gold = praetorian_high_maint_cost }
 	provision_cost = @provisions_cost_infantry_expensive
-	
+
 	stack = 15
 	ai_quality = { value = @cultural_maa_extra_ai_score }
 	icon = heavy_infantry
 }
 
-#Champion (all cultures)
+#Former Champion, Placeholder for unit
 caballero = {
 	type = pikemen
 	can_recruit = { always = no }
@@ -462,7 +453,7 @@ cataphract = {
 
 schiltron = {
 	type = pikemen
-	
+	can_recruit = { always = no }
 	damage = 36
 	toughness = 28
 	pursuit = 0
@@ -1312,12 +1303,14 @@ wolf_warriors = {
 	damage = 45
 	toughness = 35
 	pursuit = 5
-	screen = 0
+	screen = 10
 	
 	counters = {
-		pikemen = 0.5
+		skirmishers = 2
+		pikemen = .75
 		heavy_infantry = 1
-		peasant_militia = 2
+		light_cavalry = .5
+				
 	}
 
 	can_recruit = {
@@ -1396,22 +1389,23 @@ gothic_heavy_cavalry = {
 }
 
 gadrauhteis = { 
-	type = heavy_infantry
+	type = pikemen
 	
-	damage = 30
-	toughness = 30
+	damage = 38
+	toughness = 45
 	pursuit = 0
-	screen = 0
+	screen = 10
 	
 	counters = {
-		peasant_militia = 1
+		skirmishers = 1
+		pikemen = 1
+		heavy_infantry = .75
+		light_cavalry = 1.5
+		heavy_cavalry = .75
+				
 	}
 
-	terrain_bonus = {
-		mountains = { damage = -10 toughness = -5 }
-		desert_mountains = { damage = -10 toughness = -5 }
-		wetlands = { damage = -10 toughness = -5 }
-	}
+	
 
 	can_recruit = {
 		culture = {
@@ -1434,27 +1428,23 @@ gadrauhteis = {
 		value = culture_ai_weight_heavy_infantry
 		add = counter_synergy_ai_weight_heavy_infantry
 	}
-	icon = skirmishers
+	icon = pikemen
 }
 
 frankish_axemen = { 
 	type = heavy_infantry
 	
-	damage = 40
+	damage = 60
 	toughness = 20
 	pursuit = 10
 	screen = 0
 	
 	counters = {
-		peasant_militia = 1
-	}
-
-	terrain_bonus = {
-		jungle = { damage = -10 pursuit = -5 }
-		forest = { damage = -10 pursuit = -5 }
-		mountains = { damage = -10 pursuit = -5 }
-		desert_mountains = { damage = -10 pursuit = -5 }
-		wetlands = { damage = -10 pursuit = -5 }
+		skirmishers = 2
+		pikemen = .75
+		heavy_infantry = 1
+		light_cavalry = .5
+				
 	}
 
 	can_recruit = {
@@ -1478,7 +1468,7 @@ frankish_axemen = {
 
 	holy_order_fallback = yes
 
-	stack = 25
+	stack = 30
 	ai_quality = {
 		value = culture_ai_weight_heavy_infantry
 		add = counter_synergy_ai_weight_heavy_infantry

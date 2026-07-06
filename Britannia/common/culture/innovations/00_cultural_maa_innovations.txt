@@ -34,6 +34,7 @@
 @special_maa_02 = "gfx/interface/icons/culture_innovations/innovation_special_maa_02.dds"
 
 #Gesithes
+#Gesithes
 innovation_zweihanders = {
 	skill = martial
 	group = culture_group_military
@@ -43,9 +44,7 @@ innovation_zweihanders = {
 	potential = {
 		has_cultural_pillar = heritage_west_germanic
 	}
-
 	unlock_maa = landsknecht
-
 	flag = global_regional
 	flag = global_maa
 	
@@ -81,30 +80,18 @@ innovation_adaptive_militia = {
 	}
 }
 
+#Oath-Sworn
 innovation_valets = {
 	skill = martial
 	group = culture_group_military
-	culture_era = culture_era_late_medieval
+	culture_era = culture_era_tribal
 	icon = @special_maa_01
 
-	potential = {
-		has_cultural_parameter = unlock_valets_innovation
-	}
-
 	unlock_maa = gendarme
-
 	flag = global_maa
 	
 	ai_weight_for_fascination = {
 		value = 100
-		if = {
-			limit = {
-				NOT = {
-					has_cultural_era_or_later = culture_era_late_medieval
-				}
-			}
-			multiply = 0
-		}
 	}
 }
 
@@ -117,6 +104,7 @@ innovation_pike_columns = {
 
 	potential = {
 		has_cultural_pillar = heritage_latin
+		has_dlc_feature = roads_to_power
 	}
 
 	unlock_maa = akritai
@@ -127,7 +115,7 @@ innovation_pike_columns = {
 	}
 }
 
-#Auxilia Palatini / Comitatenses
+#Comitatenses
 innovation_legionnaires = {
 	skill = martial
 	group = culture_group_military
@@ -136,10 +124,11 @@ innovation_legionnaires = {
 
 	potential = {
 		has_cultural_pillar = heritage_latin
+		has_dlc_feature = roads_to_power
 	}
 	
 	unlock_maa = skoutatoi
-	unlock_maa = praetorian
+	
 
 	flag = global_maa
 	
@@ -156,6 +145,7 @@ innovation_desert_tactics = {
 
 	potential = {
 		has_cultural_pillar = heritage_latin
+		has_dlc_feature = roads_to_power
 	}
 
 	unlock_maa = cataphract
@@ -166,22 +156,21 @@ innovation_desert_tactics = {
 		value = 100
 	}
 }
-#Oath-Sworn
-innovation_caballeros = {
-	skill = martial
-	group = culture_group_military
-	culture_era = culture_era_tribal
-	icon = @maa_01
-        
-	unlock_maa = gendarme	
-
-	flag = global_regional
-	flag = tribal_era_regional
-	
-	ai_weight_for_fascination = {
-		value = 100
-	}
-}
+#Former Champions / Placeholder for alternative
+#innovation_caballeros = {
+#	skill = martial
+#	group = culture_group_military
+#	culture_era = culture_era_tribal
+#	icon = @maa_01
+#       
+#	
+#	flag = global_regional
+#	flag = tribal_era_regional
+#	
+#	ai_weight_for_fascination = {
+#		value = 100
+#	}
+#}
 
 #innovation_hobbies = {
 #	skill = martial
@@ -208,30 +197,22 @@ innovation_caballeros = {
 #	}
 #}
 
+#Auxilia Palatina (generic Roman unit for players without Roads to Power)
 innovation_rectilinear_schiltron = {
 	skill = martial
 	group = culture_group_military
-	culture_era = culture_era_late_medieval
+	culture_era = culture_era_tribal
 	icon = @special_maa_01
-
 	potential = {
-		has_cultural_parameter = unlock_schiltron_innovation
+		has_cultural_pillar = heritage_latin
+		NOT = { has_dlc_feature = roads_to_power }
 	}
-
-	unlock_maa = schiltron
+	unlock_maa = praetorian
 
 	flag = global_maa
-	
+
 	ai_weight_for_fascination = {
 		value = 100
-		if = {
-			limit = {
-				NOT = {
-					has_cultural_era_or_later = culture_era_late_medieval
-				}
-			}
-			multiply = 0
-		}
 	}
 }
 
@@ -308,6 +289,7 @@ innovation_repeating_crossbow = {
 
 	potential = {
 		has_cultural_pillar = heritage_latin
+		has_dlc_feature = roads_to_power
 	}
 
 	unlock_maa = ballistrai
@@ -323,7 +305,7 @@ innovation_repeating_crossbow = {
 innovation_pole_vault = {
 	skill = martial
 	group = culture_group_military
-	culture_era = culture_era_tribal
+	culture_era = culture_era_early_medieval
 	icon = @weapons_and_armor_01
 	
 	potential = {
@@ -331,7 +313,6 @@ innovation_pole_vault = {
 	}
 	
 	unlock_maa = huscarl
-
 	flag = global_maa
 	
 	ai_weight_for_fascination = {
