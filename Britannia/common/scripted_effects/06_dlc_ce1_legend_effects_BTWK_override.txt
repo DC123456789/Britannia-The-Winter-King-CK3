@@ -1,0 +1,113 @@
+﻿#Rewards for all Legitimizing Legends
+legend_ending_rewards_legitimizing_effect = {
+	# Legitimacy gain based on Legend Protagonist
+	disburse_legend_protagonist_legitimacy_effect = yes
+	# We let you diverge if it's an Ancient People legend - Disabled by BTWK as it makes no sense
+	# if = {
+		# limit = {
+			# exists = scope:legendary_culture
+			# has_dlc_feature = diverge_culture # Don't mislead players who don't have access to divergence
+		# }
+		# custom_tooltip = { 
+			# text = can_select_legendary_culture_pillars_tt
+			# set_variable = {
+				# name = legendary_culture
+				# value = scope:legendary_culture
+			# }
+		# }
+	# }
+    # Claims disabled in BTWK as it is extremely overpowered
+	# if = { #Roman Heritage legend without a Roman Empire
+		# limit = {
+			# scope:title_claim = title:h_roman_empire
+			# NOT = {
+				# exists = global_var:flag_restored_roman_empire
+			# }
+		# }
+		# title:d_latium.empire = { #Italy
+			# add_to_list = roman_heritage_claims
+		# }
+		# title:d_tunis.kingdom = { #North Africa
+			# add_to_list = roman_heritage_claims
+		# }
+		# title:d_thrace.empire = { #Byz
+			# add_to_list = roman_heritage_claims 
+		# }
+		# title:d_alexandria.kingdom = { #Egypt
+			# add_to_list = roman_heritage_claims 
+		# }
+		# title:d_antioch.kingdom = { #Syria
+			# add_to_list = roman_heritage_claims 
+		# }
+		# title:d_palestine.kingdom = { #Palestine
+			# add_to_list = roman_heritage_claims 
+		# }
+		# custom_tooltip = {
+			# text = legend_title_does_not_exist_sub_realm_claims_given_tt
+		# }
+		# hidden_effect = {
+			# every_in_list = {
+				# list = roman_heritage_claims
+
+				# if = {
+					# limit = {
+						# exists = this.holder
+						# this.holder != root
+					# }
+					# root = {
+						# add_pressed_claim = prev
+						# add_to_variable_list = {
+							# name = legendary_claims
+							# target = prev
+						# }
+					# }
+				# }
+				# else_if = {
+					# limit = {
+						# this.tier > tier_county
+					# }
+					# hidden_effect = {
+						# legend_distribute_claims_in_de_jure = yes
+					# }
+				# }
+			# }
+		# }
+
+	# }
+	# else_if = {
+		# limit = {
+			# exists = scope:title_claim.holder
+			# scope:title_claim.holder != root
+		# }
+		# add_pressed_claim = scope:title_claim
+		# add_to_variable_list = {
+			# name = legendary_claims
+			# target = scope:title_claim
+		# }
+	# }
+	# else_if = {
+		# limit = {
+			# scope:title_claim.tier > tier_county
+		# }
+		# custom_tooltip = {
+			# text = legend_title_does_not_exist_sub_realm_claims_given_tt
+		# }
+		# hidden_effect = {
+			# scope:title_claim = {
+				# legend_distribute_claims_in_de_jure = yes
+			# }
+		# }
+	# }
+	# Available decision
+	custom_tooltip = legend_ending_decision_tt
+	promoted_legend ?= { set_variable = finished_legend_var }
+	hidden_effect = {
+		create_character_memory = {
+			type = ce1_completed_my_legitimizing_legend
+			participants = {
+				owner = root
+				protagonist = scope:legend_protagonist
+			}
+		}
+	}
+}

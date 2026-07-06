@@ -235,6 +235,22 @@ control_region_fraction_including_tributaries_trigger = {
 	}
 }
 
+BTWK_populist_revolt_create_kingdom_culture_check_trigger = {
+	$KINGDOM$ = { save_temporary_scope_as = kingdom_scope }
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_blocked } }
+		scope:next_leader = { is_unromanized_germanic_culture_trigger = no }
+	}
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_only } }
+		scope:next_leader = { is_unromanized_germanic_culture_trigger = yes }
+	}
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = roman_culture_only } }
+		scope:next_leader = { culture = { has_cultural_pillar = heritage_latin } }
+	}
+}
+
 can_create_briton_kingdom_trigger = {
 	can_create_roman_celtic_titles_trigger = yes
 	trigger_if = {
