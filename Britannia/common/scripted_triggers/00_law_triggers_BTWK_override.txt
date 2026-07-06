@@ -1,4 +1,217 @@
-﻿can_pass_law_ca2_trigger = {
+﻿can_have_partition_succession_law_trigger = {
+	culture = {
+		has_innovation = innovation_hereditary_rule
+	}
+	custom_description = {
+		text = succession_laws_must_have_pre_feudal_or_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_pre_feudal
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+			government_has_flag = government_is_japan_feudal
+		}
+	}
+}
+
+can_have_high_partition_succession_law_trigger = {
+	trigger_if = {
+		limit = {
+			NOT = { 
+				culture = { has_cultural_parameter = can_enact_high_partition_succession_law }
+			}
+		}
+		culture = { has_innovation = innovation_heraldry }
+	}
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+			government_has_flag = government_is_japan_feudal
+		}
+	}
+}
+
+can_have_single_heir_succession_law_trigger = {
+	trigger_if = { # Celestial/Meritocratic/Soryo
+		limit = {
+			OR = {
+				government_allows = merit
+				government_has_flag = government_is_japan_feudal
+			}
+		}
+		custom_tooltip = { # You are independent, have the innovation or are Ceremonial Monarch
+			text = can_have_single_heir_succession_law_trigger_merit_or_japan_tt
+			OR = {
+				is_independent_ruler = yes
+				culture = {
+					has_innovation = innovation_primogeniture
+				}
+				tgp_has_ceremonial_liege_title_trigger = yes
+			}
+		}
+	}
+	trigger_else_if = {
+		limit = { tgp_realm_has_ceremonial_liege_trigger = yes }
+		tgp_has_ceremonial_liege_title_trigger = yes
+	}
+	trigger_else_if = {
+		limit = {
+			culture = {
+				has_innovation = innovation_roman_primogeniture
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_roman
+			has_realm_law_flag = title_revocation_allowed #limited crown authority 
+		}
+	}
+	trigger_else = {
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_non_roman
+			has_realm_law_flag = max_authority_level #absolute crown authority 
+		}
+		prestige >= 2000
+		legitimacy_level >= 3
+	}
+	# Non-tribals only
+	trigger_if = { # We split the tooltip into two, to make sure we don't show admin unless you actually have it
+		limit = {
+			has_ep3_dlc_trigger = yes
+		}
+		custom_tooltip = {
+			text = must_be_feudal_clan_or_admin
+			OR = {
+				government_has_flag = government_is_feudal
+				government_has_flag = government_is_clan
+				government_allows = administrative
+				government_has_flag = government_is_japan_feudal
+				tgp_has_ceremonial_liege_title_trigger = yes
+			}
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = succession_laws_must_have_organised_government_tooltip
+			OR = {
+				government_has_flag = government_is_feudal
+				government_has_flag = government_is_clan
+				government_allows = merit
+				government_has_flag = government_is_japan_feudal
+				tgp_has_ceremonial_liege_title_trigger = yes
+			}
+		}
+	}
+	# Admin rules
+	trigger_if = {
+		limit = { government_allows = administrative }
+		trigger_if = {
+			limit = { tgp_realm_has_ceremonial_liege_trigger = yes }
+			tgp_has_ceremonial_liege_title_trigger = yes
+		}
+		trigger_else = { is_independent_ruler = yes }
+	}
+}
+
+can_have_single_heir_youngest_succession_law_trigger = {
+	trigger_if = {
+		limit = {
+			culture = {
+				has_innovation = innovation_roman_primogeniture
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_roman
+			has_realm_law_flag = title_revocation_allowed #limited crown authority 
+		}
+	}
+	trigger_if = {
+		limit = {
+			NOT = {
+				culture = {
+					has_innovation = innovation_roman_primogeniture
+				}
+			}
+		}
+		custom_tooltip = {
+			text = has_crown_law_allowing_primogeniture_non_roman
+			has_realm_law_flag = max_authority_level #absolute crown authority 
+		}
+		prestige >= 2000
+		legitimacy_level >= 3
+	}
+	# Non-tribals only
+	trigger_if = { # We split the tooltip into two, to make sure we don't show admin unless you actually have it
+		limit = {
+			has_ep3_dlc_trigger = yes
+		}
+		custom_tooltip = {
+			text = must_be_feudal_clan_or_admin
+			OR = {
+				government_has_flag = government_is_feudal
+				government_has_flag = government_is_clan
+				government_allows = administrative
+				government_has_flag = government_is_japan_feudal
+			}
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = succession_laws_must_have_organised_government_tooltip
+			OR = {
+				government_has_flag = government_is_feudal
+				government_has_flag = government_is_clan
+				government_has_flag = government_is_japan_feudal
+			}
+		}
+	}
+	trigger_if = {
+		limit = {
+			government_allows = administrative
+		}
+		is_independent_ruler = yes
+	}
+}
+
+can_have_single_heir_dynasty_house_trigger = {
+	exists = house
+	#trigger_if = {
+	#	limit = {
+	#		culture = {
+	#			OR = {
+	#				this = culture:czech
+	#				this = culture:slovien
+	#				any_parent_culture_or_above = {
+	#					this = culture:czech
+	#				}
+	#				any_parent_culture_or_above = {
+	#					this = culture:slovien
+	#				}
+	#				NOT = {	has_innovation = innovation_heraldry }
+	#			}
+	#		}
+	#	}
+	#	culture = {
+	#		has_innovation = innovation_table_of_princes
+	#	}
+	#}
+	# trigger_else = {
+		culture = {
+			has_innovation = innovation_heraldry
+		}
+	# }
+	custom_description = {
+		text = succession_laws_must_have_organised_government_tooltip
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+			government_has_flag = government_is_japan_feudal
+		}
+	}
+	NOT = { government_allows = administrative }
+}
+
+can_pass_law_ca2_trigger = {
 	culture = { has_innovation = innovation_royal_prerogative }
 	trigger_if = {
 		limit = {
