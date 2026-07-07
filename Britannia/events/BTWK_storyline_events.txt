@@ -1615,6 +1615,12 @@ BTWK_story_event.0112 = {
 		character = root
 		animation = personality_honorable
 	}
+	
+	immediate = {
+		character:1 = { save_scope_as = uther_pendragon }
+		character:7 = { save_scope_as = mordred_pendragon_elder }
+		title:k_dumnonia.holder = { save_scope_as = mordred_pendragon }
+	}
 
 	option = {
 		name = BTWK_story_event.0112.a
@@ -1628,7 +1634,7 @@ BTWK_story_event.0112 = {
 			title:d_centdumnonia = {
 				every_de_jure_county = {
 					limit = {
-						holder = character:1
+						holder = title:k_dumnonia.holder
 					}
 					change_title_holder = {
 						holder = character:3
@@ -1639,7 +1645,7 @@ BTWK_story_event.0112 = {
 					limit = {
 						OR = {
 							NOT = { exists = holder }
-							holder = character:1
+							holder = title:k_dumnonia.holder
 						}
 					}
 					change_title_holder = {
@@ -1666,7 +1672,7 @@ BTWK_story_event.0112 = {
 				change = scope:arthur_pendragon_durnac
 			}
 			resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
-			change_government = liege.government_type
+			change_government = title:k_dumnonia.holder.government_type
 			
 			if = {
 				limit = {

@@ -55,23 +55,10 @@ can_have_single_heir_succession_law_trigger = {
 		limit = { tgp_realm_has_ceremonial_liege_trigger = yes }
 		tgp_has_ceremonial_liege_title_trigger = yes
 	}
-	trigger_else_if = {
-		limit = {
-			culture = {
-				has_innovation = innovation_roman_primogeniture
-			}
-		}
-		custom_tooltip = {
-			text = has_crown_law_allowing_primogeniture_roman
-			has_realm_law_flag = title_revocation_allowed #limited crown authority 
-		}
-	}
 	trigger_else = {
-		custom_tooltip = {
-			text = has_crown_law_allowing_primogeniture_non_roman
-			has_realm_law_flag = max_authority_level #absolute crown authority 
+		culture = {
+			has_innovation = innovation_primogeniture
 		}
-		prestige >= 2000
 		legitimacy_level >= 3
 	}
 	# Non-tribals only
@@ -114,30 +101,8 @@ can_have_single_heir_succession_law_trigger = {
 }
 
 can_have_single_heir_youngest_succession_law_trigger = {
-	trigger_if = {
-		limit = {
-			culture = {
-				has_innovation = innovation_roman_primogeniture
-			}
-		}
-		custom_tooltip = {
-			text = has_crown_law_allowing_primogeniture_roman
-			has_realm_law_flag = title_revocation_allowed #limited crown authority 
-		}
-	}
-	trigger_if = {
-		limit = {
-			NOT = {
-				culture = {
-					has_innovation = innovation_roman_primogeniture
-				}
-			}
-		}
-		custom_tooltip = {
-			text = has_crown_law_allowing_primogeniture_non_roman
-			has_realm_law_flag = max_authority_level #absolute crown authority 
-		}
-		prestige >= 2000
+	culture = {
+		has_innovation = innovation_primogeniture
 		legitimacy_level >= 3
 	}
 	# Non-tribals only
