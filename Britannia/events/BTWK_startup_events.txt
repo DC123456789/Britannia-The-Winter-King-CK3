@@ -46,6 +46,14 @@ BTWK_startup.0001 = {
 				}
 				desc = BTWK_startup.0001.t.briton
 			}
+			# Anglo-Saxons
+			triggered_desc = {
+				trigger = { 
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				desc = BTWK_startup.0001.t.anglo_saxon
+			}
 			# Default/fallback
 			desc = BTWK_startup.0001.t
 		}
@@ -89,14 +97,19 @@ BTWK_startup.0001 = {
 			# Romano-Britons
 			triggered_desc = {
 				trigger = { 
-					AND = {
-						culture = { has_cultural_pillar = heritage_latin }
-						capital_province = { geographical_region = btwk_world_britannia }
-					}
+					culture = { has_cultural_pillar = heritage_latin }
+					capital_province = { geographical_region = btwk_world_britannia }
 				}
 				desc = BTWK_startup.0001.desc.romanobritish
 			}
 			# Anglo-Saxons
+			triggered_desc = {
+				trigger = { 
+					is_unromanized_germanic_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				desc = BTWK_startup.0001.desc.anglo_saxon
+			}
 			# Irish
 			# Romanized Germanics
 			# Default/fallback
@@ -185,6 +198,14 @@ BTWK_startup.0001 = {
 						}
 						desc = BTWK_startup.0001.a.briton
 					}
+					# Anglo-Saxons
+					triggered_desc = {
+						trigger = { 
+							is_unromanized_germanic_culture_trigger = yes
+							capital_province = { geographical_region = btwk_world_britannia }
+						}
+						desc = BTWK_startup.0001.a.anglo_saxon
+					}
 					desc = BTWK_startup.0001.a
 				}
 			}
@@ -264,20 +285,32 @@ BTWK_startup.0001 = {
 			}
 		}
 		
-		# Southern Britons - warn about Rise of Mercia / Wessex
+		# Southern Britain - warn/inform about Rise of Mercia / Wessex
 		if = {
 			limit = {
 				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
 			}
-			custom_tooltip = { text = BTWK_startup.0001.rise_of_mercia_wessex_warning_tt }
+			if = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				custom_tooltip = { text = BTWK_startup.0001.rise_of_mercia_wessex_tt }
+			}
+			else = {
+				custom_tooltip = { text = BTWK_startup.0001.rise_of_mercia_wessex_warning_tt }
+			}
 		}
 		
-		# Northern Britons - warn about Rise of Bernicia / Deira
+		# Northern Britain - warn/inform about Rise of Bernicia / Deira
 		if = {
 			limit = {
 				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
 			}
-			custom_tooltip = { text = BTWK_startup.0001.rise_of_bernicia_deira_warning_tt }
+			if = {
+				limit = { is_unromanized_germanic_culture_trigger = yes }
+				custom_tooltip = { text = BTWK_startup.0001.rise_of_bernicia_deira_tt }
+			}
+			else = {
+				custom_tooltip = { text = BTWK_startup.0001.rise_of_bernicia_deira_warning_tt }
+			}
 		}
 		
 		# Cerdic - talk about opportunities in Dumnonian instability but warn about problems post-Cerdic
