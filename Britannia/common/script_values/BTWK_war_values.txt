@@ -1,6 +1,30 @@
 ﻿
 conquests_culture_targets_ai_score_value = {
 	value = 1
+	# Aelle prioritizes border duchies
+	if = {
+		limit = { 
+			scope:attacker = {
+				OR = {
+					has_character_flag = aelle_of_anglia
+					top_liege = { has_character_flag = aelle_of_anglia }
+				}
+			}
+		}
+		every_target_title = {
+			if = {
+				limit = { geographical_region = btwk_custom_aelle_target_region }
+				if = {
+					limit = { tier = tier_duchy }
+					add = 10
+				}
+				else = {
+					add = 5
+				}
+			}
+		}
+	}
+	btwk_custom_aelle_target_region
 	# Anglo-Saxons prioritize Britannia
 	if = {
 		limit = {
