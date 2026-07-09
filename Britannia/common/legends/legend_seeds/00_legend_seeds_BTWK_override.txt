@@ -1,0 +1,417 @@
+﻿# All start dates
+king_arthur = {
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = king_arthur_legend
+		}
+		is_britannic_culture_trigger = yes
+		current_year >= 600
+	}
+	is_valid = {
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory
+	chronicle_properties = {
+		ancestor = character:3 # "Arthur"
+		title = title:e_britannia
+	}
+}
+
+carolingian = {
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = carolingian_legend
+		}
+		OR = {
+			culture = { has_cultural_pillar = heritage_central_germanic }
+			culture = { has_cultural_pillar = heritage_frankish }
+			dynasty = dynasty:25061 # Karling
+			dynasty = dynasty:743 # Capet
+		}
+		always = no		# BTWK - Disabled
+	}
+	is_valid = {
+		custom_tooltip = {
+			text = must_own_france_or_hre_tt
+			OR = {
+				has_title = title:k_france
+				has_title = title:e_france
+				has_title = title:e_hre
+			}
+		}
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory
+	chronicle_properties = {
+		ancestor = character:6392
+		title = title:e_france
+	}
+}
+
+vercingetorix = {
+	type = heroic
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = vercingetorix_legend
+		}
+		# Bretons
+		culture = { has_cultural_pillar = heritage_brythonic }
+		NOR = { # You must think Rome is kinda cringe
+			is_roman_emperor_trigger = yes
+			has_title = title:e_hre
+		}
+		always = no		# BTWK - Disabled
+	}
+	is_valid = {
+		is_playable_character = yes
+		capital_province = { geographical_region = world_europe_west_francia }
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory_not_in_history
+	chronicle_properties = {
+		ancestor_flag = flag:vercingetorix
+		title = title:k_brittany
+	}
+}
+
+cadell = {
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = cadell_legend
+		}
+		OR = {
+			has_title = title:k_powys
+			dynasty = dynasty:728	# Fendigaid (House of Vortigern)
+		}
+		is_britannic_culture_trigger = yes
+	}
+	is_valid = {
+		is_playable_character = yes
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory
+	chronicle_properties = {
+		ancestor = character:600
+		title = title:k_powys
+	}
+}
+
+alfred_of_wessex = {
+	type = holy
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = alfred_of_wessex_legend
+		}
+		exists = character:7627
+		character:7627 = { #Good ol' Alfy
+			religion = religion:christianity_religion
+		}
+		OR = {
+			this = character:7627
+			dynasty = character:7627.dynasty
+		}
+		always = no
+	}
+	is_valid = {
+		is_playable_character = yes
+		piety_level >= high_piety_level
+		trigger_if = {
+			limit = {
+				this = character:7627
+			}
+			custom_tooltip = {
+				text = no_pagans_in_britannia_tt
+				NOT = {
+					any_county_in_region = {
+						region = world_europe_west_britannia
+						holder.top_liege.religion = { is_in_family = rf_pagan }
+					}
+				}
+			}
+		}
+	}
+
+	chronicle = saintly_deed
+	chronicle_properties = {
+		ancestor = character:7627
+		religion = religion:christianity_religion
+	}
+}
+
+edward_the_martyr = {
+	type = holy
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = edward_the_martyr_legend
+		}
+		dynasty = character:99.dynasty  # Ol' Eddy
+		religion = religion:christianity_religion
+		always = no
+	}
+	is_valid = {
+		is_playable_character = yes
+		highest_held_title_tier >= tier_duchy
+		custom_tooltip = {
+			text = theologian_or_high_piety_tt
+			OR = {
+				has_trait = theologian
+				piety_level >= high_piety_level
+			}
+		}
+	}
+
+	chronicle = saintly_deed
+	chronicle_properties = {
+		ancestor = character:99
+		religion = religion:christianity_religion
+	}
+}
+
+sceafa = { # Claims to be descended from Noah
+	type = holy
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = sceafa_legend
+		}
+		# All Anglo-Saxon royal dynasties that trace heir ancestry to Woden here
+		OR = {
+			dynasty = dynasty:660		# Scylding/Iclingas (House of Mercia)
+			dynasty = dynasty:816		# Gewissae/Cerdicings (House of Wessex)
+			dynasty = dynasty:812		# Seaxneating (House of Essex)
+			dynasty = dynasty:9			# Wihtaing/Oiscingas (House of Kent)
+			dynasty = dynasty:105		# Casering/Wuffingas (House of East Anglia)
+			dynasty = dynasty:662		# Benocing (House of Bernicia)
+			dynasty = dynasty:663		# Waegdaeging (House of Deira)
+			dynasty = dynasty:817		# Winting (House of Lindsey)
+		}
+		religion = { is_in_family = rf_abrahamic }
+	}
+	is_valid = {
+		is_playable_character = yes
+		highest_held_title_tier >= tier_kingdom
+		piety_level >= high_piety_level
+	}
+
+	chronicle = saintly_descent
+	chronicle_properties = {
+		ancestor_flag = flag:noah # this felt very weird to type out
+		religion = root.religion
+	}
+}
+
+new_troy_london = {
+	type = heroic
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = new_troy_london_legend
+		}
+		has_title = title:c_londinium
+	}
+	is_valid = {
+		is_playable_character = yes
+		highest_held_title_tier >= tier_kingdom
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancient_people
+	chronicle_properties = {
+		culture = culture:trojan
+		title = title:e_britannia
+		original_region = geographical_region:troy_region
+	}
+}
+
+corineus = {
+	type = heroic
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = corineus_legend
+		}
+		OR = {
+			culture = culture:cornish
+			culture = {
+				any_parent_culture_or_above = {
+					this = culture:cornish
+				}
+			}
+		}
+		always = no			# BTWK - Disabled
+	}
+	is_valid = {
+		is_playable_character = yes
+		has_title = title:d_cornwall
+		prestige_level >= very_high_prestige_level
+	}
+
+	chronicle = ancient_people
+	chronicle_properties = {
+		culture = culture:trojan
+		title = title:c_cornwall
+		original_region = geographical_region:troy_region
+	}
+}
+
+scota = { # Scots claiming ancestry from Ancient Egypt
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = scota_legend
+		}
+		has_title = title:k_scotland
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_west_germanic
+				has_cultural_pillar = heritage_goidelic
+			}
+		}
+		always = no			# BTWK - Disabled
+	}
+	is_valid = {
+		is_playable_character = yes
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancient_people
+	chronicle_properties = {
+		culture = culture:ancient_egyptian
+		title = title:k_scotland
+		original_region = geographical_region:ghw_region_egypt_et_al
+	}
+}
+
+roman_heritage = { 
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = roman_heritage_legend
+		}
+		any_held_title = { has_variable = is_roman_empire_or_claimant_title }
+	}
+	is_valid = {
+		is_playable_character = yes
+		highest_held_title_tier >= tier_kingdom
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancient_people
+	chronicle_properties = {
+		culture = culture:roman
+		title = title:h_western_roman_empire
+		original_region = geographical_region:custom_roman_full_borders
+	}
+}
+
+hieros_gamos_skirnismal = { # Fjolnir Yngling descended from Freyr and Gerdr
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = hieros_gamos_skirnismal_legend
+		}
+		dynasty = dynasty:3335
+		# OR = { # You must still be in an era where Nordic gods are still seen as kinda cool
+			# culture = culture:norse
+			# religion = religion:germanic_religion
+		# }
+	}
+	is_valid = {
+		is_playable_character = yes
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = godly_descent
+	chronicle_properties = {
+		god = flag:germanic_high_god_name
+		title = title:k_uppland
+	}
+}
+
+the_red_hand = { # He who first lays hand on Ulster shall be its King
+	type = legitimizing
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = the_red_hand_legend
+		}
+		OR = {
+			culture = culture:irish
+			culture = {
+				any_parent_culture_or_above = {
+					this = culture:irish
+				}
+			}
+		}
+	}
+	is_valid = {
+		is_playable_character = yes
+		has_title = title:k_northern_ui_neill
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory
+	chronicle_properties = {
+		ancestor = character:1555
+		title = title:e_ireland
+	}
+}
+
+ragnarr = { # Ol Raggy S
+	type = heroic
+	quality = famed
+	is_shown = {
+		has_dlc_feature = legends
+		NOT = {
+			has_global_variable = ragnarr_legend
+		}
+		dynasty = dynasty:490
+		exists = character:163109
+		character:163109 = { is_alive = no }
+		OR = {
+			religion = { is_in_family = rf_pagan }
+			culture = { has_cultural_parameter = has_access_to_runestones }
+		}
+		always = no			# BTWK - disabled
+	}
+	is_valid = {
+		is_landed = yes
+		highest_held_title_tier >= tier_kingdom
+		prestige_level >= high_prestige_level
+	}
+
+	chronicle = ancestral_glory
+	chronicle_properties = {
+		ancestor = character:163109
+		title = title:e_britannia # You could argue Scandinavia but ultimately ehhhhhhh
+	}
+}
