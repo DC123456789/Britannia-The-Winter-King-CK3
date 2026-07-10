@@ -468,10 +468,29 @@ BTWK_character_setup = {
 					check_can_recruit = no
 					size = 5
 				}
+			}
+			# Also give Cerdic some extra troops to help him out
+			character:86 ?= {
 				create_maa_regiment = {
-					type = onager
+					type = landsknecht
 					check_can_recruit = no
 					size = 5
+				}
+				if = {
+					limit = { is_ai = yes }
+					spawn_army = {
+						name = SOUTH_SAXON_WARRIORS
+						men_at_arms = {
+							type = pikemen_unit
+							men = 100
+						}
+						men_at_arms = {
+							type = onager
+							men = 15
+						}					
+						location = this.capital_province
+						inheritable = no
+					}
 				}
 			}
 			# Remove claims of most king-level rulers on their vassals

@@ -79,7 +79,16 @@
 				limit = { scope:claimant != scope:attacker } # You can always press your own claims
 				is_imprisoned = no
 			}
-			#religion = scope:attacker.religion
+			# BTWK - Claimant and attacker must share religion or heritage group
+			custom_description = {
+				text = "BTWK_claimant_shares_attacker_religion_or_heritage_group"
+				subject = scope:attacker
+				object = scope:claimant
+				OR = {
+					religion = scope:attacker.religion
+					culture = { has_same_heritage_group_as = { TARGET = scope:attacker.culture } }
+				}
+			}
 			# claimant must not be at war against defender for this claim already
 			custom_description = {
 				text = "claimant_already_pressing_their_claim"

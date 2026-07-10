@@ -140,7 +140,7 @@
 			neighboring_county_or_viking_conquest_trigger = { CHARACTER = root }
 		}
 		
-		# Stop AI Aelle from going to the north - block needed since he is a conqueror 
+		# AI Aelle directives - block needed since he is a conqueror
 		NOT = {
 			AND = {
 				scope:attacker = {
@@ -150,11 +150,37 @@
 					}
 					is_ai = yes
 				}
-				scope:target = {
-					title_province = {
-						OR = {
-							geographical_region = btwk_custom_lindum
-							geographical_region = btwk_world_britannia_hen_ogledd
+				OR = {
+					# Stop AI Aelle from going to the north
+					scope:target = {
+						title_province = {
+							OR = {
+								geographical_region = btwk_custom_lindum
+								geographical_region = btwk_world_britannia_hen_ogledd
+							}
+						}
+					}
+					# Make sure Aelle consolidates the border region before going further west
+					AND = {
+						scope:attacker = { 
+							has_character_flag = aelle_of_anglia
+							NOT = {
+								any_county_in_region = {
+									region = btwk_custom_aelle_target_region
+									percent >= 0.85
+									holder.top_liege = {
+										OR = {
+											this = scope:attacker
+											suzerain ?= scope:attacker
+										}
+									}
+								}
+							}
+						}
+						scope:target = {
+							title_province = {
+								NOT = { geographical_region = btwk_custom_aelle_target_region }
+							}
 						}
 					}
 				}
@@ -854,7 +880,7 @@ duchy_conquest_cb = {
 			}
 		}
 		
-		# Stop AI Aelle from going to the north - block needed since he is a conqueror 
+		# AI Aelle directives - block needed since he is a conqueror
 		NOT = {
 			AND = {
 				scope:attacker = {
@@ -864,11 +890,37 @@ duchy_conquest_cb = {
 					}
 					is_ai = yes
 				}
-				scope:target = {
-					title_capital_county.title_province = {
-						OR = {
-							geographical_region = btwk_custom_lindum
-							geographical_region = btwk_world_britannia_hen_ogledd
+				OR = {
+					# Stop AI Aelle from going to the north
+					scope:target = {
+						title_capital_county.title_province = {
+							OR = {
+								geographical_region = btwk_custom_lindum
+								geographical_region = btwk_world_britannia_hen_ogledd
+							}
+						}
+					}
+					# Make sure Aelle consolidates the border region before going further west
+					AND = {
+						scope:attacker = { 
+							has_character_flag = aelle_of_anglia
+							NOT = {
+								any_county_in_region = {
+									region = btwk_custom_aelle_target_region
+									percent >= 0.85
+									holder.top_liege = {
+										OR = {
+											this = scope:attacker
+											suzerain ?= scope:attacker
+										}
+									}
+								}
+							}
+						}
+						scope:target = {
+							title_capital_county.title_province = {
+								NOT = { geographical_region = btwk_custom_aelle_target_region }
+							}
 						}
 					}
 				}

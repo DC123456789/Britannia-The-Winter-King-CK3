@@ -50,7 +50,7 @@
 
 ### PART 2 - THE PRINCESS BRIDE ###
 ## OWAIN/ARTHUR POWER STRUGGLE ##
-# 
+# BTWK_story_event.0300 - Arthur chooses a wife (Guinevere or Ceinwyn)
 
 ### PART 3 - THE RETURN OF MERLIN ###
 
@@ -1695,8 +1695,20 @@ BTWK_story_event.0112 = {
 				origin = province:12
 			}
 			
+			# Become regent of Dumnonia
+			title:k_dumnonia.holder = {
+				if = {
+					limit = { has_diarchy_type = regency }
+					set_diarch = root
+					set_diarchy_swing = 30
+				}
+			}
+				
 			# Don't trigger this twice if the event happens twice (will happen if you switch from Uther)
 			set_variable = received_BTWK_story_event_0112
+			
+			# Start story
+			create_story = BTWK_story_arthur
 		}
 	}
 }
@@ -1902,3 +1914,64 @@ BTWK_story_event.0122 = {  # Event for Mordred: Notification Event from previous
 		name = BTWK_story_event.0122.a
 	}
 }
+
+# Arthur chooses a wife (Guinevere or Ceinwyn)
+BTWK_story_event.0300 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0300.t
+	desc = BTWK_story_event.0300.desc
+	theme = dynasty
+	
+	trigger = {
+		this = character:3		# Arthur
+		has_trait = restricted_marriage
+		OR = {
+			has_title = title:k_dumnonia
+			is_diarch_of_target = title:k_dumnonia.holder
+			current_year > 485
+		}
+	}
+
+	left_portrait = {
+		character = scope:guinevere
+		animation = flirtation
+	}
+
+	right_portrait = {
+		character = scope:ceinwyn
+		animation = personality_compassionate
+	}
+	
+	immediate = {
+		character:26 = { save_scope_as = guinevere }
+		character:27 = { save_scope_as = ceinwyn }
+	}
+
+	# Guinevere
+	option = {
+		name = BTWK_story_event.0300.a
+		remove_trait = restricted_marriage
+		scope:guinevere = { remove_trait = restricted_marriage }
+		marry = scope:guinevere
+		hidden_effect = {
+			scope:ceinwyn = { remove_trait = restricted_marriage }
+		}
+	}
+	
+	# Ceinwyn
+	option = {
+		name = BTWK_story_event.0300.b
+		remove_trait = restricted_marriage
+		scope:ceinwyn = { remove_trait = restricted_marriage }
+		marry = scope:ceinwyn
+		hidden_effect = {
+			scope:guinevere = { remove_trait = restricted_marriage }
+		}
+		add_stress = 30
+	}
+}
+
+# TODO various notification events + fallout of the choice
+# - If Arthur marries Guinevere (canon), Derfel marries Ceinwyn
+# - If Arthur marries Ceinwyn, Lancelot marries Guinevere and Derfel marries Nimue
