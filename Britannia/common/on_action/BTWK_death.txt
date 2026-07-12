@@ -63,7 +63,8 @@ BTWK_on_death = {
 				BTWK_aengland_bretwalda_can_inherit_trigger = no
 			}
 			save_scope_as = former_bretwalda
-			trigger_event = BTWK_aengland_bretwalda.0020
+			title:e_aengland.current_heir = { save_scope_as = former_bretwalda_player_heir }
+			scope:former_bretwalda_player_heir = { trigger_event = BTWK_aengland_bretwalda.0020 }
 			every_player = {
 				limit = { 
 					NOR = {
@@ -76,13 +77,17 @@ BTWK_on_death = {
 			}
 		}
 		
-		# Trigger Fall of Aelle event
+		# Trigger Death of Aelle event
 		if = {
 			limit = { 
 				this = character:80
 				has_title = title:k_east_anglia
-				title:k_east_anglia = { has_variable = aelle_ruling_anglia }
+				title:k_east_anglia = { 
+					has_variable = aelle_ruling_anglia
+					NOT = { has_variable = triggered_aelle_fall_event }
+				}
 			}
+			title:k_east_anglia = { set_variable = triggered_aelle_fall_event }
 			character:80 = { save_scope_as = aelle_of_anglia }
 			title:k_east_anglia.current_heir = { save_scope_as = new_holder }
 			scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }

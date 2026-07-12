@@ -440,14 +440,14 @@ BTWK_aengland_bretwalda.0020 = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					root = scope:former_bretwalda
-					is_close_or_extended_family_of = scope:former_bretwalda_player_heir
+					root = scope:former_bretwalda_player_heir
+					is_close_or_extended_family_of = scope:former_bretwalda
 				}
 				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda_relative
 			}
 			triggered_desc = {
 				trigger = {
-					root = scope:former_bretwalda
+					root = scope:former_bretwalda_player_heir
 				}
 				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda
 			}
@@ -467,17 +467,14 @@ BTWK_aengland_bretwalda.0020 = {
 	immediate = {
 		scope:former_bretwalda = { 
 			save_scope_as = background_throne_room_scope 
-			player_heir = { save_scope_as = former_bretwalda_player_heir }
 		}
 		if = {
-			limit = { this = scope:former_bretwalda }
-			scope:former_bretwalda = {
-				custom_tooltip = BTWK_aengland_bretwalda.0020.a.tt
-				destroy_title = title:e_aengland
-				every_owned_story = {
-					limit = { story_type = BTWK_aengland_bretwalda_story }
-					end_story = yes
-				}
+			limit = { has_title = title:e_aengland }
+			custom_tooltip = BTWK_aengland_bretwalda.0020.a.tt
+			destroy_title = title:e_aengland
+			every_owned_story = {
+				limit = { story_type = BTWK_aengland_bretwalda_story }
+				end_story = yes
 			}
 			every_held_title = {
 				limit = {
@@ -501,7 +498,12 @@ BTWK_aengland_bretwalda.0020 = {
 	option = {
 		name = BTWK_aengland_bretwalda.0020.a
 		# The event is written from the PoV of the heir, but it actually triggers from the dead High King
-		trigger = { this = scope:former_bretwalda }
+		trigger = { 
+			OR = {
+				this = scope:former_bretwalda 
+				this = scope:former_bretwalda_player_heir
+			}
+		}
 	}
 
 	option = {
@@ -536,7 +538,10 @@ BTWK_aengland_bretwalda.0020 = {
 			}
 			text = BTWK_aengland_bretwalda.0020.b.other
 		}
-		trigger = { this != scope:former_bretwalda }
+		trigger = { 
+			this != scope:former_bretwalda 
+			this != scope:former_bretwalda_player_heir
+		}
 	}
 }
 

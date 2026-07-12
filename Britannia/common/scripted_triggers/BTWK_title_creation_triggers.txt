@@ -304,6 +304,23 @@ BTWK_anglo_saxon_kingdom_title_creation_trigger = {
 			NOT = { highest_held_title_tier >= tier_kingdom }
 		}
 	}
+	trigger_if = {
+		limit = { 
+			liege ?= { 
+				has_title = title:e_aengland
+				NOT = {
+					any_held_title = {
+						tier >= tier_empire
+						NOT = { this = title:e_aengland }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			text = BTWK_aengland_vassal_create_kingdom_trigger
+			BTWK_aengland_bretwalda_king_tier_vassals_allowed_trigger = yes
+		}
+	}
 	custom_description = {
 		text = BTWK_control_num_de_jure_counties_in_title
 		object = $TITLE$

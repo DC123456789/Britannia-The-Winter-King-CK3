@@ -179,7 +179,13 @@ BTWK_on_title_gain = {
 		if = {
 			limit = { scope:title = title:k_east_anglia }
 			if = {
-				limit = { title:k_east_anglia = { has_variable = aelle_ruling_anglia } }
+				limit = { 
+					title:k_east_anglia = {
+						has_variable = aelle_ruling_anglia
+						NOT = { has_variable = triggered_aelle_fall_event }
+					} 
+				}
+				title:k_east_anglia = { set_variable = triggered_aelle_fall_event }
 				character:80 = { save_scope_as = aelle_of_anglia }
 				save_scope_as = new_holder
 				scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }

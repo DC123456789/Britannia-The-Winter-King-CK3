@@ -712,6 +712,34 @@ BTWK_character_setup = {
 				}
 			}
 			
+			# Generate extra family members for Creoda of Lindsey as his line dying out early
+			# breaks Linnius quite a bit
+			character:1258 ?= {
+				save_scope_as = current_char
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					gender_female_chance = 0
+					age = 12
+					father = this
+					dynasty = inherit
+					save_scope_as = child_1
+				}
+				add_courtier = scope:child_1
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					gender_female_chance = 0
+					age = 7
+					father = this
+					dynasty = inherit
+					save_scope_as = child_2
+				}
+				add_courtier = scope:child_2
+			}
+			
 			# Aelle and Cerdic start with a bit of hegemony score
 			character:80 ?= {
 				set_variable = {
