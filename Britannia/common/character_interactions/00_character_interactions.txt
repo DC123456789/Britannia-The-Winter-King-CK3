@@ -28,13 +28,7 @@ offer_vassalization_interaction = {
 		scope:recipient = {
 			this != scope:actor
 			is_playable_character = yes
-			OR = {
-				AND = {
-					top_liege = this
-					is_tributary = no
-				}
-				is_tributary_of_suzerain_or_above = scope:actor
-			}
+			top_liege = this
 			trigger_if = {
 				limit = {
 					scope:actor = {
@@ -108,6 +102,13 @@ offer_vassalization_interaction = {
 			is_at_war = no
 			is_confederation_member = no
 
+			trigger_if = {
+				limit = { is_tributary = yes }
+				custom_tooltip = {
+					text = BTWK_tributary_cannot_swear_fealty_except_to_suzerain
+					is_tributary_of_suzerain_or_above = scope:actor
+				}
+			}
 			custom_description = {
 				text = was_recently_granted_independence
 				NOT = {
@@ -1433,6 +1434,13 @@ offer_fealty_interaction = {
 		scope:actor = {
 			is_imprisoned = no
 			is_at_war = no
+			trigger_if = {
+				limit = { is_tributary = yes }
+				custom_tooltip = {
+					text = BTWK_tributary_cannot_swear_fealty_except_to_suzerain
+					is_tributary_of_suzerain_or_above = scope:recipient
+				}
+			}
 		}
 		scope:recipient = {
 			custom_description = {

@@ -7,11 +7,12 @@ namespace = BTWK_anglo_saxon_invasions
 
 ##################################################
 # BTWK_britannia_struggle.0001 - Yearly tick catalysts
-# BTWK_britannia_struggle.0011 - Join struggle event
-# BTWK_britannia_struggle.0012 - Invasion Phase event
-# BTWK_britannia_struggle.0013 - Detente Phase event
-# BTWK_britannia_struggle.0014 - Consolidation Phase event
-# BTWK_britannia_struggle.0015 - Unification Phase event
+# BTWK_britannia_struggle.0009 - Join struggle event
+# BTWK_britannia_struggle.0010 - New Phase, select correct event
+# BTWK_britannia_struggle.0011 - Invasion Phase event
+# BTWK_britannia_struggle.0012 - Detente Phase event
+# BTWK_britannia_struggle.0013 - Consolidation Phase event
+# BTWK_britannia_struggle.0014 - Unification Phase event
 # BTWK_britannia_struggle.0020 - Outsider Conquest ending event
 
 # Handle yearly tick catalysts
@@ -186,9 +187,63 @@ BTWK_britannia_struggle.0001 = {
 	}
 }
 
-# BTWK_britannia_struggle.0011 - Join event
+# BTWK_britannia_struggle.0009 - Join event
 
 # Struggle phase events
+# Triggered one day after new phase - figure out what the new phase is and fire the correect event
+BTWK_britannia_struggle.0010 = {
+	hidden = yes
+	scope = none
+	scope = struggle
+
+	immediate = {
+		if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_invasion }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_detente }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_consolidation }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_unification }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+		}
+	}
+}
+	
 # Invasion
 BTWK_britannia_struggle.0011 = {
 	type = character_event
@@ -236,9 +291,7 @@ BTWK_britannia_struggle.0011 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0011.a.anglo_saxon
 					}
@@ -309,9 +362,7 @@ BTWK_britannia_struggle.0012 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0012.a.anglo_saxon
 					}
@@ -377,9 +428,7 @@ BTWK_britannia_struggle.0013 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0013.a.anglo_saxon
 					}
@@ -428,9 +477,7 @@ BTWK_britannia_struggle.0014 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0014.a.anglo_saxon
 					}
@@ -674,18 +721,14 @@ BTWK_anglo_saxon_invasions.0002 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0002.a.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 							NOT = { this = scope:aelle_of_anglia }
 						}
@@ -846,18 +889,14 @@ BTWK_anglo_saxon_invasions.0010 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0010.b.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0010.b.briton_roman
@@ -922,18 +961,14 @@ BTWK_anglo_saxon_invasions.0011 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0011.a.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0011.a.briton_roman
@@ -2032,10 +2067,6 @@ BTWK_anglo_saxon_invasions.0110 = {
 					type = landsknecht
 					men = 150
 				}
-				men_at_arms = {
-					type = onager
-					men = 10
-				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
 			}
@@ -2058,7 +2089,7 @@ BTWK_anglo_saxon_invasions.0110 = {
 				}
 				men_at_arms = {
 					type = onager
-					men = 20
+					men = 15
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army

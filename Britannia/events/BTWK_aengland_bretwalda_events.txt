@@ -451,7 +451,7 @@ BTWK_aengland_bretwalda.0020 = {
 				}
 				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda
 			}
-			desc = BTWK_aengland_bretwalda.0020.desc
+			desc = BTWK_aengland_bretwalda.0020.desc.other
 		}
 	}
 	theme = martial
@@ -465,11 +465,13 @@ BTWK_aengland_bretwalda.0020 = {
 	}
 	
 	immediate = {
-		scope:former_bretwalda = { save_scope_as = background_throne_room_scope }
+		scope:former_bretwalda = { 
+			save_scope_as = background_throne_room_scope 
+			player_heir = { save_scope_as = former_bretwalda_player_heir }
+		}
 		if = {
 			limit = { this = scope:former_bretwalda }
 			scope:former_bretwalda = {
-				player_heir = { save_scope_as = former_bretwalda_player_heir }
 				custom_tooltip = BTWK_aengland_bretwalda.0020.a.tt
 				destroy_title = title:e_aengland
 				every_owned_story = {
@@ -493,7 +495,6 @@ BTWK_aengland_bretwalda.0020 = {
 		}
 		else = {
 			show_as_tooltip = { destroy_title = title:e_aengland }
-			custom_tooltip = BTWK_aengland_bretwalda.0020.b.tt
 		}
 	}
 
