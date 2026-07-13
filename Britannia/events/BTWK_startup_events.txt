@@ -153,6 +153,9 @@ BTWK_startup.0001 = {
 		character:61 = { save_scope_as = budic_of_broceliande }
 		character:80 = { save_scope_as = aelle_of_anglia }
 		character:300 = { save_scope_as = coel_hen }
+		character:707 = { save_scope_as = ailleann_arthur_lover }
+		character:3203 = { save_scope_as = amhar_ap_arthur }
+		character:3204 = { save_scope_as = loholt_ap_arthur }
 		play_music_cue = "mx_Struggle_Opening"
 		save_scope_value_as = {
 			name = start
@@ -215,7 +218,8 @@ BTWK_startup.0001 = {
 		# Arthur - explain starting situation, succession issues
 		if = {
 			limit = { this = character:3 }
-			custom_tooltip = { text = BTWK_startup.0001.arthur_tt }
+			custom_tooltip = { text = BTWK_startup.0001.arthur_tt.1 }
+			custom_tooltip = { text = BTWK_startup.0001.arthur_tt.2 }
 		}
 		
 		# Britannia Struggle
@@ -259,6 +263,13 @@ BTWK_startup.0001 = {
 		}
 		
 		# Anglo-Saxons - explain Bretwalda mechanic
+		if = {
+			limit = {
+				primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				is_unromanized_germanic_culture_trigger = yes
+			}
+			custom_tooltip = { text = BTWK_startup.0001.aengland_bretwalda_tooltip }
+		}
 		
 		# Aelle - explain starting situation, give notice of conqueror but warn about death in ~20 years and subsequent breakup of Anglia
 		if = {

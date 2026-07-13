@@ -1714,6 +1714,9 @@ BTWK_story_event.0112 = {
 					set_diarch = root
 					set_diarchy_swing = 30
 				}
+				else = {
+					designate_diarch = root
+				}
 			}
 				
 			# Don't trigger this twice if the event happens twice (will happen if you switch from Uther)
@@ -1943,6 +1946,7 @@ BTWK_story_event.0300 = {
 			is_diarch_of_target = title:k_dumnonia.holder
 			current_year > 485
 		}
+		character:27 = { is_adult = yes }
 	}
 
 	left_portrait = {
@@ -1956,8 +1960,10 @@ BTWK_story_event.0300 = {
 	}
 	
 	immediate = {
+		save_scope_as = arthur
 		character:26 = { save_scope_as = guinevere }
 		character:27 = { save_scope_as = ceinwyn }
+		scope:ceinwyn.host = { save_scope_as = ceinwyn_host }
 	}
 
 	# Guinevere
@@ -1966,8 +1972,18 @@ BTWK_story_event.0300 = {
 		remove_trait = restricted_marriage
 		scope:guinevere = { remove_trait = restricted_marriage }
 		marry = scope:guinevere
+		# Get rivalry with Gorfyddyd
+		if = {
+			limit = { character:16 ?= { is_alive = yes } }
+			character:16 = { set_relation_rival = root }
+		}
 		hidden_effect = {
 			scope:ceinwyn = { remove_trait = restricted_marriage }
+		}
+		scope:ceinwyn_host = { trigger_event = BTWK_story_event.0301 }
+		
+		ai_chance = {
+			base = 80
 		}
 	}
 	
@@ -1981,6 +1997,84 @@ BTWK_story_event.0300 = {
 			scope:guinevere = { remove_trait = restricted_marriage }
 		}
 		add_stress = 30
+		scope:ceinwyn_host = { trigger_event = BTWK_story_event.0302 }
+		
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+# Ceinwyn's host (usually Gorfyddyd) hears about Ceinwyn getting scorned
+BTWK_story_event.0301 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0301.t
+	desc = BTWK_story_event.0301.desc
+	theme = dynasty
+	
+	left_portrait = {
+		character = scope:arthur
+		animation = shame
+	}
+	
+	lower_center_portrait = scope:guinevere
+
+	right_portrait = {
+		character = scope:ceinwyn
+		animation = shock
+	}
+
+	option = {
+		name = {
+			trigger = { character:16 ?= root }
+			text = BTWK_story_event.0301.a.gorfyddyd
+		}
+		name = {
+			trigger = { NOT = { character:16 ?= root } }
+			text = BTWK_story_event.0301.a
+		}
+		show_as_tooltip = {
+			scope:ceinwyn = { remove_trait_force_tooltip = restricted_marriage }
+			if = {
+				limit = { character:16 ?= root }
+				set_relation_rival = scope:arthur
+			}
+		}
+	}
+}
+
+# Ceinwyn's host (usually Gorfyddyd) hears about Ceinwyn getting married
+BTWK_story_event.0302 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0302.t
+	desc = BTWK_story_event.0302.desc
+	theme = marriage
+
+	left_portrait = {
+		character = scope:ceinwyn
+		animation = wedding_happy_cry
+	}
+	
+	right_portrait = {
+		character = scope:arthur
+		animation = wedding_happy_cry
+	}
+
+	option = {
+		name = {
+			trigger = { character:16 ?= root }
+			text = BTWK_story_event.0302.a.gorfyddyd
+		}
+		name = {
+			trigger = { NOT = { character:16 ?= root } }
+			text = BTWK_story_event.0302.a
+		}
+		show_as_tooltip = {
+			scope:ceinwyn = { remove_trait_force_tooltip = restricted_marriage }
+			scope:arthur = { marry = scope:ceinwyn }
+		}
 	}
 }
 
