@@ -1010,6 +1010,16 @@ culture_shifts.0010 = {
 				# Copy acceptances
 				scope:new_culture = { copy_acceptances_from_parent_cultures_effect = yes }
 				
+				# If this is a hybridization, flag all players of the old non-West Germanic culture culture for loc purposes
+				if = {
+					limit = { scope:new_culture = { is_hybrid_culture = yes } }
+					every_player = {
+						limit = { culture = scope:old_culture }
+						set_variable = { name = was_non_west_germanic_parent_culture value = yes days = 1 }
+					}
+				}
+				
+				
 				# New culture spawns at capital of kingdom holder if possible
 				if = {
 					limit = {
@@ -1488,9 +1498,42 @@ culture_shifts.0011 = {
 	title = culture_shifts.0011.t
 	desc = {
 		first_valid = {
+		
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture = { is_hybrid_culture = yes }
+					culture = scope:new_culture
+					has_variable = was_non_west_germanic_parent_culture
+				}
+				desc = culture_shifts.0011.desc.hybrid.non_west_germanic_parent_culture_char
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture = { is_hybrid_culture = yes }
+					culture = scope:new_culture
+				}
+				desc = culture_shifts.0011.desc.hybrid.culture_char
+			}
 			triggered_desc = {
 				trigger = { scope:new_culture = { is_hybrid_culture = yes } }
 				desc = culture_shifts.0011.desc.hybrid
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture_kingdom.title_capital_county.title_province = { NOT = { geographical_region = btwk_custom_core_anglo_saxon_region } }
+					culture = scope:new_culture
+				}
+				desc = culture_shifts.0011.desc.divergent.western_cultures.culture_char
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture_kingdom.title_capital_county.title_province = { NOT = { geographical_region = btwk_custom_core_anglo_saxon_region } }
+				}
+				desc = culture_shifts.0011.desc.divergent.western_cultures
+			}
+			triggered_desc = {
+				trigger = { culture = scope:new_culture }
+				desc = culture_shifts.0011.desc.divergent.culture_char
 			}
 			desc = culture_shifts.0011.desc.divergent
 		}
@@ -1600,7 +1643,26 @@ culture_shifts.0011 = {
 		trigger = { 
 			culture = scope:new_culture
 		}
-		name = culture_shifts.0011.a
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = yes }
+				has_variable = was_non_west_germanic_parent_culture
+			}
+			text = culture_shifts.0011.a.hybrid.non_west_germanic_parent_culture
+		}
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = yes }
+				NOT = { has_variable = was_non_west_germanic_parent_culture }
+			}
+			text = culture_shifts.0011.a.hybrid
+		}
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = no }
+			}
+			text = culture_shifts.0011.a
+		}
 	}
 	
 	option = {
