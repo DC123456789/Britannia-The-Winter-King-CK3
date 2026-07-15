@@ -1358,8 +1358,11 @@ titular_titles_briton.0001 = {
 		# so that the correct tooltips are generated but the de jure shift 
 		# has already occured by the time the players actually see it
 		hidden_effect = {
-			title:k_deheubarth = { 
-				set_kingdom_formed_effect = yes
+			title:k_demetia = { 
+				set_variable = formed_deheubarth
+				# set_title_name = DEHEUBARTH
+				set_coa = k_deheubarth
+				set_kingdom_expanded_effect = yes
 				every_in_list = {
 					variable = de_jure_affected_territory
 					check_de_jure_liege_effect = yes
@@ -1382,42 +1385,11 @@ titular_titles_briton.0002 = {
 	}
 	
 	immediate = {
-		if = {
-			limit = { this = scope:founder }
-			create_title_and_vassal_change = {
-				type = created
-				save_scope_as = title_change
-				add_claim_on_loss = no
-			}
-			title:k_deheubarth = {
-				change_title_holder = {
-					holder = root
-					change = scope:title_change
-				}
-				copy_title_history = title:k_demetia
-			}
-			resolve_title_and_vassal_change = scope:title_change
-			destroy_title = title:k_demetia
-			title:k_demetia = {
-				hidden_effect = {
-					every_claimant = {
-						if = {
-							limit = { has_strong_claim_on = title:k_demetia }
-							remove_claim = title:k_demetia
-							add_pressed_claim = title:k_deheubarth
-						}
-						else = {
-							remove_claim = title:k_demetia
-							add_unpressed_claim = title:k_deheubarth
-						}
-					}
-				}
-			}
-		}
 		# This shows the de jure shift as a tooltip
 		show_as_tooltip = {
-			title:k_deheubarth = { 
-				save_scope_as = title_created_de_jure_pretend
+			title:k_demetia = { 
+				set_title_name_w_tooltip_effect = { NEW_NAME = DEHEUBARTH }
+				save_scope_as = title_expanded_de_jure_pretend
 				every_in_list = {
 					variable = de_jure_affected_territory
 					show_as_tooltip = {
@@ -1535,7 +1507,7 @@ titular_titles_briton.0005 = {
 		hidden_effect = {
 			title:k_strathclyde = { 
 				set_variable = formed_strathclyde
-				set_title_name = STRATHCLYDE
+				# set_title_name = STRATHCLYDE
 			}
 			if = {
 				limit = { completely_controls = title:c_luguvalium }
@@ -1567,7 +1539,7 @@ titular_titles_briton.0005 = {
 				title:k_ynys_man = {
 					set_variable = formed_ynys_man
 					set_variable = custom_name
-					set_title_name = MANAW
+					# set_title_name = MANAW
 					set_variable = custom_capital
 					set_capital_county = title:c_german
 				}
@@ -2138,7 +2110,7 @@ titular_titles_briton.0014 = {
 			title:k_ynys_man = {
 				set_variable = formed_ynys_man
 				set_variable = custom_name
-				set_title_name = MANAW
+				# set_title_name = MANAW
 				set_variable = custom_capital
 				set_capital_county = title:c_german
 			}
