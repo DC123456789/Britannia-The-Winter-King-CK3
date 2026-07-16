@@ -1312,7 +1312,23 @@ BTWK_anglo_saxon_invasions.0110 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_anglo_saxon_invasions.0110.t
-	desc = BTWK_anglo_saxon_invasions.0110.desc
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = { has_subject_contract_group = tributary_foederatus }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.foederati
+		    }
+		    triggered_desc = {
+		        trigger = { vassal_contract_has_flag = has_laetus_contract }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.laeti
+		    }
+		    triggered_desc = {
+		        trigger = { is_landless_adventurer = yes }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.adventurer
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0110.desc
+		}
+	}
 	theme = war
 
 	left_portrait = {
@@ -2114,7 +2130,23 @@ BTWK_anglo_saxon_invasions.0111 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_anglo_saxon_invasions.0111.t
-	desc = BTWK_anglo_saxon_invasions.0111.desc
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { has_subject_contract_group = tributary_foederatus } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.foederati
+		    }
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { vassal_contract_has_flag = has_laetus_contract } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.laeti
+		    }
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { is_landless_adventurer = yes } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.adventurer
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0111.desc
+		}
+	}
 	theme = war
 
 	left_portrait = {
@@ -2135,7 +2167,30 @@ BTWK_anglo_saxon_invasions.0111 = {
 	}
 
 	option = {
-		name = BTWK_anglo_saxon_invasions.0111.a
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_unromanized_germanic_culture_trigger = yes
+						}
+						desc = BTWK_anglo_saxon_invasions.0111.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_anglo_saxon_invasions.0111.a.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0111.a
+				}
+			}
+		}
 		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.1
 		if = {
 			limit = { scope:rise_of_kingdom_leader = { is_landed = yes } }
