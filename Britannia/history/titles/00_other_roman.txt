@@ -226,6 +226,21 @@ h_eastern_roman_empire = {
 		holder=2006	#Arcadius
 		effect = { set_variable = roman_empire_title }
 		government = administrative_government
+		effect = {
+			if = {
+				limit = {
+					exists = holder
+					has_dlc_feature = royal_court
+				}
+				holder = {
+					set_court_language = language_latin
+					if = {
+						limit = { NOT = { knows_court_language_of = this } }
+						learn_court_language_of = this
+					}
+				}
+			}
+		}
  	}
  	408.5.1={
  		holder=34071 #Theodosius II

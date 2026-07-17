@@ -360,6 +360,21 @@ BTWK_government_setup = {
 				}
 				change_government = pre_feudal_government
 			}
+			# Assign Germanic governments
+			else_if = {
+				limit = {
+					culture = { has_cultural_pillar = heritage_frankish }
+				}
+				if = {
+					limit = { has_dlc_feature = roads_to_power }
+					# TODO Need to adjust this to actually work properly
+					convert_to_administrative_from_feudalism_game_start_effect = yes
+					change_government = germanic_government
+				}
+				else = {
+					change_government = germanic_no_dlc_government
+				}
+			}
 			# Assign Sub-Roman governments
 			else_if = {
 				limit = {
@@ -376,21 +391,6 @@ BTWK_government_setup = {
 				}
 				else = {
 					change_government = sub_roman_no_dlc_government
-				}
-			}
-			# Assign Germanic governments
-			else_if = {
-				limit = {
-					culture = { has_cultural_pillar = heritage_frankish }
-				}
-				if = {
-					limit = { has_dlc_feature = roads_to_power }
-					# TODO Need to adjust this to actually work properly
-					convert_to_administrative_from_feudalism_game_start_effect = yes
-					change_government = germanic_government
-				}
-				else = {
-					change_government = germanic_no_dlc_government
 				}
 			}
 		}
