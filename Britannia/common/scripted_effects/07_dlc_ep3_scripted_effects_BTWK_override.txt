@@ -1,4 +1,103 @@
-﻿ep3_become_landed_transfer_effect = {
+﻿destroy_laamp_effect = {
+	$ADVENTURER$ = {
+		save_scope_as = the_adventurer
+		# If we weren't an adventurer before, make us one.
+		if = {
+			limit = {
+				NOT = { has_trait = adventurer }
+			}
+			add_trait = adventurer
+		}
+		hidden_effect = {
+			every_courtier = {
+				set_variable = {
+					name = former_camp_leader
+					value = scope:the_adventurer
+				}
+				add_trait = adventurer_follower
+			}
+		}
+		custom_tooltip = {
+			text = destroy_laamp_effect.tt.domicile_liquidated
+			laamp_clear_domicile_buildings_effect = yes
+		}
+		# Contacts have opinions™ about you.
+		## Be they good.
+		every_contact = {
+			limit = {
+				opinion = {
+					target = scope:the_adventurer
+					value >= 1
+				}
+			}
+			custom = custom.every_contact_with_positive_opinion
+			add_opinion = {
+				target = scope:the_adventurer
+				modifier = pleased_former_contact_opinion
+				opinion = 30
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						can_set_relation_potential_friend_trigger = { CHARACTER = scope:the_adventurer }
+					}
+					set_relation_potential_friend = scope:the_adventurer
+				}
+			}
+		}
+		## Or bad.
+		every_contact = {
+			limit = {
+				opinion = {
+					target = scope:the_adventurer
+					value < 1
+				}
+			}
+			# And neutral but _eh_.
+			custom = custom.every_contact_with_negative_opinion
+			add_opinion = {
+				target = scope:the_adventurer
+				modifier = frustrated_former_contact_opinion
+				opinion = -30
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						can_set_relation_potential_rival_trigger = { CHARACTER = scope:the_adventurer }
+					}
+					set_relation_potential_rival = scope:the_adventurer
+				}
+			}
+		}
+		# Destroy your main title.
+		every_held_title = {
+			limit = { has_variable = adventurer_creation_reason }
+			save_scope_as = landless_adventurer_title
+			scope:the_adventurer = { destroy_title = scope:landless_adventurer_title }
+		}
+		# Ironically, we only want to use this effect if you're _not_ admin — it'll reset you nicely to the best government for you, but if you're admin, you should stay admin.
+		if = {
+			limit = {
+				NOR = {
+					exists = scope:already_set_government
+					government_has_flag = government_is_administrative
+					government_has_flag = government_is_nomadic
+					government_has_flag = government_is_steppe_admin
+					government_has_flag = government_is_wanua
+					government_has_flag = government_is_mandala
+					government_has_flag = government_is_celestial
+					government_has_flag = government_is_meritocratic
+					government_has_flag = government_is_japan_feudal
+				}
+			}
+			admin_government_reset_effect = yes #this only contains Clan, Tribal, Nomadic and Feudal
+		}
+		# Clean up story no-movement flags.
+		remove_character_flag = laamp_stay_same_kingdom
+	}
+}
+
+ep3_become_landed_transfer_effect = {
 	hidden_effect = {
 		# Liquidate camp
 		$TITLE_RECEIVER$ = { laamp_clear_domicile_buildings_liquidator_effect = yes }
@@ -288,125 +387,126 @@
 		limit = { exists = scope:old_government_type }
 		scope:old_government_type = { save_scope_as = old_government }
 	}
-	# Set government type
 	if = {
 		limit = {
 			exists = scope:old_government
 		}
 		# We don't expect to actually trigger most of the below, as most are not valid targets to begin with, but all are included for completeness and mod support
-		switch = {
-			trigger = scope:old_government
-			flag:feudal = {
-				change_government = feudal_government
-			}
-			flag:republic = {
-				change_government = republic_government
-			}
-			flag:theocracy = {
-				change_government = theocracy_government
-			}
-			flag:clan = {
-				change_government = clan_government
-			}
-			flag:tribal = {
-				change_government = tribal_government
-			}
-			flag:wanua = {
-				change_government = wanua_government
-			}
-			flag:holy_order = {
-				change_government = holy_order_government
-			}
-			flag:administrative = {
-				change_government = administrative_government
-			}
-			flag:nomad = {
-				#Did you demand a herder's pastureland?
-				if = {
-					limit = {
-						scope:new_capital.title_province = {
-							has_holding = yes
-							NOT = { has_holding_type = nomad_holding }
-						}
-					}
-					scope:new_capital.title_province = { set_holding_type = nomad_holding }
+		$TITLE_RECEIVER$ = {
+			switch = {
+				trigger = scope:old_government
+				flag:feudal = {
+					change_government = feudal_government
 				}
-				change_government = nomad_government
-			}
-			flag:herder = {
-				change_government = herder_government
-			}
-			flag:celestial = {
-				change_government = celestial_government
-			}
-			flag:mandala = {
-				if = {
-					limit = {
-						faith = { has_doctrine = doctrine_polytheist }
-					}
-					change_government = mandala_government
-					#Sort out the House shenanigans
+				flag:republic = {
+					change_government = republic_government
+				}
+				flag:theocracy = {
+					change_government = theocracy_government
+				}
+				flag:clan = {
+					change_government = clan_government
+				}
+				flag:tribal = {
+					change_government = tribal_government
+				}
+				flag:wanua = {
+					change_government = wanua_government
+				}
+				flag:holy_order = {
+					change_government = holy_order_government
+				}
+				flag:administrative = {
+					change_government = administrative_government
+				}
+				flag:nomad = {
+					#Did you demand a herder's pastureland?
 					if = {
-						limit = { is_house_head = no }
-						house = { 
-							if = {
-								limit = {
-									house_head = { 
-										is_landed = no
-										is_courtier_of = root
+						limit = {
+							scope:new_capital.title_province = {
+								has_holding = yes
+								NOT = { has_holding_type = nomad_holding }
+							}
+						}
+						scope:new_capital.title_province = { set_holding_type = nomad_holding }
+					}
+					change_government = nomad_government
+				}
+				flag:herder = {
+					change_government = herder_government
+				}
+				flag:celestial = {
+					change_government = celestial_government
+				}
+				flag:mandala = {
+					if = {
+						limit = {
+							faith = { has_doctrine = doctrine_polytheist }
+						}
+						change_government = mandala_government
+						#Sort out the House shenanigans
+						if = {
+							limit = { is_house_head = no }
+							house = { 
+								if = {
+									limit = {
+										house_head = { 
+											is_landed = no
+											is_courtier_of = root
+										}
 									}
+									set_house_head = root
 								}
-								set_house_head = root
+							}
+						}
+						else = {
+							house ?= {
+								set_house_aspiration = { type = no_aspect }
 							}
 						}
 					}
 					else = {
-						house ?= {
-							set_house_aspiration = { type = no_aspect }
+						if = {
+							limit = { ep3_is_clan_inclined_trigger = yes }
+							change_government = clan_government
 						}
+						else = { change_government = feudal_government }
 					}
 				}
-				else = {
+				flag:steppe_admin = {
+					change_government = steppe_admin_government
+				}
+				flag:meritocratic = {
+					change_government = meritocratic_government
+				}
+				flag:japan_feudal = {
+					change_government = japan_feudal_government
+				}
+				flag:japan_administrative = {
 					if = {
-						limit = { ep3_is_clan_inclined_trigger = yes }
-						change_government = clan_government
+						limit = { 
+							scope:new_liege ?= { has_government = japan_administrative_government }
+						}
+						change_government = japan_administrative_government
 					}
 					else = { change_government = feudal_government }
 				}
-			}
-			flag:steppe_admin = {
-				change_government = steppe_admin_government
-			}
-			flag:meritocratic = {
-				change_government = meritocratic_government
-			}
-			flag:japan_feudal = {
-				change_government = japan_feudal_government
-			}
-			flag:japan_administrative = {
-				if = {
-					limit = { 
-						scope:new_liege ?= { has_government = japan_administrative_government }
-					}
-					change_government = japan_administrative_government
+				# BTWK
+				flag:pre_feudal = {
+					change_government = pre_feudal_government
 				}
-				else = { change_government = feudal_government }
-			}
-			# BTWK
-			flag:pre_feudal = {
-				change_government = pre_feudal_government
-			}
-			flag:sub_roman_admin = {
-				change_government = sub_roman_admin_government
-			}
-			flag:sub_roman_feudal = {
-				change_government = sub_roman_feudal_government
-			}
-			flag:germanic_admin = {
-				change_government = germanic_admin_government
-			}
-			flag:germanic_feudal = {
-				change_government = germanic_feudal_government
+				flag:sub_roman_admin = {
+					change_government = sub_roman_admin_government
+				}
+				flag:sub_roman_feudal = {
+					change_government = sub_roman_feudal_government
+				}
+				flag:germanic_admin = {
+					change_government = germanic_admin_government
+				}
+				flag:germanic_feudal = {
+					change_government = germanic_feudal_government
+				}
 			}
 		}
 	}
@@ -653,6 +753,7 @@
 			}
 		}
 	}
+	save_scope_value_as = { name = already_set_government value = yes }		# Don't reset government in the destroy_laamp_effect
 	destroy_laamp_effect = { ADVENTURER = $TITLE_RECEIVER$ }
 	# Setup NF if valid
 	if = {

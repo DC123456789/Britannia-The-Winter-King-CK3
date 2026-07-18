@@ -520,6 +520,30 @@
 			scope:attacker = { becomes_independent = { change = scope:change } }
 		}
 		
+		# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the highest tier target title - but with many exceptions
+		if = {
+			limit = { scope:claimant = { is_ruler = no } }
+			save_scope_value_as = { name = claimant_needs_government_assigned value = yes }
+			# Not allowed to inherit republican or theocratic government types - if we somehow get something else, fall back to something appropriate
+			if = {
+				limit = {
+					OR = {
+						scope:target.holder = { government_has_flag = government_is_republic }
+						scope:target.holder = { government_has_flag = government_is_theocracy }
+						scope:target.holder = { government_has_flag = government_is_holy_order }
+					}
+				}
+				save_scope_value_as = { name = claimant_assign_default_government value = yes }
+			}
+			else = {
+				if = {
+					limit = { scope:target.holder = { government_has_flag = government_is_administrative } }
+					save_scope_value_as = { name = claimant_new_government_type_is_admin value = yes }
+				}
+				scope:target.holder.government_type = { save_scope_as = claimant_new_government_type }
+			}
+		}
+		
 		# Create a claim CB which is executed to handle title/vassal changes, in addition to being used to calculate Prestige awards for war participants.
 		setup_claim_cb = {
 			titles = target_titles
@@ -530,6 +554,73 @@
 		}
 
 		resolve_title_and_vassal_change = scope:change
+		
+		# BTWK - Now actually apply the government change
+		if = {
+			limit = { exists = scope:claimant_needs_government_assigned }
+			if = {
+				limit = { exists = scope:claimant_assign_default_government }
+				if = {
+					limit = {
+						capital_county.title_province = {
+							OR = {
+								has_holding_type = nomad_holding
+								has_holding_type = herder_holding
+							}
+						}
+					}
+					change_government = nomad_government
+				}
+				else_if = {
+					limit = { 
+						capital_county.title_province = {
+							has_holding_type = tribal_holding
+						}
+					}
+					change_government = tribal_government
+				}
+				else_if = {
+					# If the liege is feudal-type (but not admin-type), adopt their government
+					liege ?= {
+						government_has_flag = government_is_feudal
+					}
+					change_government = liege.government_type
+				}
+				else = {
+					# Fallback to folkright
+					change_government = pre_feudal_government
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:claimant_new_government_type_is_admin 
+				}
+				# If the old government was admin, only keep the government if you are independent or if your new liege is also admin
+				if = {
+					limit = {
+						OR = {
+							is_independent_ruler = yes
+							liege ?= { government_has_flag = government_is_administrative }
+						}
+					}
+				}
+				# Otherwise, if you have a liege, adopt their (feudal-type) government
+				else_if = {
+					limit = {
+						liege ?= { government_has_flag = government_is_feudal }
+					}
+					change_government = liege.government_type
+				}
+				# Admin always falls back to feudal, not folkright
+				else = {
+					change_government = feudal_government
+				}
+			}
+			# Otherwise, directly inherit your government from the previous holder
+			else = {
+				scope:claimant = { change_government = scope:claimant_new_government_type }
+			}
+		}
 
 		# Landless Ceremonial Liege
 		if = {
