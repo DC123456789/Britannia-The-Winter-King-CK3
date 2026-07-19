@@ -24,6 +24,36 @@ conquests_culture_targets_ai_score_value = {
 			}
 		}
 	}
+	# If the Rise of Anglo-Saxon Kingdom story is active, prioritize its targets
+	if = {
+		limit = { scope:attacker = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story } }
+		every_target_title = {
+			save_scope_as = current_title
+			scope:attacker = {
+				every_owned_story = {
+					limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+					if = {
+						limit = { 
+							is_target_in_variable_list = {
+								name = core_target_counties
+								target = scope:current_title.title_province.county
+							}
+						}
+						add = 20
+					}
+					else_if = {
+						limit = { 
+							is_target_in_variable_list = {
+								name = extended_target_counties
+								target = scope:current_title.title_province.county
+							}
+						}
+						add = 5
+					}
+				}
+			}
+		}
+	}
 	# Anglo-Saxons prioritize Britannia
 	if = {
 		limit = {

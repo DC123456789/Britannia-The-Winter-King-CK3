@@ -936,9 +936,19 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 					remove_variable = attempting_second_revolt
 					story_owner = {
 						if = {
-							limit = { prestige < 200 }
-							add_prestige = 200
+							limit = { prestige < 400 }
+							add_prestige = 300
 						}
+						if = {
+							limit = { prestige_level < 2 }
+							add_prestige = 500
+						}
+						if = {
+							limit = { piety < 100 }
+							add_piety = 100
+						}
+						# Spawn armies before the war so that they don't get stuck if they get heavily defeated
+						BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_war_army_if_weak_effect = yes
 						# If you can, declare war on random neighbouring target in core area
 						# TODO May be too slow, maybe have 50% chance of getting a claim on two counties
 						# and declaring for both at once?
@@ -1108,6 +1118,51 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 	}
 }
 
+BTWK_aelle_story = {
+	on_setup = {
+	}
+
+	on_end = {
+	}
+	
+	# Aelle loses 0.5 health every 2 years
+	effect_group = {
+		years = 2
+		
+		trigger = {
+			current_year >= 495
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			effect = {
+				story_owner = { add_character_modifier = BTWK_health_malus }
+			}
+		}
+	}
+	
+	# If we enter the Detente phase, he loses an addition 1 health
+	effect_group = {
+		months = 6
+		
+		trigger = {
+			struggle:britannia_struggle ?= { is_struggle_phase = struggle_britannia_phase_detente }
+			NOT = { has_variable = applied_detente_health_penalty }
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			effect = {
+				set_variable = applied_detente_health_penalty
+				story_owner = {
+					add_character_modifier = BTWK_health_malus
+					add_character_modifier = BTWK_health_malus
+				}
+			}
+		}
+	}
+}
+
 BTWK_collapse_of_anglia_story = {	
 	on_setup = {
 		save_scope_as = current_story
@@ -1117,6 +1172,10 @@ BTWK_collapse_of_anglia_story = {
 			value = 10
 		}
 	}
+	
+	on_owner_death = {
+		end_story = yes
+	}		
 
 	on_end = {
 	}

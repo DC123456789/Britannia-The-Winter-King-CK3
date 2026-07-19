@@ -1991,6 +1991,26 @@ nation_fracturing_faction_modifiers = {
 			is_struggle_type = persian_struggle
 		}
 	}
+	
+	# BTWK - Generally disfavoured if you are king-level and you do not have significant cultural differences
+	modifier = {
+		desc = "FACTION_REASON_NO_CULTURAL_DIFFERENCES"
+		add = -40
+		$FACTION_TARGET$.highest_held_title_tier <= tier_kingdom
+		OR = {
+			culture = { has_same_culture_heritage = $FACTION_TARGET$.culture }
+			AND = {
+				culture = { has_cultural_pillar = heritage_latin }
+				$FACTION_TARGET$.culture = { has_cultural_pillar = heritage_brythonic }
+				NOT = { has_global_variable = end_of_britannia }
+			}
+			AND = {
+				$FACTION_TARGET$.culture = { has_cultural_pillar = heritage_latin }
+				culture = { has_cultural_pillar = heritage_brythonic }
+				NOT = { has_global_variable = end_of_britannia }
+			}
+		}
+	}
 }
 
 nation_fracturing_faction_blockers = {

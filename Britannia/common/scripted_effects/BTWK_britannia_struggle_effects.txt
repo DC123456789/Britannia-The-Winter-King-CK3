@@ -57,6 +57,10 @@ BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = {
 				type = pikemen_unit
 				men = 50
 			}
+			men_at_arms = {
+				type = landsknecht
+				men = 25
+			}
 			location = this.capital_province
 			save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
 		}
@@ -67,9 +71,72 @@ BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = {
 			}
 		}
 	}
+	# If we're getting too weak, spawn more event troops!
+	BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_war_army_if_weak_effect = yes
+}
+
+BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_war_army_if_weak_effect = {
 	if = {
 		limit = {
-			military_power < 25000		# If we're getting too weak, spawn more event troops!
+			military_power < 20000		
+		}
+		spawn_army = {
+			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+			levies = 600
+			men_at_arms = {
+				type = pikemen_unit
+				men = 200
+			}
+			men_at_arms = {
+				type = landsknecht
+				men = 250
+			}
+			men_at_arms = {
+				type = onager
+				men = 20
+			}
+			location = this.capital_province
+			save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:current_story
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			military_power < 40000		
+		}
+		spawn_army = {
+			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+			levies = 400
+			men_at_arms = {
+				type = pikemen_unit
+				men = 150
+			}
+			men_at_arms = {
+				type = landsknecht
+				men = 200
+			}
+			men_at_arms = {
+				type = onager
+				men = 10
+			}
+			location = this.capital_province
+			save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:current_story
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			military_power < 60000
 		}
 		spawn_army = {
 			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
@@ -81,6 +148,31 @@ BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = {
 			men_at_arms = {
 				type = landsknecht
 				men = 50
+			}
+			location = this.capital_province
+			save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:current_story
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			military_power < 80000
+		}
+		spawn_army = {
+			name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+			levies = 100
+			men_at_arms = {
+				type = pikemen_unit
+				men = 50
+			}
+			men_at_arms = {
+				type = landsknecht
+				men = 25
 			}
 			location = this.capital_province
 			save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army

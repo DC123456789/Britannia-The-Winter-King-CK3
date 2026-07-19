@@ -858,6 +858,7 @@ BTWK_anglo_saxon_invasions.0010 = {
 		add_character_modifier = BTWK_anglia_unstable_realm
 		custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
 		create_story = BTWK_collapse_of_anglia_story
+		create_story = BTWK_aelle_story
 	}
 	
 	option = {
@@ -957,9 +958,16 @@ BTWK_anglo_saxon_invasions.0011 = {
 			remove_variable = anglia_post_aelle_crisis
 			remove_variable = title_has_been_created
 		}
-		activate_struggle_catalyst = {
-			catalyst = catalyst_east_anglia_collapses
-			character = scope:former_king
+		hidden_effect = {
+			struggle:britannia_struggle ?= {
+				if = {
+					limit = { phase_has_catalyst = catalyst_east_anglia_collapses }
+					activate_struggle_catalyst = {
+						catalyst = catalyst_east_anglia_collapses
+						character = scope:former_king
+					}
+				}
+			}
 		}
 	}
 
@@ -1080,10 +1088,10 @@ BTWK_anglo_saxon_invasions.0101 = {
 		# Roll for chance of actually triggering the event
 		random = {
 			chance = {
-				value = 2.5
+				value = 2
 				if = {
 					limit = { year >= 540 }
-					add = 2.5
+					add = 3
 				}
 				if = {
 					limit = { year >= 545 }
@@ -1308,6 +1316,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 							REASON = flag:voluntary
 							FLAVOR_CHAR = scope:target_character
 						}
+						game_rule_create_spouse_and_children = { CHARACTER = scope:target_character LOCATION = scope:target_character }
 					}
 					scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
 				}
@@ -2088,7 +2097,11 @@ BTWK_anglo_saxon_invasions.0110 = {
 			limit = { is_ai = no }
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 300
+				levies = 400
+				men_at_arms = {
+					type = bowmen
+					men = 100
+				}
 				men_at_arms = {
 					type = pikemen_unit
 					men = 150
@@ -2096,6 +2109,10 @@ BTWK_anglo_saxon_invasions.0110 = {
 				men_at_arms = {
 					type = landsknecht
 					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
@@ -2104,22 +2121,22 @@ BTWK_anglo_saxon_invasions.0110 = {
 		else = {
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 500
+				levies = 700
 				men_at_arms = {
 					type = bowmen
-					men = 150
-				}
-				men_at_arms = {
-					type = pikemen_unit
-					men = 100
-				}
-				men_at_arms = {
-					type = landsknecht
 					men = 200
 				}
 				men_at_arms = {
+					type = pikemen_unit
+					men = 150
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 250
+				}
+				men_at_arms = {
 					type = onager
-					men = 15
+					men = 20
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
@@ -2452,6 +2469,10 @@ BTWK_anglo_saxon_invasions.9002 = {
 			holder = {
 				is_unromanized_germanic_culture_trigger = yes
 				government_has_flag = government_is_tribal
+				OR = {
+					top_liege = { is_unromanized_germanic_culture_trigger = yes }
+					vassal_contract_has_flag = has_laetus_contract
+				}
 			}
 		}
 	}

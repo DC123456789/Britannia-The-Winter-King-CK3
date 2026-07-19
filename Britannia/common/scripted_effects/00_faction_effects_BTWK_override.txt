@@ -297,6 +297,23 @@ successful_popular_revolt_outcome_effect = {
 							save_scope_as = old_holder
 							switch = {
 								trigger = government_has_flag
+								# BTWK
+								government_is_pre_feudal = {
+									save_scope_value_as = { name = old_government value = flag:pre_feudal }
+								}
+								government_is_sub_roman_admin = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
+								}
+								government_is_sub_roman_feudal = {
+									save_scope_value_as = { name = old_government value = flag:sub_roman_feudal }
+								}
+								government_is_germanic_admin = {
+									save_scope_value_as = { name = old_government value = flag:germanic_admin }
+								}
+								government_is_germanic_feudal = {
+									save_scope_value_as = { name = old_government value = flag:germanic_feudal }
+								}
+								
 								government_is_administrative = {
 									save_scope_value_as = { name = old_government value = flag:admin }
 								}
@@ -329,22 +346,6 @@ successful_popular_revolt_outcome_effect = {
 								}
 								government_is_mandala = {
 									save_scope_value_as = { name = old_government value = flag:mandala }
-								}
-								# BTWK
-								government_is_pre_feudal = {
-									save_scope_value_as = { name = old_government value = flag:pre_feudal }
-								}
-								government_is_sub_roman_admin = {
-									save_scope_value_as = { name = old_government value = flag:sub_roman_admin }
-								}
-								government_is_sub_roman_feudal = {
-									save_scope_value_as = { name = old_government value = flag:sub_roman_feudal }
-								}
-								government_is_germanic_admin = {
-									save_scope_value_as = { name = old_government value = flag:germanic_admin }
-								}
-								government_is_germanic_feudal = {
-									save_scope_value_as = { name = old_government value = flag:germanic_feudal }
 								}
 							}
 							scope:next_leader = { set_variable = { name = old_government target = scope:old_government } }
@@ -411,6 +412,11 @@ successful_popular_revolt_outcome_effect = {
 						}
 						# BTWK - Block kingdom creation if they're the wrong culture
 						BTWK_populist_revolt_create_kingdom_culture_check_trigger = { KINGDOM = primary_title.kingdom }
+						# BTWK - Stop Anglo-Saxon kingdoms from being created too early
+						trigger_if = {
+							limit = { primary_title.kingdom = { has_variable = is_anglo_saxon_kingdom } }
+							primary_title.kingdom = { has_variable = title_has_been_created }
+						}
 					}
 					create_title_and_vassal_change = {
 						type = conquest_populist
