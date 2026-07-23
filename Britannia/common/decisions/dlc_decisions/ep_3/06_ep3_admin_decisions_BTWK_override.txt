@@ -862,21 +862,11 @@ convert_to_administrative_decision = {
 				subject = root
 				faith = { NOT = { has_doctrine_parameter = unreformed } }
 			}
-			OR = {
-				AND = {
-					custom_tooltip = {
-						text = king_tier_tt
-						primary_title.tier >= tier_kingdom
-					}
-					realm_size >= 25
-				}
-				custom_description = {
-					text = has_any_neighbouring_bureaucratic_government_realm
-					any_neighboring_and_across_water_top_liege_realm_owner = {
-						government_has_flag = government_is_administrative
-					}
-				}
+			custom_tooltip = {
+				text = king_tier_tt
+				primary_title.tier >= tier_kingdom
 			}
+			realm_size >= 75
 			capital_province.county = {
 				development_level >= 15
 			}
@@ -912,7 +902,7 @@ convert_to_administrative_decision = {
 				}
 			}
 			trigger_if = {
-				limit = { has_cultural_pillar = heritage_brythonic }
+				limit = { culture = { has_cultural_pillar = heritage_brythonic } }
 				custom_description = {
 					text = end_of_britannia_has_not_triggered
 					NOT = { has_global_variable = end_of_britannia } 
@@ -932,7 +922,7 @@ convert_to_administrative_decision = {
 			root = { save_temporary_scope_as = root_scope }
 			trigger_if = {
 				limit = { is_romanized_government_culture_trigger = yes }
-				realm_size >= 45
+				realm_size >= 75
 				BTWK_reform_from_pre_feudal_innovations_trigger = yes
 			}
 			trigger_else = {
