@@ -1232,9 +1232,9 @@ BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is ov
 				trigger = {
 					NOT = { is_spouse_of = character:19 }
 					NOT = { has_trait = restricted_marriage }
-					NOT = { has_variable = uther_finished_glevum}
+					NOT = { has_variable = uther_finished_glevum }
 				}
-				desc = BTWK_story_event.0114.desc.others_alliance
+				desc = BTWK_story_event.0114.desc.desc_alliance_else		# Shares loc with other suitors for now
 			}
 
 			# UTHER
@@ -1634,6 +1634,8 @@ BTWK_story_event.0112 = {
 		name = BTWK_story_event.0112.a
 		if = {
 			limit = { NOT = { has_variable = received_BTWK_story_event_0112 } }
+			remove_trait = bastard
+			add_trait_force_tooltip = bastard_founder			# Stops Arthur's house from automatically changing once he has a legitimate child
 			create_title_and_vassal_change = {
 				type = granted
 				save_scope_as = arthur_pendragon_durnac
@@ -1972,6 +1974,7 @@ BTWK_story_event.0300 = {
 		remove_trait = restricted_marriage
 		scope:guinevere = { remove_trait = restricted_marriage }
 		marry = scope:guinevere
+		set_relation_lover = scope:guinevere
 		# Get rivalry with Gorfyddyd
 		if = {
 			limit = { character:16 ?= { is_alive = yes } }
