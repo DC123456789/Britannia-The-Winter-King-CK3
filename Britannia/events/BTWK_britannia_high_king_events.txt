@@ -4094,7 +4094,14 @@ BTWK_britannia_high_king.0189 = {
 	}
 	
 	immediate = {
-		scope:high_king = { save_scope_as = background_throne_room_scope }
+		title:e_britannia.holder = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { scope:high_king = { has_title = title:e_britannia } }
+			scope:high_king.player_heir = { save_scope_as = high_king_player_heir }
+		}
+		else = {
+			title:e_britannia.holder = { save_scope_as = high_king_player_heir }
+		}
 		if = {
 			limit = { this = scope:high_king }
 			BTWK_britannia_high_kingship_remove_authority_effect = { 
