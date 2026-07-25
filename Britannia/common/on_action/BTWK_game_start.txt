@@ -477,6 +477,11 @@ BTWK_character_setup = {
 					size = 5
 				}
 			}
+			# Move East Anglian capital to Elmham
+			title:k_east_anglia = {
+				set_variable = custom_capital
+				set_capital_county = title:c_elmham
+			}
 			# Also give Cerdic some extra troops to help him out
 			character:86 ?= {
 				create_maa_regiment = {
@@ -3177,7 +3182,7 @@ BTWK_building_setup = {
 				limit = { 
 					has_holding_type = tribal_holding
 					title_province = { geographical_region = btwk_world_britannia }
-				}				
+				}
 				add_building = palisades_01
 				if = {
 					limit = { 
@@ -3192,6 +3197,14 @@ BTWK_building_setup = {
 					chance = 50
 					add_building = war_camps_01
 				}
+			}
+			
+			if = {
+				limit = { 
+					has_holding = yes
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				generate_building = yes
 			}
 		}
 		

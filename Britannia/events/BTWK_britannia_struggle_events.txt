@@ -653,6 +653,7 @@ BTWK_anglo_saxon_invasions.0001 = {
 			set_variable = force_conqueror_ignore_rules
 			set_variable = conqueror_cannot_be_inherited
 			create_story = story_conqueror
+			create_story = BTWK_aelle_story
 		}
 	}
 }
@@ -858,7 +859,6 @@ BTWK_anglo_saxon_invasions.0010 = {
 		add_character_modifier = BTWK_anglia_unstable_realm
 		custom_tooltip = BTWK_anglo_saxon_invasions.0010.a.tt
 		create_story = BTWK_collapse_of_anglia_story
-		create_story = BTWK_aelle_story
 	}
 	
 	option = {
@@ -957,6 +957,8 @@ BTWK_anglo_saxon_invasions.0011 = {
 		title:k_east_anglia = {
 			remove_variable = anglia_post_aelle_crisis
 			remove_variable = title_has_been_created
+			set_variable = custom_capital
+			set_capital_county = title:c_rendlesham
 		}
 		hidden_effect = {
 			struggle:britannia_struggle ?= {
@@ -1962,6 +1964,14 @@ BTWK_anglo_saxon_invasions.0110 = {
 					cb = independence_war
 					target = top_liege
 				}
+				random_character_war = {
+					limit = { 
+						primary_attacker = root
+						primary_defender = root.top_liege
+						using_cb = independence_war
+					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+				}
 			}
 		}
 		# If a landless adventurer, invade for a target coastal/frontier county + some neighbours
@@ -2124,11 +2134,11 @@ BTWK_anglo_saxon_invasions.0110 = {
 				levies = 700
 				men_at_arms = {
 					type = bowmen
-					men = 200
+					men = 250
 				}
 				men_at_arms = {
 					type = pikemen_unit
-					men = 150
+					men = 200
 				}
 				men_at_arms = {
 					type = landsknecht

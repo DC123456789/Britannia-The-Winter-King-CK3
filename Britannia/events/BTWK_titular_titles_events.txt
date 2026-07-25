@@ -389,7 +389,16 @@ titular_titles_anglosaxon.0005 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = titular_titles_anglosaxon.0005.t
-	desc = titular_titles_anglosaxon.0005.desc
+	desc = {
+		desc = titular_titles_anglosaxon.0005.desc.1
+		first_valid = {
+			triggered_desc = {
+				trigger = { exists = title:k_wessex.holder }
+				desc = titular_titles_anglosaxon.0005.desc.2.wessex_exists
+			}
+			desc = titular_titles_anglosaxon.0005.desc.2.not_wessex_exists
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -460,6 +469,14 @@ titular_titles_anglosaxon.0005 = {
 			text = titular_titles_anglosaxon.0005.a.former_liege
 		}
 		name = {
+			trigger = {
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
+				}
+			}
 			text = titular_titles_anglosaxon.0005.a
 		}
 	}
@@ -514,7 +531,20 @@ titular_titles_anglosaxon.0007 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = titular_titles_anglosaxon.0007.t
-	desc = titular_titles_anglosaxon.0007.desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:conqueror = {
+						has_title = title:k_mercia
+						NOT = { has_title = title:d_berkshire.de_jure_liege }
+					}
+				}
+				desc = titular_titles_anglosaxon.0007.desc.wessex
+			}
+			desc = titular_titles_anglosaxon.0007.desc.wessex
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -557,10 +587,35 @@ titular_titles_anglosaxon.0007 = {
 					this = scope:conqueror
 					any_liege_or_above = { this = scope:conqueror }
 				}
+				scope:conqueror = {
+					has_title = title:k_mercia
+					NOT = { has_title = title:d_berkshire.de_jure_liege }
+				}
 			}
-			text = titular_titles_anglosaxon.0007.a.conqueror
+			text = titular_titles_anglosaxon.0007.a.conqueror.mercia
 		}
 		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+				NOT = {
+					scope:conqueror = {
+						has_title = title:k_mercia
+						NOT = { has_title = title:d_berkshire.de_jure_liege }
+					}
+				}
+			}
+			text = titular_titles_anglosaxon.0007.a.conqueror.wessex
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
 			text = titular_titles_anglosaxon.0007.a
 		}
 	}
@@ -1241,7 +1296,7 @@ titular_titles_roman.0002 = {
 	}
 }
 
-# Creation of kingdom
+# Creation of Roman province
 titular_titles_roman.0003 = {
 	type = character_event
 	content_source = dlc_BTWK
@@ -1256,7 +1311,7 @@ titular_titles_roman.0003 = {
 	}
 	
 	immediate = {
-		save_scope_as = founder
+		top_liege = { save_scope_as = founder }
 		trigger_event = { id = titular_titles_roman.0004 }
 		every_player = {
 			limit = { NOT = { this = PREV } }
@@ -1273,8 +1328,40 @@ titular_titles_roman.0004 = {
 	desc = {
 		first_valid = {
 			# TODO Want special loc for each province
+			triggered_desc = {
+				trigger = { scope:title = title:k_maxima_cesariensis }
+				desc = titular_titles_roman.0004.desc.maxima_cesariensis
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_flavia_cesariensis }
+				desc = titular_titles_roman.0004.desc.flavia_cesariensis
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_britannia_prima }
+				desc = titular_titles_roman.0004.desc.britannia_prima
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_britannia_secunda }
+				desc = titular_titles_roman.0004.desc.britannia_secunda
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:title = title:k_valentia
+					title:k_valentia = {
+						any_direct_de_jure_vassal_title = {
+							NOT = { title_capital_county.capital_province = { geographical_region = btwk_custom_roman_britain } }
+						}
+					}
+				}
+				desc = titular_titles_roman.0004.desc.valentia_extended
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_valentia }
+				desc = titular_titles_roman.0004.desc.valentia
+			}
 			desc = titular_titles_roman.0004.desc.fallback
 		}
+		desc = titular_titles_roman.0004.desc.outro
 	}
 	theme = realm
 	override_background = terrain
@@ -1287,7 +1374,7 @@ titular_titles_roman.0004 = {
 	option = {
 		name = {
 			trigger = { 
-				has_title = scope:title
+				this = scope:founder
 			}
 			text = titular_titles_roman.0004.a.founder
 		}
@@ -1325,6 +1412,10 @@ titular_titles_roman.0004 = {
 		name = {
 			text = titular_titles_roman.0004.a
 		}
+		if = {
+			limit = { this = scope:founder }
+			dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
+		|
 	}
 }
 
@@ -2326,6 +2417,7 @@ titular_titles_briton.0019 = {
 	title = titular_titles_briton.0019.t
 	desc = titular_titles_briton.0019.desc
 	theme = realm
+	window = big_event_window
 	
 	left_portrait = {
 		character = scope:founder

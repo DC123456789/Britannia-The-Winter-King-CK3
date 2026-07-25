@@ -432,3 +432,345 @@ on_declared_war = {
 	
 	intrigue_duel_on_attack_effect = yes
 }
+
+on_claimant_faction_war_win_common = {
+	$DEFENDER$ = {
+		if = {
+			limit = {
+				is_tributary = yes
+				exists = suzerain
+				$CLAIMANT$ = {
+					is_tributary = no
+					OR = {
+						is_ruler = no
+						is_vassal_or_below_of = $DEFENDER$
+					}
+				}
+			}
+			suzerain = { save_scope_as = handover_suzerain }
+		}
+	}
+	$CLAIMANT$ = {
+		save_scope_as = the_claimant
+	}
+	
+	# If the claimant is the prisoner of the defender, free the claimant (it doesn't make much sense to leave the new king in the old king's dungeon)
+	scope:the_claimant = {
+		if = {
+			limit = {
+				is_imprisoned_by = $DEFENDER$
+			}
+			release_from_prison = yes
+		}
+	}
+
+	# Add mutual opinion bonuses between claimant and faction members, as well as a hook on the claimant if possible.
+	$ATTACKER$.joined_faction = {
+		every_faction_member = {
+			custom = FACTION_CLAIMANT_EVERY_FACTION_MEMBER
+			limit = {
+				NOT = { this = $ATTACKER$.joined_faction.special_character }
+			}
+			hidden_effect = {
+				add_opinion = {
+					modifier = claimant_faction_member_opinion
+					target = $ATTACKER$.joined_faction.special_character
+				}
+				reverse_add_opinion = {
+					modifier = claimant_faction_claimant_opinion
+					target = $ATTACKER$.joined_faction.special_character
+				}
+			}
+			if = {
+				limit = {
+					can_add_hook = {
+						type = favor_hook
+						target = $ATTACKER$.joined_faction.special_character
+					}
+				}
+				add_hook = {
+					type = favor_hook
+					target = $ATTACKER$.joined_faction.special_character
+				}
+			}
+			# Struggle boost
+			if = {
+				limit = {
+					culture = $ATTACKER$.joined_faction.special_character.culture
+					any_character_struggle = {
+						involvement = involved
+						has_struggle_phase_parameter = struggle_prestige_install_same_culture_claimant
+					}
+				}
+				add_prestige = major_prestige_gain
+			}
+			
+			# Save the number of faction members for use further down
+			add_to_list = num_faction_members
+		}
+	}
+
+	# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the title
+	$DEFENDER$ = { save_scope_as = defender_scope }
+	scope:the_claimant = {
+		if = {
+			limit = { is_ruler = no }
+			BTWK_flag_new_government_type_for_unlanded = {
+				INHERIT_SCOPE = scope:defender_scope
+			}
+		}
+	}
+	
+	# Give the claimant their new title.
+	create_title_and_vassal_change = {
+		type = faction_demand
+		save_scope_as = change
+		add_claim_on_loss = yes
+	}
+
+	# Ceremonial Liege
+	if = {
+		limit = {
+			exists = top_liege.primary_title.var:administrative_ui_special_title
+			scope:faction_targeted_title = $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
+		}
+		$DEFENDER$ = {
+			every_held_title = {
+				limit = {
+					is_noble_family_title = no
+					is_landless_type_title = no
+					tier >= scope:faction_targeted_title.tier
+				}
+				add_to_list = faction_titles
+			}
+		}
+	}
+	every_in_list = {
+		list = $TARGET_TITLES$
+		add_to_list = faction_titles
+		holder = {
+			save_scope_as = target_holder
+		}
+	}
+	scope:target_holder ?= {
+		if = {
+			limit = {
+				top_liege = this
+				government_allows = administrative
+				primary_title = { is_in_list = faction_titles }
+			}
+			every_held_title = {
+				title_tier > barony
+				limit = {
+					is_noble_family_title = no
+				}
+				add_to_list = faction_titles
+			}
+		}
+	}
+	ordered_in_list = {
+		list = $TARGET_TITLES$
+		position = 0
+		order_by = tier
+		save_scope_as = target_title
+	}
+	$ATTACKER$.joined_faction = {
+		every_faction_county_member = {
+			limit = {
+				NOT = { is_in_list = faction_titles }
+			}
+			add_to_list = faction_titles
+		}
+	}
+
+	setup_claim_cb = {
+		titles = faction_titles
+		attacker = $ATTACKER$
+		defender = $DEFENDER$
+		claimant = scope:the_claimant
+		change = scope:change
+		civil_war = yes
+	}
+
+	# Ensure that the liege structure is preserved
+	if = {
+		limit = {
+			scope:target_title.holder = { top_liege != this }
+			scope:the_claimant.primary_title.tier < scope:target_title.tier
+		}
+		scope:the_claimant = {
+			change_liege = {
+				liege = scope:target_title.holder.liege
+				change = scope:change
+			}
+		}
+	}
+
+	# Preserve Grandeur
+	if = {
+		limit = {
+			scope:target_title.holder = {
+				has_royal_court = yes
+				has_dlc_feature = royal_court
+			}
+			scope:the_claimant = {
+				has_royal_court = no
+			}
+		}
+		scope:the_claimant = {
+			set_variable = {
+				name = previous_holder_grandeur_value
+				value = scope:target_title.holder.court_grandeur_current
+			}
+		}
+	}
+	
+	hidden_effect = {
+		if = {
+			limit = {
+				exists = scope:target_title.holder.dynasty
+				exists = scope:the_claimant.dynasty
+				scope:target_title.holder = {
+					has_variable = conqueror
+					scope:target_title.holder.dynasty = scope:the_claimant.dynasty
+				}
+				scope:the_claimant = {
+					OR = {
+						is_ai = no
+						ai_has_cautious_personality = no
+					}
+					NOT = { has_variable = conqueror }
+				}
+			}
+			scope:the_claimant = {
+				if = {
+					limit = {
+						is_ai = no
+					}
+					trigger_event = {
+						id = conqueror.0001
+						days = 10
+					}
+				}
+				else = {
+					trigger_event = conqueror.0001
+				}
+			}
+		}
+	}
+
+	resolve_title_and_vassal_change = scope:change
+		
+	# BTWK - Now actually apply the government change
+	scope:the_claimant = { BTWK_apply_new_government_type_for_unlanded = yes }
+	
+	# We give you decent Legitimacy so you don't get immediately deposed - people _really_ want you in the throne
+	# Can you even get Legitimacy?
+	if = {
+		limit = {
+			scope:the_claimant = {
+				is_valid_for_legitimacy_change = yes
+			}
+		}
+		# Per tier
+		if = {
+			limit = {
+				scope:target_title.tier = tier_empire
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 1000
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:target_title.tier = tier_kingdom
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 750
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:target_title.tier = tier_duchy
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 500
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else = {
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 300
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		# Per number of faction members
+		if = {
+			limit = {
+				list_size:num_faction_members > 0
+				scope:the_claimant = {
+					is_valid_for_legitimacy_change = yes
+				}
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = list_size:num_faction_members
+					multiply = 50
+				}
+			}
+		}
+		
+	}
+
+	# Add Appropriate Grandeur
+	scope:the_claimant = {
+		if = {
+			limit = {
+				exists = var:previous_holder_grandeur_value
+				has_royal_court = yes
+				has_dlc_feature = royal_court
+			}
+			hidden_effect = {
+				change_current_court_grandeur = -100 # Reset to 0
+				change_current_court_grandeur = var:previous_holder_grandeur_value
+				remove_variable = previous_holder_grandeur_value
+			}
+			change_current_court_grandeur = massive_court_grandeur_gain # Gain a bonus to Grandeur for winning a claim faction
+		}
+	}
+
+	# Byzantine flavor
+	if = {
+		limit = {
+			scope:target_title = title:e_byzantium
+			has_ep3_dlc_trigger = yes
+		}
+		scope:the_claimant = { 
+			trigger_event = {
+				id = ep3_emperor_yearly.2030
+				days = 15
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			exists = scope:handover_suzerain
+		}
+		start_tributary_interaction_effect = {
+			TRIBUTARY = scope:the_claimant
+			SUZERAIN = scope:handover_suzerain
+		}
+	}
+
+}

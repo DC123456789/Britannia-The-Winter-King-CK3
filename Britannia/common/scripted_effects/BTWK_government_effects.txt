@@ -61,3 +61,93 @@ remove_tribal_fame_effect = {
 		remove_character_modifier = tribal_fame_negative
 	}
 }
+
+BTWK_flag_new_government_type_for_unlanded = {
+	set_variable = { name = claimant_needs_government_assigned value = yes days = 1 }
+	# Not allowed to inherit republican or theocratic government types - if we somehow get something else, fall back to something appropriate
+	if = {
+		limit = {
+			OR = {
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_republic }
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_theocracy }
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_holy_order }
+			}
+		}
+		set_variable = { name = claimant_assign_default_government value = yes days = 1 }
+	}
+	else = {
+		if = {
+			limit = { $INHERIT_SCOPE$ = { government_has_flag = government_is_administrative } }
+			set_variable = { name = claimant_new_government_type_is_admin value = yes }
+		}
+		set_variable = { name = claimant_new_government_type value = $INHERIT_SCOPE$.government_type days = 1 }
+	}
+}
+
+BTWK_apply_new_government_type_for_unlanded = {
+	if = {
+		limit = { has_variable = claimant_needs_government_assigned }
+		if = {
+			limit = { has_variable = claimant_assign_default_government }
+			if = {
+				limit = {
+					capital_county.title_province = {
+						OR = {
+							has_holding_type = nomad_holding
+							has_holding_type = herder_holding
+						}
+					}
+				}
+				change_government = nomad_government
+			}
+			else_if = {
+				limit = { 
+					capital_county.title_province = {
+						has_holding_type = tribal_holding
+					}
+				}
+				change_government = tribal_government
+			}
+			else_if = {
+				# If the liege is feudal-type (but not admin-type), adopt their government
+				liege ?= {
+					government_has_flag = government_is_feudal
+				}
+				change_government = liege.government_type
+			}
+			else = {
+				# Fallback to folkright
+				change_government = pre_feudal_government
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = claimant_new_government_type_is_admin 
+			}
+			# If the old government was admin, only keep the government if you are independent or if your new liege is also admin
+			if = {
+				limit = {
+					OR = {
+						is_independent_ruler = yes
+						liege ?= { government_has_flag = government_is_administrative }
+					}
+				}
+			}
+			# Otherwise, if you have a liege, adopt their (feudal-type) government
+			else_if = {
+				limit = {
+					liege ?= { government_has_flag = government_is_feudal }
+				}
+				change_government = liege.government_type
+			}
+			# Admin always falls back to feudal, not folkright
+			else = {
+				change_government = feudal_government
+			}
+		}
+		# Otherwise, directly inherit your government from the previous holder
+		else = {
+			change_government = this.var:claimant_new_government_type
+		}
+	}
+}

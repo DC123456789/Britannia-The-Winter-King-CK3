@@ -424,7 +424,12 @@ convert_whole_realm_to_feudalism_decision = {
 			development_level >= convert_to_feudalism_development_requirement
 		}
 		trigger_if = {
-			limit = { is_ai = no }
+			limit = { 
+				OR = {
+					is_ai = no 
+					current_year < 530		# So Romano-Britons can't reform too early
+				}
+			}
 			OR = {
 				custom_description = {
 					text = capital_has_building_requirements_for_pre_feudal
@@ -446,12 +451,12 @@ convert_whole_realm_to_feudalism_decision = {
 		trigger_else = {
 			OR = {
 				capital_province = {
-					has_building = tribe_02
-					combined_building_level >= 7		
+					# has_building = tribe_02
+					combined_building_level >= 6		
 				}
 				capital_province = {
 					has_building = castle_01
-					combined_building_level >= 5
+					combined_building_level >= 3
 				}
 			}
 		}
