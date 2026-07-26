@@ -1038,10 +1038,55 @@ titular_titles_anglosaxon.0101 = {
 	content_source = dlc_BTWK
 	title = titular_titles_anglosaxon.0101.t
 	desc = {
+		desc = titular_titles_anglosaxon.0101.desc.intro
 		first_valid = {
-			# TODO Want special loc for each kingdom
-			desc = titular_titles_anglosaxon.0101.desc.fallback
+			triggered_desc = {
+				trigger = { scope:title = title:k_cantia }
+				desc = titular_titles_anglosaxon.0101.desc.body.cantia
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_sussex }
+				desc = titular_titles_anglosaxon.0101.desc.body.sussex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_eastseaxe }
+				desc = titular_titles_anglosaxon.0101.desc.body.essex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_east_anglia }
+				desc = titular_titles_anglosaxon.0101.desc.body.east_anglia
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_mercia }
+				desc = titular_titles_anglosaxon.0101.desc.body.mercia
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:title = title:k_wessex
+					scope:title = { has_variable = jutish_wessex }
+				}
+				desc = titular_titles_anglosaxon.0101.desc.body.wessex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_wessex }
+				desc = titular_titles_anglosaxon.0101.desc.body.wessex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_deira }
+				desc = titular_titles_anglosaxon.0101.desc.body.deira
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_bernicia }
+				desc = titular_titles_anglosaxon.0101.desc.body.bernicia
+			}
+			# Northumbria and Lindsey have their own special events
+			triggered_desc = {
+				trigger = { scope:title = title:k_wales }
+				desc = titular_titles_anglosaxon.0101.desc.body.wales
+			}
+			desc = titular_titles_anglosaxon.0101.desc.body.fallback
 		}
+		desc = titular_titles_anglosaxon.0101.desc.outro
 	}
 	theme = realm
 	override_background = terrain
@@ -1083,12 +1128,6 @@ titular_titles_anglosaxon.0101 = {
 		}
 		name = {
 			trigger = { 
-				culture = { 
-					OR = {
-						has_cultural_pillar = heritage_brythonic 
-						has_cultural_pillar = heritage_latin
-					}
-				}
 				NOR = { 
 					has_title = scope:title
 					any_liege_or_above = { has_title = scope:title }
@@ -1097,6 +1136,19 @@ titular_titles_anglosaxon.0101 = {
 			text = titular_titles_anglosaxon.0101.a.briton_roman
 		}
 		name = {
+			trigger = {
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_west_germanic
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+			}
 			text = titular_titles_anglosaxon.0101.a
 		}
 		if = {
@@ -1326,23 +1378,23 @@ titular_titles_roman.0004 = {
 	content_source = dlc_BTWK
 	title = titular_titles_roman.0004.t
 	desc = {
+		desc = titular_titles_roman.0004.desc.intro
 		first_valid = {
-			# TODO Want special loc for each province
 			triggered_desc = {
 				trigger = { scope:title = title:k_maxima_cesariensis }
-				desc = titular_titles_roman.0004.desc.maxima_cesariensis
+				desc = titular_titles_roman.0004.desc.body.maxima_cesariensis
 			}
 			triggered_desc = {
 				trigger = { scope:title = title:k_flavia_cesariensis }
-				desc = titular_titles_roman.0004.desc.flavia_cesariensis
+				desc = titular_titles_roman.0004.desc.body.flavia_cesariensis
 			}
 			triggered_desc = {
 				trigger = { scope:title = title:k_britannia_prima }
-				desc = titular_titles_roman.0004.desc.britannia_prima
+				desc = titular_titles_roman.0004.desc.body.britannia_prima
 			}
 			triggered_desc = {
 				trigger = { scope:title = title:k_britannia_secunda }
-				desc = titular_titles_roman.0004.desc.britannia_secunda
+				desc = titular_titles_roman.0004.desc.body.britannia_secunda
 			}
 			triggered_desc = {
 				trigger = { 
@@ -1353,13 +1405,13 @@ titular_titles_roman.0004 = {
 						}
 					}
 				}
-				desc = titular_titles_roman.0004.desc.valentia_extended
+				desc = titular_titles_roman.0004.desc.body.valentia_extended
 			}
 			triggered_desc = {
 				trigger = { scope:title = title:k_valentia }
 				desc = titular_titles_roman.0004.desc.valentia
 			}
-			desc = titular_titles_roman.0004.desc.fallback
+			desc = titular_titles_roman.0004.desc.body.fallback
 		}
 		desc = titular_titles_roman.0004.desc.outro
 	}
@@ -1369,6 +1421,18 @@ titular_titles_roman.0004 = {
 	left_portrait = {
 		character = scope:founder
 		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:title = {
+			random_direct_de_jure_vassal_title = {
+				save_scope_as = vassal_duchy_1
+			}
+			random_direct_de_jure_vassal_title = {
+				limit = { this != scope:vassal_duchy_1 }
+				save_scope_as = vassal_duchy_2
+			}
+		}
 	}
 
 	option = {
@@ -1415,7 +1479,7 @@ titular_titles_roman.0004 = {
 		if = {
 			limit = { this = scope:founder }
 			dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
-		|
+		}
 	}
 }
 

@@ -126,8 +126,14 @@ spreading_of_christianity.0020 = {
 	title = {
 		first_valid = {
 			triggered_desc = {
-				trigger = { 
-					religion = religion:christianity_religion
+				trigger = {
+					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_0 }
+					global_var:soc_current_phase_change = flag:decreased
+				}
+				desc = spreading_of_christianity.0020.t.phase_0.decreased
+			}
+			triggered_desc = {
+				trigger = {
 					global_var:soc_current_phase_change = flag:decreased
 				}
 				desc = spreading_of_christianity.0020.t.decreased
@@ -203,7 +209,7 @@ spreading_of_christianity.0020 = {
 					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
 					global_var:soc_current_phase_change = flag:increased
 				}
-				desc = spreading_of_christianity.0020.desc.phase_3.increased.non_christian
+				desc = spreading_of_christianity.0020.desc.phase_2.increased.non_christian
 			}
 			triggered_desc = {
 				trigger = { 
@@ -219,7 +225,7 @@ spreading_of_christianity.0020 = {
 					scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_2 }
 					global_var:soc_current_phase_change = flag:decreased
 				}
-				desc = spreading_of_christianity.0020.desc.phase_2.decreased.non_christian
+				desc = spreading_of_christianity.0020.desc.phase_2.decreased.christian
 			}
 			triggered_desc = {
 				trigger = { 
@@ -273,8 +279,17 @@ spreading_of_christianity.0020 = {
 	}
 	
 	theme = realm
-	override_background = { 		# TODO
+	override_background = {
 		reference = holy_site_christian
+		trigger = {
+			global_var:soc_current_phase_change = flag:increased
+		}
+	}
+	override_background = {
+		reference = temple_background
+		trigger = {
+			global_var:soc_current_phase_change = flag:decreased
+		}
 	}
 	
 	immediate = {
@@ -313,6 +328,14 @@ spreading_of_christianity.0020 = {
 							global_var:soc_current_phase_change = flag:decreased
 						}
 						desc = spreading_of_christianity.0020.a.decreased.christian
+					}
+					triggered_desc = {
+						trigger = { 
+							religion != religion:christianity_religion
+							global_var:soc_current_phase_change = flag:decreased
+							scope:current_sub_region = { sub_region_current_phase = spreading_of_christianity_phase_0 }
+						}
+						desc = spreading_of_christianity.0020.a.decreased.non_christian.phase_0
 					}
 					triggered_desc = {
 						trigger = { 
