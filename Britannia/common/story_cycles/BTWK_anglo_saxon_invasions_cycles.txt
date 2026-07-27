@@ -739,12 +739,12 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 		save_scope_as = ending_story
 		this.var:target_kingdom = { save_scope_as = target_kingdom }
 		# If the story owner was defeated or disqualified, then we get a second chance to trigger
+		# the story again
 		if = {
 			limit = {
 				has_variable = rise_of_anglo_saxon_kingdom_story_defeated
 			}
 			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0113 }
-			# the story again
 			this.var:target_kingdom = { 
 				if = {
 					limit = { has_variable = rise_of_anglo_saxon_kingdom_story_failed_once }
@@ -765,7 +765,6 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			}
 		}
 		# If the story ended by creating the target title, end silently
-		# TODO Add tooltip in the event for creating the title though
 		
 		# Disband all associated event troops
 		# Not for now as frankly the AI wastes them so quickly it barely matters
@@ -830,6 +829,8 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 							}
 						}
 					}
+					# Cannot ever win if you're the wrong culture
+					story_owner = { is_unromanized_germanic_culture_trigger = yes }
 				}
 				effect = {
 					end_story = yes
@@ -882,7 +883,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 					set_variable = rise_of_anglo_saxon_kingdom_story_defeated
 					end_story = yes
 				}
-			}	
+			}
 			# If you are a vassal or tributary, prioritize becoming independent first
 			triggered_effect = {
 				trigger = { 

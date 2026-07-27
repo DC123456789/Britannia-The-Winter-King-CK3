@@ -228,6 +228,12 @@ BTWK_on_title_gain = {
 						is_alive = no
 						scope:title.tier > highest_held_title_tier
 					}
+					OR = { 
+						scope:transfer_type ?= flag:inheritance 
+						scope:transfer_type ?= flag:abdication 
+						scope:transfer_type ?= flag:election 
+						scope:transfer_type ?= flag:faction_demand
+					}
 				}
 			}
 			save_scope_as = new_holder
