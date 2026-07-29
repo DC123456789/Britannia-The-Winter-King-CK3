@@ -12,6 +12,7 @@ game_rule_exclave_independence_effect = {
 			NOT = {
 				any_player = { is_vassal_or_below_of = scope:exclaver }
 			}
+			NOT = { has_variable = force_total_exclave_independence }
 		}
 		
 		remove_character_flag = delayed_cleanse
@@ -358,6 +359,7 @@ game_rule_exclave_independence_effect = {
 			NOT = {
 				any_player = { is_vassal_or_below_of = scope:exclaver }
 			}
+			NOT = { has_variable = force_total_exclave_independence }
 		}
 		
 		remove_character_flag = delayed_cleanse
@@ -703,6 +705,7 @@ game_rule_exclave_independence_effect = {
 			NOT = {
 				any_player = { is_vassal_or_below_of = scope:exclaver }
 			}
+			NOT = { has_variable = force_total_exclave_independence }
 		}
 		
 		remove_character_flag = delayed_cleanse
@@ -1015,6 +1018,7 @@ game_rule_exclave_independence_effect = {
 	else_if = { # Limited: Land connected to Capital, De Jure of Primary Title, or one gap away, as well as coastal
 		limit = {
 			has_game_rule = limited_exclave_independence
+			NOT = { has_variable = force_total_exclave_independence }
 		}
 		
 		remove_character_flag = delayed_cleanse
@@ -1357,6 +1361,7 @@ game_rule_exclave_independence_effect = {
 	else_if = { # Significant: Land connected to Capital or De Jure of Primary Title, and coastal
 		limit = {
 			has_game_rule = significant_exclave_independence
+			NOT = { has_variable = force_total_exclave_independence }
 		}
 		
 		remove_character_flag = delayed_cleanse
@@ -1690,29 +1695,56 @@ game_rule_exclave_independence_effect = {
 	}
 	else_if = { # Total: Only keep things connected to your capital, or coastal
 		limit = {
-			has_game_rule = total_exclave_independence
+			OR = {
+				has_game_rule = total_exclave_independence
+				has_variable = force_total_exclave_independence
+			}
 		}
 		
 		remove_character_flag = delayed_cleanse
-	
-		capital_province.county = {
-			every_connected_county = { # Start off by making a list of all disconnected Counties
-				invert = yes
-				max_naval_distance = 2000
-				add_to_list = disconnected_counties
-			}
-		}
 		
-		every_in_list = {
-			list = disconnected_counties
-			
-			limit = {
-				any_connected_county = {
-					NOT = { is_in_list = disconnected_counties }
-					max_naval_distance = 2000
+		if = {
+			limit = { has_variable = exclave_independence_reduced_distance }
+			capital_province.county = {
+				every_connected_county = { # Start off by making a list of all disconnected Counties
+					invert = yes
+					max_naval_distance = 1000
+					add_to_list = disconnected_counties
 				}
 			}
-			add_to_list = cull_naval_connection_counties
+			
+			every_in_list = {
+				list = disconnected_counties
+				
+				limit = {
+					any_connected_county = {
+						NOT = { is_in_list = disconnected_counties }
+						max_naval_distance = 1000
+					}
+				}
+				add_to_list = cull_naval_connection_counties
+			}
+		}
+		else = {
+			capital_province.county = {
+				every_connected_county = { # Start off by making a list of all disconnected Counties
+					invert = yes
+					max_naval_distance = 2000
+					add_to_list = disconnected_counties
+				}
+			}
+			
+			every_in_list = {
+				list = disconnected_counties
+				
+				limit = {
+					any_connected_county = {
+						NOT = { is_in_list = disconnected_counties }
+						max_naval_distance = 2000
+					}
+				}
+				add_to_list = cull_naval_connection_counties
+			}
 		}
 		
 		while = {

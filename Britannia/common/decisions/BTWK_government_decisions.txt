@@ -526,14 +526,18 @@ BTWK_convert_to_administrative_decision = {
 
 	is_shown = {
 		BTWK_admin_gov_enabled_trigger = yes
-		OR = {
-			government_has_flag = government_is_sub_roman
-			government_has_flag = government_is_germanic
-			AND = {
+		trigger_if = {
+			limit = {
 				top_liege != this
-				liege = {
-					has_government = administrative_government
-				}
+			}
+			liege = {
+				has_government = administrative_government
+			}
+		}
+		trigger_else = {
+			OR = {
+				government_has_flag = government_is_sub_roman
+				government_has_flag = government_is_germanic
 			}
 		}
 	}

@@ -960,6 +960,10 @@ BTWK_anglo_saxon_invasions.0011 = {
 			set_variable = custom_capital
 			set_capital_county = title:c_rendlesham
 		}
+		if = {
+			limit = { this = scope:former_king }
+			trigger_event = { id = BTWK_anglo_saxon_invasions.0013 delayed = yes }
+		}
 		hidden_effect = {
 			struggle:britannia_struggle ?= {
 				if = {
@@ -1028,6 +1032,23 @@ BTWK_anglo_saxon_invasions.0012 = {
 		title:k_east_anglia = { remove_variable = anglia_post_aelle_crisis }
 		add_prestige = 200
 		add_legitimacy = 100
+	}
+}
+
+# Trigger exclave independence after collapse - can't be in the immediate itself
+# as that triggers before the kingdom as actually destroyed
+BTWK_anglo_saxon_invasions.0013 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		set_variable = force_total_exclave_independence
+		set_variable = exclave_independence_reduced_distance
+		hidden_effect = {
+			game_rule_exclave_independence_effect = yes
+		}
+		remove_variable = force_total_exclave_independence
+		remove_variable = exclave_independence_reduced_distance
 	}
 }
 
@@ -2518,6 +2539,7 @@ BTWK_anglo_saxon_invasions.9002 = {
 					vassal_contract_has_flag = has_laetus_contract
 				}
 			}
+			NOT = { BTWK_has_negative_cultural_redoubt_modifier_trigger = yes }
 		}
 	}
 

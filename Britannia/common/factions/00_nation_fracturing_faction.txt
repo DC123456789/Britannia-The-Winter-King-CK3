@@ -19,7 +19,14 @@
 		
 		modifier = {
 			desc = "FACTION_REASON_BTWK_ANGLIA_UNSTABLE_REALM_NEG"
-			faction_power > faction_power_threshold
+			save_temporary_scope_value_as = {
+				name = faction_power_threshold_1_25
+				value = {
+					value = faction_power_threshold
+					multiply = 1.25
+				}
+			}
+			faction_power > scope:faction_power_threshold_1_25
 			faction_target = { has_character_modifier = BTWK_anglia_unstable_realm }
 			add = faction_discontent_for_extra_power
 		}
