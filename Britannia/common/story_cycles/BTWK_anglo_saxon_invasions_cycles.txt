@@ -947,6 +947,36 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				effect = {
 					remove_variable = attempting_second_revolt
 					story_owner = {
+						# Leave any confederations you are in
+						if = {
+							limit = { is_confederation_member = yes }
+							set_variable = {
+								name = left_confederation
+								value = root.confederation
+								years = 5
+							}
+							root.confederation = {
+								save_scope_as = confederation
+								every_confederation_member = {
+									limit = {
+										NOT = {
+											this = root
+										}
+									}
+									add_to_list = confederation_members
+								}
+							}							
+							save_scope_as = leaver
+							trigger_event = {
+								id = mpo_decisions_events.0002
+								days = 1
+							}
+						}
+						# If you become incapable, die and let your heir continue the conquest
+						if = {
+							limit = { has_trait = incapable }
+							death = natural
+						}
 						if = {
 							limit = { prestige < 400 }
 							add_prestige = 300

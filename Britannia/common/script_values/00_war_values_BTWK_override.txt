@@ -70,6 +70,7 @@ standard_truce_duration_days = {
 						CHAR = scope:defender
 					}
 				}
+				NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
 			}
 		}
 		add = 900
@@ -83,7 +84,14 @@ standard_truce_duration_days = {
 		subtract = 730
 	}
 	# A truce should at least give a 2-year breather.
-	min = 730
+	if = {
+		limit = { NOT = { scope:attacker = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story } } }
+		min = 730
+	}
+	# Lowered to 1.5 years if you have the Rise of Anglo-Saxon Kingdom story
+	else = {
+		min = 547
+	}
 	if = {
 		limit = {
 			scope:attacker = {
