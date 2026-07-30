@@ -68,6 +68,7 @@ conquests_culture_targets_ai_score_value = {
 					limit = { 
 						geographical_region = btwk_world_britannia
 						NOT = { geographical_region = btwk_custom_wales }
+						holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
 					}
 					add = 3
 				}
@@ -80,12 +81,18 @@ conquests_culture_targets_ai_score_value = {
 			}
 			# And particularly value counties that are already in e_aengland
 			if = {
-				limit = { empire = title:e_aengland }
+				limit = { 
+					empire = title:e_aengland
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+				}
 				add = 2
 			}
 			# Also counties that are required to form Anglo-Saxon duchies
 			if = {
-				limit = { has_variable = anglo_saxon_duchy_requirement }
+				limit = { 
+					has_variable = anglo_saxon_duchy_requirement
+					holder.top_liege = { is_unromanized_germanic_culture_trigger = no }
+				}
 				add = 1
 			}
 		}

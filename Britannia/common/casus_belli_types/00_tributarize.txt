@@ -600,6 +600,23 @@
 					}
 					add = 100
 				}
+				# Anglo-Saxon kings want to subjugate other Anglo-Saxons if they have no de jure pretensions
+				else_if = {
+					limit = {
+						OR = {
+							has_title = title:e_aengland
+							primary_title = { has_variable = is_anglo_saxon_kingdom }
+						}
+						BTWK_aengland_bretwalda_active_trigger = yes
+						scope:defender = { 
+							culture = { has_same_culture_heritage = scope:attacker.culture }
+							NOT = {
+								any_realm_de_jure_kingdom = { holder ?= scope:attacker }
+							}
+						}
+					}
+					add = 100
+				}
 				else_if = {
 					limit = {
 						NOT = { government_has_flag = government_is_mandala }
