@@ -1015,6 +1015,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 						# If you can, declare war on random neighbouring target in core area
 						# TODO May be too slow, maybe have 50% chance of getting a claim on two counties
 						# and declaring for both at once?
+						# Declare war in your core target area, prioritizing counties required for creating Anglo-Saxon duchies
 						ai_start_best_war = {
 							cb = {
 								claim_cb
@@ -1065,6 +1066,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 								}
 								trigger_else = {
 									scope:target_title = {
+										has_variable = anglo_saxon_duchy_requirement
 										scope:current_story = {
 											is_target_in_variable_list = {
 												name = core_target_counties
@@ -1082,7 +1084,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 								BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
 							}
 							on_failure = {
-								# Otherwise, if you can, declare war on random neighbouring target in extended area
+								# Otherwise, if you can, declare war on any neighbouring target in the core area
 								ai_start_best_war = {
 									cb = {
 										claim_cb
@@ -1093,8 +1095,9 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 									}
 									is_valid = {
 										scope:target_character = {
-											current_military_strength < prev.current_military_strength
+											current_military_strength < prev.one_and_a_quarter_times_current_military_strength
 										}
+										# Doesn't inherit scopes for some reason so we need to fetch the story again
 										any_owned_story = {
 											trigger_if = {
 												limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
@@ -1104,10 +1107,13 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 										trigger_if = {
 											limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
 											scope:target_character = {
+												# Ignore anyone else that has the Rise of Anglo-Saxon kingdom story,
+												# so we don't get e.g. Bernicia and Deira fighting each other
+												NOT = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story } 
 												any_realm_county = {
 													scope:current_story = {
 														is_target_in_variable_list = {
-															name = extended_target_counties
+															name = core_target_counties
 															target = prev
 														}
 													}
@@ -1120,7 +1126,7 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 												any_de_jure_county = {
 													scope:current_story = {
 														is_target_in_variable_list = {
-															name = extended_target_counties
+															name = core_target_counties
 															target = prev
 														}
 													}
@@ -1129,9 +1135,10 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 										}
 										trigger_else = {
 											scope:target_title = {
+												has_variable = anglo_saxon_duchy_requirement
 												scope:current_story = {
 													is_target_in_variable_list = {
-														name = extended_target_counties
+														name = core_target_counties
 														target = prev
 													}
 												}
@@ -1144,6 +1151,72 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 											save_scope_as = current_story
 										}
 										BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+									}
+									on_failure = {
+										# Otherwise, if you can, declare war on random neighbouring target in extended area
+										ai_start_best_war = {
+											cb = {
+												claim_cb
+												county_conquest_cb
+												duchy_conquest_cb
+												pre_feudal_subjugation_cb
+												de_jure_cb
+											}
+											is_valid = {
+												scope:target_character = {
+													current_military_strength < prev.current_military_strength
+												}
+												any_owned_story = {
+													trigger_if = {
+														limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+														save_temporary_scope_as = current_story
+													}
+												}
+												trigger_if = {
+													limit = { scope:casus_belli_type = casus_belli_type:pre_feudal_subjugation_cb }
+													scope:target_character = {
+														any_realm_county = {
+															scope:current_story = {
+																is_target_in_variable_list = {
+																	name = extended_target_counties
+																	target = prev
+																}
+															}
+														}
+													}
+												}
+												trigger_else_if = {
+													limit = { scope:target_title.tier > tier_county }
+													scope:target_title = {
+														any_de_jure_county = {
+															scope:current_story = {
+																is_target_in_variable_list = {
+																	name = extended_target_counties
+																	target = prev
+																}
+															}
+														}
+													}
+												}
+												trigger_else = {
+													scope:target_title = {
+														scope:current_story = {
+															is_target_in_variable_list = {
+																name = extended_target_counties
+																target = prev
+															}
+														}
+													}
+												}
+											}
+											on_success = {
+												random_owned_story = {
+													limit = { story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+													save_scope_as = current_story
+												}
+												BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
+											}
+										}
 									}
 								}
 							}
