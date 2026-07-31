@@ -440,14 +440,14 @@ BTWK_aengland_bretwalda.0020 = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					root = scope:former_bretwalda_player_heir
+					root = scope:former_bretwalda
 					is_close_or_extended_family_of = scope:former_bretwalda
 				}
 				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda_relative
 			}
 			triggered_desc = {
 				trigger = {
-					root = scope:former_bretwalda_player_heir
+					root = scope:former_bretwalda
 				}
 				desc = BTWK_aengland_bretwalda.0020.desc.bretwalda
 			}
@@ -500,8 +500,8 @@ BTWK_aengland_bretwalda.0020 = {
 		# The event is written from the PoV of the heir, but it actually triggers from the dead High King
 		trigger = { 
 			OR = {
-				this = scope:former_bretwalda 
-				this = scope:former_bretwalda_player_heir
+				scope:former_bretwalda ?= this
+				scope:former_bretwalda_player_heir ?= this
 			}
 		}
 	}
@@ -539,8 +539,10 @@ BTWK_aengland_bretwalda.0020 = {
 			text = BTWK_aengland_bretwalda.0020.b.other
 		}
 		trigger = { 
-			this != scope:former_bretwalda 
-			this != scope:former_bretwalda_player_heir
+			NOR = {
+				scope:former_bretwalda ?= this
+				scope:former_bretwalda_player_heir ?= this
+			}
 		}
 	}
 }

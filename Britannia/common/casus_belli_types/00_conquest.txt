@@ -59,7 +59,7 @@
 							AND = {
 								is_tributary = yes
 								has_subject_contract_group = tributary_foederatus
-								suzerain ?= { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+								suzerain ?= { NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } } }
 							}
 						}
 						OR = {
@@ -77,7 +77,7 @@
 								AND = {
 									is_tributary = yes
 									has_subject_contract_group = tributary_foederatus
-									suzerain ?= { NOT = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } }
+									suzerain ?= { NOT = { culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } } }
 								}
 							}
 						}
@@ -298,8 +298,8 @@
 			# Unromanized Germanic attacking another Unromanized Germanic is more expensive
 			if = {
 				limit = {
-					scope:attacker.culture = { 
-						has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs
+					scope:attacker = { 
+						culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 						government_has_flag = government_limited_conquest_cb
 					}
 					scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
@@ -1025,8 +1025,8 @@ duchy_conquest_cb = {
 			# Unromanized Germanic attacking another Unromanized Germanic is more expensive
 			if = {
 				limit = {
-					scope:attacker.culture = { 
-						has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs
+					scope:attacker = { 
+						culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs }
 						government_has_flag = government_limited_conquest_cb
 					}
 					scope:defender.top_liege.culture = { has_cultural_parameter = unromanized_germanic_access_to_conquest_cbs } 
@@ -1223,7 +1223,7 @@ duchy_conquest_cb = {
 		if = {
 			limit = {
 				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
-				scope:attacker.any_liege_or_above = { this = scope:defender }
+				scope:attacker = { any_liege_or_above = { this = scope:defender } }
 			}
 			scope:attacker = { becomes_independent = { change = scope:change } }
 		}
@@ -1372,7 +1372,7 @@ duchy_conquest_cb = {
 		if = {
 			limit = {
 				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
-				scope:attacker.any_liege_or_above = { this = scope:defender }
+				scope:attacker = { any_liege_or_above = { this = scope:defender } }
 			}
 			scope:attacker = { 
 				create_title_and_vassal_change = {
