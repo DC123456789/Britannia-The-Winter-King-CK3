@@ -870,6 +870,8 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 							}
 						}
 						# End story if end up tributary/vassalized, and loses an attempts to revolt
+						# If the truce runs out and they are imprisoned by their liege/suzerain,
+						# end the story without needing to go through the revolt (which they will lose immediately anyways)
 						# Human player automatically loses the story without needing the initial attempt
 						story_owner = {
 							is_at_war = no
@@ -883,8 +885,20 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 								}
 								AND = {
 									is_ai = yes
-									prev = { has_variable = attempting_second_revolt }
 									BTWK_rise_of_anglo_saxon_kingdom_should_revolt_trigger = yes
+									OR = {
+										prev = { has_variable = attempting_second_revolt }
+										AND = {
+											is_independent_ruler = no
+											is_imprisoned_by = liege
+											NOT = { has_truce = liege }
+										}
+										AND = {
+											is_tributary = yes
+											is_imprisoned_by = suzerain
+											NOT = { has_truce = suzerain }
+										}
+									}
 								}
 							}
 						}
@@ -916,13 +930,17 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 				effect = {
 					save_scope_as = current_story
 					story_owner = {
+						save_scope_as = story_revolter
 						if = {
 							limit = { is_independent_ruler = no }
 							start_war = {
 								cb = independence_war
 								target = top_liege
 							}
-							top_liege = { save_scope_as = target_character }
+							top_liege = { 
+								save_scope_as = target_character
+								trigger_event = BTWK_anglo_saxon_invasions.0115
+							}
 						}
 						else_if = {
 							limit = { is_tributary = yes }
@@ -930,7 +948,10 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 								cb = tributary_independence_war
 								target = suzerain
 							}
-							suzerain = { save_scope_as = target_character }
+							suzerain = { 
+								save_scope_as = target_character
+								trigger_event = BTWK_anglo_saxon_invasions.0115
+							}
 						}
 						if = {
 							limit = { is_at_war = yes }
