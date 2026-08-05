@@ -36,5 +36,79 @@ btwk_yearly_playable_pulse = {
 			}
 			change_variable = { name = hen_ogledd_control_years subtract = 1 }
 		}
+		
+		# Offmap rulers and their siblings/children marry if > 21 and still unmarries
+		if = {
+			limit = { 
+				is_ai = yes
+				has_trait = offmap_ruler
+			}
+			save_scope_as = offmap_ruler_scope
+			if = {
+				limit = {
+					is_married = no
+					is_eunuch_trigger = no
+					NOT = { has_trait = celibate }
+					NOT = { has_trait_with_flag = can_not_marry }
+					age >= 21
+				}				
+				random = {
+					chance = 33
+					BTWK_generate_spouse_effect = yes
+				}
+			}
+			any_child = {
+				if = {
+					limit = {
+						is_ruler = no
+						employer = scope:offmap_ruler_scope
+						is_married = no
+						is_eunuch_trigger = no
+						NOT = { has_trait = celibate }
+						NOT = { has_trait_with_flag = can_not_marry }
+						age >= 21
+					}				
+					random = {
+						chance = 33
+						BTWK_generate_spouse_effect = yes
+					}
+				}
+				any_child = {
+					if = {
+						limit = {
+							is_ruler = no
+							employer = scope:offmap_ruler_scope
+							is_married = no
+							is_eunuch_trigger = no
+							NOT = { has_trait = celibate }
+							NOT = { has_trait_with_flag = can_not_marry }
+							age >= 21
+						}
+					
+						random = {
+							chance = 33
+							BTWK_generate_spouse_effect = yes
+						}
+					}
+				}
+			}
+			any_sibling = {
+				if = {
+					limit = {
+						is_ruler = no
+						employer = scope:offmap_ruler_scope
+						is_married = no
+						is_eunuch_trigger = no
+						NOT = { has_trait = celibate }
+						NOT = { has_trait_with_flag = can_not_marry }
+						age >= 21
+					}				
+					random = {
+						chance = 33
+						BTWK_generate_spouse_effect = yes
+					}
+				}
+			}
+		}
 	}
 }

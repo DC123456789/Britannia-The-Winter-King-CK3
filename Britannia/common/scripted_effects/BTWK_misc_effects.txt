@@ -1,0 +1,33 @@
+﻿BTWK_generate_spouse_effect = {
+	create_character = {
+		dynasty = none
+		location = this.location
+		culture = this.culture
+		faith = this.faith
+		gender_female_chance = this.marriage_gender_adjusted_female_chance
+		age = this.age
+		save_scope_as = spouse
+	}
+
+	if = {
+		limit = { is_male = yes }
+		marry = scope:spouse
+	}
+	else = {
+		marry_matrilineal = scope:spouse
+	}
+	if = {
+		limit = {
+			NOT = { exists = scope:spouse.employer }
+		}
+		if = {
+			limit = { is_ruler = yes }
+			add_courtier = scope:spouse 
+		}
+		else = {
+			employer ?= { add_courtier = scope:spouse }
+		}
+	}
+}
+
+
