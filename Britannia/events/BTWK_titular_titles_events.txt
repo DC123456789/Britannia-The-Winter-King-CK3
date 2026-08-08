@@ -973,6 +973,20 @@ titular_titles_anglosaxon.0100 = {
 	immediate = {
 		save_scope_as = founder
 		hidden_effect = {
+			# After Mercia is formed, k_east_anglia is renamed to East Anglia if it hasn't been already
+			if = {
+				limit = { 
+					scope:title = title:k_mercia 
+					title:k_east_anglia = { has_variable = is_the_angles }
+				}
+				title:k_east_anglia = {
+					reset_title_name = yes
+					remove_variable = is_the_angles
+					set_variable = custom_capital
+					set_capital_county = title:c_rendlesham
+				}
+				save_scope_as = k_east_anglia_name_reset
+			}
 			# Rename Jutish Wessex to Westeotas ("West Jutes")
 			# Note that this can also happen if the cultural divergence event hits Wessex
 			# before it forms and Jutish culture is dominant in the area
@@ -1098,6 +1112,12 @@ titular_titles_anglosaxon.0101 = {
 	
 	immediate = {
 		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
+		if = {
+			limit = { exists = scope:k_east_anglia_name_reset }
+			show_as_tooltip = {
+				title:k_east_anglia = { set_title_name_w_tooltip_effect = { NEW_NAME = k_east_anglia } }
+			}
+		}
 	}
 
 	option = {

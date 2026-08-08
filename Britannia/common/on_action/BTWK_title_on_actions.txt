@@ -352,6 +352,7 @@ on_title_lost = {
 }
 
 # Note - Isn't triggered when a title gets destroyed!
+# Or on succession!!! Even when you think it should!!!!
 BTWK_on_title_lost = {
 	effect = {
 		# Remove offmap ruler trait
@@ -447,11 +448,18 @@ BTWK_on_title_lost = {
 					limit = { 
 						has_variable = aengland_bretwalda_hegemony_score
 					}
+					if = {
+						limit = { NOT = { has_variable = aengland_bretwalda_hegemony_score } }
+						set_variable = {
+							name = aengland_bretwalda_hegemony_score
+							value = 0
+						}
+					}
 					change_variable = {
 						name = aengland_bretwalda_hegemony_score
 						multiply = BTWK_britannia_high_king_authority_inherited_proportion
 					}
-					title:e_aengland.holder = {
+					scope:new_holder = {
 						change_variable = {
 							name = aengland_bretwalda_hegemony_score
 							add = prev.var:aengland_bretwalda_hegemony_score
