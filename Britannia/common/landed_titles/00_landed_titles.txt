@@ -9256,6 +9256,21 @@ e_britannia = {
 		
 		can_create = {
 			can_create_briton_kingdom_trigger = yes
+			# Make sure AI Dumnonia doesn't create it too early
+			trigger_if = {
+				limit = { is_ai = yes }
+				NAND = {
+					has_title = title:k_dumnonia
+					OR = {
+						this = character:1		# Uther
+						this = character:3		# Arthur
+						this = character:5		# Mordred
+						this = character:22		# Gereint
+						father ?= character:1	# Any other of Uther's children
+						current_year <= 510
+					}
+				}
+			}
 		}
 
 		can_create_on_partition = {

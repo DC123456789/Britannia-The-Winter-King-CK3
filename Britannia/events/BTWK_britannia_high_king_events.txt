@@ -3779,6 +3779,7 @@ BTWK_britannia_high_king.0186 = {
 		name = BTWK_britannia_high_king.0186.a
 		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.1
 		# Gain e_roman_britannia and destroy e_britannia
+		add_trait = augustus
 		get_title = title:e_roman_britannia
 		destroy_title = title:e_britannia
 		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.2
@@ -3819,6 +3820,34 @@ BTWK_britannia_high_king.0186 = {
 					variable = roman_de_jure_affected_territory
 					check_de_jure_liege_effect = yes
 				}
+			}
+		}
+		# Romano-British gets Cultivated Sophistication if you have the DLC and the culture has slots available
+		if = {
+			limit = { 
+				has_dlc_feature = roads_to_power 
+				culture:romanobritish = {
+					free_tradition_slot > 0
+					NOT = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+				}
+			}
+			culture:romanobritish = {
+				add_culture_tradition = tradition_ep3_cultivated_sophistication
+			}
+		}
+		# Plus your culture too, if you are Imperial and not Romano-British
+		if = {
+			limit = { 
+				has_dlc_feature = roads_to_power 
+				culture = {
+					NOT = { this = culture:romanobritish }
+					has_cultural_pillar = heritage_latin
+					free_tradition_slot > 0
+					NOT = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+				}
+			}
+			culture = {
+				add_culture_tradition = tradition_ep3_cultivated_sophistication
 			}
 		}
 		# Free conversion to Sub-Roman
