@@ -111,6 +111,37 @@ BTWK_enforce_vassalage_client_kingdom_interaction = {
 
 	on_accept = {
 		scope:actor = {
+			hidden_effect = {
+				every_character_struggle = {
+					limit = {
+						phase_has_catalyst = catalyst_vassalize_large_client_kingdom
+						save_temporary_scope_as = struggle_temp
+						scope:recipient = {
+							any_character_struggle = { this = scope:struggle_temp }
+						}
+					}
+					if = {
+						limit = {
+							phase_has_catalyst = catalyst_vassalize_large_client_kingdom
+							scope:recipient = { realm_size >= 15 }
+						}
+						activate_struggle_catalyst = {
+							catalyst = catalyst_vassalize_large_client_kingdom
+							character = scope:actor
+						}
+					}
+					else_if = {
+						limit = {
+							phase_has_catalyst = catalyst_vassalize_client_kingdom
+						}
+						activate_struggle_catalyst = {
+							catalyst = catalyst_vassalize_client_kingdom
+							character = scope:actor
+						}
+					}
+				}
+			}
+			
 			create_title_and_vassal_change = {
 				type = swear_fealty
 				save_scope_as = change
