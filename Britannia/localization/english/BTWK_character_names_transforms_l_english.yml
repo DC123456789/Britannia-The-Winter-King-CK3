@@ -48,6 +48,59 @@
  CHARACTER_TITLED_FIRST_NAME_ONLY_PATRONYM_BRITON: "$CHARACTER_TITLED_FIRST_NAME_PATRONYM_BRITON$"
  CHARACTER_FULL_NAME_ONLY_NICKNAMED_PREFIX_PATRONYM_BRITON: "$CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_BRITON$"
  
+ # Gaulish name aesthetics
+ culture_aesthetics_naming_gaulish: "$culture_aesthetics_naming_default$, with $gaulish$ patronymics"
+ 
+ GAULISH_PATRONYM: "[$GAULISH_PATRONYM_U_OR_NEXT$]"
+ GAULISH_PATRONYM_U_OR_NEXT: "SelectLocalization($gaulish_patronym_u_check$, $gaulish_patronym_u_genitive$, $GAULISH_PATRONYM_OS_OR_NEXT$)"
+ GAULISH_PATRONYM_OS_OR_NEXT: "SelectLocalization($gaulish_patronym_os_check$, $gaulish_patronym_os_genitive$, $GAULISH_PATRONYM_US_OR_NEXT$)"
+ GAULISH_PATRONYM_US_OR_NEXT: "SelectLocalization($gaulish_patronym_us_check$, $gaulish_patronym_us_genitive$, $GAULISH_PATRONYM_X_OR_NEXT$)"
+ GAULISH_PATRONYM_X_OR_NEXT: "SelectLocalization($gaulish_patronym_x_check$, $gaulish_patronym_x_genitive$, $GAULISH_PATRONYM_IS_OR_NEXT$)"
+ GAULISH_PATRONYM_IS_OR_NEXT: "SelectLocalization($gaulish_patronym_is_check$, $gaulish_patronym_is_genitive$, $GAULISH_PATRONYM_R_OR_NEXT$)"
+ GAULISH_PATRONYM_R_OR_NEXT: "SelectLocalization($gaulish_patronym_r_check$, $gaulish_patronym_r_genitive$, '$PATRONYM$')"
+ 
+ gaulish_patronym_nominative: "TrimBackChars('$PATRONYM$', '#!')"
+ gaulish_patronym_u_check: "Not(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 'u'), $gaulish_patronym_nominative$))"
+ gaulish_patronym_u_base: "TrimBackChars($gaulish_patronym_nominative$, 'u')"
+ gaulish_patronym_u_genitive: "Concatenate($gaulish_patronym_u_base$, 'unios#!')"
+ gaulish_patronym_os_check: "Not(Or(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 's'), $gaulish_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'o'), TrimBackChars($gaulish_patronym_nominative$, 's'))))"
+ gaulish_patronym_os_base: "TrimBackChars(TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'o'), 'i')"      # If there is an i at the end of the base, that gets truncatad too
+ gaulish_patronym_os_genitive: "Concatenate($gaulish_patronym_os_base$, 'ios#!')"
+ gaulish_patronym_us_check: "Not(Or(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 's'), $gaulish_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'u'), TrimBackChars($gaulish_patronym_nominative$, 's'))))"
+ gaulish_patronym_us_base: "TrimBackChars(TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'u'), 'i')"      # If there is an i at the end of the base, that gets truncatad too
+ gaulish_patronym_us_genitive: "Concatenate($gaulish_patronym_us_base$, 'ius#!')"
+ gaulish_patronym_x_check: "Not(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 'x'), $gaulish_patronym_nominative$))"
+ gaulish_patronym_x_base: "TrimBackChars($gaulish_patronym_nominative$, 'x')"
+ gaulish_patronym_x_genitive: "Concatenate($gaulish_patronym_x_base$, 'cios#!')"
+ gaulish_patronym_is_check: "Not(Or(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 's'), $gaulish_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'i'), TrimBackChars($gaulish_patronym_nominative$, 's'))))"
+ gaulish_patronym_is_base: "TrimBackChars(TrimBackChars($gaulish_patronym_nominative$, 's'), 'i')"
+ gaulish_patronym_is_genitive: "Concatenate($gaulish_patronym_is_base$, 'is#!')"
+ gaulish_patronym_r_check: "Not(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 'r'), $gaulish_patronym_nominative$))"
+ gaulish_patronym_r_base: "TrimBackChars($gaulish_patronym_nominative$, 'r')"
+ gaulish_patronym_r_genitive: "Concatenate($briton_patronym_r_base$, 'ris#!')"
+ 
+ # Patronym
+ CHARACTER_FIRST_NAME_PATRONYM_GAULISH: "$NAME$ $GAULISH_PATRONYM$"
+ CHARACTER_TITLED_FIRST_NAME_PATRONYM_GAULISH: "$TIER$ $NAME$ $GAULISH_PATRONYM$"
+ CHARACTER_FIRST_NAME_AND_DYNASTY_PATRONYM_GAULISH: "$NAME$ $HOUSE$"
+ CHARACTER_NAME_PATRONYM_GAULISH: "$TIER$ $NAME$ $GAULISH_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_PATRONYM_GAULISH: "$TIER$ $NAME$ $GAULISH_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_PATRONYM_GAULISH: "$NAME$ $GAULISH_PATRONYM$ $HOUSE$"
+ 
+ # Nickname + Patronym 
+ CHARACTER_FIRST_NAME_NICKNAMED_PATRONYM_GAULISH: "$NAME$ $NICK$ $GAULISH_PATRONYM$"
+ CHARACTER_FIRST_NAME_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$NICK$ $NAME$ $GAULISH_PATRONYM$"
+ CHARACTER_TITLED_FIRST_NAME_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$TIER$ $NICK$ $NAME$ $GAULISH_PATRONYM$"
+ CHARACTER_NAME_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$TIER$ $NICK$ $NAME$ $GAULISH_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$TIER$ $NICK$ $NAME$ $GAULISH_PATRONYM$ of $TITLE$"
+ CHARACTER_FULL_NAME_UNLANDED_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$NICK$ $NAME$ $GAULISH_PATRONYM$"
+
+ # _ONLY variants
+ CHARACTER_TITLED_FIRST_NAME_ONLY_NICKNAMED_PATRONYM_GAULISH: "$CHARACTER_TITLED_FIRST_NAME_NICKNAMED_PATRONYM_GAULISH$"
+ CHARACTER_FIRST_NAME_ONLY_PATRONYM_GAULISH: "$CHARACTER_FIRST_NAME_PATRONYM_GAULISH$"
+ CHARACTER_TITLED_FIRST_NAME_ONLY_PATRONYM_GAULISH: "$CHARACTER_TITLED_FIRST_NAME_PATRONYM_GAULISH$"
+ CHARACTER_FULL_NAME_ONLY_NICKNAMED_PREFIX_PATRONYM_GAULISH: "$CHARACTER_FULL_NAME_NICKNAMED_PREFIX_PATRONYM_GAULISH$"
+ 
  # Roman name aesthetics
  culture_aesthetics_naming_roman: "Nomen dynasty names first when given, otherwise dynasty name last when required"
  
