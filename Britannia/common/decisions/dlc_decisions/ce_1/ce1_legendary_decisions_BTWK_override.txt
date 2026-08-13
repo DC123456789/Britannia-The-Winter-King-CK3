@@ -1,0 +1,91 @@
+﻿legendary_conversion = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_legend.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 120
+		empire = 120
+		hegemony = 120
+	}
+	desc = legendary_conversion_desc
+
+	is_shown = {
+		OR = {
+			AND = {
+				has_character_flag = legendary_conversion
+				has_dlc_feature = legends
+			}
+			has_character_flag = major_religious_inspiration
+		}
+	}
+
+	is_valid = {
+		custom_tooltip = {
+			text = leg_conv_valid_county
+			any_sub_realm_county = {
+				faith != root.faith
+			}
+		}
+		is_landless_adventurer = no
+	}
+
+	effect = {
+		custom_tooltip = {
+			text = legendary_conversion_tt
+			remove_character_flag = legendary_conversion
+			remove_character_flag = major_religious_inspiration
+			set_variable = {
+				name = num_counties_converted
+				value = 0
+			}
+			every_sub_realm_county = {
+				if = {
+					limit = { root.var:num_counties_converted < 20 }
+					random = {
+						chance = {
+							value = 50
+							if = {
+								limit = { root.faith = { has_doctrine_parameter = unreformed } }
+								divide = 2
+							}
+							if = {
+								limit = {
+									is_wrong_culture_for_ethnic_faith_trigger = {
+										FAITH = root.faith
+										CULTURE = this.culture
+									}
+								}
+								divide = 4
+							}
+						}
+						set_county_faith = root.faith
+						root = {
+							change_variable = {
+								name = num_counties_converted
+								add = 1
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { root.faith = { has_doctrine_parameter = unreformed } }
+			custom_tooltip = { text = BTWK_legendary_conversion_wrong_culture_warning_tt
+		}
+	}
+	
+
+	ai_potential = {
+		always = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

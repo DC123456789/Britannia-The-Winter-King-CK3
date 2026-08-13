@@ -175,6 +175,31 @@ BTWK_client_kingdom_can_enforce_vassalage_trigger = {
 	}
 }
 
+BTWK_can_switch_away_from_laetus_contract_trigger = {
+	trigger_if = {
+		limit = { scope:vassal = { vassal_contract_has_flag = has_laetus_contract } }
+		scope:liege = { 
+			prestige_level >= 2 
+			save_temporary_scope_value_as = {
+				name = military_power_ratio
+				value = {
+					value = military_power
+					divide = {
+						value = scope:vassal.military_power
+						min = 1
+					}					
+				}
+			}
+			custom_description = {
+				text = BTWK_can_switch_away_from_laetus_contract_trigger_military_power_condition
+				object = scope:vassal
+				value = scope:military_power_ratio
+				scope:military_power_ratio >= 4
+			}
+		}
+	}
+}
+
 BTWK_government_type_is_hidden_trigger = {
 	OR = {
 		AND = {

@@ -440,6 +440,22 @@ BTWK_britannia_high_kingship_make_subject_king_vassal_effect = {
 	remove_variable = force_subject_kingdom
 }
 
+BTWK_britannia_high_kingship_add_authority_effect = {
+	custom_description = {
+		text = BTWK_britannia_high_kingship_add_authority
+		value = $AMOUNT$
+		dynasty = {
+			if = {
+				limit = { has_variable = britannia_high_kingship_authority }
+				change_variable = {
+					name = britannia_high_kingship_authority
+					add = $AMOUNT$
+				}
+			}
+		}
+	}
+}
+
 BTWK_britannia_high_kingship_remove_authority_effect = {
 	custom_description = {
 		text = BTWK_britannia_high_kingship_remove_authority
@@ -453,6 +469,24 @@ BTWK_britannia_high_kingship_remove_authority_effect = {
 				}
 			}
 		}
+	}
+}
+
+BTWK_add_authority_on_anglo_saxon_duchy_destruction_effect = {
+	if = {
+		limit = {
+			has_title = title:e_britannia
+			BTWK_britannia_high_kingship_active_trigger = yes
+			scope:old_duchy_title = { NOT = { has_variable = recently_destroyed_for_high_king_authority } }
+			scope:old_duchy_title.title_capital_county = { geographical_region = btwk_world_britannia }
+		}
+		scope:old_duchy_title = { 
+			set_variable = {
+				name = recently_destroyed_for_high_king_authority
+				years = 20
+			}
+		}
+		BTWK_britannia_high_kingship_add_authority_effect = { AMOUNT = 15 }
 	}
 }
 

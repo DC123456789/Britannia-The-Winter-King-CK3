@@ -21,6 +21,7 @@ BTWK_on_game_start = {
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
 		BTWK_culture_setup_set_blocks
+		BTWK_situation_setup
 		delay = { months = 1 }
 		BTWK_start_monthly_global_pulse
 	}
@@ -471,6 +472,14 @@ BTWK_county_setup = {
 			region = btwk_custom_cornwall
 			BTWK_update_cultural_redoubt_modifier_effect = yes
 		}
+	}
+}
+
+BTWK_situation_setup = {
+	effect = {
+		# Remove world_europe from earthquake zones - as world_europe_south as still in there, 
+		# parts of the map that actually should get earthquakes will still get them
+		remove_list_global_variable = { name = earthquake_region_list target = geographical_region:world_europe }
 	}
 }
 
@@ -3305,6 +3314,11 @@ BTWK_laeti_setup = {
 				check_can_recruit = no
 				size = 2
 			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
+			}
 		}
 		
 		# Set up Foederati (they are defined elsewhere)
@@ -3329,6 +3343,11 @@ BTWK_laeti_setup = {
 				type = light_footmen
 				check_can_recruit = no
 				size = 3
+			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
 			}
 			tributary_contract_set_obligation_level = { 
 				type = tributary_war_participation_obligation

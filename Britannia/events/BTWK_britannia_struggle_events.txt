@@ -625,6 +625,8 @@ BTWK_britannia_struggle.0020 = {
 # BTWK_anglo_saxon_invasions.0010 - Death/Fall of Aelle
 # BTWK_anglo_saxon_invasions.0011 - Collapse of East Anglia
 # BTWK_anglo_saxon_invasions.0012 - Aelle's Legacy Secured
+# BTWK_anglo_saxon_invasions.0013 - Collapse of East Anglia post-event for enclave independence
+# BTWK_anglo_saxon_invasions.0014 - Collapse of East Anglia bounce pre-event
 
 # Trigger Anglian Invasion event
 BTWK_anglo_saxon_invasions.0001 = {
@@ -927,6 +929,28 @@ BTWK_anglo_saxon_invasions.0010 = {
 	}
 }
 
+# Collapse of East Anglia bounce event, handles the rename so it happens immediately after the loc is generated
+BTWK_anglo_saxon_invasions.0014 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		trigger_event = BTWK_anglo_saxon_invasions.0011
+		every_player = {
+			limit = { this != scope:former_king }
+			trigger_event = BTWK_anglo_saxon_invasions.0011
+		}
+		title:k_east_anglia = {
+			remove_variable = is_the_angles
+			remove_variable = anglia_post_aelle_crisis
+			remove_variable = title_has_been_created
+			set_variable = custom_capital
+			set_capital_county = title:c_rendlesham
+			reset_title_name = yes
+		}
+	}
+}
+
 # Collapse of East Anglia
 BTWK_anglo_saxon_invasions.0011 = {
 	type = character_event
@@ -954,13 +978,6 @@ BTWK_anglo_saxon_invasions.0011 = {
 	
 	immediate = {
 		character:80 = { save_scope_as = aelle_of_anglia }
-		title:k_east_anglia = {
-			remove_variable = is_the_angles
-			remove_variable = anglia_post_aelle_crisis
-			remove_variable = title_has_been_created
-			set_variable = custom_capital
-			set_capital_county = title:c_rendlesham
-		}
 		scope:former_king = {
 			every_tributary = {
 				end_tributary = yes
@@ -980,7 +997,6 @@ BTWK_anglo_saxon_invasions.0011 = {
 					}
 				}
 			}
-			title:k_east_anglia = { reset_title_name = yes }
 		}
 		show_as_tooltip = {
 			title:k_east_anglia = { set_title_name_w_tooltip_effect = { NEW_NAME = k_east_anglia } }
