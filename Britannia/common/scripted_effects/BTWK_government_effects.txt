@@ -62,6 +62,86 @@ remove_tribal_fame_effect = {
 	}
 }
 
+BTWK_set_starting_government = {
+	# Assign Admin governments
+	if = {
+		limit = {
+			OR = {
+				has_title = title:h_western_roman_empire
+				has_title = title:h_eastern_roman_empire						
+			}
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = administrative_government
+		}
+		else = {
+			change_government = sub_roman_no_dlc_government		# Closest
+		}
+	}
+	# Assign Pre-Feudal governments
+	else_if = {
+		limit = {
+			OR = {
+				culture = { has_cultural_pillar = heritage_brythonic }
+				AND = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_latin }
+						is_romanized_barbarian_culture_trigger = yes
+					}
+					capital_province = { geographical_region = btwk_world_britannia }
+					# Needed since they're currently landless, and so technically in Britannia
+					NOR = {
+						has_title = title:h_western_roman_empire
+						has_title = title:h_eastern_roman_empire
+						has_title = title:k_burgundy
+						has_title = title:k_gaul
+						has_title = title:k_visigoths
+						has_title = title:k_ostrogoths
+						has_title = title:k_burgundy
+					}
+				}
+			}
+			government_has_flag = government_is_feudal
+		}
+		change_government = pre_feudal_government
+	}
+	# Assign Germanic governments
+	else_if = {
+		limit = {
+			culture = { has_cultural_pillar = heritage_frankish }
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			# TODO Need to adjust this to actually work properly
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = germanic_government
+		}
+		else = {
+			change_government = germanic_no_dlc_government
+		}
+	}
+	# Assign Sub-Roman governments
+	else_if = {
+		limit = {
+			OR = {
+				culture = { has_cultural_pillar = heritage_latin }
+				is_romanized_barbarian_culture_trigger = yes
+			}
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			# TODO Need to adjust this to actually work properly (?)
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = sub_roman_government
+		}
+		else = {
+			change_government = sub_roman_no_dlc_government
+		}
+	}
+}
+
 BTWK_flag_new_government_type_for_unlanded = {
 	set_variable = { name = claimant_needs_government_assigned value = yes days = 1 }
 	# Not allowed to inherit republican or theocratic government types - if we somehow get something else, fall back to something appropriate
