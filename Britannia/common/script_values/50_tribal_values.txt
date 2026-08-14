@@ -1,0 +1,44 @@
+﻿feudalize_holding_interaction_cost = {
+	value = 0
+	add = {
+		value = 500
+		if = {
+			limit = {
+				is_ai = yes
+				capital_province = { has_holding_type = tribal_holding }
+			}
+			add = -250
+		}
+		desc = BASE
+	}
+	if = {
+		limit = { culture = { has_same_culture_heritage = scope:target.county.culture } }
+		# No additional modifier
+	}
+	else_if = {
+		limit = {
+			is_same_heritage_group_or_related_culture_trigger = { TARGET = scope:target }
+		}
+		multiply = {
+			value = 1.25
+			desc = BTWK_FEUDALIZE_HOLDING_NOT_SAME_HERITAGE
+		}
+	}
+	else = {
+		multiply = {
+			value = 1.75
+			desc = BTWK_FEUDALIZE_HOLDING_NOT_SAME_HERITAGE_GROUP_OR_RELATED_CULTURE
+		}
+	}
+	if = {
+		limit = {
+			scope:target.county ?= {
+				OR = {
+					has_county_modifier = mpo_siberian_permafrost_modifier
+					has_county_modifier = mpo_siberian_permafrost_modifier_bad
+				} 
+			}
+		}
+		add = 2000
+	}
+}

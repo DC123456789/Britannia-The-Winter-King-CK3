@@ -156,6 +156,17 @@ is_romanized_government_culture_trigger = {
 	}
 }
 
+is_same_heritage_group_or_related_culture_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	OR = {
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
+	}
+}
+
 # Either is the given culture, or is a descendant of it through a chain of parent/child cultures
 # that all share the same heritage
 culture_is_culture_or_descendant_trigger = {

@@ -24,6 +24,19 @@
 		limit = { has_county_modifier = BTWK_cultural_redoubt_negative_2_modifier }
 		multiply = 1.25
 	}
+	# Significantly increased for tribal counties under a non-tribal, wrong heritage group ruler
+	if = {
+		limit = {
+			any_county_province = { has_holding_type = tribal_holding }
+			holder.top_liege = {
+				NOR = { 
+					government_has_flag = government_is_tribal
+					is_same_heritage_group_or_related_culture_trigger = { TARGET = prev }
+				}
+			}
+		}
+		multiply = 1.33
+	}
 	min = {
 		value = building_max_garrison
 		multiply = 1.2
