@@ -26,6 +26,8 @@ percent_count_or_higher_vassals_with_tribal_obligations = {
 	}
 }
 
+BTWK_tribal_fame_effective_realm_size_extra_penalty_threshold = 60
+
 BTWK_tribal_fame_effective_realm_size = {
 	value = 0
 	add = {
@@ -137,6 +139,17 @@ BTWK_tribal_fame_effective_realm_size = {
 		multiply = {
 			value = 0.33
 			desc = TRIBAL_FAME_VALUE_REALM_SIZE_BRITANNIA_HIGH_KING
+			format = TRIBAL_FAME_NEGATIVE_FORMAT
+		}
+	}
+	save_temporary_value_as = current_effective_realm_size
+	if = {
+		limit = { scope:current_effective_realm_size >= BTWK_tribal_fame_effective_realm_size_extra_penalty_threshold }
+		add = {
+			value = scope:current_effective_realm_size
+			subtract = BTWK_tribal_fame_effective_realm_size_extra_penalty_threshold
+			multiply = 0.5
+			desc = TRIBAL_FAME_VALUE_REALM_SIZE_TOO_HIGH
 			format = TRIBAL_FAME_NEGATIVE_FORMAT
 		}
 	}
@@ -252,7 +265,7 @@ tribal_fame_value = {
 			prestige_level = 5
 		}
 		add = {
-			value = 50
+			value = 45
 			desc = TRIBAL_FAME_VALUE_PRESTIGE_LEVEL
 		}
 	}

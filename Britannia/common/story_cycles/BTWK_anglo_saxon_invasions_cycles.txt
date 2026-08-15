@@ -755,7 +755,18 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 			limit = {
 				has_variable = rise_of_anglo_saxon_kingdom_story_defeated
 			}
-			story_owner = { trigger_event = BTWK_anglo_saxon_invasions.0113 }
+			story_owner = { 
+				trigger_event = BTWK_anglo_saxon_invasions.0113
+				if = {
+					limit = { scope:ending_story = { has_variable = complete_defeat } }
+					every_army = {
+						limit = { 
+							has_variable = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+						}
+						deplete_army_by_percentage = 0.99
+					}
+				}
+			}
 			this.var:target_kingdom = { 
 				if = {
 					limit = { has_variable = rise_of_anglo_saxon_kingdom_story_failed_once }
@@ -857,18 +868,6 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 							is_landed = no
 							is_at_war = no
 						}
-						# End story if the story owner is not Unromanized Germanic
-						story_owner = { is_unromanized_germanic_culture_trigger = no }
-						# End story if the story owner owns a kingdom title that is not the target title
-						story_owner = {
-							any_held_title = {
-								tier >= tier_kingdom
-								NOR = {
-									this = scope:current_story.var:target_kingdom
-									this = scope:current_story.var:target_title
-								}
-							}
-						}
 						# End story if end up tributary/vassalized, and loses an attempts to revolt
 						# If the truce runs out and they are imprisoned by their liege/suzerain,
 						# end the story without needing to go through the revolt (which they will lose immediately anyways)
@@ -899,6 +898,31 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 											NOT = { has_truce = suzerain }
 										}
 									}
+								}
+							}
+						}
+					}
+				}
+				effect = {
+					set_variable = complete_defeat		# This disbands the event armies too
+					set_variable = rise_of_anglo_saxon_kingdom_story_defeated
+					end_story = yes
+				}
+			}
+			# Defeat/Disqualification endings
+			triggered_effect = {
+				trigger = {
+					save_temporary_scope_as = current_story
+					OR = {
+						# End story if the story owner is not Unromanized Germanic
+						story_owner = { is_unromanized_germanic_culture_trigger = no }
+						# End story if the story owner owns a kingdom title that is not the target title
+						story_owner = {
+							any_held_title = {
+								tier >= tier_kingdom
+								NOR = {
+									this = scope:current_story.var:target_kingdom
+									this = scope:current_story.var:target_title
 								}
 							}
 						}
@@ -958,6 +982,20 @@ BTWK_rise_of_new_anglo_saxon_kingdom_story = {
 							BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
 							BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
 							prev = { set_variable = attempting_second_revolt }
+						}
+						random_character_war = {
+							limit = { 
+								primary_attacker = scope:story_revolter
+								OR = {
+									primary_defender = scope:story_revolter.top_liege
+									primary_defender = scope:story_revolter.suzerain
+								}
+								OR = {
+									using_cb = independence_war
+									using_cb = tributary_independence_war
+								}
+							}
+							set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_second_revolt_war
 						}
 					}
 				}

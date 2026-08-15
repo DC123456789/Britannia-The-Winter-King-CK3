@@ -129,13 +129,17 @@ is_imperial_culture_trigger = {
 is_imperial_like_culture_trigger = { 
 	custom_tooltip = {
 		text = is_imperial_like_culture_trigger_desc
-		OR = {
-			is_britannic_culture_trigger = yes
-			is_imperial_culture_trigger = yes
-			is_romanized_barbarian_culture_trigger = yes
-			culture = { has_cultural_pillar = heritage_gaulish }
-			culture = { has_cultural_pillar = heritage_romance }
-		}
+		culture = { culture_is_imperial_like_culture_trigger = yes }
+	}
+}
+
+culture_is_imperial_like_culture_trigger = { 
+	OR = {
+		culture_is_britannic_culture_trigger = yes
+		has_cultural_pillar = heritage_latin
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_gaulish
+		has_cultural_pillar = heritage_romance
 	}
 }
 
@@ -158,12 +162,15 @@ is_romanized_government_culture_trigger = {
 
 is_same_heritage_group_or_related_culture_trigger = {
 	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
 	OR = {
 		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
 		AND = {
 			is_imperial_like_culture_trigger = yes
 			$TARGET$ = { is_imperial_like_culture_trigger = yes }
 		}
+		$TARGET$.culture = { any_parent_culture = { this = scope:temp_current_scope.culture } }
+		culture = { any_parent_culture = { this = scope:temp_target_scope.culture } }
 	}
 }
 

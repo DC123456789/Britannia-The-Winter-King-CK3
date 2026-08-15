@@ -1172,6 +1172,13 @@ BTWK_anglo_saxon_invasions.0101 = {
 					}
 					add = 100
 				}
+				# If we want to bypass the roll for whatever reason
+				if = {
+					limit = { 
+						exists = scope:bypass_roll
+					}
+					add = 100
+				}
 			}
 			
 			# If the roll goes through, try to choose an eligible ruler
@@ -1246,7 +1253,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 					}
 				}
 				scope:target_character = {
-					trigger_event = BTWK_anglo_saxon_invasions.0110
+					trigger_event = BTWK_anglo_saxon_invasions.0109
 				}
 			}
 			# If a historical dynasty character is eligible but busy (e.g. at war), wait up
@@ -1373,9 +1380,32 @@ BTWK_anglo_saxon_invasions.0101 = {
 				
 				# Then fire the event for the new adventurer
 				scope:target_character = {
-					trigger_event = BTWK_anglo_saxon_invasions.0110
+					trigger_event = BTWK_anglo_saxon_invasions.0109
 				}
 			}
+		}
+	}
+}
+
+# Check if the target character is incapable - if he is, kill him off and then reroll
+BTWK_anglo_saxon_invasions.0109 = { 
+	type = character_event
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		if = {
+			limit = { has_trait = incapable }
+			# Kill off the character and immediately try to trigger the event again
+			player_heir = { save_scope_as = target_heir }
+			death = natural
+			scope:target_heir = {
+				save_scope_as = bypass_roll
+				trigger_event = BTWK_anglo_saxon_invasions.0101
+			}
+		}
+		else = {
+			trigger_event = BTWK_anglo_saxon_invasions.0110
 		}
 	}
 }
@@ -2231,6 +2261,12 @@ BTWK_anglo_saxon_invasions.0110 = {
 			scope:new_story = { save_scope_as = current_story }
 			BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
 		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:current_story
+			}
+		}
 		# TODO Add hook to immediate take decision after winning war if AI
 	}
 }
@@ -2375,14 +2411,16 @@ BTWK_anglo_saxon_invasions.0113 = {
 
 	option = {
 		name = {
-			first_valid = {
-				triggered_desc = {
-					trigger = { 
-						is_unromanized_germanic_culture_trigger = no
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_unromanized_germanic_culture_trigger = no
+						}
+						desc = BTWK_anglo_saxon_invasions.0113.a.not_anglo_saxon
 					}
-					desc = BTWK_anglo_saxon_invasions.0113.a.not_anglo_saxon
+					desc = BTWK_anglo_saxon_invasions.0113.a
 				}
-				desc = BTWK_anglo_saxon_invasions.0113.a
 			}
 		}
 		custom_tooltip = BTWK_anglo_saxon_invasions.0113.a.tt

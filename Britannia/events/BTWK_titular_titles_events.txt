@@ -2674,6 +2674,41 @@ titular_titles_briton.0051 = {
 			}
 		}
 		
+		# Figure out which culture controls most of Britannia
+		if = {
+			limit = {
+				NOT = {
+					any_county_in_region = {
+						region = btwk_world_britannia
+						percent >= 0.5
+						holder.top_liege.culture = { has_cultural_pillar = heritage_west_germanic }
+					}
+				}
+			}
+			every_culture_global = {
+				set_variable = {
+					name = britannia_controlled_counties
+					value = 0
+				}
+			}
+			every_county_in_region = {
+				region = btwk_world_britannia
+				holder.top_liege.culture = {
+					change_variable = {
+						name = britannia_controlled_counties
+						add = 1
+					}
+				}
+			}
+			ordered_culture_global = {
+				order_by = this.var:britannia_controlled_counties
+				limit = {
+					culture_is_imperial_like_culture_trigger = no
+				}
+				save_scope_as = britannia_largest_controlled_culture
+			}
+		}
+		
 		# Breakup of Briton and Armorican shift to Breton
 		trigger_event = { id = culture_shifts.0001 }
 		
@@ -2725,7 +2760,18 @@ titular_titles_briton.0052 = {
 	window = fullscreen_event
 	# window = big_event_window
 	title = titular_titles_briton.0052.t
-	desc = titular_titles_briton.0052.desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					exists = scope:britannia_largest_controlled_culture
+					NOT = { scope:britannia_largest_controlled_culture = { has_cultural_pillar = heritage_west_germanic } }
+				}
+				desc = titular_titles_briton.0052.desc.other_culture
+			}
+			desc = titular_titles_briton.0052.desc
+		}
+	}
 	theme = war
 	override_background = { reference = fp2_fullscreen_intro }
 	

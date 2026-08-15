@@ -135,6 +135,30 @@ btwk_on_war_won_defender = {
 				}
 			}
 		}
+		
+		# Disband Rise of Anglo-Saxon Kingdom event troops
+		if = {
+			limit = { 
+				scope:war = { 
+					OR = {
+						has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_second_revolt_war 
+						AND = {
+							has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+							scope:attacker = { is_ai = no }
+						}
+					} 
+				}
+			}
+			scope:attacker = {
+				every_army = {
+					limit = { 
+						has_variable = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+					}
+					every_army_maa_regiment = { destroy_maa_regiment = yes }
+					deplete_army_by_percentage = 0.99
+				}
+			}
+		}
 	}
 }
 
