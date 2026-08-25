@@ -23,12 +23,28 @@ culture_is_romanobritish_culture_trigger = {
 }
 
 # Determines access to Brythonic titles and mechanics
-# Does the culture derive primarily from Briton, Cumbrian, or Romano-British?
-is_britannic_culture_trigger = {
+is_briton_or_latin_culture_trigger = {
     custom_description = {
 		text = BTWK_is_britannic_culture
-        culture = { culture_is_britannic_culture_trigger = yes }
+        culture = { culture_is_briton_or_latin_culture_trigger = yes }
 	}
+}
+
+culture_is_briton_or_latin_culture_trigger = {
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+        has_cultural_pillar = heritage_latin
+        AND = {
+            has_cultural_pillar = heritage_romance
+			this.var:ancestral_starting_culture ?= culture:romanobritish
+			NOT = { has_variable = ancestral_non_roman_culture }
+        }
+	}
+}
+
+# Specifically, does the culture derive primarily from Briton or Romano-British?
+is_britannic_culture_trigger = {
+	culture = { culture_is_britannic_culture_trigger = yes }
 }
 
 culture_is_britannic_culture_trigger = {
@@ -135,7 +151,7 @@ is_imperial_like_culture_trigger = {
 
 culture_is_imperial_like_culture_trigger = { 
 	OR = {
-		culture_is_britannic_culture_trigger = yes
+		culture_is_briton_or_latin_culture_trigger = yes
 		has_cultural_pillar = heritage_latin
 		culture_is_romanized_barbarian_culture_trigger = yes
 		has_cultural_pillar = heritage_gaulish
