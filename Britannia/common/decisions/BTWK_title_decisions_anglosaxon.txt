@@ -748,6 +748,7 @@ form_northumbria_decision = {
 				kingdom = title:k_bernicia
 			}
 		}
+		title:k_bernicia = { is_contested = no }
 		has_title = title:k_deira
 		title:k_deira = { title_held_years >= 15 }
 		custom_tooltip = {
@@ -757,6 +758,7 @@ form_northumbria_decision = {
 				kingdom = title:k_deira
 			}
 		}
+		title:k_deira = { is_contested = no }
 	}
 
 	effect = {
@@ -770,6 +772,21 @@ form_northumbria_decision = {
 		}
 		custom_tooltip = {
 			text = northumbria_de_jure_shift_tt
+		}
+		if = {
+			limit = {
+				OR = {
+					title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+					title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				}
+				NAND = {
+					title:k_bernicia.var:anglo_saxon_regional_culture ?= { culture_age >= 50 }
+					title:k_deira.var:anglo_saxon_regional_culture ?= { culture_age >= 50 }
+				}
+			}
+			custom_tooltip = {
+				text = northumbrian_culture_emergence_tt
+			}
 		}
 		trigger_event = { id = titular_titles_anglosaxon.0010 }
 	}

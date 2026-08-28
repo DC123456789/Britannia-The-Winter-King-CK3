@@ -1868,8 +1868,23 @@ culture_shifts.0012 = {
 					reset_culture_creation_date = yes
 					get_all_innovations_from = culture:bernician
 					get_all_innovations_from = culture:deiran
-					copy_all_traditions_from = culture:bernician
-					copy_all_traditions_from = culture:deiran
+					copy_all_traditions_from = scope:primary_parent
+					scope:secondary_parent = {
+						if = {
+							limit = { culture:northumbrian_alt = { free_tradition_slot >= 1 } }
+							random_tradition = {
+								limit = { NOT = { culture:northumbrian_alt = { has_cultural_tradition = prev } } }
+								culture:northumbrian_alt = { add_culture_tradition = prev }
+							}
+						}
+						if = {
+							limit = { culture:northumbrian_alt = { free_tradition_slot >= 1 } }
+							random_tradition = {
+								limit = { NOT = { culture:northumbrian_alt = { has_cultural_tradition = prev } } }
+								culture:northumbrian_alt = { add_culture_tradition = prev }
+							}
+						}
+					}
 					set_ethos_from = scope:primary_parent
 					set_martial_custom_from = scope:primary_parent
 					
