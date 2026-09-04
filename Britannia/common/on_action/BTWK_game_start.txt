@@ -506,6 +506,12 @@ BTWK_character_setup = {
 					}
 				}
 			}
+			
+			# Trigger Derfel's Wolftails event 3-4 years after start
+			character:10 ?= {
+				trigger_event = { id = BTWK_story_event.0155 days = { 1095 1460 } }
+			}			
+			
 			# Remove claims of most king-level rulers on their vassals
 			every_independent_ruler = {
 				save_scope_as = current_char
@@ -3451,6 +3457,16 @@ BTWK_laamp_setup = {
 				add_courtier = character:1017		# Eiddilig
 				add_courtier = character:1018		# Sir Bedivere
 				add_courtier = character:1019		# Morfans the Ugly
+			}
+		}
+		## Sagramor
+		character:21 ?= {
+			if = {
+				limit = { 
+					is_alive = yes
+					is_landless_adventurer = yes
+				}
+				add_realm_law_skip_effects = camp_purpose_mercenaries
 			}
 		}
 	}

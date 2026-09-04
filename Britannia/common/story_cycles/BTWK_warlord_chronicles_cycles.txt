@@ -282,4 +282,40 @@ BTWK_story_arthur = {
 			}
 		}
 	}
+
+	# Check for inviting Sagramor to Dumnonia
+	effect_group = {
+		months = 2
+		trigger = {
+			character:21 ?= {
+				is_alive = yes
+				is_landless_adventurer = yes
+				is_independent_ruler = yes
+			}
+			story_owner = {
+				is_alive = yes
+				OR = {
+					highest_held_title_tier >= tier_kingdom
+					AND = {
+						is_diarch = yes
+						liege = { highest_held_title_tier >= tier_kingdom }
+					}
+				}
+			}
+			NOT = { title:d_laamp_brotherhood_horsemen = { has_variable = horsemen_vassalized } }
+		}
+
+		triggered_effect = {
+			trigger = {
+				always = yes
+			}
+			effect = {
+				character:21 = {
+					trigger_event = {
+						id = BTWK_story_event.0150
+					}
+				}
+			}
+		}
+	}
 }

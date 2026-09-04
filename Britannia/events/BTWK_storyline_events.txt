@@ -39,6 +39,9 @@
 
 # BTWK_story_event.0112 = RETURN OF ARTHUR: Arthur Introductory Event
 
+# BTWK_story_event.0150 - 0154 = Sagramor joins Arthur in Dumnonia
+# BTWK_story_event.0155 - 0159 = Derfel is granted the Wolftails
+
 ## AFTERMATH OF UTHER'S DEATH ##
 
 # BTWK_story_event.0108 = GUNDLEUS' BETRAYAL.
@@ -93,7 +96,6 @@ BTWK_story_event.0101 = {  # Uther introductory event
 	hidden = yes
 
 	immediate = {
-		name = BTWK_story_event.0101.a
 		character:1 = {
 			trigger_event = {
 				id = BTWK_story_event.0103
@@ -1967,6 +1969,475 @@ BTWK_story_event.0122 = {  # Event for Mordred: Notification Event from previous
 	}
 }
 
+## BOOK LAAMPS
+# Sagramor receives summons from Arthur, decides whether to join him or not
+# Called from Arthur's BTWK_story_arthur
+BTWK_story_event.0150 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0150.t
+	desc = BTWK_story_event.0150.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+
+	right_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+	
+	immediate = {
+		save_scope_as = sagramor
+		character:3 = { save_scope_as = arthur }
+		if = {
+			limit = { scope:arthur = { highest_held_title_tier >= tier_kingdom } }
+			scope:arthur.primary_title = { save_scope_as = arthur_kingdom }
+		}
+		else = {
+			scope:arthur.liege.primary_title = { save_scope_as = arthur_kingdom }
+		}
+	}
+
+	# Join him!
+	option = {
+		name = BTWK_story_event.0150.a
+		reverse_add_opinion = {
+			target = scope:arthur
+			modifier = pleased_opinion
+			opinion = 20
+		}
+		create_title_and_vassal_change = {
+			type = swear_fealty
+			save_scope_as = change
+			add_claim_on_loss = no
+		}
+		change_liege = {
+			liege = scope:arthur_kingdom.holder
+			change = scope:change
+		}
+		resolve_title_and_vassal_change = scope:change
+		add_contact = scope:arthur
+		scope:arthur = { 
+			trigger_event = BTWK_story_event.0151
+			if = {
+				limit = { NOT = { has_title = scope:arthur_kingdom } }
+				scope:arthur_kingdom.holder = { trigger_event = BTWK_story_event.0152 }
+			}
+		}
+		title:d_laamp_brotherhood_horsemen = { set_variable = horsemen_vassalized }
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+	# Don't
+	option = {
+		name = BTWK_story_event.0150.b
+		reverse_add_opinion = {
+			target = scope:arthur
+			modifier = disappointed_opinion
+			opinion = -20
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Notify Arthur of Sagramor's arrival
+BTWK_story_event.0151 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0151.t
+	desc = BTWK_story_event.0151.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:sagramor = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:sagramor = {
+				reverse_add_opinion = {
+					target = scope:arthur
+					modifier = pleased_opinion
+					opinion = 20
+				}
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:arthur_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+				add_contact = scope:arthur
+			}
+		}
+	}
+
+	# Great!
+	option = {
+		name = BTWK_story_event.0151.a
+	}
+}
+
+# Notify Mordred of Sagramor's arrival
+BTWK_story_event.0152 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0152.t
+	desc = BTWK_story_event.0152.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:sagramor = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:sagramor = {
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:arthur_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+	}
+
+	# Hmm...
+	option = {
+		name = BTWK_story_event.0152.a
+	}
+}
+
+# Ping Derfel's sponsor
+BTWK_story_event.0155 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		this = character:10
+		is_alive = yes
+		is_ruler = no
+		is_incapable = no
+	}
+
+	immediate = {
+		if = {
+			limit = { 
+				any_liege_or_above = {
+					OR = {
+						this = character:3
+						diarch ?= character:3
+					}
+				}
+			}
+			character:3 = { trigger_event = BTWK_story_event.0156 }
+		}
+		else_if = {
+			limit = { 
+				liege = { is_ai = yes }
+				top_liege = { is_ai = no }
+			}
+			top_liege = { trigger_event = BTWK_story_event.0156 }
+		}
+		else_if = {
+			limit = { liege ?= { NOT = { this = root } } }
+			liege = { trigger_event = BTWK_story_event.0156 }
+		}
+		else = {		# Possible if wandering?
+			trigger_event = BTWK_story_event.0156
+		}
+	}
+}
+
+# Derfel gains the Wolftails
+BTWK_story_event.0156 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0156.t
+	desc = BTWK_story_event.0156.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+	
+	immediate = {
+		character:10 = { save_scope_as = derfel }
+		character:2 = { save_scope_as = merlin }
+		character:briton0001 = { save_scope_as = hywel }
+		save_scope_as = sponsor
+		scope:sponsor = {
+			if = {
+				limit = {
+					highest_held_title_tier >= tier_kingdom
+				}
+				primary_title = { save_scope_as = sponsor_kingdom }
+			}
+			else_if = {
+				limit = { liege = { highest_held_title_tier >= tier_kingdom } }
+				liege.primary_title = { save_scope_as = sponsor_kingdom }
+			}
+			else_if = {
+				limit = { top_liege = { highest_held_title_tier >= tier_kingdom } }
+				top_liege.primary_title = { save_scope_as = sponsor_kingdom }
+			}
+		}
+	}
+
+	# Grant him the Wolftails
+	option = {
+		name = BTWK_story_event.0156.a
+		reverse_add_opinion = {
+			target = scope:derfel
+			modifier = grateful_opinion
+			opinion = 50
+		}
+		scope:derfel = {
+			set_house = house:house_cadarn
+			create_landless_adventurer_title_effect = {
+				REASON = flag:voluntary
+				FLAVOR_CHAR = scope:sponsor
+			}
+			scope:new_title = {
+				set_title_name = d_laamp_wolftails
+				set_title_prefix = d_laamp_wolftails_article
+				set_coa = d_laamp_wolftails
+			}
+			hidden_effect = {
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				set_variable = flavourise_camp_purpose_mercenaries
+			}
+			if = {
+				limit = { exists = scope:sponsor_kingdom }
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+			add_contact = scope:sponsor
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+			trigger_event = BTWK_story_event.0157
+		}
+		scope:sponsor = {
+			if = {
+				limit = { NOT = { has_title = scope:sponsor_kingdom } }
+				scope:sponsor_kingdom.holder = { trigger_event = BTWK_story_event.0158 }
+			}
+		}
+		title:d_laamp_wolftails = { set_variable = wolftails_created }
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+	# Have him serve in my court
+	option = {
+		name = BTWK_story_event.0156.b
+		scope:derfel = { 
+			set_house = house:house_cadarn
+			if = {
+				limit = { NOT = { liege = scope:sponsor } }
+				set_employer = scope:sponsor
+			}
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+	
+	# Play as Derfel!
+	option = {
+		name = BTWK_story_event.0156.c
+		reverse_add_opinion = {
+			target = scope:derfel
+			modifier = grateful_opinion
+			opinion = 50
+		}
+		scope:derfel = {
+			set_house = house:house_cadarn
+			create_landless_adventurer_title_effect = {
+				REASON = flag:voluntary
+				FLAVOR_CHAR = scope:sponsor
+			}
+			scope:new_title = {
+				set_title_name = d_laamp_wolftails
+				set_title_prefix = d_laamp_wolftails_article
+				set_coa = d_laamp_wolftails
+			}
+			hidden_effect = {
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				set_variable = flavourise_camp_purpose_mercenaries
+			}
+			if = {
+				limit = { exists = scope:sponsor_kingdom }
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+			add_contact = scope:sponsor
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+			root = { set_player_character = scope:derfel }
+			trigger_event = BTWK_story_event.0157
+		}
+		scope:sponsor = { 
+			if = {
+				limit = { NOT = { has_title = scope:sponsor_kingdom } }
+				scope:sponsor_kingdom.holder = { trigger_event = BTWK_story_event.0158 }
+			}
+		}
+		title:d_laamp_wolftails = { set_variable = wolftails_created }
+		
+		add_internal_flag = special
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Player Derfel intro event
+BTWK_story_event.0157 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0157.t
+	desc = BTWK_story_event.0157.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+
+	right_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	option = {
+		name = BTWK_story_event.0157.a
+	}
+}
+
+# Notify Mordred of Derfel's elevation
+BTWK_story_event.0158 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0158.t
+	desc = BTWK_story_event.0158.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:derfel = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:derfel = {
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+	}
+
+	# Hmm...
+	option = {
+		name = BTWK_story_event.0158.a
+	}
+}
+
+## ARTHUR'S MARRIAGE
 # Arthur chooses a wife (Guinevere or Ceinwyn)
 BTWK_story_event.0300 = {
 	type = character_event
