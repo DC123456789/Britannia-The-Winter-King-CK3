@@ -231,3 +231,41 @@ BTWK_apply_new_government_type_for_unlanded = {
 		}
 	}
 }
+
+BTWK_flag_current_crown_authority_law = {
+	if = {
+		limit = { has_realm_law = crown_authority_0 }
+		set_variable = { name = has_crown_authority_0 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_1 }
+		set_variable = { name = has_crown_authority_1 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_2 }
+		set_variable = { name = has_crown_authority_2 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_3 }
+		set_variable = { name = has_crown_authority_3 days = 1 }
+	}
+}
+
+BTWK_apply_new_government_type_for_unlanded = {
+	if = {
+		limit = { has_variable = has_crown_authority_0 }
+		add_realm_law_skip_effects = crown_authority_0
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_1 }
+		add_realm_law_skip_effects = crown_authority_1
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_2 }
+		add_realm_law_skip_effects = crown_authority_2
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_3 }
+		add_realm_law_skip_effects = crown_authority_3
+	}
+}
