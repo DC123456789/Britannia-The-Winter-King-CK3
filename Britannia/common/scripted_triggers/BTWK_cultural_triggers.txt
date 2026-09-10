@@ -184,6 +184,19 @@ is_romanized_government_culture_trigger = {
 	}
 }
 
+is_same_heritage_group_or_related_heritage_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
+	OR = {
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
+	}
+}
+
+# Same as is_same_heritage_group_or_related_heritage_trigger, but also checks for parent-child cultures
 is_same_heritage_group_or_related_culture_trigger = {
 	save_temporary_scope_as = temp_current_scope
 	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
