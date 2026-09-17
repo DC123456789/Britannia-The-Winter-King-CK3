@@ -2284,12 +2284,16 @@ culture_shifts.0030 = {
 			set_variable = { name = brithenig_emergence_progress_change value = 0 }
 			
 			# If at least 20 Romano-British provinces have a Brythonic culture 
-			# top liege, then Brithineg culture progresses
+			# top liege (and are not under an Imperial heritage suzerain),
+			# then Brithineg culture progresses
 			if = {
 				limit = {
 					any_culture_county = {
 						count >= 20
-						holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+						holder.top_liege = {
+							culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
+						}
 					}
 				}
 				change_variable = { name = brithenig_emergence_progress_change add = 2 }
@@ -2308,6 +2312,7 @@ culture_shifts.0030 = {
 						any_culture_county = {
 							count >= 60
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 						}
 					}
 					change_variable = { name = brithenig_emergence_progress_change add = 1 }
@@ -2317,6 +2322,7 @@ culture_shifts.0030 = {
 						any_culture_county = {
 							count >= 40
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 						}
 					}
 					change_variable = { name = brithenig_emergence_progress_change add = 0.5 }
@@ -2511,6 +2517,7 @@ culture_shifts.0030 = {
 					random_county = {
 						limit = {
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 							county_can_convert_to_brithenig_culture = yes
 							county_is_in_brithenig_culture_area = yes
 							any_neighboring_county = {
@@ -2525,6 +2532,7 @@ culture_shifts.0030 = {
 						random_county = {
 							limit = {
 								holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+								NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 								county_can_convert_to_brithenig_culture = yes
 								county_is_in_brithenig_culture_area = yes
 							}

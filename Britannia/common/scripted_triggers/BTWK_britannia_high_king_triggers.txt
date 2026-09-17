@@ -58,40 +58,53 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 		text = claim_britannia_high_kingship_military_requirement
 		current_military_strength >= 750
 	}
-	diplomacy >= 10
-	martial >= 12
-	stewardship >= 7
 	trigger_if = {
-		limit = {
-			has_claim_on = title:e_britannia
-			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
-		}
-		custom_description = {
-			text = claim_britannia_high_kingship_skill_requirement_reduced
-			OR = {
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 10
-				}
-				prestige_level >= 4
-				diplomacy >= 21
-				martial >= 21
-				prowess >= 25
-			}
-		}
-	}
-	trigger_else = {
+		limit = { NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship } } }
 		custom_description = {
 			text = claim_britannia_high_kingship_skill_requirement
-			OR = {
+			calc_true_if = {
+				amount >= 6
+				diplomacy >= 10
+				diplomacy >= 25
+				martial >= 12
+				martial >= 25
+				stewardship >= 7
+				highest_skill_value >= 20
+				prowess >= 30
 				any_held_title = {
 					tier >= tier_kingdom
 					title_held_years >= 15 
 				}
 				prestige_level >= 4
+				prestige_level >= 5
+				legitimacy_level >= 4
+				legitimacy_level >= 5
+				is_ai = yes
+			}
+		}
+	}
+	trigger_else = {
+		custom_description = {
+			text = claim_britannia_high_kingship_skill_requirement_reduced
+			calc_true_if = {
+				amount >= 6
+				diplomacy >= 10
 				diplomacy >= 25
+				martial >= 12
 				martial >= 25
+				stewardship >= 7
+				highest_skill_value >= 20
 				prowess >= 30
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 15 
+				}
+				prestige_level >= 4
+				prestige_level >= 5
+				legitimacy_level >= 4
+				legitimacy_level >= 5
+				has_claim_on = title:e_britannia
+				is_ai = yes
 			}
 		}
 	}
