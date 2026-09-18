@@ -54,6 +54,42 @@ BTWK_on_death = {
 			}
 			save_scope_as = former_high_king
 			trigger_event = BTWK_britannia_high_king.0023
+			player_heir = { trigger_event = BTWK_britannia_high_king.0023 }
+			every_child = {
+				even_if_dead = yes
+				if = {
+					limit = { 
+						is_alive = yes
+						NOR = {
+							has_trait = bastard
+							has_trait = bastard_founder
+						}
+					}
+					add_pressed_claim = title:e_britannia
+				}
+				else_if = {
+					limit = {
+						is_alive = yes
+						OR = {
+							has_trait = bastard
+							has_trait = bastard_founder
+						}
+					}
+					add_unpressed_claim = title:e_britannia
+				}
+				else_if = {
+					limit = {
+						is_alive = no
+					}
+					every_child = { add_unpressed_claim = title:e_britannia }
+				}
+			}
+			primary_heir = { 
+				if = {
+					limit = { NOT = { has_claim_on = title:e_britannia } }
+					add_unpressed_claim = title:e_britannia 
+				}
+			}
 		}
 		
 		# Handle Bretwalda death events
@@ -67,7 +103,7 @@ BTWK_on_death = {
 					BTWK_aengland_bretwalda_can_inherit_trigger = no
 				}
 				save_scope_as = former_bretwalda
-				title:e_aengland.current_heir = { save_scope_as = former_bretwalda_player_heir }
+				player_heir = { save_scope_as = former_bretwalda_player_heir }
 				trigger_event = BTWK_aengland_bretwalda.0020
 				scope:former_bretwalda_player_heir = { trigger_event = BTWK_aengland_bretwalda.0020 }
 				every_player = {
@@ -79,6 +115,42 @@ BTWK_on_death = {
 						BTWK_aengland_bretwalda_is_relevant_trigger = yes
 					}
 					trigger_event = BTWK_aengland_bretwalda.0020
+				}
+				
+				every_child = {
+					even_if_dead = yes
+					if = {
+						limit = { 
+							is_alive = yes
+							NOR = {
+								has_trait = bastard
+								has_trait = bastard_founder
+							}
+						}
+						add_pressed_claim = title:e_aengland
+					}
+					else_if = {
+						limit = {
+							is_alive = yes
+							OR = {
+								has_trait = bastard
+								has_trait = bastard_founder
+							}
+						}
+						add_unpressed_claim = title:e_aengland
+					}
+					else_if = {
+						limit = {
+							is_alive = no
+						}
+						every_child = { add_unpressed_claim = title:e_aengland }
+					}
+				}
+				primary_heir = { 
+					if = {
+						limit = { NOT = { has_claim_on = title:e_aengland } }
+						add_unpressed_claim = title:e_aengland 
+					}
 				}
 			}
 			# Hegemony score inheritance if Supremacy has been declared

@@ -17,6 +17,7 @@ BTWK_on_game_start = {
 		BTWK_building_setup
 		BTWK_laeti_setup
 		BTWK_britannia_high_kingship_setup
+		BTWK_aengland_bretwalda_setup
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
@@ -3354,6 +3355,15 @@ BTWK_britannia_high_kingship_setup = {
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = unify_legal_codes }
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = reclaim_caratacus_legacy }
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = restore_imperial_dignity }
+		
+		# If the High Kingship is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			title:e_britannia = { set_destroy_on_succession = yes }
+		}
 			
 		# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
 		if = {
@@ -3392,6 +3402,35 @@ BTWK_britannia_high_kingship_setup = {
 			set_variable = {
 				name = macsen_wledig_char
 				value = character:1513
+			}
+		}
+	}
+}
+
+BTWK_aengland_bretwalda_setup = {
+	effect = {
+		# If the Bretwalda system is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_aengland_bretwalda_active_trigger = yes
+				BTWK_aengland_bretwalda_can_inherit_trigger = no
+			}
+			title:e_aengland = { set_destroy_on_succession = yes }
+		}
+		if = {
+			limit = { game_start_date = 479.12.3 }			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
+				}
 			}
 		}
 	}
