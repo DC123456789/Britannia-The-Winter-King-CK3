@@ -464,3 +464,38 @@ BTWK_culture_allowed_to_diverge_at_county_trigger = {
 		}
 	}
 }
+
+BTWK_culture_allowed_to_hybridize_at_county_trigger = {
+	$OTHER_CULTURE$ = { save_scope_as = trigger_other_culture }
+	# Romans have their own system
+	# Allow for now, but block once Romano-Saxon is added
+	# trigger_if = {
+		# limit = { $CULTURE$ = { has_cultural_pillar = heritage_latin } } 
+		# custom_tooltip = {
+			# text = BTWK_heritage_latin_cannot_hybridize_tt
+			# NOT = { $CULTURE$ = { has_cultural_pillar = heritage_latin } }
+		# }
+	# }
+	# Angle/Old Saxon/Jutish have their own culture split/evolution - only allow hybridization after
+	trigger_if = {
+		limit = { 
+			OR = {
+				$CULTURE$ = culture:angle
+				$CULTURE$ = culture:old_saxon
+				$CULTURE$ = culture:jute
+			}
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		custom_tooltip = {
+			text = BTWK_heritage_anglo_saxon_cannot_hybridize_in_britannia_tt
+			NAND = {
+				OR = {
+					$CULTURE$ = culture:angle
+					$CULTURE$ = culture:old_saxon
+					$CULTURE$ = culture:jute
+				}
+				$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+	}
+}
