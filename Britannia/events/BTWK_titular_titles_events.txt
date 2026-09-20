@@ -144,6 +144,15 @@ titular_titles_anglosaxon.0001 = {
 					check_de_jure_liege_effect = yes
 				}
 			}
+			if = {
+				limit = {
+					BTWK_britannia_high_kingship_active_trigger = yes
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+				}
+			}
 		}
 		if = {
 			limit = { this = scope:conqueror }
@@ -155,6 +164,15 @@ titular_titles_anglosaxon.0001 = {
 							catalyst = catalyst_create_anglo_saxon_duchy
 							character = scope:conqueror
 						}
+					}
+				}
+				if = {
+					limit = {
+						BTWK_britannia_high_kingship_active_trigger = yes
+						exists = title:e_britannia.holder
+					}
+					BTWK_britannia_high_kingship_remove_authority_effect = { 
+						AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
 					}
 				}
 			}
@@ -2927,6 +2945,17 @@ titular_titles_irish.0002 = {
 				}
 				add_trait = reaver
 			}
+			hidden_effect = {
+				if = {
+					limit = {
+						BTWK_britannia_high_kingship_active_trigger = yes
+						exists = title:e_britannia.holder
+					}
+					BTWK_britannia_high_kingship_remove_authority_effect = { 
+						AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+					}
+				}
+			}
 		}
 		# This shows the de jure shift as a tooltip
 		show_as_tooltip = {
@@ -2940,6 +2969,15 @@ titular_titles_irish.0002 = {
 				}
 			}
 			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_caer_gei } }
+			if = {
+				limit = {
+					BTWK_britannia_high_kingship_active_trigger = yes
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+				}
+			}
 		}
 	}
 
@@ -3012,6 +3050,18 @@ titular_titles_irish.0004 = {
 			}
 			show_as_tooltip = { destroy_title = title:k_lleyn }
 		}
+		hidden_effect = {
+			if = {
+				limit = {
+					this = scope:conqueror
+					BTWK_britannia_high_kingship_active_trigger = yes
+					exists = title:e_britannia.holder
+				}
+				BTWK_britannia_high_kingship_add_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_destruction_gain
+				}
+			}
+		}
 		# This shows the de jure shift as a tooltip
 		show_as_tooltip = {
 			title:k_lleyn = { 
@@ -3024,6 +3074,15 @@ titular_titles_irish.0004 = {
 				}
 			}
 			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_deganwy } }
+			if = {
+				limit = {
+					BTWK_britannia_high_kingship_active_trigger = yes
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_kingship_add_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_destruction_gain
+				}
+			}
 		}
 	}
 
