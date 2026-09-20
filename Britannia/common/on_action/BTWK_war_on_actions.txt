@@ -81,6 +81,32 @@ btwk_on_war_won_attacker = {
 				}
 			}
 		}
+		
+		# Lose High King authority
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				scope:defender = { 
+					OR = {
+						has_title = title:e_britannia
+						AND = {
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+							suzerain ?= { has_tittle = title:e_britannia }
+							scope:war = { any_war_defender = { has_title = title:e_britannia } }
+						}
+					}
+				}
+				# Don't lose authority from winning against your own subject kings!
+				NOT = {
+					scope:attacker = { has_title = title:e_britannia }
+				}
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_lose_defensive_war_loss
+				}
+			}
+		}
 	}
 }
 
@@ -156,6 +182,32 @@ btwk_on_war_won_defender = {
 					}
 					every_army_maa_regiment = { destroy_maa_regiment = yes }
 					deplete_army_by_percentage = 0.99
+				}
+			}
+		}
+		
+		# Gain High King authority
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				scope:defender = { 
+					OR = {
+						has_title = title:e_britannia
+						AND = {
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+							suzerain ?= { has_title = title:e_britannia }
+							scope:war = { any_war_defender = { has_title = title:e_britannia } }
+						}
+					}
+				}
+				# Don't gain authority from losing against your own subject kings!
+				NOT = {
+					scope:attacker = { has_title = title:e_britannia }
+				}
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_add_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_win_defensive_war_gain
 				}
 			}
 		}
