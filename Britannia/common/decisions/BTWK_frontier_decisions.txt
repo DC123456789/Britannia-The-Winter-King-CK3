@@ -166,6 +166,7 @@ restore_hadrians_wall_decision = {
 			has_trait = romanitas_trait
 		}
 		NOT = { has_trait = barbarian_trait }
+		NOT = { has_character_modifier = destroyed_hadrians_wall_character_modifier }
 	}
 
 	effect = {
@@ -173,6 +174,17 @@ restore_hadrians_wall_decision = {
 		if = {
 			limit = { has_global_variable = ruin_hadrians_wall_decision }
 			custom_tooltip = BTWK_frontier_event.0210.a_tt_1
+		}
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+				BTWK_britannia_high_kingship_active_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			custom_tooltip = BTWK_frontier_event.0210.a_tt_2
 		}
 			
 		show_as_tooltip = {
@@ -272,13 +284,19 @@ ruin_hadrians_wall_decision = {
 				modifier = destroyed_hadrians_wall_character_modifier
 			}
 			if = {
+				limit = { culture = { has_cultural_pillar = heritage_latin } }
+				add_legitimacy = major_legitimacy_loss
+				add_prestige = massive_prestige_loss
+				dynasty = { add_dynasty_prestige = medium_dynasty_prestige_loss }
+			}
+			else_if = {
 				limit = {
 					is_imperial_like_culture_trigger = yes
 				}
 				add_legitimacy = medium_legitimacy_loss
+				add_prestige = minor_prestige_loss
 			}
-		}
-		
+		}		
 		trigger_event = BTWK_frontier_event.0201
 		set_global_variable = ruin_hadrians_wall_decision
 		remove_global_variable = restore_hadrians_wall_decision

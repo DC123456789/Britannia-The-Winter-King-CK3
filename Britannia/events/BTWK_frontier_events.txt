@@ -528,6 +528,17 @@ BTWK_frontier_event.0210 = {
 			limit = { has_global_variable = ruin_hadrians_wall_decision }
 			custom_tooltip = BTWK_frontier_event.0210.a_tt_1
 		}
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
+				BTWK_britannia_high_kingship_active_trigger = yes
+				any_held_title = {
+					tier = root.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			custom_tooltip = BTWK_frontier_event.0210.a_tt_2
+		}
 
 		add_prestige = 200	
 		if = {
@@ -613,6 +624,15 @@ BTWK_frontier_event.0211 = {
 		add_legitimacy = 400
 		add_character_modifier = {
 			modifier = restored_hadrians_wall_major_character_modifier
+		}
+		if = {
+			limit = {
+				has_title = title:e_britannia
+				BTWK_britannia_high_kingship_active_trigger = yes
+			}
+			BTWK_britannia_high_kingship_add_authority_effect = { 
+				AMOUNT = BTWK_britannia_high_king_authority_restore_hadrians_wall_gain
+			}
 		}
 		hidden_effect = {
 			save_scope_as = restored_hadrians_wall_major_character
