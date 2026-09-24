@@ -7,9 +7,9 @@
  BRITON_PATRONYM_OS_OR_NEXT: "SelectLocalization($briton_patronym_os_check$, $briton_patronym_os_genitive$, $BRITON_PATRONYM_IX_OR_NEXT$)"
  BRITON_PATRONYM_IX_OR_NEXT: "SelectLocalization($briton_patronym_ix_check$, $briton_patronym_ix_genitive$, $BRITON_PATRONYM_A_OR_NEXT$)"
  BRITON_PATRONYM_A_OR_NEXT: "SelectLocalization($briton_patronym_a_check$, $briton_patronym_a_genitive$, $BRITON_PATRONYM_R_OR_NEXT$)"
- BRITON_PATRONYM_R_OR_NEXT: "SelectLocalization($briton_patronym_r_check$, $briton_patronym_r_genitive$, '$PATRONYM$')"
+ BRITON_PATRONYM_R_OR_NEXT: "SelectLocalization($briton_patronym_r_check$, $briton_patronym_r_genitive$, '$PATRONYM|q$')"
  
- briton_patronym_nominative: "TrimBackChars('$PATRONYM$', '#!')"
+ briton_patronym_nominative: "TrimBackChars('$PATRONYM|q$', '#!')"
  briton_patronym_us_check: "Not(Or(EqualTo_string(TrimBackChars($briton_patronym_nominative$, 's'), $briton_patronym_nominative$), EqualTo_string(TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'u'), TrimBackChars($briton_patronym_nominative$, 's'))))"
  briton_patronym_us_base: "TrimBackChars(TrimBackChars($briton_patronym_nominative$, 's'), 'u')"
  briton_patronym_us_genitive: "Concatenate($briton_patronym_us_base$, 'i#!')"
@@ -57,9 +57,9 @@
  GAULISH_PATRONYM_US_OR_NEXT: "SelectLocalization($gaulish_patronym_us_check$, $gaulish_patronym_us_genitive$, $GAULISH_PATRONYM_X_OR_NEXT$)"
  GAULISH_PATRONYM_X_OR_NEXT: "SelectLocalization($gaulish_patronym_x_check$, $gaulish_patronym_x_genitive$, $GAULISH_PATRONYM_IS_OR_NEXT$)"
  GAULISH_PATRONYM_IS_OR_NEXT: "SelectLocalization($gaulish_patronym_is_check$, $gaulish_patronym_is_genitive$, $GAULISH_PATRONYM_R_OR_NEXT$)"
- GAULISH_PATRONYM_R_OR_NEXT: "SelectLocalization($gaulish_patronym_r_check$, $gaulish_patronym_r_genitive$, '$PATRONYM$')"
+ GAULISH_PATRONYM_R_OR_NEXT: "SelectLocalization($gaulish_patronym_r_check$, $gaulish_patronym_r_genitive$, '$PATRONYM|q$')"
  
- gaulish_patronym_nominative: "TrimBackChars('$PATRONYM$', '#!')"
+ gaulish_patronym_nominative: "TrimBackChars('$PATRONYM|q$', '#!')"
  gaulish_patronym_u_check: "Not(EqualTo_string(TrimBackChars($gaulish_patronym_nominative$, 'u'), $gaulish_patronym_nominative$))"
  gaulish_patronym_u_base: "TrimBackChars($gaulish_patronym_nominative$, 'u')"
  gaulish_patronym_u_genitive: "Concatenate($gaulish_patronym_u_base$, 'unios#!')"
@@ -105,10 +105,10 @@
  culture_aesthetics_naming_roman: "Nomen dynasty names first when given, otherwise dynasty name last when required"
  
  roman_dynasty_is_nomen: "Not(Or(Or(EqualTo_string(TrimBackChars($roman_dynasty_name$, 's'), $roman_dynasty_name$), EqualTo_string(TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'), TrimBackChars($roman_dynasty_name$, 's'))), EqualTo_string(TrimBackChars(TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'), 'i'), TrimBackChars(TrimBackChars($roman_dynasty_name$, 's'), 'u'))))"
- roman_dynasty_name: "TrimBackChars('$DYNASTY$', '#!')"
+ roman_dynasty_name: "TrimBackChars('$DYNASTY|q$', '#!')"
  
- ROMAN_NOMEN: "[SelectLocalization($roman_dynasty_is_nomen$, '$DYNASTY$ ', '')]"
- ROMAN_HOUSE_LAST_NAME: "[SelectLocalization($roman_dynasty_is_nomen$, '', ' $HOUSE$')]"
+ ROMAN_NOMEN: "[SelectLocalization($roman_dynasty_is_nomen$, '$DYNASTY|q$ ', '')]"
+ ROMAN_HOUSE_LAST_NAME: "[SelectLocalization($roman_dynasty_is_nomen$, '', ' $HOUSE|q$')]"
  
  # Basic name
  CHARACTER_FIRST_NAME_AND_DYNASTY_ROMAN: "$ROMAN_NOMEN$$NAME$$ROMAN_HOUSE_LAST_NAME$"
