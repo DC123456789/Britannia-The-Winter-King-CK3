@@ -34,5 +34,25 @@ BTWK_on_character_faith_change_all = {
 			remove_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
 			remove_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
 		}
+		
+		# Britannia struggle catalyst
+		if = {
+			limit = {
+				scope:old_faith = { has_doctrine_parameter = unreformed }
+				NOT = { faith = { has_doctrine_parameter = unreformed } }
+				is_independent_ruler = yes
+				any_character_struggle = {
+					involvement = involved
+					phase_has_catalyst = catalyst_convert_to_reformed_religion
+				}
+			}
+			every_character_struggle = {
+				involvement = involved
+				activate_struggle_catalyst = {
+					catalyst = catalyst_convert_to_reformed_religion
+					character = root
+				}
+			}
+		}
 	}
 }

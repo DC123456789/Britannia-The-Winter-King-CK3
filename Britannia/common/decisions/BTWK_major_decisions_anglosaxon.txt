@@ -2,9 +2,333 @@
 # Anglo-Saxon Major Decisions											#
 #########################################################################
 
+claim_aengland_bretwalda_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = claim_aengland_bretwalda_decision_desc
+
+	is_shown = {
+		is_unromanized_germanic_culture_trigger = yes
+		any_held_title = {
+			tier = root.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+		}
+		NOT = { has_title = title:e_aengland }
+		BTWK_aengland_bretwalda_active_trigger = yes
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		is_unromanized_germanic_culture_trigger = yes
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_kingdom_requirement_tt
+			any_held_title = {
+				tier = tier_kingdom
+				target_is_de_jure_liege_or_above = title:e_aengland
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+		title:e_aengland = { is_title_created = no }
+		prestige_level >= high_prestige_level
+		age >= 25
+		realm_size >= 15
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_military_requirement_tt
+			current_military_strength >= 1000
+		}
+		OR = {
+			custom_tooltip = {
+				text = claim_aengland_bretwalda_king_ruled_years_requirement_tt
+				any_held_title = {
+					tier >= tier_kingdom
+					title_held_years >= 10 
+				}
+			}
+			prestige_level >= very_high_prestige_level
+			diplomacy >= 25
+			martial >= 25
+			prowess >= 30
+		}
+		BTWK_aengland_bretwalda_britannia_region_control_min_counties_trigger = {
+			COUNTIES_REQUIRED = 60
+		}
+		control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
+			FRACTION_REQUIRED = 0.5
+		}
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_king_hegemony_score_tt
+			has_variable = aengland_bretwalda_hegemony_score
+			this.var:aengland_bretwalda_hegemony_score >= 180
+		}
+	}
+
+	effect = {
+		show_as_tooltip = {
+			get_title = title:e_aengland
+		}
+		custom_tooltip = {
+			text = claim_aengland_bretwalda_decision_effect_tt
+		}
+		save_scope_as = new_bretwalda
+		primary_title = { save_scope_as = old_primary_title }
+		trigger_event = { id = BTWK_aengland_bretwalda.0001 }
+		every_player = {
+			limit = { this != prev }
+			trigger_event = { id = BTWK_aengland_bretwalda.0001 }
+		}
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_aengland_bretwalda"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_aengland_declare_supremacy_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_knight_kneeling.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	is_shown = {
+		is_unromanized_germanic_culture_trigger = yes
+		BTWK_aengland_bretwalda_active_trigger = yes
+		has_title = title:e_aengland
+		NOT = { BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes }
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		government_is_not_tribal_trigger = yes
+		is_unromanized_germanic_culture_trigger = yes
+		prestige_level >= high_prestige_level
+		OR = {
+			title:e_aengland = {
+				title_held_years >= 10 
+			}
+			prestige_level >= 4
+			diplomacy >= 20
+			martial >= 20
+			prowess >= 25
+		}
+		control_region_fraction_including_tributaries_trigger = {
+			FRACTION_REQUIRED = 0.60
+			REGION = geographical_region:btwk_custom_aengland
+		}
+		control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
+			FRACTION_REQUIRED = 0.75
+		}
+		custom_tooltip = {
+			text = BTWK_HK_aengland_declare_supremacy_decision_hegemony_score_tt
+			this.var:aengland_bretwalda_hegemony_score >= 500
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_HK_aengland_declare_supremacy_decision_effect_tt.1
+		custom_tooltip = BTWK_HK_aengland_declare_supremacy_decision_effect_tt.2
+		save_scope_as = bretwalda
+		trigger_event = { id = BTWK_aengland_bretwalda.0002 }
+		every_player = {
+			limit = { this != prev }
+			trigger_event = { id = BTWK_aengland_bretwalda.0002 }
+		}
+	}
+	
+	cost = {
+		prestige = { value = 1000 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_aengland_bretwalda"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_aengland_unite_aengland_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_found_kingdom.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	is_shown = {
+		is_unromanized_germanic_culture_trigger = yes
+		BTWK_aengland_bretwalda_active_trigger = yes
+		has_title = title:e_aengland
+		custom_tooltip = {
+			text = BTWK_HK_aengland_unite_aengland_decision_has_declared_supremacy_tt
+			BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+		}
+	}
+
+	is_valid = {
+		BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = yes
+	}
+
+	effect = {
+		BTWK_HK_aengland_unite_aengland_decision_effect = yes
+	}
+	
+	cost = {
+		gold = { value = 200 }
+		prestige = { value = 1000 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_aengland_bretwalda"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_HK_aengland_unite_aengland_decision_struggle = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_found_kingdom.dds"
+	}
+	extra_picture = "gfx/interface/illustrations/decisions/decision_found_kingdom.dds"
+	selection_tooltip = BTWK_HK_aengland_unite_aengland_decision_tooltip
+	is_invisible = yes
+	sort_order = 80
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 12
+		hegemony = 12
+	}
+
+	is_shown = {
+		is_unromanized_germanic_culture_trigger = yes
+		BTWK_aengland_bretwalda_active_trigger = yes
+	}
+
+	is_valid = {
+		has_title = title:e_aengland
+		custom_tooltip = {
+			text = BTWK_HK_aengland_unite_aengland_decision_has_declared_supremacy_tt
+			BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+		}
+		BTWK_HK_aengland_unite_aengland_decision_is_valid_trigger = yes
+	}
+
+	effect = {
+		BTWK_HK_aengland_unite_aengland_decision_effect = yes
+	}
+	
+	cost = {
+		gold = { value = 100 }
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_widget_view_aengland_bretwalda"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
 embrace_anglo_saxon_culture_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/decision_legitimacy.dds"
 	}
 	decision_group_type = major
 
@@ -21,6 +345,7 @@ embrace_anglo_saxon_culture_decision = {
 
 	is_shown = {
 		has_title = title:e_aengland
+		BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
 		NOT = { title:e_aengland = { has_variable = anglo_saxon_unified_culture } }
 		culture = { has_cultural_pillar = heritage_west_germanic }
 	}
@@ -39,20 +364,14 @@ embrace_anglo_saxon_culture_decision = {
 			FRACTION_REQUIRED = 0.75
 			REGION = geographical_region:btwk_custom_aengland
 		}
-		custom_tooltip = {
-			text = aengland_has_declared_supremacy_tt
-			# TODO check variable once mechanic is implemented
-			title:e_aengland = { has_variable = aengland_declared_supremacy }
-		}
 		OR = {
 			custom_tooltip = {
 				text = aengland_has_been_united_tt
 				# TODO check variable once mechanic is implemented
 				title:e_aengland = { has_variable = aengland_united }
 			}
-			# TODO once mechanic is implemented, need to figure out appropriate values
 			custom_tooltip = {
-				text = aengland_has_at_least_1000_bretwalda_authority_tt
+				text = embrace_anglo_saxon_culture_decision_hegemony_score_requirement_tt
 				always = no
 			}
 		}
@@ -77,5 +396,121 @@ embrace_anglo_saxon_culture_decision = {
 
 	ai_will_do = {
 		base = 100
+	}
+}
+
+BTWK_rise_of_anglo_saxon_kingdom_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/ep3_decision_varangian_guard.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 0
+		empire = 0
+		hegemony = 0
+	}
+
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					primary_title = title:d_laamp_scyldings
+				}
+				desc = BTWK_rise_of_anglo_saxon_kingdom_decision_d_laamp_scyldings_desc
+			}
+			desc = BTWK_rise_of_anglo_saxon_kingdom_decision_desc
+		}
+	}
+
+	is_shown = {
+		BTWK_rise_of_anglo_saxon_kingdom_is_visible_trigger = yes
+		BTWK_rise_of_anglo_saxon_kingdom_get_target_kingdom_trigger = yes
+		BTWK_rise_of_anglo_saxon_kingdom_is_kingdom_visible_trigger = { KINGDOM = scope:target_kingdom }
+	}
+
+	is_valid = {
+		BTWK_rise_of_anglo_saxon_kingdom_is_character_valid_ai_trigger = yes
+		is_adult = yes
+		prestige_level >= 2
+		trigger_if = {
+			limit = { is_tributary = yes }
+			NOT = { has_truce = suzerain }
+		}
+		trigger_if = {
+			limit = { is_independent_ruler = no }
+			NOT = { has_truce = top_liege }
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.1
+		show_as_tooltip = {
+			spawn_army = {
+				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+				levies = 300
+				men_at_arms = {
+					type = pikemen_unit
+					men = 150
+				}
+				men_at_arms = {
+					type = landsknecht
+					men = 150
+				}
+				men_at_arms = {
+					type = onager
+					men = 10
+				}
+				location = this.capital_province
+			}
+		}
+		if = {
+			limit = { 
+				is_independent_ruler = no
+				top_liege = { realm_size <= 12 }
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.a
+		}
+		else_if = {
+			limit = { is_independent_ruler = no }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.b
+		}
+		else_if = {
+			limit = { is_tributary = yes }
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.c
+		}
+		else_if = {
+			limit = { 
+				is_landless_adventurer = yes
+				primary_title = title:d_laamp_scyldings
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.2.d
+		}
+		if = {
+			limit = { 
+				primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+			}
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3.lindsey
+		}
+		else = {
+			custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.3
+		}
+		custom_tooltip = BTWK_rise_of_anglo_saxon_kingdom_decision_effect_tt.4
+		trigger_event = BTWK_anglo_saxon_invasions.0110
+	}
+	
+	cost = {
+		prestige = 250
+	}
+	
+	ai_potential = {
+		always = no
+	}
+
+	ai_will_do = {
+		base = 0		# Handled by event
 	}
 }

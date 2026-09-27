@@ -1,4 +1,4 @@
-version="0.1"
+version="0.1.2"
 tags={
 	"Total Conversion"
 	"History"
@@ -18,5 +18,5 @@ replace_path="history/situations"
 replace_path="history/struggles"
 replace_path="history/titles"
 replace_path="gfx/interface/illustrations/loading_screens"
-supported_version="1.19.0.4"
-path="mod/Britannia"
+supported_version="1.19.0.6"
+path="mod/Britannia-The-Winter-King-CK3/Britannia"

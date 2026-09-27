@@ -7,22 +7,22 @@
 	cultures = {
 		# Brythonic
 		briton
-		cumbrian
-		welsh
-		cornish
 		romanobritish
 		
 		# Germanic
 		angle
 		old_saxon
 		jute
-		# TODO Scripted derivative cultures too
+		
+		# Goidelic
+		irish
 	}
 	faiths = {
 		catholic
 		briton_pagan
 		romano_celtic_pagan
 		anglo_saxon_pagan
+		gael_pagan
 	}
 	regions = { btwk_world_britannia }
 
@@ -33,12 +33,13 @@
 
 	on_start = {
 		# Starting Events
-		# trigger_event = { on_action = fp2_iberian_struggle_starting_events }
+		trigger_event = neutral_struggle.0001
+		trigger_event = BTWK_britannia_struggle.0001
 	}
 
 	on_change_phase = {
-		# Set up AI Intent
-		# trigger_event = fp2_struggle.0003
+		# Requires one day delay in order to check the new phase, not the old phase
+		trigger_event = { id = BTWK_britannia_struggle.0010 days = 1 }
 	}
 	
 	# Root = the current struggle
@@ -74,58 +75,109 @@
 						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
 						
 						# War effects
-						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
 						catalyst_sign_truce_outside_war = medium_struggle_catalyst_gain
-						catalyst_end_any_war_within_the_region = medium_struggle_catalyst_gain
+						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_end_any_war_within_the_region = minimal_struggle_catalyst_gain
 						
 						# Diplomatic effects
+						catalyst_became_best_friend_soulmate_with_very_important_character = major_struggle_catalyst_gain # AI done
+						catalyst_grant_privilege_to_diff_faith_culture_vassal = medium_struggle_catalyst_gain
+						catalyst_grant_land_local_noble = medium_struggle_catalyst_gain
+						catalyst_release_important = medium_struggle_catalyst_gain
+						catalyst_invite_diff_faith_culture_to_feast = minor_struggle_catalyst_gain
 						catalyst_learned_new_language_important = minor_struggle_catalyst_gain
-						catalyst_formed_intercultural_alliance_with_important_character = major_struggle_catalyst_gain
+						catalyst_formed_intercultural_alliance_with_important_character = minor_struggle_catalyst_gain
 						catalyst_gift_independent_ruler = minor_struggle_catalyst_gain
 						catalyst_became_friend_lover_with_character = minor_struggle_catalyst_gain
+						catalyst_improve_development_vassal_diff_faith_culture = minimal_struggle_catalyst_gain # How to do AI?
+						catalyst_ransom_important = minimal_struggle_catalyst_gain
 						
 						# Realm effects
-						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
-						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
-						catalyst_bretwalda_died_violently = massive_struggle_catalyst_gain
-						catalyst_bretwalda_died_naturally = major_struggle_catalyst_gain
-						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_create_anglo_saxon_duchy = massive_struggle_catalyst_gain
+						catalyst_destroy_anglo_saxon_duchy = massive_struggle_catalyst_gain
+						catalyst_bretwalda_died_violently = excessive_struggle_catalyst_gain
+						catalyst_bretwalda_died_naturally = monumental_struggle_catalyst_gain
+						catalyst_conqueror_died_violently = excessive_struggle_catalyst_gain
+						catalyst_conqueror_died_naturally = monumental_struggle_catalyst_gain
+						catalyst_east_anglia_collapses = excessive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = massive_struggle_catalyst_gain
 					}
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
-						catalyst_vassalize_independent_ruler = minor_struggle_catalyst_gain
-						catalyst_create_new_anglo_saxon_kingdom = major_struggle_catalyst_gain
-						catalyst_pass_britannia_reform = massive_struggle_catalyst_gain
-						catalyst_convert_to_reformed_religion = medium_struggle_catalyst_gain
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# Realm effects
+						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = monumental_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_reformed_religion = major_struggle_catalyst_gain
+						catalyst_convert_to_pre_feudal = massive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = monumental_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = monumental_struggle_catalyst_over_time_gain
+						
+						# Gain over time depending on number of outsider-controlled counties in Britannia
+						catalyst_uninvolved_presence_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_5 = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
 					duchy_conquest_cb_blocked = yes
 					more_expensive_unromanized_germanic_mutual_conquest_cb = yes
+					unromanized_germanic_conquest_cb_on_laeti_blocked = yes
+					allow_rise_of_anglo_saxon_kingdoms = yes
 				}
 			}
 
 			culture_effects = {
 				name = CULTURE_EFFECTS_NAME
-				# TODO
+				
+				###### Common
+				common_parameters = {
+					county_culture_conversion_in_region_proceeds_slightly_faster = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
+				}
 			}
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
+				
+				###### Involved
+				involved_parameters = {
+					anglo_saxon_kings_cannot_create_new_kingdoms = yes
+					anglo_saxon_controlled_counties_can_become_tribal = yes
+				}
 			}
 
 			#We are listing all available decision to give players insights on how they can end the Struggle
 			ending_decisions = {
-				# TODO
+				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
+				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
+				BTWK_britannia_struggle_outsider_ending_decision
 			}
 		}
 
@@ -136,91 +188,201 @@
 			future_phases = {
 				struggle_britannia_phase_invasion = {						
 					catalysts = {
-						# TODO
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# War effects
+						catalyst_usurp_title_britannia_region = minor_struggle_catalyst_gain
+						catalyst_end_any_war_within_the_region = minor_struggle_catalyst_gain
+						catalyst_broke_truce_against_important_character = massive_struggle_catalyst_gain
+						
+						# Diplo effects
+						catalyst_gain_claim_on_title_britannia_region = minimal_struggle_catalyst_gain
+						catalyst_becomes_rival_with_involved = medium_struggle_catalyst_gain
+						catalyst_unnatural_death_important_character = medium_struggle_catalyst_gain
+						catalyst_using_a_hook_on_very_important_character = minor_struggle_catalyst_gain # good
+						catalyst_reveal_secret_important = minor_struggle_catalyst_gain
+						
+						# Realm effects
+						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
+						catalyst_high_king_britannia_died_violently = monumental_struggle_catalyst_gain
+						catalyst_high_king_britannia_died_naturally = massive_struggle_catalyst_gain
+						catalyst_high_king_britannia_lost_throne = massive_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						
+						# Massive gain from from the Plague of Justinian / Crisis of the 6th Century (TODO)
+						catalyst_apocalyptic_bubonic_plague = excessive_struggle_catalyst_gain
 					}
 				}
 				struggle_britannia_phase_consolidation = {
 					catalysts = {
-						# TODO
+						catalyst_passing_of_time = minimal_struggle_catalyst_over_time_gain
+						
+						# Realm effects
+						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = monumental_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_reformed_religion = major_struggle_catalyst_gain
+						catalyst_convert_to_pre_feudal = massive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = monumental_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = monumental_struggle_catalyst_over_time_gain
+						
+						# Gain over time depending on number of outsider-controlled counties in Britannia
+						catalyst_uninvolved_presence_in_britannia_1 = minimal_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_2 = minor_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_3 = medium_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_4 = major_struggle_catalyst_over_time_gain
+						catalyst_uninvolved_presence_in_britannia_5 = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
-
+				
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
 					duchy_conquest_cb_blocked = yes
 					more_expensive_unromanized_germanic_mutual_conquest_cb = yes
+					unromanized_germanic_conquest_cb_on_laeti_blocked = yes
+					white_peace_acceptance_between_involved_or_interloper_with_region_easier = yes
+					truces_by_involved_or_interlopers_within_region_longer = yes
+					struggle_cheaper_buy_truce = yes
+					more_expensive_conquest_cb = yes
+				}
+				
+				involved_character_modifier = {
+					ai_war_chance = -0.25
+					ai_war_cooldown = 0.25
 				}
 			}
 
 			culture_effects = {
 				name = CULTURE_EFFECTS_NAME
-				# TODO
+				
+				###### Common
+				common_parameters = {
+					county_culture_conversion_in_region_proceeds_slightly_faster = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
+				}
 			}
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
+				
+				###### Involved
+				involved_parameters = {
+					anglo_saxon_kings_cannot_create_new_kingdoms = yes
+					anglo_saxon_controlled_counties_can_become_tribal = yes
+				}
 			}
 
 			#We are listing all available decision to give players insights on how they can end the Struggle
 			ending_decisions = {
-				# TODO
+				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
+				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
+				BTWK_britannia_struggle_outsider_ending_decision
 			}
         }
 
 		# Consolidation is triggered as the Anglo-Saxon kingdoms become better organized and/or a powerful Briton/Roman/Romanized Germanic(?) realm starts to consolidate
-        # This triggers the beginning of larger-scale wars(?) and the unification of the Anglo-Saxons into larger kingdoms
+        # This triggers the beginning of larger-scale wars and the unification of the Anglo-Saxons into larger kingdoms
 		struggle_britannia_phase_consolidation = {
+			save_progress = yes
+			
 			##################################################
 			# General Set-Up
 			future_phases = {
 				struggle_britannia_phase_unification = {
-					catalysts = {
-						# TODO
+					catalysts = {						
+						# Realm effects
+						catalyst_create_new_anglo_saxon_kingdom = massive_struggle_catalyst_gain
+						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
+						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
+						catalyst_pass_britannia_reform = monumental_struggle_catalyst_gain
+						catalyst_aengland_declare_supremacy = excessive_struggle_catalyst_gain
+						catalyst_convert_to_advanced_government = massive_struggle_catalyst_gain
+						catalyst_vassalize_client_kingdom = massive_struggle_catalyst_gain
+						catalyst_vassalize_large_client_kingdom = excessive_struggle_catalyst_gain
+						
+						# Gain over time depending on the size of largest realms in Britannia
+						# and if Britannia/Aengland centralization is well advanced
+						catalyst_large_realm_in_britannia_2 = minimal_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_3 = minor_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_4 = medium_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_5 = major_struggle_catalyst_over_time_gain
+						catalyst_large_realm_in_britannia_6 = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_is_inheritable = massive_struggle_catalyst_over_time_gain
+						catalyst_high_king_britannia_vassalized_subject_kings = massive_struggle_catalyst_over_time_gain
+						catalyst_bretwalda_aengland_has_declared_supremacy = massive_struggle_catalyst_over_time_gain
 					}
 				}
 			}
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
 					cheaper_pre_feudal_subjugation_cb = yes
+					allow_rise_of_anglo_saxon_kingdoms = yes
 				}
 			}
 
 			faith_effects = {
 				name = FAITH_EFFECTS_NAME
-				# TODO
 			}
 
 			culture_effects = {
 				name = CULTURE_EFFECTS_NAME
-				# TODO
+				###### Common
+				common_parameters = {
+					county_culture_conversion_in_region_proceeds_faster = yes
+				}
 
 				###### Involved
 				involved_parameters = {
 					allow_briton_culture_split = yes
 					allow_anglo_saxon_regional_cultures = yes
 					allow_romanobritish_culture_shifts = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
 				}
 			}
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
+
+				###### Involved
+				involved_parameters = {
+					britannia_high_king_authority_minor_boost = yes
+					aengland_bretwalda_hegemony_score_minor_boost = yes
+					anglo_saxon_controlled_counties_can_become_tribal = yes
+				}
 			}
 
 			#We are listing all available decision to give players insights on how they can end the Struggle
 			ending_decisions = {
-				# TODO
+				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
+				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
+				BTWK_britannia_struggle_outsider_ending_decision
 			}
 		}
 
@@ -228,25 +390,31 @@
 		struggle_britannia_phase_unification = {
 			##################################################
 			# Final phase! No more progress!
+			# This is just here so that having no more next phase doesn't break the UI
+			future_phases = {
+				struggle_britannia_phase_unification = {
+					catalysts = {						
+					
+					}
+				}
+			}
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
-				# TODO
 				
 				###### Involved
 				involved_parameters = {
 					cheaper_pre_feudal_subjugation_cb = yes
+					allow_rise_of_anglo_saxon_kingdoms = yes
 				}
 			}
 
 			faith_effects = {
 				name = FAITH_EFFECTS_NAME
-				# TODO
 			}
 
 			culture_effects = {
 				name = CULTURE_EFFECTS_NAME
-				# TODO
 
 				###### Involved
 				involved_parameters = {
@@ -258,12 +426,23 @@
 
 			other_effects = {
 				name = OTHER_EFFECTS_NAME
-				# TODO
+
+				###### Involved
+				involved_parameters = {
+					britannia_high_king_authority_boost = yes
+					aengland_bretwalda_hegemony_score_boost = yes
+					BTWK_client_state_enforce_vassalage_cost_reduction = yes
+				}
 			}
 
 			#We are listing all available decision to give players insights on how they can end the Struggle
 			ending_decisions = {
-				# TODO
+				BTWK_HK_britannia_reclaim_caratacus_legacy_decision_struggle
+				BTWK_HK_britannia_restore_imperial_dignity_decision_struggle
+				reunite_the_britons_decision
+				BTWK_HK_aengland_unite_aengland_decision_struggle
+				found_romanized_germanic_empire_britannia_decision
+				BTWK_britannia_struggle_outsider_ending_decision
 			}
 		}
 	}

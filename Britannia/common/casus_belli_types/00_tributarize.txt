@@ -39,6 +39,11 @@
 						NOT = {
 							government_has_flag = government_is_nomadic
 						}
+						NAND = {
+							has_title = title:e_britannia
+							BTWK_britannia_subject_king_tributaries_active_trigger = yes
+							scope:defender = { BTWK_britannia_subject_king_eligible_trigger = yes }
+						}
 					}
 					scope:defender.realm_size <= {
 						value = scope:attacker.realm_size
@@ -526,6 +531,26 @@
 			multiply = 0.1
 		}
 
+		# High kings should avoid northern Britain until you at least pass the first reform
+		if = {
+			limit = {
+				scope:attacker = {
+					has_title = title:e_britannia
+					BTWK_britannia_subject_king_tributaries_active_trigger = yes
+				}
+				scope:defender = { 
+					BTWK_britannia_subject_king_eligible_trigger = yes
+					primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia_hen_ogledd }
+					NOT = {
+						any_held_title = {
+							tier >= tier_kingdom
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+			}
+			multiply = 0.2
+		}
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 
@@ -566,12 +591,42 @@
 					}
 				}
 
+				# High Kings should absolutely weight this cb on potential subject kings highly
 				if = {
+					limit = {
+						has_title = title:e_britannia
+						BTWK_britannia_subject_king_tributaries_active_trigger = yes
+						scope:defender = { BTWK_britannia_subject_king_eligible_trigger = yes }
+					}
+					add = 100
+				}
+				# Anglo-Saxon kings want to subjugate other Anglo-Saxons if they have no de jure pretensions
+				else_if = {
+					limit = {
+						OR = {
+							has_title = title:e_aengland
+							primary_title = { has_variable = is_anglo_saxon_kingdom }
+						}
+						BTWK_aengland_bretwalda_active_trigger = yes
+						scope:defender = { 
+							culture = { has_same_culture_heritage = scope:attacker.culture }
+							NOT = {
+								any_realm_de_jure_kingdom = { holder ?= scope:attacker }
+							}
+						}
+						NAND = {
+							scope:attacker = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+							scope:defender = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+						}
+					}
+					add = 100
+				}
+				else_if = {
 					limit = {
 						NOT = { government_has_flag = government_is_mandala }
 					}
 					add = -1000
-				} 
+				}				
 			}
 		}
 	}
@@ -607,7 +662,22 @@ tributary_independence_war = {
 	}
 
 	on_declaration = {
+		if = {
+			limit = { scope:attacker = { has_subject_contract_group = tributary_foederatus } }
+			war = { set_variable = was_foederatus }
+		}
 		on_declared_war = yes # this will also break the tributary agreement immediately
+		
+		hidden_effect = {
+			# Check mint modifiers
+			if = {
+				limit = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_central_mint } }
+				BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				every_vassal_or_below = {
+					BTWK_britannia_high_king_reform_establish_central_mint_check_modifier_effect = yes
+				}
+			}
+		}
 	}
 
 	on_victory_desc = {
@@ -702,6 +772,10 @@ tributary_independence_war = {
 
 	on_white_peace = {
 		save_scope_value_as = { name = low_obligations value = yes } # sets low obligations in the resulting tributary contract
+		if = {
+			limit = { war = { has_variable = was_foederatus } }
+			save_scope_value_as = { name = make_tributary_foederati value = yes }
+		}
 		start_tributary_from_war_effect = {
 			TRIBUTARY = scope:attacker
 			SUZERAIN = scope:defender
@@ -751,6 +825,10 @@ tributary_independence_war = {
 	}
 
 	on_defeat = {
+		if = {
+			limit = { war = { has_variable = was_foederatus } }
+			save_scope_value_as = { name = make_tributary_foederati value = yes }
+		}
 		start_tributary_from_war_effect = {
 			TRIBUTARY = scope:attacker
 			SUZERAIN = scope:defender

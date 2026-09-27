@@ -256,7 +256,7 @@ scripted_trigger weak_empire = {
 	is_titular = no
 	is_landless_type_title = no
 	is_head_of_faith = no
-	NOT = { # Need to own 20% of De Jure counties
+	NOR = { # Need to own 20% of De Jure counties
 		any_in_de_jure_hierarchy = {
 			filter = {
 				tier = tier_county
@@ -271,6 +271,16 @@ scripted_trigger weak_empire = {
 				}
 			}
 			percent >= 0.20
+		}
+		
+		# Britannia + Aengland are immune to this until unification
+		AND = {
+			this = title:e_britannia
+			BTWK_britannia_high_kingship_active_trigger = yes
+		}
+		AND = {
+			this = title:e_aengland
+			BTWK_aengland_bretwalda_active_trigger = yes
 		}
 	}
 }

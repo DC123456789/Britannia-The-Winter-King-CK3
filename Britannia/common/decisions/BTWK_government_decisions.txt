@@ -51,11 +51,20 @@ convert_pre_feudal_to_feudalism_decision = {
 		capital_province.county = {
 			development_level >= 15
 		}
-		custom_description = {
-			text = capital_has_building_requirements_for_feudal
+		trigger_if = {
+			limit = { is_ai = no }
+			custom_description = {
+				text = capital_has_building_requirements_for_feudal
+				capital_province = {
+					has_building = castle_02
+					combined_building_level >= 15
+				}
+			}
+		}
+		trigger_else = {
 			capital_province = {
 				has_building = castle_02
-				combined_building_level >= 15
+				combined_building_level >= 11
 			}
 		}
 		BTWK_reform_from_pre_feudal_innovations_trigger = yes
@@ -79,7 +88,9 @@ convert_pre_feudal_to_feudalism_decision = {
 
 	effect = {
 		trigger_event = BTWK_government.0001
+		BTWK_flag_current_crown_authority_law = yes
 		change_government = feudal_government
+		hidden_effect = { BTWK_apply_new_government_type_for_unlanded = yes }
 		custom_tooltip = easier_for_vassals_to_convert_to_feudal
 		hidden_effect = {
 			save_scope_as = actor
@@ -179,7 +190,9 @@ convert_pre_feudal_to_feudalism_through_liege_decision = {
 
 	effect = {
 		trigger_event = BTWK_government.0001
+		BTWK_flag_current_crown_authority_law = yes
 		change_government = feudal_government
+		hidden_effect = { BTWK_apply_new_government_type_for_unlanded = yes }
 		custom_tooltip = easier_for_vassals_to_convert_to_feudal
 		hidden_effect = {
 			save_scope_as = actor
@@ -290,8 +303,8 @@ convert_sub_roman_to_germanic_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0003
 		save_scope_as = actor
+		trigger_event = BTWK_government.0003
 
 		if = {
 			limit = { BTWK_admin_gov_enabled_trigger = yes }
@@ -361,9 +374,9 @@ convert_germanic_to_sub_roman_decision = {
 				trigger = {
 					top_liege != this
 				}
-				desc = convert_sub_roman_to_germanic_decision_from_liege_desc
+				desc = convert_germanic_to_sub_roman_decision_from_liege_desc
 			}
-			desc = convert_sub_roman_to_germanic_decision_desc
+			desc = convert_germanic_to_sub_roman_decision_desc
 		}
 	}
 
@@ -439,8 +452,8 @@ convert_germanic_to_sub_roman_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0005
 		save_scope_as = actor
+		trigger_event = BTWK_government.0005
 
 		if = {
 			limit = { BTWK_admin_gov_enabled_trigger = yes }
@@ -517,14 +530,18 @@ BTWK_convert_to_administrative_decision = {
 
 	is_shown = {
 		BTWK_admin_gov_enabled_trigger = yes
-		OR = {
-			government_has_flag = government_is_sub_roman
-			government_has_flag = government_is_germanic
-			AND = {
+		trigger_if = {
+			limit = {
 				top_liege != this
-				liege = {
-					has_government = administrative_government
-				}
+			}
+			liege = {
+				has_government = administrative_government
+			}
+		}
+		trigger_else = {
+			OR = {
+				government_has_flag = government_is_sub_roman
+				government_has_flag = government_is_germanic
 			}
 		}
 	}
@@ -567,8 +584,8 @@ BTWK_convert_to_administrative_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0007
 		save_scope_as = actor
+		trigger_event = BTWK_government.0007
 		tgp_domicile_conversion_when_changing_government_type = {
 			NEW_DOMICILE_TYPE = estate
 			NEW_GOVERNMENT_TYPE = administrative_government

@@ -14,10 +14,6 @@
 global_religion.0001 = {
 	hidden = yes
 	
-	trigger = {
-		always = no		# TODO Replaced by Spreading of Christianity mechanic
-	}
-	
 	immediate = {
 		random_list = {
 			7 = {
@@ -208,43 +204,11 @@ global_religion.0001 = {
 				}
 			}
 			100 = {
-				modifier = { # A parallel system for africans lowers the need for this
-					add = 50
-					faith = {
-						has_doctrine = west_african_unreformed_faith_doctrine
+				modifier = {
+					subtract = {
+						value = BTWK_convert_to_reformed_faith_score
+						multiply = 1.5
 					}
-				}
-				modifier = { # Historically held out for a long time
-					add = 150
-					faith.religion = religion:baltic_religion
-				}
-				modifier = { # Less susceptible
-					add = 50
-					faith.religion = faith:finnish_pagan.religion
-				}
-				modifier = { # The mongols are (mostly) busy
-					add = 150
-					mpo_has_gok_mongol_empire_trigger = yes
-				}
-				modifier = {
-					add = -40
-					current_date >= 868.1.1
-				}
-				modifier = {
-					add = -15
-					current_date >= 900.1.1
-				}
-				modifier = {
-					add = -25
-					current_date >= 950.1.1
-				}
-				modifier = {
-					add = -10
-					current_date >= 1000.1.1
-				}
-				modifier = { #100 % that something happens if it can
-					add = -10
-					current_date >= 1100.1.1
 				}
 			}
 		}
@@ -273,13 +237,14 @@ global_religion.0001 = {
 							capital_province ?= { geographical_region = world_steppe }
 						}
 					}
-					if = {
-						limit = {
-							faith = { religion_tag = islam_religion }
-						}
-						change_government = clan_government
-					}
-					else = { change_government = feudal_government }
+                    # Still have to reform the normal way, though should be easier now
+					# if = {
+						# limit = {
+							# faith = { religion_tag = islam_religion }
+						# }
+						# change_government = clan_government
+					# }
+					# else = { change_government = feudal_government }
 					capital_county = {
 						set_county_faith = prev.faith
 					}
@@ -297,13 +262,14 @@ global_religion.0001 = {
 						capital_province ?= { geographical_region = world_steppe }
 					}
 				}
-				if = {
-					limit = {
-						faith = { religion_tag = islam_religion }
-					}
-					change_government = clan_government
-				}
-				else = { change_government = feudal_government }
+                # Still have to reform the normal way, though should be easier now
+				# if = {
+					# limit = {
+						# faith = { religion_tag = islam_religion }
+					# }
+					# change_government = clan_government
+				# }
+				# else = { change_government = feudal_government }
 				capital_county = {
 					set_county_faith = root.faith
 				}

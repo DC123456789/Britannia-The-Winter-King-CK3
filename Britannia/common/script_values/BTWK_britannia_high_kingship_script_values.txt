@@ -1,12 +1,45 @@
-﻿parent_child_relation_cultural_acceptance = 15 	#  10 --> 15
-sibling_relation_cultural_acceptance = 8		#  5 --> 8
-
-BTWK_britannia_romanized_control_share = {
+﻿BTWK_britannia_romanized_control_share = {
 	value = 0
 	every_county_in_region = {
 		region = btwk_world_britannia
 		limit = {
-			holder.top_liege = { is_imperial_like_culture_trigger = yes }
+			holder.top_liege = { 
+				OR = {
+					is_imperial_like_culture_trigger = yes
+					AND = {
+						primary_title = { has_variable = is_roman_empire_title }
+						government_has_flag = government_is_administrative
+					}
+				}
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = 0
+		every_county_in_region = {
+			region = btwk_world_britannia
+			add = 1
+		}
+	}
+}
+
+BTWK_britannia_control_share_including_subject_kings = {
+	value = 0
+	save_temporary_scope_as = current_char
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			OR = {
+				scope:current_char = { completely_controls = prev }
+				holder.top_liege = {					
+					is_tributary_of_suzerain_or_above = scope:current_char 
+					OR = {
+						has_subject_contract_group = tributary_britannia_subject_king 
+						has_subject_contract_group = tributary_britannia_subject_king_permanent
+					}
+				}
+			}
 		}
 		add = 1
 	}
@@ -35,267 +68,315 @@ BTWK_britannia_high_king_claimant_to_scope_military_power_ratio = {
 
 BTWK_britannia_high_king_scope_support_for_claimant = {
 	value = 0
-	# Opinion
-	add = {
-		value = "opinion(scope:claimant)"
-		if = {
-			limit = { "opinion(scope:claimant)" > 0 }
-			divide = 2
+	if = {
+		limit = { is_ai = yes }
+		
+		# Opinion
+		add = {
+			value = "opinion(scope:claimant)"
+			if = {
+				limit = { "opinion(scope:claimant)" > 0 }
+				divide = 2
+			}
+			else = {
+				divide = 1.5
+			}
+			desc = CLAIMANT_SUPPORT_OPINION
 		}
-		else = {
-			divide = 1.5
-		}
-		desc = CLAIMANT_SUPPORT_OPINION
-	}
-	# Relative Power
-	# 20 * (scope:claimant.military_power / military_power - 1.25 ) if the claimant is at least 1.25x stronger
-	# -50 * (military_power / scope:claimant.military_power - 0.8) if the claimant is not at least 1.25x stronger
-	add = {
-		value = 0
+		# Hooks
 		if = {
-			limit = { BTWK_britannia_high_king_claimant_to_scope_military_power_ratio > 1.25 }
+			limit = { scope:claimant = { has_strong_hook = prev } }
 			add = {
-				value = scope:claimant.military_power
-				min = 1
+				value = 25
+				desc = CLAIMANT_SUPPORT_STRONG_HOOK
 			}
-			divide = {
-				value = military_power
-				min = 1
-			}
-			subtract = 1.25
-			multiply = 20
 		}
-		else = {
+		else_if = {
+			limit = { scope:claimant = { has_hook = prev } }
 			add = {
-				value = military_power
-				min = 1
+				value = 10
+				desc = CLAIMANT_SUPPORT_HOOK
 			}
-			divide = {
-				value = scope:claimant.military_power
-				min = 1
-			}
-			subtract = 0.8
-			multiply = -50
 		}
-		max = 50
-		desc = CLAIMANT_SUPPORT_MILITARY_POWER
-	}
-	# Claimant prestige level
-	add = {
-		value = scope:claimant.prestige_level
-		subtract = 3
-		if = {
-			limit = { scope:claimant.prestige_level < 3 }
-			multiply = 10
-		}
-		else = {
-			multiply = 20
-		}
-		min = 0
-		desc = CLAIMANT_SUPPORT_PRESTIGE_LEVEL
-	}
-	# Claimant stats
-	add = {
-		value = scope:claimant.diplomacy
-		subtract = 15
-		if = {
-			limit = { scope:claimant.diplomacy < 15 }
-			multiply = 2
-		}
-		max = 15
-		desc = CLAIMANT_SUPPORT_DIPLOMACY
-	}
-	add = {
-		value = scope:claimant.martial
-		subtract = 15
-		if = {
-			limit = { scope:claimant.martial < 15 }
-			multiply = 2
-		}
-		max = 15
-		desc = CLAIMANT_SUPPORT_MARTIAL
-	}
-	add = {
-		value = scope:claimant.prowess
-		subtract = 15
-		if = {
-			limit = { scope:claimant.prowess > 15 }
-			multiply = 0.5
-		}
-		max = 10
-		desc = CLAIMANT_SUPPORT_PROWESS
-	}
-	# Scope traits
-	if = {
-		limit = { has_trait = ambitious }
-		subtract = {
-			value = 15
-			desc = CLAIMANT_SUPPORT_IS_AMBITIOUS
-		}
-	}
-	
-	# Same House/Dynasty
-	if = {
-		limit = { house = scope:claimant.house }
+		# Relative Power
+		# 20 * (scope:claimant.military_power / military_power - 1.25 ) if the claimant is at least 1.25x stronger
+		# -50 * (military_power / scope:claimant.military_power - 0.8) if the claimant is not at least 1.25x stronger
 		add = {
-			value = 30
-			desc = CLAIMANT_SUPPORT_SAME_HOUSE
-		}
-	}
-	else_if = {
-		limit = { dynasty = scope:claimant.dynasty }
-		add = {
-			value = 15
-			desc = CLAIMANT_SUPPORT_SAME_DYNASTY
-		}
-	}
-	# Alliances
-	if = {
-		limit = { is_allied_to = scope:claimant }
-		add = {
-			value = 40
-			desc = CLAIMANT_SUPPORT_ALLIANCE
-		}
-	}
-	# Cultural Differences
-	if = {
-		limit = { this.culture != scope:claimant.culture }
-		subtract = {
-			value = 5
-			desc = CLAIMANT_SUPPORT_DIFFERENT_CULTURE
-		}
-	}
-	if = {
-		limit = { NOT = { this.culture = { has_same_culture_heritage = scope:claimant.culture } } }
-		subtract = {
-			value = 10
-			desc = CLAIMANT_SUPPORT_DIFFERENT_HERITAGE
-		}
-	}
-	# Religious Differences
-	if = {
-		limit = {
-			faith = {
-				faith_hostility_level = {
-					target = scope:claimant.faith
-					value = faith_astray_level
+			value = 0
+			if = {
+				limit = { BTWK_britannia_high_king_claimant_to_scope_military_power_ratio > 1.25 }
+				add = {
+					value = scope:claimant.military_power
+					min = 1
 				}
+				divide = {
+					value = military_power
+					min = 1
+				}
+				subtract = 1.25
+				multiply = 20
+			}
+			else = {
+				add = {
+					value = military_power
+					min = 1
+				}
+				divide = {
+					value = scope:claimant.military_power
+					min = 1
+				}
+				subtract = 0.8
+				multiply = -50
+			}
+			max = 50
+			desc = CLAIMANT_SUPPORT_MILITARY_POWER
+		}
+		# Claimant prestige level
+		add = {
+			value = scope:claimant.prestige_level
+			subtract = 3
+			if = {
+				limit = { scope:claimant.prestige_level < 3 }
+				multiply = 10
+			}
+			else = {
+				multiply = 20
+			}
+			min = 0
+			desc = CLAIMANT_SUPPORT_PRESTIGE_LEVEL
+		}
+		# Claimant stats
+		add = {
+			value = scope:claimant.diplomacy
+			subtract = 15
+			if = {
+				limit = { scope:claimant.diplomacy < 15 }
+				multiply = 2
+			}
+			max = 15
+			desc = CLAIMANT_SUPPORT_DIPLOMACY
+		}
+		add = {
+			value = scope:claimant.martial
+			subtract = 15
+			if = {
+				limit = { scope:claimant.martial < 15 }
+				multiply = 2
+			}
+			max = 15
+			desc = CLAIMANT_SUPPORT_MARTIAL
+		}
+		add = {
+			value = scope:claimant.prowess
+			subtract = 15
+			if = {
+				limit = { scope:claimant.prowess > 15 }
+				multiply = 0.5
+			}
+			max = 10
+			desc = CLAIMANT_SUPPORT_PROWESS
+		}
+		# Claimant Tribal Fame
+		if = {
+			limit = { scope:claimant = { government_has_flag = government_has_tribal_fame } }
+			add = {
+				value = scope:claimant.tribal_fame_value
+				save_temporary_value_as = claimant_tribal_fame_value
+				if = {
+					limit = { scope:claimant_tribal_fame_value > 0 }
+					multiply = 0.5
+				}
+				desc = CLAIMANT_SUPPORT_TRIBAL_FAME
 			}
 		}
+		# Claimant claims
 		if = {
-			limit = { has_trait = zealous }
+			limit = { scope:claimant = { has_strong_claim_on = title:e_britannia } }
+			add = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_PRESSED_CLAIM
+			}
+		}
+		else_if = {
+			limit = { scope:claimant = { has_weak_claim_on = title:e_britannia } }
+			add = {
+				value = 5
+				desc = CLAIMANT_SUPPORT_UNPRESSED_CLAIM
+			}
+		}
+		
+		# Scope traits
+		if = {
+			limit = { has_trait = ambitious }
 			subtract = {
 				value = 15
-				desc = CLAIMANT_SUPPORT_ASTRAY_FAITH_ZEALOUS
+				desc = CLAIMANT_SUPPORT_IS_AMBITIOUS
 			}
 		}
-		else = {
+		
+		# Same House/Dynasty
+		if = {
+			limit = { house = scope:claimant.house }
+			add = {
+				value = 30
+				desc = CLAIMANT_SUPPORT_SAME_HOUSE
+			}
+		}
+		else_if = {
+			limit = { dynasty = scope:claimant.dynasty }
+			add = {
+				value = 15
+				desc = CLAIMANT_SUPPORT_SAME_DYNASTY
+			}
+		}
+		# Alliances
+		if = {
+			limit = { is_allied_to = scope:claimant }
+			add = {
+				value = 40
+				desc = CLAIMANT_SUPPORT_ALLIANCE
+			}
+		}
+		# Cultural Differences
+		if = {
+			limit = { this.culture != scope:claimant.culture }
+			subtract = {
+				value = 5
+				desc = CLAIMANT_SUPPORT_DIFFERENT_CULTURE
+			}
+		}
+		if = {
+			limit = { NOT = { this.culture = { has_same_culture_heritage = scope:claimant.culture } } }
 			subtract = {
 				value = 10
-				desc = CLAIMANT_SUPPORT_ASTRAY_FAITH
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			faith = {
-				faith_hostility_level = {
-					target = scope:claimant.faith
-					value = faith_hostile_level
-				}
+				desc = CLAIMANT_SUPPORT_DIFFERENT_HERITAGE
 			}
 		}
 		if = {
-			limit = { has_trait = zealous }
+			limit = {
+				scope:claimant = { is_britannic_culture_trigger = no }
+				is_britannic_culture_trigger = yes
+			}
 			subtract = {
-				value = 30
-				desc = CLAIMANT_SUPPORT_HOSTILE_FAITH_ZEALOUS
+				value = 10
+				desc = CLAIMANT_SUPPORT_NOT_BRITANNIC
 			}
 		}
-		else = {
-			subtract = {
-				value = 20
-				desc = CLAIMANT_SUPPORT_HOSTILE_FAITH
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			faith = {
-				faith_hostility_level = {
-					target = scope:claimant.faith
-					value = faith_evil_level
-				}
-			}
-		}
+		# Religious Differences
 		if = {
-			limit = { has_trait = zealous }
-			subtract = {
-				value = 30
-				desc = CLAIMANT_SUPPORT_EVIL_FAITH_ZEALOUS
-			}
-		}
-		else = {
-			subtract = {
-				value = 20
-				desc = CLAIMANT_SUPPORT_EVIL_FAITH
-			}
-		}
-	}
-	
-	# Northern Britons don't care unless you are also a northerner
-	if = {
-		limit = {
-			NOR = {
-				scope:claimant.primary_title.title_capital_county.title_province = { 
-					geographical_region = btwk_world_britannia_hen_ogledd
+			limit = {
+				faith = {
+					faith_hostility_level = {
+						target = scope:claimant.faith
+						value = faith_astray_level
+					}
 				}
-				scope:claimant = {
+			}
+			if = {
+				limit = { has_trait = zealous }
+				subtract = {
+					value = 15
+					desc = CLAIMANT_SUPPORT_ASTRAY_FAITH_ZEALOUS
+				}
+			}
+			else = {
+				subtract = {
+					value = 10
+					desc = CLAIMANT_SUPPORT_ASTRAY_FAITH
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				faith = {
+					faith_hostility_level = {
+						target = scope:claimant.faith
+						value = faith_hostile_level
+					}
+				}
+			}
+			if = {
+				limit = { has_trait = zealous }
+				subtract = {
+					value = 30
+					desc = CLAIMANT_SUPPORT_HOSTILE_FAITH_ZEALOUS
+				}
+			}
+			else = {
+				subtract = {
+					value = 20
+					desc = CLAIMANT_SUPPORT_HOSTILE_FAITH
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				faith = {
+					faith_hostility_level = {
+						target = scope:claimant.faith
+						value = faith_evil_level
+					}
+				}
+			}
+			if = {
+				limit = { has_trait = zealous }
+				subtract = {
+					value = 30
+					desc = CLAIMANT_SUPPORT_EVIL_FAITH_ZEALOUS
+				}
+			}
+			else = {
+				subtract = {
+					value = 20
+					desc = CLAIMANT_SUPPORT_EVIL_FAITH
+				}
+			}
+		}
+		
+		# Restorer of Hadrian's Wall
+		if = {
+			limit = { scope:claimant = { has_character_modifier = restored_hadrians_wall_major_character_modifier } }
+			add = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_RESTORED_HADRIANS_WALL
+			}
+		}
+		
+		# Northern Britons don't care unless you are also a northerner
+		if = {
+			limit = {
+				NOR = {
+					scope:claimant.primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_hen_ogledd
+					}
+					scope:claimant = {
+						any_held_title = {
+							tier >= tier_kingdom
+							title_capital_county.title_province = { 
+								geographical_region = btwk_world_britannia_hen_ogledd
+							}
+						}
+					}
+					primary_title.title_capital_county.title_province = { 
+						geographical_region = btwk_world_britannia_south
+					}
 					any_held_title = {
 						tier >= tier_kingdom
 						title_capital_county.title_province = { 
-							geographical_region = btwk_world_britannia_hen_ogledd
+							geographical_region = btwk_world_britannia_south
 						}
 					}
 				}
-				primary_title.title_capital_county.title_province = { 
-					geographical_region = btwk_world_britannia_south
-				}
-				any_held_title = {
-					tier >= tier_kingdom
-					title_capital_county.title_province = { 
-						geographical_region = btwk_world_britannia_south
-					}
-				}
+			}
+			divide = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_DISTANT_CLAIMANT
 			}
 		}
-		divide = {
-			value = 10
-			desc = CLAIMANT_SUPPORT_DISTANT_CLAIMANT
-		}
-	}
-	
-	# Don't really care if not Brythonic or Imperial
-	if = {
-		limit = {
-			culture = {
-				NOR = {
-					has_cultural_pillar = heritage_brythonic
-					has_cultural_pillar = heritage_latin
-				}
-			}
-		}
-		divide = {
-			value = 4
-			desc = CLAIMANT_SUPPORT_NOT_BRYTHONIC_OR_IMPERIAL
-		}
-	}
-	
-	# Won't get involved if tribtuary to a non-Brythonic/Imperial
-	if = {
-		limit = {
-			is_tributary = yes
-			suzerain = {
+		
+		# Don't really care if not Brythonic or Imperial
+		if = {
+			limit = {
 				culture = {
 					NOR = {
 						has_cultural_pillar = heritage_brythonic
@@ -303,99 +384,118 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 					}
 				}
 			}
+			divide = {
+				value = 4
+				desc = CLAIMANT_SUPPORT_NOT_BRYTHONIC_OR_IMPERIAL
+			}
 		}
-		divide = {
-			value = 4
-			desc = CLAIMANT_SUPPORT_SUZERAIN_NOT_BRYTHONIC_OR_IMPERIAL
-		}
-	} 
-	
-	# Don't really want to oppose if they are losing a war
-	save_temporary_scope_value_as = current_score
-	if = {
-		limit = {
-			current_score < BTWK_britannia_high_king_scope_opponent_threshold
-			is_at_war = yes
-		}
+		
+		# Won't get involved if tribtuary to a non-Brythonic/Imperial
 		if = {
 			limit = {
-				any_character_war = {
-					is_war_leader = prev
-					OR = {
-						AND = {
-							primary_defender = prev
-							attacker_war_score >= 50
-						}
-						AND = {
-							primary_attacker = prev
-							defender_war_score >= 50
+				is_tributary = yes
+				suzerain = {
+					culture = {
+						NOR = {
+							has_cultural_pillar = heritage_brythonic
+							has_cultural_pillar = heritage_latin
 						}
 					}
 				}
 			}
-			add = {
-				value = 40
-				desc = CLAIMANT_SUPPORT_LOSING_WAR
+			divide = {
+				value = 4
+				desc = CLAIMANT_SUPPORT_SUZERAIN_NOT_BRYTHONIC_OR_IMPERIAL
 			}
-		}
-		else_if = {
+		} 
+		
+		# Don't really want to oppose if they are losing a war
+		save_temporary_value_as = current_score
+		if = {
 			limit = {
-				any_character_war = {
-					is_war_leader = prev
-					OR = {
-						AND = {
-							primary_defender = prev
-							attacker_war_score >= 25
-						}
-						AND = {
-							primary_attacker = prev
-							defender_war_score >= 25
+				scope:current_score < BTWK_britannia_high_king_scope_opponent_threshold
+				is_at_war = yes
+			}
+			if = {
+				limit = {
+					any_character_war = {
+						is_war_leader = prev
+						OR = {
+							AND = {
+								primary_defender = prev
+								attacker_war_score >= 50
+							}
+							AND = {
+								primary_attacker = prev
+								defender_war_score >= 50
+							}
 						}
 					}
 				}
+				add = {
+					value = 40
+					desc = CLAIMANT_SUPPORT_LOSING_WAR
+				}
 			}
-			add = {
-				value = 30
-				desc = CLAIMANT_SUPPORT_LOSING_WAR
+			else_if = {
+				limit = {
+					any_character_war = {
+						is_war_leader = prev
+						OR = {
+							AND = {
+								primary_defender = prev
+								attacker_war_score >= 25
+							}
+							AND = {
+								primary_attacker = prev
+								defender_war_score >= 25
+							}
+						}
+					}
+				}
+				add = {
+					value = 30
+					desc = CLAIMANT_SUPPORT_LOSING_WAR
+				}
+			}
+			else_if = {
+				limit = {
+					any_character_war = {
+						is_war_leader = prev
+						OR = {
+							AND = {
+								primary_defender = prev
+								attacker_war_score >= 10
+							}
+							AND = {
+								primary_attacker = prev
+								defender_war_score >= 10
+							}
+						}
+					}
+				}
+				add = {
+					value = 20
+					desc = CLAIMANT_SUPPORT_LOSING_WAR
+				}
+			}
+			else = {
+				add = {
+					value = 10
+					desc = CLAIMANT_SUPPORT_AT_WAR
+				}
 			}
 		}
-		else_if = {
+		
+		# Allies won't directly oppose you
+		if = {
 			limit = {
-				any_character_war = {
-					is_war_leader = prev
-					OR = {
-						AND = {
-							primary_defender = prev
-							attacker_war_score >= 10
-						}
-						AND = {
-							primary_attacker = prev
-							defender_war_score >= 10
-						}
-					}
-				}
+				is_allied_to = scope:claimant
 			}
-			add = {
-				value = 20
-				desc = CLAIMANT_SUPPORT_LOSING_WAR
+			min = {
+				value = BTWK_britannia_high_king_scope_opponent_threshold
+				desc = CLAIMANT_SUPPORT_ALLY_WILL_NOT_OPPOSE
 			}
-		}
-		else = {
-			add = {
-				value = 10
-				desc = CLAIMANT_SUPPORT_AT_WAR
-			}
-		}
-	}
-	
-	# Allies won't directly oppose you
-	if = {
-		limit = {
-			is_allied_to = scope:claimant
-		}
-		min = {
-			value = BTWK_britannia_high_king_scope_opponent_threshold
-			desc = CLAIMANT_SUPPORT_ALLY_WILL_NOT_OPPOSE
 		}
 	}
 }
@@ -513,5 +613,388 @@ BTWK_britannia_high_king_num_potential_neutrals = {
 	every_in_list = {
 		variable = britannia_potential_neutral_kings_list
 		add = 1
+	}
+}
+
+BTWK_britannia_high_king_num_declared_supporters = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_supporter_kings_list
+		add = 1
+	}
+}
+
+BTWK_britannia_high_king_num_declared_opponents = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_opponent_kings_list
+		add = 1
+	}
+}
+
+BTWK_britannia_high_king_num_declared_neutrals = {
+	value = 0
+	every_in_global_list = {
+		variable = britannia_neutral_kings_list
+		add = 1
+	}
+}
+
+BTWK_britannia_high_king_dispute_war_military_power_ratio = {
+	value = military_power
+	ordered_independent_ruler = {
+		limit = { has_variable = HK_britannia_opponent }
+		order_by = military_power
+		save_temporary_scope_as = HK_britannia_opponent_leader
+	}
+	# Add military power of all predicted allies
+	every_independent_ruler = {
+		limit = {
+			this != prev
+			OR = {
+				is_allied_to = prev
+				has_variable = HK_britannia_supporter
+			}
+			NOR = {
+				this = scope:HK_britannia_opponent_leader
+				is_allied_to = scope:HK_britannia_opponent_leader
+				has_variable = HK_britannia_opponent
+			}
+		}
+		add = military_power
+	}
+	# Personality adjustment - bold characters will go ahead at less favourable odds
+	multiply = {
+		value = 1
+		add = {
+			value = ai_boldness
+			divide = 100
+			multiply = 0.25
+		}
+	}
+	# Divide by the military power of all predicted opponents
+	divide = {
+		value = 0
+		every_independent_ruler = {
+			limit = {
+				OR = {
+					this = scope:HK_britannia_opponent_leader
+					is_allied_to = scope:HK_britannia_opponent_leader
+					has_variable = HK_britannia_opponent
+				}
+			}
+			add = military_power
+		}		
+		min = 1
+	}
+}
+
+BTWK_britannia_high_king_dispute_war_predicted_military_power_ratio = {
+	value = military_power
+	save_temporary_scope_as = claimant
+	ordered_independent_ruler = {
+		limit = {
+			BTWK_britannia_high_kingship_is_elector_trigger = yes
+			BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+		}
+		order_by = military_power
+		save_temporary_scope_as = HK_britannia_opponent_leader
+	}
+	# Add military power of all predicted allies
+	every_independent_ruler = {
+		limit = {
+			this != prev
+			OR = {
+				is_allied_to = prev
+				AND = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+					BTWK_britannia_high_king_scope_support_for_claimant >= BTWK_britannia_high_king_scope_supporter_threshold
+				}
+			}
+			NOR = {
+				this = scope:HK_britannia_opponent_leader
+				is_allied_to = scope:HK_britannia_opponent_leader
+				AND = {
+					BTWK_britannia_high_kingship_is_elector_trigger = yes
+					BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+				}
+			}
+		}
+		add = military_power
+	}
+	# Personality adjustment - bold characters will go ahead at less favourable odds
+	multiply = {
+		value = 1
+		add = {
+			value = ai_boldness
+			divide = 100
+			multiply = 0.25
+		}
+	}
+	# Divide by the military power of all predicted opponents
+	divide = {
+		value = 0
+		every_independent_ruler = {
+			limit = {
+				OR = {
+					this = scope:HK_britannia_opponent_leader
+					is_allied_to = scope:HK_britannia_opponent_leader
+					AND = {
+						BTWK_britannia_high_kingship_is_elector_trigger = yes
+						BTWK_britannia_high_king_scope_support_for_claimant < BTWK_britannia_high_king_scope_opponent_threshold
+					}
+				}
+			}
+			add = military_power
+		}		
+		min = 1
+	}
+}
+
+BTWK_britannia_high_king_region_control_share = {
+	value = 0
+	save_temporary_scope_as = current_high_king
+	every_county_in_region = {
+		region = btwk_world_britannia
+		limit = {
+			holder.top_liege = { 
+				OR = {
+					this = scope:current_high_king
+					AND = {
+						is_tributary = yes
+						BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+						suzerain = scope:current_high_king
+					}
+				}
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = 0
+		every_county_in_region = {
+			region = btwk_world_britannia
+			add = 1
+		}
+	}
+}
+
+BTWK_britannia_legitimacy_level_modifier = {
+	value = legitimacy_level
+	subtract = legitimacy_title_tier_value
+	multiply = 0.10
+	add = 1
+}
+
+BTWK_britannia_high_king_authority_minor_struggle_phase_boost = 0.1
+BTWK_britannia_high_king_authority_minor_struggle_phase_boost_modifier = {
+	value = BTWK_britannia_high_king_authority_minor_struggle_phase_boost
+	add = 1
+}
+BTWK_britannia_high_king_authority_struggle_phase_boost = 0.25
+BTWK_britannia_high_king_authority_struggle_phase_boost_modifier = {
+	value = BTWK_britannia_high_king_authority_struggle_phase_boost
+	add = 1
+}
+
+BTWK_britannia_high_king_authority_change = {
+	value = 0
+	add = {
+		value = 0.75
+		desc = BASE_VALUE
+	}
+	add = {
+		value = BTWK_britannia_high_king_region_control_share
+		multiply = 0.75
+		desc = BRITANNIA_AUTHORITY_REGION_CONTROL
+	}
+	if = {
+		limit = { has_legitimacy = yes }
+		multiply = {
+			value = BTWK_britannia_legitimacy_level_modifier
+			desc = BRITANNIA_AUTHORITY_LEGITIMACY
+		}
+	}
+	if = {
+		limit = { government_has_flag = government_is_tribal }
+		multiply = {
+			value = 0.66
+			desc = BRITANNIA_AUTHORITY_TRIBAL_GOVERNMENT
+		}
+	}
+	else_if = {
+		limit = { NOT = { government_has_flag = government_is_pre_feudal } }
+		multiply = {
+			value = 1.2
+			desc = BRITANNIA_AUTHORITY_ADVANCED_GOVERNMENT
+		}
+	}
+	if = {
+		limit = {
+			struggle:britannia_struggle ?= { has_struggle_phase_parameter = britannia_high_king_authority_minor_boost }
+		}
+		multiply = {
+			value = BTWK_britannia_high_king_authority_minor_struggle_phase_boost_modifier
+			desc = BRITANNIA_AUTHORITY_STRUGGLE_PHASE_MINOR_BOOST
+		}
+	}
+	else_if = {
+		limit = {
+			struggle:britannia_struggle ?= { has_struggle_phase_parameter = britannia_high_king_authority_boost }
+		}
+		multiply = {
+			value = BTWK_britannia_high_king_authority_struggle_phase_boost_modifier
+			desc = BRITANNIA_AUTHORITY_STRUGGLE_PHASE_BOOST
+		}
+	}	
+}
+
+BTWK_britannia_high_king_authority_min = 0
+BTWK_britannia_high_king_authority_max = 750
+BTWK_britannia_high_king_authority_inherited_penalty = 0.25
+BTWK_britannia_high_king_authority_inherited_proportion = {
+	value = 1
+	subtract = BTWK_britannia_high_king_authority_inherited_penalty
+}
+BTWK_britannia_high_king_authority_inherited_penalty_reduced = 0.10
+BTWK_britannia_high_king_authority_inherited_proportion_reduced = {
+	value = 1
+	subtract = BTWK_britannia_high_king_authority_inherited_penalty_reduced
+}
+BTWK_britannia_high_king_authority_inherited_current_penalty = {
+	value = 0
+	if = {
+		limit = {
+			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+			NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency } }
+		}
+		add = BTWK_britannia_high_king_authority_inherited_penalty_reduced
+	}
+	else = {
+		add = BTWK_britannia_high_king_authority_inherited_penalty
+	}
+}
+BTWK_britannia_high_king_authority_inherited_current_proportion = {
+	value = 1
+	subtract = BTWK_britannia_high_king_authority_inherited_current_penalty
+}
+
+BTWK_britannia_high_king_authority_yearly_decay_value = 3
+
+BTWK_britannia_high_king_authority_major_conquest_event_gain = 50
+BTWK_britannia_high_king_authority_restore_hadrians_wall_gain = 40
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_destruction_gain = 15
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss = 10
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss_value = {
+	value = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+	multiply = -1
+}
+BTWK_britannia_high_king_authority_win_defensive_war_gain = 5
+BTWK_britannia_high_king_authority_lose_defensive_war_loss = 5
+BTWK_britannia_high_king_authority_lose_defensive_war_loss_value = {
+	value = BTWK_britannia_high_king_authority_lose_defensive_war_loss
+	multiply = -1
+}
+BTWK_britannia_high_king_authority_win_major_battle_gain = 1
+BTWK_britannia_high_king_authority_lose_major_battle_loss = 1
+BTWK_britannia_high_king_authority_lose_major_battle_loss_value = {
+	value = BTWK_britannia_high_king_authority_lose_major_battle_loss
+	multiply = -1
+}
+
+BTWK_britannia_high_king_reform_default_prestige_cost = 500
+BTWK_britannia_high_king_reform_default_prestige_cost_negative = {
+	value = BTWK_britannia_high_king_reform_default_prestige_cost
+	multiply = -1
+}
+BTWK_britannia_high_king_reform_establish_central_mint_gold_cost = 750
+
+BTWK_britannia_high_king_reform_empower_high_council_support_score = {
+	# Base value (generally quite reluctant)
+	value = -50
+	
+	# Opinion
+	add = "opinion(scope:high_king)"
+	
+	# Hooks
+	if = {
+		limit = { scope:high_king = { has_strong_hook = prev } }
+		add = 40
+	}
+	else_if = {
+		limit = { scope:high_king = { has_hook = prev } }
+		add = 15
+	}
+	
+	# Scope traits
+	if = {
+		limit = { has_trait = ambitious }
+		subtract = 15
+	}
+	
+	# Same House/Dynasty (minor boost)
+	if = {
+		limit = { house = scope:high_king.house }
+		add = 10
+	}
+	else_if = {
+		limit = { dynasty = scope:high_king.dynasty }
+		add = 5
+	}
+	
+	# Alliances
+	if = {
+		limit = { is_allied_to = scope:high_king }
+		add = 20
+	}
+	
+	# Cultural Differences
+	if = {
+		limit = { this.culture != scope:high_king.culture }
+		subtract = 10
+	}
+	else_if = {
+		limit = { NOT = { this.culture = { has_same_culture_heritage = scope:claimant.culture } } }
+		subtract = 20
+	}
+	
+	# Religious Differences
+	subtract = {
+		value = "faith.faith_hostility_level(scope:high_king.faith)"
+		multiply = 10
+		max = 25		# Hostile vs. Evil isn't fundamentally a big difference
+		if = {
+			limit = { has_trait = zealous }
+			multiply = 1.5
+		}
+	}
+}
+
+BTWK_britannia_high_king_reform_centralize_the_church_cost = 600
+BTWK_britannia_high_king_reform_centralize_the_church_cost_negative = {
+	value = BTWK_britannia_high_king_reform_centralize_the_church_cost
+	multiply = -1
+}
+
+BTWK_britannia_high_king_reform_restore_imperial_dignity_support_score = {
+	value = BTWK_britannia_high_king_reform_empower_high_council_support_score
+	# Tribal rulers are more parochial
+	if = {
+		limit = { government_has_flag = government_is_tribal }
+		subtract = -15
+	}
+	# Subject kings will almost always rebel
+	if = {
+		limit = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+		subtract = -30
+	}
+	# Lower tier rulers are not as interested in rebelling as they have less to lose and more to gain
+	else_if = {
+		limit = { highest_held_title_tier = tier_duchy }
+		add = 20
+	}
+	else_if = {
+		limit = { highest_held_title_tier = tier_county }
+		add = 40
 	}
 }

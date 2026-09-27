@@ -37,6 +37,13 @@
 			# Increment progress and flip religion if reaches 100
 			if = {
 				limit = { religion != religion:christianity_religion }
+				if = {
+					limit = { NOT = { has_variable = soc_proselytization_progress } }
+					set_variable = {
+						name = soc_proselytization_progress
+						value = 0
+					}
+				}
 				change_variable = {
 					name = soc_proselytization_progress
 					add = soc_proselytization_monthly_progress_value

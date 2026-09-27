@@ -79,7 +79,16 @@
 				limit = { scope:claimant != scope:attacker } # You can always press your own claims
 				is_imprisoned = no
 			}
-			#religion = scope:attacker.religion
+			# BTWK - Claimant and attacker must share religion or heritage group
+			custom_description = {
+				text = "BTWK_claimant_shares_attacker_religion_or_heritage_group"
+				subject = scope:attacker
+				object = scope:claimant
+				OR = {
+					religion = scope:attacker.religion
+					culture = { has_same_heritage_group_as = { TARGET = scope:attacker.culture } }
+				}
+			}
 			# claimant must not be at war against defender for this claim already
 			custom_description = {
 				text = "claimant_already_pressing_their_claim"
@@ -179,6 +188,22 @@
 				}
 			}
 		}
+		
+		# BTWK - Cannot press claim on Britannia before the first reform
+		trigger_if = {
+			limit = {
+				this = title:e_britannia
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			custom_tooltip = {
+				text = BTWK_cannot_claim_britannia_before_first_reform_tt
+				always = no
+			}
+		}
+		
+		# Cannot press claims on offmap titles
+		NOT = { has_variable = is_offmap_title }
 		
 		# BTWK AI cultural redoubt blocks
 		BTWK_ai_cb_target_title_block_on_cultural_redoubts_trigger = yes
@@ -388,6 +413,15 @@
 			order_by = tier
 			save_scope_as = target
 		}
+		
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
 
 		scope:attacker = {
 			if = {
@@ -480,6 +514,25 @@
 			add_claim_on_loss = yes
 		}
 		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker = { any_liege_or_above = { this = scope:defender } }
+			}
+			scope:attacker = { becomes_independent = { change = scope:change } }
+		}
+		
+		# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the highest tier target title - but with many exceptions
+		scope:claimant = {
+			if = {
+				limit = { is_ruler = no }
+				BTWK_flag_new_government_type_for_unlanded = {
+					INHERIT_SCOPE = scope:target.holder
+				}
+			}
+		}
+		
 		# Create a claim CB which is executed to handle title/vassal changes, in addition to being used to calculate Prestige awards for war participants.
 		setup_claim_cb = {
 			titles = target_titles
@@ -490,6 +543,9 @@
 		}
 
 		resolve_title_and_vassal_change = scope:change
+		
+		# BTWK - Now actually apply the government change
+		scope:claimant = { BTWK_apply_new_government_type_for_unlanded = yes }
 
 		# Landless Ceremonial Liege
 		if = {
@@ -641,6 +697,32 @@
 			}
 		}
 
+		# Deal with foederati revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+				scope:attacker.suzerain ?= scope:defender
+			}
+			scope:attacker = { end_tributary = yes }
+		}
+		
+		# Deal with laeti revolts
+		if = {
+			limit = {
+				war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+				scope:attacker = { any_liege_or_above = { this = scope:defender } }
+			}
+			scope:attacker = { 
+				create_title_and_vassal_change = {
+					type = independency
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				becomes_independent = { change = scope:change }
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+			
 		# Create an 'helper' claim CB which we won't execute, but can use to determine how much Prestige should be given to war participants.
 		setup_claim_cb = {
 			titles = target_titles

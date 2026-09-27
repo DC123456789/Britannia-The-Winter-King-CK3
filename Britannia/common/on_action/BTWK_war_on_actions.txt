@@ -8,7 +8,105 @@ on_war_won_attacker = { # As in, won BY attacker. Only one of the two on_actions
 	# The war notifications are handled in `effect` instead of `events` due to order of operations.
 	# `effect` fires on THIS tick, `events` fires on the NEXT tick, and the war gets destroyed between this tick and the next.
 	on_actions = {
+		btwk_on_war_won_attacker
 		btwk_check_conquest_events
+	}
+}
+
+btwk_on_war_won_attacker = {
+	effect = {
+		if = {
+			limit = {
+				scope:attacker = {
+					any_owned_story = {
+						story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+						NOT = { has_variable = got_foederati_heritage_modifier }
+					}
+				}
+				scope:war = {
+					OR = {
+						using_cb = claim_cb
+						using_cb = county_conquest_cb
+						using_cb = duchy_conquest_cb
+						using_cb = de_jure_cb
+						using_cb = pre_feudal_subjugation_cb
+						using_cb = tributary_independence_war
+						using_cb = independence_war
+					}
+				}				
+			}
+			scope:attacker = {
+				every_owned_story = {
+					limit = {
+						story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+						NOT = { has_variable = got_foederati_heritage_modifier }
+					}
+					set_variable = got_foederati_heritage_modifier
+					save_scope_as = target_story
+				}
+				if = {
+					limit = { NOT = { has_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier } }
+					trigger_event = BTWK_anglo_saxon_invasions.0114
+				}
+			}
+		}
+		
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
+		
+		# Lose High King authority
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				scope:defender = { 
+					OR = {
+						has_title = title:e_britannia
+						AND = {
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+							suzerain ?= { has_tittle = title:e_britannia }
+							scope:war = { any_war_defender = { has_title = title:e_britannia } }
+						}
+					}
+				}
+				# Don't lose authority from winning against your own subject kings!
+				NOT = {
+					scope:attacker = { has_title = title:e_britannia }
+				}
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_lose_defensive_war_loss
+				}
+			}
+		}
 	}
 }
 
@@ -22,5 +120,178 @@ btwk_check_conquest_events = {
 		conquest_flavour_briton.0001 				# e_britannia
 		conquest_flavour_irish.0001 				# e_cymru, Irish versions
 		conquest_flavour_romanized_germanic.0001	# e_romanized_germanic_britannia
+	}
+}
+
+on_war_won_defender = {
+	on_actions = {
+		btwk_on_war_won_defender
+	}
+}
+
+btwk_on_war_won_defender = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
+		
+		# Disband Rise of Anglo-Saxon Kingdom event troops
+		if = {
+			limit = { 
+				scope:war = { 
+					OR = {
+						has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_second_revolt_war 
+						AND = {
+							has_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+							scope:attacker = { is_ai = no }
+						}
+					} 
+				}
+			}
+			scope:attacker = {
+				every_army = {
+					limit = { 
+						has_variable = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+					}
+					every_army_maa_regiment = { destroy_maa_regiment = yes }
+					deplete_army_by_percentage = 0.99
+				}
+			}
+		}
+		
+		# Gain High King authority
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				scope:defender = { 
+					OR = {
+						has_title = title:e_britannia
+						AND = {
+							BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes
+							suzerain ?= { has_title = title:e_britannia }
+							scope:war = { any_war_defender = { has_title = title:e_britannia } }
+						}
+					}
+				}
+				# Don't gain authority from losing against your own subject kings!
+				NOT = {
+					scope:attacker = { has_title = title:e_britannia }
+				}
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_add_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_win_defensive_war_gain
+				}
+			}
+		}
+	}
+}
+
+on_war_white_peace = {
+	on_actions = {
+		btwk_on_war_white_peace
+	}
+}
+
+btwk_on_war_white_peace = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
+	}
+}
+
+on_war_invalidated = {
+	on_actions = {
+		btwk_on_war_invalidated
+	}
+}
+
+btwk_on_war_invalidated = {
+	effect = {
+		scope:attacker = {
+			# End any war in the struggle region.
+			if = {
+				limit = {
+					scope:war = {
+						NOT = { has_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+					}
+					any_character_struggle = {
+						involvement = involved
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+				}
+				every_character_struggle = {
+					limit = {
+						activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
+							CATALYST = catalyst_end_any_war_within_the_region
+							CHAR = scope:defender
+						}
+					}
+					activate_struggle_catalyst = {
+						catalyst = catalyst_end_any_war_within_the_region
+						character = scope:attacker
+					}
+					scope:war = { set_variable = used_for_struggle_catalyst_on_war_ended_end_any_war }
+				}
+			}
+		}
 	}
 }

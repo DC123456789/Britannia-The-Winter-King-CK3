@@ -178,3 +178,29 @@ faith_conversion = {
 		}
 	}
 }
+
+# Is this character allowed to hybridize their culture with the target culture?
+# root: Character
+# scope:culture: The culture they want to hybridize with
+can_hybridize_culture = {
+	can_hybridize_culture_trigger = {
+		CULTURE = scope:culture
+		CHARACTER = root
+	}
+}
+
+# Is this character allowed to diverge their culture?
+# root: Character
+can_diverge_culture = {
+	culture = { culture_age >= culture_divergence_cooldown }
+	custom_description = {
+		text = culture_present_in_realm_for_divergence
+		any_sub_realm_county = {
+			culture = root.culture
+		}
+	}
+	BTWK_culture_allowed_to_diverge_at_county_trigger = {
+		CULTURE = culture
+		COUNTY = capital_county
+	}
+}

@@ -1,0 +1,51 @@
+﻿# Root = Winning combat side
+# scope:wipe - Was this a wipe?
+on_combat_end_winner = {
+	on_actions = {
+		btwk_on_combat_end_winner
+	}
+}
+
+btwk_on_combat_end_winner = {
+	effect = {
+		# Gain Britannia Authority from winning major battle
+		if = {
+			limit = {
+				combat = { warscore_value >= 15 }
+				BTWK_britannia_high_kingship_active_trigger = yes
+				side_commander = { has_title = title:e_britannia }
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_add_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_win_major_battle_gain
+				}
+			}
+		}
+	}
+}
+
+# Root = Losing combat side
+# scope:wipe - Was this a wipe?
+on_combat_end_loser = {
+	on_actions = {
+		btwk_on_combat_end_loser
+	}
+}
+
+on_combat_end_loser = {
+	effect = {
+		# Lose Britannia Authority from losing major battle
+		if = {
+			limit = {
+				combat = { warscore_value >= 15 }
+				BTWK_britannia_high_kingship_active_trigger = yes
+				side_commander = { has_title = title:e_britannia }
+			}
+			title:e_britannia.holder = { 
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_lose_major_battle_loss
+				}
+			}
+		}
+	}
+}

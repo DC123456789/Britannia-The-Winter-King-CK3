@@ -330,18 +330,39 @@ culture_shifts.0001 = {
 			reset_culture_creation_date = yes
 			get_all_innovations_from = culture:briton
 			save_scope_as = welsh
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+				}
+				struggle:britannia_struggle = { set_culture_as_involved = prev }
+			}
+			BTWK_enable_culture_effect = yes
 		}
 		culture:cumbrian = {
 			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
 			reset_culture_creation_date = yes
 			get_all_innovations_from = culture:briton
 			save_scope_as = cumbrian
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+				}
+				struggle:britannia_struggle = { set_culture_as_involved = prev }
+			}
+			BTWK_enable_culture_effect = yes
 		}
 		culture:cornish = {
 			# 'Diverge' this culture by copying innovations. Leave traditions as defined in the database.
 			reset_culture_creation_date = yes
 			get_all_innovations_from = culture:briton
 			save_scope_as = cornish
+			if = {
+				limit = {
+					exists = struggle:britannia_struggle
+				}
+				struggle:britannia_struggle = { set_culture_as_involved = prev }
+			}
+			BTWK_enable_culture_effect = yes
 		}
 		culture:briton = {
 			save_scope_as = briton
@@ -420,6 +441,7 @@ culture_shifts.0001 = {
 			reset_culture_creation_date = yes
 			get_all_innovations_from = culture:armorican
 			save_scope_as = breton
+			BTWK_enable_culture_effect = yes
 		}
 		culture:armorican = {
 			save_scope_as = armorican
@@ -981,6 +1003,7 @@ culture_shifts.0010 = {
 					set_variable = { name = anglo_saxon_regional_culture_kingdom value = scope:current_kingdom }
 					set_variable = { name = new_culture_tradition_discount days = 9125 }
 					set_variable = culture_has_emerged
+					BTWK_enable_culture_effect = yes
 				}
 				if = {
 					limit = {
@@ -991,6 +1014,15 @@ culture_shifts.0010 = {
 				
 				# Copy acceptances
 				scope:new_culture = { copy_acceptances_from_parent_cultures_effect = yes }
+				
+				# If this is a hybridization, flag all players of the old non-West Germanic culture culture for loc purposes
+				if = {
+					limit = { scope:new_culture = { is_hybrid_culture = yes } }
+					every_player = {
+						limit = { culture = scope:old_culture }
+						set_variable = { name = was_non_west_germanic_parent_culture value = yes days = 1 }
+					}
+				}
 				
 				# New culture spawns at capital of kingdom holder if possible
 				if = {
@@ -1469,10 +1501,42 @@ culture_shifts.0011 = {
 	content_source = dlc_BTWK
 	title = culture_shifts.0011.t
 	desc = {
-		first_valid = {
+		first_valid = {		
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture = { is_hybrid_culture = yes }
+					culture = scope:new_culture
+					has_variable = was_non_west_germanic_parent_culture
+				}
+				desc = culture_shifts.0011.desc.hybrid.non_west_germanic_parent_culture_char
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture = { is_hybrid_culture = yes }
+					culture = scope:new_culture
+				}
+				desc = culture_shifts.0011.desc.hybrid.culture_char
+			}
 			triggered_desc = {
 				trigger = { scope:new_culture = { is_hybrid_culture = yes } }
 				desc = culture_shifts.0011.desc.hybrid
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture_kingdom.title_capital_county.title_province = { NOT = { geographical_region = btwk_custom_core_anglo_saxon_region } }
+					culture = scope:new_culture
+				}
+				desc = culture_shifts.0011.desc.divergent.western_cultures.culture_char
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:new_culture_kingdom.title_capital_county.title_province = { NOT = { geographical_region = btwk_custom_core_anglo_saxon_region } }
+				}
+				desc = culture_shifts.0011.desc.divergent.western_cultures
+			}
+			triggered_desc = {
+				trigger = { culture = scope:new_culture }
+				desc = culture_shifts.0011.desc.divergent.culture_char
 			}
 			desc = culture_shifts.0011.desc.divergent
 		}
@@ -1582,7 +1646,26 @@ culture_shifts.0011 = {
 		trigger = { 
 			culture = scope:new_culture
 		}
-		name = culture_shifts.0011.a
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = yes }
+				has_variable = was_non_west_germanic_parent_culture
+			}
+			text = culture_shifts.0011.a.hybrid.non_west_germanic_parent_culture
+		}
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = yes }
+				NOT = { has_variable = was_non_west_germanic_parent_culture }
+			}
+			text = culture_shifts.0011.a.hybrid
+		}
+		name = {
+			trigger = {
+				scope:new_culture = { is_hybrid_culture = no }
+			}
+			text = culture_shifts.0011.a
+		}
 	}
 	
 	option = {
@@ -1785,8 +1868,23 @@ culture_shifts.0012 = {
 					reset_culture_creation_date = yes
 					get_all_innovations_from = culture:bernician
 					get_all_innovations_from = culture:deiran
-					copy_all_traditions_from = culture:bernician
-					copy_all_traditions_from = culture:deiran
+					copy_all_traditions_from = scope:primary_parent
+					scope:secondary_parent = {
+						if = {
+							limit = { culture:northumbrian_alt = { free_tradition_slot >= 1 } }
+							random_tradition = {
+								limit = { NOT = { culture:northumbrian_alt = { has_cultural_tradition = prev } } }
+								culture:northumbrian_alt = { add_culture_tradition = prev }
+							}
+						}
+						if = {
+							limit = { culture:northumbrian_alt = { free_tradition_slot >= 1 } }
+							random_tradition = {
+								limit = { NOT = { culture:northumbrian_alt = { has_cultural_tradition = prev } } }
+								culture:northumbrian_alt = { add_culture_tradition = prev }
+							}
+						}
+					}
 					set_ethos_from = scope:primary_parent
 					set_martial_custom_from = scope:primary_parent
 					
@@ -1826,6 +1924,7 @@ culture_shifts.0012 = {
 				set_variable = { name = anglo_saxon_regional_culture value = scope:northumbrian_culture }
 			}
 			scope:northumbrian_culture = {
+				BTWK_enable_culture_effect = yes
 				set_variable = { name = anglo_saxon_regional_culture_kingdom value = title:k_northumbria }
 			}
 			
@@ -1956,6 +2055,7 @@ culture_shifts.0020 = {
 			}
 			set_variable = { name = new_culture_tradition_discount days = 9125 }
 			set_variable = culture_has_emerged
+			BTWK_enable_culture_effect = yes
 		}
 		if = {
 			limit = {
@@ -2090,7 +2190,15 @@ culture_shifts.0021 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = culture_shifts.0021.t
-	desc = culture_shifts.0021.desc
+	desc = {
+		first_valid = {		
+			triggered_desc = {
+				trigger = { this = scope:founder }
+				desc = culture_shifts.0021.desc.founder
+			}
+			desc = culture_shifts.0021.desc
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -2176,12 +2284,16 @@ culture_shifts.0030 = {
 			set_variable = { name = brithenig_emergence_progress_change value = 0 }
 			
 			# If at least 20 Romano-British provinces have a Brythonic culture 
-			# top liege, then Brithineg culture progresses
+			# top liege (and are not under an Imperial heritage suzerain),
+			# then Brithineg culture progresses
 			if = {
 				limit = {
 					any_culture_county = {
 						count >= 20
-						holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+						holder.top_liege = {
+							culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
+						}
 					}
 				}
 				change_variable = { name = brithenig_emergence_progress_change add = 2 }
@@ -2200,6 +2312,7 @@ culture_shifts.0030 = {
 						any_culture_county = {
 							count >= 60
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 						}
 					}
 					change_variable = { name = brithenig_emergence_progress_change add = 1 }
@@ -2209,6 +2322,7 @@ culture_shifts.0030 = {
 						any_culture_county = {
 							count >= 40
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 						}
 					}
 					change_variable = { name = brithenig_emergence_progress_change add = 0.5 }
@@ -2316,6 +2430,8 @@ culture_shifts.0030 = {
 					
 					# Copy acceptances
 					copy_acceptances_from_parent_cultures_effect = yes
+					
+					BTWK_enable_culture_effect = yes
 				}
 				if = {
 					limit = {
@@ -2401,6 +2517,7 @@ culture_shifts.0030 = {
 					random_county = {
 						limit = {
 							holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+							NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 							county_can_convert_to_brithenig_culture = yes
 							county_is_in_brithenig_culture_area = yes
 							any_neighboring_county = {
@@ -2415,6 +2532,7 @@ culture_shifts.0030 = {
 						random_county = {
 							limit = {
 								holder.top_liege.culture = { has_cultural_pillar = heritage_brythonic }
+								NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 								county_can_convert_to_brithenig_culture = yes
 								county_is_in_brithenig_culture_area = yes
 							}
@@ -2455,7 +2573,41 @@ culture_shifts.0031 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = culture_shifts.0031.t
-	desc = culture_shifts.0031.desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					culture = scope:parent_briton_culture
+					exists = title:e_britannia.holder
+					has_title = title:e_britannia
+				}
+				desc = culture_shifts.0031.desc.britannia_exists.high_king
+			}
+			triggered_desc = {
+				trigger = { 
+					culture = scope:new_culture
+					exists = title:e_britannia.holder
+				}
+				desc = culture_shifts.0031.desc.britannia_exists.culture_char
+			}
+			triggered_desc = {
+				trigger = { 
+					culture = scope:new_culture
+					exists = title:e_britannia.holder
+				}
+				desc = culture_shifts.0031.desc.britannia_exists
+			}
+			triggered_desc = {
+				trigger = { culture = scope:parent_briton_culture }
+				desc = culture_shifts.0031.desc.parent_briton_culture_char
+			}
+			triggered_desc = {
+				trigger = { culture = scope:new_culture }
+				desc = culture_shifts.0031.desc.culture_char
+			}
+			desc = culture_shifts.0031.desc
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -2505,7 +2657,7 @@ culture_shifts.0031 = {
 	}
 
 	option = {
-		trigger = { 
+		trigger = {
 			culture = scope:new_culture
 		}
 		name = culture_shifts.0031.a
@@ -2537,7 +2689,14 @@ culture_shifts.0031 = {
 				county_is_in_brithenig_culture_area = yes
 			}
 		}
-		name = culture_shifts.0031.c
+		name = {
+			trigger = { culture = scope:parent_briton_culture }
+			text = culture_shifts.0031.c.briton
+		}
+		name = {
+			trigger = { culture = scope:parent_briton_culture }
+			text = culture_shifts.0031.c.other
+		}
 		custom_tooltip = culture_shifts.0031.c.tt
 	}
 	
@@ -2562,9 +2721,29 @@ culture_shifts.0031 = {
 	}
 	
 	option = {
+		trigger = {
+			NOT = { culture = scope:new_culture }
+			NAND = {
+				character_can_convert_to_brithenig_culture = yes
+				capital_county = {
+					county_is_in_brithenig_culture_area = yes
+				}
+			}
+			NOT = {
+				any_sub_realm_county = {
+					county_can_convert_to_brithenig_culture = yes
+					county_is_in_brithenig_culture_area = yes
+				}
+			}
+			culture = scope:parent_briton_culture
+		}
+		name = culture_shifts.0031.e
+	}
+	
+	option = {
 		trigger = { always = no }
 		fallback = yes
-		name = culture_shifts.0031.e
+		name = culture_shifts.0031.f
 	}
 }
 
@@ -2766,6 +2945,7 @@ culture_shifts.0032 = {
 					set_variable = is_britannic_germanic_hybrid_culture
 					set_variable = { name = romance_barbarian_culture_parent value = scope:barbarian_culture }					
 					set_variable = culture_has_emerged
+					BTWK_enable_culture_effect = yes
 				}
 				set_variable = { name = britannic_hybrid_culture value = scope:new_culture }
 				
@@ -2774,6 +2954,12 @@ culture_shifts.0032 = {
 						exists = struggle:britannia_struggle
 					}
 					struggle:britannia_struggle = { set_culture_as_involved = scope:new_culture }
+				}
+				
+				# Flag all players of the old barbarian culture for loc purposes
+				every_player = {
+					limit = { culture = scope:barbarian_culture }
+					set_variable = { name = was_barbarian_parent_culture value = yes days = 1 }
 				}
 				
 				# If e_romanized_germanic_britannia is of the old barbarian culture and has an eligible capital,
@@ -3024,7 +3210,22 @@ culture_shifts.0033 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = culture_shifts.0033.t
-	desc = culture_shifts.0033.desc
+	desc = {
+		first_valid = {		
+			triggered_desc = {
+				trigger = { 
+					culture = scope:new_culture
+					has_variable = was_barbarian_parent_culture
+				}
+				desc = culture_shifts.0033.desc.barbarian_culture_char
+			}
+			triggered_desc = {
+				trigger = { culture = scope:new_culture }
+				desc = culture_shifts.0033.desc.romanobritish_culture_char
+			}
+			desc = culture_shifts.0033.desc
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -3082,7 +3283,14 @@ culture_shifts.0033 = {
 		trigger = { 
 			culture = scope:new_culture
 		}
-		name = culture_shifts.0033.a
+		name = {
+			trigger = { has_variable = was_barbarian_parent_culture }
+			text = culture_shifts.0033.a.was_barbarian
+		}
+		name = {
+			trigger = { NOT = { has_variable = was_barbarian_parent_culture } }
+			text = culture_shifts.0033.a.was_romanobritish
+		}
 	}
 	
 	option = {
@@ -3093,7 +3301,14 @@ culture_shifts.0033 = {
 				county_is_in_britannic_hybrid_culture_area = { BARBARIAN_CULTURE = scope:barbarian_culture }
 			}
 		}
-		name = culture_shifts.0033.b
+		name = {
+			trigger = { has_variable = was_barbarian_parent_culture }
+			text = culture_shifts.0033.b.was_barbarian
+		}
+		name = {
+			trigger = { NOT = { has_variable = was_barbarian_parent_culture } }
+			text = culture_shifts.0033.b.was_romanobritish
+		}
 		custom_tooltip = culture_shifts.0033.b.tt
 	}
 	
@@ -3163,7 +3378,7 @@ culture_shifts.0034 = {
 			}
 			set_variable = { name = britannic_emergence_progress_change value = 0 }
 			
-			# If there is an Imperial heritage realm that rules at least 40 Romano-British counties,
+			# If there is an Imperial heritage realm that rules at least 45 Romano-British counties,
 			# Or if there is an Imperial heritage High King of Britannia,
 			# then Britannic culture gets no emergence progress
 			# Alternatively, if there is an Imperial heritage realm that rules at least 5 Romano-British counties,
@@ -3177,7 +3392,7 @@ culture_shifts.0034 = {
 							culture = { has_cultural_pillar = heritage_latin }
 							OR = {
 								any_realm_county = {
-									count >= 40
+									count >= 45
 									culture = culture:romanobritish
 								}
 								AND = {
@@ -3212,7 +3427,7 @@ culture_shifts.0034 = {
 							culture = { has_cultural_pillar = heritage_latin }
 							OR = {
 								any_realm_county = {
-									count >= 35
+									count >= 40
 									culture = culture:romanobritish
 								}
 							}
@@ -3276,6 +3491,7 @@ culture_shifts.0034 = {
 					this.var:britannic_emergence_progress >= 70
 					NOT = { has_variable = britannic_warning_fired }
 				}
+				set_variable = britannic_warning_fired
 				every_player = {
 					limit = { culture = culture:romanobritish }
 					trigger_event = { id = culture_shifts.0036 }
@@ -3314,6 +3530,8 @@ culture_shifts.0034 = {
 					
 					# Copy acceptances
 					copy_acceptances_from_parent_cultures_effect = yes
+					
+					BTWK_enable_culture_effect = yes
 				}
 				if = {
 					limit = {
@@ -3524,7 +3742,15 @@ culture_shifts.0035 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = culture_shifts.0035.t
-	desc = culture_shifts.0035.desc
+	desc = {
+		first_valid = {		
+			triggered_desc = {
+				trigger = { culture = scope:new_culture }
+				desc = culture_shifts.0035.desc.culture_char
+			}
+			desc = culture_shifts.0035.desc
+		}
+	}
 	theme = realm
 	
 	left_portrait = {
@@ -3645,7 +3871,7 @@ culture_shifts.0036 = {
 	
 	left_portrait = {
 		character = root
-		animation = stress
+		animation = worry
 	}
 	
 	immediate = {
@@ -4025,6 +4251,8 @@ culture_shifts.9997 = {
 						character_can_convert_to_current_culture_trigger = { CULTURE = scope:current_culture }
 						capital_county = prev
 					}
+					culture = { save_scope_as = old_culture }
+					root = { save_scope_as = new_culture }
 					convert_character_with_family_and_courtiers_effect = {
 						CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 						CULTURE_CONDITION_OP = "="
@@ -4036,6 +4264,7 @@ culture_shifts.9997 = {
 			}
 			
 			# And also adventurers in a already-flipped county location
+			root = { save_scope_as = new_culture }
 			convert_county_unlanded_domiciles_effect = {
 				CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 				CULTURE_CONDITION_OP = "="
@@ -4106,6 +4335,8 @@ culture_shifts.9997 = {
 							culture = root
 						}
 					}
+					culture = { save_scope_as = old_culture }
+					root = { save_scope_as = new_culture }
 					convert_character_with_family_and_courtiers_effect = {
 						CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 						CULTURE_CONDITION_OP = "="
@@ -4154,6 +4385,8 @@ culture_shifts.9997 = {
 								culture = root
 							}
 						}
+						culture = { save_scope_as = old_culture }
+						root = { save_scope_as = new_culture }
 						convert_character_with_family_and_courtiers_effect = {
 							CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 							CULTURE_CONDITION_OP = "="
@@ -4199,6 +4432,8 @@ culture_shifts.9997 = {
 						factor = 0.67
 						is_independent_ruler = yes
 					}
+					culture = { save_scope_as = old_culture }
+					root = { save_scope_as = new_culture }
 					convert_character_with_family_and_courtiers_effect = {
 						CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 						CULTURE_CONDITION_OP = "="
@@ -4237,6 +4472,8 @@ culture_shifts.9997 = {
 			owner = { 
 				random = {
 					chance = 10
+					culture = { save_scope_as = old_culture }
+					root = { save_scope_as = new_culture }
 					convert_character_with_family_and_courtiers_effect = {
 						CULTURE_CONDITION_LHS = "character_can_convert_to_current_culture_trigger"
 						CULTURE_CONDITION_OP = "="

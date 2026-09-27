@@ -154,4 +154,44 @@ BTWK_cultural_redoubt_yearly_pacification_progress_effect = {
 	}
 }
 
+BTWK_update_wrong_heritage_group_tribal_county_modifier_effect = {
+	save_scope_as = temp_current_county
+	if = {
+		limit = {
+			any_county_province = { has_holding_type = tribal_holding }
+			holder = { 
+				NOT = { culture = { has_same_culture_heritage = temp_current_county.culture } }
+				top_liege = {
+					NOR = { 
+						government_has_flag = government_is_tribal
+						is_same_heritage_group_or_related_culture_trigger = { 
+							TARGET = scope:temp_current_county
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_county_modifier = BTWK_wrong_heritage_group_tribal_county_modifier } }
+			add_county_modifier = BTWK_wrong_heritage_group_tribal_county_modifier
+		}
+	}
+	else_if = {
+		limit = { has_county_modifier = BTWK_wrong_heritage_group_tribal_county_modifier }
+		remove_county_modifier = BTWK_wrong_heritage_group_tribal_county_modifier
+	}
+}
+
+BTWK_update_wrong_heritage_group_tribal_county_modifier_for_sub_realm_effect = {
+	every_held_title = {
+		limit = { tier = tier_county }
+		BTWK_update_wrong_heritage_group_tribal_county_modifier_effect = yes
+	}
+	if = {
+		limit = { is_independent_ruler = yes }
+		every_sub_realm_county = {
+			BTWK_update_wrong_heritage_group_tribal_county_modifier_effect = yes
+		}
+	}
+}
 

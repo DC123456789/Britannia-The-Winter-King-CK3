@@ -235,6 +235,22 @@ control_region_fraction_including_tributaries_trigger = {
 	}
 }
 
+BTWK_populist_revolt_create_kingdom_culture_check_trigger = {
+	$KINGDOM$ = { save_temporary_scope_as = kingdom_scope }
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_blocked } }
+		scope:next_leader = { is_unromanized_germanic_culture_trigger = no }
+	}
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_only } }
+		scope:next_leader = { is_unromanized_germanic_culture_trigger = yes }
+	}
+	trigger_if = {
+		limit = { scope:kingdom_scope = { has_variable = roman_culture_only } }
+		scope:next_leader = { culture = { has_cultural_pillar = heritage_latin } }
+	}
+}
+
 can_create_briton_kingdom_trigger = {
 	can_create_roman_celtic_titles_trigger = yes
 	trigger_if = {
@@ -272,6 +288,57 @@ germanic_controlled_trigger = {
 	custom_description = {
 		text = germanic_controlled_trigger
 		holder.top_liege = { can_create_germanic_title_culture_trigger = yes }
+	}
+}
+
+BTWK_anglo_saxon_kingdom_title_creation_trigger = {
+	save_temporary_scope_as = current_char
+	trigger_if = {
+		limit = { 
+			struggle:britannia_struggle ?= {
+				has_struggle_phase_parameter = anglo_saxon_kings_cannot_create_new_kingdoms
+			}
+		}
+		custom_tooltip = {
+			text = BTWK_anglo_saxon_kingdom_title_creation_trigger
+			NOT = { highest_held_title_tier >= tier_kingdom }
+		}
+	}
+	trigger_if = {
+		limit = { 
+			liege ?= { 
+				has_title = title:e_aengland
+				NOT = {
+					any_held_title = {
+						tier >= tier_empire
+						NOT = { this = title:e_aengland }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			text = BTWK_aengland_vassal_create_kingdom_trigger
+			BTWK_aengland_bretwalda_king_tier_vassals_allowed_trigger = yes
+		}
+	}
+	BTWK_control_num_de_jure_counties_in_title_trigger = {
+		TITLE = $TITLE$
+		NUM_COUNTIES = $NUM_COUNTIES$
+	}
+}
+
+BTWK_control_num_de_jure_counties_in_title_trigger = {
+	save_temporary_scope_as = current_char
+	custom_description = {
+		text = BTWK_control_num_de_jure_counties_in_title
+		object = $TITLE$
+		value = $NUM_COUNTIES$
+		$TITLE$ = {
+			any_de_jure_county = {
+				count >= $NUM_COUNTIES$
+				scope:current_char = { completely_controls = prev }
+			}
+		}
 	}
 }
 

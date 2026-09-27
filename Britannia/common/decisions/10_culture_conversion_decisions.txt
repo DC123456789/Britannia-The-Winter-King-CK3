@@ -23,13 +23,23 @@ convert_to_local_culture_decision = {
 			# Some closely related cultures can also interconvert
 			AND = {
 				is_culture_or_descendant_trigger = { CULTURE = culture:romanobritish }
-				capital_province.culture = { has_cultural_pillar = heritage_brythonic }
+				capital_province = { has_cultural_pillar = heritage_brythonic }
 			}
 			AND = {
-				capital_province.culture = { 
+				capital_province = { 
 					is_culture_or_descendant_trigger = { CULTURE = culture:romanobritish }
 				}
 				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			# AND = {
+				# is_culture_or_descendant_trigger = { CULTURE = culture:romanogallic }
+				# capital_province = { has_cultural_pillar = heritage_gaulish }
+			# }
+			AND = {		# Gauls can become Romano-Gallic, but not the other way around
+				capital_province = { 
+					is_culture_or_descendant_trigger = { CULTURE = culture:romanogallic }
+				}
+				culture = { has_cultural_pillar = heritage_gaulish }
 			}
 			# If your capital is a related Romance culture, you can also convert to it (but not back)
 			capital_province = { 
@@ -275,6 +285,10 @@ convert_to_local_culture_decision = {
 					this = root.culture
 				}
 			}
+			NAND = {	# Briton -> Romano-British doesn't count
+				culture = culture:briton
+				capital_province.culture = culture:romanobritish
+			}
 		}
 		
 		modifier = { # Farewell, norse culture (unless the player is running a norse empire)
@@ -343,7 +357,7 @@ convert_to_local_culture_decision = {
 		
 		modifier = { # If your capital borders a province with the correct culture, do not convert
 			factor = 0
-			top_liege != this
+			# top_liege != this
 			exists = liege
 			culture = liege.culture
 			capital_province.county = {

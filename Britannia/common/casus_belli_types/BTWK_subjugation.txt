@@ -13,6 +13,7 @@
 			government_has_flag = government_allow_pre_feudal_subjugation
 			government_has_flag = government_allow_pre_feudal_subjugation_limited
 		}
+		highest_held_title_tier <= tier_kingdom
 	}
 	
 	# Root is the title
@@ -34,9 +35,18 @@
 			trigger_if = {
 				limit = {
 					government_has_flag = government_allow_pre_feudal_subjugation_limited
+					NAND = { 
+						owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+						# Deira cannot subjugate Lindsey early
+						NAND = {
+							scope:defender.primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+							title:d_lindsey.kingdom != title:k_lindsey
+						}
+					}					
 				}
 				BTWK_reform_from_tribal_innovations_trigger = yes
 			}
+			is_independent_ruler = yes
 		}
 	}
 	
@@ -52,7 +62,7 @@
 					government_has_flag = government_allow_pre_feudal_subjugation_limited
 				}
 			}
-			culture = { has_same_heritage_group_as = { TARGET = scope:defender.culture } }
+			is_same_heritage_group_or_related_heritage_trigger = { TARGET = scope:defender }
 		}
 		
 		scope:defender = {
@@ -117,6 +127,19 @@
 				multiply = scope:attacker.realm_size
 				desc = CB_REALM_SIZE_COST
 				max = 4000
+			}
+			
+			# More expensive if you are bypassing innovation requirements
+			if = {
+				limit = {
+					government_has_flag = government_allow_pre_feudal_subjugation_limited
+					NOT = { BTWK_reform_from_tribal_innovations_trigger = yes }
+					owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+				}
+				add = {
+					value = 1000
+					desc = CB_BTWK_BYPASS_INNOVATION_REQUIREMENTS				
+				}
 			}
 
 			# Cheaper in the later phases of the Britannia struggle
@@ -246,7 +269,7 @@
 			limit = {
 				scope:defender = {
 					any_realm_county = {
-						count > 20
+						count > 3
 						NOT = { kingdom = { is_in_list = target_titles } }
 					}
 				}
@@ -577,5 +600,8 @@
 	ai_score_mult = {
 		value = 1
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+	
+		# BTWK
+		multiply = conquests_culture_targets_ai_score_value
 	}
 }

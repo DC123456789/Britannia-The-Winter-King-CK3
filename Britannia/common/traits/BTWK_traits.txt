@@ -283,6 +283,25 @@ northaugustus_offmap = {		# Used for the offmap WRE and ERE to stop them inherti
 	}
 }
 
+offmap_ruler = {
+	category = fame
+
+	inheritance_blocker = all	
+	shown_in_ruler_designer = no
+	
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					NOT = { exists = this }
+				}
+				desc = trait_offmap_ruler_desc
+			}
+			desc = trait_offmap_ruler_character_desc
+		}
+	}
+}
+
 # loyal = {
 	# category = fame
 	
@@ -518,16 +537,71 @@ roman_trained = {
 	
 	same_opinion = 5
 
-	# TODO: No direct conversion. Probably heavy_infantry_damage_mult, no flanks in CK3, movement_speed, attacker_advantage and defender_advantage
-	# command_modifier = {
-	# 	heavy_infantry = 0.1
-	# 	center = 0.1
-	# 	speed = 0.15
-	# 	morale_offence = 0.2
-	# 	morale_defence = 0.2
-	# }
+	heavy_infantry_damage_mult = 0.1
+	heavy_infantry_toughness_mult = 0.1
+	movement_speed = 0.15
+	supply_duration = 0.2
 
 	ruler_designer_cost = 25
+	
+	track = {
+		33 = {
+			heavy_infantry_damage_mult = 0.1
+			heavy_infantry_toughness_mult = 0.1
+			monthly_prestige = 0.2
+		}
+		66 = {
+			heavy_infantry_damage_mult = 0.1
+			heavy_infantry_toughness_mult = 0.1
+			movement_speed = 0.1
+			supply_duration = 0.1
+			monthly_prestige = 0.1
+		}
+		100 = {
+			martial = 1
+			heavy_infantry_damage_mult = 0.1
+			heavy_infantry_toughness_mult = 0.1
+			monthly_prestige = 0.2
+			movement_speed = 0.1
+			supply_duration = 0.1
+		}
+	}
+
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					exists = this
+					has_trait_xp = {
+						trait = roman_trained
+						value >= 100
+					}
+				}
+				desc = trait_roman_trained_3
+			}
+			triggered_desc = {
+				trigger = {
+					exists = this
+					has_trait_xp = {
+						trait = roman_trained
+						value >= 66
+					}
+				}
+				desc = trait_roman_trained_2
+			}
+			triggered_desc = {
+				trigger = {
+					exists = this
+					has_trait_xp = {
+						trait = roman_trained
+						value >= 33
+					}
+				}
+				desc = trait_roman_trained_1
+			}
+			desc = trait_roman_trained
+		}
+	}
 
 	desc = {
 		first_valid = {

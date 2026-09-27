@@ -112,10 +112,13 @@ convert_to_feudalism_liege_converted_decision = {
 			has_realm_law = tribal_authority_2
 			has_realm_law = tribal_authority_3
 		}
-		custom_description = {
-			text = faith_is_reformed
-			subject = root
-			faith = { NOT = { has_doctrine_parameter = unreformed } }
+		OR = {
+			custom_description = {
+				text = faith_is_reformed
+				subject = root
+				faith = { NOT = { has_doctrine_parameter = unreformed } }
+			}
+			BTWK_reform_from_tribal_innovations_trigger = yes
 		}
 		trigger_if = {
 			limit = { government_has_flag = government_is_wanua }
@@ -128,10 +131,18 @@ convert_to_feudalism_liege_converted_decision = {
 		capital_province.county = {
 			development_level >= convert_to_feudalism_development_requirement
 		}
-		custom_description = {
-			text = capital_has_building_requirements_for_pre_feudal_from_liege
+		trigger_if = {
+			limit = { is_ai = no }
+			custom_description = {
+				text = capital_has_building_requirements_for_pre_feudal_from_liege
+				capital_province = {
+					combined_building_level >= 7
+				}
+			}
+		}
+		trigger_else = {
 			capital_province = {
-				combined_building_level >= 7
+				combined_building_level >= 5
 			}
 		}
 	}
@@ -148,13 +159,13 @@ convert_to_feudalism_liege_converted_decision = {
 	}
 
 	effect = {
-		trigger_event = major_decisions.0001
 		save_scope_as = actor
+		trigger_event = major_decisions.0001
 		convert_whole_realm_to_feudalism_effect = yes
 		hidden_effect = {
 			every_vassal = {
 				trigger_event = {
-					id = major_decisions.0002
+					id = BTWK_government.0020
 					days = 3
 				}
 			}
@@ -225,8 +236,8 @@ convert_clan_to_feudalism_through_liege_decision = {
 	}
 
 	effect = {
-		trigger_event = major_decisions.0001
 		save_scope_as = actor
+		trigger_event = major_decisions.0001
 
 		change_government = feudal_government
 
@@ -314,8 +325,8 @@ convert_feudalism_to_clan_through_liege_decision = {
 	}
 
 	effect = {
-		trigger_event = major_decisions.0001
 		save_scope_as = actor
+		trigger_event = major_decisions.0001
 
 		change_government = clan_government
 
@@ -412,19 +423,40 @@ convert_whole_realm_to_feudalism_decision = {
 		capital_province.county = {
 			development_level >= convert_to_feudalism_development_requirement
 		}
-		OR = {
-			custom_description = {
-				text = capital_has_building_requirements_for_pre_feudal
-				capital_province = {
-					has_building = tribe_02
-					combined_building_level >= 10
+		trigger_if = {
+			limit = { 
+				OR = {
+					is_ai = no 
+					current_year < 530		# So Romano-Britons can't reform too early
 				}
 			}
-			custom_description = {
-				text = capital_has_building_requirements_for_pre_feudal_castle
+			OR = {
+				custom_description = {
+					text = capital_has_building_requirements_for_pre_feudal
+					capital_province = {
+						has_building = tribe_02
+						combined_building_level >= 10
+					}
+				}
+				custom_description = {
+					text = capital_has_building_requirements_for_pre_feudal_castle
+					capital_province = {
+						has_building = castle_01
+						combined_building_level >= 7
+					}
+				}
+			}
+		}
+		# AI doesn't build enough buildings usually
+		trigger_else = {
+			OR = {
+				capital_province = {
+					# has_building = tribe_02
+					combined_building_level >= 6		
+				}
 				capital_province = {
 					has_building = castle_01
-					combined_building_level >= 7
+					combined_building_level >= 3
 				}
 			}
 		}
@@ -451,13 +483,13 @@ convert_whole_realm_to_feudalism_decision = {
 	effect = {
 		gain_legitimizing_legend_seed_tooltip_effect = yes
 		add_character_flag = ready_to_receive_seed
-		trigger_event = major_decisions.0001
 		save_scope_as = actor
+		trigger_event = major_decisions.0001
 		convert_whole_realm_to_feudalism_effect = yes
 		hidden_effect = {
 			every_vassal = {
 				trigger_event = {
-					id = major_decisions.0002
+					id = BTWK_government.0020
 					days = 3
 				}
 			}
@@ -628,8 +660,8 @@ convert_whole_realm_to_feudalism_west_african_pagan_decision = {
 	cost = { prestige = 500 }
 
 	effect = {
-		trigger_event = major_decisions.0001
 		save_scope_as = actor
+		trigger_event = major_decisions.0001
 		convert_whole_realm_to_feudalism_effect = yes
 		hidden_effect = {
 			every_vassal = {

@@ -5,7 +5,6 @@ h_western_roman_empire = {
 		holder=2031	#Augustus
 	#	active=yes
 		effect = { set_variable = roman_empire_title }
-		government = administrative_government
 	}
 	14.8.19={
 		holder=2033	#Tiberius
@@ -225,7 +224,21 @@ h_eastern_roman_empire = {
 		liege=0
 		holder=2006	#Arcadius
 		effect = { set_variable = roman_empire_title }
-		government = administrative_government
+		effect = {
+			if = {
+				limit = {
+					exists = holder
+					has_dlc_feature = royal_court
+				}
+				holder = {
+					set_court_language = language_latin
+					if = {
+						limit = { NOT = { knows_court_language_of = this } }
+						learn_court_language_of = this
+					}
+				}
+			}
+		}
  	}
  	408.5.1={
  		holder=34071 #Theodosius II
@@ -373,7 +386,7 @@ k_maxima_cesariensis = {
 		liege = 0
 		effect = { 
 			remove_global_variable = maxima_cesariensis_restored
-			clear_variable = title_has_been_created
+			remove_variable = title_has_been_created
 		}
 	#	clear_tribute_suzerain = e_britannia
 	}

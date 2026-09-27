@@ -45,6 +45,12 @@
 					}
 				}
 			}
+			
+			# Must have same heritage group as attacker
+			custom_tooltip = {
+				text = "vassalization_cb_different_heritage_group_tt"
+				culture = { has_same_heritage_group_as = { TARGET = scope:attacker.culture } }
+			}
 		}
 		scope:attacker = {
 			is_landed = yes
@@ -55,21 +61,23 @@
 	allowed_against_character = {
 		scope:defender = {
 			top_liege = this
-			trigger_if = {
-				limit = { 
-					scope:attacker = { 
-						OR = {
-							is_ai = no # Already pre-filtered by the AI due to ai_only_against_neighbors = yes. any_neighboring_top_liege_realm_owner is expensive
-							has_variable = conqueror	# ...unless it's being triggered by event, like with conquerors
-						}
-					}
-				}					
+			# BTWK - We have to do the check for the AI as well as otherwise they can attack over sea
+			# which is not what we want
+			# trigger_if = {
+				# limit = { 
+					# scope:attacker = { 
+						# OR = {
+							# is_ai = no # Already pre-filtered by the AI due to ai_only_against_neighbors = yes. any_neighboring_top_liege_realm_owner is expensive
+							# has_variable = conqueror	# ...unless it's being triggered by event, like with conquerors
+						# }
+					# }
+				# }					
 				scope:attacker = {
 					any_neighboring_top_liege_realm_owner = {
 						this = scope:defender
 					}
 				}
-			}
+			# }
 
 			trigger_if = { # if unlocked without the perk, only target involved or interloper
 				limit = {
@@ -92,9 +100,6 @@
 					faith.religious_head = root
 				}
 			}
-			
-			# Must have same heritage group as attacker
-			culture = { has_same_heritage_group_as = { TARGET = scope:defender.culture } }
 		}
 		
 		scope:attacker.primary_title.tier > scope:defender.primary_title.tier # Must be lower tier

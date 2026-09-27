@@ -2,75 +2,6 @@
 # Briton Title Decisions												#
 #########################################################################
 
-claim_britannia_high_kingship_decision = {
-	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
-	}
-	decision_group_type = major
-
-	ai_check_interval_by_tier = {
-		barony = 0
-		county = 0
-		duchy = 0
-		kingdom = 12
-		empire = 12
-		hegemony = 12
-	}
-
-	desc = claim_britannia_high_kingship_decision_desc
-
-	is_shown = {
-		culture = {
-			OR = {
-				has_same_heritage_group_as = { TARGET = culture:briton }
-				has_cultural_pillar = heritage_latin
-				this = culture:britannic
-			}
-		}
-		any_held_title = {
-			tier = root.primary_title.tier
-			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-		}
-		NOT = { has_title = title:e_britannia }
-		BTWK_britannia_high_kingship_active_trigger = yes
-		# TODO This decision should be disabled after one of the reforms as well
-	}
-
-	is_valid = {
-		BTWK_britannia_high_kingship_can_claim_trigger = yes
-	}
-
-	effect = {
-		BTWK_britannia_claim_high_kingship_effect = yes
-	}
-	
-	cost = {
-		gold = { value = 100 }
-		prestige = { value = 500 }
-	}
-	
-	ai_potential = {
-		is_independent_ruler = yes
-	}
-
-	ai_will_do = {
-		base = 0		# Want AI to calculate if it's actually going to win or not
-	}
-	
-	widget = {
-		gui = "decision_view_widget_claim_britannia_high_kingship"
-		controller = decision_option_list_controller
-
-		### This placeholder has to be here or the game will crash
-		item = {
-			value = none
-			is_shown = { always = yes }
-			is_valid = { always = yes }
-			localization = placeholder_name
-		}
-	}
-}
-
 create_deheubarth_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
@@ -91,8 +22,8 @@ create_deheubarth_decision = {
 	is_shown = {
 		has_title = title:k_demetia
 		highest_held_title_tier < tier_empire
-		title:k_deheubarth = {
-			NOT = { has_variable = title_created_de_jure }
+		title:k_demetia = {
+			NOT = { has_variable = title_expanded_de_jure }
 		}
 	}
 
@@ -110,13 +41,12 @@ create_deheubarth_decision = {
 		add_prestige = 200
 		dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
 		add_legitimacy = 25	
-		# This makes the de jure change show up in the decision window, but doesn't actually do anything
-		show_as_tooltip = {
-			get_title = title:k_deheubarth
-			destroy_title = title:k_demetia
+		title:k_demetia = {
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = DEHEUBARTH } }
 		}
-		title:k_deheubarth = { 
-			save_scope_as = title_created_de_jure_pretend
+		# This makes the de jure change show up in the decision window, but doesn't actually do anything
+		title:k_demetia = { 
+			save_scope_as = title_expanded_de_jure_pretend
 			every_in_list = {
 				variable = dynamic_de_jure_territory
 				show_as_tooltip = {
@@ -163,12 +93,7 @@ reunite_dumnonia_decision = {
 			has_title = title:k_dumnonia
 			has_title = title:k_kernow
 		}
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_briton_or_latin_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		title:k_dumnonia = {
 			NOT = { has_variable = title_expanded_de_jure }
@@ -260,12 +185,7 @@ form_strathclyde_decision = {
 
 	is_shown = {
 		has_title = title:k_strathclyde
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_briton_or_latin_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		title:k_strathclyde = {
 			NOT = { has_variable = formed_strathclyde }
@@ -297,7 +217,7 @@ form_strathclyde_decision = {
 		add_prestige = 300
 		dynasty = { add_dynasty_prestige = major_dynasty_prestige_value }
 		add_legitimacy = 50
-		title:k_strathclyde = {		
+		title:k_strathclyde = {
 			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
 			set_variable = custom_name
 		}
@@ -622,12 +542,7 @@ create_hen_ogledd_decision = {
 			}
 			primary_title = { title_capital_county = { title_province = { geographical_region = btwk_world_britannia_hen_ogledd } } }
 		}
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_briton_or_latin_culture_trigger = yes
 		highest_held_title_tier < tier_empire
 		# title:k_ebrauc = {
 			# NOT = { check_kingdom_region_de_jure_liege_trigger = { DE_JURE_LIEGE = title:e_hen_ogledd } }
@@ -701,6 +616,7 @@ reunite_the_britons_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
 	}
+	extra_picture = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
 	decision_group_type = major
 
 	ai_check_interval_by_tier = {
@@ -715,27 +631,36 @@ reunite_the_britons_decision = {
 	desc = reunite_the_britons_decision_desc
 
 	is_shown = {
-		any_held_title = {
-			OR = {
-				this.var:kingdom_region ?= title:k_ebrauc
-				this.var:kingdom_region ?= title:k_gwynedd
-				this.var:kingdom_region ?= title:k_londinium
+		OR = {
+			any_character_struggle = {
+				struggle:britannia_struggle ?= this
+			}
+			primary_title.title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+			any_held_title = {
+				tier >= tier_kingdom
+				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
 			}
 		}
 		has_global_variable = end_of_britannia
-		culture = {
-			OR = {
-				has_cultural_pillar = heritage_brythonic
-				has_cultural_pillar = heritage_latin
-			}
-		}
+		is_briton_or_latin_culture_trigger = yes
+		NOT = { title:e_britannia = { has_variable = britannia_reunited } }
 	}
 
 	is_valid = {
+		custom_tooltip = {
+			text = reunite_the_britons_decision_kingdom_tt
+			any_held_title = {
+				OR = {
+					this.var:kingdom_region ?= title:k_ebrauc
+					this.var:kingdom_region ?= title:k_gwynedd
+					this.var:kingdom_region ?= title:k_londinium
+				}
+			}
+		}
 		is_independent_ruler = yes
 		prestige_level >= high_prestige_level
 		control_region_fraction_trigger = {
-			FRACTION_REQUIRED = 0.80
+			FRACTION_REQUIRED = 0.85
 			REGION = geographical_region:btwk_world_britannia
 		}
 		OR = {
@@ -749,6 +674,16 @@ reunite_the_britons_decision = {
 	}
 
 	effect = {
+		title:e_britannia = { set_variable = britannia_reunited }
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+		}
+		show_as_tooltip = {
+			dynasty = {
+				add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+			}
+		}
 		add_prestige = 1000
 		dynasty = { add_dynasty_prestige = monumental_dynasty_prestige_value }
 		add_legitimacy = 150
@@ -816,16 +751,14 @@ britannia_claim_imperial_title_decision = {
 		has_title = title:e_britannia
 		culture = {
 			OR = {
-				has_cultural_pillar = heritage_romanized_germanic
-				has_cultural_pillar = heritage_frankish
 				has_cultural_pillar = heritage_latin
+				has_cultural_pillar = heritage_romance
 			}
 		}
 		NOT = { title:e_britannia = { has_variable = emperor_flag } }
 		# If the High King mechanic is still active, then you should be taking the Roman path after
 		# unification instead - this is basically for if a Britannic character/realm survives the Fall of 
 		# Britannia and then unifies Britannia
-		# TODO Take another look at this once the High King system has been implemented
 		has_global_variable = end_of_britannia
 	}
 
@@ -834,6 +767,12 @@ britannia_claim_imperial_title_decision = {
 		custom_tooltip = {
 			NOT = { exists = title:h_western_roman_empire.holder }
 			text = no_wre_emp_exists_tt
+		}
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_latin
+				has_cultural_pillar = heritage_romance
+			}
 		}
 		prestige_level >= very_high_prestige_level
 		completely_controls_region = btwk_world_britannia

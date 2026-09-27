@@ -1,7 +1,136 @@
 # root - Character who changed government
 # scope:old_government - Character's old government type
 on_government_change = {
+	on_actions = {
+		BTWK_on_government_change
+	}
+}
+
+BTWK_on_government_change = {
 	effect = {
 		tribal_fame_government_change_effect = yes
+		
+		# Convert from subjugated tributary to client kingdom
+		if = {
+			limit = { 
+				is_tributary = yes
+				has_subject_contract_group = tributary_subjugated
+				should_be_BTWK_client_kingdom_tributary_trigger = {
+					SUZERAIN = suzerain
+					TRIBUTARY = this
+				}
+			}
+			# Copy contract over to permanent type
+			set_variable = {
+				name = default_tributary_taxes_value
+				value = vassal_contract_obligation_level:default_tributary_taxes
+			}
+			set_variable = {
+				name = default_tributary_levies_value
+				value = vassal_contract_obligation_level:default_tributary_levies
+			}
+			set_variable = {
+				name = default_tributary_prestige_value
+				value = vassal_contract_obligation_level:default_tributary_prestige
+			}
+			start_tributary = {
+				contract_group = tributary_BTWK_client_kingdom
+				suzerain = root
+			}
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_taxes level = this.var:default_tributary_taxes_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_levies level = this.var:default_tributary_levies_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+			}
+			remove_variable = default_tributary_prestige_value
+		}
+		every_tributary = {
+			limit = {
+				has_subject_contract_group = tributary_subjugated
+				should_be_BTWK_client_kingdom_tributary_trigger = {
+					SUZERAIN = suzerain
+					TRIBUTARY = this
+				}
+			}
+			# Copy contract over to permanent type
+			set_variable = {
+				name = default_tributary_taxes_value
+				value = vassal_contract_obligation_level:default_tributary_taxes
+			}
+			set_variable = {
+				name = default_tributary_levies_value
+				value = vassal_contract_obligation_level:default_tributary_levies
+			}
+			set_variable = {
+				name = default_tributary_prestige_value
+				value = vassal_contract_obligation_level:default_tributary_prestige
+			}
+			start_tributary = {
+				contract_group = tributary_BTWK_client_kingdom
+				suzerain = root
+			}
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_taxes level = this.var:default_tributary_taxes_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_levies level = this.var:default_tributary_levies_value
+			}
+			remove_variable = default_tributary_levies_value
+			tributary_contract_set_obligation_level = { 
+				type = default_tributary_prestige level = this.var:default_tributary_prestige_value
+			}
+			remove_variable = default_tributary_prestige_value
+		}
+		
+		# Britannia struggle catalysts
+		if = {
+			limit = {
+				scope:old_government = government_type:tribal_government
+				government_has_flag = government_is_pre_feudal
+				is_independent_ruler = yes
+				any_character_struggle = {
+					involvement = involved
+					phase_has_catalyst = catalyst_convert_to_pre_feudal
+				}
+			}
+			every_character_struggle = {
+				involvement = involved
+				activate_struggle_catalyst = {
+					catalyst = catalyst_convert_to_pre_feudal
+					character = root
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:old_government = government_type:pre_feudal_government
+				OR = {
+					AND = {
+						government_has_flag = government_is_feudal
+						NOT = { government_has_flag = government_is_pre_feudal }
+					}
+					government_has_flag = government_is_administrative
+				}
+				is_independent_ruler = yes
+				any_character_struggle = {
+					involvement = involved
+					phase_has_catalyst = catalyst_convert_to_advanced_government
+				}
+			}
+			every_character_struggle = {
+				involvement = involved
+				activate_struggle_catalyst = {
+					catalyst = catalyst_convert_to_advanced_government
+					character = root
+				}
+			}
+		}
 	}
 }

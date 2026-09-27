@@ -23,15 +23,35 @@ culture_is_romanobritish_culture_trigger = {
 }
 
 # Determines access to Brythonic titles and mechanics
-# Does the culture derive primarily from Briton, Cumbrian, or Romano-British?
-is_brythonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_brythonic_culture_trigger_desc
-        culture = { culture_is_brythonic_culture_trigger = yes }
+is_briton_or_latin_culture_trigger = {
+    custom_description = {
+		text = BTWK_is_britannic_culture
+        culture = { culture_is_briton_or_latin_culture_trigger = yes }
 	}
 }
 
-culture_is_brythonic_culture_trigger = {
+culture_is_briton_or_latin_culture_trigger = {
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+        has_cultural_pillar = heritage_latin
+        AND = {
+            has_cultural_pillar = heritage_romance
+			this.var:ancestral_starting_culture ?= culture:romanobritish
+			NOT = { 
+				this.var:ancestral_non_roman_culture ?= { 
+					culture_is_romanized_barbarian_culture_trigger = yes
+				}
+			}
+        }
+	}
+}
+
+# Specifically, does the culture derive primarily from Briton or Romano-British?
+is_britannic_culture_trigger = {
+	culture = { culture_is_britannic_culture_trigger = yes }
+}
+
+culture_is_britannic_culture_trigger = {
 	OR = {
 		has_cultural_pillar = heritage_brythonic
         AND = {
@@ -40,8 +60,12 @@ culture_is_brythonic_culture_trigger = {
         }
         AND = {
             has_cultural_pillar = heritage_romance
-			this.var:ancestral_starting_culture = culture:romanobritish
-			NOT = { has_variable = ancestral_non_roman_culture }
+			this.var:ancestral_starting_culture ?= culture:romanobritish
+			NOT = { 
+				this.var:ancestral_non_roman_culture ?= { 
+					culture_is_romanized_barbarian_culture_trigger = yes
+				}
+			}
         }
 	}
 }
@@ -73,6 +97,20 @@ culture_is_romanized_barbarian_culture_trigger = {
 		has_cultural_pillar = heritage_romanized_germanic
 		has_cultural_pillar = heritage_romanized_sarmatian
 		has_cultural_pillar = heritage_frankish
+	}
+}
+
+is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	culture = { culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = yes }
+}
+
+culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	OR = {
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_romance
+	}
+	this.var:ancestral_non_roman_culture ?= {
+		culture_is_romanized_barbarian_culture_trigger = yes
 	}
 }
 
@@ -115,12 +153,17 @@ is_imperial_culture_trigger = {
 is_imperial_like_culture_trigger = { 
 	custom_tooltip = {
 		text = is_imperial_like_culture_trigger_desc
-		OR = {
-			is_brythonic_culture_trigger = yes
-			is_imperial_culture_trigger = yes
-			is_romanized_barbarian_culture_trigger = yes
-			culture = { has_cultural_pillar = heritage_romance }
-		}
+		culture = { culture_is_imperial_like_culture_trigger = yes }
+	}
+}
+
+culture_is_imperial_like_culture_trigger = { 
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+		has_cultural_pillar = heritage_latin
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_gaulish
+		has_cultural_pillar = heritage_romance
 	}
 }
 
@@ -132,11 +175,39 @@ is_romanized_government_culture_trigger = {
 			has_cultural_pillar = heritage_romanized_sarmatian
 			has_cultural_pillar = heritage_frankish
 			has_cultural_pillar = heritage_romance
+			has_cultural_pillar = heritage_gaulish
 			AND = {
 				has_cultural_pillar = heritage_brythonic
 				NOT = { has_global_variable = end_of_britannia }
 			}
 		}
+	}
+}
+
+is_same_heritage_group_or_related_heritage_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
+	OR = {
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
+	}
+}
+
+# Same as is_same_heritage_group_or_related_heritage_trigger, but also checks for parent-child cultures
+is_same_heritage_group_or_related_culture_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
+	OR = {
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
+		$TARGET$.culture = { any_parent_culture = { this = scope:temp_current_scope.culture } }
+		culture = { any_parent_culture = { this = scope:temp_target_scope.culture } }
 	}
 }
 
@@ -247,9 +318,92 @@ is_independent_domicile_holder_for_culture_shift_trigger = {
 	}
 }
 
+BTWK_ai_should_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# The Gaels want to convert the Picts and Cumbrians
+			culture = culture:gaelic
+			OR = {
+				scope:county.culture = culture:cumbrian
+				scope:county.culture = culture:pictish
+			}
+		}
+		AND = {
+			# Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			OR = {
+				scope:county.culture = culture:old_saxon
+				scope:county.culture = culture:jute
+				scope:county.culture = culture:angle
+				scope:county.culture = { 
+					has_variable = anglo_saxon_regional_culture_kingdom
+				}
+			}
+		}
+		AND = {
+			# Britons / Romano-Britons should try to reconvert Anglo-Saxon provinces
+			OR = {
+				culture = culture:romanobritish
+				culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			OR = {
+				scope:county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+		AND = {
+			# Briton/Welsh should try to reconvert Irish in Wales
+			culture = { has_cultural_pillar = heritage_brythonic }
+			scope:county = {
+				culture = culture:irish
+				title_province = { geographical_region = btwk_world_britannia_south_cymry }
+			}
+		}
+		BTWK_ai_should_aggressively_promote_culture_trigger = yes
+	}
+}
+
+# For if the AI should ignore even adjacency requirements when converting culture
+BTWK_ai_should_aggressively_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			OR = {
+				scope:county.culture = culture:romanobritish
+				scope:county.culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+				scope:county.culture = { has_cultural_pillar = heritage_pictish }
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+	}
+}
+
 bg_game_type_region_tabula_trigger = { #For Roman and Romanized cultures and as fallback for pre-chess cultures
 	OR = {
 		has_cultural_pillar = heritage_latin
+		has_cultural_pillar = heritage_gaulish
 		has_cultural_pillar = heritage_basque
 		has_cultural_pillar = heritage_israelite
 		has_cultural_pillar = heritage_romanized_germanic
@@ -308,5 +462,12 @@ culture_has_coronations_trigger = {
 	}
 	trigger_else = {
 		culture = { has_innovation = innovation_coronations }
+	}
+}
+
+BTWK_can_pick_for_hybridization_trigger = {
+	custom_tooltip = {
+		text = BTWK_can_pick_for_hybridization_trigger_tt
+		has_cultural_pillar = $HERITAGE$
 	}
 }

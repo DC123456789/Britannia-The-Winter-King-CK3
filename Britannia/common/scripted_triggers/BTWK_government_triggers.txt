@@ -91,7 +91,6 @@ BTWK_should_become_germanic_government_trigger = {
 BTWK_reform_from_pre_feudal_innovations_trigger = {
 	custom_description = { #You need to have 75% of all era 2 innovations
 		text = has_75_pc_of_era_2_innovations
-		subject = root.culture
 		culture = {
 			calc_true_if = {
 				amount >= 11
@@ -141,28 +140,84 @@ BTWK_reform_from_tribal_unreformed_pagan_innovations_trigger = {
 }
 
 BTWK_reform_from_tribal_innovations_trigger = {
-	custom_description = { #You need to have 80% of all (non-regional/unique) tribal innovations!
+	custom_description = { #You need to have at least 14 innovations total
 		text = has_80_pc_of_tribal_innovations
 		subject = this.culture
 		culture = {
-			calc_true_if = {
-				amount >= 13
-				has_innovation = innovation_motte
-				has_innovation = innovation_catapult
-				has_innovation = innovation_barracks
-				has_innovation = innovation_mustering_grounds
-				has_innovation = innovation_bannus
-				has_innovation = innovation_quilted_armor
-				has_innovation = innovation_gavelkind
-				has_innovation = innovation_crop_rotation
-				has_innovation = innovation_city_planning
-				has_innovation = innovation_casus_belli
-				has_innovation = innovation_plenary_assemblies
-				has_innovation = innovation_ledger
-				has_innovation = innovation_development_01
-				has_innovation = innovation_currency_01
-				has_innovation = innovation_longboats
+			any_known_innovation = {
+				count >= 14
+				innovation_is_regional = no
 			}
 		}
+	}
+}
+
+should_be_BTWK_client_kingdom_tributary_trigger = {
+	$SUZERAIN$ = { NOT = { government_has_flag = government_is_tribal } }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	OR = {
+		$TRIBUTARY$ = { NOT = { government_has_flag = government_is_tribal } }
+		$SUZERAIN$.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	}
+}
+
+BTWK_client_kingdom_can_enforce_vassalage_trigger = {
+	$SUZERAIN$ = { save_temporary_scope_as = suzerain_scope }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	scope:suzerain_scope.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	OR = {
+		scope:tributary_scope.highest_held_title_tier < scope:suzerain_scope.highest_held_title_tier
+		AND = {
+			scope:tributary_scope.highest_held_title_tier = scope:suzerain_scope.highest_held_title_tier
+			scope:tributary_scope.realm_size <= 10
+			scope:suzerain_scope.realm_size >= 50
+		}
+	}
+}
+
+BTWK_can_switch_away_from_laetus_contract_trigger = {
+	trigger_if = {
+		limit = { scope:vassal = { vassal_contract_has_flag = has_laetus_contract } }
+		scope:liege = { 
+			prestige_level >= 2 
+			save_temporary_scope_value_as = {
+				name = military_power_ratio
+				value = {
+					value = military_power
+					divide = {
+						value = scope:vassal.military_power
+						min = 1
+					}					
+				}
+			}
+			custom_description = {
+				text = BTWK_can_switch_away_from_laetus_contract_trigger_military_power_condition
+				object = scope:vassal
+				value = scope:military_power_ratio
+				scope:military_power_ratio >= 4
+			}
+		}
+	}
+}
+
+BTWK_government_type_is_hidden_trigger = {
+	OR = {
+		AND = {
+			this = government_type:sub_roman_government
+			BTWK_admin_gov_enabled_trigger = no
+		}
+		AND = {
+			this = government_type:sub_roman_no_dlc_government
+			BTWK_admin_gov_enabled_trigger = yes
+		}
+		AND = {
+			this = government_type:germanic_government
+			BTWK_admin_gov_enabled_trigger = no
+		}
+		AND = {
+			this = government_type:germanic_no_dlc_government
+			BTWK_admin_gov_enabled_trigger = yes
+		}
+		this = government_type:landless_adventurer_government_bm_placeholder
 	}
 }
