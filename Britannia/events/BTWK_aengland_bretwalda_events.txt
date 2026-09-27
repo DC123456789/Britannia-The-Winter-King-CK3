@@ -432,7 +432,6 @@ BTWK_aengland_bretwalda.0003 = {
 # BTWK_aengland_bretwalda.0024 - Hegemony Score too low for too long, Bretwalda title lost
 
 # Death of the Bretwalda
-# TODO Use destroy_on_succession instead
 BTWK_aengland_bretwalda.0020 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -599,6 +598,14 @@ BTWK_aengland_bretwalda.0021 = {
 	}
 	
 	immediate = {
+		if = {
+			limit = { 
+				this = scope:former_bretwalda
+				exists = title:e_aengland.holder
+			}
+			title:e_aengland = { set_variable = { name = aengland_block_fall_of_bretwalda_event days = 1 } }
+			hidden_effect = { destroy_title = title:e_aengland }
+		}
 		if = {
 			limit = { this = scope:former_bretwalda }
 			scope:former_bretwalda = {
@@ -790,6 +797,7 @@ BTWK_aengland_bretwalda.0024 = {
 		name = BTWK_aengland_bretwalda.0024.a
 		trigger = { this = scope:former_bretwalda }
 		custom_tooltip = BTWK_aengland_bretwalda.0024.a.tt
+		title:e_aengland = { set_variable = { name = aengland_block_fall_of_bretwalda_event days = 1 } }
 		destroy_title = title:e_aengland
 		add_prestige = -500
 		every_owned_story = {
