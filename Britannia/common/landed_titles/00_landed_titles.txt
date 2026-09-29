@@ -106,6 +106,10 @@ e_britannia = {
 			text = BTWK_must_create_britannia_through_high_kingship_tt
 			BTWK_britannia_high_kingship_active_trigger = no
 		}
+		trigger_if = {
+			limit = { BTWK_britannia_high_kingship_active_trigger = no }
+			sub_realm_size >= 200
+		}
 	}
 	
 	ai_primary_priority = {
@@ -1801,6 +1805,36 @@ e_britannia = {
 					color={ 100 160 124 }
 				}
 			}
+		}
+		
+		d_throne_dumnonia = {
+			color={ 96 180 86 }
+			
+			landless = yes
+			capital = c_lindinis
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+			
+			ai_primary_priority = {
+				add = @always_primary_score
+			}
+			
+			can_create = {
+				always = no
+			}
+		
+			cultural_names = {
+				name_list_briton = cn_dyfneint_briton
+				name_list_cumbrian = cn_dyfneint_briton
+				name_list_armorican = cn_dyfneint_briton
+				name_list_breton = cn_dyfneint_breton
+				name_list_greek = cn_dumnonia_greek
+				name_list_armenian = cn_dumnonia_greek
+				name_list_romanosyrian = cn_dumnonia_greek
+				name_list_romanoegyptian = cn_dumnonia_greek
+				name_list_britannic = cn_dumnonia_britannic
+			}	
 		}
 	}
 	
@@ -37961,6 +37995,10 @@ e_aengland = {
 			text = BTWK_must_create_aengland_through_bretwalda_tt
 			BTWK_aengland_bretwalda_active_trigger = no
 		}
+		trigger_if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = no }
+			sub_realm_size >= 200
+		}
 	}
 	
 	ai_primary_priority = {
@@ -39448,6 +39486,7 @@ e_romanized_germanic_britannia = {
 			is_culture_or_descendant_including_romance_trigger = { 
 				CULTURE = title:e_romanized_germanic_britannia.var:romanized_germanic_empire_culture
 			}
+			sub_realm_size >= 200
 		}
 		trigger_else = {
 			custom_tooltip = {
