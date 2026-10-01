@@ -10,6 +10,14 @@ on_title_destroyed = {
 
 BTWK_on_title_destroyed = {
 	effect = {
+		# Make sure titles having a delayed de jure destruction revert back to normal
+		scope:landed_title = {
+			if = {
+				limit = { has_variable = BTWK_destroy_on_succession_or_gain_same_tier }
+				BTWK_unset_to_be_destroyed_title_effect = yes
+			}
+		}
+	
 		if = {
 			limit = {
 				scope:landed_title = title:e_britannia

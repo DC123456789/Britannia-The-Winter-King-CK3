@@ -59,17 +59,16 @@ create_anglo_saxon_de_jure_duchies_decision = {
 					}
 				}
 			}
+			save_scope_as = conqueror
 			every_in_global_list = {
 				variable = celtic_duchy_list
 				if = {
 					limit = {
 						is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:title_created_de_jure_pretend }
 					}
-					if = {
-						limit = { exists = holder }
-						show_as_tooltip = {
-							# destroy_title must be in character scope to work
-							holder = { destroy_title = prev }
+					show_as_tooltip = {
+						BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+							DESTROYER = scope:conqueror
 						}
 					}
 				}
@@ -162,6 +161,7 @@ destroy_anglo_saxon_de_jure_duchies_decision = {
 				is_ai = no
 				has_variable = selected_title
 			}
+			save_scope_as = conqueror
 			this.var:selected_title = {
 				save_scope_as = title_created_de_jure_ignore
 				every_in_list = {
@@ -170,10 +170,9 @@ destroy_anglo_saxon_de_jure_duchies_decision = {
 						check_de_jure_liege_effect = yes
 					}
 				}
-				if = {
-					limit = { exists = holder }
-					show_as_tooltip = {
-						destroy_title = this
+				show_as_tooltip = {
+					BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+						DESTROYER = scope:conqueror
 					}
 				}
 			}

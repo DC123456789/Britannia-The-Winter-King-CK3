@@ -121,6 +121,7 @@ titular_titles_anglosaxon.0001 = {
 					holder = root
 					change = scope:title_change
 				}
+				BTWK_unset_to_be_destroyed_title_effect = yes
 			}
 			resolve_title_and_vassal_change = scope:title_change
 		}
@@ -130,10 +131,8 @@ titular_titles_anglosaxon.0001 = {
 				limit = {
 					is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:new_duchy_title }
 				}
-				if = {
-					limit = { exists = holder }
-					# destroy_title must be in character scope to work
-					holder = { destroy_title = prev }
+				BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+					DESTROYER = scope:conqueror
 				}
 			}
 		}
@@ -239,9 +238,19 @@ titular_titles_anglosaxon.0002 = {
 	}
 	
 	immediate = {
-		if = {
-			limit = { exists = scope:old_duchy_title.holder }
-			destroy_title = scope:old_duchy_title
+		scope:old_duchy_title = {
+			BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+				DESTROYER = scope:conqueror
+			}
+		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:old_duchy_title }
+				}
+				BTWK_unset_to_be_destroyed_title_effect = yes
+			}
 		}
 		show_as_tooltip = {
 			scope:old_duchy_title = {
@@ -3258,7 +3267,7 @@ titular_titles_romanized_germanic.0001 = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:frankish }
 					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_FRANKISH }
 					set_variable = custom_name
-					# set_coa = k_franks_britannia		# TODO
+					set_coa = k_franks_britannia
 				}
 				else_if = {
 					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:alan }
