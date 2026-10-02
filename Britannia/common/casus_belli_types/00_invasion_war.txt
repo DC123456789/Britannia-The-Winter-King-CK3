@@ -12,8 +12,8 @@
 		OR = {
 			government_has_flag = government_is_tribal
 			government_has_flag = government_is_nomadic
-			faith = {
-				has_doctrine_parameter = invasion_cb_enabled
+			rite = {
+				rite_has_parameter = invasion_cb_enabled
 			}
 			has_character_flag = bp2_inspired_culture_for_conquest
 			has_variable = mpo_desperate_stance_invasion_cb_enable_var
@@ -108,6 +108,8 @@
 		multiply = byzantium_conquests_ai_score_value
 		multiply = muslim_invasions_prefer_nonmuslims_ai_score_value
 		
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 
@@ -342,14 +344,14 @@
 
 		scope:attacker = {
 			add_prestige = mongol_invasion_cb_prestige_white_peace
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -484,9 +486,9 @@ clan_invasion_war = {
 			always = yes
 		}
 		trigger_else = {
-			NOR = {
-				has_character_flag = used_lifetime_invasion
-				has_character_flag = pending_lifetime_invasion
+			has_none_of_variables = {
+				name = used_lifetime_invasion
+				name = pending_lifetime_invasion
 			}
 		}
 	}
@@ -555,6 +557,8 @@ clan_invasion_war = {
 		multiply = byzantium_conquests_ai_score_value
 		multiply = muslim_invasions_prefer_nonmuslims_ai_score_value
 		
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 	
@@ -755,7 +759,7 @@ clan_invasion_war = {
 		if = {
 			limit = {
 				#Conquering, or indirectly butchering, an entire empire in one war is a bit much.
-				NOT = { scope:defender.primary_title.tier = tier_empire }
+				scope:defender.primary_title.tier < tier_empire
 				scope:defender.primary_title.tier = scope:attacker.primary_title.tier
 			}
 			every_in_list = {
@@ -843,7 +847,7 @@ clan_invasion_war = {
 
 		scope:attacker = {
 			add_prestige = mongol_invasion_cb_prestige_white_peace
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
@@ -852,7 +856,7 @@ clan_invasion_war = {
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -1205,14 +1209,14 @@ mongol_invasion_war = {
 
 		scope:attacker = {
 			add_prestige = mongol_invasion_cb_prestige_white_peace
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -1332,6 +1336,8 @@ mongol_invasion_war = {
 
 	ai_score_mult = {
 		value = 1
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 }
@@ -1674,14 +1680,14 @@ mongol_realm_invasion_war = {
 
 		scope:attacker = {
 			add_prestige = mongol_invasion_cb_prestige_white_peace
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -1806,6 +1812,8 @@ mongol_realm_invasion_war = {
 
 	ai_score_mult = {
 		value = 1
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 }
@@ -2051,14 +2059,14 @@ pax_romana_invasion_war = {
 
 		scope:attacker = {
 			add_prestige = mongol_invasion_cb_prestige_white_peace
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -2178,6 +2186,8 @@ pax_romana_invasion_war = {
 	
 	ai_score_mult = {
 		value = 1
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 }

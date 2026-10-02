@@ -1,7 +1,27 @@
 ﻿GetGovernmentIcon = {
 	type = character
 
-	text = { # Holy Order
+	text = { # Monastic Order
+		trigger = {
+			trigger_if = {
+				limit = {
+					is_alive = no
+				}
+				has_government = monastic_holy_order_government
+			}
+			trigger_else = {
+				trigger_if = {
+					limit = { is_ruler = yes }
+					government_has_flag = government_is_monastic_holy_order
+				}
+				trigger_else = {
+					liege ?= { government_has_flag = government_is_monastic_holy_order }
+				}
+			}
+		}
+		localization_key = monastic_holy_order_icon_concept
+	}
+	text = { # Military Order
 		trigger = {
 			trigger_if = {
 				limit = {
@@ -190,13 +210,11 @@
 			trigger_else = {
 				trigger_if = {
 					limit = { is_ruler = yes }
-					government_has_flag = government_is_tribal
-					NOT = { government_has_flag = government_is_wanua }
+					government_has_flag = government_is_tribal_excluding_wanua
 				}
 				trigger_else = {
 					liege ?= { 
-						government_has_flag = government_is_tribal 
-						NOT = { government_has_flag = government_is_wanua }
+						government_has_flag = government_is_tribal_excluding_wanua
 					}
 				}
 			}
@@ -343,6 +361,26 @@
 		}
 		localization_key = republic_icon_concept
 	}
+	text = { # Ecclesiastical
+		trigger = {
+			trigger_if = {
+				limit = {
+					is_alive = no
+				}
+				has_government = ecclesiastical_government
+			}
+			trigger_else = {
+				trigger_if = {
+					limit = { is_ruler = yes }
+					government_has_flag = government_is_ecclesiastical
+				}
+				trigger_else = {
+					liege ?= { government_has_flag = government_is_ecclesiastical }
+				}
+			}
+		}
+		localization_key = ecclesiastical_icon_concept
+	}
 	text = { # Theocracy
 		trigger = {
 			trigger_if = {
@@ -406,15 +444,140 @@
 	}
 }
 
-GetTribalFeudal = {
-	type = character
+GetGovernmentTypeIcon = {
+	type = government_type
 
-	text = {
-		trigger = { government_has_flag = government_is_tribal }
-		localization_key = tribal_government
+	text = { # Military Order
+		trigger = {
+			government_type_has_flag = government_is_holy_order
+		}
+		localization_key = holy_order_icon_concept
 	}
-
-	text = {
-		localization_key = feudal_government
+	text = { # Mercenary
+		trigger = {
+			government_type_has_flag = government_is_mercenary
+		}
+		localization_key = mercenary_icon_concept
+	}
+	text = { # Adventurer
+		trigger = {
+			government_type_has_flag = government_is_landless_adventurer
+		}
+		localization_key = adventurer_icon_concept
+	}
+	text = { # Nomad
+		trigger = {
+			government_type_has_flag = government_is_nomadic
+		}
+		localization_key = nomadic_icon_concept
+	}
+	text = { # Herder
+		trigger = {
+			government_type_has_flag = government_is_herder
+		}
+		localization_key = herder_icon_concept
+	}
+	text = { # Celestial
+		trigger = {
+			government_type_has_flag = government_is_celestial
+		}
+		localization_key = celestial_icon_concept
+	}
+	text = { # Mandala
+		trigger = {
+			government_type_has_flag = government_is_mandala
+		}
+		localization_key = mandala_icon_concept
+	}
+	text = { # Maritime Tribal
+		trigger = {
+			government_type_has_flag = government_is_wanua
+		}
+		localization_key = wanua_icon_concept
+	}
+	text = { # Meritocratic
+		trigger = {
+			government_type_has_flag = government_is_meritocratic
+		}
+		localization_key = meritocratic_icon_concept
+	}
+	text = { # Tribal
+		trigger = {
+			government_type_has_flag = government_is_tribal_excluding_wanua
+		}
+		localization_key = tribal_icon_concept
+	}
+	text = { # Clan
+		trigger = {
+			government_type_has_flag = government_is_clan
+		}
+		localization_key = clan_icon_concept
+	}
+	text = { # Japanese Admin
+		trigger = {
+			government_type_has_flag = government_is_japan_administrative
+		}
+		localization_key = japan_administrative_icon_concept
+	}
+	### BTWK GOVERNMENTS START HERE ###
+	text = { # Pre-Feudal/Folkright Government
+		trigger = {
+			government_type_has_flag = government_is_pre_feudal
+		}
+		localization_key = pre_feudal_icon_concept
+	}
+	text = { # Sub-Roman
+		trigger = {
+			government_type_has_flag = government_is_sub_roman
+		}
+		localization_key = sub_roman_icon_concept
+	}
+	text = { # Germanic
+		trigger = {
+			government_type_has_flag = government_is_germanic
+		}
+		localization_key = germanic_icon_concept
+	}
+	### BTWK GOVERNMENTS END HERE ###
+	text = { # Admin
+		trigger = {
+			government_type_has_flag = government_is_administrative
+		}
+		localization_key = administrative_icon_concept
+	}
+	text = { # Republic
+		trigger = {
+			government_type_has_flag = government_is_republic
+		}
+		localization_key = republic_icon_concept
+	}
+	text = { # Ecclesiastical
+		trigger = {
+			government_type_has_flag = government_is_ecclesiastical
+		}
+		localization_key = ecclesiastical_icon_concept
+	}
+	text = { # Theocracy
+		trigger = {
+			government_type_has_flag = government_is_theocracy
+		}
+		localization_key = theocracy_icon_concept
+	}
+	text = { # Japanese Feudal
+		trigger = {
+			government_type_has_flag = government_is_japan_feudal
+		}
+		localization_key = japan_feudal_icon_concept
+	}
+	text = { # Steppe Admin
+		trigger = {
+			government_type_has_flag = government_is_steppe_admin
+		}
+		localization_key = steppe_admin_icon_concept
+	}
+	text = { # Feudal
+		trigger = { always = no }
+		localization_key = feudal_icon_concept
+		fallback = yes
 	}
 }
