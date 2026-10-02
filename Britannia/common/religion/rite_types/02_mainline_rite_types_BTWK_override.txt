@@ -1,0 +1,92 @@
+﻿###############################
+# Mainline rite types         #
+###############################
+# One rite per faith that would otherwise only ever have an engine-generated
+# dynamic rite. Dynamic rites get positional tags (dynamic_rite_%i) that script,
+# history and localisation cannot reference, so every faith gets a stable
+# scripted main rite instead.
+# Keys, and therefore names, adjectives and adherent locs, match the parent
+# faith so the player-facing text is unchanged.
+# color, tenets, doctrines and tenet_selection_pair are copied from the faith
+# type: an empty tenets block on a rite falls back to the religion's core
+# tenets rather than the faith's, which would silently drop faith tenets.
+
+basque_pagan = {
+	faith = basque_pagan
+
+	color = basque
+
+	tenets = {
+		tenet_cthonic_redoubts
+		tenet_christian_syncretism
+		tenet_communal_identity
+	}
+
+	doctrines = {
+		unreformed_faith_doctrine
+	}
+}
+
+norse_pagan = {
+	faith = norse_pagan
+
+	color = { 0.4 0.4 0.4 }
+
+	tenets = {
+		tenet_warmonger
+	}
+
+	doctrines = {
+		unreformed_faith_doctrine
+	}
+
+	tenet_selection_pair = {
+		requires_dlc_flag = the_northern_lords
+		tenet = tenet_gruesome_festivals
+		fallback_tenet = tenet_human_sacrifice
+	}
+
+	tenet_selection_pair = {
+		requires_dlc_flag = the_northern_lords
+		tenet = tenet_bhakti
+		fallback_tenet = tenet_ancestor_worship
+	}
+}
+
+hellenic_pagan = {
+	faith = hellenic_pagan
+
+	color = { 0.6 0.1 0.1 }
+
+	tenets = {
+		tenet_astrology
+		tenet_ritual_celebrations
+		tenet_esotericism
+	}
+
+	doctrines = {
+		unreformed_faith_doctrine
+	}
+
+	# TODO_PAM_DESIGN TIT-72804
+	cultures = { greek roman } # ancient_egyptian trojan macedonian carthaginian }
+}
+
+pagan = {
+	faith = pagan
+
+	color = { 0.6 0.0 0.0 }
+
+	tenets = {
+		tenet_astrology
+		tenet_ancestor_worship
+		tenet_sanctity_of_nature
+	}
+
+	doctrines = {
+		unreformed_faith_doctrine
+	}
+
+	# TODO_PAM_DESIGN TIT-72804
+	# cultures = { roman saxon frankish }
+}
