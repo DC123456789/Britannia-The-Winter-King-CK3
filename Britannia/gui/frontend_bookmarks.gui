@@ -1965,6 +1965,17 @@
 														margin = { 2 0 }
 													}
 
+													text_multi = {
+														visible = "[Not( Or( BookmarkCharacter.HasDynastyTemplate, BookmarkCharacter.HasDynastyHouse ) )]"
+														text = "[BookmarkCharacter.GetTitleName]"
+														default_format = "#high"
+														tooltip = "BOOKMARK_CHARACTER_REALM"
+														autoresize = yes
+														max_width = 120
+														align = center
+														margin = { 2 0 }
+													}
+
 													expand = {}
 												}
 
@@ -3787,6 +3798,13 @@ types BookmarkPortraits
 								fontsize = 16
 								default_format = "#high;glow_color:{0,0,0,1}"
 							}
+
+							text_single = {
+								visible = "[And( BookmarkCharacter.StartAsExistingRuler, Not( Or( BookmarkCharacter.HasDynastyTemplate, BookmarkCharacter.HasDynastyHouse ) ) )]"
+								text = "lowborn_desc_succession"
+								fontsize = 16
+								default_format = "#high;glow_color:{0,0,0,1}"
+							}
 						}
 					}
 
@@ -3969,15 +3987,22 @@ types BookmarkPortraits
 							}
 
 							text_single = {
-								visible = "[Not( BookmarkCharacter.HasDynastyHouse )]"
+								visible = "[And( BookmarkCharacter.StartAsExistingRuler, And( BookmarkCharacter.HasDynastyTemplate, Not( BookmarkCharacter.HasDynastyHouse ) ) )]"
 								text = "[BookmarkCharacter.GetDynastyTemplate.GetName]"
 								fontsize = 16
 								default_format = "#high;glow_color:{0,0,0,1}"
 							}
 
 							text_single = {
-								visible = "[BookmarkCharacter.HasDynastyHouse]"
+								visible = "[And( BookmarkCharacter.StartAsExistingRuler, BookmarkCharacter.HasDynastyHouse )]"
 								text = "[BookmarkCharacter.GetDynastyHouseTemplate.GetName]"
+								fontsize = 16
+								default_format = "#high;glow_color:{0,0,0,1}"
+							}
+
+							text_single = {
+								visible = "[And( BookmarkCharacter.StartAsExistingRuler, Not( Or( BookmarkCharacter.HasDynastyTemplate, BookmarkCharacter.HasDynastyHouse ) ) )]"
+								text = "lowborn_desc_succession"
 								fontsize = 16
 								default_format = "#high;glow_color:{0,0,0,1}"
 							}

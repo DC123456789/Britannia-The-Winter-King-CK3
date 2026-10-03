@@ -305,6 +305,7 @@ types Filters {
 														blockoverride "faith_context"
 														{
 															datacontext = "[GetPlayer.GetFaith]"
+															datacontext = "[GetPlayer.GetRite]"
 														}
 
 														blockoverride "icon_size"
@@ -489,7 +490,7 @@ types Filters {
 													}
 
 													tooltipwidget = {
-														using = religion_tooltip
+														religion_tooltip = {}
 													}
 												}
 												
@@ -509,6 +510,35 @@ types Filters {
 														align = nobaseline
 													}
 													tooltip = "CHARACTER_LIST_GOVERNMENT_TT"
+												}
+
+												hbox = {
+													datacontext = "[PatternItem.GetRite]"
+													visible = "[PatternItem.IsRite]"
+													layoutpolicy_horizontal = expanding
+													margin = { 10 0 }
+													margin_left = 5
+													spacing = 5
+
+													icon = {
+														size = { 45 45 }
+														texture = "[PatternItem.GetRite.GetIcon]"
+													}
+
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														text = "[Rite.GetNameNoTooltip]"
+														align = nobaseline
+													}
+
+													text_single = {
+														text = "[PatternItem.GetType]"
+														align = nobaseline
+													}
+
+													tooltipwidget = {
+														rite_tooltip_click = {}
+													}
 												}
 											}
 										}

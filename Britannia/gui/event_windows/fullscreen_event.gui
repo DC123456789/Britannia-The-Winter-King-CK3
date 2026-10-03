@@ -1,12 +1,13 @@
-window = {
-	name = "fullscreen_event_w_portraits"
+﻿window = {
+	name = "fullscreen_event"
 	size = { 100% 100% }
-	#scale = "[ScaleToFitElementInside('(int32)1920', '(int32)1080')]"
 	movable = no
 
 	layer = top
+
 	using = Event_Window_Debug_EventTools
-	datacontext = "[EventWindow.AccessEventWindowData]"
+	datacontext = "[SplashWindow.GetSplashItem]"
+	datacontext = "[SplashItem.GetEventData]"
 
 	widget = {
 		size = { 110% 120% }
@@ -42,6 +43,7 @@ window = {
 		}
 	}
 
+	### Center Dark Splash Line
 	widget = {
 		name = "window_background"
 		parentanchor = center
@@ -75,12 +77,13 @@ window = {
 		}
 	}
 
+	### Left side Illustration
 	widget = {
 		name = "event_image"
 		parentanchor = center
 		widgetanchor = center
 		size = { 1920 626 }
-		position = { 175 -5 }
+		position = { 180 -5 }
 
 		alpha = 0
 
@@ -97,7 +100,6 @@ window = {
 				modify_texture = {
 					name = "event_picture_fade_short_left"
 					texture = "gfx/interface/component_masks/mask_fade_horizontal_short.dds"
-					mirror = horizontal
 					blend_mode = alphamultiply
 				}
 
@@ -134,13 +136,39 @@ window = {
 				}
 			}
 		}
+
+		state = {
+			### This is called by code !!!
+			name = "fade_out"
+			using = Animation_FadeOut_Standard
+		}
+
+		state = {
+			### This is called by code !!!
+			name = "fade_in"
+			using = Animation_FadeIn_Standard
+		}
 	}
 
+	### Left side Text and Description
 	widget = {
 		name = "window_content"
 		parentanchor = left|vcenter
+		position = { 60 0 }
 		size = { 500 600 }
-		position = { 35 0 }
+
+		state = {
+			### This is called by code !!!
+			name = "fade_out"
+			using = Animation_FadeOut_Standard
+			on_finish = "[SplashWindow.EndTransition]"
+		}
+
+		state = {
+			### This is called by code !!!
+			name = "fade_in"
+			using = Animation_FadeIn_Standard
+		}
 
 		vbox = {
 			name = "text"
@@ -191,12 +219,12 @@ window = {
 				text_single = {
 					name = "title"
 					layoutpolicy_horizontal = expanding
+					align = left
 					fontsize = 29
 					fontsize_min = 16
+					max_width = 480
 					text = "[EventWindowData.GetTitle]"
 					using = Font_Type_Flavor
-					max_width = 480
-					align = left
 				}
 
 				state = {
@@ -239,11 +267,11 @@ window = {
 							name = "description"
 							minimumsize = { 480 -1 }
 							maximumsize = { 480 -1 }
-							autoresize = yes
 							margin_top = 5
 							text = "[EventWindowData.GetDescription]"
-							fontsize = 16
 							align = left
+							autoresize = yes
+							fontsize = 16
 						}
 					}
 				}
@@ -258,6 +286,7 @@ window = {
 				}
 			}
 
+			### Situation / Struggle Effects
 			vbox = {
 				layoutpolicy_horizontal = expanding
 				name = "dynamic_content_widget"
@@ -306,6 +335,7 @@ window = {
 					}
 				}
 
+				### Event Option Buttons
 				fixedgridbox = {
 					name = "option_grid"
 					addcolumn = 500
@@ -565,26 +595,145 @@ window = {
 			using = Event_Window_Right_Tooltips
 		}
 	}
-		
+
+	### Splash Item Queue
+	hbox = {
+		margin_top = 0
+		margin_left = 10
+		alpha = 0
+
+		state = {
+			name = start
+			trigger_on_create = yes
+			using = Animation_Curve_Default
+			alpha = 1
+			delay = 0.2
+			duration = 0.7
+		}
+
+		vbox = {
+			layoutpolicy_vertical = expanding
+			spacing = 10
+			margin = { 0 250 }
+
+			divider_light = {
+				layoutpolicy_vertical = expanding
+				using = Color_Orange
+
+				modify_texture = {
+					texture = "gfx/interface/component_masks/mask_fade_vertical_up.dds"
+					blend_mode = alphamultiply
+				}
+			}
+
+			vbox = {
+				datamodel = "[SplashWindow.GetItems]"
+				spacing = 5
+
+				item = {
+					widget_queue_item = {}
+				}
+			}
+
+			divider_light = {
+				layoutpolicy_vertical = expanding
+				using = Color_Orange
+
+				modify_texture = {
+					texture = "gfx/interface/component_masks/mask_fade_vertical_up.dds"
+					blend_mode = alphamultiply
+					mirror = vertical
+				}
+			}
+		}
+
+		expand = {}
+	}
+
+	### Top Right Debug Panel
 	flowcontainer = {
 		name = "debug_stuff"
 		visible = "[InDebugMode]"
-		parentanchor = top|right
-		position = { -100 220 }
+		parentanchor = right
+		position = { -100 222 }
 		ignoreinvisible = yes
+		alpha = 0
+
+		state = {
+			name = start
+			trigger_on_create = yes
+			using = Animation_Curve_Default
+			alpha = 1
+			delay = 0.2
+			duration = 0.7
+		}
 
 		using = Event_Window_Debug_Info
 	}
-	
+
 	widget = {
 		name = "event_transition"
 		parentanchor = center
 		widgetanchor = center
+		position = { 60 -5 }
 		size = { 2246 730 }
-		position = { 45 -5 }
 
 		event_window_transition_widget = {
 			using = Event_Window_Default_Transition_States
+		}
+	}
+}
+
+types SplashTypes
+{
+	type widget_queue_item = widget
+	{
+		size = { 56 56 }
+
+		### Item Button
+		button_normal = {
+			size = { 56 56 }
+			alwaystransparent = "[SplashItem.IsSelected]"
+			enabled = "[Not( SplashItem.IsResolved )]"
+			onclick = "[SplashItem.OnClick]"
+			position = { 0 0 }
+			parentanchor = center
+
+			tooltip = "[SplashItem.GetName]"
+			tooltip_visible = "[Not( SplashItem.IsSelected )]"
+
+			icon_round_button_base = {}
+
+			state = {
+				name = "selected"
+				duration = 0.1
+				trigger_when = "[SplashItem.IsSelected]"
+				using = Animation_Curve_Default
+				scale = 1
+			}
+
+			state = {
+				name = "not_selected"
+				duration = 0.25
+				scale = 0.9
+				trigger_when = "[Not( SplashItem.IsSelected )]"
+				using = Animation_Curve_Default
+			}
+
+			icon = {
+				visible = "[SplashItem.IsSelected]"
+				size = { 56 56 }
+				texture = "gfx/interface/buttons/button_lifestyles_active_frame.dds"
+			}
+
+			### Item Icon
+			highlight_icon = {
+				parentanchor = center
+				position = { 1 0 }
+				size = { 45 45 }
+
+				texture = "[SplashItem.GetIcon]"
+			}
 		}
 	}
 }

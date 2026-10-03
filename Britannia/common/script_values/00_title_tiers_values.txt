@@ -9,12 +9,32 @@ tier_hegemony = 6
 highest_held_title_tier_plus_one = {
 	value = highest_held_title_tier
 	add = 1
-	max = tier_empire
+	max = tier_hegemony
+}
+highest_held_title_tier_plus_two = {
+	value = highest_held_title_tier
+	add = 2
+	max = tier_hegemony
 }
 
 highest_held_title_tier_minus_one = {
 	value = highest_held_title_tier
 	subtract = 1
+	min = tier_unlanded
+}
+highest_held_title_tier_minus_two = {
+	value = highest_held_title_tier
+	subtract = 2
+	min = tier_unlanded
+}
+highest_held_title_tier_minus_three = {
+	value = highest_held_title_tier
+	subtract = 3
+	min = tier_unlanded
+}
+highest_held_title_tier_minus_four = {
+	value = highest_held_title_tier
+	subtract = 4
 	min = tier_unlanded
 }
 
@@ -35,113 +55,116 @@ create_title_counties_percentage = {
 				value = 0.6
 				desc = CREATE_TITLE_PERCENTAGE_BASE_DUCHY_KINGDOM
 			}
-			root ?= {
-				if = {
-					limit = { # Do you have Legitimacy?
-						has_legitimacy = yes
-					}
+			if = { # Code also evaluates this with no creating character, e.g. title creation previews
+				limit = { exists = root }
+				root = {
 					if = {
-						limit = {
-							has_legitimacy_flag = reduced_title_creation_cost
+						limit = { # Do you have Legitimacy?
+							has_legitimacy = yes
 						}
-						add = {
-							value = -0.10 #50%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_REDUCED
+						if = {
+							limit = {
+								has_legitimacy_flag = reduced_title_creation_cost
+							}
+							add = {
+								value = -0.10 #50%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_REDUCED
+							}
 						}
-					}
-					else_if = {
-						limit = {
-							has_legitimacy_flag = very_reduced_title_creation_cost
+						else_if = {
+							limit = {
+								has_legitimacy_flag = very_reduced_title_creation_cost
+							}
+							add = {
+								value = -0.15 #45%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_VERY_REDUCED
+							}
 						}
-						add = {
-							value = -0.15 #45%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_VERY_REDUCED
+						else_if = {
+							limit = {
+								has_legitimacy_flag = extra_reduced_title_creation_cost
+							}
+							add = {
+								value = -0.20 #40%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_EXTRA_REDUCED
+							}
 						}
-					}
-					else_if = {
-						limit = {
-							has_legitimacy_flag = extra_reduced_title_creation_cost
-						}
-						add = {
-							value = -0.20 #40%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_EXTRA_REDUCED
+						else = {
+							#If you're level 2/1/0 or don't have Legitimacy you get no discounts
+							add = {
+								value = 0.0
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
+							}
 						}
 					}
 					else = {
 						#If you're level 2/1/0 or don't have Legitimacy you get no discounts
 						add = {
+							# We add 0 with a 'desc', so we show up in the GUI and people understand legitimacy is a way to improve this
 							value = 0.0
 							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
 						}
-					}
-				}
-				else = {
-					#If you're level 2/1/0 or don't have Legitimacy you get no discounts
-					add = {
-						# We add 0 with a 'desc', so we show up in the GUI and people understand legitimacy is a way to improve this
-						value = 0.0
-						desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
 					}
 				}
 			}
 		}
 		else_if = { #Smaller discounts for Empires
 			limit = {
-				OR = {
-					tier = tier_empire
-					tier = tier_hegemony
-				}
+				tier >= tier_empire
 			}
 			add = {
 				value = 0.8
 				desc = CREATE_TITLE_PERCENTAGE_BASE_EMPIRE
 			}
-			root ?= {
-				if = {
-					limit = { # Do you have Legitimacy?
-						has_legitimacy = yes
-					}
+			if = { # Code also evaluates this with no creating character, e.g. title creation previews
+				limit = { exists = root }
+				root = {
 					if = {
-						limit = {
-							has_legitimacy_flag = reduced_title_creation_cost
+						limit = { # Do you have Legitimacy?
+							has_legitimacy = yes
 						}
-						add = {
-							value = -0.05 #75%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_REDUCED
+						if = {
+							limit = {
+								has_legitimacy_flag = reduced_title_creation_cost
+							}
+							add = {
+								value = -0.05 #75%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_REDUCED
+							}
 						}
-					}
-					else_if = {
-						limit = {
-							has_legitimacy_flag = very_reduced_title_creation_cost
+						else_if = {
+							limit = {
+								has_legitimacy_flag = very_reduced_title_creation_cost
+							}
+							add = {
+								value = -0.10 #70%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_VERY_REDUCED
+							}
 						}
-						add = {
-							value = -0.10 #70%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_VERY_REDUCED
+						else_if = {
+							limit = {
+								has_legitimacy_flag = extra_reduced_title_creation_cost
+							}
+							add = {
+								value = -0.15 #65%
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_EXTRA_REDUCED
+							}
 						}
-					}
-					else_if = {
-						limit = {
-							has_legitimacy_flag = extra_reduced_title_creation_cost
-						}
-						add = {
-							value = -0.15 #65%
-							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_EXTRA_REDUCED
+						else = {
+							#If you're level 1/0 or don't have Legitimacy you get no discounts
+							add = {
+								value = 0.0
+								desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
+							}
 						}
 					}
 					else = {
 						#If you're level 1/0 or don't have Legitimacy you get no discounts
 						add = {
+							# We add 0 with a 'desc', so we show up in the GUI and people understand legitimacy is a way to improve this
 							value = 0.0
 							desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
 						}
-					}
-				}
-				else = {
-					#If you're level 1/0 or don't have Legitimacy you get no discounts
-					add = {
-						# We add 0 with a 'desc', so we show up in the GUI and people understand legitimacy is a way to improve this
-						value = 0.0
-						desc = CREATE_TITLE_PERCENTAGE_LEGITIMACY_DISCOUNT_NONE
 					}
 				}
 			}
@@ -165,12 +188,13 @@ usurp_title_counties_percentage = {
 		}
 		else_if = {
 			limit = {
-				OR = {
-					tier = tier_empire
-					tier = tier_hegemony
-				}
+				tier >= tier_empire
 			}
 			add = 0.8
 		}
 	}
+}
+tier_minus_one = {
+	value = tier
+	subtract = 1
 }

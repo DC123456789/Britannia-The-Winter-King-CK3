@@ -1,155 +1,19 @@
-﻿# Determines if a faith can be created, on top of the piety requirement, and the doctrine requirements
-# Also handles reforming a faith, check for the unreformed doctrine to enable those additional checks
-# Root is the faith creator
-faith_creation = {
-	trigger_if = {
-		limit = {
-			highest_held_title_tier = tier_county
-			top_liege != this
-			NOT = { faith = { has_doctrine_parameter = unreformed } }
-		}
-		custom_description = {
-			text = "faith_creation_duchy_or_higher"
-			highest_held_title_tier >= tier_duchy
-		}
-	}
-
-	is_adult = yes
-	is_at_war = no
-	custom_description = {
-		text = "character_is_not_real_head"
-		faith.religious_head != root
-	}
-
-	custom_description = {
-		text = "character_can_only_create_one_faith"
-		NOT = { exists = var:has_created_a_faith }
-	}
-
-	trigger_if = {
-		limit = {
-			faith = { has_doctrine_parameter = unreformed }
-		}
-
-		NOT = {
-			custom_description = {
-				text = faith_has_been_reformed
-				object = faith
-				exists = faith.var:has_been_reformed
-			}
-		}
-		
-		government_is_not_tribal_trigger = yes
-		sub_realm_size >= 75
-		highest_held_title_tier >= tier_kingdom
-
-		trigger_if = {
-			limit = {
-				NOT = {
-					has_character_flag = ignore_3_holy_site_rule
-				}
-			}
-			faith = {
-				num_realm_holy_sites_faithful_holders = {
-					CHARACTER = root
-					COUNT = 1
-				}
-			}
-		}
-		
-		# Make sure to update the tooltips if you change this!
-		trigger_if = {
-			limit = {
-				faith = {
-					num_realm_holy_sites_faithful_holders = {
-						CHARACTER = root
-						COUNT = 3
-					}
-				}
-			}
-			piety_level >= 2
-			learning >= 15
-		}
-		trigger_else_if = {
-			limit = {
-				faith = {
-					num_realm_holy_sites_faithful_holders = {
-						CHARACTER = root
-						COUNT = 2
-					}
-				}
-			}
-			piety_level >= 3
-			learning >= 20
-			custom_tooltip = {
-				text = faith_reformation_one_learning_trait_tooltip
-				OR = {
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-			custom_tooltip = {
-				text = faith_reformation_can_reduce_requirements_tooltip
-				piety_level >= 3
-				learning >= 20
-				OR = {
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-		}
-		trigger_else = {
-			piety_level >= 4
-			learning >= 25
-			custom_tooltip = {
-				text = faith_reformation_two_learning_traits_tooltip
-				calc_true_if = {
-					amount = 2
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-			custom_tooltip = {
-				text = faith_reformation_can_reduce_requirements_tooltip
-				piety_level >= 4
-				learning >= 25
-				calc_true_if = {
-					amount = 2
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-		}
-		
-
-		custom_tooltip = {
-			text = faith_reformation_via_decision
-			faith = {
-				NOT = { has_variable = block_reformation_var }
-			}
-		}
-	}
-}
-
-# Determines if a character can convert faith via the convert faith UI, on top of the piety requirement
-# Root is the faith creator
+﻿# Determines if a character can convert faith via the convert faith UI, on top of the piety requirement
+# Root is the character that would convert
 # scope:new_faith is the faith they want to convert to
 faith_conversion = {
 	is_adult = yes
 	faith.religious_head != root
+	custom_tooltip = {
+		text = is_antipope_tt
+		pam_is_antipope_trigger = no
+	}
 	is_in_ongoing_great_holy_war = no
+	scope:new_faith.main_rite= {
+		is_rite_enabled = yes
+		can_convert_to_rite = yes
+	}
+
 	# Can't (or shouldn't) convert to faiths that are meant to be resurrected via decision, event, etc.
 	custom_tooltip = {
 		text = faith_conversion_cost_conversion_blocked_till_decision_taken
@@ -161,6 +25,31 @@ faith_conversion = {
 		text = faith_conversion_cost_conversion_blocked_till_nebulous_circumstances
 		NOT = {
 			scope:new_faith = { has_variable = block_conversion_till_nebulous_circumstances }
+		}
+	}
+
+	# The realm teaches its own State Rite: converting to its faith skips the recency and knowledge gates
+	trigger_if = {
+		limit = {
+			exists = top_liege.primary_title.state_rite
+			scope:new_faith = top_liege.primary_title.state_rite.faith
+		}
+		always = yes
+	}
+	trigger_else = {
+		custom_tooltip = {
+			text = faith_conversion_recently_converted
+			NOT = {
+				has_character_flag = faith_conversion_recently_converted
+			}
+		}
+
+		OR = {
+			AND = {
+				faith.religion = scope:new_faith.religion
+				"knows_rite_level(scope:new_faith.main_rite)" > pam_same_religion_rite_knowledge_requirement
+			}
+			"knows_rite_level(scope:new_faith.main_rite)" > pam_other_religion_rite_knowledge_requirement
 		}
 	}
 	
@@ -176,16 +65,6 @@ faith_conversion = {
 		NOT = {
 			scope:new_faith = { has_variable = block_conversion }
 		}
-	}
-}
-
-# Is this character allowed to hybridize their culture with the target culture?
-# root: Character
-# scope:culture: The culture they want to hybridize with
-can_hybridize_culture = {
-	can_hybridize_culture_trigger = {
-		CULTURE = scope:culture
-		CHARACTER = root
 	}
 }
 
