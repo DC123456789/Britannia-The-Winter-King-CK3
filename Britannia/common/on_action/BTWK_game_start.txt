@@ -265,8 +265,7 @@ BTWK_religion_setup = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:catholic
-						this = faith:insular_celtic
+						this = faith:christian_faith
 						this = faith:pelagian
 						this = faith:arian
 						this = faith:priscillianism
@@ -324,6 +323,93 @@ BTWK_religion_setup = {
 					NOT = { has_variable = block_conversion }
 				}
 				set_variable = { name = block_conversion_till_founded }
+			}
+		}
+		
+		# Transfer tenets from Chalcedonian to all enabled Christian Rites
+		# since they are all offshoots and should have a similar theology unless otherwise specified
+		every_tenet = {
+			save_scope_as = current_tenet
+			if = {
+				limit = { 
+					rite:roman_rite = {
+						has_at_least_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
 			}
 		}
 	}
@@ -745,6 +831,7 @@ BTWK_character_setup = {
 					location = this.location
 					culture = this.culture
 					faith = this.faith
+					rite = this.rite
 					gender_female_chance = 0
 					age = 12
 					father = this
@@ -756,6 +843,7 @@ BTWK_character_setup = {
 					location = this.location
 					culture = this.culture
 					faith = this.faith
+					rite = this.rite
 					gender_female_chance = 0
 					age = 7
 					father = this

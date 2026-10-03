@@ -1013,17 +1013,18 @@ culture_emergence_events.0003 = { # Emergent Divergences, based on adjacency to 
 								dynasty = none
 								culture = prev.culture
 								faith = prev.faith
+								rite = prev.rite
 								location = scope:location_target.location
 								gender_female_chance = {
 									if = {
 										limit = {
-											prev.faith = { has_doctrine = doctrine_gender_male_dominated }
+											prev.rite = { rite_has_doctrine = doctrine_gender_male_dominated }
 										}
 										add = 0
 									}
 									else_if = {
 										limit = {
-											prev.faith = { has_doctrine = doctrine_gender_female_dominated }
+											prev.rite = { rite_has_doctrine = doctrine_gender_female_dominated }
 										}
 										add = 100
 									}
@@ -1407,6 +1408,7 @@ culture_emergence_events.0005 = {
 			template = generic_peasant_character
 			culture = scope:county_scope.culture
 			faith = scope:county_scope.faith
+			rite = scope:county_scope.rite
 			gender_female_chance = 50
 			save_scope_as = rustic_peasant
 		}

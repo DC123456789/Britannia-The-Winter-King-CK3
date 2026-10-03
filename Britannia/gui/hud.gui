@@ -3731,143 +3731,6 @@ types HUD
 			allow_outside = yes
 			direction = vertical
 
-			button_hud_character_bar = {
-				name = "high_king_tab"
-
-				visible = "[GetScriptedGui('BTWK_high_king_tab_visible').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
-
-				onclick = "[GetVariableSystem.Toggle('show_high_king_window')]"
-				# tooltip = "HIGH_KING_TAB_TT"
-				
-				using = tooltip_es
-				tooltip_offset = { 20 0 }
-
-				coat_of_arms_icon = {
-					parentanchor = center
-					size = { 32 32 }
-					position = { 0 1 }
-					
-					coat_of_arms = "[GetTitleByKey('e_britannia').GetTitleCoA.GetTexture('(int32)56','(int32)56')]"
-					coat_of_arms_slot = "[GetTitleByKey('e_britannia').GetTitleCoA.GetSlot('(int32)56','(int32)56')]"
-					coat_of_arms_mask = "gfx/interface/coat_of_arms/title_mask.dds"
-					
-					coa_title_frame = {
-						parentanchor = center
-						texture = "gfx/interface/coat_of_arms/title_44.dds"
-						size = { 35 35 }
-					}
-				}
-				
-				tooltipwidget = {
-					container = {
-						using = GeneralTooltipSetup
-						alwaystransparent = no
-
-						widget = {
-							name = "background"
-							using = DefaultTooltipBackground
-							size = { 100% 100% }
-							alwaystransparent = no
-						}
-
-						vbox = {
-							direction = vertical
-							margin_top = 12
-							margin_bottom = 18
-							set_parent_size_to_minimum = yes
-							
-							datacontext = "[GetTitleByKey('e_britannia')]"
-							
-							hbox = {
-								layoutpolicy_horizontal = expanding
-								margin_bottom = 5
-								textbox = {
-									using = DefaultTooltipText
-									margin = { 20 0 }
-									text = "HIGH_KING_TAB_TITLE"
-									alwaystransparent = no
-								}
-								expand = {}
-							}
-
-							vbox = {
-								visible = "[GetTitleByKey('e_britannia').HasHolder]"
-								margin_top = 10
-								hbox = {
-									layoutpolicy_horizontal = growing
-									spacing = 10
-									margin = { 20 0 }
-
-									vbox = {
-										layoutpolicy_vertical = expanding
-										expand = {}
-										datacontext = "[Title.GetHolder]"
-
-										portrait_head_small = {
-											name = "culture_head_portrait"
-										}
-									}
-
-									vbox = {
-										layoutpolicy_vertical = expanding
-										spacing = 0
-										text_single = {
-											layoutpolicy_horizontal = growing
-											fonttintcolor = "[TooltipInfo.GetTintColor]"
-											text = "HIGH_KING_TAB_CURRENT_HIGH_KING"
-											align = top
-
-											using = DefaultTooltipText
-										}
-										
-										text_single = {
-											layoutpolicy_horizontal = growing
-											fonttintcolor = "[TooltipInfo.GetTintColor]"
-											text = "HIGH_KING_TAB_HIGH_KING_AUTHORITY"
-											align = top
-
-											using = DefaultTooltipText
-										}
-										
-										expand = {}
-									}
-								}
-							}
-							
-							hbox = {
-								layoutpolicy_horizontal = expanding
-								textbox = {
-									using = DefaultTooltipText
-									visible = "[Not(GetTitleByKey('e_britannia').HasHolder)]"
-									margin = { 20 0 }
-									text = "HIGH_KING_TAB_NO_HIGH_KING"
-									alwaystransparent = no
-								}
-								expand = {}
-							}
-							
-							textbox = {
-								using = DefaultTooltipText
-								margin = { 20 0 }
-								text = " "
-								alwaystransparent = no
-							}
-							
-							hbox = {
-								layoutpolicy_horizontal = expanding
-								textbox = {
-									using = DefaultTooltipText
-									margin = { 20 0 }
-									text = "HIGH_KING_TAB_TT"
-									alwaystransparent = no
-								}
-								expand = {}
-							}
-						}
-					}
-				}
-			}
-
 			# Rite
 			widget = {
 				name = "faith_button_container"
@@ -4052,6 +3915,143 @@ types HUD
 						color = { 0 0 0 0.8 }
 						glow_radius = 3
 						using = Glow_Standard
+					}
+				}
+			}
+
+			button_hud_character_bar = {
+				name = "high_king_tab"
+
+				visible = "[GetScriptedGui('BTWK_high_king_tab_visible').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End)]"
+
+				onclick = "[GetVariableSystem.Toggle('show_high_king_window')]"
+				# tooltip = "HIGH_KING_TAB_TT"
+				
+				using = tooltip_es
+				tooltip_offset = { 20 0 }
+
+				coat_of_arms_icon = {
+					parentanchor = center
+					size = { 32 32 }
+					position = { 0 1 }
+					
+					coat_of_arms = "[GetTitleByKey('e_britannia').GetTitleCoA.GetTexture('(int32)56','(int32)56')]"
+					coat_of_arms_slot = "[GetTitleByKey('e_britannia').GetTitleCoA.GetSlot('(int32)56','(int32)56')]"
+					coat_of_arms_mask = "gfx/interface/coat_of_arms/title_mask.dds"
+					
+					coa_title_frame = {
+						parentanchor = center
+						texture = "gfx/interface/coat_of_arms/title_44.dds"
+						size = { 35 35 }
+					}
+				}
+				
+				tooltipwidget = {
+					container = {
+						using = GeneralTooltipSetup
+						alwaystransparent = no
+
+						widget = {
+							name = "background"
+							using = DefaultTooltipBackground
+							size = { 100% 100% }
+							alwaystransparent = no
+						}
+
+						vbox = {
+							direction = vertical
+							margin_top = 12
+							margin_bottom = 18
+							set_parent_size_to_minimum = yes
+							
+							datacontext = "[GetTitleByKey('e_britannia')]"
+							
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								margin_bottom = 5
+								textbox = {
+									using = DefaultTooltipText
+									margin = { 20 0 }
+									text = "HIGH_KING_TAB_TITLE"
+									alwaystransparent = no
+								}
+								expand = {}
+							}
+
+							vbox = {
+								visible = "[GetTitleByKey('e_britannia').HasHolder]"
+								margin_top = 10
+								hbox = {
+									layoutpolicy_horizontal = growing
+									spacing = 10
+									margin = { 20 0 }
+
+									vbox = {
+										layoutpolicy_vertical = expanding
+										expand = {}
+										datacontext = "[Title.GetHolder]"
+
+										portrait_head_small = {
+											name = "culture_head_portrait"
+										}
+									}
+
+									vbox = {
+										layoutpolicy_vertical = expanding
+										spacing = 0
+										text_single = {
+											layoutpolicy_horizontal = growing
+											fonttintcolor = "[TooltipInfo.GetTintColor]"
+											text = "HIGH_KING_TAB_CURRENT_HIGH_KING"
+											align = top
+
+											using = DefaultTooltipText
+										}
+										
+										text_single = {
+											layoutpolicy_horizontal = growing
+											fonttintcolor = "[TooltipInfo.GetTintColor]"
+											text = "HIGH_KING_TAB_HIGH_KING_AUTHORITY"
+											align = top
+
+											using = DefaultTooltipText
+										}
+										
+										expand = {}
+									}
+								}
+							}
+							
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								textbox = {
+									using = DefaultTooltipText
+									visible = "[Not(GetTitleByKey('e_britannia').HasHolder)]"
+									margin = { 20 0 }
+									text = "HIGH_KING_TAB_NO_HIGH_KING"
+									alwaystransparent = no
+								}
+								expand = {}
+							}
+							
+							textbox = {
+								using = DefaultTooltipText
+								margin = { 20 0 }
+								text = " "
+								alwaystransparent = no
+							}
+							
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								textbox = {
+									using = DefaultTooltipText
+									margin = { 20 0 }
+									text = "HIGH_KING_TAB_TT"
+									alwaystransparent = no
+								}
+								expand = {}
+							}
+						}
 					}
 				}
 			}

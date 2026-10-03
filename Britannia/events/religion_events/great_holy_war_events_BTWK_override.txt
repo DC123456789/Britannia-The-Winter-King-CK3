@@ -1,0 +1,706 @@
+﻿namespace = great_holy_war
+
+# The Sponsor declares a Great Holy War
+great_holy_war.0001 = {
+	hidden = yes
+	scope = faith
+    id_override_priority = 10
+	
+	trigger = {
+		has_doctrine = doctrine_spiritual_head
+		save_temporary_scope_as = the_faith
+		exists = religious_head
+		trigger_if = { # Player spiritual heads launch through a decision or bull, not this monthly pulse
+			limit = {
+				religious_head = { is_ai = no }
+			}
+			religious_head = { player_hof_requested_ghw_launch_trigger = yes }
+		}
+		NOR = {
+			exists = great_holy_war
+			exists = var:variable_ghw_cooldown
+			trigger_if = {
+				limit = {
+					NOT = {
+						religious_head = { religious_head_has_selected_ghw_target_trigger = yes }
+					}
+				}
+				religion = { exists = var:variable_first_ghw_cooldown } # Do not event spam after Crusades have been just unlocked.
+			}
+		}
+		religious_head = { is_imprisoned = no }
+		religion = { exists = var:variable_ghw_unlocked } # Age of Crusades
+		OR = {
+			suitable_faith_for_undirected_ghw_trigger = yes #Right combinations of Doctrines to have GHWs. And a valid target exists
+			religious_head = { religious_head_has_selected_ghw_target_trigger = yes }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = the_faith
+
+		#Determine Sponsor.
+		religious_head = { save_scope_as = ghw_sponsor }
+		if = {
+			limit = { scope:ghw_sponsor = { has_variable = player_ghw_launch } }
+			save_temporary_scope_value_as = {
+				name = skip_ghw_war_chest_gold
+				value = yes
+			}
+		}
+		if = {
+			limit = {
+				scope:ghw_sponsor = { has_variable = player_ghw_target_kingdom }
+			}
+			scope:ghw_sponsor = {
+				var:player_ghw_target_kingdom = { save_scope_as = target_kingdom }
+				remove_variable = player_ghw_target_kingdom
+				if = {
+					limit = { has_variable = player_ghw_launch }
+					remove_variable = player_ghw_launch
+				}
+			}
+			pam_determine_ghw_target_character_from_kingdom_effect = { FAITH = scope:the_faith }
+		}
+		else_if = {
+			limit = {
+				scope:ghw_sponsor = {
+					has_pam_dlc_trigger = yes
+					has_variable = pam_bull_ghw_target_kingdom
+				}
+			}
+			pam_use_bull_selected_ghw_target_effect = {
+				GHW_SPONSOR = scope:ghw_sponsor
+				FAITH = scope:the_faith
+			}
+		}
+		else = {
+			determine_ghw_target_effect = { FAITH = scope:the_faith }
+			if = {
+				limit = { scope:ghw_sponsor = { has_variable = player_ghw_launch } }
+				scope:ghw_sponsor = { remove_variable = player_ghw_launch }
+			}
+		}
+
+		# Launch the preparation phase
+		start_great_holy_war = {
+			target_character = scope:target_character
+			target_title = scope:target_kingdom
+			delay = { 365 545 }
+		}
+		scope:target_character.faith = { save_scope_as = target_faith } #Used for counterpledges.
+
+		great_holy_war = {
+			set_war_declarer = scope:ghw_sponsor
+			if = {
+				limit = { is_directed_ghw = no }
+				undirected_ghw_recipient_selection_effect = yes
+			}
+		}
+		if = {
+			limit = {
+				scope:ghw_sponsor.gold > 0
+				NOT = { exists = scope:skip_ghw_war_chest_gold }
+			}
+			great_holy_war = {
+				change_war_chest_gold = {
+					value = scope:ghw_sponsor.gold
+					divide = 2
+					max = 5000
+				}
+			}
+			scope:ghw_sponsor = {
+				remove_short_term_gold = {
+					value = gold
+					divide = 2
+					max = 5000
+				}
+			}
+		}
+		great_holy_war = {
+			pledge_attacker = scope:ghw_sponsor
+			set_variable = {
+				name = redirect_cost
+				value = 500
+			}
+		}
+		#If no Claimant or Title Holder is available to be the Papal choice and the Crusade has not proceeded far enough to have a favorite beneficiary, select a fallback Recipient so that the CB's tooltip does not appear incomplete.
+		if = { #Random Courtier in the Pope's court.
+			limit = {
+				NOT = { exists = scope:the_faith.great_holy_war.ghw_title_recipient }
+				exists = scope:ghw_sponsor
+				exists = scope:the_faith.great_holy_war
+				scope:ghw_sponsor = {
+					any_courtier = {
+						is_adult = yes
+						is_ai = yes
+						NOR = {
+							has_trait = excommunicated
+							has_trait = incapable
+							has_trait = devoted
+						}
+						faith = scope:the_faith
+					}
+				}
+			}
+			scope:ghw_sponsor = {
+				random_courtier = {
+					alternative_limit = {
+						scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_male_dominated } }
+						is_male = yes
+						is_adult = yes
+						is_ai = yes
+						NOR = {
+							has_trait = excommunicated
+							has_trait = incapable
+							has_trait = devoted
+						}
+						faith = scope:the_faith
+					}
+					alternative_limit = {
+						scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_female_dominated } }
+						is_female = yes
+						is_adult = yes
+						is_ai = yes
+						NOR = {
+							has_trait = excommunicated
+							has_trait = incapable
+							has_trait = devoted
+						}
+						faith = scope:the_faith
+					}
+					limit = {
+						is_adult = yes
+						is_ai = yes
+						NOR = {
+							has_trait = excommunicated
+							has_trait = incapable
+							has_trait = devoted
+						}
+						faith = scope:the_faith
+					}
+					save_scope_as = fallback_recipient
+					add_character_flag = flag_is_ghw_fallback_recipient
+				}
+			}
+		}
+		else_if = { #Else Generate a fallback recipient.
+			limit = {
+				NOT = { exists = scope:the_faith.great_holy_war.ghw_title_recipient }
+			}
+			create_character = {
+				location = scope:ghw_sponsor.capital_province
+				template = new_commander_character
+				faith = scope:the_faith
+				culture = scope:ghw_sponsor.culture
+				save_scope_as = fallback_recipient
+				gender_female_chance = {
+					if = {
+						limit = {
+							scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_male_dominated } }
+						}
+						add = 0
+					}
+					else_if = {
+						limit = {
+							scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_female_dominated } }
+						}
+						add = 100
+					}
+					else = {
+						add = 50
+					}
+				}
+			}
+			scope:fallback_recipient = { add_character_flag = flag_is_ghw_fallback_recipient }
+		}
+		great_holy_war = {
+			set_variable = {
+				name = var_fallback_recipient
+				value = scope:fallback_recipient
+			}
+		}
+
+		every_player = { #Inform players
+			limit = {
+				faith = scope:the_faith
+				highest_held_title_tier >= tier_county
+				this != scope:ghw_sponsor
+			}
+			trigger_event = great_holy_war.0003 #Send event immediately for player, then delay it for all the AIs.
+		}
+		every_player = { #Inform defending players
+			limit = {
+				OR = {
+					faith = scope:target_faith #All infidels.
+					any_liege_or_above = {
+						scope:the_faith.great_holy_war = { has_pledged_defender = prev }
+					}
+					AND = {
+						faith != scope:the_faith
+						scope:the_faith.great_holy_war = { has_pledged_defender = prev }
+					}
+				}
+			}
+			trigger_event = great_holy_war.0050
+		}
+
+		#Attackers Pledge to the Crusade. (AI only)
+		every_faith_ruler = {
+			limit = {
+				is_ai = yes
+				is_landed = yes
+				highest_held_title_tier >= tier_county
+				NOR = {
+					this = scope:ghw_sponsor
+					root.great_holy_war = { has_pledged_attacker = prev }
+					target_is_liege_or_above = scope:target_character
+				}
+			}
+			trigger_event = {
+				#AI pledging. There is a chance the AI might pledge after the Crusade starts, but it's a lot less likely.
+				id = great_holy_war.0020
+				days = { 50 450 }
+			}
+		}
+		every_faith_holy_order = {
+			trigger_event = {
+				#Military Orders always join
+				id = great_holy_war.0090
+				days = { 30 60 }
+			}
+		}
+
+		#Defenders Pledge to the Crusade. (AI only)
+		scope:target_character = {
+			religion = {
+				every_faith = {
+					every_faith_ruler = {
+						limit = {
+							is_ai = yes
+							is_landed = yes
+							highest_held_title_tier >= tier_county
+							NOT = {
+								root.great_holy_war = { has_pledged_defender = prev }
+							}
+						}
+						trigger_event = {
+							#AI counterpledging. Unlike attackers, defenders should be selected much faster during the preparation phase and then stop.
+							id = great_holy_war.0021
+							days = { 25 150 }
+						}
+					}
+				}
+			}
+			faith = {
+				every_faith_holy_order = {
+					trigger_event = {
+						# Military Orders always join
+						id = great_holy_war.0091
+						days = { 30 60 }
+					}
+				}
+			}
+		}
+		#EP3 Redirected Crusade setup event
+		# great_holy_war = {
+			# if = {
+				# limit = {
+					# scope:the_faith = { this = faith:catholic }
+					# ep3_frankokratia_ghw_trigger = yes
+					# ep3_frankokratia_financier_exists_trigger = yes
+				# }
+				# #start with player
+				# if = {
+					# limit = {
+						# any_player = {
+							# ep3_frankokratia_story_owner_trigger = yes
+						# }
+					# }
+					# random_player = {
+						# limit = {
+							# ep3_frankokratia_story_owner_trigger = yes
+						# }
+						# trigger_event = {
+							# id = ep3_frankokratia_events.0001
+							# days = 20
+						# }
+					# }
+				# }
+				# #Next, ai with a closely related claimant who will accept
+				# else_if = {
+					# limit = {
+						# scope:the_faith = {
+							# any_faith_playable_ruler = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# ep3_frankokratia_will_start_trigger = yes
+								# save_temporary_scope_as = char_temp
+								
+								# #Thorough check for close relation claimants
+								# OR = {
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+									# }
+									# #In laws of family in court/realm
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_spouse = {
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #Spouse claimant
+									# any_spouse = {
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #Spouse's close family in realm/court
+									# any_spouse = {
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_close_family_member = {
+											# OR = {
+												# is_courtier_of = prev
+												# is_vassal_of = prev
+											# }
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #friends
+									# any_relation = {
+										# type = friend
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #soulmates
+									# any_relation = {
+										# type = soulmate
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+								# }
+							# }
+						# }
+					# }
+					# scope:the_faith = {
+						# ordered_faith_playable_ruler = {
+							# order_by = {
+								# value = 0
+								# add = current_military_strength
+							# }
+							# limit = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# ep3_frankokratia_will_start_trigger = yes
+								# save_temporary_scope_as = char_temp
+								
+								# #Thorough check for close relation claimants
+								# OR = {
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+									# }
+									# #In laws of family in court/realm
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_spouse = {
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #Spouse claimant
+									# any_spouse = {
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #Spouse's close family in realm/court
+									# any_spouse = {
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_close_family_member = {
+											# OR = {
+												# is_courtier_of = prev
+												# is_vassal_of = prev
+											# }
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #friends
+									# any_relation = {
+										# type = friend
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #soulmates
+									# any_relation = {
+										# type = soulmate
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+								# }
+							# }
+							# trigger_event = {
+								# id = ep3_frankokratia_events.0001
+								# days = 20
+							# }
+						# }
+					# }
+				# }
+				# #Someone with looser relation to claimant who will accept
+				# else_if = {
+					# limit = {
+						# scope:the_faith = {
+							# any_faith_playable_ruler = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# ep3_frankokratia_will_start_trigger = yes
+							# }
+						# }
+					# }
+					# scope:the_faith = {
+						# ordered_faith_playable_ruler = {
+							# order_by = {
+								# value = 0
+								# add = current_military_strength
+							# }
+							# limit = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# ep3_frankokratia_will_start_trigger = yes
+							# }
+							# trigger_event = {
+								# id = ep3_frankokratia_events.0001
+								# days = 20
+							# }
+						# }
+					# }
+				# }
+				# #Next, ai with a closely related claimant who might not accept
+				# else_if = {
+					# limit = {
+						# scope:the_faith = {
+							# any_faith_playable_ruler = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# save_temporary_scope_as = char_temp
+								
+								# #Thorough check for close relation claimants
+								# OR = {
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+									# }
+									# #In laws of family in court/realm
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_spouse = {
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #Spouse claimant
+									# any_spouse = {
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #Spouse's close family in realm/court
+									# any_spouse = {
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_close_family_member = {
+											# OR = {
+												# is_courtier_of = prev
+												# is_vassal_of = prev
+											# }
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #friends
+									# any_relation = {
+										# type = friend
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #soulmates
+									# any_relation = {
+										# type = soulmate
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+								# }
+							# }
+						# }
+					# }
+					# scope:the_faith = {
+						# ordered_faith_playable_ruler = {
+							# order_by = {
+								# value = 0
+								# add = current_military_strength
+							# }
+							# limit = {
+								# ep3_frankokratia_story_owner_trigger = yes
+								# save_temporary_scope_as = char_temp
+								
+								# #Thorough check for close relation claimants
+								# OR = {
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+									# }
+									# #In laws of family in court/realm
+									# any_close_family_member = {
+										# OR = {
+											# is_courtier_of = prev
+											# is_vassal_of = prev
+										# }
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_spouse = {
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #Spouse claimant
+									# any_spouse = {
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #Spouse's close family in realm/court
+									# any_spouse = {
+										# ep3_frankokratia_transiting_relative_trigger = yes
+										# any_close_family_member = {
+											# OR = {
+												# is_courtier_of = prev
+												# is_vassal_of = prev
+											# }
+											# ep3_frankokratia_claimant_trigger = yes
+										# }
+									# }
+									# #friends
+									# any_relation = {
+										# type = friend
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+									# #soulmates
+									# any_relation = {
+										# type = soulmate
+										# ep3_frankokratia_claimant_trigger = yes
+									# }
+								# }
+							# }
+							# trigger_event = {
+								# id = ep3_frankokratia_events.0001
+								# days = 20
+							# }
+						# }
+					# }
+				# }
+				# #Someone with looser relation to claimant who might not accept
+				# else_if = {
+					# limit = {
+						# scope:the_faith = {
+							# any_faith_playable_ruler = {
+								# ep3_frankokratia_story_owner_trigger = yes
+							# }
+						# }
+					# }
+					# scope:the_faith = {
+						# ordered_faith_playable_ruler = {
+							# order_by = {
+								# value = 0
+								# add = current_military_strength
+							# }
+							# limit = {
+								# ep3_frankokratia_story_owner_trigger = yes
+							# }
+							# trigger_event = {
+								# id = ep3_frankokratia_events.0001
+								# days = 20
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+		if = {
+			limit = {
+				NOT = {
+					exists = global_var:cath_crusade_1
+				}
+				scope:the_faith = { this = faith:catholic }
+			}
+			set_global_variable = {
+				name = cath_crusade_1
+				value = 1
+			}
+		}
+		else_if = {
+			limit = {
+				scope:the_faith = { this = faith:catholic }
+			}
+			change_global_variable = {
+				name = cath_crusade_1
+				add = 1
+			}
+		}
+	}
+}
+
+# War is launched
+great_holy_war.0005 = {
+	hidden = yes
+	scope = ghw
+    id_override_priority = 10
+
+	immediate = {
+		# if = {
+			# limit = {
+				# any_pledged_attacker = {
+					# primary_title = { is_head_of_faith = yes }
+					# faith = faith:catholic
+				# }
+				# exists = global_var:byz_claimant_champion
+				# global_var:byz_claimant_champion = {
+					# is_alive = yes
+					# is_ruler = yes
+					# any_owned_story = {
+						# type = frankokratia_story
+					# }
+				# }
+				# exists = title:e_byzantium.holder
+			# }
+			# #Check claimant isn't dead, invalidate if they are
+			# if = {
+				# limit = {
+					# global_var:byz_claimant_champion = {
+						# any_owned_story = {
+							# type = frankokratia_story
+							# var:byz_claimant = { is_alive = no }
+						# }
+					# }
+				# }
+				# global_var:byz_claimant_champion = {
+					# random_owned_story = {
+						# type = frankokratia_story
+						# every_in_list = {
+							# variable = frankokratia_leaders
+							# limit = {
+								# is_ai = no
+							# }
+							# trigger_event = ep3_frankokratia_events.0005
+						# }
+					# }
+				# }
+			# }
+			# else = {
+				# ep3_frankokratia_remove_pledged_attackers_effect = yes
+			# }
+		# }
+		
+		start_ghw_war = undirected_great_holy_war
+		divide_war_chest = {
+			fraction = 0.2
+			prestige = no
+			gold = no
+		}
+	}
+}

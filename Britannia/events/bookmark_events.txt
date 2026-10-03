@@ -73,7 +73,7 @@ namespace = bookmark
 		# }
 	# }
 # }
-		
+	
 # ### Alfred is pretty cool so we give him a nickname
 # bookmark.0002 = { #by Mathilda Bjarnehed
 	# type = character_event
@@ -125,7 +125,7 @@ namespace = bookmark
 	# hidden = yes
 	
 	# trigger = {
-		# scope:imprisoner.faith = { trait_is_virtue = vengeful }
+		# root.rite = { trait_is_virtue_rite = vengeful }
 		# scope:imprisoner = {
 			# any_close_family_member = {
 				# even_if_dead = yes
@@ -314,6 +314,10 @@ namespace = bookmark
 		# }
 		# execute_opinion_effect = { VICTIM = scope:prisoner EXECUTIONER = root }
 
+		# stress_and_fulfillment_impact = {
+			# zealous = medium_stress_impact_loss
+		# }
+
 		# ai_chance = {
 			# base = 50
 		# }
@@ -470,11 +474,11 @@ namespace = bookmark
 			# culture = culture:radhanite
 			# gender_female_chance = {
 				# if = {
-					# limit = { faith:kabarism = { has_doctrine = doctrine_gender_male_dominated } }
+					# limit = { faith:kabarism = { main_rite = { rite_has_doctrine = doctrine_gender_male_dominated } } }
 					# add = 0
 				# }
 				# else_if = {
-					# limit = { faith:kabarism = { has_doctrine = doctrine_gender_female_dominated } }
+					# limit = { faith:kabarism = { main_rite = { rite_has_doctrine = doctrine_gender_female_dominated } } }
 					# add = 100
 				# }
 				# else = {
@@ -497,11 +501,11 @@ namespace = bookmark
 			# random_traits = yes
 			# gender_female_chance = {
 				# if = {
-					# limit = { faith:kabarism = { has_doctrine = doctrine_gender_male_dominated } }
+					# limit = { faith:kabarism = { main_rite = { rite_has_doctrine = doctrine_gender_male_dominated } } }
 					# add = 0
 				# }
 				# else_if = {
-					# limit = { faith:kabarism = { has_doctrine = doctrine_gender_female_dominated } }
+					# limit = { faith:kabarism = { main_rite = { rite_has_doctrine = doctrine_gender_female_dominated } } }
 					# add = 100
 				# }
 				# else = {
@@ -927,6 +931,7 @@ namespace = bookmark
 					# location = root.location
 					# culture = root.location.culture
 					# faith = root.location.faith
+					# rite = root.location.rite
 					# dynasty = none
 					# save_scope_as = witch
 				# }
@@ -1136,7 +1141,7 @@ namespace = bookmark
 		# }
 		# if = {
 			# limit = { character:528 = { is_councillor_of = root } }
-			# fire_councillor = character:528
+			# show_as_tooltip = { fire_councillor = character:528 }
 		# }
 		# assign_councillor_type = {
 			# type = councillor_court_chaplain
@@ -1189,6 +1194,7 @@ namespace = bookmark
 			# if = {
 				# limit = {
 					# has_character_flag = bishop_assignment
+					# NOT = { cp:councillor_court_chaplain ?= character:john_monk }
 				# }
 				# assign_councillor_type = {
 					# type = councillor_court_chaplain
@@ -1481,7 +1487,7 @@ namespace = bookmark
 				# }
 				# add_trait = deceitful
 				# add_trait = historical_character
-				# add_character_flag = raiktor
+				# set_variable = raiktor
 				# set_variable = {
 					# name = show_historical_gui
 					# value = 1
@@ -2388,6 +2394,7 @@ namespace = bookmark
 		# start_war = {
 			# casus_belli = admin_barbarian_conquest_cb
 			# target = title:d_biansong.holder
+			# target_title = title:d_biansong
 		# }
 
 		# spawn_army = {
@@ -2438,11 +2445,12 @@ namespace = bookmark
 			# is_landed = no
 		# }
 
-		# set_character_faith = faith:maitreya
+		# set_character_faith = faith:maitreya_faith
+		# set_character_rite = rite:maitreya
 
-		# faith:maitreya = {
+		# faith:maitreya_faith = {
 			# change_fervor = {
-				# value = 100
+				# value = massive_fervor_gain
 				# desc = maitreya_has_descended_fervor_desc
 			# }
 		# }
@@ -2478,6 +2486,7 @@ namespace = bookmark
 		# start_war = {
 			# casus_belli = admin_barbarian_conquest_cb
 			# target = title:d_biansong.holder
+			# target_title = title:d_biansong
 		# }
 
 		# spawn_army = {
