@@ -1827,6 +1827,23 @@ update_main_rite_action = {
 			save_scope_as = main_rite
 			save_scope_value_as = { name = rite_counties value = rite_counties }
 			save_scope_value_as = { name = rite_holy_sites value = rite_holy_sites }
+			if = {		# BTWK - Roman Rite gets a big bonus to compensate for being offmap
+				limit = { this = rite:roman_rite }
+				save_scope_value_as = {
+					name = rite_counties
+					value = {
+						value = scope:rite_counties
+						add = 500
+					}
+				}
+				save_scope_value_as = {
+					name = rite_holy_sites
+					value = {
+						value = scope:rite_holy_sites
+						add = 4
+					}
+				}
+			}
 		}
 		if = {
 			limit = {

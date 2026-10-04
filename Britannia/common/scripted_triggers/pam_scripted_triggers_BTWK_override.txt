@@ -1,0 +1,67 @@
+﻿# The liturgical language triggers below only evaluate in a rite scope; call them through
+# main_rite from a faith and through rite from a character.
+# Pre-scripted rites skip the Head of Rite culture fallback. Slavic, Georgian, Antiochian,
+# heresies, and custom divergences keep that fallback.
+rite_has_pre_scripted_liturgical_language_trigger = {
+	OR = {
+		faith = faith:catholic
+		this = rite:roman_rite
+		this = rite:ambrosian_rite
+		this = rite:beneventan_rite
+		this = rite:mozarabic_church
+		this = rite:carolingian_christianity
+		faith = faith:orthodox
+		this = rite:byzantine_rite
+		this = rite:insular_celtic
+		this = rite:ethiopian_rite
+		this = rite:armenian_rite
+		this = rite:coptic_rite
+		# BTWK
+		this = rite:britannic_rite
+		this = rite:saxon_rite
+	}
+}
+
+# These are founding-see rites in rite scope, not map-wide or ordinary swap traditions
+pam_rite_is_regional_trigger = {
+	OR = {
+		this = rite:insular_celtic
+		this = rite:georgian_rite
+		this = rite:ambrosian_rite
+		this = rite:beneventan_rite
+		this = rite:mozarabic_church
+		this = rite:carolingian_christianity
+		this = rite:slavic_rite
+		this = rite:coptic_rite
+		this = rite:antiochian_rite
+		this = rite:ethiopian_rite
+		this = rite:armenian_rite
+		
+		# BTWK
+		this = rite:britannic_rite
+		this = rite:saxon_rite
+	}
+}
+
+pam_latin_as_liturgical_language_trigger = {
+	OR = {
+		faith = faith:catholic
+		this = rite:roman_rite
+		this = rite:ambrosian_rite
+		this = rite:beneventan_rite
+		this = rite:mozarabic_church
+		this = rite:carolingian_christianity
+		# BTWK
+		this = rite:britannic_rite
+		this = rite:saxon_rite
+		AND = {
+			rite_has_pre_scripted_liturgical_language_trigger = no
+			head_of_rite.culture ?= {
+				OR = {
+					this = culture:italian
+					has_same_culture_language = culture:italian
+				}
+			}
+		}
+	}
+}

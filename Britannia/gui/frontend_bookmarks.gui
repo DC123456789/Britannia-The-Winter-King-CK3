@@ -987,7 +987,7 @@
 
 						hbox = {
 							hbox = {
-								datamodel = "[DataModelFirst( GameSetup.GetDlcCollection.GetDlcs, '(int32)15' )]"
+								datamodel = "[DataModelFirst( GameSetup.GetDlcCollection.GetDlcs, '(int32)10' )]"
 								spacing = 5
 
 								item = {
@@ -1621,11 +1621,26 @@
 										}
 
 										coat_of_arms_icon = { #Dynasty
-											visible = "[Not( BookmarkCharacter.HasDynastyHouse )]"
+											visible = "[And( BookmarkCharacter.HasDynastyTemplate, Not( BookmarkCharacter.HasDynastyHouse ) )]"
 											parentanchor = bottom|hcenter
 											size = { 280 280 }
 											coat_of_arms = "[BookmarkCharacter.GetDynastyTemplate.GetCoA.GetTexture('(int32)256','(int32)256')]"
 											coat_of_arms_slot = "[BookmarkCharacter.GetDynastyTemplate.GetCoA.GetSlot('(int32)256','(int32)256')]"
+											coat_of_arms_mask = "gfx/interface/frontend/mask_coa_flag.dds"
+
+											modify_texture = {
+												texture = "gfx/interface/coat_of_arms/coa_overlay.dds"
+												blend_mode = overlay
+												spritetype = corneredTiled
+											}
+										}
+
+										coat_of_arms_icon = { # Non-dynastic fallback (realm/title CoA)
+											visible = "[And( BookmarkCharacter.StartAsExistingRuler, Not( Or( BookmarkCharacter.HasDynastyTemplate, BookmarkCharacter.HasDynastyHouse ) ) )]"
+											parentanchor = bottom|hcenter
+											size = { 280 280 }
+											coat_of_arms = "[BookmarkCharacter.GetLandedTitleTemplate.GetCoA.GetTexture('(int32)256','(int32)256')]"
+											coat_of_arms_slot = "[BookmarkCharacter.GetLandedTitleTemplate.GetCoA.GetSlot('(int32)256','(int32)256')]"
 											coat_of_arms_mask = "gfx/interface/frontend/mask_coa_flag.dds"
 
 											modify_texture = {
@@ -1944,7 +1959,7 @@
 													coa_dynasty_bookmark = {}
 
 													text_multi = {
-														visible = "[Not( BookmarkCharacter.HasDynastyHouse )]"
+														visible = "[And( BookmarkCharacter.HasDynastyTemplate, Not( BookmarkCharacter.HasDynastyHouse ) )]"
 														text = "[BookmarkCharacter.GetDynastyTemplate.GetName]"
 														default_format = "#high"
 														tooltip = "BOOKMARK_DYNASTY_TOOLTIP"
