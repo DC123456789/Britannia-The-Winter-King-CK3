@@ -1,23 +1,24 @@
 ﻿apply_tribal_fame_effect = {
 	every_ruler = {
-		remove_tribal_fame_effect = yes
+		check_tribal_fame_effect = yes
+	}
+}
+
+check_tribal_fame_effect = {
+	remove_tribal_fame_effect = yes
+	if = {
+		limit = {
+			government_has_flag = government_has_tribal_fame
+		}
+		save_scope_as = current_character
 		if = {
-			limit = {
-				government_has_flag = government_has_tribal_fame
-				tribal_fame_value >= 0
-			}
-			save_scope_as = current_character
+			limit = { tribal_fame_value >= 0 }
 			add_character_modifier = {
 				modifier = tribal_fame_positive
 				desc = tribal_fame_positive_desc
 			}
 		}
-		if = {
-			limit = {
-				government_has_flag = government_has_tribal_fame
-				tribal_fame_value < 0
-			}
-			save_scope_as = current_character
+		else = {
 			add_character_modifier = {
 				modifier = tribal_fame_negative
 				desc = tribal_fame_negative_desc
@@ -28,22 +29,7 @@
 
 tribal_fame_government_change_effect = {
 	root = {
-		if = {
-			limit = {
-				government_has_flag = government_has_tribal_fame
-			}
-			save_scope_as = current_character
-			add_character_modifier = {
-				modifier = tribal_fame_positive
-				desc = tribal_fame_positive_desc
-			}
-		}
-		if = {
-			limit = {
-				NOT = { government_has_flag = government_has_tribal_fame }
-			}
-			remove_tribal_fame_effect = yes
-		}
+		check_tribal_fame_effect = yes
 	}
 }
 
