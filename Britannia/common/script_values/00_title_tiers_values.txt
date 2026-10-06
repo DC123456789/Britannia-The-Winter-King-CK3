@@ -193,6 +193,31 @@ usurp_title_counties_percentage = {
 			add = 0.8
 		}
 	}
+	# If you modify this, make sure you also modify USURP_TITLE_TOOLTIP_TITLE in 
+	# localization\english\replace\gui\title\title_view_BTWK_override_l_english.yml
+	if = {
+		limit = {
+			OR = {
+				AND = {
+					scope:title = { has_variable = is_anglo_saxon_duchy }
+					can_create_germanic_title_trigger = no
+				}
+				AND = {
+					scope:title = { has_variable = is_anglo_saxon_kingdom }
+					can_create_germanic_title_trigger = no
+				}
+				AND = {
+					scope:title = { has_variable = is_briton_roman_duchy }
+					can_create_roman_celtic_titles_trigger = no
+				}
+				AND = {
+					scope:title = { has_variable = is_briton_kingdom }
+					can_create_briton_kingdom_trigger = no
+				}
+			}
+		}
+		add = 2		# Block completely
+	}
 }
 tier_minus_one = {
 	value = tier
