@@ -1,5 +1,5 @@
 ﻿# Get faith to convert to in the request conversion button (largest faith in region? Or capital faith?)
-BTWK_soc_get_faith_to_convert_to = {
+BTWK_soc_get_christian_rite_to_convert_to = {
 	scope = character
 	
 	effect = {
@@ -26,7 +26,7 @@ BTWK_soc_get_faith_to_convert_to = {
 		# Shouldn't be possible, but...
 		else_if = {
 			limit = { exists = location.county }
-			location.county = {				
+			location.county = {
 				BTWK_soc_situation_get_county_region_largest_christian_rite = yes
 			}
 			set_variable = { 
@@ -37,7 +37,55 @@ BTWK_soc_get_faith_to_convert_to = {
 		else = {
 			set_variable = { 
 				name = BTWK_soc_rite_to_convert_to
-				value = rite:roman_rite
+				value = faith:christian_faith.main_rite
+			}
+		}
+	}
+}
+
+BTWK_get_faith_rite_to_convert_to = {
+	scope = character
+	
+	effect = {
+		set_variable = { 
+			name = BTWK_faith_to_convert_to
+			value = scope:new_faith
+		}
+		if = {
+			limit = { is_landed = yes }
+			capital_province.county = {
+				BTWK_get_nearby_county_largest_faith_rite = { TARGET_FAITH = scope:new_faith }
+			}
+			set_variable = { 
+				name = BTWK_rite_to_convert_to
+				value = scope:largest_nearby_rite
+			}
+		}
+		else_if = {
+			limit = { has_domicile = yes }
+			domicile.domicile_location.county = {				
+				BTWK_get_nearby_county_largest_faith_rite = { TARGET_FAITH = scope:new_faith }
+			}
+			set_variable = { 
+				name = BTWK_rite_to_convert_to
+				value = scope:largest_nearby_rite
+			}
+		}
+		# Shouldn't be possible, but...
+		else_if = {
+			limit = { exists = location.county }
+			location.county = {
+				BTWK_get_nearby_county_largest_faith_rite = { TARGET_FAITH = scope:new_faith }
+			}
+			set_variable = { 
+				name = BTWK_rite_to_convert_to
+				value = scope:largest_nearby_rite
+			}
+		}
+		else = {
+			set_variable = { 
+				name = BTWK_rite_to_convert_to
+				value = scope:new_faith.main_rite
 			}
 		}
 	}

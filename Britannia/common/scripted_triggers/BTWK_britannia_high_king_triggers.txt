@@ -60,53 +60,71 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 		text = claim_britannia_high_kingship_military_requirement
 		current_military_strength >= 750
 	}
+	if = {
+		limit = { is_ai	= yes }
+		save_temporary_scope_value_as = { name = num_triggers_needed value = 5 }
+	}
+	else = {
+		save_temporary_scope_value_as = { name = num_triggers_needed value = 6 }
+	}
 	trigger_if = {
-		limit = { NOT = { BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship } } }
-		custom_description = {
-			text = claim_britannia_high_kingship_skill_requirement
-			calc_true_if = {
-				amount >= 6
-				diplomacy >= 10
-				diplomacy >= 25
-				martial >= 12
-				martial >= 25
-				stewardship >= 7
+		limit = { is_ai = no }
+		calc_true_if = {
+			amount >= 6
+			diplomacy >= 10
+			diplomacy >= 25
+			martial >= 12
+			martial >= 25
+			stewardship >= 7
+			custom_tooltip = {
+				text = BTWK_highest_skill_value_over_20
 				highest_skill_value >= 20
-				prowess >= 30
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 15 
+			}
+			prowess >= 30
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			prestige_level >= 5
+			legitimacy_level >= 4
+			legitimacy_level >= 5
+			AND = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+				custom_tooltip = {
+					text = BTWK_has_claim_on_britannia
+					has_claim_on = title:e_britannia
 				}
-				prestige_level >= 4
-				prestige_level >= 5
-				legitimacy_level >= 4
-				legitimacy_level >= 5
-				is_ai = yes
 			}
 		}
 	}
 	trigger_else = {
-		custom_description = {
-			text = claim_britannia_high_kingship_skill_requirement_reduced
-			calc_true_if = {
-				amount >= 6
-				diplomacy >= 10
-				diplomacy >= 25
-				martial >= 12
-				martial >= 25
-				stewardship >= 7
+		calc_true_if = {
+			amount >= 5
+			diplomacy >= 10
+			diplomacy >= 25
+			martial >= 12
+			martial >= 25
+			stewardship >= 7
+			custom_tooltip = {
+				text = BTWK_highest_skill_value_over_20
 				highest_skill_value >= 20
-				prowess >= 30
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 15 
+			}
+			prowess >= 30
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			prestige_level >= 5
+			legitimacy_level >= 4
+			legitimacy_level >= 5
+			AND = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+				custom_tooltip = {
+					text = BTWK_has_claim_on_britannia
+					has_claim_on = title:e_britannia
 				}
-				prestige_level >= 4
-				prestige_level >= 5
-				legitimacy_level >= 4
-				legitimacy_level >= 5
-				has_claim_on = title:e_britannia
-				is_ai = yes
 			}
 		}
 	}

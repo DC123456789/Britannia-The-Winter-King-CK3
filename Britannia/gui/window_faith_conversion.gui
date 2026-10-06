@@ -1,0 +1,183 @@
+﻿window = {
+	name = "faith_conversion_window"
+	datacontext = "[FaithConversionWindow.GetVassalConversionWindow]"
+	datacontext = "[GetVariableSystem]"
+	datacontext = "[FaithConversionWindow.GetFaith]"
+	datacontext = "[FaithConversionWindow.GetRite]"
+	parentanchor = center
+	size = { 680 900 }
+	layer = middle
+
+	using = Window_Background
+	using = Window_Decoration
+
+	state = {
+		name = _show
+		# Get rite to convert to
+		on_start = "[GetScriptedGui('BTWK_get_faith_rite_to_convert_to').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('new_faith', FaithConversionWindow.GetFaith.MakeScope).End)]"
+	}
+	
+	vbox = {
+		using = Window_Margins
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text" 
+			{
+				text = "CONVERT_FAITH_WINDOW_TITLE_UI"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[FaithConversionWindow.Close]"
+			}
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			margin = { 20 5 }
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 20
+
+				vbox = {
+					name = "realm_adoption"
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						text = "CONVERT_FAITH_WINDOW_DESC"
+						margin_bottom = 10
+					}
+
+					text_single = {
+						name = "header"
+						layoutpolicy_horizontal = expanding
+
+						text = "RITE_CREATION_VIEW_CONFIRM_ADOPTION"
+						default_format = "#low"
+					}
+
+					text_single = {
+						name = "desc"
+						layoutpolicy_horizontal = expanding
+						text = "RITE_CREATION_VIEW_CONFIRM_ADOPTION_DESC"
+					}
+				}
+			}
+
+			vbox = {
+				name = "cost"
+				datacontext = "[FaithConversionWindow.GetFaith]"
+
+				tooltip = "FAITH_CONVERSION_COST_TOOLTIP"
+
+				text_single = {
+					name = "label"
+					layoutpolicy_horizontal = expanding
+					text = "FAITH_CONVERSION_TOTAL_COST"
+					default_format = "#high"
+					using = Font_Size_Medium
+					align = right
+				}
+
+				text_single = {
+					name = "missing"
+					layoutpolicy_horizontal = expanding
+					visible = "[GreaterThan_int32( FaithConversionWindow.CalcPietyMissing, '(int32)0' )]"
+					text = "FAITH_CONVERSION_COST_MISSING"
+					using = Font_Size_Medium
+					align = right
+				}
+			}
+		}
+
+		vbox = {
+			name = "old_faith_tolerance"
+			layoutpolicy_horizontal = expanding
+			margin = { 20 5 }
+
+			text_single = {
+				name = "header"
+				layoutpolicy_horizontal = expanding
+				text = "FAITH_CONVERSION_TOLERANCE"
+				default_format = "#low"
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				text_multi = {
+					name = "desc"
+					autoresize = yes
+					max_width = 560
+					text = "FAITH_CONVERSION_TOLERANCE_TEXT"
+				}
+
+				expand = {}
+			}
+		}
+
+		spacer = {
+			size = { 15 10 }
+		}
+
+		divider = {
+			layoutpolicy_horizontal = expanding
+		}
+
+		vassal_conversion_preview = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			blockoverride "footer" {
+				visible = no
+			}
+		}
+		
+		vbox = {
+			datacontext = "[FaithConversionWindow.GetRite]"
+			margin_bottom = 10
+			spacing = 10
+
+
+			hbox = {
+				visible = "[GetPlayer.IsValid]"
+				margin_top = -5
+				spacing = 5
+
+				text_single = {
+					text = "FAITH_VIEW_YOUR_KNOWLEDGE"
+					align = nobaseline
+				}
+
+				text_single = {
+					text = "[GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'rite', Rite.MakeScope ).ScriptValue( 'pam_knows_rite_level' )|V0%]"
+					align = nobaseline
+				}
+			}
+
+			text_multi = {
+				layoutpolicy_horizontal = expanding
+				align = center
+				visible = "[And( Not( FaithConversionWindow.GetFaith.HasDoctrineByKey( 'doctrine_polytheist' ) ), GetPlayer.GetGovernment.HasGovernmentFlag( 'government_is_mandala' ) )]"
+				text = "FAITH_MANDALA_MONOTHEIST_WARNING"
+			}
+
+			button_primary = {
+				name = "create_faith"
+				size = { 400 60 }
+
+				onclick = "[FaithConversionWindow.ConvertFaithAndRite]"
+				clicksound = "event:/DLC/CE3/SFX/UIX/ce3_adopt_a_new_rite"
+				tooltip = "FAITH_CONVERSION_BUTTON_TOOLTIP"
+				enabled = "[FaithConversionWindow.CanConvertFaithAndRite]"
+
+				text = "FAITH_CONVERSION_CONVERT"
+				using = Font_Size_Medium
+			}
+		}	
+	}
+}

@@ -353,7 +353,65 @@ BTWK_soc_situation_get_county_region_largest_christian_rite = {
 	
 	if = {
 		limit = { NOT = { exists = scope:region_largest_christian_rite } }
-		rite:roman_rite = { save_scope_as = region_largest_christian_rite }
+		faith:christian_faith.main_rite = { save_scope_as = region_largest_christian_rite }
+	}
+}
+
+BTWK_get_nearby_county_largest_faith_rite = {
+	$TARGET_FAITH$ = { save_scope_as = effect_target_faith }
+	
+	# Calculate the number of nearby counties following each faith rite
+	scope:effect_target_faith = {
+		every_faith_rite = {
+			set_variable = { name = rite_counties_count value = 0 }
+		}
+	}
+	every_in_list = {
+		variable = nearby_counties
+		if = {
+			limit = { faith = scope:effect_target_faith }
+			rite = {
+				change_variable = { name = rite_counties_count add = 1 }
+			}
+		}
+	}
+	
+	# Get rite with most nearby counties
+	scope:effect_target_faith = {
+		if = {
+			limit = {
+				any_faith_rite = { this.var:rite_counties_count > 0 }
+			}
+			# Get list of rites with tied-max number of nearby counties
+			save_scope_value_as = { name = max_rite_counties_count value = 1 }
+			clear_local_variable_list = max_rite_counties_list
+			every_faith_rite = {
+				if = {
+					limit = { this.var:rite_counties_count > scope:max_rite_counties_count }
+					save_scope_value_as = { 
+						name = scope:max_rite_counties_count
+						value = this.var:rite_counties_count
+					}
+					clear_local_variable_list = max_rite_counties_list
+					add_to_local_variable_list = { name = max_rite_counties_list target = this }
+				}
+				else_if = {
+					limit = { this.var:rite_counties_count == scope:max_rite_counties_count }
+					add_to_local_variable_list = { name = max_rite_counties_list target = this }
+				}
+			}
+			
+			# Get the first faith in the list (this is to preserve determinism)
+			ordered_in_local_list = {
+				variable = max_rite_counties_list
+				position = 0
+				save_scope_as = largest_nearby_rite
+			}
+		}
+		# Fall back to main rite of there are no nearby counties of that faith
+		else = {
+			scope:effect_target_faith.main_rite = { save_scope_as = largest_nearby_rite }
+		}
 	}
 }
 

@@ -9,7 +9,14 @@ faith_conversion = {
 		pam_is_antipope_trigger = no
 	}
 	is_in_ongoing_great_holy_war = no
-	scope:new_faith.main_rite= {
+	trigger_if = {
+		limit = { has_variable = BTWK_rite_to_convert_to }
+		this.var:BTWK_rite_to_convert_to = { save_temporary_scope_as = new_rite }
+	}
+	trigger_else = {
+		scope:new_faith.main_rite = { save_temporary_scope_as = new_rite }
+	}
+	scope:new_rite = {
 		is_rite_enabled = yes
 		can_convert_to_rite = yes
 	}
@@ -47,9 +54,42 @@ faith_conversion = {
 		OR = {
 			AND = {
 				faith.religion = scope:new_faith.religion
-				"knows_rite_level(scope:new_faith.main_rite)" > pam_same_religion_rite_knowledge_requirement
+				"knows_rite_level(scope:new_rite)" > pam_same_religion_rite_knowledge_requirement
 			}
-			"knows_rite_level(scope:new_faith.main_rite)" > pam_other_religion_rite_knowledge_requirement
+			"knows_rite_level(scope:new_rite)" > pam_other_religion_rite_knowledge_requirement
+			# If your capital is Christian, you can always convert to it
+			trigger_if = {
+				limit = {
+					scope:new_faith.religion = religion:christianity_religion
+				}
+				custom_tooltip = {
+					text = faith_conversion_BTWK_spreading_of_christianity_faith_capital
+					capital_county.faith = scope:new_faith
+				}
+			}
+			# Can always convert to any Christian faith with a significant presence in your region
+			# Player only just in case for performance reasons
+			trigger_if = {
+				limit = {
+					is_ai = no
+					scope:new_faith.religion = religion:christianity_religion
+				}
+				save_temporary_scope_as = current_character
+				custom_tooltip = {
+					text = faith_conversion_BTWK_spreading_of_christianity_faith_spread
+					situation:spreading_of_christianity_situation = {
+						any_participant_group = {
+							participant_group_has_character = scope:current_character
+							participant_group_sub_region = {
+								any_situation_sub_region_county = {
+									percent >= 0.15
+									faith = scope:new_faith
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	
