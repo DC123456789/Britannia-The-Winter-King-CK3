@@ -658,17 +658,16 @@ culture_shifts.0010 = {
 					this.var:regional_culture_progress >= 100
 				}
 				# If the kingdom has a holder, than diverge from the holder's culture
-				# Unless they are already a regional culture
+				# Unless they are already a regional culture, or not Unromanized Germanic
 				if = {
 					limit = { 
 						exists = this.holder
-						NOT = { 
-							culture = { 
-								OR = {
-									has_variable = anglo_saxon_regional_culture_kingdom 
-									has_variable = is_anglo_saxon_unified_culture
-								} 
-							}
+						this.holder.culture = {
+							is_unromanized_germanic_culture_trigger = yes
+							NOR = {
+								has_variable = anglo_saxon_regional_culture_kingdom 
+								has_variable = is_anglo_saxon_unified_culture
+							} 
 						}
 					}
 					this.holder.culture = { save_scope_as = old_culture }
@@ -1024,14 +1023,15 @@ culture_shifts.0010 = {
 					}
 				}
 				
-				# New culture spawns at capital of kingdom holder if possible
+				# New culture spawns at capital of kingdom holder if possible, if in the kingdom
 				if = {
 					limit = {
 						holder ?= {
 							OR = {
 								capital_county = { 
-									county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
-								} 
+									county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
+									county_can_convert_to_anglo_saxon_regional_culture = yes
+								}
 								# If the holder holds multiple kingdom or higher titles, only do this if the
 								# capital is actually in the kingdom
 								NOT = {
@@ -1060,14 +1060,14 @@ culture_shifts.0010 = {
 						random_held_title = {
 							limit = {
 								tier = tier_county
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 							save_scope_as = new_culture_spawn_county
 						}
 					}
 				}
-				# Next, any non-regional culture West Germanic province in the de facto kingdom
+				# Next, any non-regional culture West Germanic province in the de jure + de facto kingdom
 				if = {
 					limit = { 
 						NOT = { exists = scope:new_culture_spawn_county }
@@ -1075,14 +1075,14 @@ culture_shifts.0010 = {
 					holder ?= {
 						random_sub_realm_county = {
 							limit = {
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 							save_scope_as = new_culture_spawn_county
 						}
 					}
 				}
-				# Next, the capital of any independent parent culture ruler in the kingdom 
+				# Next, the capital of any independent parent culture ruler in the de jure kingdom 
 				if = {
 					limit = { 
 						NOT = { exists = scope:new_culture_spawn_county }
@@ -1093,14 +1093,14 @@ culture_shifts.0010 = {
 							scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
 							capital_county = {
 								scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 						}
 						capital_county = { save_scope_as = new_culture_spawn_county }
 					}
 				}
-				# Next, any parent culture province under any independent parent culture ruler in the kingdom 
+				# Next, any parent culture province under any independent parent culture ruler in the de jure kingdom 
 				if = {
 					limit = { 
 						NOT = { exists = scope:new_culture_spawn_county }
@@ -1111,21 +1111,21 @@ culture_shifts.0010 = {
 							scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
 							any_sub_realm_county = {
 								scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 						}
 						random_sub_realm_county = { 
 							limit = {
 								scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 							save_scope_as = new_culture_spawn_county 
 						}
 					}
 				}
-				# Next, any parent culture province under any parent culture ruler in the kingdom 
+				# Next, any parent culture province under any parent culture ruler in the de jure kingdom 
 				if = {
 					limit = { 
 						NOT = { exists = scope:new_culture_spawn_county }
@@ -1136,21 +1136,36 @@ culture_shifts.0010 = {
 							scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
 							any_sub_realm_county = {
 								scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 						}
 						random_sub_realm_county = { 
 							limit = {
 								scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
-								county_is_in_anglo_saxon_regional_culture_kingdom = { KINGDOM = scope:current_kingdom }
+								county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
 								county_can_convert_to_anglo_saxon_regional_culture = yes
 							}
 							save_scope_as = new_culture_spawn_county 
 						}
 					}
 				}
-				# Next, any arbitary parent culture province in the kingdom 
+				# Next, any arbitary parent culture province in the de jure kingdom 
+				if = {
+					limit = { 
+						NOT = { exists = scope:new_culture_spawn_county }
+					}
+					random_county = {
+						limit = {
+							scope:new_culture = { is_child_culture_of_trigger = { TARGET = prev.culture } }
+							county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = { KINGDOM = scope:current_kingdom }
+							county_can_convert_to_anglo_saxon_regional_culture = yes
+						}
+						save_scope_as = new_culture_spawn_county						
+					}
+				}
+				# Should never get here, but:
+				# Next, any arbitary parent culture province in the de jure or de facto kingdom 
 				if = {
 					limit = { 
 						NOT = { exists = scope:new_culture_spawn_county }
@@ -1164,7 +1179,6 @@ culture_shifts.0010 = {
 						save_scope_as = new_culture_spawn_county						
 					}
 				}
-				# Should never get here, but:
 				# Next, any non-regional culture West Germanic province under
 				# any independent non-regional culture West Germanic ruler in the kingdom 
 				if = {

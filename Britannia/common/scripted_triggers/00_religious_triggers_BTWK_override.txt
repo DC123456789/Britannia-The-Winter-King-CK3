@@ -1,3 +1,194 @@
+BTWK_can_reform_rite_trigger = {
+	government_is_not_tribal_trigger = yes
+	# TODO Maybe need to figure out theocratic requirements?
+	sub_realm_size >= 75
+	highest_held_title_tier >= tier_kingdom
+	
+	trigger_if = {
+		limit = {
+			NOT = {
+				has_character_flag = ignore_3_holy_site_rule
+			}
+		}
+		# Empire Faith Gate: easier reformation path
+		# trigger_if = {
+			# limit = {
+				# empire_faith_gate_enabled_trigger = yes
+			# }
+			# custom_tooltip = {
+				# text = empire_faith_gate_reformation_piety_level
+				# piety_level >= 2
+			# }
+			# custom_tooltip = {
+				# text = empire_faith_gate_reformation_tribal_authority
+				# has_realm_law = tribal_authority_3
+			# }
+			# custom_tooltip = {
+				# text = empire_faith_gate_reformation_holy_site
+				# faith = {
+					# any_holy_site_barony = {
+						# count >= 3
+						# county.holder = {
+							# faith = root.faith
+						# }
+					# }
+				# }
+			# }
+		# }
+		faith = {
+			num_realm_holy_sites_faithful_holders = {
+				CHARACTER = root
+				COUNT = 1
+			}
+		}
+	}
+
+	# Make sure to update the tooltips if you change this!
+	trigger_if = {
+		limit = {
+			faith = {
+				num_realm_holy_sites_faithful_holders = {
+					CHARACTER = root
+					COUNT = 3
+				}
+			}
+		}
+		piety_level >= 2
+		learning >= 15
+	}
+	trigger_else_if = {
+		limit = {
+			faith = {
+				num_realm_holy_sites_faithful_holders = {
+					CHARACTER = root
+					COUNT = 2
+				}
+			}
+		}
+		piety_level >= 3
+		learning >= 20
+		OR = {
+			has_trait = erudite
+			has_trait = theologian
+			has_trait = education_learning_3
+			has_trait = education_learning_4
+			has_trait = education_learning_5
+		}
+		custom_tooltip = {
+			text = faith_reformation_can_reduce_requirements_tooltip
+			piety_level >= 3
+			learning >= 20
+			OR = {
+				has_trait = erudite
+				has_trait = theologian
+				has_trait = education_learning_3
+				has_trait = education_learning_4
+				has_trait = education_learning_5
+			}
+		}
+	}
+	trigger_else = {
+		piety_level >= 4
+		learning >= 25
+		calc_true_if = {
+			amount >= 2
+			has_trait = erudite
+			has_trait = theologian
+			has_trait = education_learning_3
+			has_trait = education_learning_4
+			has_trait = education_learning_5
+		}
+		custom_tooltip = {
+			text = faith_reformation_can_reduce_requirements_tooltip
+			piety_level >= 4
+			learning >= 25
+			calc_true_if = {
+				amount = 2
+				has_trait = erudite
+				has_trait = theologian
+				has_trait = education_learning_3
+				has_trait = education_learning_4
+				has_trait = education_learning_5
+			}
+		}
+	}
+}
+
+# Can edit a rite
+can_edit_rite_trigger = {
+	is_adult = yes
+	is_at_war = no
+	custom_tooltip = {
+		text = ecumenical_council_already_ongoing_tt
+		NOT = { faith = { has_variable = ecumenical_council_ongoing } }
+	}
+	trigger_if = {
+		limit = {
+			is_clergy = no
+			highest_held_title_tier = tier_county
+			top_liege != this
+		}
+		custom_description = {
+			text = "faith_creation_duchy_or_higher"
+			highest_held_title_tier >= tier_duchy
+		}
+	}
+
+	trigger_if = {
+		limit = {
+			rite = {
+				rite_has_doctrine = doctrine_theocracy_temporal
+			}
+			is_clergy = no
+			has_puppet_type = theological_agent_puppet
+			# Allow Mandala God-Kings and Son of Heaven to create and edit rites freely
+			trigger_if = {
+				limit = {
+					top_overlord = this
+				}
+				NOR = {
+					government_has_flag = government_is_mandala
+					tgp_has_access_to_ministry_trigger = yes
+				}
+			}
+		}
+		is_puppet_action_valid = puppet_trigger_can_create_rite
+	}
+	
+	custom_description = {
+		text = "character_is_rite_head"
+		rite.head_of_rite == root
+	}
+
+	custom_description = {
+		text = "character_can_only_edit_one_rite"
+		NOT = { exists = var:has_edited_a_rite }
+	}
+
+	trigger_if = {
+		limit = {
+			faith = { has_doctrine_parameter = unreformed }
+		}
+
+		NOT = {
+			custom_description = {
+				text = faith_has_been_reformed
+				object = faith
+				exists = faith.var:has_been_reformed
+			}
+		}
+
+		BTWK_can_reform_rite_trigger = yes
+
+		custom_tooltip = {
+			text = faith_reformation_via_decision
+			faith = {
+				NOT = { has_variable = block_reformation_var }
+			}
+		}
+	}
+}
+
 # Can create a rite
 can_create_rite_trigger = {
 
@@ -60,125 +251,7 @@ can_create_rite_trigger = {
 			}
 		}
 		
-		government_is_not_tribal_trigger = yes
-		# TODO Maybe need to figure out theocratic requirements?
-		sub_realm_size >= 75
-		highest_held_title_tier >= tier_kingdom
-		
-		trigger_if = {
-			limit = {
-				NOT = {
-					has_character_flag = ignore_3_holy_site_rule
-				}
-			}
-			# Empire Faith Gate: easier reformation path
-			# trigger_if = {
-				# limit = {
-					# empire_faith_gate_enabled_trigger = yes
-				# }
-				# custom_tooltip = {
-					# text = empire_faith_gate_reformation_piety_level
-					# piety_level >= 2
-				# }
-				# custom_tooltip = {
-					# text = empire_faith_gate_reformation_tribal_authority
-					# has_realm_law = tribal_authority_3
-				# }
-				# custom_tooltip = {
-					# text = empire_faith_gate_reformation_holy_site
-					# faith = {
-						# any_holy_site_barony = {
-							# count >= 3
-							# county.holder = {
-								# faith = root.faith
-							# }
-						# }
-					# }
-				# }
-			# }
-			faith = {
-				num_realm_holy_sites_faithful_holders = {
-					CHARACTER = root
-					COUNT = 1
-				}
-			}
-		}
-
-		# Make sure to update the tooltips if you change this!
-		trigger_if = {
-			limit = {
-				faith = {
-					num_realm_holy_sites_faithful_holders = {
-						CHARACTER = root
-						COUNT = 3
-					}
-				}
-			}
-			piety_level >= 2
-			learning >= 15
-		}
-		trigger_else_if = {
-			limit = {
-				faith = {
-					num_realm_holy_sites_faithful_holders = {
-						CHARACTER = root
-						COUNT = 2
-					}
-				}
-			}
-			piety_level >= 3
-			learning >= 20
-			custom_tooltip = {
-				text = faith_reformation_one_learning_trait_tooltip
-				OR = {
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-			custom_tooltip = {
-				text = faith_reformation_can_reduce_requirements_tooltip
-				piety_level >= 3
-				learning >= 20
-				OR = {
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-		}
-		trigger_else = {
-			piety_level >= 4
-			learning >= 25
-			custom_tooltip = {
-				text = faith_reformation_two_learning_traits_tooltip
-				calc_true_if = {
-					amount = 2
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-			custom_tooltip = {
-				text = faith_reformation_can_reduce_requirements_tooltip
-				piety_level >= 4
-				learning >= 25
-				calc_true_if = {
-					amount = 2
-					has_trait = scholar
-					has_trait = theologian
-					has_trait = education_learning_3
-					has_trait = education_learning_4
-					has_trait = education_learning_5
-				}
-			}
-		}
+		BTWK_can_reform_rite_trigger = yes
 		
 		custom_tooltip = {
 			text = faith_reformation_via_decision

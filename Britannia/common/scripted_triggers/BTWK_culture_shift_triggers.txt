@@ -18,14 +18,18 @@ character_can_convert_to_anglo_saxon_regional_culture = {
 					has_cultural_pillar = heritage_frankish
 				}
 			}
+			# Romanized Germanic cultures can only convert if the top liege/court owner is Unromanized Germanic
 			OR = {
 				AND = {
 					is_ruler = yes
 					is_independent_ruler = no
+					top_liege = { is_unromanized_germanic_culture_trigger = yes }
 				}
-				is_ruler = no
+				AND = {
+					is_ruler = no
+					court_owner = { is_unromanized_germanic_culture_trigger = yes }
+				}
 			}
-			liege_or_court_owner = { is_unromanized_germanic_culture_trigger = yes }
 		}		
 	}
 	NOR = { 
@@ -45,20 +49,31 @@ county_can_convert_to_anglo_saxon_regional_culture = {
 					has_cultural_pillar = heritage_frankish
 				}
 			}
-			holder = {
-				OR = {
-					NOT = { culture = prev.culture }
-					AND = {
-						is_independent_ruler = no
-						liege = { is_unromanized_germanic_culture_trigger = yes }
-					}
-				}
-			}
+			# Romanized Germanic cultures can only convert if the top liege is Unromanized Germanic
+			holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
 		}		
 	}
 	NOR = { 
 		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
 		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County is in the [potential] de jure territory of the given kingdom
+county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		AND = {
+			var:anglo_saxon_duchy.kingdom ?= $KINGDOM$
+			OR = {
+				NOT = { $KINGDOM$ = title:k_wales }
+				title_province = { geographical_region = btwk_custom_wales } 
+			}
+		}
+		kingdom = $KINGDOM$
 	}
 }
 
