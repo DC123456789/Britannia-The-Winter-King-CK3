@@ -1,0 +1,414 @@
+﻿####################
+# Communion tenets #
+# by Sean Hughes	#
+####################
+
+seek_indulgences_interaction = {
+	icon = letter_of_indulgence
+	category = interaction_category_religion
+	interface_priority = 110
+
+	desc = seek_indulgences_interaction_desc
+
+	notification_text = RELIGIOUS_HEAD_SEEK_INDULGENCES
+	greeting = positive
+	ai_maybe = yes
+
+	is_available = {
+		trigger_if = {
+			limit = {
+				is_ai = yes
+			}
+			NOR = {
+				has_trait = cynical
+				has_character_flag = hof_request_cooldown
+			}
+			short_term_gold >= head_of_faith_gold_value
+		}
+	}
+
+	is_shown = {
+		always = no
+		scope:recipient != scope:puppet_or_actor
+		scope:puppet_or_actor ?= {
+			is_playable_character = yes
+			faith ?= {
+				OR = {
+					has_doctrine = doctrine_spiritual_head
+					has_doctrine = doctrine_temporal_head
+					has_doctrine_parameter = has_clerical_regions
+				}
+				faith_has_sacraments_central_trigger = yes
+			}
+			rite ?= {
+				NOT = {
+					rite_has_parameter = no_seek_indulgences
+				}
+			}
+			seek_indulgences_show_recipient_trigger = yes
+			this != religious_head_or_challenger
+		}
+		scope:recipient = {
+			faith = scope:puppet_or_actor.faith
+			# Antipope uses petition_antipope_indulgences_interaction instead
+			trigger_if = {
+				limit = { has_pam_dlc_trigger = yes }
+				pam_is_antipope_trigger = no
+			}
+		}
+		# Those under an antipope seek indulgences from them instead of the real Head of Faith
+		trigger_if = {
+			limit = {
+				scope:recipient ?= scope:puppet_or_actor.faith.religious_head
+			}
+			scope:puppet_or_actor ?= { is_following_religious_head_challenger = no }
+		}
+	}
+
+	cooldown = { years = 5 }
+
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			seek_indulgences_recipient_trigger = yes
+			trigger_if = {
+				limit = {
+					has_trait = kinslayer_3
+					trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_3 GENDER_CHARACTER = scope:actor }
+				}
+				gold >= seek_indulgences_major_criminal_trait_value
+			}
+			trigger_else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_trait = kinslayer_2
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_2 GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = witch
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:witch GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = deviant
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:deviant GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = sodomite
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:sodomite GENDER_CHARACTER = scope:actor }
+						}
+					}
+				}
+				gold >= seek_indulgences_medium_criminal_trait_value
+			}
+			trigger_else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_trait = kinslayer_1
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_1 GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = fornicator
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:fornicator GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = adulterer
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:adulterer GENDER_CHARACTER = scope:actor }
+						}
+					}
+				}
+				gold >= seek_indulgences_minor_criminal_trait_value
+			}
+			trigger_else = {
+				gold >= seek_indulgences_buy_piety_value
+			}
+			trigger_if = {
+				limit = { has_pam_dlc_trigger = yes }
+				custom_tooltip = {
+					text = actor_is_antipope_sponsor_tt
+					pam_is_antipope_sponsor_trigger = no
+				}
+			}
+			pam_not_antipope_when_recipient_is_hof_tt = { CHARACTER = scope:actor }
+			custom_description = {
+				text = "seek_indulgences_excommunicated"
+				NOT = { has_trait = excommunicated }
+			}
+		}
+		scope:actor = {
+			custom_tooltip = {
+				text = HOF_INTERACTION_UNREFORMED_FAITH
+				NOT = {
+					faith = { has_doctrine_parameter = unreformed }
+				}
+			}
+			NOT = {
+				is_at_war_with = scope:recipient
+			}
+		}
+		scope:actor = {
+			NOT = {
+				has_character_modifier = promised_pilgrimage_to_clergy_modifier
+			}
+		}
+	}
+
+	ai_accept = {
+		base = 75
+
+		celestial_hierarchy_acceptance_modifier = {
+			ACTOR = scope:actor
+			RECIPIENT = scope:recipient
+		}
+
+		seek_indulgences_acceptance_modifier = yes
+
+		modifier = {
+			add = pam_offer_pilgrimage_acceptance_value
+			scope:offer_pilgrimage = yes
+			desc = OFFER_PILGRIMAGE_INTERACTION_OPTION_REASON
+		}
+	}
+
+	send_options_exclusive = no
+
+	send_option = {
+		is_shown = {
+			has_pam_dlc_trigger = yes
+			pam_offer_pilgrimage_option_shown_trigger = { ACTOR = scope:actor }
+		}
+		is_valid = {
+			pam_offer_pilgrimage_option_valid_trigger = { ACTOR = scope:actor }
+		}
+		flag = offer_pilgrimage
+		localization = OFFER_PILGRIMAGE_INTERACTION_OPTION
+	}
+
+	ai_min_reply_days = 1
+	ai_max_reply_days = 5
+
+	can_send = {
+		# Anti-spam AI blockers
+		ai_religious_request_blocker_trigger = { INTERACTION = seek_indulgences_interaction }
+	}
+
+	on_send = {
+		# Anti-spam AI blockers
+		ai_religious_request_blocker_effect = { INTERACTION = seek_indulgences_interaction }
+	}
+
+	on_accept = {
+		show_as_tooltip = {
+			seek_indulgences_interaction_effect = yes
+		}
+		scope:actor = {
+			trigger_event = religious_interaction.1010
+		}
+		pam_offer_pilgrimage_effect = {
+			ACTOR = scope:actor
+			CLERIC = scope:recipient
+		}
+
+		# If we're a clan this interaction affects unity
+		add_clan_unity_interaction_effect = {
+			CHARACTER = scope:actor
+			TARGET = scope:recipient
+			VALUE = medium_unity_gain
+			DESC = clan_unity_indulgences_accepted.desc
+			REVERSE_NON_HOUSE_TARGET = no
+		}
+	}
+
+	on_decline = {
+
+		scope:actor = {
+			show_as_tooltip = {
+				seek_indulgences_refusal_effect = yes
+			}
+
+			trigger_event = religious_interaction.1011
+		}
+
+
+		# If we're a clan this interaction affects unity
+		add_clan_unity_interaction_effect = {
+			CHARACTER = scope:actor
+			TARGET = scope:recipient
+			VALUE = minor_unity_loss
+			DESC = clan_unity_indulgences_declined.desc
+			REVERSE_NON_HOUSE_TARGET = no
+		}
+	}
+
+	# AI will do
+
+	ai_targets = {
+		ai_recipients = head_of_faith
+		ai_recipients = realm_priest_superior
+		ai_recipients = superior
+		ai_recipients = realm_priest_top_superior
+		ai_recipients = councillors
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 36
+		duchy = 36
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	ai_will_do = {
+		base = -25
+
+		ai_value_modifier = { # +50 to -50
+			who = scope:actor
+			ai_zeal = 0.5
+		}
+
+		modifier = {
+			add = 50
+			scope:actor = {
+				piety < 0
+			}
+		}
+
+		modifier = {
+			add = 75
+			scope:actor = {
+				piety_level < 0
+			}
+		}
+
+		modifier = {
+			add = 50
+			scope:actor = {
+				piety < major_piety_value
+				short_term_gold >= head_of_faith_gold_value
+				short_term_gold >= monumental_gold_value
+			}
+		}
+
+		modifier = {
+			add = -25
+			scope:actor = {
+				piety > major_piety_value
+				piety_level > 0
+			}
+		}
+		#high chance of success
+		modifier = {
+			add = 25
+			scope:recipient = {
+				OR = {
+					scope:actor.puppet:theological_agent_puppet ?= scope:recipient
+					scope:recipient.rite = {
+						rite_has_parameter = increases_seek_indulgences_acceptance
+					}
+					ai_greed >= 100
+					ai_vengefulness <= -100
+					opinion = {
+						target = scope:actor
+						value >= 100
+					}
+				}
+			}
+		}
+		#Lowered chance of success
+		modifier = {
+			factor = 0.5
+			scope:recipient = {
+				OR = {
+					opinion = {
+						target = scope:actor
+						value < -25
+					}
+					ai_greed <= -50
+					ai_vengefulness >= 50
+					rite = {
+						has_tenet_status = { tenet = tenet_vows_of_poverty status = permitted }
+					}
+					rite = {
+						has_tenet_status = { tenet = tenet_communal_possessions status = permitted }
+					}
+					NOT = {
+						exists = scope:actor.puppet:theological_agent_puppet
+					}
+					AND = {
+						scope:actor = {
+							NOT = { rite = scope:recipient.rite }
+						}
+						scope:recipient = {
+							rite_fulfillment_score = {
+								target = scope:actor.rite
+								value < 25
+							}
+						}
+					}
+				}
+			}
+		}
+
+		#badly lowered chance of success
+		modifier = {
+			factor = 0
+			scope:recipient = {
+				OR = {
+					opinion = {
+						target = scope:actor
+						value < -50
+					}
+					ai_greed <= -80
+					ai_vengefulness >= 80
+					rite = {
+						has_tenet_status = { tenet = tenet_confession status = prohibited }
+					}
+					AND = {
+						scope:actor = {
+							NOT = { rite = scope:recipient.rite }
+						}
+						any_tenet = {
+							scope:actor.rite = {
+								has_tenet_status = {
+									tenet = prev
+									status = core
+								}
+							}
+							scope:recipient.rite = {
+								has_tenet_status = {
+									tenet = prev
+									status = prohibited
+								}
+							}
+						}
+					}
+					AND = {
+						scope:actor = {
+							NOT = { rite = scope:recipient.rite }
+						}
+						any_tenet = {
+							scope:actor.rite = {
+								has_tenet_status = {
+									tenet = prev
+									status = permitted
+								}
+							}
+							scope:recipient.rite = {
+								has_tenet_status = {
+									tenet = prev
+									status = prohibited
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		evaluate_action_increasing_house_unity = {
+			VALUE = 50
+		}
+	}
+}
+

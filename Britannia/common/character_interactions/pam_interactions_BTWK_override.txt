@@ -1,0 +1,4766 @@
+﻿# Create a New Ecclesiastical Title as HoF (player only - we'll make the ai use the "request" ones)
+create_new_ecclesiastical_title_interaction = {
+	category = interaction_category_religion
+	icon = request_clerical_title_creation
+	interface_priority = 45
+	common_interaction = yes
+
+	use_diplomatic_range = yes
+	ai_maybe = no
+	popup_on_receive = yes
+
+	desc = create_new_ecclesiastical_title_interaction_desc
+	target_type = title
+	target_filter = domain_titles
+	target_source = recipient
+	show_all_targets = no
+
+	# Recipient's court chaplain as the default new title holder
+	redirect = {
+		scope:recipient = {
+			# A character may hold only one clerical region, so an existing archbishop cannot default here
+			cp:councillor_court_chaplain ?= {
+				if = {
+					limit = { NOT = { any_held_title = { has_clerical_region = yes } } }
+					save_scope_as = secondary_recipient
+				}
+			}
+		}
+	}
+
+	# Recipient's court chaplain, then eligible AI courtiers from either the recipient or the actor (HoF) as candidate holders
+	populate_recipient_list = {
+		scope:recipient = {
+			cp:councillor_court_chaplain ?= {
+				if = {
+					limit = { NOT = { any_held_title = { has_clerical_region = yes } } }
+					add_to_list = characters
+				}
+			}
+			every_courtier = {
+				limit = {
+					is_ai = yes
+					NOT = { any_held_title = { has_clerical_region = yes } }
+					can_be_court_chaplain_trigger = { COURT_OWNER = scope:actor }
+				}
+				add_to_list = characters
+			}
+		}
+		scope:actor = {
+			every_courtier = {
+				limit = {
+					is_ai = yes
+					NOT = { any_held_title = { has_clerical_region = yes } }
+					can_be_court_chaplain_trigger = { COURT_OWNER = scope:actor }
+				}
+				add_to_list = characters
+			}
+		}
+	}
+
+	# Clerical region supporting HoF
+	is_available = {
+		always = no		# BTWK Disabled
+		is_ai = no
+		pam_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
+		faith ?= { has_doctrine_parameter = has_clerical_regions }
+		has_pam_dlc_trigger = yes
+		is_adult = yes
+	}
+
+	# Same-faith duke-or-above holding a title whose de jure capital is not yet in a clerical region
+	# We do not require the recipient's own capital, so a seated ruler can still found a see elsewhere
+	is_shown = {
+		scope:recipient = {
+			is_ruler = yes
+			faith ?= scope:actor.faith
+			NOT = { this = scope:actor }
+			any_held_title = {
+				tier >= tier_duchy
+				is_landless_type_title = no
+				title_capital_county ?= {
+					NOT = { exists = clerical_region_title }
+					OR = {
+						holder ?= scope:recipient
+						holder ?= {
+							any_liege_or_above = {
+								this = scope:recipient
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# At least one eligible clergy holder exists; at least one eligible kingdom title can be picked
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			is_imprisoned = no
+			is_at_war = no
+			is_incapable = no
+		}
+		scope:recipient = {
+			is_imprisoned = no
+			is_adult = yes
+			pam_actor_is_clerical_title_authority_of_this_trigger = yes
+		}
+		custom_tooltip = {
+			text = create_new_ecclesiastical_title_no_eligible_kingdom_tt
+			scope:recipient = {
+				any_held_title = {
+					pam_valid_new_clerical_region_anchor_trigger = { PETITIONER = scope:recipient }
+				}
+			}
+		}
+		custom_tooltip = {
+			text = create_new_ecclesiastical_title_no_eligible_holder_tt
+			OR = {
+				scope:recipient = {
+					OR = {
+						any_courtier = {
+							can_be_court_chaplain_trigger = { COURT_OWNER = scope:recipient }
+						}
+						exists = cp:councillor_court_chaplain
+					}
+				}
+				any_courtier = {
+					can_be_court_chaplain_trigger = { COURT_OWNER = scope:actor }
+				}
+			}
+		}
+	}
+
+	has_valid_target_showing_failures_only = {
+		custom_tooltip = {
+			text = pam_new_clerical_region_invalid_anchor_tt
+			scope:target ?= {
+				pam_valid_new_clerical_region_anchor_trigger = { PETITIONER = scope:recipient }
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		scope:target = {
+			pam_valid_new_clerical_region_anchor_trigger = { PETITIONER = scope:recipient }
+		}
+	}
+
+	# Scales with the free Christian de jure counties of the anchor's de jure kingdom, which is what the region takes
+	cost = {
+		piety = {
+			value = pam_new_clerical_region_cost_value
+			# A Head of Rites acting for a faith with no Head of Faith pays more
+			if = {
+				limit = { NOT = { exists = scope:actor.faith.religious_head } }
+				multiply = 1.5
+			}
+		}
+	}
+
+	auto_accept = yes
+
+	# Creates the new clerical region title anchored to the chosen kingdom, sets up the new holder as court chaplain, and fires the situation catalyst
+	on_accept = {
+		pam_create_new_ecclesiastical_title_interaction_effect = yes
+	}
+}
+
+# Expand an Ecclesiastical Title as HoF (player only - we'll make the ai use the "request" ones)
+expand_ecclesiastical_title_interaction = {
+	category = interaction_category_religion
+	icon = request_clerical_title_expansion
+	interface_priority = 45
+	common_interaction = no
+
+	use_diplomatic_range = yes
+	ai_maybe = no
+	popup_on_receive = yes
+
+	desc = expand_ecclesiastical_title_interaction_desc
+	target_type = title
+	target_filter = clerical_region_adjacent_duchies
+	target_source = recipient
+	show_all_targets = no
+
+	# Clerical region supporting HoF
+	is_available = {
+		always = no		# BTWK Disabled
+		is_ai = no
+		pam_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
+		faith ?= { has_doctrine_parameter = has_clerical_regions }
+		has_pam_dlc_trigger = yes
+		is_adult = yes
+	}
+
+	cooldown_against_recipient = { years = 2 }
+
+	# Same-faith ecclesiastical rulers who hold a clerical region with at least one county bordering uncovered land; also the HoF on themselves
+	is_shown = {
+		scope:recipient = {
+			is_ruler = yes
+			faith ?= scope:actor.faith
+			pam_government_is_religious_playable_trigger = yes
+			# Picker only lists duchies around the region at the recipient's capital
+			pam_acting_clerical_region_trigger = { ARCHBISHOP = this }
+			pam_actor_is_clerical_title_authority_of_this_trigger = yes
+		}
+	}
+
+	# At least one adjacent duchy passes the picker criteria
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			is_imprisoned = no
+			is_at_war = no
+			is_incapable = no
+		}
+		scope:recipient = {
+			is_imprisoned = no
+			is_adult = yes
+			custom_tooltip = { # Must match can_be_picked_title below
+				text = expand_ecclesiastical_title_no_eligible_target_tt
+				pam_has_eligible_expand_ecclesiastical_title_target_trigger = yes
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		pam_valid_expand_ecclesiastical_title_target_trigger = { TITLE = scope:target ARCHBISHOP = scope:recipient }
+	}
+
+	# can_be_picked_title is picker-only and is not rechecked on send
+	has_valid_target_showing_failures_only = {
+		pam_valid_expand_ecclesiastical_title_target_trigger = { TITLE = scope:target ARCHBISHOP = scope:recipient }
+	}
+
+	# Piety scales with the number of de jure counties in the chosen target duchy
+	cost = {
+		piety = {
+			value = pam_new_ecclesiastical_title_cost_value
+			# A Head of Rites acting for a faith with no Head of Faith pays more
+			if = {
+				limit = { NOT = { exists = scope:actor.faith.religious_head } }
+				multiply = 1.5
+			}
+		}
+	}
+
+	auto_accept = yes
+
+	# Grows the recipient's clerical region into all de jure counties of the chosen duchy and fires the situation catalyst
+	on_accept = {
+		pam_expand_ecclesiastical_title_interaction_effect = yes
+	}
+}
+
+# Split an Ecclesiastical Title as HoF (player only - we'll make the ai use the "request" ones)
+split_ecclesiastical_title_interaction = {
+	category = interaction_category_religion
+	icon = request_clerical_title_split
+	interface_priority = 45
+	common_interaction = no
+
+	use_diplomatic_range = yes
+	ai_maybe = no
+	popup_on_receive = yes
+
+	desc = split_ecclesiastical_title_interaction_desc
+
+	# Pre-selects a default secular ruler (secondary_actor) by finding a random eligible county holder or liege in the recipient's clerical region THEN pre-selects their court chaplain as the default new holder (secondary_recipient) if available
+	redirect = {
+		scope:recipient = {
+			random_held_title = {
+				limit = {
+					has_clerical_region = yes
+					is_head_of_faith = no
+				}
+				random_county_in_clerical_region = {
+					limit = {
+						OR = {
+							holder = {
+								pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+							holder = {
+								any_liege_or_above = {
+									pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+								}
+							}
+						}
+					}
+					holder = {
+						if = {
+							limit = {
+								pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+							save_scope_as = secondary_actor
+						}
+						else = {
+							random_liege_or_above = {
+								limit = {
+									pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+								}
+								save_scope_as = secondary_actor
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:secondary_actor ?= {
+					is_ai = yes
+					exists = cp:councillor_court_chaplain
+					NOT = { cp:councillor_court_chaplain = scope:recipient }
+				}
+			}
+			scope:secondary_actor = {
+				cp:councillor_court_chaplain = {
+					save_scope_as = secondary_recipient
+				}
+			}
+		}
+	}
+
+	# Lists all eligible duke+ secular rulers whose realm capital lies within the recipient's clerical region, found by county holders and their liege chains
+	populate_actor_list = {
+		scope:recipient = {
+			every_held_title = {
+				limit = {
+					has_clerical_region = yes
+					is_head_of_faith = no
+				}
+				every_county_in_clerical_region = {
+					holder = {
+						if = {
+							limit = {
+								pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+							add_to_list = characters
+						}
+						every_liege_or_above = {
+							limit = {
+								pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+							add_to_list = characters
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Lists clergy candidates for the new title: the chosen secular ruler's court chaplain (if eligible), their eligible courtiers, and same-faith ecclesiastical holders/top lieges of counties within the recipient's clerical region - excludes existing clerical region holders
+	populate_recipient_list = {
+		if = {
+			limit = { exists = scope:secondary_actor }
+			scope:secondary_actor = {
+				if = {
+					limit = {
+						exists = cp:councillor_court_chaplain
+						cp:councillor_court_chaplain != scope:recipient
+						NOT = {
+							cp:councillor_court_chaplain = {
+								any_held_title = { has_clerical_region = yes }
+							}
+						}
+					}
+					cp:councillor_court_chaplain = { add_to_list = characters }
+				}
+				every_courtier = {
+					limit = {
+						is_ai = yes
+						this != scope:recipient
+						NOT = { any_held_title = { has_clerical_region = no } }
+						can_be_court_chaplain_trigger = { COURT_OWNER = scope:secondary_actor }
+					}
+					add_to_list = characters
+				}
+			}
+		}
+		scope:recipient = {
+			primary_title = {
+				every_county_in_clerical_region = {
+					if = {
+						limit = {
+							holder = {
+								is_alive = yes
+								is_ruler = yes
+								faith = scope:actor.faith
+								pam_government_is_religious_playable_trigger = yes
+								this != scope:recipient
+								NOT = { any_held_title = { has_clerical_region = yes } }
+							}
+						}
+						holder = {
+							add_to_list = characters
+						}
+					}
+					if = {
+						limit = {
+							holder.top_liege = {
+								is_alive = yes
+								is_ruler = yes
+								faith = scope:actor.faith
+								pam_government_is_religious_playable_trigger = yes
+								this != scope:recipient
+								NOT = { any_held_title = { has_clerical_region = yes } }
+							}
+							holder != scope:recipient
+						}
+						holder.top_liege = {
+							add_to_list = characters
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# Clerical region supporting HoF
+	is_available = {
+		always = no		# BTWK Disabled
+		is_ai = no
+		pam_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
+		faith ?= { has_doctrine_parameter = has_clerical_regions }
+		has_pam_dlc_trigger = yes
+		is_adult = yes
+	}
+
+	cooldown_against_recipient = { years = 10 }
+
+	# Shown for same-faith ecclesiastical rulers with at least one eligible secular ruler inside it; also the HoF on their own region
+	is_shown = {
+		scope:recipient = {
+			is_ruler = yes
+			faith ?= scope:actor.faith
+			pam_government_is_religious_playable_trigger = yes
+			any_held_title = {
+				has_clerical_region = yes
+				# The HoF may split their own see; other rulers' head-of-faith titles stay protected
+				trigger_if = {
+					limit = { scope:recipient != scope:actor }
+					is_head_of_faith = no
+				}
+				any_county_in_clerical_region = {
+					OR = {
+						holder ?= {
+							pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+						}
+						holder ?= {
+							any_liege_or_above = {
+								pam_potential_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	# A valid secular ruler exists to split from, and that an eligible clergy holder candidate exists
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			is_imprisoned = no
+			is_at_war = no
+			is_incapable = no
+		}
+		scope:recipient = {
+			is_imprisoned = no
+			is_adult = yes
+			pam_actor_is_clerical_title_authority_of_this_trigger = yes
+		}
+		custom_tooltip = {
+			text = split_ecclesiastical_title_no_eligible_secular_ruler_tt
+			scope:recipient = {
+				any_held_title = {
+					has_clerical_region = yes
+					# Mirror is_shown: the HoF may split their own see, other rulers' head-of-faith titles stay protected
+					trigger_if = {
+						limit = { scope:recipient != scope:actor }
+						is_head_of_faith = no
+					}
+					any_county_in_clerical_region = {
+						OR = {
+							holder = {
+								pam_valid_secular_clerical_split_ruler_trigger = { RULER = this }
+							}
+							holder = {
+								any_liege_or_above = {
+									pam_valid_secular_clerical_split_ruler_trigger = { RULER = this }
+								}
+							}
+						}
+					}
+				}
+			}
+			trigger_if = {
+				limit = { exists = scope:secondary_actor }
+				pam_valid_secular_clerical_split_ruler_trigger = { RULER = scope:secondary_actor }
+			}
+		}
+		custom_tooltip = {
+			text = split_ecclesiastical_title_no_eligible_holder_tt
+			OR = {
+				AND = {
+					exists = scope:secondary_actor
+					OR = {
+						scope:secondary_actor = {
+							exists = cp:councillor_court_chaplain
+							cp:councillor_court_chaplain != scope:recipient
+						}
+						scope:secondary_actor = {
+							any_courtier = {
+								this != scope:recipient
+								can_be_court_chaplain_trigger = { COURT_OWNER = scope:secondary_actor }
+							}
+						}
+					scope:recipient = {
+						primary_title = {
+							any_county_in_clerical_region = {
+								holder = {
+									is_alive = yes
+									is_ruler = yes
+									faith = scope:actor.faith
+									pam_government_is_religious_playable_trigger = yes
+									this != scope:recipient
+									NOT = { any_held_title = { has_clerical_region = yes } }
+								}
+							}
+						}
+					}
+					}
+				}
+				NOT = { exists = scope:secondary_actor }
+			}
+		}
+	}
+
+	# Piety scales with the number of de jure counties in the chosen secular ruler's primary title
+	cost = {
+		piety = {
+			value = pam_split_ecclesiastical_title_cost_value
+			# A Head of Rites acting for a faith with no Head of Faith pays more
+			if = {
+				limit = { NOT = { exists = scope:actor.faith.religious_head } }
+				multiply = 1.5
+			}
+		}
+	}
+
+	auto_accept = yes
+
+	# Splits the secular ruler's land out of the clerical region, creates the new title, grants it to the chosen holder, and fires the situation catalyst
+	on_accept = {
+		pam_split_ecclesiastical_title_interaction_effect = yes
+	}
+}
+
+# Merge an Ecclesiastical Title as HoF (player only - we'll make the ai use the "request" ones)
+merge_new_ecclesiastical_title_interaction = {
+	category = interaction_category_religion
+	icon = request_clerical_title_merger
+	interface_priority = 45
+	common_interaction = no
+
+	use_diplomatic_range = yes
+	ai_maybe = no
+	popup_on_receive = yes
+
+	desc = merge_new_ecclesiastical_title_interaction_desc
+	target_type = title
+	target_filter = clerical_region
+	show_all_targets = no
+
+	# Clerical region supporting HoF
+	is_available = {
+		always = no		# BTWK Disabled
+		is_ai = no
+		pam_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
+		faith ?= { has_doctrine_parameter = has_clerical_regions }
+		has_pam_dlc_trigger = yes
+		is_adult = yes
+	}
+
+	cooldown_against_recipient = { years = 20 }
+
+	# Same-faith ecclesiastical rulers that border at least one other same-faith clerical region; also the HoF on themselves
+	is_shown = {
+		scope:recipient = {
+			is_ruler = yes
+			faith ?= scope:actor.faith
+			pam_government_is_religious_playable_trigger = yes
+			any_held_title = {
+				has_clerical_region = yes
+				is_head_of_faith = no
+			}
+			pam_actor_is_clerical_title_authority_of_this_trigger = yes
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			is_imprisoned = no
+			is_at_war = no
+			is_incapable = no
+		}
+		scope:recipient = {
+			is_imprisoned = no
+			is_adult = yes
+			custom_tooltip = {
+				text = merge_new_ecclesiastical_title_cooldown_trigger
+				NOT = { exists = capital_province.county.clerical_region_title.var:merge_clerical_region_cooldown }
+			}
+			# Must be the recipient's own region, because a landed archbishop's capital can sit in another region
+			pam_acting_clerical_region_trigger = { ARCHBISHOP = this }
+			capital_province.county.clerical_region_title ?= {
+				pam_has_adjacent_mergeable_clerical_region_trigger = yes
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		pam_acting_clerical_region_trigger = { ARCHBISHOP = scope:recipient }
+		pam_potential_merge_clerical_region_title_trigger = {
+			TITLE = scope:target
+			ABSORBING_TITLE = scope:recipient.capital_province.county.clerical_region_title
+		}
+	}
+
+	# can_be_picked_title is picker-only and is not rechecked on send
+	has_valid_target_showing_failures_only = {
+		pam_acting_clerical_region_trigger = { ARCHBISHOP = scope:recipient }
+		pam_potential_merge_clerical_region_title_trigger = {
+			TITLE = scope:target
+			ABSORBING_TITLE = scope:recipient.capital_province.county.clerical_region_title
+		}
+	}
+
+	# Piety scales with the number of counties in the absorbed clerical region
+	cost = {
+		piety = {
+			value = pam_merge_new_ecclesiastical_title_cost_value
+			# A Head of Rites acting for a faith with no Head of Faith pays more
+			if = {
+				limit = { NOT = { exists = scope:actor.faith.religious_head } }
+				multiply = 2
+			}
+		}
+	}
+
+	auto_accept = yes
+
+	# Absorbs all counties of the target clerical region into the recipient's primary title via grow_clerical_region_fromand destroys it
+	on_accept = {
+		pam_merge_new_ecclesiastical_title_interaction_effect = {
+			ABSORBING_TITLE = scope:recipient.capital_province.county.clerical_region_title
+			ABSORBED_TITLE = scope:target
+			SENDER = scope:actor
+		}
+	}
+}
+
+petition_antipope_indulgences_interaction = {
+	category = interaction_category_religion
+	icon = petition_antipope_indulgences
+	common_interaction = yes
+
+	desc = petition_antipope_indulgences_interaction_desc
+	notification_text = RELIGIOUS_HEAD_SEEK_INDULGENCES
+	
+	ai_targets = {
+		ai_recipients = religious_head_challenger
+	}
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 36
+		duchy = 24
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	is_available = {
+		always = no		# BTWK Disabled
+		faith = {
+			faith_has_sacraments_central_trigger = yes
+			OR = {
+				has_doctrine_parameter = has_clerical_regions
+				has_doctrine = doctrine_spiritual_head
+				has_doctrine = doctrine_temporal_head
+			}
+		}
+		rite = {
+			NOT = {
+				rite_has_parameter = no_seek_indulgences
+			}
+		}
+	}
+
+	is_shown = {
+		# Anyone under an antipope or their sponsor petitions that antipope, not the Head of Faith
+		scope:actor = { is_following_religious_head_challenger = yes }
+		has_pam_dlc_trigger = yes
+		scope:actor != scope:recipient
+		scope:actor.religious_head_or_challenger ?= scope:recipient
+	}
+
+	cooldown = { years = 5 }
+
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			NOT = {
+				is_at_war_with = scope:recipient
+			}
+			NOT = {
+				has_character_modifier = promised_pilgrimage_to_clergy_modifier
+			}
+			trigger_if = {
+				limit = {
+					has_trait = kinslayer_3
+					trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_3 GENDER_CHARACTER = scope:actor }
+				}
+				gold >= seek_indulgences_major_criminal_trait_value
+			}
+			trigger_else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_trait = kinslayer_2
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_2 GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = witch
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:witch GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = deviant
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:deviant GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = sodomite
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:sodomite GENDER_CHARACTER = scope:actor }
+						}
+					}
+				}
+				gold >= seek_indulgences_medium_criminal_trait_value
+			}
+			trigger_else_if = {
+				limit = {
+					OR = {
+						AND = {
+							has_trait = kinslayer_1
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:kinslayer_1 GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = fornicator
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:fornicator GENDER_CHARACTER = scope:actor }
+						}
+						AND = {
+							has_trait = adulterer
+							trait_is_shunned_or_criminal_in_rite_trigger = { RITE = rite TRAIT = trait:adulterer GENDER_CHARACTER = scope:actor }
+						}
+					}
+				}
+				gold >= seek_indulgences_minor_criminal_trait_value
+			}
+			trigger_else = {
+				gold >= seek_indulgences_antipope_buy_piety_value
+			}
+		}
+		scope:recipient = {
+			is_alive = yes
+			pam_is_antipope_trigger = yes
+		}
+	}
+
+	# Autoaccept if you are the sponsor
+	auto_accept = {
+		custom_description = {
+			text = petition_antipope_sponsor_auto_accept_tt
+			subject = scope:actor
+			object = scope:recipient
+			scope:recipient = {
+				pam_antipope_is_sponsored_by_trigger = { SPONSOR = scope:actor }
+			}
+		}
+	}
+
+	send_options_exclusive = no
+
+	send_option = {
+		is_shown = {
+			pam_offer_pilgrimage_option_shown_trigger = { ACTOR = scope:actor }
+		}
+		is_valid = {
+			pam_offer_pilgrimage_option_valid_trigger = { ACTOR = scope:actor }
+		}
+		flag = offer_pilgrimage
+		localization = OFFER_PILGRIMAGE_INTERACTION_OPTION
+	}
+
+	ai_accept = {
+		base = 75
+
+		seek_indulgences_acceptance_modifier = yes
+
+		modifier = {
+			add = pam_offer_pilgrimage_acceptance_value
+			scope:offer_pilgrimage = yes
+			desc = OFFER_PILGRIMAGE_INTERACTION_OPTION_REASON
+		}
+	}
+
+	ai_min_reply_days = 1
+	ai_max_reply_days = 5
+
+	on_accept = {
+		seek_indulgences_interaction_effect = yes
+		pam_offer_pilgrimage_effect = {
+			ACTOR = scope:actor
+			CLERIC = scope:recipient
+		}
+	}
+}
+
+#Head of faith or head of rite bestows an unheld de jure liege title
+ecclesiastical_bestow_title_interaction = {
+	category = interaction_category_religion
+	icon = icon_clergy_claim_unformed_kingdom
+	notification_text = ECCLESIASTICAL_BESTOW_TITLE_NOTIFICATION
+	interface_priority = 69
+	common_interaction = yes
+	target_type = title
+	target_filter = dejure_titles
+	target_source = recipient
+	show_all_targets = yes
+	popup_on_receive = yes
+
+	desc = ecclesiastical_bestow_title_interaction_desc
+
+	is_available = {
+		has_pam_dlc_trigger = yes
+	}
+	cost = {
+		gold = {
+			value = pam_ecclesiastical_bestow_title_gold_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+		treasury = {
+			value = pam_ecclesiastical_bestow_title_treasury_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+		piety = {
+			value = pam_ecclesiastical_bestow_title_piety_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+	}
+
+	is_shown = {
+		always = no 	# BTWK Disabled
+		scope:puppet_or_actor ?= {
+			government_has_flag = government_is_theocracy
+			is_available_quick = {
+				adult = yes
+				alive = yes
+				imprisoned = no
+				incapable = no
+			}
+		}
+		scope:puppet_or_actor != scope:recipient
+		scope:puppet_or_actor ?= {
+			trigger_if = {
+				limit = { exists = scope:recipient.religious_head_or_challenger }
+				scope:recipient.religious_head_or_challenger = this
+			}
+			trigger_else = {
+				highest_held_title_tier >= tier_duchy
+				government_has_flag = government_is_theocracy
+				scope:recipient.rite.head_of_rite ?= this
+			}
+		}
+		scope:recipient = {
+			is_landed = yes
+			highest_held_title_tier >= tier_county
+			highest_held_title_tier < tier_empire
+			faith ?= scope:puppet_or_actor.faith
+			any_held_title = {
+				de_jure_liege ?= {
+					tier < tier_hegemony
+					NOT = { exists = holder }
+					is_landless_type_title = no
+				}
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		scope:target = {
+			tier > tier_county
+			custom_tooltip = {
+				text = no_bestowing_hegemony_tt
+				tier < tier_hegemony
+			}
+			custom_tooltip = {
+				text = must_be_same_tier_or_one_higher_tt
+				NOR = {
+					tier > scope:recipient.highest_held_title_tier_plus_one
+					tier < scope:recipient.highest_held_title_tier
+				}
+			}
+			custom_tooltip = {
+				text = target_has_holder_tt
+				NOT = { exists = holder }
+			}
+			is_landless_type_title = no
+		}
+		scope:recipient = {
+			any_held_title = {
+				de_jure_liege = scope:target
+			}
+		}
+		trigger_if = {
+			limit = {
+				scope:target ?= {
+					tier = tier_empire
+				}
+				exists = struggle:iberian_struggle
+			}
+			custom_tooltip = {
+				text = bestow_empire_iberian_struggle_tt
+				scope:recipient = {
+					NOT = {
+						any_character_struggle = {
+							is_struggle_type = iberian_struggle
+						}
+					}
+				}
+			}
+		}
+	}
+
+	has_valid_target_showing_failures_only = {
+		exists = scope:target
+		scope:target = {
+			tier >= scope:recipient.highest_held_title_tier
+			tier > tier_county
+			is_landless_type_title = no
+		}
+		scope:recipient = {
+			any_held_title = {
+				de_jure_liege = scope:target
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:puppet_or_actor = {
+			piety_level >= 2
+			trigger_if = {
+				limit = {
+					NOT = {
+						religious_head_or_challenger ?= scope:puppet_or_actor
+					}
+					scope:recipient = {
+						is_independent_ruler = no
+					}
+				}
+        		custom_tooltip = {
+					text = recipient_head_of_rite_is_not_lieges_head_of_rite_tt
+					exists = scope:recipient.liege.rite.head_of_rite
+					rite.head_of_rite ?= scope:recipient.liege.rite.head_of_rite
+				}
+        	}
+        	NOT = {
+        		has_trait = excommunicated
+        	}
+		}
+		scope:recipient = {
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				ruler = yes
+			}
+			NOT = {
+				has_trait = excommunicated
+			}
+			faith = scope:puppet_or_actor.faith
+			highest_held_title_tier >= tier_county
+			custom_tooltip = {
+				text = recipient_can_recieve_titles_normally_tt
+				NOT = {
+					is_vassal_or_below_of = scope:puppet_or_actor
+				}
+			}
+			custom_tooltip = {
+				text = recipient_liege_is_two_tiers_higher_or_none_tt
+				OR = {
+					is_independent_ruler = yes
+					highest_held_title_tier < liege.highest_held_title_tier_minus_one
+				}
+			}
+			trigger_if = {
+				limit = {
+					NOT = {
+						scope:puppet_or_actor.religious_head_or_challenger ?= scope:puppet_or_actor
+					}
+				}
+				rite = scope:puppet_or_actor.rite
+			}
+			trigger_if = {
+				limit = {
+					exists = struggle:iberian_struggle
+					scope:recipient = {
+						any_character_struggle = {
+							this = struggle:iberian_struggle
+						}
+					}
+				}
+				custom_tooltip = {
+					text = bestow_empire_iberian_struggle_tt
+					scope:recipient = {
+						any_held_title = {
+							de_jure_liege ?= {
+								tier < tier_empire
+								tier >= scope:recipient.highest_held_title_tier
+								tier >= tier_county
+								NOT = { exists = holder }
+								is_landless_type_title = no
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = any_available_title_same_tier_or_higher_tt
+				scope:recipient = {
+					any_held_title = {
+						de_jure_liege ?= {
+							tier < tier_hegemony
+							tier >= scope:recipient.highest_held_title_tier
+							NOT = { exists = holder }
+							is_landless_type_title = no
+						}
+					}
+				}
+			}
+
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				gold >= pam_ecclesiastical_bestow_title_gold_cost_value
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				treasury >= pam_ecclesiastical_bestow_title_treasury_cost_value
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				piety >= pam_ecclesiastical_bestow_title_piety_cost_value
+			}
+		}
+	}
+
+	# A title handed over with no strings attached is never refused; the hook demands still go through ai_accept.
+	auto_accept = {
+		custom_description = {
+			text = ecclesiastical_bestow_title_asks_nothing_tt
+			scope:demand_nothing = yes
+		}
+	}
+
+	send_options_exclusive = yes
+	send_option = {
+		is_valid = {
+			scope:actor = {
+				NOT = {
+					has_strong_hook = scope:recipient
+				}
+				trigger_if = {
+					limit = { is_ai = yes }
+					ai_greed >= medium_positive_ai_value
+				}
+			}
+		}
+		flag = gain_strong_hook
+		localization = GAIN_STRONG_HOOK_INTERACTION_OPTION
+	}
+	send_option = {
+		is_valid = {
+			scope:actor = {
+				NOT = {
+					has_hook = scope:recipient
+				}
+				trigger_if = {
+					limit = { is_ai = yes }
+					ai_greed > low_negative_ai_value
+				}
+			}
+		}
+		flag = gain_weak_hook
+		localization = GAIN_WEAK_HOOK_INTERACTION_OPTION
+	}
+	send_option = {
+		flag = demand_nothing
+		localization = DEMAND_NOTHING_INTERACTION_OPTION
+		starts_enabled = { always = yes }
+	}
+	ai_accept = {
+		base = 100
+		
+		modifier = { # Peace of God: a title bestowed by the Church is a title not fought over
+			scope:recipient.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_clergy_peacemaking
+			}
+			add = 40
+			desc = pam_peace_of_god_clergy_peacemaking_accept_reason
+		}
+		modifier = {
+			scope:recipient = {
+				OR = {
+					ai_energy > 0
+					ai_energy < 0
+				}
+			}
+			add = {
+				value = scope:recipient.ai_energy
+				multiply = 0.25
+			} 
+			desc = RECIPIENT_ENERGY_REASON
+		}
+		modifier = {
+			scope:recipient = {
+				OR = {
+					ai_greed > 0
+					ai_greed < 0
+				}
+			}
+			add = {
+				value = scope:recipient.ai_greed
+				multiply = 0.25
+			} 
+			desc = RECIPIENT_GREED_REASON
+		}
+
+		modifier = {
+			scope:recipient = {
+				is_independent_ruler = no
+				OR = {
+					opinion = {
+						target = scope:recipient.liege
+						value >= 25
+					}
+					has_dread_level_towards = {
+						target = scope:recipient.liege
+						level >= 1
+					}
+				}
+				
+			}
+			add = {
+				value = -30
+				if = {
+					limit = {
+						scope:recipient = {
+							opinion = {
+								target = scope:recipient.liege
+								value >= 80
+							}
+						}
+					}
+					add = -50
+				}
+				if = {
+					limit = {
+						scope:recipient = {
+							has_dread_level_towards = {
+								target = scope:recipient.liege
+								level >= 1
+							}
+						}
+					}
+					add = -20
+				}
+				if = {
+					limit = {
+						scope:recipient = {
+							has_dread_level_towards = {
+								target = scope:recipient.liege
+								level >= 2
+							}
+						}
+					}
+					add = -50
+				}
+			}
+			desc = CONCERN_ABOUT_LIEGE_REASON
+		}
+
+		modifier = {
+			scope:recipient ?= {
+				ai_zeal != 0
+			}
+			
+			add = {
+				value = scope:recipient.ai_zeal
+				multiply = 0.5
+			}
+			desc = RECIPIENT_ZEALOUSNESS_REASON
+		}
+		modifier = {
+			add = -100
+			scope:recipient = { has_trait = paranoid }
+			desc = DEMAND_SUBMISSION_RECIPIENT_IS_PARANOID
+		}
+		modifier = {
+			add = -100
+			scope:recipient = { has_any_bad_relationship_with_character_trigger = { CHARACTER = scope:puppet_or_actor } }
+			desc = RECIPIENT_BAD_RELATIONS
+		}
+		modifier = {
+			add = -10
+			exists = scope:target
+			scope:recipient = {
+				any_claim = {
+					tier >= scope:target.tier
+				}
+			}
+			desc = RECIPIENT_POWERFUL_CLAIMS
+		}
+		modifier = {
+			add = 75
+			exists = scope:target
+			scope:recipient = {
+				any_claim = {
+					this = scope:target
+				}
+			}
+			desc = RECIPIENT_CLAIMS_TARGET
+		}
+		modifier = {
+			add = -50
+			scope:recipient = {
+				any_heir_title = {
+					tier >= tier_kingdom
+					place_in_line_of_succession = {
+						target = scope:recipient
+						value = 1
+					}
+				}
+			}
+			desc = RECIPIENT_POWERFUL_HEIR
+		}
+		modifier = {
+			add = 200
+			scope:puppet_or_actor = {
+				has_strong_hook = scope:recipient
+			}
+			desc = HAS_STRONG_HOOK_RECIPIENT_REASON
+		}
+		modifier = {
+			add = 25
+			scope:puppet_or_actor = {
+				NOT = { has_strong_hook = scope:recipient }
+				has_hook = scope:recipient
+			}
+			desc = HAS_HOOK_RECIPIENT_REASON
+		}
+		modifier = {
+			add = 75
+			scope:recipient = {
+				government_has_flag = government_is_theocracy
+			}
+			desc = IS_THEOCRATIC_REASON
+		}
+		modifier = {
+			add = 100
+			scope:recipient = { has_any_good_relationship_with_character_trigger = { CHARACTER = scope:puppet_or_actor } }
+			desc = RECIPIENT_GOOD_RELATIONS
+		}
+		modifier = {
+			add = {
+				value = scope:recipient.intrigue
+				subtract = 12
+				multiply = -10
+			}
+			scope:recipient.intrigue > 12
+			desc = RECIPIENT_RESISTS_HOOK_REASON
+		}
+		modifier = {
+			add = 300
+			puppeteer ?= scope:puppet_or_actor
+			desc = IS_YOUR_PUPPET_REASON
+		}
+		modifier = {
+			add = {
+				value = 50
+				if = {
+					limit = {
+						scope:recipient.house.house_head = scope:puppet_or_actor
+					}
+					add = 50
+				}
+			}
+			exists = scope:puppet_or_actor.house
+			scope:recipient = {
+				house ?= scope:puppet_or_actor.house
+			}
+			desc = OF_YOUR_HOUSE_REASON
+		}
+		modifier = {
+			add = 20
+			exists = scope:puppet_or_actor.dynasty
+			scope:recipient = {
+				dynasty ?= scope:puppet_or_actor.dynasty
+			}
+			desc = OF_YOUR_DYNASTY_REASON
+		}
+		modifier = {
+			add = 40
+			scope:recipient = {
+				any_sub_realm_county = {
+					any_neighboring_county = {
+						holder.top_liege ?= {
+							NOT = {
+								faith = scope:puppet_or_actor.faith
+							}
+							scope:puppet_or_actor.rite = {
+								rite_hostility_level = {
+									target = prev.rite
+									value >= faith_hostile_level
+								}
+							}
+						}
+					}
+				}
+			}
+			desc = NEIGHBORS_HOSTILE_HEATHENS_REASON
+		}
+		opinion_modifier = {
+			opinion_target = scope:puppet_or_actor
+			who = scope:recipient
+			multiplier = 1
+			desc = AI_OPINION_REASON
+		}
+		modifier = {
+			add = -100
+			scope:gain_weak_hook ?= yes
+			desc = GAIN_WEAK_HOOK_INTERACTION_OPTION_REASON
+		}
+		modifier = {
+			add = -250
+			scope:gain_strong_hook ?= yes
+			desc = GAIN_STRONG_HOOK_INTERACTION_OPTION_REASON
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				if = {
+					limit = { pam_ecclesiastical_bestow_title_treasury_cost_value > 0 }
+					remove_treasury = pam_ecclesiastical_bestow_title_treasury_cost_value
+				}
+				if = {
+					limit = { pam_ecclesiastical_bestow_title_gold_cost_value > 0 }
+					remove_short_term_gold = {
+						value = pam_ecclesiastical_bestow_title_gold_cost_value
+					}
+				}
+				if = {
+					limit = { pam_ecclesiastical_bestow_title_piety_cost_value > 0 }
+					add_piety = {
+						value = {
+							add = pam_ecclesiastical_bestow_title_piety_cost_value
+							max = piety
+							multiply = -1
+						}
+					}
+				}
+			}
+		}
+		scope:puppet_or_actor = {
+			save_scope_as = religious_authority
+		}
+		#Show opinion losses to relevant characters
+		if = {
+			limit = {
+				scope:actor = {
+					is_ai = no
+				}
+			}
+			if = {
+				limit = {
+					scope:recipient = {
+						is_independent_ruler = no
+						liege = {
+							NOT = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+				scope:recipient.liege = {
+					add_opinion = {
+						target = scope:puppet_or_actor
+						modifier = circumvented_my_authority_opinion
+						opinion = {
+							value = -25
+							if = {
+								limit = {
+									exists = scope:target
+									scope:target.tier = scope:recipient.liege.highest_held_title_tier_minus_one
+								}
+								add = -25
+							}
+						}
+					}
+				}
+			}
+		}
+		else = {
+			hidden_effect = {
+				if = {
+					limit = {
+						scope:recipient = {
+							liege = {
+								NOT = {
+									this = scope:puppet_or_actor
+								}
+							}
+						}
+					}
+					scope:recipient.liege = {
+						add_opinion = {
+							target = scope:puppet_or_actor
+							modifier = circumvented_my_authority_opinion
+							opinion = {
+								value = -25
+								if = {
+									limit = {
+										exists = scope:target
+										scope:target.tier = scope:recipient.liege.highest_held_title_tier_minus_one
+									}
+									add = -25
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			if = {
+				limit = {
+					scope:recipient = {
+						is_independent_ruler = no
+						liege = {
+							NOT = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+				scope:recipient.liege = {
+					add_opinion = {
+						target = scope:recipient
+						modifier = circumvented_my_authority_opinion
+						opinion = {
+							value = -15
+							if = {
+								limit = {
+									exists = scope:target
+									scope:target.tier = scope:recipient.liege.highest_held_title_tier_minus_one
+								}
+								add = -15
+							}
+						}
+					}
+				}
+			}
+		}
+		else = {
+			hidden_effect = {
+				if = {
+					limit = {
+						scope:recipient = {
+							is_independent_ruler = no
+							liege = {
+								NOT = {
+									this = scope:puppet_or_actor
+								}
+							}
+						}
+					}
+					scope:recipient.liege = {
+						add_opinion = {
+							target = scope:recipient
+							modifier = circumvented_my_authority_opinion
+							opinion = {
+								value = -10
+								if = {
+									limit = {
+										exists = scope:target
+										scope:target.tier = scope:recipient.liege.highest_held_title_tier_minus_one
+									}
+									add = -10
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		scope:recipient = {
+			show_as_tooltip = { bestow_title_effect = yes }
+		}
+		scope:puppet_or_actor = {
+			trigger_event = pam_interactions_events.0091
+		}
+	}
+	on_decline = {
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+				scope:actor = { is_ai = yes }
+			}
+			scope:puppet_or_actor = {
+				if = {
+					limit = {
+						exists = scope:target
+					}
+					add_opinion = {
+						modifier = refusal_opinion
+						target = scope:recipient
+						opinion = {
+							value = -25
+							multiply = {
+								value = scope:target.tier
+								subtract = 2
+							}
+						}
+					}
+				}
+				else = {
+					add_opinion = {
+						modifier = refusal_opinion
+						target = scope:recipient
+						opinion = -50
+					}
+				}
+			}
+			if = {
+				limit = {
+					scope:recipient = {
+						is_independent_ruler = no
+						liege = {
+							NOT = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+				scope:recipient.liege = {
+					add_opinion = {
+						target = scope:recipient
+						modifier = loyalty_opinion
+						opinion = {
+							value = 10
+							if = {
+								limit = {
+									exists = scope:target
+									scope:target.tier = scope:recipient.liege.highest_held_title_tier_minus_one
+								}
+								add = 10
+							}
+						}
+					}
+				}
+			}
+		}
+		scope:actor = {
+			send_interface_toast = {
+				type = event_toast_effect_bad
+				title = ecclesiastic_title_refusal_toast_tt
+				left_icon = scope:recipient
+			}
+		}
+	}
+
+	ai_targets = {
+		ai_recipients = neighboring_rulers_including_tributary_borders
+		ai_recipients = dynasty
+		ai_recipients = realm_characters
+		ai_recipients = subordinates
+		ai_recipients = rulers_in_clerical_region
+		max = 5
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 60
+		duchy = 120
+		kingdom = 240
+		empire = 0
+		hegemony = 0
+	}
+	ai_will_do = {
+		base = 20
+
+		modifier = { # Peace of God: the Church would rather settle a title than watch it be fought over
+			add = 25
+			scope:puppet_or_actor.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_clergy_peacemaking
+			}
+		}
+
+		modifier = {
+			add = 10
+			scope:recipient = {
+				government_has_flag = government_is_theocracy
+			}
+		}
+
+		modifier = {
+			add = 100
+			puppeteer ?= scope:puppet_or_actor
+		}
+
+		modifier = {
+			exists = scope:puppet_or_actor.house
+			scope:recipient = {
+				house ?= scope:puppet_or_actor.house
+			}
+			add = 10
+		}
+		modifier = {
+			add = 5
+			exists = scope:puppet_or_actor.dynasty
+			scope:recipient = {
+				dynasty ?= scope:puppet_or_actor.dynasty
+			}
+		}
+		modifier = {
+			add = 20
+			scope:recipient = {
+				any_sub_realm_county = {
+					any_neighboring_county = {
+						holder.top_liege ?= {
+							NOT = {
+								faith = scope:puppet_or_actor.faith
+							}
+							scope:puppet_or_actor.rite = {
+								rite_hostility_level = {
+									target = prev.rite
+									value >= faith_hostile_level
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			add = {
+				value = scope:recipient.piety_level
+				multiply = 10
+			}
+		}
+		opinion_modifier = {
+			opinion_target = scope:recipient
+			who = scope:actor
+			multiplier = 0.5
+		}
+		modifier = {
+			scope:recipient = {
+				is_independent_ruler = no
+			}
+			scope:puppet_or_actor = {
+				opinion = {
+					target = scope:recipient.liege
+					value >= 30
+				}
+			}
+			add = -50
+		}
+		modifier = {
+			scope:recipient = {
+				is_independent_ruler = no
+			}
+			scope:puppet_or_actor = {
+				opinion = {
+					target = scope:recipient.liege
+					value <= -50
+				}
+			}
+			add = 10
+		}
+		modifier = {
+			scope:recipient = {
+				is_independent_ruler = no
+			}
+			scope:puppet_or_actor = {
+				opinion = {
+					target = scope:recipient.liege
+					value <= -100
+				}
+			}
+			add = 25
+		}
+		modifier = {
+			add = -80
+			exists = scope:target
+			scope:target.tier >= tier_empire
+			scope:recipient = {
+				sub_realm_size <= 10
+			}
+		}
+		modifier = {
+			add = -50
+			exists = scope:target
+			scope:target.tier >= tier_empire
+			scope:recipient = {
+				sub_realm_size <= 20
+				sub_realm_size > 10
+			}
+		}
+		modifier = {
+			add = -20
+			exists = scope:target
+			scope:target.tier >= tier_empire
+			scope:recipient = {
+				sub_realm_size <= 30
+				sub_realm_size > 20
+			}
+		}
+		modifier = {
+			add = -10
+			exists = scope:target
+			scope:target.tier >= tier_empire
+			scope:recipient = {
+				sub_realm_size <= 40
+				sub_realm_size > 30
+			}
+		}
+		modifier = {
+			add = -5
+			exists = scope:target
+			scope:target.tier >= tier_empire
+			scope:recipient = {
+				sub_realm_size <= 50
+				sub_realm_size > 40
+			}
+		}
+		modifier = {
+			add = -80
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			scope:recipient = {
+				sub_realm_size <= 1
+			}
+		}
+		modifier = {
+			add = -50
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			scope:recipient = {
+				sub_realm_size <= 3
+				sub_realm_size > 1
+			}
+		}
+		modifier = {
+			add = -20
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			scope:recipient = {
+				sub_realm_size <= 6
+				sub_realm_size > 3
+			}
+		}
+		modifier = {
+			add = -10
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			scope:recipient = {
+				sub_realm_size <= 9
+				sub_realm_size > 6
+			}
+		}
+		modifier = {
+			add = -5
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			scope:recipient = {
+				sub_realm_size <= 12
+				sub_realm_size > 9
+			}
+		}
+
+		modifier = {
+			add = 25
+			scope:puppet_or_actor = { has_any_good_relationship_with_character_trigger = { CHARACTER = scope:recipient } }
+		}
+		modifier = {
+			save_temporary_scope_as = cleric
+			add = {
+				value = scope:recipient.clerical_hesitation_claim_interaction_value
+				multiply = -5
+			}
+		}
+	}
+}
+
+#Secular rulers petition the clergy to proclaim an unheld de jure title above their own and crown them with it
+request_unformed_title_interaction = {
+	category = interaction_category_religion
+	icon = icon_clergy_claim_unformed_kingdom
+
+	interface_priority = 40
+	common_interaction = no
+	target_type = title
+	target_filter = dejure_titles
+	target_source = actor
+	show_all_targets = yes
+	notification_text = REQUEST_UNFORMED_TITLE_NOTIFICATION
+	greeting = positive
+
+	use_diplomatic_range = yes
+	ai_min_reply_days = 1
+	ai_max_reply_days = 5
+	popup_on_receive = yes
+
+	desc = request_unformed_title_interaction_desc
+
+	cooldown_against_recipient = { years = 10 }
+
+	is_available = {
+		has_pam_dlc_trigger = yes
+	}
+
+	is_shown = {
+		always = no 	# BTWK Disabled
+		scope:puppet_or_actor ?= {
+			highest_held_title_tier >= tier_county
+			is_landed = yes
+			pam_clergy_interactions_faith_trigger = yes
+			NOT = { government_has_flag = government_is_theocracy }
+			highest_held_title_tier < tier_empire
+			is_ruler = yes
+		}
+		scope:puppet_or_actor != scope:recipient
+		scope:puppet_or_actor ?= {
+			NOT = { is_at_war_with = scope:recipient }
+			any_held_title = {
+				de_jure_liege ?= {
+					NOT = { exists = holder }
+					tier < tier_hegemony
+					is_landless_type_title = no
+				}
+			}
+		}
+		scope:recipient = {
+			pam_request_legitimacy_priest_trigger = { CHARACTER = scope:puppet_or_actor }
+			NOT = { this = scope:actor }
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:puppet_or_actor = {
+			is_at_war = no
+			clergy_interaction_generic_piety_level_or_puppet_req_trigger = yes
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+			}
+			is_landed = yes
+			NOT = {
+				has_trait = excommunicated
+			}
+			primary_title = {
+				is_landless_type_title = no
+			}
+			custom_tooltip = {
+				text = request_unformed_title_not_clerics_vassal_tt
+				NOT = {
+					is_vassal_or_below_of = scope:recipient
+				}
+			}
+			custom_tooltip = {
+				text = request_unformed_title_liege_two_tiers_higher_tt
+				OR = {
+					is_independent_ruler = yes
+					highest_held_title_tier < liege.highest_held_title_tier_minus_one
+				}
+			}
+			NOT = {
+				has_character_modifier = promised_pilgrimage_to_clergy_modifier
+			}
+			custom_tooltip = {
+				text = valid_request_unformed_title_tt
+				any_held_title = {
+					de_jure_liege ?= {
+						target_valid_request_unformed_title_trigger = yes
+					}
+				}
+			}
+		}
+		scope:recipient = {
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+				ruler = yes
+				adult = yes
+			}
+			NOT = {
+				has_trait = excommunicated
+			}
+			piety_level >= 2
+			highest_held_title_tier >= tier_duchy
+			faith = scope:puppet_or_actor.faith
+			trigger_if = {
+				limit = {
+					NOT = {
+						scope:puppet_or_actor.religious_head_or_challenger ?= this
+					}
+				}
+				rite = scope:puppet_or_actor.rite
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				piety >= pam_request_unformed_title_piety_cost_value
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		scope:target = {
+			target_valid_request_unformed_title_trigger = yes
+		}
+		trigger_if = {
+			limit = {
+				scope:target ?= {
+					tier = tier_empire
+				}
+				exists = struggle:iberian_struggle
+			}
+			custom_tooltip = {
+				text = request_unformed_title_empire_iberian_struggle_tt
+				scope:puppet_or_actor = {
+					NOT = {
+						any_character_struggle = {
+							is_struggle_type = iberian_struggle
+						}
+					}
+				}
+			}
+		}
+	}
+
+	has_valid_target_showing_failures_only = {
+		exists = scope:target
+		scope:target = {
+			is_landless_type_title = no
+			is_head_of_faith = no
+			tier > tier_county
+			tier >= scope:puppet_or_actor.highest_held_title_tier
+			NOT = { exists = holder }
+			any_direct_de_jure_vassal_title = {
+				holder ?= scope:puppet_or_actor
+			}
+		}
+	}
+
+	cost = {
+		piety = {
+			value = pam_request_unformed_title_piety_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+	}
+
+	auto_accept = {
+		custom_description = {
+			text = "spending_hook"
+			subject = scope:puppet_or_actor
+			object = scope:recipient
+			scope:use_hook = yes
+			scope:puppet_or_actor = { has_strong_hook = scope:recipient }
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				if = {
+					limit = { pam_request_unformed_title_piety_cost_value > 0 }
+					add_piety = {
+						value = {
+							add = pam_request_unformed_title_piety_cost_value
+							max = piety
+							multiply = -1
+						}
+					}
+				}
+			}
+		}
+		scope:recipient = {
+			save_scope_as = cleric
+		}
+		#Crowning a vassal over their liege's head is an affront to the liege
+		if = {
+			limit = {
+				scope:puppet_or_actor = {
+					is_independent_ruler = no
+					liege = {
+						NOT = {
+							this = scope:recipient
+						}
+					}
+				}
+			}
+			scope:puppet_or_actor.liege = {
+				add_opinion = {
+					target = scope:recipient
+					modifier = circumvented_my_authority_opinion
+					opinion = -25
+				}
+				add_opinion = {
+					target = scope:puppet_or_actor
+					modifier = circumvented_my_authority_opinion
+					opinion = {
+						value = -15
+						if = {
+							limit = {
+								exists = scope:target
+								scope:target.tier = scope:puppet_or_actor.liege.highest_held_title_tier_minus_one
+							}
+							add = -15
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:puppet_or_actor = {
+				add_opinion = {
+					target = scope:recipient
+					modifier = grateful_opinion
+					opinion = 30
+				}
+			}
+		}
+		else = {
+			hidden_effect = {
+				scope:puppet_or_actor = {
+					add_opinion = {
+						target = scope:recipient
+						modifier = grateful_opinion
+						opinion = 50
+					}
+				}
+			}
+		}
+		scope:puppet_or_actor = {
+			show_as_tooltip = { request_unformed_title_effect = yes }
+			trigger_event = pam_interactions_events.0097
+		}
+	}
+
+	on_decline = {
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:puppet_or_actor = {
+				add_opinion = {
+					target = scope:recipient
+					modifier = refusal_opinion
+					opinion = -50
+				}
+			}
+		}
+		scope:puppet_or_actor = {
+			send_interface_toast = {
+				type = event_toast_effect_bad
+				title = request_unformed_title_refusal_toast_tt
+				left_icon = scope:recipient
+			}
+		}
+		if = {
+			limit = {
+				scope:is_puppet_action ?= yes
+				scope:actor != scope:recipient
+			}
+			scope:actor = {
+				send_interface_toast = {
+					type = event_toast_effect_bad
+					title = request_unformed_title_refusal_toast_tt_puppeteer
+					left_icon = scope:puppet_or_actor
+					right_icon = scope:recipient
+				}
+			}
+		}
+	}
+
+	send_options_exclusive = no
+	send_option = {
+		is_valid = {
+			scope:puppet_or_actor = {
+				has_usable_hook = scope:recipient
+			}
+			trigger_if = {
+				limit = {
+					scope:recipient = {
+						is_ai = no
+					}
+				}
+				scope:actor = { is_ai = no }
+			}
+		}
+		flag = use_hook
+		localization = EDUCATION_HOOK
+	}
+	send_option = {
+		is_valid = {
+			scope:puppet_or_actor = {
+				short_term_gold >= major_gold_value
+			}
+		}
+		flag = donate_faith
+		localization = DONATE_TO_THE_FAITH_INTERACTION_OPTION
+	}
+	send_option = {
+		is_valid = {
+			NOT = {
+				scope:recipient = {
+					has_usable_hook = scope:puppet_or_actor
+				}
+			}
+			scope:recipient = {
+				can_add_hook = {
+					target = scope:puppet_or_actor
+					type = favor_hook
+				}
+			}
+		}
+		flag = offer_hook
+		localization = OFFER_HOOK_INTERACTION_OPTION
+	}
+	#Swear to wrest the rest of the realm from the heathens holding it. Hidden below kingdom tier, since the free casus belli only covers kingdom-tier holy wars.
+	send_option = {
+		is_shown = {
+			scope:target ?= {
+				tier = tier_kingdom
+			}
+		}
+		is_valid = {
+			scope:puppet_or_actor = {
+				faith = {
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+				#A personal vow of pacifism bars offensive war outright, and bonus_major_holy_war grants no exemption from it
+				NOT = { has_personal_tenet_flag = tenet_pacifism_no_offensive_war }
+			}
+			custom_tooltip = {
+				text = valid_request_unformed_title_holy_war_option_tt
+				scope:target ?= {
+					any_de_jure_county = {
+						percent >= 0.25
+						holder ?= {
+							save_temporary_scope_as = heathen_holder
+							rite = {
+								is_hostile_enough_for_holy_war_trigger = { RITE = scope:puppet_or_actor.rite }
+							}
+							#A holder you cannot lawfully attack is no use as a war target, vassals and fellow subjects included
+							scope:puppet_or_actor = {
+								allows_declaring_war_against_target_trigger = { TARGET = scope:heathen_holder }
+							}
+						}
+					}
+				}
+			}
+		}
+		flag = promise_holy_war
+		localization = PROMISE_HOLY_WAR_INTERACTION_OPTION
+	}
+
+	send_option = {
+		is_shown = {
+			pam_offer_pilgrimage_option_shown_trigger = { ACTOR = scope:puppet_or_actor }
+		}
+		is_valid = {
+			pam_offer_pilgrimage_option_valid_trigger = { ACTOR = scope:puppet_or_actor }
+		}
+		flag = offer_pilgrimage
+		localization = OFFER_PILGRIMAGE_INTERACTION_OPTION
+	}
+
+	ai_accept = {
+		base = -100
+
+		modifier = {
+			desc = pam_sf_ear_of_clergy_accept_reason
+			scope:puppet_or_actor = { has_character_modifier = pam_sf_ear_of_clergy_modifier }
+			add = 25
+		}
+		modifier = {
+			desc = SCHEME_WEAK_HOOK_USED
+			scope:use_hook = yes
+			scope:puppet_or_actor = { NOT = { has_strong_hook = scope:recipient } }
+			add = 200
+		}
+		modifier = {
+			desc = OFFER_HOOK_INTERACTION_OPTION_REASON
+			scope:offer_hook = yes
+			add = {
+				value = scope:puppet_or_actor.highest_held_title_tier
+				multiply = 20
+			}
+		}
+		modifier = {
+			desc = DONATE_FAITH_INTERACTION_OPTION_REASON
+			scope:donate_faith = yes
+			add = 50
+		}
+		modifier = {
+			desc = PROMISE_HOLY_WAR_INTERACTION_OPTION_REASON
+			scope:promise_holy_war = yes
+			add = 75
+		}
+		modifier = {
+			add = pam_offer_pilgrimage_acceptance_value
+			scope:offer_pilgrimage = yes
+			desc = OFFER_PILGRIMAGE_INTERACTION_OPTION_REASON
+		}
+
+		general_secular_to_ecclesiastic_acceptance_modifier = yes
+
+		#Asking to be raised above your own rank is the real favour; a crown costs more than a coronet
+		modifier = {
+			desc = request_unformed_title_tier_above_own_reason
+			exists = scope:target
+			scope:target = {
+				tier >= tier_kingdom
+				tier > scope:puppet_or_actor.highest_held_title_tier
+			}
+			add = {
+				value = scope:target.tier
+				subtract = 3
+				multiply = -50
+			}
+		}
+		#A ruler who already rules the land is simply asking for the crown that goes with it. These bands stack.
+		modifier = {
+			desc = request_unformed_title_partly_controls_target_reason
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					percent >= 0.33
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+			add = 40
+		}
+		modifier = {
+			desc = request_unformed_title_mostly_controls_target_reason
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					percent >= 0.5
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+			add = 40
+		}
+		modifier = {
+			desc = request_unformed_title_controls_target_reason
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					count = all
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+			add = 70
+		}
+		#The clergy will not crown a ruler over land that is not yet theirs in spirit
+		modifier = {
+			desc = request_unformed_title_faithless_de_jure_reason
+			exists = scope:target
+			scope:target = {
+				NOT = {
+					any_de_jure_county = {
+						percent >= 0.75
+						faith = scope:puppet_or_actor.faith
+					}
+				}
+			}
+			add = -50
+		}
+		modifier = {
+			desc = LOW_LEGITIMACY_REASON
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level <= 1
+			}
+			add = -150
+		}
+		modifier = {
+			desc = LOW_LEGITIMACY_REASON
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 2
+			}
+			add = -25
+		}
+		modifier = {
+			desc = HIGH_LEGITIMACY_REASON
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level >= 4
+			}
+			add = {
+				value = scope:puppet_or_actor.legitimacy_level
+				subtract = 3
+				multiply = 50
+			}
+		}
+	}
+
+	ai_targets = {
+		ai_recipients = head_of_faith
+		ai_recipients = realm_priest_superior
+		ai_recipients = realm_priest_top_superior
+		max = 3
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 60
+		kingdom = 90
+		empire = 0
+		hegemony = 0
+	}
+
+	ai_will_do = {
+		base = 20
+		modifier = {
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					count = all
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+			add = 50
+		}
+		modifier = {
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					percent >= 0.5
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+			add = 25
+		}
+		modifier = {
+			OR = {
+				ai_greed < 0
+				ai_energy < 0
+				trigger_if = {
+					limit = {
+						has_legitimacy = yes
+					}
+					legitimacy_level < 2
+				}
+			}
+			factor = 0
+		}
+	}
+}
+
+#Secular rulers petition the clergy to recognize a neighboring title as de jure part of their primary realm
+ecclesiastical_de_jure_shifting_interaction = {
+	category = interaction_category_religion
+	icon = ecclesiastical_de_jure_shifting_interaction
+
+	interface_priority = 39
+	common_interaction = yes
+	target_type = title
+	target_filter = dejure_titles
+	target_source = actor
+	show_all_targets = yes
+	notification_text = ecclesiastical_de_jure_shifting_interaction_notification
+	greeting = positive
+
+	use_diplomatic_range = yes
+	ai_min_reply_days = 1
+	ai_max_reply_days = 5
+	popup_on_receive = yes
+
+	desc = ecclesiastical_de_jure_shifting_interaction_desc
+
+	cooldown_against_recipient = { years = 3 }
+
+	is_available = {
+		has_pam_dlc_trigger = yes
+	}
+
+	is_shown = {
+		always = no		# BTWK Disabled
+		scope:puppet_or_actor ?= {
+			highest_held_title_tier >= tier_kingdom
+			is_landed = yes
+			pam_clergy_interactions_faith_trigger = yes
+			is_ruler = yes
+		}
+		scope:puppet_or_actor ?= {
+			NOR = {
+				this = scope:recipient
+				is_at_war_with = scope:recipient
+			}
+			any_sub_realm_title = {
+				any_this_title_or_de_jure_above = {
+					target_valid_ecclesiastical_de_jure_shifting_trigger = yes
+				}
+			}
+		}
+		scope:recipient = {
+			pam_request_legitimacy_priest_trigger = { CHARACTER = scope:puppet_or_actor }
+			NOT = { this = scope:actor }
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:puppet_or_actor = {
+			is_at_war = no
+			clergy_interaction_generic_piety_level_or_puppet_req_trigger = yes
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+			}
+			is_landed = yes
+			NOT = {
+				has_trait = excommunicated
+			}
+			primary_title = {
+				is_landless_type_title = no
+			}
+			custom_tooltip = {
+				text = valid_ecclesiastical_de_jure_shifting_title_tt
+				any_sub_realm_title = {
+						any_this_title_or_de_jure_above = {
+						target_valid_ecclesiastical_de_jure_shifting_trigger = yes
+						any_de_jure_county = {
+							percent >= 0.5
+							faith = scope:puppet_or_actor.faith
+						}
+						any_de_jure_county = {
+							percent >= 0.5
+							holder = { faith = scope:puppet_or_actor.faith }
+						}
+					}
+				}
+			}
+			NOT = {
+				has_character_modifier = promised_pilgrimage_to_clergy_modifier
+			}
+		}
+		scope:recipient = {
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+				ruler = yes
+				adult = yes
+			}
+			NOT = {
+				has_trait = excommunicated
+			}
+			highest_held_title_tier >= tier_duchy
+
+			custom_tooltip = {
+				text = relevant_theocrat_tt
+				OR = {
+					scope:puppet_or_actor.religious_head_or_challenger ?= scope:recipient
+					scope:puppet_or_actor = {
+						any_liege_or_above = {
+							this = scope:recipient
+						}
+					}
+					any_held_title = {
+						has_clerical_region = yes
+						any_county_in_clerical_region = {
+							OR = {
+								this = scope:puppet_or_actor.primary_title
+								scope:puppet_or_actor.primary_title = {
+									is_de_jure_liege_or_above_target = prev
+								}
+							}
+						}
+					}
+					AND = {
+						is_landed = yes
+						any_held_title = {
+							OR = {
+								#they have a title beneath actor's titles
+								any_this_title_or_de_jure_above = {
+									holder ?= scope:puppet_or_actor
+								}
+								#they have a title that presides over actor's titles
+								any_in_de_jure_hierarchy = {
+									holder ?= scope:puppet_or_actor
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				piety >= pam_ecclesiastical_de_jure_shifting_piety_cost_value
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				prestige >= pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		scope:target = {
+			target_valid_ecclesiastical_de_jure_shifting_trigger = yes
+
+			#At least half of its counties belong to your faith
+			custom_tooltip = {
+				text = half_target_de_jure_counties_belong_to_faith_tt
+				any_de_jure_county = {
+					percent >= 0.5
+					faith = scope:puppet_or_actor.faith
+				}
+			}
+			
+			#At least half of its counties' rulers are of your faith
+			custom_tooltip = {
+				text = half_target_de_jure_holders_belong_to_faith_tt
+				any_de_jure_county = {
+					percent >= 0.5
+					holder = { faith = scope:puppet_or_actor.faith }
+				}
+			}
+		}
+	}
+
+	has_valid_target_showing_failures_only = {
+		exists = scope:target
+		scope:target = {
+			is_landless_type_title = no
+			is_head_of_faith = no
+			tier = scope:puppet_or_actor.highest_held_title_tier_minus_one
+			NOT = {
+				de_jure_liege = scope:puppet_or_actor.primary_title
+			}
+			custom_tooltip = {
+				text = petition_de_jure_integration_target_is_connected_tt
+				any_de_jure_county = {
+					holder ?= {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+				}
+			}
+		}
+	}
+
+	cost = {
+		piety = {
+			value = pam_ecclesiastical_de_jure_shifting_piety_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+		prestige = {
+			value = pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+	}
+
+	auto_accept = {
+		custom_description = {
+			text = "spending_hook"
+			subject = scope:puppet_or_actor
+			object = scope:recipient
+			scope:use_hook = yes
+			scope:puppet_or_actor = { has_strong_hook = scope:recipient }
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				if = {
+					limit = { pam_ecclesiastical_de_jure_shifting_piety_cost_value > 0 }
+					add_piety = {
+						value = {
+							add = pam_ecclesiastical_de_jure_shifting_piety_cost_value
+							max = piety
+							multiply = -1
+						}
+					}
+				}
+				if = {
+					limit = { pam_ecclesiastical_de_jure_shifting_prestige_cost_value > 0 }
+					add_prestige = {
+						value = {
+							add = pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+							max = prestige
+							multiply = -1
+						}
+					}
+				}
+			}
+		}
+		scope:target ?= {
+			de_jure_liege = {
+				save_scope_as = former_de_jure_liege
+			}
+		}
+		scope:puppet_or_actor = {
+			save_scope_as = de_jure_master
+			faith = { save_scope_as = de_jure_faith }
+		}
+		scope:recipient = {
+			save_scope_as = cleric
+		}	
+		if = {
+			limit = {
+				scope:target.de_jure_liege.holder?= {
+					NOT = {
+						this = scope:puppet_or_actor
+					}
+				}
+			}
+			scope:target.de_jure_liege.holder = {
+				add_opinion = {
+					target = scope:puppet_or_actor
+					modifier = stole_de_jure_lands_opinion
+					opinion = -70
+				}
+			}
+			scope:recipient = {
+				if = {
+					limit = {
+						is_ai = no
+					}
+					scope:target.de_jure_liege.holder = {
+						add_opinion = {
+							target = scope:puppet_or_actor
+							modifier = gave_away_de_jure_lands_opinion
+							opinion = -50
+						}
+					}
+				}
+				else = {
+					hidden_effect = {
+						scope:target.de_jure_liege.holder = {
+							add_opinion = {
+								target = scope:puppet_or_actor
+								modifier = gave_away_de_jure_lands_opinion
+								opinion = -50
+							}
+						}
+					}
+				}
+			}
+		}
+		scope:recipient = {
+			if = {
+				limit = {
+					is_ai = no
+				}
+				scope:puppet_or_actor = {
+					add_opinion = {
+						target = scope:recipient
+						modifier = grateful_opinion
+						opinion = 30
+					}
+				}
+			}
+			else = {
+				hidden_effect = {
+					scope:puppet_or_actor = {
+						add_opinion = {
+							target = scope:recipient
+							modifier = grateful_opinion
+							opinion = 50
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					is_ai = no
+				}
+				custom_tooltip = every_subordinate_in_target_de_jure_liege_opinion_loss
+				custom_tooltip = every_subordinate_in_actor_title_opinion_gain
+			}
+			hidden_effect = {
+				#Bishops based in different dioceses have feelings
+				every_subordinate = {
+					limit = {
+						capital_province.county ?= {
+							any_this_title_or_de_jure_above = {
+								this = scope:former_de_jure_liege
+							}
+						}
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					add_opinion = {
+						target = scope:recipient
+						modifier = ruled_against_my_diocese_opinion
+						opinion = -25
+					}
+				}
+				every_subordinate = {
+					limit = {
+						capital_province.county ?= {
+							any_this_title_or_de_jure_above = {
+								this = scope:puppet_or_actor.primary_title
+							}
+						}
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					add_opinion = {
+						target = scope:recipient
+						modifier = ruled_in_favor_of_my_diocese_opinion
+						opinion = 25
+					}
+				}
+			}
+		}
+		scope:puppet_or_actor = {
+			show_as_tooltip = {
+				ecclesiastical_de_jure_shifting_effect = {
+					DE_JURE_MASTER = scope:puppet_or_actor
+					CLERIC = scope:recipient
+				}
+			}
+			trigger_event = pam_interactions_events.0094
+		}
+	}
+
+	on_decline = {
+		scope:target ?= {
+			de_jure_liege = {
+				save_scope_as = former_de_jure_liege
+			}
+		}
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:puppet_or_actor = {
+				add_opinion = {
+					modifier = refusal_opinion
+					target = scope:recipient
+					opinion = -50
+				}
+			}
+			if = {
+				limit = {
+					scope:target.de_jure_liege.holder ?= {
+						NOT = {
+							this = scope:puppet_or_actor
+						}
+					}
+				}
+				scope:target.de_jure_liege.holder ?= {
+					add_opinion = {
+						modifier = respected_de_jure_opinion
+						target = scope:recipient
+						opinion = 50
+					}
+				}
+			}
+
+			scope:recipient = {
+				if = {
+					limit = {
+						is_ai = no
+					}
+					custom_tooltip = every_subordinate_in_target_de_jure_liege_opinion_gain
+					custom_tooltip = every_subordinate_in_actor_title_opinion_loss
+				}
+				hidden_effect = {
+					#Bishops based in different dioceses have feelings
+					every_subordinate = {
+						limit = {
+							capital_province.county ?= {
+								any_this_title_or_de_jure_above = {
+									this = scope:former_de_jure_liege
+								}
+							}
+							NOR = {
+								this = scope:puppet_or_actor
+								this = scope:recipient
+							}
+						}
+						add_opinion = {
+							target = scope:recipient
+							modifier = ruled_in_favor_of_my_diocese_opinion
+							opinion = 25
+						}
+					}
+					every_subordinate = {
+						limit = {
+							capital_province.county ?= {
+								any_this_title_or_de_jure_above = {
+									this = scope:puppet_or_actor.primary_title
+								}
+							}
+							NOR = {
+								this = scope:puppet_or_actor
+								this = scope:recipient
+							}
+						}
+						add_opinion = {
+							target = scope:recipient
+							modifier = ruled_against_my_diocese_opinion
+							opinion = -25
+						}
+					}
+				}
+			}
+		}
+		
+		scope:puppet_or_actor = {
+			send_interface_toast = {
+				type = event_toast_effect_bad
+				title = ecclesiastic_de_jure_refusal_toast_tt
+				left_icon = scope:recipient
+			}
+		}
+		if = {
+			limit = {
+				scope:is_puppet_action ?= yes
+				scope:actor != scope:recipient
+			}
+			scope:actor = {
+				send_interface_toast = {
+					type = event_toast_effect_bad
+					title = ecclesiastic_de_jure_refusal_toast_tt_puppeteer
+					left_icon = scope:puppet_or_actor
+					right_icon = scope:recipient
+				}
+			}
+		}
+	}
+
+	send_options_exclusive = no
+	send_option = {
+		is_valid = {
+			scope:puppet_or_actor = {
+				has_usable_hook = scope:recipient
+			}
+			trigger_if = {
+				limit = {
+					scope:recipient = {
+						is_ai = no
+					}
+				}
+				scope:actor = { is_ai = no }
+			}
+		}
+		flag = use_hook
+		localization = EDUCATION_HOOK
+	}
+	send_option = {
+		is_valid = {
+			scope:puppet_or_actor = {
+				short_term_gold >= major_gold_value
+			}
+		}
+		flag = donate_faith
+		localization = DONATE_TO_THE_FAITH_INTERACTION_OPTION
+	}
+	send_option = {
+		is_valid = {
+			NOT = {
+				scope:recipient = {
+					has_usable_hook = scope:puppet_or_actor
+				}
+			}
+			scope:recipient = {
+				can_add_hook = {
+					target = scope:puppet_or_actor
+					type = favor_hook
+				}
+			}
+		}
+		flag = offer_hook
+		localization = OFFER_HOOK_INTERACTION_OPTION
+	}
+	#Promise to convert every ruler of the region
+	send_option = {
+		is_valid = {
+			custom_tooltip = {
+				text = valid_domination_interaction_option_tt
+				scope:target ?= {
+					any_de_jure_county = {
+						holder ?= {
+							OR = {
+								faith = {
+									NOT = {
+										this = scope:puppet_or_actor.faith
+									}
+								}
+								any_liege_or_above = {
+									faith = {
+										NOT = {
+											this = scope:puppet_or_actor.faith
+										}
+									}
+									NOT = {
+										is_liege_or_above_of = scope:puppet_or_actor
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		flag = promise_domination
+		localization = PROMISE_DOMINATION_INTERACTION_OPTION
+	}
+	#Deploy missionaries throughout the kingdom
+	send_option = {
+		is_valid = {
+			custom_tooltip = {
+				text = valid_conversion_interaction_option_tt
+				scope:target ?= {
+					any_de_jure_county = {
+						OR = {
+							NOT = {
+								faith = scope:puppet_or_actor.faith
+							}
+							trigger_if = {
+								limit = {
+									scope:puppet_or_actor.rite = scope:recipient.rite
+								}
+								AND = {
+									NOT = {
+										rite = scope:puppet_or_actor.rite
+									}
+									rite = {
+										"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		flag = promise_conversion
+		localization = PROMISE_CONVERSION_INTERACTION_OPTION
+	}
+	send_option = {
+		is_shown = {
+			pam_offer_pilgrimage_option_shown_trigger = { ACTOR = scope:puppet_or_actor }
+		}
+		is_valid = {
+			pam_offer_pilgrimage_option_valid_trigger = { ACTOR = scope:puppet_or_actor }
+		}
+		flag = offer_pilgrimage
+		localization = OFFER_PILGRIMAGE_INTERACTION_OPTION
+	}
+
+	ai_accept = {
+		base = -150
+
+		modifier = {
+			scope:puppet_or_actor = { has_character_modifier = pam_sf_ear_of_clergy_modifier }
+			add = 25
+			desc = pam_sf_ear_of_clergy_accept_reason
+		}
+		modifier = { # Peace of God: redrawing de jure borders by decree spares a war of conquest
+			scope:recipient.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_clergy_peacemaking
+			}
+			add = 50
+			desc = pam_peace_of_god_clergy_peacemaking_accept_reason
+		}
+		modifier = {
+			scope:use_hook = yes
+			add = 200
+			scope:puppet_or_actor = { NOT = { has_strong_hook = scope:recipient } }
+			desc = SCHEME_WEAK_HOOK_USED
+		}
+		modifier = {
+			add = {
+				value = 20
+				multiply = scope:puppet_or_actor.highest_held_title_tier
+			}
+			scope:offer_hook = yes
+			desc = OFFER_HOOK_INTERACTION_OPTION_REASON
+		}
+		modifier = {
+			add = {
+				value = 50
+				if = {
+					limit = {
+						pam_actor_rite_has_core_simony_trigger = yes
+					}
+					multiply = 5
+				}
+			}
+			scope:donate_faith = yes
+			desc = DONATE_FAITH_INTERACTION_OPTION_REASON
+		}
+		modifier = {
+			add = pam_offer_pilgrimage_acceptance_value
+			scope:offer_pilgrimage = yes
+			desc = OFFER_PILGRIMAGE_INTERACTION_OPTION_REASON
+		}
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							holder ?= {
+								OR = {
+									faith = {
+										NOT = {
+											this = scope:puppet_or_actor.faith
+										}
+									}
+									any_liege_or_above = {
+										faith = {
+											NOT = {
+												this = scope:puppet_or_actor.faith
+											}
+										}
+									}
+								}
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_astray_level
+									}
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_hostile_level
+									}
+								}
+							}
+							add = 3
+						}
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_evil_level
+									}
+								}
+							}
+							add = 2
+						}
+						add = {
+							value = holder.highest_held_title_tier
+							subtract = 1
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+				multiply = 2
+			}
+			scope:promise_domination = yes
+			desc = PROMISE_DOMINATION_INTERACTION_OPTION_REASON
+		}
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							OR = {
+								NOT = {
+									faith = scope:puppet_or_actor.faith
+								}
+								trigger_if = {
+									limit = {
+										scope:puppet_or_actor.rite = scope:recipient.rite
+									}
+									AND = {
+										NOT = {
+											rite = scope:puppet_or_actor.rite
+										}
+										rite = {
+											"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+										}
+									}
+								}
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= major_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= monumental_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_astray_level
+									}
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_hostile_level
+									}
+								}
+							}
+							add = 2
+						}
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_evil_level
+									}
+								}
+							}
+							add = 2
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+			exists = scope:target
+			scope:promise_conversion = yes
+			desc = PROMISE_CONVERSION_INTERACTION_OPTION_REASON
+		}
+		#From other rite rulers
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							holder ?= {
+								NOT = {
+									is_vassal_or_below_of = scope:puppet_or_actor
+								}
+								OR = {
+									faith = {
+										NOT = {
+											this = scope:puppet_or_actor.faith
+										}
+									}
+									any_liege_or_above = {
+										faith = {
+											NOT = {
+												this = scope:puppet_or_actor.faith
+											}
+										}
+										NOT = {
+											is_liege_or_above_of = scope:puppet_or_actor
+										}
+									}
+								}
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								holder.rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= major_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								holder.rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= monumental_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+						add = {
+							value = holder.highest_held_title_tier
+							subtract = 1
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+			scope:puppet_or_actor.rite = scope:recipient.rite
+			scope:target ?= {
+				any_de_jure_county = {
+					holder = {
+						NOT = {
+							is_vassal_or_below_of = scope:puppet_or_actor
+						}
+						faith = scope:puppet_or_actor.faith
+						OR = {
+							rite = {
+								NOT = {
+									this = scope:puppet_or_actor.rite
+								}
+								"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+							}
+							any_liege_or_above = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+								}
+								NOT = {
+									is_liege_or_above_of = scope:puppet_or_actor
+								}
+							}
+						}
+					}
+				}
+			}
+			desc = OTHER_RITE_RULERS_REASON
+		}
+		#From other faith rulers
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							holder ?= {
+								NOT = {
+									is_vassal_or_below_of = scope:puppet_or_actor
+								}
+								OR = {
+									faith = {
+										NOT = {
+											this = scope:puppet_or_actor.faith
+										}
+									}
+									any_liege_or_above = {
+										faith = {
+											NOT = {
+												this = scope:puppet_or_actor.faith
+											}
+										}
+										NOT = {
+											is_liege_or_above_of = scope:puppet_or_actor
+										}
+									}
+								}
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_astray_level
+									}
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_hostile_level
+									}
+								}
+							}
+							add = 2
+						}
+						if = {
+							limit = {
+								holder.rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_evil_level
+									}
+								}
+							}
+							add = 2
+						}
+						add = {
+							value = holder.highest_held_title_tier
+							subtract = 1
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+			scope:target ?= {
+				any_de_jure_county = {
+					holder ?= {
+						NOT = {
+							is_vassal_or_below_of = scope:puppet_or_actor
+						}
+						OR = {
+							faith = {
+								NOT = {
+									this = scope:puppet_or_actor.faith
+								}
+							}
+							any_liege_or_above = {
+								faith = {
+									NOT = {
+										this = scope:puppet_or_actor.faith
+									}
+								}
+								NOT = {
+									is_liege_or_above_of = scope:puppet_or_actor
+								}
+							}
+						}
+					}
+				}
+			}
+			desc = OTHER_FAITH_RULERS_REASON
+		}
+		#From other rite counties
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							NOT = {
+								rite = scope:puppet_or_actor.rite
+							}
+							rite = {
+								"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= major_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								rite = {
+									"divergence(scope:puppet_or_actor.rite)" >= monumental_rite_divergence_value
+								}
+							}
+							add = 1
+						}
+					}
+				}
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+			scope:puppet_or_actor.rite = scope:recipient.rite
+			scope:target ?= {
+				any_de_jure_county = {
+					faith = scope:puppet_or_actor.faith
+					NOT = {
+						rite = scope:puppet_or_actor.rite
+					}
+					rite = {
+						"divergence(scope:puppet_or_actor.rite)" >= medium_rite_divergence_value
+					}
+				}
+			}
+			desc = OTHER_RITE_COUNTIES_REASON
+		}
+		#From other faith counties
+		modifier = {
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							NOT = {
+								faith = scope:puppet_or_actor.faith
+							}
+						}
+						add = 1
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_astray_level
+									}
+								}
+							}
+							add = 1
+						}
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_hostile_level
+									}
+								}
+							}
+							add = 2
+						}
+						if = {
+							limit = {
+								rite = {
+									NOT = {
+										this = scope:puppet_or_actor.rite
+									}
+									rite_hostility_level = {
+										target = scope:puppet_or_actor.rite
+										value >= faith_evil_level
+									}
+								}
+							}
+							add = 2
+						}
+					}
+				}
+				multiply = 2
+				
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+			scope:target ?= {
+				any_de_jure_county = {
+					NOT = {
+						faith = scope:puppet_or_actor.faith
+					}
+				}
+			}
+			desc = OTHER_FAITH_COUNTIES_REASON
+		}
+		modifier = {
+			scope:target = {
+				de_jure_liege ?= {
+					holder ?= {
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+						faith = scope:recipient.faith
+					}
+				}
+			}
+			add = -40
+			desc = petition_de_jure_integration_displaces_faithful_ruler_reason
+		}
+		modifier = {
+			scope:target = {
+				de_jure_liege ?= {
+					holder ?= {
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+						num_sinful_traits > 0
+					}
+				}
+			}
+			add = {
+				value = scope:target.de_jure_liege.holder.num_sinful_traits
+				multiply = 10
+			}
+			desc = petition_de_jure_integration_sinful_de_jure_liege_reason
+		}
+		modifier = {
+			scope:target = {
+				any_de_jure_county = {
+					count = all
+					holder ?= {
+						OR = {
+							this = scope:puppet_or_actor
+							any_liege_or_above = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+			}
+			add = 50
+			desc = petition_de_jure_integration_controls_target_reason
+		}
+
+		general_secular_to_ecclesiastic_acceptance_modifier = yes
+		modifier = {
+			exists = scope:target
+			scope:target.tier >= tier_kingdom
+			add = {
+				value = scope:target.tier
+				subtract = 3
+				multiply = -100
+			}
+			desc = TARGET_TIER_REASON
+		}
+
+		opinion_modifier = {
+			opinion_target = scope:puppet_or_actor
+			who = scope:recipient
+			multiplier = 0.5
+			desc = AI_OPINION_REASON
+		}
+
+		#COUNTY FACTORS
+		#Percentage of counties controlled
+		modifier = {
+			desc = counties_within_title_you_dont_control
+			NOT = {
+				scope:puppet_or_actor = {
+					completely_controls = scope:target
+				}
+			}
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							NOT = {
+								holder = {
+									target_is_same_character_or_above = scope:puppet_or_actor
+								}
+							}
+						}
+						add = -2
+						if = {
+							limit = {
+								holder = {
+									OR = {
+										AND = {
+											NOT = { faith = scope:recipient.faith }
+											rite = {
+												rite_hostility_level = {
+													target = scope:recipient.rite
+													value <= faith_astray_level
+												}
+											}
+										}
+										AND = {
+											faith = scope:recipient.faith
+											NOT = {
+												rite = scope:recipient.rite
+											}
+											rite = {
+												"divergence(scope:recipient.rite)" >= medium_rite_divergence_value
+											}
+										}
+									}
+								}
+							}
+							add = -3
+						}
+						if = {
+							limit = {
+								holder = {
+									faith = scope:recipient.faith
+									rite = {
+										"divergence(scope:recipient.rite)" < medium_rite_divergence_value
+									}
+								}
+							}
+							add = -5
+						}
+					}
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+		}
+		#Number of directly bordering counties with current de jure
+		modifier = {
+			desc = bordering_de_jure_counties_reason
+			scope:target ?= {
+				any_de_jure_county = {
+					any_neighboring_county = {
+						any_this_title_or_de_jure_above = {
+							this = scope:puppet_or_actor.primary_title
+						}
+					}
+				}
+			}
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							any_neighboring_county = {
+								any_this_title_or_de_jure_above = {
+									this = scope:puppet_or_actor.primary_title
+								}
+							}
+						}
+						every_neighboring_county = {
+							limit = {
+								any_this_title_or_de_jure_above = {
+									this = scope:puppet_or_actor.primary_title
+								}
+							}
+							add = 3
+						}
+					}
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+		}
+		#Has distinct identity
+		modifier = {
+			desc = distinct_culture_counties_reason
+			add = {
+				value = 0
+				scope:target = {
+					every_de_jure_county = {
+						limit = {
+							NOT = {
+								culture = scope:puppet_or_actor.culture
+							}
+						}
+						add = -1
+						if = {
+							limit = {
+								culture = {
+									cultural_acceptance = {
+										target = scope:puppet_or_actor.culture
+										value < 40
+									}
+								}
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								culture = {
+									cultural_acceptance = {
+										target = scope:puppet_or_actor.culture
+										value < 20
+									}
+								}
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								NOT = {
+									culture = {
+										has_same_culture_heritage = scope:puppet_or_actor.culture
+									}
+								}
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								NOT = {
+									culture = {
+										has_same_culture_language = scope:puppet_or_actor.culture
+									}
+								}
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								culture = scope:recipient.culture
+							}
+							add = -3
+						}
+						if = {
+							limit = {
+								NOT = {
+									culture = scope:recipient.culture
+								}
+								culture = {
+									has_same_culture_heritage = scope:recipient.culture
+								}
+							}
+							add = -2
+						}
+						if = {
+							limit = {
+								NOT = {
+									culture = scope:recipient.culture
+								}
+								culture = {
+									has_same_culture_language = scope:recipient.culture
+								}
+							}
+							add = -1
+						}
+					}
+					if = {
+						limit = {
+							scope:target.tier = tier_kingdom
+						}
+						multiply = 2
+					}
+					if = {
+						limit = {
+							scope:target.tier = tier_duchy
+						}
+						multiply = 2
+					}
+					max = -1
+				}
+			}
+			NOT = {
+				scope:recipient.culture = scope:puppet_or_actor.culture
+			}
+			scope:target ?= {
+				any_de_jure_county = {
+					NOT = {
+						culture = scope:puppet_or_actor.culture
+					}
+				}
+			}
+			OR = {
+				#Kingdoms tend to be cultural, empires no
+				scope:target.tier = tier_duchy
+				#Recipient will try to defend own culture regardless
+				scope:target ?= {
+					any_de_jure_county = {
+						culture = scope:recipient.culture
+					}
+				}
+			}
+		}
+		#Your counties within target that have low control
+		modifier = {
+			desc = low_control_counties_in_target_reason
+			scope:target ?= {
+				any_de_jure_county = {
+					holder = {
+						target_is_same_character_or_above = scope:puppet_or_actor
+					}
+					county_control < 100
+				}
+			}
+			add = {
+				value = 0
+				scope:target ?= {
+					every_de_jure_county = {
+						limit = {
+							holder = {
+								target_is_same_character_or_above = scope:puppet_or_actor
+							}
+							county_control < 100
+						}
+						add = -1
+						if = {
+							limit = {
+								county_control < 75
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								county_control < 50
+							}
+							add = -1
+						}
+						if = {
+							limit = {
+								county_control < 25
+							}
+							add = -1
+						}
+					}
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_kingdom
+					}
+					multiply = 2
+				}
+				if = {
+					limit = {
+						scope:target.tier = tier_duchy
+					}
+					multiply = 4
+				}
+			}
+		}
+		#Legitimacy
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 0
+			}
+			add = -150
+			desc = LOW_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 1
+			}
+			add = -100
+			desc = LOW_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 2
+			}
+			add = -50
+			desc = LOW_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 4
+			}
+			add = 25
+			desc = HIGH_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 5
+			}
+			add = 100
+			desc = HIGH_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level = 6
+			}
+			add = 150
+			desc = HIGH_LEGITIMACY_REASON
+		}
+		modifier = {
+			scope:puppet_or_actor = {
+				has_legitimacy = yes
+				legitimacy_level >= 7
+			}
+			add = 250
+			desc = HIGH_LEGITIMACY_REASON
+		}
+	}
+
+	ai_targets = {
+		ai_recipients = head_of_faith
+		ai_recipients = realm_priest_superior
+		ai_recipients = realm_priest_top_superior
+		max = 3
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 60
+		empire = 60
+		hegemony = 60
+	}
+
+	ai_will_do = {
+		base = 10
+		modifier = {
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					count = all
+					holder ?= {
+						OR = {
+							this = scope:puppet_or_actor
+							any_liege_or_above = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+			}
+			add = 50
+		}
+		modifier = {
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					percent >= 0.5
+					holder ?= {
+						OR = {
+							this = scope:puppet_or_actor
+							any_liege_or_above = {
+								this = scope:puppet_or_actor
+							}
+						}
+					}
+				}
+			}
+			add = 50
+		}
+		modifier = {
+			OR = {
+				ai_greed < 0
+				ai_energy < 0
+				AND = {
+					scope:target.de_jure_liege.holder ?= {
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					has_any_good_relationship_with_character_trigger = { CHARACTER = scope:target.de_jure_liege.holder }
+				}
+				trigger_if = {
+					limit = {
+						has_legitimacy = yes
+					}
+					legitimacy_level < 2
+				}
+			}
+			factor = 0
+		}
+	}
+}
+
+# Ecclesiastical rulers grant de jure recognition to a same-faith ruler
+ecclesiastical_de_jure_shifting_grant_interaction = {
+	category = interaction_category_religion
+	icon = ecclesiastical_de_jure_shifting_interaction
+
+	interface_priority = 39
+	common_interaction = yes
+	target_type = title
+	target_filter = dejure_titles
+	target_source = recipient
+	show_all_targets = yes
+	notification_text = ecclesiastical_de_jure_shifting_grant_interaction_notification
+	greeting = positive
+
+	use_diplomatic_range = yes
+	ai_min_reply_days = 1
+	ai_max_reply_days = 5
+	popup_on_receive = yes
+
+	desc = ecclesiastical_de_jure_shifting_grant_interaction_desc
+
+	is_available = {
+		has_pam_dlc_trigger = yes
+	}
+
+	cost = {
+		piety = {
+			value = {
+				add = pam_ecclesiastical_de_jure_shifting_piety_cost_value
+				multiply = 0.5
+			}
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+		prestige = {
+			value = {
+				add = pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+				multiply = 0.5
+			}
+			if = {
+				limit = { scope:is_puppet_action ?= yes }
+				multiply = 0
+			}
+		}
+	}
+
+	is_shown = {
+		always = no		# BTWK Disabled
+		scope:puppet_or_actor ?= {
+			government_has_flag = government_is_theocracy
+			is_available_quick = {
+				adult = yes
+				alive = yes
+				imprisoned = no
+				incapable = no
+			}
+			this != scope:recipient
+		}
+		exists = scope:puppet_or_actor
+		scope:puppet_or_actor ?= {
+			OR = {
+				scope:recipient.religious_head_or_challenger ?= this
+				AND = {
+					highest_held_title_tier >= tier_duchy
+					government_has_flag = government_is_theocracy
+					NOT = { exists = scope:recipient.religious_head_or_challenger }
+					scope:recipient.rite.head_of_rite ?= this
+				}
+			}
+		}
+		scope:recipient = {
+			is_landed = yes
+			highest_held_title_tier >= tier_kingdom
+			faith ?= scope:puppet_or_actor.faith
+			any_held_title = {
+				de_jure_liege ?= {
+					tier < tier_hegemony
+					NOT = { exists = holder }
+					is_landless_type_title = no
+				}
+			}
+			any_sub_realm_title = {
+				any_this_title_or_de_jure_above = {
+					is_landless_type_title = no
+					is_head_of_faith = no
+					tier = scope:recipient.highest_held_title_tier_minus_one
+					NOT = {
+						de_jure_liege = scope:recipient.primary_title
+					}
+				}
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:puppet_or_actor = {
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+				ruler = yes
+				adult = yes
+			}
+			NOT = {
+				has_trait = excommunicated
+			}
+		}
+		scope:recipient = {
+			is_available_quick = {
+				incapable = no
+				imprisoned = no
+				hostage = no
+				ruler = yes
+				adult = yes
+			}
+			is_at_war = no
+			NOT = {
+				has_trait = excommunicated
+			}
+			primary_title = {
+				is_landless_type_title = no
+			}
+			custom_tooltip = {
+				text = valid_ecclesiastical_de_jure_shifting_grant_title_tt
+				any_sub_realm_title = {
+					any_this_title_or_de_jure_above = {
+						is_landless_type_title = no
+						is_head_of_faith = no
+						tier = scope:recipient.highest_held_title_tier_minus_one
+						NOT = {
+							de_jure_liege = scope:recipient.primary_title
+						}
+						any_de_jure_county = {
+							percent >= 0.5
+							faith = scope:recipient.faith
+						}
+						any_de_jure_county = {
+							percent >= 0.5
+							holder = { faith = scope:recipient.faith }
+						}
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				NOT = { scope:puppet_or_actor.religious_head_or_challenger ?= scope:puppet_or_actor }
+			}
+			scope:recipient.rite = scope:puppet_or_actor.rite
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				piety >= pam_ecclesiastical_de_jure_shifting_piety_cost_value
+			}
+		}
+		trigger_if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				prestige >= pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+			}
+		}
+	}
+
+	can_be_picked_title = {
+		scope:target = {
+			is_landless_type_title = no
+			is_head_of_faith = no
+			tier = scope:recipient.highest_held_title_tier_minus_one
+			custom_tooltip = {
+				text = ecclesiastical_de_jure_shifting_grant_not_already_de_jure_tt
+				NOT = {
+					de_jure_liege = scope:recipient.primary_title
+				}
+			}
+			custom_tooltip = {
+				text = recipient_holds_target_de_jure_county_tt
+				any_de_jure_county = {
+					holder ?= {
+						target_is_same_character_or_above = scope:recipient
+					}
+				}
+			}
+			trigger_if = {
+				limit = {
+					exists = scope:puppet_or_actor.religious_head_or_challenger
+					NOT = {
+						scope:puppet_or_actor.religious_head_or_challenger = scope:puppet_or_actor
+					}
+					exists = scope:target.de_jure_liege.holder
+				}
+				custom_tooltip = {
+					text = hof_is_target_de_jure_liege_tt
+					NOT = {
+						scope:puppet_or_actor.religious_head_or_challenger ?= scope:target.de_jure_liege.holder
+					}
+				}
+			}
+			trigger_if = {
+				limit = {
+					scope:actor = {
+						is_ai = no
+					}
+				}
+				custom_tooltip = {
+					text = ecclesiastical_de_jure_shifting_grant_target_must_border_de_jure_tt
+					any_de_jure_county = {
+						any_title_to_title_neighboring_and_across_water_county = {
+							any_this_title_or_de_jure_above = {
+								this = scope:recipient.primary_title
+							}
+						}
+					}
+				}
+			}
+			trigger_else = {
+				custom_tooltip = {
+					text = ecclesiastical_de_jure_shifting_grant_target_must_border_de_jure_land_tt
+					any_de_jure_county = {
+						any_title_to_title_neighboring_county = {
+							any_this_title_or_de_jure_above = {
+								this = scope:recipient.primary_title
+							}
+						}
+					}
+				}
+			}
+
+			# At least half of its counties belong to the beneficiary's faith
+			custom_tooltip = {
+				text = half_target_de_jure_counties_belong_to_faith_tt
+				any_de_jure_county = {
+					percent >= 0.5
+					faith = scope:recipient.faith
+				}
+			}
+
+			# At least half of its counties' rulers are of the beneficiary's faith
+			custom_tooltip = {
+				text = half_target_de_jure_holders_belong_to_faith_tt
+				any_de_jure_county = {
+					percent >= 0.5
+					holder = { faith = scope:recipient.faith }
+				}
+			}
+		}
+	}
+
+	has_valid_target_showing_failures_only = {
+		exists = scope:target
+		scope:target = {
+			is_landless_type_title = no
+			is_head_of_faith = no
+			tier = scope:recipient.highest_held_title_tier_minus_one
+			NOT = {
+				de_jure_liege = scope:recipient.primary_title
+			}
+			custom_tooltip = {
+				text = recipient_holds_target_de_jure_county_tt
+				any_de_jure_county = {
+					holder ?= {
+						target_is_same_character_or_above = scope:recipient
+					}
+				}
+			}
+		}
+	}
+
+	auto_accept = {
+		custom_tooltip = {
+			text = no_reason_to_refuse_tt
+			OR = {
+				scope:recipient = { is_ai = yes }
+				scope:recipient = scope:puppet_or_actor
+			}
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = { scope:is_puppet_action ?= yes }
+			scope:puppet_or_actor = {
+				if = {
+					limit = { pam_ecclesiastical_de_jure_shifting_piety_cost_value > 0 }
+					add_piety = {
+						value = {
+							add = pam_ecclesiastical_de_jure_shifting_piety_cost_value
+							max = piety
+							multiply = -1
+						}
+					}
+				}
+				if = {
+					limit = { pam_ecclesiastical_de_jure_shifting_prestige_cost_value > 0 }
+					add_prestige = {
+						value = {
+							add = pam_ecclesiastical_de_jure_shifting_prestige_cost_value
+							max = prestige
+							multiply = -1
+						}
+					}
+				}
+			}
+		}
+		# The existing effect/event expects puppet_or_actor to be the beneficiary and recipient to be the clerical authority.
+		scope:recipient = {
+			save_scope_as = de_jure_master
+		}
+		scope:puppet_or_actor = {
+			save_scope_as = cleric
+		}
+		scope:target ?= {
+			de_jure_liege = {
+				save_scope_as = former_de_jure_liege
+			}
+		}
+		scope:puppet_or_actor = {
+			faith = { save_scope_as = de_jure_faith }
+		}
+		if = {
+			limit = {
+				scope:target.de_jure_liege.holder ?= {
+					NOR = {
+						this = scope:puppet_or_actor
+						this = scope:recipient
+					}
+				}
+			}
+			scope:target.de_jure_liege.holder = {
+				if = {
+					limit = {
+						scope:actor = {
+							is_ai = no
+						}
+					}
+					add_opinion = {
+						target = scope:puppet_or_actor
+						modifier = gave_away_de_jure_lands_opinion
+						opinion = -70
+					}
+				}
+				else = {
+					hidden_effect = {
+						add_opinion = {
+							target = scope:puppet_or_actor
+							modifier = gave_away_de_jure_lands_opinion
+							opinion = -70
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						scope:recipient = scope:puppet_or_actor
+					}
+				}
+				scope:recipient = {
+					if = {
+						limit = {
+							is_ai = no
+						}
+						scope:target.de_jure_liege.holder = {
+							add_opinion = {
+								target = scope:recipient
+								modifier = stole_de_jure_lands_opinion
+								opinion = -50
+							}
+						}
+					}
+					else = {
+						hidden_effect = {
+							scope:target.de_jure_liege.holder = {
+								add_opinion = {
+									target = scope:recipient
+									modifier = stole_de_jure_lands_opinion
+									opinion = -50
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		scope:recipient = {
+			if = {
+				limit = {
+					NOT = {
+						this = scope:puppet_or_actor
+					}
+				}
+				if = {
+					limit = {
+						scope:actor = { is_ai = no }
+					}
+					add_opinion = {
+						target = scope:puppet_or_actor
+						modifier = grateful_opinion
+						opinion = 30
+					}
+				}
+				else = {
+					hidden_effect = {
+						scope:recipient = {
+							add_opinion = {
+								target = scope:puppet_or_actor
+								modifier = grateful_opinion
+								opinion = 30
+							}
+						}
+					}
+				}
+			}
+		}
+		scope:puppet_or_actor = {
+			if = {
+				limit = {
+					scope:actor = { is_ai = no }
+				}
+				custom_tooltip = every_subordinate_in_target_de_jure_liege_opinion_loss
+				custom_tooltip = every_subordinate_in_actor_title_opinion_gain
+			}
+			hidden_effect = {
+				# Bishops based in different dioceses have feelings
+				every_subordinate = {
+					limit = {
+						capital_province.county ?= {
+							any_this_title_or_de_jure_above = {
+								this = scope:former_de_jure_liege
+							}
+						}
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					add_opinion = {
+						target = scope:puppet_or_actor
+						modifier = ruled_against_my_diocese_opinion
+						opinion = -25
+					}
+				}
+				every_subordinate = {
+					limit = {
+						capital_province.county ?= {
+							any_this_title_or_de_jure_above = {
+								this = scope:recipient.primary_title
+							}
+						}
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					add_opinion = {
+						target = scope:puppet_or_actor
+						modifier = ruled_in_favor_of_my_diocese_opinion
+						opinion = 25
+					}
+				}
+			}
+		}
+		
+		scope:recipient = {
+			show_as_tooltip = {
+				ecclesiastical_de_jure_shifting_effect = {
+					DE_JURE_MASTER = scope:recipient
+					CLERIC = scope:puppet_or_actor
+				}
+			}
+		}
+
+		scope:puppet_or_actor = {
+			trigger_event = pam_interactions_events.0096
+		}
+	}
+
+	on_decline = {
+		if = {
+			limit = {
+				scope:recipient = {
+					is_ai = no
+				}
+			}
+			scope:puppet_or_actor = {
+				send_interface_toast = {
+					type = event_toast_effect_bad
+					title = ecclesiastical_de_jure_shifting_grant_interaction_decline_toast
+					left_icon = scope:recipient
+				}
+				add_opinion = {
+					target = scope:recipient
+					modifier = refusal_opinion
+					opinion = -30
+				}
+			}
+			if = {
+				limit = {
+					scope:is_puppet_action ?= yes
+					scope:actor != scope:recipient
+				}
+				scope:actor = {
+					send_interface_toast = {
+						type = event_toast_effect_bad
+						title = ecclesiastical_de_jure_shifting_grant_interaction_decline_toast_puppeteer
+						left_icon = scope:puppet_or_actor
+						right_icon = scope:recipient
+					}
+				}
+			}
+			if = {
+				limit = {
+					scope:target.de_jure_liege.holder ?= {
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+				}
+				scope:target.de_jure_liege.holder ?= {
+					add_opinion = {
+						target = scope:recipient
+						modifier = respected_de_jure_opinion
+						opinion = 50
+					}
+				}
+			}
+		}
+	}
+
+	send_options_exclusive = no
+
+	ai_targets = {
+		ai_recipients = neighboring_rulers_including_tributary_borders
+		ai_recipients = dynasty
+		ai_recipients = realm_characters
+		ai_recipients = subordinates
+		ai_recipients = rulers_in_clerical_region
+		max = 5
+	}
+
+	ai_frequency_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 120
+		kingdom = 60
+		empire = 60
+		hegemony = 60
+	}
+
+	ai_will_do = {
+		base = 5
+		modifier = { # Peace of God: settling de jure claims by decree forestalls the wars they would otherwise cause
+			add = 25
+			scope:puppet_or_actor.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_clergy_peacemaking
+			}
+		}
+		modifier = {
+			exists = scope:target
+			scope:recipient = {
+				completely_controls = scope:target
+			}
+			add = 20
+		}
+		modifier = {
+			exists = scope:target
+			scope:target = {
+				any_de_jure_county = {
+					percent >= 0.5
+					holder ?= {
+						target_is_same_character_or_above = scope:recipient
+					}
+				}
+			}
+			add = 10
+		}
+		modifier = {
+			scope:recipient = {
+				has_any_good_relationship_with_character_trigger = { CHARACTER = scope:puppet_or_actor }
+			}
+			add = 75
+		}
+		modifier = {
+			scope:recipient = scope:puppet_or_actor
+			add = 100
+		}
+		modifier = {
+			NOT = { scope:recipient = scope:puppet_or_actor }
+			scope:target ?= {
+				any_de_jure_county = {
+					this = scope:puppet_or_actor.capital_county
+					scope:puppet_or_actor.culture = capital_county.culture
+				}
+			}
+			factor = 0.1
+		}
+		modifier = {
+			OR = {
+				ai_energy < 0
+				AND = {
+					scope:target.de_jure_liege.holder ?= {
+						NOR = {
+							this = scope:puppet_or_actor
+							this = scope:recipient
+						}
+					}
+					has_any_good_relationship_with_character_trigger = { CHARACTER = scope:target.de_jure_liege.holder }
+				}
+			}
+			factor = 0
+		}
+	}
+}
