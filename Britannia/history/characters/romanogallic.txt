@@ -13516,3 +13516,36 @@
 		death=yes
 	}
 }
+
+romanogallic_1 = {
+	name = "palladius_male_roman"
+	culture = romanogallic
+	rite = carolingian_christianity
+	396.1.1 = {
+		birth = yes
+	}
+	461.1.1 = {
+		death = yes
+		effect_even_if_dead = {
+			# Just in Clackmannan for now, as close to Aberdeenshire as we can get
+			province:818 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:818
+				PRESET = yes
+			}
+			# Local saint, only faiths associated with Britannia or Ireland should care
+			faith:christian_faith = { add_saint = { character = root } }
+			faith:pelagian = { add_saint = { character = root } }
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:romanogallic_1
+				SAINT_COUNTY = province:818.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+		}
+	}
+}

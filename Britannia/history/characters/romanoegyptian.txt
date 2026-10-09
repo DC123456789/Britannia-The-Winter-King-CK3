@@ -1,0 +1,43 @@
+﻿######################################
+####  ROMANO-EGYPTIAN CHARACTERS  ####
+######################################
+
+romanoegyptian_1 = {
+	name = "Markos" #I #Mark the Evangelist
+	# rite = coptic_rite
+	rite = roman_rite
+	culture = romanoegyptian #Traditionally from Cyrene, this is the closest we have
+	10.1.1 = {
+		birth = "10.1.1"
+	}
+	68.1.1 = {
+		death = "68.1.1"
+		effect_even_if_dead = {
+			# Possible early dedication in Lincoln
+			province:289 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:289		# 6053 #Saint Mark's Coptic Orthodox Cathedral (Alexandria)
+				PRESET = yes
+			}
+			religion:christianity_religion = {
+				every_faith = {
+					limit = {
+						main_rite = { is_rite_enabled = yes }
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:romanoegyptian_1
+				SAINT_COUNTY = province:289.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+		}
+	}
+}
