@@ -2486,6 +2486,7 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			court_fashion_level_4_modifier = { INPUT_PARAMETER = chinese }
 			modifier = {
 				add = 100
+				is_merit_based_official = no
 				portrait_low_nobles_clothing_trigger = {
 					CULTURE_INPUT = chinese
 				}
@@ -2493,6 +2494,7 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			}
 			modifier = {
 				add = 120
+				is_merit_based_official = no
 				OR = {
 					portrait_high_nobles_clothing_trigger = {
 						CULTURE_INPUT = chinese
@@ -2526,6 +2528,10 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			court_fashion_level_4_modifier = { INPUT_PARAMETER = chinese }
 			modifier = {
 				add = 100
+				trigger_if = {
+					limit = { has_tgp_dlc_trigger = yes }
+					is_merit_based_official = no
+				}
 				OR = {
 					portrait_low_nobles_clothing_trigger = {
 						CULTURE_INPUT = chinese
@@ -2563,6 +2569,11 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				portrait_high_nobles_trigger = {
 					CULTURE_INPUT = chinese
 				}
+				NOT = {
+					portrait_imperial_trigger = {
+						CULTURE_INPUT = chinese
+					}
+				}
 				has_tgp_dlc_trigger = yes
 			}
 		}
@@ -2584,17 +2595,35 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}	
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				merit_level <= 2
-				NOT = { exists = global_var:chinese_fashion_change }
+				# Korean handling
+				trigger_if = {
+					limit = {
+					 	OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = yes
+					# No use of green by Silla officials, so we skip to red
+					korea_low_rank_trigger = yes
+				}
+				trigger_else = {
+					merit_level <= 2
+					global_var:chinese_fashion ?= flag:tang
+				}
 			}
 		}
 	}
@@ -2628,7 +2657,7 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 					merit_level = 4
 					merit_level = 3
 				}
-				NOT = { exists = global_var:chinese_fashion_change }
+				global_var:chinese_fashion ?= flag:tang
 			}
 		}
 	}
@@ -2649,20 +2678,38 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}	
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				OR = {
-					merit_level = 6
-					merit_level = 5
+				# Korean handling
+				trigger_if = {
+					limit = {
+					 	OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = yes
+					# No use of green by Silla officials, so we skip to red
+					korea_mid_rank_trigger = yes
 				}
-				NOT = { exists = global_var:chinese_fashion_change }
+				trigger_else = {
+					OR = {
+						merit_level = 6
+						merit_level = 5
+					}
+					global_var:chinese_fashion ?= flag:tang
+				}
 			}
 		}
 	}
@@ -2683,17 +2730,40 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}	
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				merit_level >= 7
-				NOT = { exists = global_var:chinese_fashion_change }
+				# Korean handling
+				trigger_if = {
+					limit = {
+					 	OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = yes
+					OR = {
+						korea_high_rank_trigger = yes
+						royal_councillor_or_regent_trigger = yes
+					}
+				}
+				trigger_else = {
+					OR = {
+						merit_level >= 7
+						royal_councillor_or_regent_trigger = yes
+					}
+					global_var:chinese_fashion ?= flag:tang
+				}
 			}
 		}
 	}
@@ -2724,7 +2794,9 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				}
 				has_tgp_dlc_trigger = yes
 				merit_level <= 2
-				exists = global_var:chinese_fashion_change
+				# Councillors or regents of the ruler are always highest
+				royal_councillor_or_regent_trigger = no
+				global_var:chinese_fashion ?= flag:song
 			}
 		}
 	}
@@ -2745,20 +2817,40 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				OR = {
-					merit_level = 4
-					merit_level = 3
+				trigger_if = {
+					limit = {
+						OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = no
+					# No use of blue by Goryeo officials, so we skip to red
+					korea_low_rank_trigger = yes
 				}
-				exists = global_var:chinese_fashion_change
+				trigger_else = {
+					OR = {
+						merit_level = 4
+						merit_level = 3
+					}
+					# Councillors or regents of the ruler are always highest
+					global_var:chinese_fashion ?= flag:song
+				}
+				# Councillors or regents of the ruler are always highest
+				royal_councillor_or_regent_trigger = no
 			}
 		}
 	}
@@ -2779,20 +2871,42 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+						 	has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				OR = {
-					merit_level = 6
-					merit_level = 5
+				# Korean handling
+				trigger_if = {
+					limit = {
+					 	OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = no
+					# No use of blue by Goryeo officials, so we skip from green to red
+					korea_mid_rank_trigger = yes
+					# Councillors or regents of the ruler are always highest
+					royal_councillor_or_regent_trigger = no
 				}
-				exists = global_var:chinese_fashion_change
+				trigger_else = {
+					OR = {
+						merit_level = 6
+						merit_level = 5
+					}
+					# Councillors or regents of the ruler are always highest
+					royal_councillor_or_regent_trigger = no
+				}
+				global_var:chinese_fashion ?= flag:song
 			}
 		}
 	}
@@ -2810,20 +2924,52 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			base = 0
 			modifier = {
 				add = 100
+				is_alive = no
+				tgp_primary_title_is_ministry = yes
+				highest_held_title_tier = tier_empire
+				has_tgp_dlc_trigger = yes
+			}
+			modifier = {
+				add = 100
 				is_merit_based_official = yes
 				OR = {
 					liege.culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 					culture = {
-						has_clothing_gfx = chinese_clothing_gfx
-						NOT = { has_clothing_gfx = korean_clothing_gfx }
+						OR = {
+							has_clothing_gfx = chinese_clothing_gfx
+							has_clothing_gfx = korean_clothing_gfx
+						}
 					}
 				}
 				has_tgp_dlc_trigger = yes
-				merit_level >= 7
-				exists = global_var:chinese_fashion_change
+				# Korean handling
+				trigger_if = {
+					limit = {
+					 	OR = {
+							liege.culture = { has_clothing_gfx = korean_clothing_gfx }
+							culture = { has_clothing_gfx = korean_clothing_gfx }
+						}
+					}
+					portrait_era1_trigger = no
+					OR = {
+						korea_high_rank_trigger = yes
+						# Councillors or regents of the ruler are always highest
+						royal_councillor_or_regent_trigger = yes
+					}
+				}
+				trigger_else = {
+					OR = {
+						merit_level >= 7
+						# Councillors or regents of the ruler are always highest
+						royal_councillor_or_regent_trigger = yes
+					}
+					global_var:chinese_fashion ?= flag:song
+				}
 			}
 		}
 	}
@@ -3035,17 +3181,21 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 					CULTURE_INPUT = khitan
 				}
 				government_has_flag = government_has_merit
+				trigger_if = {
+					limit = { is_alive = no }
+					tgp_primary_title_is_ministry = no
+				}
 			}
 			modifier = {
 				add = 120
-				# primary_title ?= title:h_china
 				always = no
-				NOT = { exists = global_var:chinese_fashion_change }
+				# primary_title ?= title:h_china
+				global_var:chinese_fashion ?= flag:tang
 			}
 			modifier = {
 				add = 120
-				# primary_title ?= title:h_china
 				always = no
+				# primary_title ?= title:h_china
 				has_tgp_dlc_trigger = no
 			}
 		}
@@ -3065,7 +3215,7 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			modifier = {
 				add = 120
 				has_tgp_dlc_trigger = yes
-				exists = global_var:chinese_fashion_change
+				global_var:chinese_fashion ?= flag:song
 				always = no
 				# OR = {
 					# primary_title ?= title:h_china
@@ -3085,6 +3235,10 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 				}
 				government_has_flag = government_has_merit
 				is_independent_ruler = yes
+				trigger_if = {
+					limit = { is_alive = no }
+					tgp_primary_title_is_ministry = no
+				}
 			}
 		}
 	}
@@ -3246,6 +3400,7 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			base = 0
 			modifier = {
 				add = 100
+				is_merit_based_official = no
 				portrait_commoner_clothing_trigger = {
 					CULTURE_INPUT = korean
 				}
@@ -3267,8 +3422,21 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			base = 0
 			modifier = {
 				add = 100
+				# Song style court dress post-Silla
+				trigger_if = {
+					limit = { portrait_era1_trigger = no }
+					is_merit_based_official = no
+				}
 				portrait_low_nobles_trigger = {
 					CULTURE_INPUT = korean
+				}
+				NOR = {
+					portrait_high_nobles_trigger = {
+						CULTURE_INPUT = korean
+					}
+					portrait_imperial_trigger = {
+						CULTURE_INPUT = korean
+					}
 				}
 				has_tgp_dlc_trigger = yes
 			}
@@ -3288,8 +3456,18 @@ clothes_base = { # The lowest priority group of clothes with triggers based on r
 			base = 0
 			modifier = {
 				add = 100
+				# Song style court dress post-Silla
+				trigger_if = {
+					limit = { portrait_era1_trigger = no }
+					is_merit_based_official = no
+				}
 				portrait_high_nobles_trigger = {
 					CULTURE_INPUT = korean
+				}
+				NOT = {
+					portrait_imperial_trigger = {
+						CULTURE_INPUT = korean
+					}
 				}
 				has_tgp_dlc_trigger = yes
 			}

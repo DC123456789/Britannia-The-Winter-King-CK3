@@ -7,11 +7,12 @@ namespace = BTWK_anglo_saxon_invasions
 
 ##################################################
 # BTWK_britannia_struggle.0001 - Yearly tick catalysts
-# BTWK_britannia_struggle.0011 - Join struggle event
-# BTWK_britannia_struggle.0012 - Invasion Phase event
-# BTWK_britannia_struggle.0013 - Detente Phase event
-# BTWK_britannia_struggle.0014 - Consolidation Phase event
-# BTWK_britannia_struggle.0015 - Unification Phase event
+# BTWK_britannia_struggle.0009 - Join struggle event
+# BTWK_britannia_struggle.0010 - New Phase, select correct event
+# BTWK_britannia_struggle.0011 - Invasion Phase event
+# BTWK_britannia_struggle.0012 - Detente Phase event
+# BTWK_britannia_struggle.0013 - Consolidation Phase event
+# BTWK_britannia_struggle.0014 - Unification Phase event
 # BTWK_britannia_struggle.0020 - Outsider Conquest ending event
 
 # Handle yearly tick catalysts
@@ -186,9 +187,63 @@ BTWK_britannia_struggle.0001 = {
 	}
 }
 
-# BTWK_britannia_struggle.0011 - Join event
+# BTWK_britannia_struggle.0009 - Join event
 
 # Struggle phase events
+# Triggered one day after new phase - figure out what the new phase is and fire the correect event
+BTWK_britannia_struggle.0010 = {
+	hidden = yes
+	scope = none
+	scope = struggle
+
+	immediate = {
+		if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_invasion }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0011
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_detente }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0012
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_consolidation }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0013
+			}
+		}
+		else_if = {
+			limit = { is_struggle_phase = struggle_britannia_phase_unification }
+			every_involved_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+			every_interloper_ruler = {
+				limit = { is_ai = no }
+				trigger_event = BTWK_britannia_struggle.0014
+			}
+		}
+	}
+}
+	
 # Invasion
 BTWK_britannia_struggle.0011 = {
 	type = character_event
@@ -236,9 +291,7 @@ BTWK_britannia_struggle.0011 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0011.a.anglo_saxon
 					}
@@ -309,9 +362,7 @@ BTWK_britannia_struggle.0012 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0012.a.anglo_saxon
 					}
@@ -377,9 +428,7 @@ BTWK_britannia_struggle.0013 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0013.a.anglo_saxon
 					}
@@ -428,9 +477,7 @@ BTWK_britannia_struggle.0014 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 						}
 						desc = BTWK_britannia_struggle.0014.a.anglo_saxon
 					}
@@ -485,7 +532,6 @@ BTWK_britannia_struggle.0020 = {
 			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
 		}
 		else = {
-			struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
 		}
 	}
 
@@ -495,7 +541,15 @@ BTWK_britannia_struggle.0020 = {
 			this = scope:conqueror
 		}
 		custom_tooltip = BTWK_britannia_struggle.0020.a.tt
+		give_nickname = nick_the_conqueror
 		BTWK_end_britannia_struggle_effect = yes
+		if = {
+			limit = { has_dlc_feature = legends }
+			legend_seed_struggle_ending_effect = {
+				ENDER = root
+				STRUGGLE = britannia_struggle
+			}
+		}
 		struggle:britannia_struggle = { end_struggle = BTWK_britannia_struggle_outsider_ending_decision }
 		dynasty = {
 			add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
@@ -572,6 +626,8 @@ BTWK_britannia_struggle.0020 = {
 # BTWK_anglo_saxon_invasions.0010 - Death/Fall of Aelle
 # BTWK_anglo_saxon_invasions.0011 - Collapse of East Anglia
 # BTWK_anglo_saxon_invasions.0012 - Aelle's Legacy Secured
+# BTWK_anglo_saxon_invasions.0013 - Collapse of East Anglia post-event for enclave independence
+# BTWK_anglo_saxon_invasions.0014 - Collapse of East Anglia bounce pre-event
 
 # Trigger Anglian Invasion event
 BTWK_anglo_saxon_invasions.0001 = {
@@ -600,6 +656,7 @@ BTWK_anglo_saxon_invasions.0001 = {
 			set_variable = force_conqueror_ignore_rules
 			set_variable = conqueror_cannot_be_inherited
 			create_story = story_conqueror
+			create_story = BTWK_aelle_story
 		}
 	}
 }
@@ -643,6 +700,10 @@ BTWK_anglo_saxon_invasions.0002 = {
 						type = landsknecht
 						men = 100
 					}
+					men_at_arms = {
+						type = onager
+						men = 25
+					}					
 					location = this.capital_province
 					inheritable = no
 				}
@@ -664,18 +725,14 @@ BTWK_anglo_saxon_invasions.0002 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0002.a.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 							NOT = { this = scope:aelle_of_anglia }
 						}
@@ -706,14 +763,14 @@ BTWK_anglo_saxon_invasions.0010 = {
 		first_valid = {
 		    triggered_desc = {
 		        trigger = {
-					this = scope:anglia_heir
+					this = scope:new_holder
 					scope:aelle_of_anglia = { is_alive = no }
 		        }
 		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_dead
 		    }
 		    triggered_desc = {
 		        trigger = {
-					this = scope:anglia_heir
+					this = scope:new_holder
 					scope:aelle_of_anglia = { is_alive = yes }
 		        }
 		        desc = BTWK_anglo_saxon_invasions.0010.desc.anglia_heir_aelle_deposed
@@ -724,6 +781,14 @@ BTWK_anglo_saxon_invasions.0010 = {
 					scope:aelle_of_anglia = { is_alive = no }
 		        }
 		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_dead
+		    }
+		    triggered_desc = {
+		        trigger = {
+					this = scope:aelle_of_anglia
+					is_close_or_extended_family_of = scope:new_holder
+					scope:aelle_of_anglia = { is_alive = yes }
+		        }
+		        desc = BTWK_anglo_saxon_invasions.0010.desc.aelle_aelle_deposed_to_heir
 		    }
 		    triggered_desc = {
 		        trigger = {
@@ -809,6 +874,12 @@ BTWK_anglo_saxon_invasions.0010 = {
 						}
 						desc = BTWK_anglo_saxon_invasions.0010.a.aelle_dead
 					}
+					triggered_desc = {
+						trigger = { 
+							is_close_or_extended_family_of = scope:new_holder
+						}
+						desc = BTWK_anglo_saxon_invasions.0010.a.aelle_deposed_to_heir
+					}
 					desc = BTWK_anglo_saxon_invasions.0010.a.aelle
 				}
 			}
@@ -836,18 +907,14 @@ BTWK_anglo_saxon_invasions.0010 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0010.b.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0010.b.briton_roman
@@ -859,6 +926,28 @@ BTWK_anglo_saxon_invasions.0010 = {
 		trigger = { 
 			this != scope:new_holder
 			this != scope:aelle_of_anglia
+		}
+	}
+}
+
+# Collapse of East Anglia bounce event, handles the rename so it happens immediately after the loc is generated
+BTWK_anglo_saxon_invasions.0014 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		trigger_event = BTWK_anglo_saxon_invasions.0011
+		every_player = {
+			limit = { this != scope:former_king }
+			trigger_event = BTWK_anglo_saxon_invasions.0011
+		}
+		title:k_east_anglia = {
+			remove_variable = is_the_angles
+			remove_variable = anglia_post_aelle_crisis
+			remove_variable = title_has_been_created
+			set_variable = custom_capital
+			set_capital_county = title:c_rendlesham
+			reset_title_name = yes
 		}
 	}
 }
@@ -890,13 +979,28 @@ BTWK_anglo_saxon_invasions.0011 = {
 	
 	immediate = {
 		character:80 = { save_scope_as = aelle_of_anglia }
-		title:k_east_anglia = {
-			remove_variable = anglia_post_aelle_crisis
-			remove_variable = title_has_been_created
+		scope:former_king = {
+			every_tributary = {
+				end_tributary = yes
+			}
 		}
-		activate_struggle_catalyst = {
-			catalyst = catalyst_east_anglia_collapses
-			character = scope:former_king
+		if = {
+			limit = { this = scope:former_king }
+			trigger_event = { id = BTWK_anglo_saxon_invasions.0013 delayed = yes }
+		}
+		hidden_effect = {
+			struggle:britannia_struggle ?= {
+				if = {
+					limit = { phase_has_catalyst = catalyst_east_anglia_collapses }
+					activate_struggle_catalyst = {
+						catalyst = catalyst_east_anglia_collapses
+						character = scope:former_king
+					}
+				}
+			}
+		}
+		show_as_tooltip = {
+			title:k_east_anglia = { set_title_name_w_tooltip_effect = { NEW_NAME = k_east_anglia } }
 		}
 	}
 
@@ -912,18 +1016,14 @@ BTWK_anglo_saxon_invasions.0011 = {
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = { 
-								is_unromanized_germanic_culture_trigger = yes
-							}
+							is_unromanized_germanic_culture_trigger = yes
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0011.a.anglo_saxon
 					}
 					triggered_desc = {
 						trigger = { 
-							culture = {
-								is_unromanized_germanic_culture_trigger = no
-							}
+							is_unromanized_germanic_culture_trigger = no
 							capital_province = { geographical_region = btwk_world_britannia }
 						}
 						desc = BTWK_anglo_saxon_invasions.0011.a.briton_roman
@@ -962,6 +1062,23 @@ BTWK_anglo_saxon_invasions.0012 = {
 	}
 }
 
+# Trigger exclave independence after collapse - can't be in the immediate itself
+# as that triggers before the kingdom as actually destroyed
+BTWK_anglo_saxon_invasions.0013 = {
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		set_variable = force_total_exclave_independence
+		set_variable = exclave_independence_reduced_distance
+		hidden_effect = {
+			game_rule_exclave_independence_effect = yes
+		}
+		remove_variable = force_total_exclave_independence
+		remove_variable = exclave_independence_reduced_distance
+	}
+}
+
 ##################################################################################################
 # BTWK_anglo_saxon_invasions.0100 - 0199: Rise of Bernicia/Deira/Lindsey/Mercia/Wessex Events
 ##################################################################################################
@@ -973,6 +1090,7 @@ BTWK_anglo_saxon_invasions.0012 = {
 # BTWK_anglo_saxon_invasions.0112 - Rise of Kingdom ended (timeout)
 # BTWK_anglo_saxon_invasions.0113 - Rise of Kingdom ended (defeat)
 # BTWK_anglo_saxon_invasions.0114 - Won first war, get Foederati Heritage modifier
+# BTWK_anglo_saxon_invasions.0115 - Notify liege/suzerain of second revolt
 
 # Yearly master controller event, decides if any of the story cycles should start
 BTWK_anglo_saxon_invasions.0100 = {
@@ -1021,10 +1139,10 @@ BTWK_anglo_saxon_invasions.0101 = {
 		# Roll for chance of actually triggering the event
 		random = {
 			chance = {
-				value = 2.5
+				value = 2
 				if = {
 					limit = { year >= 540 }
-					add = 2.5
+					add = 3
 				}
 				if = {
 					limit = { year >= 545 }
@@ -1052,6 +1170,13 @@ BTWK_anglo_saxon_invasions.0101 = {
 						scope:event_target_kingdom = {							
 							has_variable = BTWK_rise_of_anglo_saxon_kingdom_wait_for_historical_char
 						}
+					}
+					add = 100
+				}
+				# If we want to bypass the roll for whatever reason
+				if = {
+					limit = { 
+						exists = scope:bypass_roll
 					}
 					add = 100
 				}
@@ -1129,7 +1254,7 @@ BTWK_anglo_saxon_invasions.0101 = {
 					}
 				}
 				scope:target_character = {
-					trigger_event = BTWK_anglo_saxon_invasions.0110
+					trigger_event = BTWK_anglo_saxon_invasions.0109
 				}
 			}
 			# If a historical dynasty character is eligible but busy (e.g. at war), wait up
@@ -1249,15 +1374,39 @@ BTWK_anglo_saxon_invasions.0101 = {
 							REASON = flag:voluntary
 							FLAVOR_CHAR = scope:target_character
 						}
+						game_rule_create_spouse_and_children = { CHARACTER = scope:target_character LOCATION = scope:target_character }
 					}
 					scope:event_target_kingdom = { save_scope_as = force_target_kingdom }
 				}
 				
 				# Then fire the event for the new adventurer
 				scope:target_character = {
-					trigger_event = BTWK_anglo_saxon_invasions.0110
+					trigger_event = BTWK_anglo_saxon_invasions.0109
 				}
 			}
+		}
+	}
+}
+
+# Check if the target character is incapable - if he is, kill him off and then reroll
+BTWK_anglo_saxon_invasions.0109 = { 
+	type = character_event
+	hidden = yes
+	content_source = dlc_BTWK
+	
+	immediate = {
+		if = {
+			limit = { has_trait = incapable }
+			# Kill off the character and immediately try to trigger the event again
+			player_heir = { save_scope_as = target_heir }
+			death = natural
+			scope:target_heir = {
+				save_scope_as = bypass_roll
+				trigger_event = BTWK_anglo_saxon_invasions.0101
+			}
+		}
+		else = {
+			trigger_event = BTWK_anglo_saxon_invasions.0110
 		}
 	}
 }
@@ -1267,7 +1416,23 @@ BTWK_anglo_saxon_invasions.0110 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_anglo_saxon_invasions.0110.t
-	desc = BTWK_anglo_saxon_invasions.0110.desc
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = { has_subject_contract_group = tributary_foederatus }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.foederati
+		    }
+		    triggered_desc = {
+		        trigger = { vassal_contract_has_flag = has_laetus_contract }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.laeti
+		    }
+		    triggered_desc = {
+		        trigger = { is_landless_adventurer = yes }
+		        desc = BTWK_anglo_saxon_invasions.0110.desc.adventurer
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0110.desc
+		}
+	}
 	theme = war
 
 	left_portrait = {
@@ -1878,6 +2043,14 @@ BTWK_anglo_saxon_invasions.0110 = {
 					cb = independence_war
 					target = top_liege
 				}
+				random_character_war = {
+					limit = { 
+						primary_attacker = root
+						primary_defender = root.top_liege
+						using_cb = independence_war
+					}
+					set_variable = BTWK_is_rise_of_anglo_saxon_kingdom_initial_war
+				}
 			}
 		}
 		# If a landless adventurer, invade for a target coastal/frontier county + some neighbours
@@ -2013,7 +2186,11 @@ BTWK_anglo_saxon_invasions.0110 = {
 			limit = { is_ai = no }
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 300
+				levies = 400
+				men_at_arms = {
+					type = bowmen
+					men = 100
+				}
 				men_at_arms = {
 					type = pikemen_unit
 					men = 150
@@ -2033,18 +2210,18 @@ BTWK_anglo_saxon_invasions.0110 = {
 		else = {
 			spawn_army = {
 				name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
-				levies = 500
+				levies = 700
 				men_at_arms = {
 					type = bowmen
-					men = 150
+					men = 250
 				}
 				men_at_arms = {
 					type = pikemen_unit
-					men = 100
+					men = 200
 				}
 				men_at_arms = {
 					type = landsknecht
-					men = 200
+					men = 250
 				}
 				men_at_arms = {
 					type = onager
@@ -2052,6 +2229,27 @@ BTWK_anglo_saxon_invasions.0110 = {
 				}
 				location = this.capital_province
 				save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+			}
+			if = {
+				limit = { is_landed = no }
+				spawn_army = {
+					name = RISE_OF_ANGLO_SAXON_KINGDOM_WARRIORS
+					levies = 200
+					men_at_arms = {
+						type = pikemen_unit
+						men = 50
+					}
+					men_at_arms = {
+						type = landsknecht
+						men = 100
+					}
+					men_at_arms = {
+						type = onager
+						men = 5
+					}
+					location = this.capital_province
+					save_scope_as = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				}
 			}
 			add_prestige = 1000
 			add_gold = 300
@@ -2064,6 +2262,12 @@ BTWK_anglo_saxon_invasions.0110 = {
 			scope:new_story = { save_scope_as = current_story }
 			BTWK_rise_of_anglo_saxon_kingdom_spawn_ai_expansion_war_army_effect = yes
 		}
+		scope:BTWK_rise_of_new_anglo_saxon_kingdom_story_army = {
+			set_variable = {
+				name = BTWK_rise_of_new_anglo_saxon_kingdom_story_army
+				value = scope:current_story
+			}
+		}
 		# TODO Add hook to immediate take decision after winning war if AI
 	}
 }
@@ -2073,7 +2277,23 @@ BTWK_anglo_saxon_invasions.0111 = {
 	type = character_event
 	content_source = dlc_BTWK
 	title = BTWK_anglo_saxon_invasions.0111.t
-	desc = BTWK_anglo_saxon_invasions.0111.desc
+	desc = {
+		first_valid = {
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { has_subject_contract_group = tributary_foederatus } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.foederati
+		    }
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { vassal_contract_has_flag = has_laetus_contract } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.laeti
+		    }
+		    triggered_desc = {
+		        trigger = { scope:rise_of_kingdom_leader = { is_landless_adventurer = yes } }
+		        desc = BTWK_anglo_saxon_invasions.0111.desc.adventurer
+		    }
+		    desc = BTWK_anglo_saxon_invasions.0111.desc
+		}
+	}
 	theme = war
 
 	left_portrait = {
@@ -2094,7 +2314,30 @@ BTWK_anglo_saxon_invasions.0111 = {
 	}
 
 	option = {
-		name = BTWK_anglo_saxon_invasions.0111.a
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_unromanized_germanic_culture_trigger = yes
+						}
+						desc = BTWK_anglo_saxon_invasions.0111.a.anglo_saxon
+					}
+					triggered_desc = {
+						trigger = { 
+							culture = {
+								OR = {
+									has_cultural_pillar = heritage_brythonic
+									has_cultural_pillar = heritage_latin
+								}
+							}
+						}
+						desc = BTWK_anglo_saxon_invasions.0111.a.briton_roman
+					}
+					desc = BTWK_anglo_saxon_invasions.0111.a
+				}
+			}
+		}
 		custom_tooltip = BTWK_anglo_saxon_invasions.0111.a.tt.1
 		if = {
 			limit = { scope:rise_of_kingdom_leader = { is_landed = yes } }
@@ -2129,22 +2372,58 @@ BTWK_anglo_saxon_invasions.0112 = {
 BTWK_anglo_saxon_invasions.0113 = { 
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_anglo_saxon_invasions.0113.t
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					is_unromanized_germanic_culture_trigger = no
+				}
+				desc = BTWK_anglo_saxon_invasions.0113.t.not_anglo_saxon
+			}
+			desc = BTWK_anglo_saxon_invasions.0113.t
+		}
+	}
 	# TODO Want different loc for the different cases:
 	#	- Becomes unlanded
 	#	- Is subjugated and cannot break free
 	#	- Converts to a non-unromanized Germanic culture
 	#	- Gains a different kingdom or higher title
-	desc = BTWK_anglo_saxon_invasions.0113.desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					is_unromanized_germanic_culture_trigger = no
+				}
+				desc = BTWK_anglo_saxon_invasions.0113.desc.not_anglo_saxon
+			}
+			desc = BTWK_anglo_saxon_invasions.0113.desc
+		}
+	}
 	theme = war
 
 	left_portrait = {
 		character = root
+		triggered_animation = {
+			trigger = { is_unromanized_germanic_culture_trigger = no }
+			animation = personality_honorable
+		}
 		animation = war_over_loss
 	}
 
 	option = {
-		name = BTWK_anglo_saxon_invasions.0113.a
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							is_unromanized_germanic_culture_trigger = no
+						}
+						desc = BTWK_anglo_saxon_invasions.0113.a.not_anglo_saxon
+					}
+					desc = BTWK_anglo_saxon_invasions.0113.a
+				}
+			}
+		}
 		custom_tooltip = BTWK_anglo_saxon_invasions.0113.a.tt
 		if = {
 			limit = { has_character_modifier = BTWK_rise_of_new_anglo_saxon_kingdom_foederati_heritage_modifier }
@@ -2177,11 +2456,35 @@ BTWK_anglo_saxon_invasions.0114 = {
 			capital_county = {
 				set_county_culture = root.culture
 				set_county_faith = root.faith
+				set_county_rite = root.rite
 			}
 		}
 	}
 }
 
+# Notify liege/suzerain of second revolt
+BTWK_anglo_saxon_invasions.0115 = { 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_anglo_saxon_invasions.0115.t
+	desc = BTWK_anglo_saxon_invasions.0115.desc
+	theme = war
+
+	left_portrait = {
+		character = root
+		animation = war_over_win
+	}
+	
+	right_portrait = {
+		character = scope:story_revolter
+		animation = war_attacker
+	}
+
+	option = {
+		name = BTWK_anglo_saxon_invasions.0115.a
+		custom_tooltip = BTWK_anglo_saxon_invasions.0115.a.tt		
+	}
+}
 
 ##################################################################################################
 # BTWK_anglo_saxon_invasions.9000 - 9099: Misc Cultural Conversion Events
@@ -2335,14 +2638,19 @@ BTWK_anglo_saxon_invasions.9002 = {
 	content_source = dlc_BTWK
 	
 	trigger = {
-		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_controlled_counties_can_become_tribal }
+		struggle:britannia_struggle ?= { has_struggle_phase_parameter = anglo_saxon_culture_can_spread_quickly_in_tribal_counties }
 		scope:target_county = {
 			title_province = { has_holding_type = tribal_holding }
 			is_germanic_culture_trigger = no
 			holder = {
 				is_unromanized_germanic_culture_trigger = yes
 				government_has_flag = government_is_tribal
+				OR = {
+					top_liege = { is_unromanized_germanic_culture_trigger = yes }
+					vassal_contract_has_flag = has_laetus_contract
+				}
 			}
+			NOT = { BTWK_has_negative_cultural_redoubt_modifier_trigger = yes }
 		}
 	}
 
@@ -2416,6 +2724,7 @@ BTWK_anglo_saxon_invasions.9003 = {
 		scope:target_county = {
 			set_county_culture = holder.culture
 			set_county_faith = root.faith
+			set_county_rite = root.rite
 		}
 		# Send toasts to lieges
 		hidden_effect = {

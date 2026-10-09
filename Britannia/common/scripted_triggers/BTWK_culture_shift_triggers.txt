@@ -18,14 +18,18 @@ character_can_convert_to_anglo_saxon_regional_culture = {
 					has_cultural_pillar = heritage_frankish
 				}
 			}
+			# Romanized Germanic cultures can only convert if the top liege/court owner is Unromanized Germanic
 			OR = {
 				AND = {
 					is_ruler = yes
 					is_independent_ruler = no
+					top_liege = { is_unromanized_germanic_culture_trigger = yes }
 				}
-				is_ruler = no
+				AND = {
+					is_ruler = no
+					court_owner = { is_unromanized_germanic_culture_trigger = yes }
+				}
 			}
-			liege_or_court_owner = { is_unromanized_germanic_culture_trigger = yes }
 		}		
 	}
 	NOR = { 
@@ -45,20 +49,31 @@ county_can_convert_to_anglo_saxon_regional_culture = {
 					has_cultural_pillar = heritage_frankish
 				}
 			}
-			holder = {
-				OR = {
-					NOT = { culture = prev.culture }
-					AND = {
-						is_independent_ruler = no
-						liege = { is_unromanized_germanic_culture_trigger = yes }
-					}
-				}
-			}
+			# Romanized Germanic cultures can only convert if the top liege is Unromanized Germanic
+			holder.top_liege = { is_unromanized_germanic_culture_trigger = yes }
 		}		
 	}
 	NOR = { 
 		culture = { has_variable = anglo_saxon_regional_culture_kingdom }
 		culture = { has_variable = is_anglo_saxon_unified_culture }
+	}
+}
+
+# County is in the [potential] de jure territory of the given kingdom
+county_is_in_anglo_saxon_regional_culture_kingdom_de_jure = {
+	OR = {
+		title_province = { geographical_region = btwk_world_britannia }
+		title_province = { geographical_region = btwk_world_caledonia }
+	}
+	OR = {
+		AND = {
+			var:anglo_saxon_duchy.kingdom ?= $KINGDOM$
+			OR = {
+				NOT = { $KINGDOM$ = title:k_wales }
+				title_province = { geographical_region = btwk_custom_wales } 
+			}
+		}
+		kingdom = $KINGDOM$
 	}
 }
 
@@ -155,7 +170,7 @@ county_is_in_britannic_culture_area = {
 				has_title = title:e_britannia
 				has_title = title:e_roman_britannia
 				any_realm_county = {
-					count >= 40
+					count >= 45
 					culture = culture:romanobritish
 				}
 				AND = {
@@ -186,7 +201,7 @@ county_is_in_brithenig_culture_area = {
 	OR = {
 		holder.top_liege = {
 			culture = { has_cultural_pillar = heritage_brythonic }	# Includes Brithenig itself
-			NOT = { suzerain ?= { culture = culture:romanobritish } }
+			NOT = { suzerain ?= { culture = { has_cultural_pillar = heritage_latin } } }
 		}
 		any_neighboring_county = { culture = { has_cultural_pillar = heritage_brythonic } }
 		culture = { has_cultural_pillar = heritage_brythonic }
@@ -204,7 +219,7 @@ county_is_in_brithenig_culture_area = {
 		holder.top_liege.culture = culture:britannic
 		holder.top_liege = {
 			culture = { has_cultural_pillar = heritage_latin }
-			realm_size >= 40
+			realm_size >= 45
 		}
 	}
 }
@@ -296,7 +311,7 @@ county_is_in_britannic_hybrid_culture_area = {
 		holder.top_liege.culture = culture:britannic
 		holder.top_liege = {
 			culture = { has_cultural_pillar = heritage_latin }
-			realm_size >= 40
+			realm_size >= 45
 		}
 	}
 }
@@ -460,6 +475,56 @@ BTWK_culture_allowed_to_diverge_at_county_trigger = {
 					$CULTURE$ = culture:jute
 				}
 				$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+	}
+}
+
+BTWK_culture_allowed_to_hybridize_at_county_trigger = {
+	$OTHER_CULTURE$ = { save_scope_as = trigger_other_culture }
+	# Romans have their own system
+	# Allow for now, but block once Romano-Saxon is added
+	# trigger_if = {
+		# limit = { $CULTURE$ = { has_cultural_pillar = heritage_latin } } 
+		# custom_tooltip = {
+			# text = BTWK_heritage_latin_cannot_hybridize_tt
+			# NOT = { $CULTURE$ = { has_cultural_pillar = heritage_latin } }
+		# }
+	# }
+	# Angle/Old Saxon/Jutish have their own culture split/evolution - only allow hybridization after
+	trigger_if = {
+		limit = { 
+			OR = {
+				$CULTURE$ = culture:angle
+				$CULTURE$ = culture:old_saxon
+				$CULTURE$ = culture:jute
+			}
+			$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+		}
+		custom_tooltip = {
+			text = BTWK_heritage_anglo_saxon_cannot_hybridize_in_britannia_tt
+			NAND = {
+				OR = {
+					$CULTURE$ = culture:angle
+					$CULTURE$ = culture:old_saxon
+					$CULTURE$ = culture:jute
+				}
+				$COUNTY$.title_province = { geographical_region = btwk_world_britannia }
+			}
+		}
+	}
+	# Romanized Germanic/Sarmatian cultures cannot manually hybridize with Imperial cultures
+	# as they have their own scripted system
+	trigger_if = {
+		limit = { 
+			$CULTURE$ = { culture_is_romanized_barbarian_culture_trigger = yes }
+			$OTHER_CULTURE$ = { has_cultural_pillar = heritage_latin }
+		}
+		custom_tooltip = {
+			text = BTWK_heritage_romanized_barbarian_cannot_hybridize_with_latin_tt
+			NAND = {
+				$CULTURE$ = { culture_is_romanized_barbarian_culture_trigger = yes }
+				$OTHER_CULTURE$ = { has_cultural_pillar = heritage_latin }
 			}
 		}
 	}

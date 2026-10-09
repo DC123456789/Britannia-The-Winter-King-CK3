@@ -2,127 +2,11 @@
 # Anglo-Saxon Title Decisions											#
 #########################################################################
 
-claim_aengland_bretwalda_decision = {
-	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_destiny_goal.dds"
-	}
-	decision_group_type = major
-
-	ai_check_interval_by_tier = {
-		barony = 0
-		county = 0
-		duchy = 0
-		kingdom = 12
-		empire = 12
-		hegemony = 12
-	}
-
-	desc = claim_aengland_bretwalda_decision_desc
-
-	is_shown = {
-		culture = {
-			has_same_heritage_group_as = { TARGET = culture:angle }
-			NOT = { has_cultural_pillar = heritage_romanized_germanic }
-			NOT = { has_cultural_pillar = heritage_frankish }
-		}
-		any_held_title = {
-			tier = root.primary_title.tier
-			title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-		}
-		NOT = { has_title = title:e_aengland }
-		BTWK_aengland_bretwalda_active_trigger = yes
-	}
-
-	is_valid = {
-		is_independent_ruler = yes
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_culture_requirement_tt
-			culture = {
-				has_same_heritage_group_as = { TARGET = culture:angle }
-				NOT = { has_cultural_pillar = heritage_romanized_germanic }
-				NOT = { has_cultural_pillar = heritage_frankish }
-			}
-		}
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_kingdom_requirement_tt
-			any_held_title = {
-				tier = tier_kingdom
-				target_is_de_jure_liege_or_above = title:e_aengland
-				title_capital_county.title_province = { geographical_region = btwk_world_britannia }
-			}
-		}
-		NOT = { exists = title:e_aengland.holder }
-		prestige_level >= high_prestige_level
-		age >= 25
-		realm_size >= 15
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_military_requirement_tt
-			current_military_strength >= 1000
-		}
-		OR = {
-			custom_tooltip = {
-				text = claim_aengland_bretwalda_king_ruled_years_requirement_tt
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 10 
-				}
-			}
-			prestige_level >= very_high_prestige_level
-			diplomacy >= 25
-			martial >= 25
-			prowess >= 30
-		}
-		control_anglo_saxon_provinces_fraction_including_tributaries_trigger = {
-			FRACTION_REQUIRED = 0.5
-		}
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_king_hegemony_score_tt
-			this.var:aengland_hegemony_score >= 120
-		}
-	}
-
-	effect = {
-		show_as_tooltip = {
-			get_title = title:e_aengland
-		}
-		custom_tooltip = {
-			text = claim_aengland_bretwalda_decision_effect_tt
-		}
-		# trigger_event = { id = aengland_bretwalda.0001 }
-	}
-	
-	cost = {
-		gold = { value = 100 }
-		prestige = { value = 500 }
-	}
-	
-	ai_potential = {
-		is_independent_ruler = yes
-	}
-
-	ai_will_do = {
-		base = 0		# Want AI to calculate if it's actually going to win or not
-	}
-	
-	widget = {
-		gui = "decision_view_widget_view_aengland_bretwalda"
-		controller = decision_option_list_controller
-
-		### This placeholder has to be here or the game will crash
-		item = {
-			value = none
-			is_shown = { always = yes }
-			is_valid = { always = yes }
-			localization = placeholder_name
-		}
-	}
-}
-
 create_anglo_saxon_de_jure_duchies_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_people_captured.dds"
 	}
-	decision_group_type = major
+	decision_group_type = realm
 
 	ai_check_interval_by_tier = {
 		barony = 0
@@ -175,17 +59,16 @@ create_anglo_saxon_de_jure_duchies_decision = {
 					}
 				}
 			}
+			save_scope_as = conqueror
 			every_in_global_list = {
 				variable = celtic_duchy_list
 				if = {
 					limit = {
 						is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:title_created_de_jure_pretend }
 					}
-					if = {
-						limit = { exists = holder }
-						show_as_tooltip = {
-							# destroy_title must be in character scope to work
-							holder = { destroy_title = prev }
+					show_as_tooltip = {
+						BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+							DESTROYER = scope:conqueror
 						}
 					}
 				}
@@ -231,9 +114,9 @@ create_anglo_saxon_de_jure_duchies_decision = {
 
 destroy_anglo_saxon_de_jure_duchies_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_battle_overwatch.dds"
 	}
-	decision_group_type = major
+	decision_group_type = realm
 
 	ai_check_interval_by_tier = {
 		barony = 0
@@ -278,6 +161,7 @@ destroy_anglo_saxon_de_jure_duchies_decision = {
 				is_ai = no
 				has_variable = selected_title
 			}
+			save_scope_as = conqueror
 			this.var:selected_title = {
 				save_scope_as = title_created_de_jure_ignore
 				every_in_list = {
@@ -286,10 +170,9 @@ destroy_anglo_saxon_de_jure_duchies_decision = {
 						check_de_jure_liege_effect = yes
 					}
 				}
-				if = {
-					limit = { exists = holder }
-					show_as_tooltip = {
-						destroy_title = this
+				show_as_tooltip = {
+					BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+						DESTROYER = scope:conqueror
 					}
 				}
 			}
@@ -336,9 +219,9 @@ destroy_anglo_saxon_de_jure_duchies_decision = {
 
 integrate_duchy_anglo_saxon_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_battle_overwatch.dds"
 	}
-	decision_group_type = major
+	decision_group_type = realm
 
 	ai_check_interval_by_tier = {
 		barony = 0
@@ -485,7 +368,7 @@ integrate_duchy_anglo_saxon_decision = {
 
 mercia_annex_north_bank_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_battle_cavalry.dds"
 	}
 	decision_group_type = major
 
@@ -614,7 +497,7 @@ mercia_annex_north_bank_decision = {
 
 create_berkshire_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_lord_overlooking_bridge.dds"
 	}
 	decision_group_type = major
 
@@ -627,7 +510,18 @@ create_berkshire_decision = {
 		hegemony = 12
 	}
 
-	desc = create_berkshire_decision_desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_title = title:k_mercia
+					NOT = { has_title = title:d_berkshire.de_jure_liege }
+				}
+				desc = create_berkshire_decision_desc_mercia
+			}
+			desc = create_berkshire_decision_desc
+		}
+	}
 
 	is_shown = {
 		OR = {
@@ -706,7 +600,7 @@ create_berkshire_decision = {
 
 expand_surrey_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_lord_overlooking_bridge.dds"
 	}
 	decision_group_type = major
 
@@ -799,7 +693,7 @@ expand_surrey_decision = {
 
 form_northumbria_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_battle_cavalry.dds"
 	}
 	decision_group_type = major
 
@@ -837,8 +731,7 @@ form_northumbria_decision = {
 			}
 		}
 		NOT = { title:k_northumbria = { has_variable = title_has_been_created } }
-		# TODO check variable once mechanic is implemented
-		NOT = { title:e_aengland = { has_variable = aengland_united } }
+		BTWK_aengland_united_trigger = no
 	}
 
 	is_valid = {
@@ -854,6 +747,7 @@ form_northumbria_decision = {
 				kingdom = title:k_bernicia
 			}
 		}
+		title:k_bernicia = { is_contested = no }
 		has_title = title:k_deira
 		title:k_deira = { title_held_years >= 15 }
 		custom_tooltip = {
@@ -863,6 +757,7 @@ form_northumbria_decision = {
 				kingdom = title:k_deira
 			}
 		}
+		title:k_deira = { is_contested = no }
 	}
 
 	effect = {
@@ -876,6 +771,21 @@ form_northumbria_decision = {
 		}
 		custom_tooltip = {
 			text = northumbria_de_jure_shift_tt
+		}
+		if = {
+			limit = {
+				OR = {
+					title:k_bernicia = { has_variable = anglo_saxon_regional_culture }
+					title:k_deira = { has_variable = anglo_saxon_regional_culture }
+				}
+				NAND = {
+					title:k_bernicia.var:anglo_saxon_regional_culture ?= { culture_age >= 50 }
+					title:k_deira.var:anglo_saxon_regional_culture ?= { culture_age >= 50 }
+				}
+			}
+			custom_tooltip = {
+				text = northumbrian_culture_emergence_tt
+			}
 		}
 		trigger_event = { id = titular_titles_anglosaxon.0010 }
 	}
@@ -896,7 +806,7 @@ form_northumbria_decision = {
 
 elevate_lindsey_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_saxon_army.dds"
 	}
 	decision_group_type = major
 
@@ -922,8 +832,7 @@ elevate_lindsey_decision = {
 			}
 		}
 		NOT = { title:k_lindsey = { has_variable = title_has_been_created } }
-		# TODO check variable once mechanic is implemented
-		NOT = { title:e_aengland = { has_variable = aengland_united } }
+		BTWK_aengland_united_trigger = no
 	}
 
 	is_valid = {
@@ -931,7 +840,7 @@ elevate_lindsey_decision = {
 		prestige_level >= medium_prestige_level
 		has_title = title:d_lindsey
 		highest_held_title_tier <= tier_kingdom
-		realm_size >= 25
+		realm_size >= 20
 	}
 
 	effect = {

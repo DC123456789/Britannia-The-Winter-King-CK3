@@ -20,6 +20,7 @@ BTWK_yearly_major_event_on_action = {
 		culture_shifts.0010			# Anglo-Saxon regional/kingdom culture emergence
 		culture_shifts.0030			# Brithenig culture emergence
 		culture_shifts.0032			# Britanno-[Romanized Germanic] hybrid culture emergence
+		culture_shifts.0034			# Britannic culture emergence
 		
 		BTWK_anglo_saxon_invasions.0100		# Trigger Rise of Anglo-Saxon kingdom events
 	}
@@ -54,6 +55,22 @@ BTWK_yearly_global_pulse_effects = {
 						min = BTWK_britannia_high_king_authority_min
 						max = BTWK_britannia_high_king_authority_max
 					}
+				}
+			}
+		}
+		
+		# Inherited Hegemony Score decays
+		if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = yes }
+			every_kingdom = {
+				limit = { has_variable = inherited_aengland_bretwalda_hegemony_score }
+				change_variable = {
+					name = inherited_aengland_bretwalda_hegemony_score
+					subtract = BTWK_aengland_bretwalda_hegemony_score_yearly_decay
+				}
+				if = {
+					limit = { this.var:inherited_aengland_bretwalda_hegemony_score < 0 }
+					remove_variable = inherited_aengland_bretwalda_hegemony_score
 				}
 			}
 		}

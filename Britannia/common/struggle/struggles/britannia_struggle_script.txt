@@ -18,7 +18,7 @@
 		irish
 	}
 	faiths = {
-		catholic
+		christian_faith
 		briton_pagan
 		romano_celtic_pagan
 		anglo_saxon_pagan
@@ -38,50 +38,8 @@
 	}
 
 	on_change_phase = {
-		if = {
-			limit = { is_struggle_phase = struggle_britannia_phase_invasion }
-			every_involved_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0011
-			}
-			every_interloper_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0011
-			}
-		}
-		else_if = {
-			limit = { is_struggle_phase = struggle_britannia_phase_detente }
-			every_involved_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0012
-			}
-			every_interloper_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0012
-			}
-		}
-		else_if = {
-			limit = { is_struggle_phase = struggle_britannia_phase_consolidation }
-			every_involved_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0013
-			}
-			every_interloper_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0013
-			}
-		}
-		else_if = {
-			limit = { is_struggle_phase = struggle_britannia_phase_unification }
-			every_involved_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0014
-			}
-			every_interloper_ruler = {
-				limit = { is_ai = no }
-				trigger_event = BTWK_britannia_struggle.0014
-			}
-		}
+		# Requires one day delay in order to check the new phase, not the old phase
+		trigger_event = { id = BTWK_britannia_struggle.0010 days = 1 }
 	}
 	
 	# Root = the current struggle
@@ -151,7 +109,7 @@
 						
 						# Realm effects
 						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
-						catalyst_create_new_anglo_saxon_kingdom = excessive_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = monumental_struggle_catalyst_gain
 						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
 						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
 						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
@@ -198,6 +156,7 @@
 				###### Common
 				common_parameters = {
 					county_culture_conversion_in_region_proceeds_slightly_faster = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
 				}
 			}
 
@@ -237,21 +196,22 @@
 						catalyst_broke_truce_against_important_character = massive_struggle_catalyst_gain
 						
 						# Diplo effects
-						catalyst_gain_claim_on_title_britannia_region = minor_struggle_catalyst_gain
-						catalyst_becomes_rival_with_involved = major_struggle_catalyst_gain
+						catalyst_gain_claim_on_title_britannia_region = minimal_struggle_catalyst_gain
+						catalyst_becomes_rival_with_involved = medium_struggle_catalyst_gain
 						catalyst_unnatural_death_important_character = medium_struggle_catalyst_gain
-						catalyst_using_a_hook_on_very_important_character = medium_struggle_catalyst_gain # good
-						catalyst_reveal_secret_important = major_struggle_catalyst_gain
+						catalyst_using_a_hook_on_very_important_character = minor_struggle_catalyst_gain # good
+						catalyst_reveal_secret_important = minor_struggle_catalyst_gain
 						
 						# Realm effects
 						catalyst_create_anglo_saxon_duchy = major_struggle_catalyst_gain
 						catalyst_destroy_anglo_saxon_duchy = major_struggle_catalyst_gain
 						catalyst_high_king_britannia_died_violently = monumental_struggle_catalyst_gain
 						catalyst_high_king_britannia_died_naturally = massive_struggle_catalyst_gain
-						catalyst_high_king_britannia_dissolved = massive_struggle_catalyst_gain
+						catalyst_high_king_britannia_lost_throne = massive_struggle_catalyst_gain
 						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
 						
-						# TODO Massive gain from from the Plague of Justinian / Crisis of the 6th Century
+						# Massive gain from from the Plague of Justinian / Crisis of the 6th Century (TODO)
+						catalyst_apocalyptic_bubonic_plague = excessive_struggle_catalyst_gain
 					}
 				}
 				struggle_britannia_phase_consolidation = {
@@ -260,7 +220,7 @@
 						
 						# Realm effects
 						catalyst_vassalize_independent_ruler = medium_struggle_catalyst_gain
-						catalyst_create_new_anglo_saxon_kingdom = excessive_struggle_catalyst_gain
+						catalyst_create_new_anglo_saxon_kingdom = monumental_struggle_catalyst_gain
 						catalyst_become_high_king_britannia = major_struggle_catalyst_gain
 						catalyst_become_bretwalda_aengland = major_struggle_catalyst_gain
 						catalyst_pass_britannia_reform = excessive_struggle_catalyst_gain
@@ -315,6 +275,7 @@
 				###### Common
 				common_parameters = {
 					county_culture_conversion_in_region_proceeds_slightly_faster = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
 				}
 			}
 
@@ -399,6 +360,7 @@
 					allow_briton_culture_split = yes
 					allow_anglo_saxon_regional_cultures = yes
 					allow_romanobritish_culture_shifts = yes
+					anglo_saxon_culture_can_spread_quickly_in_tribal_counties = yes
 				}
 			}
 
@@ -409,6 +371,7 @@
 				involved_parameters = {
 					britannia_high_king_authority_minor_boost = yes
 					aengland_bretwalda_hegemony_score_minor_boost = yes
+					anglo_saxon_controlled_counties_can_become_tribal = yes
 				}
 			}
 
@@ -427,6 +390,14 @@
 		struggle_britannia_phase_unification = {
 			##################################################
 			# Final phase! No more progress!
+			# This is just here so that having no more next phase doesn't break the UI
+			future_phases = {
+				struggle_britannia_phase_unification = {
+					catalysts = {						
+					
+					}
+				}
+			}
 
 			war_effects = {
 				name = WAR_EFFECTS_NAME
@@ -460,7 +431,7 @@
 				involved_parameters = {
 					britannia_high_king_authority_boost = yes
 					aengland_bretwalda_hegemony_score_boost = yes
-					# TODO Cheaper client kingdom enforce vassalage
+					BTWK_client_state_enforce_vassalage_cost_reduction = yes
 				}
 			}
 

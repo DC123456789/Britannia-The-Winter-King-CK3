@@ -1,18 +1,22 @@
 ﻿# Modify (multiply) the doctrine cost when creating a faith.
 # The returned value is interpreted as a multiplicative modifier (e.g. 0.5 means +50% cost).
 # scope:character = the creation character
+# scope:old_rite = the rite the character had before creating
 # scope:old_faith = the faith the character is converting from
-faith_creation_cost_mult = {
+rite_creation_cost_mult = {
 	subtract = {
 		value = scope:old_faith.faith_conversion_fervor_mult
+		multiply = 0.5
 		desc = "faith_creation_cost_fervor_impact"
 		format = "BREAKDOWN_FORMAT_PIETY_PERCENTAGE_POSITIVE_IS_BAD"
 	}
 	if = {
 		limit = {
-			num_realm_holy_sites_faithful_holders = {
-				CHARACTER = root
-				COUNT = 3
+			scope:old_faith = {
+				num_realm_holy_sites_faithful_holders = {
+					CHARACTER = scope:character
+					COUNT = 3
+				}
 			}
 		}
 		subtract = {
@@ -23,9 +27,11 @@ faith_creation_cost_mult = {
 	}
 	else_if = {
 		limit = {
-			num_realm_holy_sites_faithful_holders = {
-				CHARACTER = root
-				COUNT = 2
+			scope:old_faith = {
+				num_realm_holy_sites_faithful_holders = {
+					CHARACTER = scope:character
+					COUNT = 2
+				}
 			}
 		}
 		add = {

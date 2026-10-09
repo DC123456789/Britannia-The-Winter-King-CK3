@@ -14,38 +14,38 @@
 
 	is_shown = {
 		scope:recipient = {
-			this != scope:actor
-			liege = scope:actor
+			this != scope:puppet_or_actor
+			liege ?= scope:puppet_or_actor
 			is_tributary = no # this excludes tributary contracts by default
 			is_ruler = yes
 			vassal_contract_has_modifiable_obligations = yes
-			NOT = { government_allows = administrative }
+			NOT = { government_has_mechanic = administrative }
 			NOT = { government_has_flag = government_is_nomadic }
 		}
 	}
 
 	is_valid_showing_failures_only = {
-		NOT = { scope:actor = { is_at_war_with = scope:recipient } }
+		NOT = { scope:puppet_or_actor = { is_at_war_with = scope:recipient } }
 	}
 
 	can_send = {
 		#Mandala gets special treatment
 		trigger_if = {
 			limit = {
-				scope:actor = { government_has_flag = government_is_mandala }
+				scope:puppet_or_actor = { government_has_flag = government_is_mandala }
 			}
 			custom_tooltip = {
 				text = liege_modify_vassal_contract_mandala_cooldown
 				NOT = {
-					scope:recipient = { var:liege_recently_adjusted_mandala_vassal_contract ?= scope:actor }
+					scope:recipient = { var:liege_recently_adjusted_mandala_vassal_contract ?= scope:puppet_or_actor }
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 
 				custom_description = {
 					text = "liege_modify_vassal_contract_cannot_exceed_tyranny_cap"
-					object = scope:actor
+					object = scope:puppet_or_actor
 					NOT = {
 						vassal_obligation_increase_tyranny_gain_multiplier > 1
 					}
@@ -95,12 +95,12 @@
 			}
 		}
 		trigger_else = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 
 				custom_description = {
 					text = "liege_modify_vassal_contract_cannot_exceed_tyranny_cap"
-					object = scope:actor
+					object = scope:puppet_or_actor
 					NOT = {
 						vassal_obligation_increase_tyranny_gain_multiplier > 1
 					}
@@ -148,7 +148,7 @@
 			if = {
 				limit = {
 					catalyst_granted_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -158,7 +158,7 @@
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -169,7 +169,7 @@
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -177,7 +177,7 @@
 			if = {
 				limit = {
 					catalyst_revoked_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -187,7 +187,7 @@
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -198,7 +198,7 @@
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_revoked_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -208,7 +208,7 @@
 			if = {
 				limit = {
 					scope:recipient.count_obligation_improvements_for_vassal > 0
-					scope:actor = {
+					scope:puppet_or_actor = {
 						is_diff_faith_or_culture_trigger = {
 							CHAR = scope:recipient
 							STATUS = involved
@@ -222,7 +222,7 @@
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -233,7 +233,7 @@
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_grant_privilege_to_diff_faith_culture_vassal
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -241,7 +241,7 @@
 		}
 
 		# Enact changes.
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
@@ -250,7 +250,7 @@
 				add_tyranny = vassal_obligation_increase_tyranny_gain
 				if = {
 					limit = { vassal_obligation_increase_tyranny_gain != 0 }
-					stress_impact = {
+					stress_and_fulfillment_impact = {
 						just = medium_stress_impact_gain
 						generous = medium_stress_impact_gain
 					}
@@ -262,6 +262,25 @@
 					use_hook = scope:recipient
 					add_achievement_flag_effect = { FLAG = achievement_fine_print_flag }
 				}
+				
+				# BTWK - Revoking laeti status incurs additional opinion maluses against all laeti
+				if = {
+					limit = {
+						scope:recipient = { vassal_contract_has_flag = has_laetus_contract }
+						any_in_list = {
+							list = changed_obligations
+							vassal_contract_type = vassal_contract:special_contract
+							this != vassal_contract:special_contract.obligation:special_contract_laetus
+						}
+					}
+					every_vassal = {
+						limit = { vassal_contract_has_flag = has_laetus_contract }
+						add_opinion = {
+							modifier = BTWK_revoked_laeti_status
+							target = scope:actor
+						}
+					}
+				}
 
 				scope:recipient = {
 					hidden_effect = {
@@ -269,7 +288,7 @@
 					}
 					set_variable = {
 						name = liege_recently_adjusted_mandala_vassal_contract
-						value = scope:actor
+						value = scope:puppet_or_actor
 						years = mandala_vassal_obligation_cooldown_years
 					}
 				}
@@ -296,7 +315,7 @@
 
 	send_option = {
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_usable_hook = scope:recipient
 			}
 		}
@@ -304,7 +323,7 @@
 		localization = SCHEME_HOOK
 	}
 	should_use_extra_icon = {
-		scope:actor = { has_usable_hook = scope:recipient }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 
@@ -312,7 +331,7 @@
 }
 
 vassal_modify_vassal_contract_interaction = {
-	special_interaction = liege_modify_vassal_contract
+	special_interaction = vassal_modify_vassal_contract
 	interface = modify_vassal_contract
 	category = interaction_category_vassal
 	common_interaction = yes
@@ -324,54 +343,40 @@ vassal_modify_vassal_contract_interaction = {
 	force_notification = yes
 	notification_text = MODIFY_VASSAL_CONTRACT_NOTIFICATION_TO_LIEGE
 
-	redirect = {
-		# need to reverse the role for the UI to work properly
-		scope:recipient = {
-			save_scope_as = secondary_recipient
-		}
-		scope:actor = {
-			save_scope_as = recipient
-		}
-
-		scope:secondary_recipient = {
-			save_scope_as = actor
-		}
-	}
-
 	is_shown = {
-		scope:recipient = {
-			liege = scope:actor
-			this != scope:actor
+		scope:puppet_or_actor = {
+			liege ?= scope:recipient
+			this != scope:recipient
 			is_tributary = no # this excludes tributary contracts by default
 			vassal_contract_has_modifiable_obligations = yes
 			NOR = {
-				government_allows = administrative
+				government_has_mechanic = administrative
 				government_has_flag = government_is_nomadic
 			}
 		}
 	}
 
 	is_valid_showing_failures_only = {
-		NOT = { scope:recipient = { is_at_war_with = scope:actor } }
+		NOT = { scope:recipient = { is_at_war_with = scope:puppet_or_actor } }
 	}
 
 	can_send = {
 		#Mandala gets special treatment
 		trigger_if = {
 			limit = {
-				scope:recipient = { government_has_flag = government_is_mandala }
+				scope:puppet_or_actor = { government_has_flag = government_is_mandala }
 			}
 			custom_tooltip = {
 				text = vassal_modify_vassal_contract_mandala_cooldown
 				NOT = {
-					scope:actor = { var:vassal_recently_adjusted_mandala_vassal_contract ?= scope:recipient }
+					scope:puppet_or_actor = { var:vassal_recently_adjusted_mandala_vassal_contract ?= scope:recipient }
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 			}
 
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				# Must be an even trade overall
 				trigger_if = {
 					limit = {
@@ -379,7 +384,7 @@ vassal_modify_vassal_contract_interaction = {
 					}
 					custom_description = {
 						text = "vassal_modify_vassal_contract_cannot_increase_obligation_level"
-						object = scope:actor
+						object = scope:recipient
 						value = count_obligation_improvements_for_vassal_include_hook
 						count_obligation_improvements_for_vassal_include_hook = 0
 					}
@@ -396,20 +401,20 @@ vassal_modify_vassal_contract_interaction = {
 		#The rest
 		trigger_else_if = { #If you're blocked we don't want to show anything else
 			limit = {
-				scope:recipient = {
+				scope:puppet_or_actor = {
 					subject_contract_is_blocked_from_modification = yes
 				}
 			}
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				subject_contract_is_blocked_from_modification = no
 			}
 		}
 		trigger_else = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 			}
 
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				# Must be an even trade overall
 				trigger_if = {
 					limit = {
@@ -417,7 +422,7 @@ vassal_modify_vassal_contract_interaction = {
 					}
 					custom_description = {
 						text = "vassal_modify_vassal_contract_cannot_increase_obligation_level"
-						object = scope:actor
+						object = scope:recipient
 						value = count_obligation_improvements_for_vassal_include_hook
 						count_obligation_improvements_for_vassal_include_hook = 0
 					}
@@ -437,14 +442,14 @@ vassal_modify_vassal_contract_interaction = {
 
 	on_accept = {
 		# Enact changes.
-		scope:recipient = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
-				right_icon = scope:actor
+				right_icon = scope:recipient
 				if = {
 					limit = { always = scope:hook }
-					use_hook = scope:actor
+					use_hook = scope:recipient
 					add_achievement_flag_effect = { FLAG = achievement_fine_print_flag }
 				}
 
@@ -455,7 +460,7 @@ vassal_modify_vassal_contract_interaction = {
 
 					save_scope_as = obligation
 
-					scope:recipient = {
+					scope:puppet_or_actor = {
 						vassal_contract_set_obligation_level = {
 							type = scope:obligation.vassal_contract_type
 							level = scope:obligation
@@ -464,7 +469,7 @@ vassal_modify_vassal_contract_interaction = {
 				}
 			}
 		}
-		scope:actor = {
+		scope:puppet_or_actor = {
 			set_variable = {
 				name = vassal_recently_adjusted_mandala_vassal_contract
 				value = scope:recipient
@@ -479,24 +484,24 @@ vassal_modify_vassal_contract_interaction = {
 			## We work these out first so they're not invalidated by the actual effect block.
 			if = {
 				limit = {
-					catalyst_granted_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					catalyst_granted_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:puppet_or_actor }
+					scope:recipient = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-								CHAR = scope:recipient
+								CHAR = scope:puppet_or_actor
 							}
 						}
 					}
 				}
-				scope:actor = {
+				scope:recipient = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-								CHAR = scope:recipient
+								CHAR = scope:puppet_or_actor
 							}
 						}
 						activate_struggle_catalyst = {
@@ -510,7 +515,7 @@ vassal_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					scope:recipient.count_obligation_improvements_for_vassal > 0
-					scope:actor = {
+					scope:puppet_or_actor = {
 						is_diff_faith_or_culture_trigger = {
 							CHAR = scope:recipient
 							STATUS = involved
@@ -524,7 +529,7 @@ vassal_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -535,7 +540,7 @@ vassal_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_grant_privilege_to_diff_faith_culture_vassal
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -543,13 +548,13 @@ vassal_modify_vassal_contract_interaction = {
 		}
 
 		# Additional Flavor Titles
-		scope:recipient = { additional_flavor_check_effect = yes }
+		scope:puppet_or_actor = { additional_flavor_check_effect = yes }
 	}
 
 	send_option = {
 		is_valid = {
-			scope:recipient = {
-				has_usable_hook = scope:actor
+			scope:puppet_or_actor = {
+				has_usable_hook = scope:recipient
 			}
 		}
 		flag = hook
@@ -557,28 +562,28 @@ vassal_modify_vassal_contract_interaction = {
 	}
 	send_option = {
 		is_shown = {
-			scope:recipient = { is_diarch_of_target = scope:actor }
-			scope:actor = { has_diarchy_parameter = diarch_gets_a_free_change_on_vassal_contract }
+			scope:puppet_or_actor = { is_diarch_of_target = scope:recipient }
+			scope:recipient = { has_diarchy_parameter = diarch_gets_a_free_change_on_vassal_contract }
 		}
 		is_valid = {
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				trigger_if = {
 					limit = { has_variable_list = diarch_contract_rights_used_list }
 					NOT = {
 						is_target_in_variable_list = {
 							name = diarch_contract_rights_used_list
-							target = scope:actor
+							target = scope:recipient
 						}
 					}
 				}
 			}
-			scope:actor = { has_diarchy_active_parameter = diarch_gets_a_free_change_on_vassal_contract }
+			scope:recipient = { has_diarchy_active_parameter = diarch_gets_a_free_change_on_vassal_contract }
 		}
 		flag = diarch
 		localization = CALL_IN_DIARCH_RIGHTS
 	}
 	should_use_extra_icon = {
-		scope:recipient = { has_usable_hook = scope:actor }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 	send_options_exclusive = no
@@ -591,14 +596,23 @@ ai_only_liege_modify_vassal_contract_interaction = {
 
 	auto_accept = yes
 
+	is_available = {
+		trigger_if = {
+			limit = {
+				NOT = { government_has_mechanic = administrative }
+			}
+			is_at_war = no
+		}
+		is_ai = yes
+	}
+
 	is_shown = {
 		scope:actor = {
-			is_ai = yes
 			has_usable_hook = scope:recipient
 		}
 		scope:recipient = {
 			this != scope:actor
-			liege = scope:actor
+			liege ?= scope:actor
 			NOT = {
 				has_strong_hook = scope:actor
 			}
@@ -612,7 +626,7 @@ ai_only_liege_modify_vassal_contract_interaction = {
 
 	on_accept = {
 		scope:actor = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				generous = minor_stress_impact_gain
 			}
 		}
@@ -624,15 +638,6 @@ ai_only_liege_modify_vassal_contract_interaction = {
 
 		# Additional Flavor Titles
 		scope:recipient = { additional_flavor_check_effect = yes }
-	}
-
-	ai_potential = {
-		trigger_if = {
-			limit = {
-				NOT = { government_allows = administrative }
-			}
-			is_at_war = no
-		}
 	}
 
 	ai_targets = {
@@ -677,9 +682,14 @@ ai_only_liege_modify_vassal_contract_admin_province_interaction = {
 
 	auto_accept = yes
 
+	is_available = {
+		# This also blocks non-admin govs with admin vassals from changing province obligations... but we're OK with that.
+		government_has_flag = government_uses_admin_province_obligations
+		is_ai = yes
+	}
+
 	is_shown = {
 		scope:actor = {
-			is_ai = yes
 			AND = {
 				government_has_flag = government_uses_admin_province_obligations
 				scope:recipient = { government_has_flag = government_uses_admin_province_obligations }
@@ -687,13 +697,14 @@ ai_only_liege_modify_vassal_contract_admin_province_interaction = {
 		}
 		scope:recipient = {
 			this != scope:actor
-			liege = scope:actor
+			liege ?= scope:actor
 			is_tributary = no
 			NOT = {
 				has_strong_hook = scope:actor
 			}
 			is_ruler = yes
 			government_has_flag = government_uses_admin_province_obligations
+			NOT = { has_variable = admin_contract_cooldown }
 
 			does_ai_liege_in_vassal_contract_desire_admin_province_obligation_change = yes
 		}
@@ -702,13 +713,18 @@ ai_only_liege_modify_vassal_contract_admin_province_interaction = {
 
 	on_accept = {
 		scope:actor = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				generous = minor_stress_impact_gain
 			}
 		}
 
 		scope:recipient = {
 			trigger_event = char_interaction.0253
+			set_variable = {
+				name = admin_contract_cooldown
+				value = yes
+				years = admin_contract_cooldown_value
+			}
 		}
 
 		# Additional Flavor Titles
@@ -729,11 +745,6 @@ ai_only_liege_modify_vassal_contract_admin_province_interaction = {
 		hegemony = 3
 	}
 
-	is_available = {
-		# This also blocks non-admin govs with admin vassals from changing province obligations... but we're OK with that.
-		government_has_flag = government_uses_admin_province_obligations
-	}
-
 	ai_will_do = {
 		base = 100
 	}
@@ -746,15 +757,18 @@ ai_only_vassal_modify_vassal_contract_interaction = {
 
 	auto_accept = yes
 
+	is_available = {
+		top_liege != this
+		vassal_contract_can_be_modified_trigger = yes
+		does_ai_vassal_in_vassal_contract_desire_obligation_change = yes
+		is_ai = yes
+		is_tributary = no # this excludes tributary contracts by default
+	}
+
 	is_shown = {
 		scope:actor = {
-			is_ai = yes
-			top_liege != this
 			has_usable_hook = scope:recipient
-			vassal_contract_can_be_modified_trigger = yes
-			does_ai_vassal_in_vassal_contract_desire_obligation_change = yes
-			is_tributary = no # this excludes tributary contracts by default
-			liege = scope:recipient
+			liege ?= scope:recipient
 		}
 		scope:recipient = {
 			this != scope:actor
@@ -773,10 +787,6 @@ ai_only_vassal_modify_vassal_contract_interaction = {
 
 		# Additional Flavor Titles
 		scope:recipient = { additional_flavor_check_effect = yes }
-	}
-
-	ai_potential = {
-		always = yes
 	}
 
 	ai_targets = {
@@ -829,16 +839,16 @@ admin_liege_modify_vassal_contract_interaction = {
 
 	is_shown = {
 		scope:recipient = {
-			this != scope:actor
-			liege = scope:actor
+			this != scope:puppet_or_actor
+			liege ?= scope:puppet_or_actor
 			OR = {
 				is_landed = yes
-				is_councillor_of = scope:actor.top_liege
+				is_councillor_of = scope:puppet_or_actor.top_liege
 			}
 			is_tributary = no # this excludes tributary contracts by default
 			is_ruler = yes
 			vassal_contract_has_modifiable_obligations = yes
-			government_allows = administrative
+			government_has_mechanic = administrative
 			any_held_title = {
 				OR = {
 					tier >= holder.main_administrative_tier
@@ -850,7 +860,7 @@ admin_liege_modify_vassal_contract_interaction = {
 	}
 
 	is_valid_showing_failures_only = {
-		scope:actor = {
+		scope:puppet_or_actor = {
 			NOT = { is_at_war_with = scope:recipient }
 			tgp_is_ceremonial_liege_trigger = no
 		}
@@ -883,7 +893,7 @@ admin_liege_modify_vassal_contract_interaction = {
 				}
 			}
 			trigger_else = {
-				scope:actor = {
+				scope:puppet_or_actor = {
 					has_changed_contract_obligation_trigger = yes
 				}
 			}
@@ -898,7 +908,7 @@ admin_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					catalyst_granted_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -908,7 +918,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -919,7 +929,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -927,7 +937,7 @@ admin_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					catalyst_revoked_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -937,7 +947,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -948,7 +958,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_revoked_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -958,7 +968,7 @@ admin_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					scope:recipient.count_obligation_improvements_for_vassal > 0
-					scope:actor = {
+					scope:puppet_or_actor = {
 						is_diff_faith_or_culture_trigger = {
 							CHAR = scope:recipient
 							STATUS = involved
@@ -972,7 +982,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -983,7 +993,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_grant_privilege_to_diff_faith_culture_vassal
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -991,7 +1001,7 @@ admin_liege_modify_vassal_contract_interaction = {
 		}
 
 		# Enact changes.
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
@@ -1026,21 +1036,14 @@ admin_liege_modify_vassal_contract_interaction = {
 							}
 							if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = celestial_province_military
-										vassal_contract_has_flag = celestial_province_protectorate
-									}
+									vassal_contract_has_flag = celestial_military_appointment
 									NOT = { has_realm_law = celestial_military_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = celestial_military_appointment_succession_law
 							}
 							else_if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = celestial_province_standard
-										vassal_contract_has_flag = celestial_province_industrial
-										vassal_contract_has_flag = celestial_province_metropolitan
-									}
+									vassal_contract_has_flag = celestial_civil_appointment
 									NOT = { has_realm_law = celestial_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = celestial_appointment_succession_law
@@ -1049,22 +1052,22 @@ admin_liege_modify_vassal_contract_interaction = {
 						# Update the succession law for meritocratic province types if applicable - That way, we don't have to wait until the current law invalidates.
 						else_if = {
 							limit = {
-								government_has_flag = government_is_meritocratic
+								OR = {
+									government_has_flag = government_is_meritocratic
+									government_has_flag = government_is_steppe_admin
+								}
 								scope:obligation.vassal_contract_type = vassal_contract:meritocratic_provinces
 							}
 							if = {
 								limit = {
-									vassal_contract_has_flag = meritocratic_province_military
+									vassal_contract_has_flag = meritocratic_military_appointment
 									NOT = { has_realm_law = meritocratic_military_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = meritocratic_military_appointment_succession_law
 							}
 							else_if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = meritocratic_province_standard
-										vassal_contract_has_flag = meritocratic_province_industrial
-									}
+									vassal_contract_has_flag = meritocratic_civil_appointment
 									NOT = { has_realm_law = meritocratic_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = meritocratic_appointment_succession_law
@@ -1073,7 +1076,7 @@ admin_liege_modify_vassal_contract_interaction = {
 						# Update the succession law for japanese province types if applicable - That way, we don't have to wait until the current law invalidates.
 						else_if = {
 							limit = {
-								government_has_flag = government_is_japanese_administrative
+								government_has_flag = government_is_japan_administrative
 								scope:obligation.vassal_contract_type = vassal_contract:japan_administrative_provinces
 							}
 							if = {
@@ -1115,21 +1118,22 @@ admin_vassal_modify_vassal_contract_interaction = {
 
 	send_name = "admin_vassal_modify_vassal_contract_interaction_send"
 	desc = admin_vassal_modify_vassal_contract_interaction_desc
+	notification_text = MODIFY_VASSAL_CONTRACT_NOTIFICATION_TO_LIEGE
 
 	is_shown = {
-		scope:actor = {
-			top_liege != this
-			this != scope:recipient
-			liege = scope:recipient
-			is_tributary = no # this excludes tributary contracts by default
+		scope:puppet_or_actor = {
+			government_has_mechanic = administrative
 			vassal_contract_has_modifiable_obligations = yes
-			government_allows = administrative
 			tgp_is_ceremonial_liege_trigger = no
+			top_liege != this
+			is_tributary = no # this excludes tributary contracts by default
+			this != scope:recipient
+			liege ?= scope:recipient
 		}
 	}
 
 	is_valid_showing_failures_only = {
-		scope:actor = {
+		scope:puppet_or_actor = {
 			custom_tooltip = {
 				text = admin_vassal_not_holding_a_theme_desc
 				any_held_title = {
@@ -1147,11 +1151,11 @@ admin_vassal_modify_vassal_contract_interaction = {
 	can_send = {
 		trigger_if = { #If you're blocked we don't want to show anything else (we don't really use this for admin, but we'll keep the logic, just in case)
 			limit = {
-				scope:actor = {
+				scope:puppet_or_actor = {
 					subject_contract_is_blocked_from_modification = yes
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				subject_contract_is_blocked_from_modification = no
 			}
 		}
@@ -1159,13 +1163,13 @@ admin_vassal_modify_vassal_contract_interaction = {
 			# There is no cooldown present - To make sure we somehow don't show both cooldowns at the same time, we split them into separate triggers
 			trigger_if = {
 				limit = {
-					scope:actor = {
+					scope:puppet_or_actor = {
 						has_variable = admin_contract_cooldown
 					}
 				}
 				custom_tooltip = {
 					text = admin_contract_cooldown_desc_vassal
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = admin_contract_cooldown }
 					}
 				}
@@ -1173,11 +1177,11 @@ admin_vassal_modify_vassal_contract_interaction = {
 			trigger_else = {
 				custom_tooltip = {
 					text = admin_contract_request_cooldown_desc
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = admin_contract_request_cooldown }
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					has_changed_contract_obligation_trigger = yes
 				}
 			}
@@ -1190,7 +1194,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 						scope:dominant_family = yes
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					influence >= major_influence_value
 				}
 			}
@@ -1210,7 +1214,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 
 	on_accept = {
 		# Enact changes
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
@@ -1233,7 +1237,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 							scope:diarch = yes
 						}
 					}
-					scope:actor = {
+					scope:puppet_or_actor = {
 						change_influence = major_influence_loss
 					}
 				}
@@ -1252,7 +1256,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 
 					save_scope_as = obligation
 
-					scope:actor = {
+					scope:puppet_or_actor = {
 						vassal_contract_set_obligation_level = {
 							type = scope:obligation.vassal_contract_type
 							level = scope:obligation
@@ -1267,21 +1271,14 @@ admin_vassal_modify_vassal_contract_interaction = {
 
 							if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = celestial_province_military
-										vassal_contract_has_flag = celestial_province_protectorate
-									}
+									vassal_contract_has_flag = celestial_military_appointment
 									NOT = { has_realm_law = celestial_military_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = celestial_military_appointment_succession_law
 							}
 							else_if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = celestial_province_standard
-										vassal_contract_has_flag = celestial_province_industrial
-										vassal_contract_has_flag = celestial_province_metropolitan
-									}
+									vassal_contract_has_flag = celestial_civil_appointment
 									NOT = { has_realm_law = celestial_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = celestial_appointment_succession_law
@@ -1290,22 +1287,22 @@ admin_vassal_modify_vassal_contract_interaction = {
 						# Update the succession law for meritocratic province types if applicable - That way, we don't have to wait until the current law invalidates.
 						else_if = {
 							limit = {
-								government_has_flag = government_is_meritocratic
+								OR = {
+									government_has_flag = government_is_meritocratic
+									government_has_flag = government_is_steppe_admin
+								}
 								scope:obligation.vassal_contract_type = vassal_contract:meritocratic_provinces
 							}
 							if = {
 								limit = {
-									vassal_contract_has_flag = meritocratic_province_military
+									vassal_contract_has_flag = meritocratic_military_appointment
 									NOT = { has_realm_law = meritocratic_military_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = meritocratic_military_appointment_succession_law
 							}
 							else_if = {
 								limit = {
-									OR = {
-										vassal_contract_has_flag = meritocratic_province_standard
-										vassal_contract_has_flag = meritocratic_province_industrial
-									}
+									vassal_contract_has_flag = meritocratic_civil_appointment
 									NOT = { has_realm_law = meritocratic_appointment_succession_law }
 								}
 								add_realm_law_skip_effects = meritocratic_appointment_succession_law
@@ -1314,7 +1311,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 						# Update the succession law for japanese province types if applicable - That way, we don't have to wait until the current law invalidates.
 						else_if = {
 							limit = {
-								government_has_flag = government_is_japanese_administrative
+								government_has_flag = government_is_japan_administrative
 								scope:obligation.vassal_contract_type = vassal_contract:japan_administrative_provinces
 							}
 							if = {
@@ -1351,7 +1348,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-								CHAR = scope:actor
+								CHAR = scope:puppet_or_actor
 							}
 						}
 					}
@@ -1362,12 +1359,12 @@ admin_vassal_modify_vassal_contract_interaction = {
 						limit = {
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-								CHAR = scope:actor
+								CHAR = scope:puppet_or_actor
 							}
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:recipient
 						}
 					}
 				}
@@ -1375,17 +1372,17 @@ admin_vassal_modify_vassal_contract_interaction = {
 			# Improving contract catalyst
 			if = {
 				limit = {
-					scope:actor.count_obligation_improvements_for_vassal > 0
+					scope:puppet_or_actor.count_obligation_improvements_for_vassal > 0
 					scope:recipient = {
 						is_diff_faith_or_culture_trigger = {
-							CHAR = scope:actor
+							CHAR = scope:puppet_or_actor
 							STATUS = involved
 						}
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_grant_privilege_to_diff_faith_culture_vassal
-								CHAR = scope:actor
+								CHAR = scope:puppet_or_actor
 							}
 						}
 					}
@@ -1396,7 +1393,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 						limit = {
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
 								CATALYST = catalyst_grant_privilege_to_diff_faith_culture_vassal
-								CHAR = scope:actor
+								CHAR = scope:puppet_or_actor
 							}
 						}
 						activate_struggle_catalyst = {
@@ -1412,7 +1409,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 	on_decline = {
 		# Activate cooldown - You may only ask for it to be changed every so often (this mostly exists for MP, since you cannot send it to the AI unless they accept)
 		hidden_effect = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				set_variable = {
 					name = admin_contract_request_cooldown
 					value = yes
@@ -1426,7 +1423,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 	# Hook
 	send_option = {
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_usable_hook = scope:recipient
 			}
 		}
@@ -1436,7 +1433,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 	# Dominant Family
 	send_option = {
 		is_shown = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				house ?= { is_dominant_family = yes }
 			}
 		}
@@ -1446,10 +1443,10 @@ admin_vassal_modify_vassal_contract_interaction = {
 	# Diarch
 	send_option = {
 		is_shown = {
-			scope:actor = { is_diarch_of_target = scope:recipient }
+			scope:puppet_or_actor = { is_diarch_of_target = scope:recipient }
 		}
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				trigger_if = {
 					limit = { has_variable_list = diarch_contract_rights_used_list }
 					NOT = {
@@ -1465,7 +1462,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 		localization = CALL_IN_DIARCH_RIGHTS
 	}
 	should_use_extra_icon = {
-		scope:actor = { has_usable_hook = scope:recipient }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 	send_options_exclusive = no
@@ -1476,20 +1473,20 @@ admin_vassal_modify_vassal_contract_interaction = {
 		# Opinion Factor
 		opinion_modifier = {
 			who = scope:recipient
-			opinion_target = scope:actor
+			opinion_target = scope:puppet_or_actor
 			multiplier = 1
 			desc = AI_OPINION_REASON
 		}
 
 		# Governor efficiency - Skilled governors are more likely to get accepted
 		modifier = {
-			add = scope:actor.governor_efficiency_presented
+			add = scope:puppet_or_actor.governor_efficiency_presented
 			desc = AI_GOVERNOR_EFFICIENCY
 		}
 
 		# Members of a powerful family are more likely to get accepted
 		modifier = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				house ?= { is_powerful_family = yes }
 				NOT = { house ?= scope:recipient.house }
 			}
@@ -1499,7 +1496,7 @@ admin_vassal_modify_vassal_contract_interaction = {
 
 		# Members of the emperors family are much more likely to get accepted
 		modifier = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				house ?= scope:recipient.house
 			}
 			add = 60
@@ -1524,8 +1521,8 @@ nomad_liege_modify_vassal_contract_interaction = {
 
 	is_shown = {
 		scope:recipient = {
-			this != scope:actor
-			liege = scope:actor
+			this != scope:puppet_or_actor
+			liege ?= scope:puppet_or_actor
 			is_tributary = no # this excludes tributary contracts by default
 			is_ruler = yes
 			vassal_contract_has_modifiable_obligations = yes
@@ -1534,7 +1531,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 	}
 
 	is_valid_showing_failures_only = {
-		NOT = { scope:actor = { is_at_war_with = scope:recipient } }
+		NOT = { scope:puppet_or_actor = { is_at_war_with = scope:recipient } }
 	}
 
 	can_send = {
@@ -1549,12 +1546,12 @@ nomad_liege_modify_vassal_contract_interaction = {
 			}
 		}
 		trigger_else = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 
 				custom_description = {
 					text = "liege_modify_vassal_contract_cannot_exceed_tyranny_cap"
-					object = scope:actor
+					object = scope:puppet_or_actor
 					NOT = {
 						vassal_obligation_increase_tyranny_gain_multiplier > 1
 					}
@@ -1602,7 +1599,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					catalyst_granted_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -1612,7 +1609,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -1623,7 +1620,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_granted_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -1631,7 +1628,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					catalyst_revoked_powerful_diff_faith_vassal_religious_protection_preliminary_trigger = { CHAR = scope:recipient }
-					scope:actor = {
+					scope:puppet_or_actor = {
 						any_character_struggle = {
 							involvement = involved
 							activate_struggle_catalyst_secondary_character_involvement_involved_trigger = {
@@ -1641,7 +1638,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -1652,7 +1649,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_revoked_powerful_diff_faith_vassal_religious_protection
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -1662,7 +1659,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 			if = {
 				limit = {
 					scope:recipient.count_obligation_improvements_for_vassal > 0
-					scope:actor = {
+					scope:puppet_or_actor = {
 						is_diff_faith_or_culture_trigger = {
 							CHAR = scope:recipient
 							STATUS = involved
@@ -1676,7 +1673,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 					}
 				}
-				scope:actor = {
+				scope:puppet_or_actor = {
 					every_character_struggle = {
 						involvement = involved
 						limit = {
@@ -1687,7 +1684,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 						}
 						activate_struggle_catalyst = {
 							catalyst = catalyst_grant_privilege_to_diff_faith_culture_vassal
-							character = scope:actor
+							character = scope:puppet_or_actor
 						}
 					}
 				}
@@ -1695,14 +1692,14 @@ nomad_liege_modify_vassal_contract_interaction = {
 		}
 
 		# Enact changes.
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
 				right_icon = scope:recipient
 				if = {
 					limit = { vassal_obligation_increase_tyranny_gain != 0 }
-					stress_impact = {
+					stress_and_fulfillment_impact = {
 						just = medium_stress_impact_gain
 						generous = medium_stress_impact_gain
 					}
@@ -1748,7 +1745,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 
 	send_option = {
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_usable_hook = scope:recipient
 			}
 		}
@@ -1756,7 +1753,7 @@ nomad_liege_modify_vassal_contract_interaction = {
 		localization = SCHEME_HOOK
 	}
 	should_use_extra_icon = {
-		scope:actor = { has_usable_hook = scope:recipient }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 	send_options_exclusive = no
@@ -1773,25 +1770,11 @@ nomad_vassal_modify_vassal_contract_interaction = {
 	send_name = "nomad_vassal_modify_vassal_contract_interaction_send"
 	desc = nomad_vassal_modify_vassal_contract_interaction_desc
 
-	redirect = {
-		# need to reverse the role for the UI to work properly
-		scope:recipient = {
-			save_scope_as = secondary_recipient
-		}
-		scope:actor = {
-			save_scope_as = recipient
-		}
-
-		scope:secondary_recipient = {
-			save_scope_as = actor
-		}
-	}
-
 	is_shown = {
-		scope:recipient = {
+		scope:puppet_or_actor = {
 			is_independent_ruler = no
-			this != scope:actor
-			liege = scope:actor
+			this != scope:recipient
+			liege ?= scope:recipient
 			is_tributary = no # this excludes tributary contracts by default
 			vassal_contract_has_modifiable_obligations = yes
 			government_has_flag = government_is_nomadic
@@ -1799,17 +1782,17 @@ nomad_vassal_modify_vassal_contract_interaction = {
 	}
 
 	is_valid_showing_failures_only = {
-		NOT = { scope:recipient = { is_at_war_with = scope:actor } }
+		NOT = { scope:recipient = { is_at_war_with = scope:puppet_or_actor } }
 	}
 
 	can_send = {
 		trigger_if = { #If you're blocked we don't want to show anything else
 			limit = {
-				scope:recipient = {
+				scope:puppet_or_actor = {
 					subject_contract_is_blocked_from_modification = yes
 				}
 			}
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				subject_contract_is_blocked_from_modification = no
 			}
 		}
@@ -1817,13 +1800,13 @@ nomad_vassal_modify_vassal_contract_interaction = {
 			# There is no cooldown present - To make sure we somehow don't show both cooldowns at the same time, we split them into separate triggers
 			trigger_if = {
 				limit = {
-					scope:actor = {
+					scope:puppet_or_actor = {
 						has_variable = vassal_modify_contract_cooldown
 					}
 				}
 				custom_tooltip = {
 					text = vassal_modify_contract_cooldown_desc
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = vassal_modify_contract_cooldown }
 					}
 				}
@@ -1831,22 +1814,27 @@ nomad_vassal_modify_vassal_contract_interaction = {
 			trigger_else = {
 				custom_tooltip = {
 					text = nomad_contract_request_cooldown_desc
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = nomad_contract_request_cooldown }
 					}
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 			}
 
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				# Must be an even trade overall
-				custom_description = {
-					text = "vassal_modify_vassal_contract_cannot_increase_obligation_level"
-					object = scope:actor
-					value = count_obligation_improvements_for_vassal_include_hook
-					count_obligation_improvements_for_vassal_include_hook = 0
+				trigger_if = {
+					limit = {
+						count_obligation_improvements_for_vassal_include_hook >= 0
+					}
+					custom_description = {
+						text = "vassal_modify_vassal_contract_cannot_increase_obligation_level"
+						object = scope:recipient
+						value = count_obligation_improvements_for_vassal_include_hook
+						count_obligation_improvements_for_vassal_include_hook = 0
+					}
 				}
 
 				# Cannot change more than three things at once
@@ -1863,14 +1851,14 @@ nomad_vassal_modify_vassal_contract_interaction = {
 
 	on_accept = {
 		# Enact changes
-		scope:recipient = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
-				right_icon = scope:actor
+				right_icon = scope:recipient
 				if = {
 					limit = { always = scope:hook }
-					use_hook = scope:actor
+					use_hook = scope:recipient
 					add_achievement_flag_effect = { FLAG = achievement_fine_print_flag }
 				}
 
@@ -1890,7 +1878,7 @@ nomad_vassal_modify_vassal_contract_interaction = {
 
 					save_scope_as = obligation
 
-					scope:recipient = {
+					scope:puppet_or_actor = {
 						vassal_contract_set_obligation_level = {
 							type = scope:obligation.vassal_contract_type
 							level = scope:obligation
@@ -1902,13 +1890,13 @@ nomad_vassal_modify_vassal_contract_interaction = {
 		# If there's a diarch involved, and they called in their change, that gets flagged.
 		diarch_changed_own_contract_effect = yes
 		# Additional Flavor Titles
-		scope:recipient = { additional_flavor_check_effect = yes }
+		scope:puppet_or_actor = { additional_flavor_check_effect = yes }
 	}
 
 	on_decline = {
 		# Activate cooldown - You may only ask for it to be changed every so often (this mostly exists for MP, since you cannot send it to the AI unless they accept)
 		hidden_effect = {
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				set_variable = {
 					name = nomad_contract_request_cooldown
 					value = yes
@@ -1922,8 +1910,8 @@ nomad_vassal_modify_vassal_contract_interaction = {
 	# Hook
 	send_option = {
 		is_valid = {
-			scope:recipient = {
-				has_usable_hook = scope:actor
+			scope:puppet_or_actor = {
+				has_usable_hook = scope:recipient
 			}
 		}
 		flag = hook
@@ -1931,16 +1919,16 @@ nomad_vassal_modify_vassal_contract_interaction = {
 	}
 	send_option = {
 		is_shown = {
-			scope:recipient = { is_diarch_of_target = scope:actor }
+			scope:puppet_or_actor = { is_diarch_of_target = scope:recipient }
 		}
 		is_valid = {
-			scope:recipient = {
+			scope:puppet_or_actor = {
 				trigger_if = {
 					limit = { has_variable_list = diarch_contract_rights_used_list }
 					NOT = {
 						is_target_in_variable_list = {
 							name = diarch_contract_rights_used_list
-							target = scope:actor
+							target = scope:recipient
 						}
 					}
 				}
@@ -1950,7 +1938,7 @@ nomad_vassal_modify_vassal_contract_interaction = {
 		localization = CALL_IN_DIARCH_RIGHTS
 	}
 	should_use_extra_icon = {
-		scope:recipient = { has_usable_hook = scope:actor }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 	send_options_exclusive = no
@@ -1971,29 +1959,29 @@ suzerain_modify_tributary_contract_interaction = {
 
 	is_shown = {
 		scope:recipient = {
-			is_tributary_of = scope:actor # excludes vassals by default
+			is_tributary_of = scope:puppet_or_actor # excludes vassals by default
 			subject_contract_has_modifiable_obligations = yes
 			NOT = { government_has_flag = government_is_herder }
 		}
 	}
 
 	is_valid_showing_failures_only = {
-		NOT = { scope:recipient = { is_at_war_with = scope:actor } }
+		NOT = { scope:recipient = { is_at_war_with = scope:puppet_or_actor } }
 	}
 
 	can_send = {
 		#Mandala gets special treatment
 		trigger_if = {
 			limit = {
-				scope:actor = { government_has_flag = government_is_mandala }
+				scope:puppet_or_actor = { government_has_flag = government_is_mandala }
 			}
 			custom_tooltip = {
 				text = suzerain_modify_subject_contract_mandala_cooldown
 				NOT = {
-					scope:recipient = { var:suzerain_recently_adjusted_mandala_subject_contract ?= scope:actor }
+					scope:recipient = { var:suzerain_recently_adjusted_mandala_subject_contract ?= scope:puppet_or_actor }
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 
 				# Cannot change more than three things at once
@@ -2011,7 +1999,7 @@ suzerain_modify_tributary_contract_interaction = {
 				trigger_if = {
 					limit = { scope:obligations_favoring_tributary > 0 }
 					custom_description = {
-						text = "tributary_modify_vassal_contract_unnecessary_hook_usage_vassal_favor"
+						text = "vassal_modify_vassal_contract_unnecessary_hook_usage_vassal_favor"
 						object = scope:recipient
 						value = scope:obligations_favoring_tributary
 						NOT = { always = scope:hook }
@@ -2020,7 +2008,7 @@ suzerain_modify_tributary_contract_interaction = {
 				trigger_else_if = {
 					limit = { scope:obligations_favoring_tributary = 0 }
 					custom_description = {
-						text = "tributary_modify_vassal_contract_unnecessary_hook_usage_equal"
+						text = "vassal_modify_vassal_contract_unnecessary_hook_usage_equal"
 						object = scope:recipient
 						NOT = { always = scope:hook }
 					}
@@ -2032,7 +2020,7 @@ suzerain_modify_tributary_contract_interaction = {
 						scope:obligations_favoring_tributary < 0
 						NOT = { always = scope:hook }
 					}
-					scope:actor = { piety >= major_piety_value }
+					scope:puppet_or_actor = { piety >= major_piety_value }
 				}
 				trigger_else = {} # Otherwise we're fine!
 			}
@@ -2042,14 +2030,35 @@ suzerain_modify_tributary_contract_interaction = {
 				scope:recipient = {
 					subject_contract_is_blocked_from_modification = yes
 				}
+				# Client kingdoms can change every 10 years
+				NOT = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
 			}
 			scope:recipient = {
 				subject_contract_is_blocked_from_modification = no
 			}
 		}
 		trigger_else = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
+				
+				trigger_if = {
+					limit = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					# Restrictions on how quickly you can change contract on client kingdoms
+					custom_tooltip = {
+						text = suzerain_modify_subject_contract_BTWK_client_kingdom_cooldown
+						NOT = {
+							scope:recipient = { var:suzerain_recently_adjusted_BTWK_client_kingdom_subject_contract ?= scope:actor }
+						}
+					}
+					
+					custom_description = {
+						text = "liege_modify_vassal_contract_cannot_exceed_tyranny_cap"
+						object = scope:puppet_or_actor
+						NOT = {
+							vassal_obligation_increase_tyranny_gain_multiplier > 1
+						}
+					}
+				}
 
 				# Cannot change more than three things at once
 				custom_description = {
@@ -2066,7 +2075,7 @@ suzerain_modify_tributary_contract_interaction = {
 				trigger_if = {
 					limit = { scope:obligations_favoring_tributary > 0 }
 					custom_description = {
-						text = "tributary_modify_vassal_contract_unnecessary_hook_usage_vassal_favor"
+						text = "vassal_modify_vassal_contract_unnecessary_hook_usage_vassal_favor"
 						object = scope:recipient
 						value = scope:obligations_favoring_tributary
 						NOT = { always = scope:hook }
@@ -2075,7 +2084,7 @@ suzerain_modify_tributary_contract_interaction = {
 				trigger_else_if = {
 					limit = { scope:obligations_favoring_tributary = 0 }
 					custom_description = {
-						text = "tributary_modify_vassal_contract_unnecessary_hook_usage_equal"
+						text = "vassal_modify_vassal_contract_unnecessary_hook_usage_equal"
 						object = scope:recipient
 						NOT = { always = scope:hook }
 					}
@@ -2095,7 +2104,7 @@ suzerain_modify_tributary_contract_interaction = {
 							multiply = -1
 						}
 					}
-					scope:actor = {
+					scope:puppet_or_actor = {
 						prestige >= scope:total_prestige_cost
 					}
 				}
@@ -2107,7 +2116,7 @@ suzerain_modify_tributary_contract_interaction = {
 	auto_accept = yes
 
 	on_accept = {
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
@@ -2118,6 +2127,19 @@ suzerain_modify_tributary_contract_interaction = {
 					}
 					use_hook = scope:recipient
 					add_achievement_flag_effect = { FLAG = achievement_fine_print_flag }
+				}
+				
+				# BTWK - 50% tyranny gain from increasing obligations on client kingdoms
+				if = {
+					limit = { scope:recipient = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					save_scope_value_as = {
+						name = tyranny_gain
+						value = {
+							value = vassal_obligation_increase_tyranny_gain
+							divide = 2
+						}
+					}
+					add_tyranny = scope:tyranny_gain
 				}
 
 				# Prestige and opinion cost of making an unequal contract without a hook
@@ -2147,7 +2169,7 @@ suzerain_modify_tributary_contract_interaction = {
 						add_opinion = {
 							modifier = outraged_opinion
 							opinion = -30
-							target = scope:actor
+							target = scope:puppet_or_actor
 						}
 					}
 
@@ -2158,7 +2180,7 @@ suzerain_modify_tributary_contract_interaction = {
 						add_opinion = {
 							modifier = outraged_opinion
 							opinion = -10
-							target = scope:actor
+							target = scope:puppet_or_actor
 						}
 					}
 				}
@@ -2168,8 +2190,13 @@ suzerain_modify_tributary_contract_interaction = {
 						set_subject_contract_modification_blocked = yes
 					}
 					set_variable = {
+						name = suzerain_recently_adjusted_BTWK_client_kingdom_subject_contract
+						value = scope:puppet_or_actor
+						years = 10
+					}
+					set_variable = {
 						name = suzerain_recently_adjusted_mandala_subject_contract
-						value = scope:actor
+						value = scope:puppet_or_actor
 						years = mandala_vassal_obligation_cooldown_years
 					}
 				}
@@ -2195,7 +2222,7 @@ suzerain_modify_tributary_contract_interaction = {
 
 	send_option = {
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_usable_hook = scope:recipient
 			}
 		}
@@ -2203,7 +2230,7 @@ suzerain_modify_tributary_contract_interaction = {
 		localization = SCHEME_HOOK
 	}
 	should_use_extra_icon = {
-		scope:actor = { has_usable_hook = scope:recipient }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 
@@ -2220,19 +2247,20 @@ subject_modify_tributary_contract_interaction = {
 
 	send_name = "subject_modify_tributary_contract_interaction_send"
 	desc = subject_modify_tributary_contract_interaction_desc
+	notification_text = MODIFY_VASSAL_CONTRACT_NOTIFICATION_TO_LIEGE
 
 	is_shown = {
-		scope:actor = {
+		scope:puppet_or_actor = {
 			is_tributary_of = scope:recipient # excludes vassals by default
 			subject_contract_has_modifiable_obligations = yes
 		}
 	}
 
 	is_valid_showing_failures_only = {
-		scope:actor = {
+		scope:puppet_or_actor = {
 			is_travelling = no
 		}
-		NOT = { scope:recipient = { is_at_war_with = scope:actor } }
+		NOT = { scope:recipient = { is_at_war_with = scope:puppet_or_actor } }
 	}
 
 	can_send = {
@@ -2244,11 +2272,11 @@ subject_modify_tributary_contract_interaction = {
 			custom_tooltip = {
 				text = subject_modify_subject_contract_mandala_cooldown
 				NOT = {
-					scope:actor = { var:subject_recently_adjusted_mandala_subject_contract ?= scope:recipient }
+					scope:puppet_or_actor = { var:subject_recently_adjusted_mandala_subject_contract ?= scope:recipient }
 				}
 			}
 			# You can afford the cost if there is one
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_changed_contract_obligation_trigger = yes
 				trigger_if = {
 					limit = { scope:hook = no } # no cost
@@ -2273,25 +2301,28 @@ subject_modify_tributary_contract_interaction = {
 		}
 		trigger_else_if = { #If you're blocked we don't want to show anything else (we don't really use this for admin, but we'll keep the logic, just in case)
 			limit = {
-				scope:actor = {
+				scope:puppet_or_actor = {
 					subject_contract_is_blocked_from_modification = yes
 				}
 			}
-			scope:actor = {
+			scope:puppet_or_actor = {
 				subject_contract_is_blocked_from_modification = no
 			}
 		}
 		trigger_else = {
+			scope:puppet_or_actor = {
+				has_changed_contract_obligation_trigger = yes
+			}
 			# There is no cooldown present - To make sure we somehow don't show both cooldowns at the same time, we split them into separate triggers
 			trigger_if = {
 				limit = {
-					scope:actor = {
+					scope:puppet_or_actor = {
 						has_variable = tributary_modify_contract_cooldown
 					}
 				}
 				custom_tooltip = {
 					text = tributary_modify_contract_cooldown_desc
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = tributary_modify_contract_cooldown }
 					}
 				}
@@ -2299,14 +2330,14 @@ subject_modify_tributary_contract_interaction = {
 			trigger_else = {
 				custom_tooltip = {
 					text = tributary_modify_contract_cooldown_desc
-					scope:actor = {
+					scope:puppet_or_actor = {
 						NOT = { has_variable = tributary_modify_contract_cooldown }
 					}
 				}
 			}
 
 			# You can afford the cost if there is one
-			scope:actor = {
+			scope:puppet_or_actor = {
 				trigger_if = {
 					limit = { scope:hook = no } # no cost
 					trigger_if = {
@@ -2339,7 +2370,7 @@ subject_modify_tributary_contract_interaction = {
 
 	on_accept = {
 		# Enact changes
-		scope:actor = {
+		scope:puppet_or_actor = {
 			send_interface_message = {
 				type = msg_vassal_contract_change
 				title = modify_vassal_contract_interaction_notification
@@ -2400,7 +2431,7 @@ subject_modify_tributary_contract_interaction = {
 
 					save_scope_as = obligation
 
-					scope:actor = {
+					scope:puppet_or_actor = {
 						tributary_contract_set_obligation_level = {
 							type = scope:obligation.subject_contract_type
 							level = scope:obligation
@@ -2417,7 +2448,7 @@ subject_modify_tributary_contract_interaction = {
 	on_decline = {
 		# Activate cooldown - You may only ask for it to be changed every so often (this mostly exists for MP, since you cannot send it to the AI unless they accept)
 		hidden_effect = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				set_variable = {
 					name = tributary_modify_contract_cooldown
 					value = yes
@@ -2431,7 +2462,7 @@ subject_modify_tributary_contract_interaction = {
 	# Hook
 	send_option = {
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				has_usable_hook = scope:recipient
 			}
 		}
@@ -2440,10 +2471,10 @@ subject_modify_tributary_contract_interaction = {
 	}
 	send_option = {
 		is_shown = {
-			scope:actor = { is_diarch_of_target = scope:recipient }
+			scope:puppet_or_actor = { is_diarch_of_target = scope:recipient }
 		}
 		is_valid = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				trigger_if = {
 					limit = { has_variable_list = diarch_contract_rights_used_list }
 					NOT = {
@@ -2459,7 +2490,7 @@ subject_modify_tributary_contract_interaction = {
 		localization = CALL_IN_DIARCH_RIGHTS
 	}
 	should_use_extra_icon = {
-		scope:actor = { has_usable_hook = scope:recipient }
+		scope:puppet_or_actor = { has_usable_hook = scope:recipient }
 	}
 	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
 	send_options_exclusive = no
@@ -2470,7 +2501,7 @@ subject_modify_tributary_contract_interaction = {
 		# Opinion Factor
 		opinion_modifier = {
 			who = scope:recipient
-			opinion_target = scope:actor
+			opinion_target = scope:puppet_or_actor
 			multiplier = 1
 			desc = AI_OPINION_REASON
 		}
@@ -2482,7 +2513,7 @@ subject_modify_tributary_contract_interaction = {
 				if = { # the Chinese Emperor cares less since they get tribute through missions as well
 					limit = {
 						scope:new_value < 0
-						scope:actor = {
+						scope:puppet_or_actor = {
 							OR = {
 								has_subject_contract_group = tributary_celestial
 								has_subject_contract_group = tributary_hegemonic
@@ -2503,18 +2534,21 @@ ai_only_hegemonic_tributary_modify_tributary_contract_interaction = {
 
 	auto_accept = yes
 
+	is_available = {
+		subject_standing > 40
+		is_ai = yes
+		is_available = yes # Let's not have the AI do this when they're away from home etc (like paying tribute)
+		OR = {
+			has_subject_contract_group = tributary_celestial
+			has_subject_contract_group = tributary_hegemonic
+		}
+		does_ai_subject_in_subject_contract_desire_obligation_change = yes
+		subject_contract_has_modifiable_obligations = yes
+	}
+
 	is_shown = {
 		scope:actor = {
-			is_ai = yes
-			is_available = yes # Let's not have the AI do this when they're away from home etc (like paying tribute)
 			is_tributary_of = scope:recipient # excludes vassals by default
-			OR = {
-				has_subject_contract_group = tributary_celestial
-				has_subject_contract_group = tributary_hegemonic
-			}
-			subject_standing > 40
-			subject_contract_has_modifiable_obligations = yes
-			does_ai_subject_in_subject_contract_desire_obligation_change = yes
 			NOT = { is_at_war_with = scope:recipient }
 		}
 	}
@@ -2556,10 +2590,6 @@ ai_only_hegemonic_tributary_modify_tributary_contract_interaction = {
 				trigger_event = char_interaction.0252
 			}
 		}
-	}
-
-	ai_potential = {
-		always = yes
 	}
 
 	ai_targets = {

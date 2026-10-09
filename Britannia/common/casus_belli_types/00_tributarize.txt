@@ -375,7 +375,7 @@
 				value = minor_prestige_value
 				multiply = -1.0
 			}
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
@@ -391,7 +391,7 @@
 		}
 		
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -551,6 +551,8 @@
 			}
 			multiply = 0.2
 		}
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 
@@ -600,12 +602,33 @@
 					}
 					add = 100
 				}
+				# Anglo-Saxon kings want to subjugate other Anglo-Saxons if they have no de jure pretensions
+				else_if = {
+					limit = {
+						OR = {
+							has_title = title:e_aengland
+							primary_title = { has_variable = is_anglo_saxon_kingdom }
+						}
+						BTWK_aengland_bretwalda_active_trigger = yes
+						scope:defender = { 
+							culture = { has_same_culture_heritage = scope:attacker.culture }
+							NOT = {
+								any_realm_de_jure_kingdom = { holder ?= scope:attacker }
+							}
+						}
+						NAND = {
+							scope:attacker = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+							scope:defender = { owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story }
+						}
+					}
+					add = 100
+				}
 				else_if = {
 					limit = {
 						NOT = { government_has_flag = government_is_mandala }
 					}
 					add = -1000
-				}				
+				} 
 			}
 		}
 	}
@@ -762,7 +785,7 @@ tributary_independence_war = {
 		}
 		scope:attacker = {
 			show_pow_release_message_effect = yes
-			stress_impact = {
+			stress_and_fulfillment_impact = {
  				ambitious = medium_stress_impact_gain
  				arrogant = medium_stress_impact_gain
  			}
@@ -779,7 +802,7 @@ tributary_independence_war = {
 
 		scope:defender = {
 			add_prestige = minor_prestige_value
-			stress_impact = {
+			stress_and_fulfillment_impact = {
  				arrogant = medium_stress_impact_gain
  			}
 		}

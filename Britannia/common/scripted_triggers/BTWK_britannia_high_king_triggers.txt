@@ -13,6 +13,13 @@ BTWK_britannia_subject_king_tributaries_active_trigger = {
 	BTWK_britannia_high_kingship_active_trigger = yes
 }
 
+BTWK_britannia_king_tier_vassals_allowed_trigger = {
+	OR = {
+		BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+		BTWK_britannia_high_kingship_active_trigger = no
+	}
+}
+
 BTWK_britannia_subject_king_vassals_active_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
 	OR = {
@@ -46,45 +53,78 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 	prestige_level >= high_prestige_level
 	age >= 25
 	realm_size >= 10
+	diplomacy >= 6
+	martial >= 8
 	is_tributary = no
 	custom_description = {
 		text = claim_britannia_high_kingship_military_requirement
 		current_military_strength >= 750
 	}
-	diplomacy >= 10
-	martial >= 12
-	stewardship >= 7
+	if = {
+		limit = { is_ai	= yes }
+		save_temporary_scope_value_as = { name = num_triggers_needed value = 5 }
+	}
+	else = {
+		save_temporary_scope_value_as = { name = num_triggers_needed value = 6 }
+	}
 	trigger_if = {
-		limit = {
-			has_claim_on = title:e_britannia
-			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
-		}
-		custom_description = {
-			text = claim_britannia_high_kingship_skill_requirement_reduced
-			OR = {
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 10
+		limit = { is_ai = no }
+		calc_true_if = {
+			amount >= 6
+			diplomacy >= 10
+			diplomacy >= 25
+			martial >= 12
+			martial >= 25
+			stewardship >= 7
+			custom_tooltip = {
+				text = BTWK_highest_skill_value_over_20
+				highest_skill_value >= 20
+			}
+			prowess >= 30
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			prestige_level >= 5
+			legitimacy_level >= 4
+			legitimacy_level >= 5
+			AND = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+				custom_tooltip = {
+					text = BTWK_has_claim_on_britannia
+					has_claim_on = title:e_britannia
 				}
-				prestige_level >= 4
-				diplomacy >= 21
-				martial >= 21
-				prowess >= 25
 			}
 		}
 	}
 	trigger_else = {
-		custom_description = {
-			text = claim_britannia_high_kingship_skill_requirement
-			OR = {
-				any_held_title = {
-					tier >= tier_kingdom
-					title_held_years >= 15 
+		calc_true_if = {
+			amount >= 5
+			diplomacy >= 10
+			diplomacy >= 25
+			martial >= 12
+			martial >= 25
+			stewardship >= 7
+			custom_tooltip = {
+				text = BTWK_highest_skill_value_over_20
+				highest_skill_value >= 20
+			}
+			prowess >= 30
+			any_held_title = {
+				tier >= tier_kingdom
+				title_held_years >= 15 
+			}
+			prestige_level >= 4
+			prestige_level >= 5
+			legitimacy_level >= 4
+			legitimacy_level >= 5
+			AND = {
+				BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
+				custom_tooltip = {
+					text = BTWK_has_claim_on_britannia
+					has_claim_on = title:e_britannia
 				}
-				prestige_level >= 4
-				diplomacy >= 25
-				martial >= 25
-				prowess >= 30
 			}
 		}
 	}
@@ -106,7 +146,7 @@ BTWK_britannia_high_kingship_can_claim_trigger = {
 }
 
 BTWK_britannia_high_kingship_is_allowed_culture_trigger = {
-	is_britannic_culture_trigger = yes
+	is_briton_or_latin_culture_trigger = yes
 }
 
 BTWK_britannia_high_kingship_is_elector_trigger = {
@@ -164,13 +204,13 @@ BTWK_britannia_high_kingship_is_eligible_trigger = {
 	}
 }
 
-# If this is changed, must adjust BTWK_britannia_high_king.0020 as well!
+# If this is changed, must adjust BTWK_britannia_high_kingship_unfit_to_rule_requirements_effect as well!
 BTWK_britannia_high_kingship_is_fit_to_rule_trigger = {
 	BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
 	any_held_title = { tier = tier_kingdom }
 	prestige_level >= high_prestige_level
-	martial >= 10
-	diplomacy >= 8
+	martial >= 8
+	diplomacy >= 6
 	is_incapable = no
 	realm_size >= 10
 }
@@ -352,7 +392,7 @@ BTWK_britannia_high_king_reform_formalize_high_kingship_trigger = {
 
 BTWK_britannia_high_king_reform_establish_coregency_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = formalize_high_kingship }
-	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 450 }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 400 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 0.55 
 	}
@@ -361,7 +401,7 @@ BTWK_britannia_high_king_reform_establish_coregency_trigger = {
 
 BTWK_britannia_high_king_reform_establish_central_mint_trigger = {
 	BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = establish_coregency }
-	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 100 }
+	BTWK_britannia_high_kingship_has_authority_trigger = { AMOUNT = 150 }
 	BTWK_britannia_high_kingship_britannia_region_control_trigger = { 
 		FRACTION_REQUIRED = 0.60 
 	}
@@ -470,7 +510,7 @@ BTWK_britannia_high_king_reform_unify_legal_codes_trigger = {
 		FRACTION_REQUIRED = 0.85 
 	}
 	trigger_if = {
-		limit = { government_has_flag = government_is_administrative }
+		limit = { government_has_mechanic = administrative }
 		NOT = { has_realm_law = imperial_bureaucracy_0 }
 	}
 	trigger_else = {
@@ -506,7 +546,7 @@ BTWK_britannia_high_king_reform_restore_imperial_dignity_trigger = {
 		FRACTION_REQUIRED = 0.95
 	}
 	trigger_if = {
-		limit = { government_has_flag = government_is_administrative }
+		limit = { government_has_mechanic = administrative }
 		NOT = { has_realm_law = imperial_bureaucracy_0 }
 	}
 	trigger_else = {

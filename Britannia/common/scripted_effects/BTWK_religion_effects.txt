@@ -124,3 +124,34 @@ BTWK_set_deity_effect = {
 
     add_character_modifier = $DEITY$
 }
+
+BTWK_consume_all_saint_charges = {
+	if = {
+		limit = {
+			NOT = {
+				$SAINT_COUNTY$.holder.faith = {
+					has_saint_character = $SAINT_CHARACTER$
+				}
+			}
+		}
+		$SAINT_COUNTY$.holder.faith = {
+			add_saint = { character = $SAINT_CHARACTER$ }
+		}
+	}
+	$SAINT_COUNTY$.holder = {
+		consume_saint_relic_charge = $SAINT_CHARACTER$
+		consume_saint_relic_charge = $SAINT_CHARACTER$
+		consume_saint_relic_charge = $SAINT_CHARACTER$
+		consume_saint_relic_charge = $SAINT_CHARACTER$
+	}
+	if = {
+		limit = {
+			title:c_jerusalem.holder.faith = {
+				NOT = { $SAINT_CONDITION$ }
+			}
+		}
+		title:c_jerusalem.holder.faith = {
+			remove_saint = $SAINT_CHARACTER$
+		}
+	}
+}

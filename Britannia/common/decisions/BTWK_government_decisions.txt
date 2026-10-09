@@ -5,7 +5,7 @@
 # Convert from Pre-Feudal to Feudalism
 convert_pre_feudal_to_feudalism_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_castle_rider_arriving.dds"
 	}
 	decision_group_type = major
 	desc = convert_pre_feudal_to_feudalism_decision_desc
@@ -29,7 +29,7 @@ convert_pre_feudal_to_feudalism_decision = {
 					NOR = {
 						government_has_flag = government_is_feudal
 						government_has_flag = government_is_clan
-						government_has_flag = government_is_administrative
+						government_has_mechanic = administrative
 					}
 				}
 			}
@@ -88,7 +88,9 @@ convert_pre_feudal_to_feudalism_decision = {
 
 	effect = {
 		trigger_event = BTWK_government.0001
+		BTWK_flag_current_crown_authority_law = yes
 		change_government = feudal_government
+		hidden_effect = { BTWK_apply_new_government_type_for_unlanded = yes }
 		custom_tooltip = easier_for_vassals_to_convert_to_feudal
 		hidden_effect = {
 			save_scope_as = actor
@@ -112,7 +114,7 @@ convert_pre_feudal_to_feudalism_decision = {
 					primary_title.tier >= tier_kingdom
 				}
 				any_neighboring_and_across_water_top_liege_realm_owner = {
-					government_has_flag = government_is_administrative
+					government_has_mechanic = administrative
 				}				
 			}
 		}
@@ -138,7 +140,7 @@ convert_pre_feudal_to_feudalism_through_liege_decision = {
 		reference = "gfx/interface/illustrations/event_scenes/bp1_courtyard_mena.dds"
 	}
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_castle_hill.dds"
 	}
 	decision_group_type = major
 	desc = convert_pre_feudal_to_feudalism_through_liege_decision_desc
@@ -188,7 +190,9 @@ convert_pre_feudal_to_feudalism_through_liege_decision = {
 
 	effect = {
 		trigger_event = BTWK_government.0001
+		BTWK_flag_current_crown_authority_law = yes
 		change_government = feudal_government
+		hidden_effect = { BTWK_apply_new_government_type_for_unlanded = yes }
 		custom_tooltip = easier_for_vassals_to_convert_to_feudal
 		hidden_effect = {
 			save_scope_as = actor
@@ -212,7 +216,7 @@ convert_pre_feudal_to_feudalism_through_liege_decision = {
 
 convert_sub_roman_to_germanic_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_town_palisade.dds"
 	}
 	decision_group_type = major
 	desc = {
@@ -299,8 +303,8 @@ convert_sub_roman_to_germanic_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0003
 		save_scope_as = actor
+		trigger_event = BTWK_government.0003
 
 		if = {
 			limit = { BTWK_admin_gov_enabled_trigger = yes }
@@ -361,7 +365,7 @@ convert_sub_roman_to_germanic_decision = {
 
 convert_germanic_to_sub_roman_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_roman_town_forum.dds"
 	}
 	decision_group_type = major
 	desc = {
@@ -370,9 +374,9 @@ convert_germanic_to_sub_roman_decision = {
 				trigger = {
 					top_liege != this
 				}
-				desc = convert_sub_roman_to_germanic_decision_from_liege_desc
+				desc = convert_germanic_to_sub_roman_decision_from_liege_desc
 			}
-			desc = convert_sub_roman_to_germanic_decision_desc
+			desc = convert_germanic_to_sub_roman_decision_desc
 		}
 	}
 
@@ -448,8 +452,8 @@ convert_germanic_to_sub_roman_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0005
 		save_scope_as = actor
+		trigger_event = BTWK_government.0005
 
 		if = {
 			limit = { BTWK_admin_gov_enabled_trigger = yes }
@@ -510,7 +514,7 @@ convert_germanic_to_sub_roman_decision = {
 
 BTWK_convert_to_administrative_decision = {
 	picture = {
-		reference = "gfx/interface/illustrations/decisions/ep3_cerimonial_decision.dds"
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_roman_great_temple.dds"
 	}
 	decision_group_type = major
 	desc = BTWK_convert_to_administrative_decision_desc
@@ -526,14 +530,18 @@ BTWK_convert_to_administrative_decision = {
 
 	is_shown = {
 		BTWK_admin_gov_enabled_trigger = yes
-		OR = {
-			government_has_flag = government_is_sub_roman
-			government_has_flag = government_is_germanic
-			AND = {
+		trigger_if = {
+			limit = {
 				top_liege != this
-				liege = {
-					has_government = administrative_government
-				}
+			}
+			liege = {
+				has_government = administrative_government
+			}
+		}
+		trigger_else = {
+			OR = {
+				government_has_flag = government_is_sub_roman
+				government_has_flag = government_is_germanic
 			}
 		}
 	}
@@ -576,8 +584,8 @@ BTWK_convert_to_administrative_decision = {
 	}
 
 	effect = {
-		trigger_event = BTWK_government.0007
 		save_scope_as = actor
+		trigger_event = BTWK_government.0007
 		tgp_domicile_conversion_when_changing_government_type = {
 			NEW_DOMICILE_TYPE = estate
 			NEW_GOVERNMENT_TYPE = administrative_government
@@ -588,7 +596,7 @@ BTWK_convert_to_administrative_decision = {
 		hidden_effect = {
 			every_vassal_or_below = {
 				limit = { 
-					government_allows = administrative
+					government_has_mechanic = administrative
 					NOT = { has_government = administrative_government }
 				}
 				tgp_domicile_conversion_when_changing_government_type = {

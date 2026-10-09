@@ -1,0 +1,281 @@
+﻿# --- Founder spawn dispatcher (any scope) ---
+# Calls the matching per-heresy founder template based on scope:heresy_faith
+# and the resurgence stage. Saves scope:founder at scope:birth_location.
+#
+# Stage logic (named historical heresies):
+#   first outbreak:                spawn the primary historical figure
+#   second outbreak (resurgence):  spawn the named secondary historical figure
+#   third+ outbreak:               spawn the per-heresy anonymous resurgence
+#
+# Always-anonymous heresies (Paulician, Iconoclast, Adoptionist, Messalian) always use their single anonymous template.
+pam_heresy_dispatch_founder_spawn_effect = {
+	if = {
+		limit = { scope:heresy_faith = faith:lollard }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_lollard_secondary_fired } }
+				pam_heresy_spawn_lollard_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_lollard_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_lollard_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_lollard_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:hussite }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_hussite_secondary_fired } }
+				pam_heresy_spawn_hussite_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_hussite_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_hussite_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_hussite_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:joachimite }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_joachimite_secondary_fired } }
+				pam_heresy_spawn_joachimite_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_joachimite_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_joachimite_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_joachimite_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:cathar }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_cathar_secondary_fired } }
+				pam_heresy_spawn_cathar_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_cathar_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_cathar_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_cathar_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:waldensian }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_waldensian_secondary_fired } }
+				pam_heresy_spawn_waldensian_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_waldensian_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_waldensian_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_waldensian_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:bogomilist }
+		if = {
+			limit = { exists = scope:is_resurgence }
+			if = {
+				limit = { NOT = { exists = global_var:pam_heresy_bogomilist_secondary_fired } }
+				pam_heresy_spawn_bogomilist_secondary_founder_effect = yes
+				set_global_variable = { name = pam_heresy_bogomilist_secondary_fired value = yes }
+			}
+			else = {
+				pam_heresy_spawn_bogomilist_resurgence_founder_effect = yes
+			}
+		}
+		else = {
+			pam_heresy_spawn_bogomilist_founder_effect = yes
+		}
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:paulician }
+		pam_heresy_spawn_paulician_founder_effect = yes
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:iconoclast }
+		pam_heresy_spawn_iconoclast_founder_effect = yes
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:adoptionist }
+		pam_heresy_spawn_adoptionist_founder_effect = yes
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:messalian }
+		pam_heresy_spawn_messalian_founder_effect = yes
+	}
+    # BTWK heresies
+    else_if = {
+		limit = { scope:heresy_faith = faith:pelagian }
+		pam_heresy_spawn_pelagian_founder_effect = yes
+	}
+    else_if = {
+		limit = { scope:heresy_faith = faith:arian }
+		pam_heresy_spawn_arian_founder_effect = yes
+	}
+    else_if = {
+		limit = { scope:heresy_faith = faith:priscillianism }
+		pam_heresy_spawn_priscillianism_founder_effect = yes
+	}
+    else_if = {
+		limit = { scope:heresy_faith = faith:novatianist }
+		pam_heresy_spawn_novatianist_founder_effect = yes
+	}
+    else_if = {
+		limit = { scope:heresy_faith = faith:valentinianism }
+		pam_heresy_spawn_valentinianism_founder_effect = yes
+	}
+}
+
+# --- Per-heresy 50-year cooldown setter (faith scope on origin_faith) ---
+pam_heresy_set_per_heresy_cooldown_effect = {
+	if = {
+		limit = { scope:heresy_faith = faith:lollard }
+		set_global_variable = { name = pam_heresy_lollard_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:hussite }
+		set_global_variable = { name = pam_heresy_hussite_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:joachimite }
+		set_global_variable = { name = pam_heresy_joachimite_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:cathar }
+		set_global_variable = { name = pam_heresy_cathar_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:waldensian }
+		set_global_variable = { name = pam_heresy_waldensian_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:bogomilist }
+		set_global_variable = { name = pam_heresy_bogomilist_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:paulician }
+		set_global_variable = { name = pam_heresy_paulician_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:iconoclast }
+		set_global_variable = { name = pam_heresy_iconoclast_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:adoptionist }
+		set_global_variable = { name = pam_heresy_adoptionist_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:messalian }
+		set_global_variable = { name = pam_heresy_messalian_cooldown value = yes years = 50 }
+	}
+    # BTWK heresies
+	else_if = {
+		limit = { scope:heresy_faith = faith:pelagian }
+		set_global_variable = { name = pam_heresy_pelagian_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:arian }
+		set_global_variable = { name = pam_heresy_arian_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:priscillianism }
+		set_global_variable = { name = pam_heresy_priscillianism_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:novatianist }
+		set_global_variable = { name = pam_heresy_novatianist_cooldown value = yes years = 50 }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:valentinianism }
+		set_global_variable = { name = pam_heresy_valentinianism_cooldown value = yes years = 50 }
+	}
+}
+
+# create_rite_from_type takes a literal rite type key, so dispatch on heresy_faith.
+pam_heresy_dispatch_create_pre_declaration_rite_effect = {
+	if = {
+		limit = { scope:heresy_faith = faith:lollard }
+		create_rite_from_type = { type = lollard_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:hussite }
+		create_rite_from_type = { type = hussite_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:joachimite }
+		create_rite_from_type = { type = joachimite_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:cathar }
+		create_rite_from_type = { type = cathar_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:waldensian }
+		create_rite_from_type = { type = waldensian_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:bogomilist }
+		create_rite_from_type = { type = bogomilist_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:paulician }
+		create_rite_from_type = { type = paulician_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:iconoclast }
+		create_rite_from_type = { type = iconoclast_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:adoptionist }
+		create_rite_from_type = { type = adoptionist_rite save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:messalian }
+		create_rite_from_type = { type = messalian_rite save_scope_as = new_rite convert = yes }
+	}
+    # BTWK heresies
+	else_if = {
+		limit = { scope:heresy_faith = faith:pelagian }
+		create_rite_from_type = { type = pelagian save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:arian }
+		create_rite_from_type = { type = arian save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:priscillianism }
+		create_rite_from_type = { type = priscillianism save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:novatianist }
+		create_rite_from_type = { type = novatianist save_scope_as = new_rite convert = yes }
+	}
+	else_if = {
+		limit = { scope:heresy_faith = faith:valentinianism }
+		create_rite_from_type = { type = valentinianism save_scope_as = new_rite convert = yes }
+	}
+}

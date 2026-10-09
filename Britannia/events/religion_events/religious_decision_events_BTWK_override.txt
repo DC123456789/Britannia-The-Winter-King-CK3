@@ -1,0 +1,212 @@
+﻿namespace = religious_decision
+
+religious_decision.0102 = {
+	type = character_event
+    id_override_priority = 10
+	title = religious_decision.0102.t
+	desc = religious_decision.0102.desc
+	theme = faith
+	left_portrait = {
+		character = root
+		animation = personality_rational
+	}
+
+	# # Odin
+	# option = {
+	# 	name = religious_decision.0102.odin
+	# 	trigger = {
+	# 		NOT = { has_character_modifier = bhakti_germanic_generic_odin }
+	# 	}
+	# 	set_bhakti_effect = { BHAKTI = bhakti_germanic_generic_odin }
+	# }
+
+	# # Ullr
+	# option = {
+	# 	name = religious_decision.0102.ullr
+	# 	trigger = {
+	# 		is_vaguely_danish_bhakti_trigger = no
+	# 		NOT = { has_character_modifier = bhakti_germanic_not_danish_ullr }
+	# 	}
+	# 	set_bhakti_effect = { BHAKTI = bhakti_germanic_not_danish_ullr }
+	# }
+
+	# # Tyr
+	# option = {
+	# 	name = religious_decision.0102.tyr
+	# 	trigger = {
+	# 		is_vaguely_danish_bhakti_trigger = yes
+	# 		NOT = { has_character_modifier = bhakti_germanic_danish_tyr }
+	# 	}
+	# 	set_bhakti_effect = { BHAKTI = bhakti_germanic_danish_tyr }
+	# }
+
+	# # Thor
+	# option = {
+	# 	name = religious_decision.0102.thor
+	# 	trigger = {
+	# 		NOT = { has_character_modifier = bhakti_germanic_generic_thor }
+	# 	}
+	# 	set_bhakti_effect = { BHAKTI = bhakti_germanic_generic_thor }
+	# }
+
+	# # Freyr
+	# option = {
+	# 	name = religious_decision.0102.freyr
+	# 	trigger = {
+	# 		NOT = { has_character_modifier = bhakti_germanic_generic_freyr }
+	# 	}
+	# 	set_bhakti_effect = { BHAKTI = bhakti_germanic_generic_freyr }
+	# }
+
+	# ODIN
+	option = {
+		name = religious_decision.0102.odin
+		trigger = {
+			NOR = { 
+				has_character_modifier = BTWK_norse_deity_odin_modifier
+				has_character_modifier = BTWK_anglo_saxon_deity_odin_modifier
+				has_character_modifier = BTWK_frankish_deity_odin_modifier
+				has_character_modifier = BTWK_suebic_deity_odin_modifier
+				has_character_modifier = BTWK_gothic_deity_odin_modifier
+			}
+		}
+		if = {
+			limit = {
+				has_faith = faith:norse_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_norse_deity_odin_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:anglo_saxon_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_anglo_saxon_deity_odin_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:frankish_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_frankish_deity_odin_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:suebic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_suebic_deity_odin_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:gothic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_gothic_deity_odin_modifier }
+		}
+	}
+	
+	# TYR
+	option = {
+		name = religious_decision.0102.tyr
+		trigger = {
+			NOR = { 
+				has_character_modifier = BTWK_norse_deity_tyr_modifier
+				has_character_modifier = BTWK_anglo_saxon_deity_tyr_modifier
+				has_character_modifier = BTWK_frankish_deity_tyr_modifier
+				has_character_modifier = BTWK_suebic_deity_tyr_modifier
+				has_character_modifier = BTWK_gothic_deity_tyr_modifier
+			}
+			is_old_saxon_culture_trigger = no
+		}
+		if = {
+			limit = {
+				has_faith = faith:norse_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_norse_deity_tyr_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:anglo_saxon_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_anglo_saxon_deity_tyr_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:frankish_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_frankish_deity_tyr_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:suebic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_suebic_deity_tyr_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:gothic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_gothic_deity_tyr_modifier }
+		}
+	}	
+	
+	# SEAXNEAT
+	option = {
+		name = religious_decision.0102.BTWK_seaxneat
+		trigger = {
+			is_old_saxon_culture_trigger = yes
+		}
+		BTWK_set_deity_effect = { DEITY = BTWK_deity_seaxneat_modifier }
+	}
+
+	# THOR
+	option = {
+		name = religious_decision.0102.thor
+		trigger = {
+			NOR = { 
+				has_character_modifier = BTWK_norse_deity_thor_modifier
+				has_character_modifier = BTWK_anglo_saxon_deity_thor_modifier
+				has_character_modifier = BTWK_frankish_deity_thor_modifier
+				has_character_modifier = BTWK_suebic_deity_thor_modifier
+				has_character_modifier = BTWK_gothic_deity_thor_modifier
+			}
+		}
+		if = {
+			limit = {
+				has_faith = faith:norse_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_norse_deity_thor_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:anglo_saxon_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_anglo_saxon_deity_thor_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:frankish_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_frankish_deity_thor_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:suebic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_suebic_deity_thor_modifier }
+		}
+		else_if = {
+			limit = {
+				has_faith = faith:gothic_pagan
+			}
+			BTWK_set_deity_effect = { DEITY = BTWK_gothic_deity_thor_modifier }
+		}
+	}
+
+	# Opt-Out
+	option = {
+		name = religious_decision.0102.optout
+		flavor = religious_decision.0102.flavor
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}

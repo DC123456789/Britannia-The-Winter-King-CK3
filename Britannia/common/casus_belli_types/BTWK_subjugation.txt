@@ -13,6 +13,7 @@
 			government_has_flag = government_allow_pre_feudal_subjugation
 			government_has_flag = government_allow_pre_feudal_subjugation_limited
 		}
+		highest_held_title_tier <= tier_kingdom
 	}
 	
 	# Root is the title
@@ -37,11 +38,15 @@
 					NAND = { 
 						owns_story_of_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
 						# Deira cannot subjugate Lindsey early
-						scope:defender.primary_title.title_capital_county.var:anglo_saxon_duchy != title:d_lindsey
+						NAND = {
+							scope:defender.primary_title.title_capital_county.var:anglo_saxon_duchy = title:d_lindsey
+							title:d_lindsey.kingdom != title:k_lindsey
+						}
 					}					
 				}
 				BTWK_reform_from_tribal_innovations_trigger = yes
 			}
+			is_independent_ruler = yes
 		}
 	}
 	
@@ -57,7 +62,7 @@
 					government_has_flag = government_allow_pre_feudal_subjugation_limited
 				}
 			}
-			culture = { has_same_heritage_group_as = { TARGET = scope:defender.culture } }
+			is_same_heritage_group_or_related_heritage_trigger = { TARGET = scope:defender }
 		}
 		
 		scope:defender = {
@@ -264,7 +269,7 @@
 			limit = {
 				scope:defender = {
 					any_realm_county = {
-						count > 20
+						count > 3
 						NOT = { kingdom = { is_in_list = target_titles } }
 					}
 				}
@@ -475,7 +480,7 @@
 				value = medium_prestige_value
 				multiply = -1.0
 			}
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
@@ -491,7 +496,7 @@
 		}
 
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -594,6 +599,11 @@
 
 	ai_score_mult = {
 		value = 1
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
+	
+		# BTWK
+		multiply = conquests_culture_targets_ai_score_value
 	}
 }

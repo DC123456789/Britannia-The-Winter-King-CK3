@@ -5,20 +5,26 @@ on_game_start = {
 }
 
 BTWK_on_game_start = {
+	events = {
+		BTWK_startup.1000 # Set up Historical Characters Visual Ages
+	}
 	on_actions = {
 		BTWK_de_jure_setup
 		BTWK_story_trigger_on_game_start_479
-		BTWK_culture_setup
 		BTWK_religion_setup
 		BTWK_government_setup
-		BTWK_county_setup
 		BTWK_character_setup
 		BTWK_building_setup
 		BTWK_laeti_setup
 		BTWK_britannia_high_kingship_setup
+		BTWK_aengland_bretwalda_setup
 		BTWK_tribal_fame_calc
 		BTWK_thirteen_treasures_distribution
 		BTWK_game_start_events
+		BTWK_culture_setup_set_blocks
+		BTWK_situation_setup
+		delay = { months = 1 }
+		BTWK_start_monthly_global_pulse
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
@@ -27,8 +33,10 @@ BTWK_on_game_start = {
 BTWK_on_game_start_after_lobby = {
 	on_actions = { 
 		BTWK_culture_setup 
+		BTWK_county_setup		# Must come after culture setup as it uses variables set there
 		BTWK_laamp_setup
 		BTWK_startup_events
+		BTWK_government_setup_after_lobby
 	}
 	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
 }
@@ -53,6 +61,59 @@ BTWK_story_trigger_on_game_start_479 = {
 				}
 			}
 		}
+	}
+}
+
+BTWK_start_monthly_global_pulse = {
+	effect = {
+		title:c_londinium.holder = { create_story = BTWK_monthly_global_pulse_story }
+	}
+}
+
+# This is separate from the main culture setup as it needs to run before the lobby
+BTWK_culture_setup_set_blocks = {
+	effect = {
+		# Block some cultures in the ruler designer (mostly those that appear over the course of the game)
+		every_culture_global = {
+			limit = {
+				OR = {
+					has_cultural_pillar = heritage_romance
+					has_cultural_pillar = heritage_arabic
+					has_cultural_pillar = heritage_berber
+					has_cultural_pillar = heritage_turkic
+					AND = {
+						has_cultural_pillar = heritage_west_germanic
+						NOR = {
+							this = culture:angle
+							this = culture:old_saxon
+							this = culture:jute
+							this = culture:frisian
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_frankish
+						NOT = {
+							this = culture:frankish
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_brythonic
+						NOR = {
+							this = culture:briton
+							this = culture:armorican
+						}
+					}
+					has_cultural_pillar = heritage_gaulish
+					this = culture:norse_gael
+					this = culture:bavarian
+				}
+			}
+			set_variable = block_start_with
+		}
+		
+		# Block this from showing so we don't have two Northumbrians in the start screen
+		culture:northumbrian_alt = { set_variable = block_show_ruler_designer }
+		culture:romanohibernian = { set_variable = block_show_ruler_designer }
 	}
 }
 
@@ -166,46 +227,6 @@ BTWK_culture_setup = {
 			}
 		}
 		
-		# Block some cultures in the ruler designer (mostly those that appear over the course of the game)
-		every_culture_global = {
-			limit = {
-				OR = {
-					has_cultural_pillar = heritage_romance
-					has_cultural_pillar = heritage_arabic
-					has_cultural_pillar = heritage_berber
-					has_cultural_pillar = heritage_turkic
-					AND = {
-						has_cultural_pillar = heritage_west_germanic
-						NOR = {
-							this = culture:angle
-							this = culture:old_saxon
-							this = culture:jute
-							this = culture:frisian
-						}
-					}
-					AND = {
-						has_cultural_pillar = heritage_frankish
-						NOT = {
-							this = culture:frankish
-						}
-					}
-					AND = {
-						has_cultural_pillar = heritage_brythonic
-						NOR = {
-							this = culture:briton
-							this = culture:armorican
-						}
-					}
-					this = culture:norse_gael
-					this = culture:bavarian
-				}
-			}
-			set_variable = block_start_with
-		}
-		
-		# Block this from showing so we don't have two Northumbrians in the start screen
-		culture:northumbrian_alt = { set_variable = block_show_ruler_designer }
-		
 		# Set global variables references for loc purposes
 		set_global_variable = { name = briton_culture value = culture:briton }
 		set_global_variable = { name = welsh_culture value = culture:welsh }
@@ -221,7 +242,7 @@ BTWK_culture_setup = {
 }
 
 BTWK_religion_setup = {
-	effect = {		
+	effect = {
 		# Block all irrelevant vanilla faiths permanently
 		every_religion_global = {
 			limit = {
@@ -234,17 +255,19 @@ BTWK_religion_setup = {
 					this = religion:hellenism_religion
 					this = religion:islam_religion
 					this = religion:judaism_religion
-					this = religion:paganism_religion
 					this = religion:scythian_religion
 				}
 			}
-			every_faith = { set_variable = { name = block_conversion } }
+			every_faith = { 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
+			}
 		}
 		religion:christianity_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:catholic
+						this = faith:christian_faith
 						this = faith:pelagian
 						this = faith:arian
 						this = faith:priscillianism
@@ -254,44 +277,44 @@ BTWK_religion_setup = {
 					}
 				}
 				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:dualism_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:manichean
+						this = faith:manichaean_faith
 					}
 				}
 				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:islam_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:ashari
-						this = faith:muwalladi
-						this = faith:maturidi
-						this = faith:mutazila
-						this = faith:ismaili
-						this = faith:zayidi
-						this = faith:ibadi
-						this = faith:sufri
+						this = faith:sadr_al_islam
+						this = faith:sunni
+						this = faith:shia
+						this = faith:kharijite
 						this = faith:barghawata
 					}
 				}
-				set_variable = { name = block_conversion } 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:judaism_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:rabbinism
+						this = faith:rabbinic_faith
 					}
 				}
-				set_variable = { name = block_conversion } 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		
@@ -302,6 +325,94 @@ BTWK_religion_setup = {
 					NOT = { has_variable = block_conversion }
 				}
 				set_variable = { name = block_conversion_till_founded }
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		
+		# Transfer tenets from Chalcedonian to all enabled Christian Rites
+		# since they are all offshoots and should have a similar theology unless otherwise specified
+		every_tenet = {
+			save_scope_as = current_tenet
+			if = {
+				limit = { 
+					rite:roman_rite = {
+						has_at_least_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
 			}
 		}
 	}
@@ -309,6 +420,15 @@ BTWK_religion_setup = {
 
 BTWK_government_setup = {
 	effect = {
+		# Rename East Anglia during Aelle's reign
+		if = {
+			limit = { game_start_date < 497.4.16 }
+			title:k_east_anglia = { 
+				set_variable = is_the_angles
+				set_title_name = k_the_angles 
+			}
+		}
+
 		if = {
 			limit = { game_start_date < 600.1.1 }
 			# Make sure all Anglo-Saxon rulers start tribal
@@ -324,67 +444,13 @@ BTWK_government_setup = {
 		every_ruler = {
 			limit = {
 				government_has_flag = government_is_feudal
-			}
-			# Assign Pre-Feudal governments
-			if = {
-				limit = {
-					OR = {
-						culture = { has_cultural_pillar = heritage_brythonic }
-						AND = {
-							OR = {
-								culture = { has_cultural_pillar = heritage_latin }
-								is_romanized_barbarian_culture_trigger = yes
-							}
-							capital_province = { geographical_region = btwk_world_britannia }
-							# Needed since they're currently landless, and so technically in Britannia
-							NOR = {
-								has_title = title:h_western_roman_empire
-								has_title = title:h_eastern_roman_empire
-								has_title = title:k_burgundy
-								has_title = title:k_gaul
-								has_title = title:k_visigoths
-								has_title = title:k_ostrogoths
-								has_title = title:k_burgundy
-							}
-						}
-					}
-					government_has_flag = government_is_feudal
-				}
-				change_government = pre_feudal_government
-			}
-			# Assign Sub-Roman governments
-			else_if = {
-				limit = {
-					OR = {
-						culture = { has_cultural_pillar = heritage_latin }
-						is_romanized_barbarian_culture_trigger = yes
+				NOT = { 
+					any_held_title = {
+						has_variable = is_offmap_title 
 					}
 				}
-				if = {
-					limit = { has_dlc_feature = roads_to_power }
-					# TODO Need to adjust this to actually work properly
-					convert_to_administrative_from_feudalism_game_start_effect = yes
-					change_government = sub_roman_government
-				}
-				else = {
-					change_government = sub_roman_no_dlc_government
-				}
 			}
-			# Assign Germanic governments
-			else_if = {
-				limit = {
-					culture = { has_cultural_pillar = heritage_frankish }
-				}
-				if = {
-					limit = { has_dlc_feature = roads_to_power }
-					# TODO Need to adjust this to actually work properly
-					convert_to_administrative_from_feudalism_game_start_effect = yes
-					change_government = germanic_government
-				}
-				else = {
-					change_government = germanic_no_dlc_government
-				}
-			}
+			BTWK_set_starting_government = yes
 		}
 		
 		# Set up laws
@@ -416,13 +482,27 @@ BTWK_government_setup = {
 							has_cultural_pillar = heritage_goidelic
 							has_cultural_pillar = heritage_pictish
 							has_cultural_pillar = heritage_west_germanic
-							has_cultural_pillar = heritage_frankish
 							has_cultural_pillar = heritage_central_germanic
 						}
 					}
 				}
 				add_realm_law_skip_effects = tribal_authority_1
 			}
+		}
+	}
+}
+
+BTWK_government_setup_after_lobby = {
+	effect = {
+		# Set offmap ruler governments after the lobby so they are not selectable in the starting screen
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_feudal
+				any_held_title = {
+					has_variable = is_offmap_title 
+				}
+			}
+			BTWK_set_starting_government = yes
 		}
 	}
 }
@@ -445,11 +525,33 @@ BTWK_county_setup = {
 			region = btwk_custom_cornwall
 			BTWK_update_cultural_redoubt_modifier_effect = yes
 		}
+		
+		# Initialize wrong-heritage group tribal county penalty modifiers
+		every_county = {
+			BTWK_update_wrong_heritage_group_tribal_county_modifier_effect = yes
+		}
+	}
+}
+
+BTWK_situation_setup = {
+	effect = {
+		# Remove world_europe from earthquake zones - as world_europe_south as still in there, 
+		# parts of the map that actually should get earthquakes will still get them
+		remove_list_global_variable = { name = earthquake_region_list target = geographical_region:world_europe }
 	}
 }
 
 BTWK_character_setup = {
 	effect = {
+		# Give offmap title trait to all relevant characters
+		every_independent_ruler = {
+			limit = { 
+				any_held_title = {
+					has_variable = is_offmap_title 
+				}
+			}
+			add_trait = offmap_ruler
+		}
 		if = {
 			limit = { game_start_date = 479.12.3 }
 			# Start Anglian Invasions a few months after start
@@ -461,6 +563,46 @@ BTWK_character_setup = {
 					size = 5
 				}
 			}
+			# Move East Anglian capital to Elmham
+			title:k_east_anglia = {
+				set_variable = custom_capital
+				set_capital_county = title:c_elmham
+			}
+			# Also give Cerdic some extra troops to help him out
+			character:86 ?= {
+				create_maa_regiment = {
+					type = landsknecht
+					check_can_recruit = no
+					size = 5
+				}
+				if = {
+					limit = { is_ai = yes }
+					spawn_army = {
+						name = SOUTH_SAXON_WARRIORS
+						levies = 200
+						men_at_arms = {
+							type = pikemen_unit
+							men = 200
+						}
+						men_at_arms = {
+							type = landsknecht
+							men = 150
+						}
+						men_at_arms = {
+							type = onager
+							men = 15
+						}
+						location = this.capital_province
+						inheritable = no
+					}
+				}
+			}
+			
+			# Trigger Derfel's Wolftails event 3-4 years after start
+			character:10 ?= {
+				trigger_event = { id = BTWK_story_event.0155 days = { 1095 1460 } }
+			}			
+			
 			# Remove claims of most king-level rulers on their vassals
 			every_independent_ruler = {
 				save_scope_as = current_char
@@ -683,6 +825,50 @@ BTWK_character_setup = {
 					scope:current_char = { remove_claim = PREV }
 				}
 			}
+			
+			# Generate extra family members for Creoda of Lindsey as his line dying out early
+			# breaks Linnius quite a bit
+			character:1258 ?= {
+				save_scope_as = current_char
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					rite = this.rite
+					gender_female_chance = 0
+					age = 12
+					father = this
+					dynasty = inherit
+					save_scope_as = child_1
+				}
+				add_courtier = scope:child_1
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					rite = this.rite
+					gender_female_chance = 0
+					age = 7
+					father = this
+					dynasty = inherit
+					save_scope_as = child_2
+				}
+				add_courtier = scope:child_2
+			}
+			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
+				}
+			}
 		}
 		
 		# Save Aelle for tooltip purposes
@@ -749,7 +935,6 @@ BTWK_de_jure_setup = {
 			title:k_powys = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_siluria = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_demetia = { set_variable = { name = kingdom_region value = PREV } }
-			title:k_deheubarth = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_gwynedd = { set_variable = { name = kingdom_region value = PREV } }
 			title:k_lleyn = { set_variable = { name = kingdom_region value = PREV } }
 		}
@@ -1875,7 +2060,7 @@ BTWK_de_jure_setup = {
 				set_variable = { name = roman_name value = flag:cn_dumnonia }
 				set_variable = { name = roman_adj value = flag:cn_dumnonia_adj }
 				set_variable = { name = roman_default_name value = flag:cn_isca }
-				set_variable = { name = roman_default_adj value = flag:cn_iscan_adj }
+				set_variable = { name = roman_default_adj value = flag:cn_isca_adj }
 				set_variable = { name = greek_name value = flag:cn_dumnonia_greek }
 				set_variable = { name = greek_adj value = flag:cn_dumnonia_greek_adj }
 				set_variable = { name = greek_default_name value = flag:cn_isca_greek_loc }
@@ -2293,14 +2478,11 @@ BTWK_de_jure_setup = {
 		### BRITON TITLE SETUP ###
 		
 		# FORMABLE KINGDOMS
-		title:k_deheubarth = {
-			title:d_deheubarth = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
-			title:d_ystrad_tywi = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
-			title:d_brycheiniog = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
-			title:d_westpowys = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
-		}
 		
 		# EXPANDABLE KINGDOMS
+		title:k_demetia = {
+			title:d_westpowys = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+		}
 		title:k_dumnonia = {
 			title:d_kernow = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
 			title:d_penwith = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
@@ -2875,6 +3057,7 @@ BTWK_de_jure_setup = {
 						target = THIS
 					}
 				}
+				set_variable = is_anglo_saxon_duchy
 			}
 			every_direct_de_jure_vassal_title = {
 				add_to_global_variable_list = {
@@ -2900,6 +3083,7 @@ BTWK_de_jure_setup = {
 						name = anglo_saxon_heptarchy_kingdom_list
 						target = THIS
 					}
+					set_variable = is_anglo_saxon_kingdom
 				}
 			}
 		}
@@ -2910,6 +3094,10 @@ BTWK_de_jure_setup = {
 					name = celtic_duchy_list
 					target = THIS
 				}
+				set_variable = is_briton_roman_duchy
+			}
+			every_direct_de_jure_vassal_title = {
+				set_variable = is_briton_kingdom
 			}
 		}
 		every_duchy = {
@@ -2917,6 +3105,24 @@ BTWK_de_jure_setup = {
 			add_to_global_variable_list = {
 				name = roman_duchy_list
 				target = THIS
+			}
+		}
+		
+		# Flag kingdoms for which cultures are allowed to create them, so that they're not
+		# incorrectly created during populist revolts
+		title:e_britannia = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = unromanized_germanic_culture_blocked
+			}
+		}
+		title:e_aengland = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = unromanized_germanic_culture_only
+			}
+		}
+		title:e_roman_britannia = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = roman_culture_only
 			}
 		}
 		
@@ -2955,6 +3161,11 @@ BTWK_de_jure_setup = {
 		title:h_western_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
 		title:h_eastern_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
 		
+		# For determining Augustus trait
+		title:e_roman_britannia = { set_variable = is_roman_empire_title }
+		title:h_western_roman_empire = { set_variable = is_roman_empire_title }
+		title:h_eastern_roman_empire = { set_variable = is_roman_empire_title }
+		
 		# This forces Britannic and Brythonic characters to use "Emperor" for these titles
 		title:e_roman_britannia = { set_variable = emperor_flag }
 		title:e_romanized_germanic_britannia = { set_variable = emperor_flag }
@@ -2965,6 +3176,30 @@ BTWK_de_jure_setup = {
 		title:e_britannia = { set_variable = high_king_flag }
 		title:e_hen_ogledd = { set_variable = high_king_flag }
 		title:e_cymru = { set_variable = high_king_flag }
+		
+		# Flag all offmap titles
+		title:h_western_roman_empire = { set_variable = is_offmap_title }
+		title:h_eastern_roman_empire = { set_variable = is_offmap_title }
+		title:k_connacht = { set_variable = is_offmap_title }
+		title:k_leinster = { set_variable = is_offmap_title }
+		title:k_dalriada = { set_variable = is_offmap_title }
+		title:k_gaul = { set_variable = is_offmap_title }
+		title:k_franks = { set_variable = is_offmap_title }
+		title:k_visigoths = { set_variable = is_offmap_title }
+		title:k_ostrogoths = { set_variable = is_offmap_title }
+		title:k_burgundy = { set_variable = is_offmap_title }
+		title:k_alemannia = { set_variable = is_offmap_title }
+		title:k_broceliande = { set_variable = is_offmap_title }
+		title:k_thuringia = { set_variable = is_offmap_title }
+		title:k_angeln = { set_variable = is_offmap_title }
+		title:d_fortriu = { set_variable = is_offmap_title }
+		title:d_nordalbingia = { set_variable = is_offmap_title }
+		title:d_friesland = { set_variable = is_offmap_title }
+		title:d_zealand = { set_variable = is_offmap_title }
+		title:d_vestfold = { set_variable = is_offmap_title }
+		title:d_westgotaland = { set_variable = is_offmap_title }
+		title:d_tiundaland = { set_variable = is_offmap_title }
+		title:d_tarbellia = { set_variable = is_offmap_title }
 	}
 }
 
@@ -2996,12 +3231,12 @@ BTWK_building_setup = {
 							terrain = floodplains
 						}
 					}
-					add_building = curtain_walls_02
+					add_building = curtain_walls_01
 					if = {
 						limit = { has_building_or_higher = castle_02 }
 						random = {
 							chance = 50
-							add_building = curtain_walls_03
+							add_building = curtain_walls_02
 						}
 					}
 				}
@@ -3013,12 +3248,12 @@ BTWK_building_setup = {
 							terrain = jungle
 						}
 					}
-					add_building = ramparts_02
+					add_building = ramparts_01
 					if = {
 						limit = { has_building_or_higher = castle_02 }
 						random = {
 							chance = 50
-							add_building = ramparts_03
+							add_building = ramparts_02
 						}
 					}
 				}
@@ -3030,12 +3265,12 @@ BTWK_building_setup = {
 							terrain = hills
 						}
 					}
-					add_building = hill_forts_02
+					add_building = hill_forts_01
 					if = {
 						limit = { has_building_or_higher = castle_02 }
 						random = {
 							chance = 50
-							add_building = hill_forts_03
+							add_building = hill_forts_02
 						}
 					}
 				}
@@ -3055,6 +3290,34 @@ BTWK_building_setup = {
 					chance = 50
 					add_building = hill_forts_02
 				}
+			}
+			if = {
+				limit = { 
+					has_holding_type = tribal_holding
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				add_building = palisades_01
+				if = {
+					limit = { 
+						OR = {
+							duchy.title_capital_county.title_province = this # Is duchy capital
+							kingdom.title_capital_county.title_province = this # Is kingdom capital							
+						}
+					}	
+					add_building = palisades_02
+				}
+				random = {					
+					chance = 50
+					add_building = war_camps_01
+				}
+			}
+			
+			if = {
+				limit = { 
+					has_holding = yes
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				generate_building = yes
 			}
 		}
 		
@@ -3131,6 +3394,11 @@ BTWK_laeti_setup = {
 				check_can_recruit = no
 				size = 2
 			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
+			}
 		}
 		
 		# Set up Foederati (they are defined elsewhere)
@@ -3156,6 +3424,11 @@ BTWK_laeti_setup = {
 				check_can_recruit = no
 				size = 3
 			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
+			}
 			tributary_contract_set_obligation_level = { 
 				type = tributary_war_participation_obligation
 				level = tributary_war_participation_obligation_forced 
@@ -3179,6 +3452,15 @@ BTWK_britannia_high_kingship_setup = {
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = unify_legal_codes }
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = reclaim_caratacus_legacy }
 		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = restore_imperial_dignity }
+		
+		# If the High Kingship is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			title:e_britannia = { set_destroy_on_succession = yes }
+		}
 			
 		# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
 		if = {
@@ -3217,6 +3499,35 @@ BTWK_britannia_high_kingship_setup = {
 			set_variable = {
 				name = macsen_wledig_char
 				value = character:1513
+			}
+		}
+	}
+}
+
+BTWK_aengland_bretwalda_setup = {
+	effect = {
+		# If the Bretwalda system is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_aengland_bretwalda_active_trigger = yes
+				BTWK_aengland_bretwalda_can_inherit_trigger = no
+			}
+			title:e_aengland = { set_destroy_on_succession = yes }
+		}
+		if = {
+			limit = { game_start_date = 479.12.3 }			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
+				}
 			}
 		}
 	}
@@ -3282,6 +3593,16 @@ BTWK_laamp_setup = {
 				add_courtier = character:1017		# Eiddilig
 				add_courtier = character:1018		# Sir Bedivere
 				add_courtier = character:1019		# Morfans the Ugly
+			}
+		}
+		## Sagramor
+		character:21 ?= {
+			if = {
+				limit = { 
+					is_alive = yes
+					is_landless_adventurer = yes
+				}
+				add_realm_law_skip_effects = camp_purpose_mercenaries
 			}
 		}
 	}

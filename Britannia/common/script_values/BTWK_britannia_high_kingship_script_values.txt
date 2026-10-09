@@ -3,7 +3,18 @@
 	every_county_in_region = {
 		region = btwk_world_britannia
 		limit = {
-			holder.top_liege = { is_imperial_like_culture_trigger = yes }
+			holder.top_liege = { 
+				OR = {
+					is_imperial_like_culture_trigger = yes
+					AND = {
+						primary_title = { has_variable = is_roman_empire_title }
+						OR = {
+							government_has_mechanic = administrative
+							government_has_flag = government_is_romanized_government
+						}
+					}
+				}
+			}
 		}
 		add = 1
 	}
@@ -173,7 +184,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			limit = { scope:claimant = { government_has_flag = government_has_tribal_fame } }
 			add = {
 				value = scope:claimant.tribal_fame_value
-				save_temporary_scope_value_as = claimant_tribal_fame_value
+				save_temporary_value_as = claimant_tribal_fame_value
 				if = {
 					limit = { scope:claimant_tribal_fame_value > 0 }
 					multiply = 0.5
@@ -242,6 +253,16 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			subtract = {
 				value = 10
 				desc = CLAIMANT_SUPPORT_DIFFERENT_HERITAGE
+			}
+		}
+		if = {
+			limit = {
+				scope:claimant = { is_britannic_culture_trigger = no }
+				is_britannic_culture_trigger = yes
+			}
+			subtract = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_NOT_BRITANNIC
 			}
 		}
 		# Religious Differences
@@ -315,6 +336,15 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 			}
 		}
 		
+		# Restorer of Hadrian's Wall
+		if = {
+			limit = { scope:claimant = { has_character_modifier = restored_hadrians_wall_major_character_modifier } }
+			add = {
+				value = 10
+				desc = CLAIMANT_SUPPORT_RESTORED_HADRIANS_WALL
+			}
+		}
+		
 		# Northern Britons don't care unless you are also a northerner
 		if = {
 			limit = {
@@ -383,7 +413,7 @@ BTWK_britannia_high_king_scope_support_for_claimant = {
 		} 
 		
 		# Don't really want to oppose if they are losing a war
-		save_temporary_scope_value_as = current_score
+		save_temporary_value_as = current_score
 		if = {
 			limit = {
 				scope:current_score < BTWK_britannia_high_king_scope_opponent_threshold
@@ -853,6 +883,27 @@ BTWK_britannia_high_king_authority_inherited_current_proportion = {
 }
 
 BTWK_britannia_high_king_authority_yearly_decay_value = 3
+
+BTWK_britannia_high_king_authority_major_conquest_event_gain = 50
+BTWK_britannia_high_king_authority_restore_hadrians_wall_gain = 40
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_destruction_gain = 15
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss = 10
+BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss_value = {
+	value = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+	multiply = -1
+}
+BTWK_britannia_high_king_authority_win_defensive_war_gain = 5
+BTWK_britannia_high_king_authority_lose_defensive_war_loss = 5
+BTWK_britannia_high_king_authority_lose_defensive_war_loss_value = {
+	value = BTWK_britannia_high_king_authority_lose_defensive_war_loss
+	multiply = -1
+}
+BTWK_britannia_high_king_authority_win_major_battle_gain = 1
+BTWK_britannia_high_king_authority_lose_major_battle_loss = 1
+BTWK_britannia_high_king_authority_lose_major_battle_loss_value = {
+	value = BTWK_britannia_high_king_authority_lose_major_battle_loss
+	multiply = -1
+}
 
 BTWK_britannia_high_king_reform_default_prestige_cost = 500
 BTWK_britannia_high_king_reform_default_prestige_cost_negative = {

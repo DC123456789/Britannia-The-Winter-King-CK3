@@ -1,0 +1,257 @@
+﻿apply_tribal_fame_effect = {
+	every_ruler = {
+		check_tribal_fame_effect = yes
+	}
+}
+
+check_tribal_fame_effect = {
+	remove_tribal_fame_effect = yes
+	if = {
+		limit = {
+			government_has_flag = government_has_tribal_fame
+		}
+		save_scope_as = current_character
+		if = {
+			limit = { tribal_fame_value >= 0 }
+			add_character_modifier = {
+				modifier = tribal_fame_positive
+				desc = tribal_fame_positive_desc
+			}
+		}
+		else = {
+			add_character_modifier = {
+				modifier = tribal_fame_negative
+				desc = tribal_fame_negative_desc
+			}
+		}
+	}
+}
+
+tribal_fame_government_change_effect = {
+	root = {
+		check_tribal_fame_effect = yes
+	}
+}
+
+remove_tribal_fame_effect = {
+	if = {
+		limit = {
+			has_character_modifier = tribal_fame_positive
+		}
+		remove_character_modifier = tribal_fame_positive
+	}
+	if = {
+		limit = {
+			has_character_modifier = tribal_fame_negative
+		}
+		remove_character_modifier = tribal_fame_negative
+	}
+}
+
+BTWK_set_starting_government = {
+	# Assign Admin governments
+	if = {
+		limit = {
+			OR = {
+				has_title = title:h_western_roman_empire
+				has_title = title:h_eastern_roman_empire						
+			}
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = administrative_government
+		}
+		else = {
+			change_government = sub_roman_no_dlc_government		# Closest
+		}
+	}
+	# Assign Pre-Feudal governments
+	else_if = {
+		limit = {
+			OR = {
+				culture = { has_cultural_pillar = heritage_brythonic }
+				AND = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_latin }
+						is_romanized_barbarian_culture_trigger = yes
+					}
+					capital_province = { geographical_region = btwk_world_britannia }
+					# Needed since they're currently landless, and so technically in Britannia
+					NOR = {
+						has_title = title:h_western_roman_empire
+						has_title = title:h_eastern_roman_empire
+						has_title = title:k_burgundy
+						has_title = title:k_gaul
+						has_title = title:k_visigoths
+						has_title = title:k_ostrogoths
+						has_title = title:k_burgundy
+					}
+				}
+			}
+			government_has_flag = government_is_feudal
+		}
+		change_government = pre_feudal_government
+	}
+	# Assign Germanic governments
+	else_if = {
+		limit = {
+			culture = { has_cultural_pillar = heritage_frankish }
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			# TODO Need to adjust this to actually work properly
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = germanic_government
+		}
+		else = {
+			change_government = germanic_no_dlc_government
+		}
+	}
+	# Assign Sub-Roman governments
+	else_if = {
+		limit = {
+			OR = {
+				culture = { has_cultural_pillar = heritage_latin }
+				is_romanized_barbarian_culture_trigger = yes
+			}
+		}
+		if = {
+			limit = { has_dlc_feature = roads_to_power }
+			# TODO Need to adjust this to actually work properly (?)
+			convert_to_administrative_from_feudalism_game_start_effect = yes
+			change_government = sub_roman_government
+		}
+		else = {
+			change_government = sub_roman_no_dlc_government
+		}
+	}
+}
+
+BTWK_flag_new_government_type_for_unlanded = {
+	set_variable = { name = claimant_needs_government_assigned value = yes days = 1 }
+	# Not allowed to inherit republican or theocratic government types - if we somehow get something else, fall back to something appropriate
+	if = {
+		limit = {
+			OR = {
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_republic }
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_theocracy }
+				$INHERIT_SCOPE$ = { government_has_flag = government_is_holy_order }
+			}
+		}
+		set_variable = { name = claimant_assign_default_government value = yes days = 1 }
+	}
+	else = {
+		if = {
+			limit = { $INHERIT_SCOPE$ = { government_has_mechanic = administrative } }
+			set_variable = { name = claimant_new_government_type_is_admin value = yes }
+		}
+		set_variable = { name = claimant_new_government_type value = $INHERIT_SCOPE$.government_type days = 1 }
+	}
+}
+
+BTWK_apply_new_government_type_for_unlanded = {
+	if = {
+		limit = { has_variable = claimant_needs_government_assigned }
+		if = {
+			limit = { has_variable = claimant_assign_default_government }
+			if = {
+				limit = {
+					capital_county.title_province = {
+						OR = {
+							has_holding_type = nomad_holding
+							has_holding_type = herder_holding
+						}
+					}
+				}
+				change_government = nomad_government
+			}
+			else_if = {
+				limit = { 
+					capital_county.title_province = {
+						has_holding_type = tribal_holding
+					}
+				}
+				change_government = tribal_government
+			}
+			else_if = {
+				# If the liege is feudal-type (but not admin-type), adopt their government
+				liege ?= {
+					government_has_flag = government_is_feudal
+				}
+				change_government = liege.government_type
+			}
+			else = {
+				# Fallback to folkright
+				change_government = pre_feudal_government
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = claimant_new_government_type_is_admin 
+			}
+			# If the old government was admin, only keep the government if you are independent or if your new liege is also admin
+			if = {
+				limit = {
+					OR = {
+						is_independent_ruler = yes
+						liege ?= { government_has_mechanic = administrative }
+					}
+				}
+			}
+			# Otherwise, if you have a liege, adopt their (feudal-type) government
+			else_if = {
+				limit = {
+					liege ?= { government_has_flag = government_is_feudal }
+				}
+				change_government = liege.government_type
+			}
+			# Admin always falls back to feudal, not folkright
+			else = {
+				change_government = feudal_government
+			}
+		}
+		# Otherwise, directly inherit your government from the previous holder
+		else = {
+			change_government = this.var:claimant_new_government_type
+		}
+	}
+}
+
+BTWK_flag_current_crown_authority_law = {
+	if = {
+		limit = { has_realm_law = crown_authority_0 }
+		set_variable = { name = has_crown_authority_0 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_1 }
+		set_variable = { name = has_crown_authority_1 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_2 }
+		set_variable = { name = has_crown_authority_2 days = 1 }
+	}
+	else_if = {
+		limit = { has_realm_law = crown_authority_3 }
+		set_variable = { name = has_crown_authority_3 days = 1 }
+	}
+}
+
+BTWK_apply_new_government_type_for_unlanded = {
+	if = {
+		limit = { has_variable = has_crown_authority_0 }
+		add_realm_law_skip_effects = crown_authority_0
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_1 }
+		add_realm_law_skip_effects = crown_authority_1
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_2 }
+		add_realm_law_skip_effects = crown_authority_2
+	}
+	else_if = {
+		limit = { has_variable = has_crown_authority_3 }
+		add_realm_law_skip_effects = crown_authority_3
+	}
+}

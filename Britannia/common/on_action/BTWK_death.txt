@@ -54,15 +54,154 @@ BTWK_on_death = {
 			}
 			save_scope_as = former_high_king
 			trigger_event = BTWK_britannia_high_king.0023
+			player_heir = { trigger_event = BTWK_britannia_high_king.0023 }
+			every_child = {
+				even_if_dead = yes
+				if = {
+					limit = { 
+						is_alive = yes
+						NOR = {
+							has_trait = bastard
+							has_trait = bastard_founder
+						}
+					}
+					add_pressed_claim = title:e_britannia
+				}
+				else_if = {
+					limit = {
+						is_alive = yes
+						OR = {
+							has_trait = bastard
+							has_trait = bastard_founder
+						}
+					}
+					add_unpressed_claim = title:e_britannia
+				}
+				else_if = {
+					limit = {
+						is_alive = no
+					}
+					every_child = { add_unpressed_claim = title:e_britannia }
+				}
+			}
+			primary_heir = { 
+				if = {
+					limit = { NOT = { has_claim_on = title:e_britannia } }
+					add_unpressed_claim = title:e_britannia 
+				}
+			}
 		}
 		
-		# Trigger Fall of Aelle event
+		# Handle Bretwalda death events
+		if = {
+			limit = { 
+				has_title = title:e_aengland
+				BTWK_aengland_bretwalda_active_trigger = yes
+			}
+			if = {
+				limit = {
+					BTWK_aengland_bretwalda_can_inherit_trigger = no
+				}
+				save_scope_as = former_bretwalda
+				player_heir = { save_scope_as = former_bretwalda_player_heir }
+				trigger_event = BTWK_aengland_bretwalda.0020
+				scope:former_bretwalda_player_heir = { trigger_event = BTWK_aengland_bretwalda.0020 }
+				every_player = {
+					limit = { 
+						NOR = {
+							scope:former_bretwalda ?= this
+							# scope:former_bretwalda.player_heir ?= this 
+						}
+						BTWK_aengland_bretwalda_is_relevant_trigger = yes
+					}
+					trigger_event = BTWK_aengland_bretwalda.0020
+				}
+				
+				every_child = {
+					even_if_dead = yes
+					if = {
+						limit = { 
+							is_alive = yes
+							NOR = {
+								has_trait = bastard
+								has_trait = bastard_founder
+							}
+						}
+						add_pressed_claim = title:e_aengland
+					}
+					else_if = {
+						limit = {
+							is_alive = yes
+							OR = {
+								has_trait = bastard
+								has_trait = bastard_founder
+							}
+						}
+						add_unpressed_claim = title:e_aengland
+					}
+					else_if = {
+						limit = {
+							is_alive = no
+						}
+						every_child = { add_unpressed_claim = title:e_aengland }
+					}
+				}
+				primary_heir = { 
+					if = {
+						limit = { NOT = { has_claim_on = title:e_aengland } }
+						add_unpressed_claim = title:e_aengland 
+					}
+				}
+			}
+			# Hegemony score inheritance if Supremacy has been declared
+			else = {
+				if = {
+					limit = { 
+						has_variable = aengland_bretwalda_hegemony_score
+					}
+					title:e_aengland = {
+						set_variable = inheriting_hegemony_score
+						set_variable = { name = current_hegemony_score value = prev.var:aengland_bretwalda_hegemony_score }
+						set_variable = { name = new_holder value = title:e_aengland.current_heir }
+					}
+					change_variable = {
+						name = aengland_bretwalda_hegemony_score
+						multiply = BTWK_britannia_high_king_authority_inherited_proportion
+					}
+					title:e_aengland = {
+						set_variable = { name = inherited_hegemony_score value = prev.var:aengland_bretwalda_hegemony_score }
+					}
+					title:e_aengland.current_heir = {
+						if = {
+							limit = { NOT = { has_variable = aengland_bretwalda_hegemony_score } }
+							set_variable = {
+								name = aengland_bretwalda_hegemony_score
+								value = 0
+							}
+						}
+						change_variable = {
+							name = aengland_bretwalda_hegemony_score
+							add = prev.var:aengland_bretwalda_hegemony_score
+						}
+					}
+					title:e_aengland = {
+						set_variable = { name = new_holder_hegemony_score value = title:e_aengland.current_heir.var:aengland_bretwalda_hegemony_score }
+					}
+				}
+			}
+		}
+		
+		# Trigger Death of Aelle event
 		if = {
 			limit = { 
 				this = character:80
 				has_title = title:k_east_anglia
-				title:k_east_anglia = { has_variable = aelle_ruling_anglia }
+				title:k_east_anglia = { 
+					has_variable = aelle_ruling_anglia
+					NOT = { has_variable = triggered_aelle_fall_event }
+				}
 			}
+			title:k_east_anglia = { set_variable = triggered_aelle_fall_event }
 			character:80 = { save_scope_as = aelle_of_anglia }
 			title:k_east_anglia.current_heir = { save_scope_as = new_holder }
 			scope:new_holder = { trigger_event = BTWK_anglo_saxon_invasions.0010 }

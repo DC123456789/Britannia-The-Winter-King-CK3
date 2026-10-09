@@ -58,7 +58,10 @@ k_papal_state = {			# Primas Britanniarum ("Primate/Primacy of the Britannias") 
 	ruler_uses_title_name = no
 	can_use_nomadic_naming = no
 	landless = yes
+	allow_domicile = no
 
+	disable_regnal_numbers = never
+	
 	capital = c_londinium		# Temporary
 
 	ai_primary_priority = {
@@ -69,6 +72,18 @@ k_papal_state = {			# Primas Britanniarum ("Primate/Primacy of the Britannias") 
 	no_automatic_claims = yes
 	always_follows_primary_heir = yes
 	de_jure_drift_disabled = yes
+
+	ignore_titularity_for_title_weighting = yes
+
+	holding_regnal_male_names = {
+		Alexander_regnal Anastasius_regnal Benedictus_regnal Bonifatius_regnal Caelestinus Callistus_regnal Clemens_regnal Eugenius_regnal Leo_regnal Gregorius_regnal
+		Hadrianus_regnal Honorius_regnal Innocentius Ioannes_regnal Lucius_regnal Marinus_regnal Martinus_regnal Nicolaus Sergius_regnal Silvester_regnal
+		Stephanus_regnal Urbanus Victor_regnal
+	}
+	holding_regnal_female_names = {
+		Alexandra Anastasia Benedicta Caelestina Clementia Eugenia Gregoria Honoria
+		Innocentia Ioanna Lucia Stephania Theodora Urbana Veronica Victoria
+	}
 }
 
 d_manichean = {
@@ -77,6 +92,7 @@ d_manichean = {
 	ruler_uses_title_name = no
 	can_use_nomadic_naming = no
 	landless = yes
+	allow_domicile = no
 
 	capital = c_londinium		# Temporary
 
@@ -89,6 +105,8 @@ d_manichean = {
 	always_follows_primary_heir = yes
 	de_jure_drift_disabled = yes
 }
+
+# TODO Figure out monastic orders (Benedictines, Columbans?)
 
 e_britannia = {
 	color={ 76 141 67 }
@@ -99,19 +117,23 @@ e_britannia = {
 	can_be_named_after_dynasty = no
 
 	can_create = {
-		is_britannic_culture_trigger = yes
+		is_briton_or_latin_culture_trigger = yes
 		is_roman_ruler_trigger = no
 		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
 		custom_tooltip = {
 			text = BTWK_must_create_britannia_through_high_kingship_tt
 			BTWK_britannia_high_kingship_active_trigger = no
 		}
+		trigger_if = {
+			limit = { BTWK_britannia_high_kingship_active_trigger = no }
+			sub_realm_size >= 200
+		}
 	}
 	
 	ai_primary_priority = {
 		if = {
 			limit = {
-				is_britannic_culture_trigger = yes
+				is_briton_or_latin_culture_trigger = yes
 			}
 			add = @correct_culture_primary_score
 		}
@@ -128,7 +150,7 @@ e_britannia = {
 		ai_primary_priority = {
 			if = {
 				limit = {
-					is_britannic_culture_trigger = yes
+					is_briton_or_latin_culture_trigger = yes
 				}
 				add = @better_than_the_alternatives_score
 			}
@@ -1801,6 +1823,36 @@ e_britannia = {
 					color={ 100 160 124 }
 				}
 			}
+		}
+		
+		d_throne_dumnonia = {
+			color={ 96 180 86 }
+			
+			landless = yes
+			capital = c_lindinis
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+			
+			ai_primary_priority = {
+				add = @always_primary_score
+			}
+			
+			can_create = {
+				always = no
+			}
+		
+			cultural_names = {
+				name_list_briton = cn_dyfneint_briton
+				name_list_cumbrian = cn_dyfneint_briton
+				name_list_armorican = cn_dyfneint_briton
+				name_list_breton = cn_dyfneint_breton
+				name_list_greek = cn_dumnonia_greek
+				name_list_armenian = cn_dumnonia_greek
+				name_list_romanosyrian = cn_dumnonia_greek
+				name_list_romanoegyptian = cn_dumnonia_greek
+				name_list_britannic = cn_dumnonia_britannic
+			}	
 		}
 	}
 	
@@ -9256,6 +9308,21 @@ e_britannia = {
 		
 		can_create = {
 			can_create_briton_kingdom_trigger = yes
+			# Make sure AI Dumnonia doesn't create it too early
+			trigger_if = {
+				limit = { is_ai = yes }
+				NAND = {
+					has_title = title:k_dumnonia
+					OR = {
+						this = character:1		# Uther
+						this = character:3		# Arthur
+						this = character:5		# Mordred
+						this = character:22		# Gereint
+						father ?= character:1	# Any other of Uther's children
+						current_year <= 510
+					}
+				}
+			}
 		}
 
 		can_create_on_partition = {
@@ -12930,16 +12997,20 @@ e_britannia = {
 						name_list_armorican = cn_colin_brittonic
 						name_list_breton = cn_colin_breton
 						name_list_pictish = cn_colin_pictish
-						name_list_roman = cn_castrum_ad_tinam
-						name_list_romanobritish = cn_castrum_ad_tinam
-						name_list_romanogallic = cn_castrum_ad_tinam
-						name_list_romanorhaetian = cn_castrum_ad_tinam
-						name_list_romanoaquitanian = cn_castrum_ad_tinam
-						name_list_romanogermanic = cn_castrum_ad_tinam
-						name_list_romanoscandian = cn_castrum_ad_tinam
-						name_list_romanonumidian = cn_castrum_ad_tinam
-						name_list_romanoafrican = cn_castrum_ad_tinam
-						name_list_britannic = cn_castrum_ad_tinam_britannic
+						name_list_roman = cn_horophulacium
+						name_list_romanobritish = cn_horophulacium
+						name_list_romanogallic = cn_horophulacium
+						name_list_romanorhaetian = cn_horophulacium
+						name_list_romanoaquitanian = cn_horophulacium
+						name_list_romanogermanic = cn_horophulacium
+						name_list_romanoscandian = cn_horophulacium
+						name_list_romanonumidian = cn_horophulacium
+						name_list_romanoafrican = cn_horophulacium
+						name_list_greek = cn_horophulacium_greek
+						name_list_armenian = cn_horophulacium_greek
+						name_list_romanosyrian = cn_horophulacium_greek
+						name_list_romanoegyptian = cn_horophulacium_greek
+						name_list_britannic = cn_colin_britannic
 						name_list_anglo_saxon = cn_hollingworth_anglosaxon
 						name_list_oldfrisian = cn_hollingworth_anglosaxon
 						name_list_frisian = cn_hollingworth_anglosaxon
@@ -20757,27 +20828,27 @@ e_britannia = {
 		}
 		
 		cultural_names = {
-			name_list_briton = cn_dyfed_brythonic
-			name_list_cumbrian = cn_dyfed_brythonic
-			name_list_armorican = cn_dyfed_brythonic
-			name_list_breton = cn_dyfed_breton
-			name_list_irish = cn_demetia_gaelic
-			name_list_gaelic = cn_demetia_gaelic
-			name_list_pictish = cn_dyfed_pictish
-			name_list_roman = cn_demetia
-			name_list_romanobritish = cn_demetia
-			name_list_romanogallic = cn_demetia
-			name_list_romanorhaetian = cn_demetia
-			name_list_romanoaquitanian = cn_demetia
-			name_list_romanogermanic = cn_demetia
-			name_list_romanoscandian = cn_demetia
-			name_list_romanonumidian = cn_demetia
-			name_list_romanoafrican = cn_demetia
-			name_list_greek = cn_demetia_greek
-			name_list_armenian = cn_demetia_greek
-			name_list_romanosyrian = cn_demetia_greek
-			name_list_romanoegyptian = cn_demetia_greek
-			name_list_britannic = cn_demetia_britannic
+			name_list_briton = cn_k_demetia_brythonic
+			name_list_cumbrian = cn_k_demetia_brythonic
+			name_list_armorican = cn_k_demetia_brythonic
+			name_list_breton = cn_k_demetia_breton
+			name_list_irish = cn_k_demetia_gaelic
+			name_list_gaelic = cn_k_demetia_gaelic
+			name_list_pictish = cn_k_demetia_pictish
+			name_list_roman = cn_k_demetia_roman
+			name_list_romanobritish = cn_k_demetia_roman
+			name_list_romanogallic = cn_k_demetia_roman
+			name_list_romanorhaetian = cn_k_demetia_roman
+			name_list_romanoaquitanian = cn_k_demetia_roman
+			name_list_romanogermanic = cn_k_demetia_roman
+			name_list_romanoscandian = cn_k_demetia_roman
+			name_list_romanonumidian = cn_k_demetia_roman
+			name_list_romanoafrican = cn_k_demetia_roman
+			name_list_greek = cn_k_demetia_greek
+			name_list_armenian = cn_k_demetia_greek
+			name_list_romanosyrian = cn_k_demetia_greek
+			name_list_romanoegyptian = cn_k_demetia_greek
+			name_list_britannic = cn_k_demetia_britannic
 		}
 		
 		d_deheubarth = {			# Dyfed
@@ -22637,31 +22708,6 @@ e_britannia = {
 					color={ 50 140 155 }
 				}
 			}
-		}
-	}
-	
-	k_deheubarth = {
-		color={ 121 131 77 }
-		
-		capital = c_moridunum
-	
-		de_jure_drift_disabled = yes
-		can_be_named_after_dynasty = no
-		
-		can_create = {
-			can_create_briton_kingdom_trigger = yes
-		}
-
-		can_create_on_partition = {
-			can_create_briton_kingdom_trigger = yes
-		}
-		
-		cultural_names = {
-			name_list_britannic = cn_deheubarth_britannic
-			name_list_breton = cn_deheubarth_breton
-			name_list_irish = cn_deheubarth_gaelic
-			name_list_gaelic = cn_deheubarth_gaelic
-			name_list_pictish = cn_deheubarth_pictish
 		}
 	}
 	
@@ -27006,14 +27052,14 @@ e_britannia = {
 					name_list_britannic = cn_dubrodolum_britannic
 					name_list_anglo_saxon = cn_allerton_anglosaxon
 					name_list_oldfrisian = cn_allerton_anglosaxon
-					name_list_frisian = cn_allerton_anglosaxon
+					name_list_frisian = cn_allerton_frisian
 					name_list_angle = cn_allerton_anglosaxon
 					name_list_old_saxon = cn_allerton_anglosaxon
-					name_list_saxon = cn_allerton_anglosaxon
+					name_list_saxon = cn_allerton_saxon
 					name_list_jute = cn_allerton_anglosaxon
 					name_list_norse = cn_allerton_norse
 					name_list_norse_gael = cn_allerton_norse
-					name_list_proto_norse = cn_allerton_norse
+					name_list_proto_norse = cn_allerton_proto_norse
 					name_list_briton = cn_dol_dufr
 					name_list_cumbrian = cn_dol_dufr
 					name_list_armorican = cn_dol_dufr
@@ -27036,14 +27082,14 @@ e_britannia = {
 						name_list_britannic = cn_dubrodolum_britannic
 						name_list_anglo_saxon = cn_allerton_anglosaxon
 						name_list_oldfrisian = cn_allerton_anglosaxon
-						name_list_frisian = cn_allerton_anglosaxon
+						name_list_frisian = cn_allerton_frisian
 						name_list_angle = cn_allerton_anglosaxon
 						name_list_old_saxon = cn_allerton_anglosaxon
-						name_list_saxon = cn_allerton_anglosaxon
+						name_list_saxon = cn_allerton_saxon
 						name_list_jute = cn_allerton_anglosaxon
 						name_list_norse = cn_allerton_norse
 						name_list_norse_gael = cn_allerton_norse
-						name_list_proto_norse = cn_allerton_norse
+						name_list_proto_norse = cn_allerton_proto_norse
 						name_list_briton = cn_dol_dufr
 						name_list_cumbrian = cn_dol_dufr
 						name_list_armorican = cn_dol_dufr
@@ -29095,11 +29141,14 @@ e_britannia = {
 						name_list_pictish = cn_llyn_pictish
 						name_list_anglo_saxon = cn_dunham_anglosaxon
 						name_list_oldfrisian = cn_dunham_anglosaxon
-						name_list_frisian = cn_dunham_anglosaxon
+						name_list_frisian = cn_dunham_frisian
 						name_list_angle = cn_dunham_anglosaxon
 						name_list_old_saxon = cn_dunham_anglosaxon
-						name_list_saxon = cn_dunham_anglosaxon
+						name_list_saxon = cn_dunham_saxon
 						name_list_jute = cn_dunham_anglosaxon
+						name_list_norse = cn_dunham_norse
+						name_list_norse_gael = cn_dunham_norse
+						name_list_proto_norse = cn_dunham_proto_norse
 					}
 					
 					color={ 65 130 54 }
@@ -29126,6 +29175,9 @@ e_britannia = {
 						name_list_old_saxon = cn_frodsham_anglosaxon
 						name_list_saxon = cn_frodsham_saxon
 						name_list_jute = cn_frodsham_anglosaxon
+						name_list_norse = cn_frodsham_norse
+						name_list_norse_gael = cn_frodsham_norse
+						name_list_proto_norse = cn_frodsham_proto_norse
 					}
 					
 					color={ 65 110 54 }
@@ -35796,20 +35848,20 @@ e_britannia = {
 					color={ 98 98 179 }
 				}
 				
-				b_strathgryffechurch = {		      	# Inchinnan
+				b_strathgryffechurch = {		      	# Inchinnan | Cerdigone/Bishopton
 					province = 846
 			
 					cultural_names = {
-						name_list_roman = cn_insula
-						name_list_romanobritish = cn_insula
-						name_list_romanogallic = cn_insula
-						name_list_romanorhaetian = cn_insula
-						name_list_romanoaquitanian = cn_insula
-						name_list_romanogermanic = cn_insula
-						name_list_romanoscandian = cn_insula
-						name_list_romanonumidian = cn_insula
-						name_list_romanoafrican = cn_insula
-						name_list_britannic = cn_insula_britannic
+						name_list_roman = cn_cerdigone
+						name_list_romanobritish = cn_cerdigone
+						name_list_romanogallic = cn_cerdigone
+						name_list_romanorhaetian = cn_cerdigone
+						name_list_romanoaquitanian = cn_cerdigone
+						name_list_romanogermanic = cn_cerdigone
+						name_list_romanoscandian = cn_cerdigone
+						name_list_romanonumidian = cn_cerdigone
+						name_list_romanoafrican = cn_cerdigone
+						name_list_britannic = cn_cerdigone_britannic
 						name_list_irish = cn_inchinnan_gaelic
 						name_list_gaelic = cn_inchinnan_gaelic
 						name_list_briton = cn_inchinnan_brittonic
@@ -37866,15 +37918,16 @@ e_cymru = {
 	can_be_named_after_dynasty = no
 
 	can_create = {
-		is_britannic_culture_trigger = yes
+		is_briton_or_latin_culture_trigger = yes
 		is_roman_ruler_trigger = no
 		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
+		sub_realm_size >= 40
 	}
 	
 	ai_primary_priority = {
 		if = {
 			limit = {
-				is_britannic_culture_trigger = yes
+				is_briton_or_latin_culture_trigger = yes
 			}
 			add = @better_than_the_alternatives_score
 		}
@@ -37911,15 +37964,16 @@ e_hen_ogledd = {
 	can_be_named_after_dynasty = no
 
 	can_create = {
-		is_britannic_culture_trigger = yes
+		is_briton_or_latin_culture_trigger = yes
 		is_roman_ruler_trigger = no
 		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
+		sub_realm_size >= 60
 	}
 	
 	ai_primary_priority = {
 		if = {
 			limit = {
-				is_britannic_culture_trigger = yes
+				is_briton_or_latin_culture_trigger = yes
 			}
 			add = @better_than_the_alternatives_score
 		}
@@ -37955,6 +38009,14 @@ e_aengland = {
 	can_create = {
 		is_ingvaeonic_culture_trigger = yes
 		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
+		custom_tooltip = {
+			text = BTWK_must_create_aengland_through_bretwalda_tt
+			BTWK_aengland_bretwalda_active_trigger = no
+		}
+		trigger_if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = no }
+			sub_realm_size >= 200
+		}
 	}
 	
 	ai_primary_priority = {
@@ -38358,6 +38420,14 @@ e_aengland = {
 				TITLE = title:k_mercia
 				NUM_COUNTIES = 15
 			}
+			# Gyrwas has a tendency to form them too early
+			trigger_if = {
+				limit = { 
+					is_ai = yes
+					current_year < 560
+				}
+				primary_title.kingdom ?= title:k_mercia
+			}
 		}
 
 		can_create_on_partition = {
@@ -38714,6 +38784,11 @@ e_aengland = {
 			BTWK_anglo_saxon_kingdom_title_creation_trigger = {
 				TITLE = title:k_deira
 				NUM_COUNTIES = 10
+			}
+			# Want them to form k_lindsey instead of they can
+			trigger_if = {
+				limit = { is_ai = yes }
+				NOT = { primary_title = title:d_lindsey }
 			}
 		}
 
@@ -39429,6 +39504,7 @@ e_romanized_germanic_britannia = {
 			is_culture_or_descendant_including_romance_trigger = { 
 				CULTURE = title:e_romanized_germanic_britannia.var:romanized_germanic_empire_culture
 			}
+			sub_realm_size >= 200
 		}
 		trigger_else = {
 			custom_tooltip = {
@@ -39451,6 +39527,7 @@ e_roman_britannia = {
 
 	can_create = {
 		can_create_roman_title_trigger = yes
+		sub_realm_size >= 200
 		rule_title_creation_imperial_power_projection_title_creation_trigger = yes
 	}
 	
@@ -39500,8 +39577,7 @@ e_roman_britannia = {
 				}
 				add = @correct_culture_primary_score
 			}
-		}
-		
+		}		
 		
 		cultural_names = {
 			name_list_greek = cn_maxima_caesariensis_greek
@@ -39513,10 +39589,18 @@ e_roman_britannia = {
 
 		can_create = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_maxima_cesariensis
+				NUM_COUNTIES = 20
+			}
 		}
 
 		can_create_on_partition = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_maxima_cesariensis
+				NUM_COUNTIES = 20
+			}
 		}
 	}
 	
@@ -39547,10 +39631,18 @@ e_roman_britannia = {
 
 		can_create = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_flavia_cesariensis
+				NUM_COUNTIES = 20
+			}
 		}
 
 		can_create_on_partition = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_flavia_cesariensis
+				NUM_COUNTIES = 20
+			}
 		}
 	}
 	
@@ -39581,10 +39673,18 @@ e_roman_britannia = {
 
 		can_create = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_britannia_prima
+				NUM_COUNTIES = 20
+			}
 		}
 
 		can_create_on_partition = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_britannia_prima
+				NUM_COUNTIES = 20
+			}
 		}
 	}
 	
@@ -39615,10 +39715,18 @@ e_roman_britannia = {
 
 		can_create = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_britannia_secunda
+				NUM_COUNTIES = 20
+			}
 		}
 
 		can_create_on_partition = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_britannia_secunda
+				NUM_COUNTIES = 20
+			}
 		}
 	}
 	
@@ -39649,10 +39757,18 @@ e_roman_britannia = {
 
 		can_create = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_valentia
+				NUM_COUNTIES = 15
+			}
 		}
 
 		can_create_on_partition = {
 			can_create_roman_title_trigger = yes
+			BTWK_control_num_de_jure_counties_in_title_trigger = {
+				TITLE = title:k_valentia
+				NUM_COUNTIES = 15
+			}
 		}
 	}
 }
@@ -39806,7 +39922,7 @@ k_alemannia = {
 k_broceliande = {
 	color = { 86 191 151 }
 	landless = yes
-	capital = c_londinium		# Temporary
+	capital = c_din_tagell		# Temporary
 
 	can_create = {
 		always = no
@@ -40302,7 +40418,7 @@ d_tarbellia = {
 
 d_laamp_arthur = { # Arthur Pendragon
 	color = { 100 100 100 }
-	capital = c_durnovaria		# Capital of Dumnonia
+	capital = c_durnovaria
 
 	definite_form = yes
 	landless = yes
@@ -40311,8 +40427,44 @@ d_laamp_arthur = { # Arthur Pendragon
 	no_automatic_claims = yes
 	destroy_if_invalid_heir = yes
 
+	dlc_feature = roads_to_power
+
 	ai_primary_priority = { add = @never_primary_score }
 }
+
+d_laamp_brotherhood_horsemen = { # Sagramor
+	color = { 200 200 200 }
+	capital = c_durnovaria
+
+	definite_form = yes
+	landless = yes
+	require_landless = yes
+	ruler_uses_title_name = no
+	no_automatic_claims = yes
+	destroy_if_invalid_heir = yes
+
+	dlc_feature = roads_to_power
+
+	ai_primary_priority = { add = @never_primary_score }
+}
+
+# Pre-existing LAAMP titles cannot be activated midgame - the Wolftails are created
+# as a dynamic title instead
+# d_laamp_wolftails = { # Derfel Cadarn
+	# color={ 50 100 75 }
+	# capital = c_peonnum
+
+	# definite_form = yes
+	# landless = yes
+	# require_landless = yes
+	# ruler_uses_title_name = no
+	# no_automatic_claims = yes
+	# destroy_if_invalid_heir = yes
+
+	# dlc_feature = roads_to_power
+
+	# ai_primary_priority = { add = @never_primary_score }
+# }
 
 d_laamp_scyldings = { # Scyldings
 	color = { 156 49 3 }
@@ -40324,6 +40476,8 @@ d_laamp_scyldings = { # Scyldings
 	ruler_uses_title_name = no
 	no_automatic_claims = yes
 	destroy_if_invalid_heir = yes
+
+	dlc_feature = roads_to_power
 
 	ai_primary_priority = { add = @never_primary_score }
 }

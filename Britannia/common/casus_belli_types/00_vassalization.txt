@@ -49,7 +49,7 @@
 			# Must have same heritage group as attacker
 			custom_tooltip = {
 				text = "vassalization_cb_different_heritage_group_tt"
-				culture = { has_same_heritage_group_as = { TARGET = scope:attacker.culture } }
+				is_same_heritage_group_or_related_heritage_trigger = { TARGET = scope:attacker }
 			}
 		}
 		scope:attacker = {
@@ -91,7 +91,7 @@
 				}
 			}
 
-			NOR = { # Can't vassalize holy orders or Heads of Faith
+			NOR = { # Can't vassalize Military Orders or Heads of Faith
 				any_held_title = {
 					is_holy_order = yes
 				}
@@ -114,6 +114,10 @@
 		prestige = {
 			value = 0
 			add = {
+				value = 300
+				desc = CB_BASE_COST
+			}
+			add = {
 				desc = CB_SIZE_OF_TARGET_REALM_COST
 				scope:defender = {
 					every_sub_realm_county = {
@@ -123,26 +127,32 @@
 					}
 				}
 			}
+			multiply = vassalization_cb_prestige_cost_mulitiplier
+			# No penalty for same culture
 			if = {
 				limit = {
-					scope:defender.primary_title = {
-						tier = tier_kingdom
-					}
-				}
-				multiply = {
-					value = 2
-					desc = CB_VASSALIZING_KING
+					scope:attacker.culture = scope:defender.culture
 				}
 			}
-			if = {
+			# Small penalty for closely related culture (same heritage)
+			else_if = {
 				limit = {
-					scope:defender.primary_title = {
-						tier = tier_empire
+					OR = {
+						scope:attacker.culture = { has_same_culture_heritage = scope:defender.culture }
+						scope:attacker.culture = { any_parent_culture = { this = scope:defender.culture } }
+						scope:defender.culture = { any_parent_culture = { this = scope:attacker.culture } }
 					}
 				}
 				multiply = {
-					value = 4
-					desc = CB_VASSALIZING_EMPEROR
+					value = 1.5
+					desc = CB_DIFFERENT_CULTURE
+				}
+			}
+			# Large penalty for different heritage
+			else = {
+				multiply = {
+					value = 3
+					desc = CB_DIFFERENT_HERITAGE
 				}
 			}
 
@@ -254,7 +264,7 @@
 				value = minor_prestige_value
 				multiply = -1.0
 			}
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				ambitious = medium_stress_impact_gain
 				arrogant = medium_stress_impact_gain
 			}
@@ -270,7 +280,7 @@
 		}
 		
 		scope:defender = {
-			stress_impact = {
+			stress_and_fulfillment_impact = {
 				arrogant = medium_stress_impact_gain
 			}
 		}
@@ -402,6 +412,8 @@
 		# Tell the Romans to stop going adventuring into the steppe for no gods-damned reason.
 		multiply = byzantium_conquests_ai_score_value
 
+		multiply = pam_peace_of_god_coreligionist_war_ai_score_value
+		multiply = zealous_war_on_head_of_faith_ai_score_value
 		add = frankokratia_leader_protection_value #Set back to 0. Declaring war on the frankokratia leader can really ruin the whole thing
 	}
 }

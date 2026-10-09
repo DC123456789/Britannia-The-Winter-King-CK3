@@ -54,7 +54,7 @@
 	religion = "hellenic_pagan"
 	father = 2100
 	mother = 2101
-	trait = northaugustus_offmap
+	trait = augustus
 	203.1.1 = {
 		birth = yes
 		give_nickname = nick_elagabalus
@@ -150,7 +150,7 @@
 	religion = "hellenic_pagan"
 	father = 2103
 	mother = 2102
-	trait = northaugustus_offmap
+	trait = augustus
 	208.10.1 = {
 		birth = yes
 		give_nickname = nick_severus
@@ -174,7 +174,7 @@
 	religion = "hellenic_pagan"
 	# trait = tolerant
 	trait = compassionate
-	trait = northaugustus_offmap
+	trait = augustus
 	204.1.1 = {
 		birth = yes
 		give_nickname = nick_the_arab
@@ -197,5 +197,104 @@
 	}
 	330.1.1 = {
 		death = yes
+	}
+}
+
+pope_7613 = {
+	name = "Evaristus"
+	martial = 6
+	diplomacy = 7
+	intrigue = 8
+	stewardship = 8
+	rite = roman_rite
+	culture = "romanosyrian"
+	trait = diligent
+	trait = calm
+	trait = zealous
+	trait = education_diplomacy_3
+	5.1.1 = {
+		birth = "5.1.1"
+	}
+	99.1.1 = {
+		name = "Evaristus_regnal"
+	# AKA: Yeshua
+	}
+	107.1.1 = {
+		death = "107.1.1"
+	}
+}
+
+pope_7607 = {
+	name = "Anicetus"
+	martial = 6
+	diplomacy = 7
+	intrigue = 8
+	stewardship = 8
+	rite = byzantine_rite
+	culture = "romanosyrian"
+	trait = diligent
+	trait = calm
+	trait = zealous
+	trait = education_diplomacy_3
+	110.1.1 = {
+		birth = "110.1.1"
+	}
+	154.1.1 = {
+		name = "Anicetus_regnal"
+	# AKA: Polycarp
+	}
+	167.4.20 = {
+		death = "167.4.20"
+	}
+}
+
+
+romanosyrian_1 = {
+	name = "Andrew"
+	# AKA: Andreas 'the Apostle'
+	dynasty = 8661
+	martial = 3
+	diplomacy = 9
+	intrigue = 9
+	stewardship = 9
+	rite = byzantine_rite
+	culture = romanosyrian		# Hellenized Jew
+	trait = trusting
+	trait = brave
+	trait = education_learning_4
+
+	8.1.1 = {
+		birth = yes
+		give_nickname = nick_the_apostle
+	}
+	65.1.1 = {
+		death = yes
+		effect_even_if_dead = {
+			# Dedication at Rochester Cathedral
+			province:154 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:154		# 476 #Cathedral of Saint Andrew, Patras
+				PRESET = yes
+			}
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:romanosyrian_1
+				SAINT_COUNTY = province:154.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+			religion:christianity_religion = {
+				every_faith = {
+					limit = {
+						main_rite = { is_rite_enabled = yes }
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+		}
 	}
 }

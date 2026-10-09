@@ -16,11 +16,11 @@ on_declared_war = {
 					government_has_flag = government_is_tribal
 				}			
 				liege ?= {
-					government_has_flag = government_is_administrative
+					government_has_mechanic = administrative
 				}
 			}
 			scope:defender = {
-				government_has_flag = government_is_administrative
+				government_has_mechanic = administrative
 				liege ?= scope:attacker.liege
 			}
 		}
@@ -46,6 +46,32 @@ on_declared_war = {
 		scope:attacker = {
 			custom_description_no_bullet = {
 				text = attack_breaking_truce_text
+			}
+			# PAM Peace of God: breaking a truce with a co-religionist draws the ban
+			if = {
+				limit = {
+					rite = {
+						rite_has_parameter = tenet_peace_of_god_excommunication_truce
+					}
+					scope:defender = { faith = scope:attacker.faith }
+					NOT = { has_trait = excommunicated }
+					faith = {
+						OR = {
+							AND = {
+								exists = religious_head
+								has_doctrine = doctrine_spiritual_head
+							}
+							has_doctrine_parameter = has_clerical_regions
+							any_faith_ruler = {
+								highest_held_title_tier >= tier_duchy
+								government_has_flag = government_is_theocracy
+							}
+						}
+						faith_has_sacraments_central_trigger = yes
+						NOT = { religious_head ?= scope:attacker }
+					}
+				}
+				add_excommunication_actual_effect = yes
 			}
 
 			# Remove the war target from the bought_truce_list if they're in it
@@ -118,6 +144,21 @@ on_declared_war = {
 					}
 				}
 			}
+		}
+	}
+	# PAM Peace of God: warring on a co-religionist costs piety
+	if = {
+		limit = {
+			scope:defender = { faith = scope:attacker.faith }
+			scope:attacker.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_same_faith_war_piety_penalty
+			}
+		}
+		scope:attacker = {
+			custom_description_no_bullet = {
+				text = attack_same_faith_peace_of_god_text
+			}
+			add_piety = medium_piety_loss
 		}
 	}
 	# Breaking Betrothals
@@ -431,4 +472,663 @@ on_declared_war = {
 	}
 	
 	intrigue_duel_on_attack_effect = yes
+}
+
+on_claimant_faction_war_win_common = {
+	$DEFENDER$ = {
+		if = {
+			limit = {
+				is_tributary = yes
+				exists = suzerain
+				$CLAIMANT$ = {
+					is_tributary = no
+					OR = {
+						is_ruler = no
+						is_vassal_or_below_of = $DEFENDER$
+					}
+				}
+			}
+			suzerain = { save_scope_as = handover_suzerain }
+		}
+	}
+	$ATTACKER$.joined_faction.special_title ?= {
+		save_scope_as = faction_targeted_title
+	}
+	$CLAIMANT$ = {
+		save_scope_as = the_claimant
+	}
+	
+	# If the claimant is the prisoner of the defender, free the claimant (it doesn't make much sense to leave the new king in the old king's dungeon)
+	scope:the_claimant = {
+		if = {
+			limit = {
+				is_imprisoned_by = $DEFENDER$
+			}
+			release_from_prison = yes
+		}
+	}
+
+	# Add mutual opinion bonuses between claimant and faction members, as well as a hook on the claimant if possible.
+	$ATTACKER$.joined_faction = {
+		every_faction_member = {
+			custom = FACTION_CLAIMANT_EVERY_FACTION_MEMBER
+			limit = {
+				NOT = { this = $ATTACKER$.joined_faction.special_character }
+			}
+			hidden_effect = {
+				add_opinion = {
+					modifier = claimant_faction_member_opinion
+					target = $ATTACKER$.joined_faction.special_character
+				}
+				reverse_add_opinion = {
+					modifier = claimant_faction_claimant_opinion
+					target = $ATTACKER$.joined_faction.special_character
+				}
+			}
+			if = {
+				limit = {
+					can_add_hook = {
+						type = favor_hook
+						target = $ATTACKER$.joined_faction.special_character
+					}
+				}
+				add_hook = {
+					type = favor_hook
+					target = $ATTACKER$.joined_faction.special_character
+				}
+			}
+			# Struggle boost
+			if = {
+				limit = {
+					culture = $ATTACKER$.joined_faction.special_character.culture
+					any_character_struggle = {
+						involvement = involved
+						has_struggle_phase_parameter = struggle_prestige_install_same_culture_claimant
+					}
+				}
+				add_prestige = major_prestige_gain
+			}
+			
+			# Save the number of faction members for use further down
+			add_to_list = num_faction_members
+		}
+	}
+
+	# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the title
+	$DEFENDER$ = { save_scope_as = defender_scope }
+	scope:the_claimant = {
+		if = {
+			limit = { is_ruler = no }
+			BTWK_flag_new_government_type_for_unlanded = {
+				INHERIT_SCOPE = scope:defender_scope
+			}
+		}
+	}
+	
+	# Give the claimant their new title.
+	create_title_and_vassal_change = {
+		type = faction_demand
+		save_scope_as = change
+		add_claim_on_loss = yes
+	}
+
+	# Ceremonial Liege
+	if = {
+		limit = {
+			exists = $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
+			scope:faction_targeted_title ?= $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
+		}
+		$DEFENDER$ = {
+			every_held_title = {
+				limit = {
+					is_noble_family_title = no
+					is_landless_type_title = no
+					tier >= scope:faction_targeted_title.tier
+				}
+				add_to_list = faction_titles
+			}
+		}
+	}
+	every_in_list = {
+		list = $TARGET_TITLES$
+		add_to_list = faction_titles
+		holder = {
+			save_scope_as = target_holder
+		}
+	}
+	scope:target_holder ?= {
+		if = {
+			limit = {
+				top_liege = this
+				government_has_mechanic = administrative
+				primary_title = { is_in_list = faction_titles }
+			}
+			every_held_title = {
+				title_tier > barony
+				limit = {
+					is_noble_family_title = no
+				}
+				add_to_list = faction_titles
+			}
+		}
+	}
+	ordered_in_list = {
+		list = $TARGET_TITLES$
+		position = 0
+		order_by = tier
+		save_scope_as = target_title
+	}
+	$ATTACKER$.joined_faction = {
+		every_faction_county_member = {
+			limit = {
+				NOT = { is_in_list = faction_titles }
+			}
+			add_to_list = faction_titles
+		}
+	}
+
+	setup_claim_cb = {
+		titles = faction_titles
+		attacker = $ATTACKER$
+		defender = $DEFENDER$
+		claimant = scope:the_claimant
+		change = scope:change
+		civil_war = yes
+	}
+
+	# Ensure that the liege structure is preserved
+	if = {
+		limit = {
+			scope:target_holder = { top_liege != this }
+			scope:the_claimant.primary_title.tier < scope:target_title.tier
+		}
+		scope:the_claimant = {
+			change_liege = {
+				liege = scope:target_holder.liege
+				change = scope:change
+			}
+		}
+	}
+
+	# Preserve Grandeur
+	if = {
+		limit = {
+			scope:target_holder = {
+				has_royal_court = yes
+				has_dlc_feature = royal_court
+			}
+			scope:the_claimant = {
+				has_royal_court = no
+			}
+		}
+		scope:the_claimant = {
+			set_variable = {
+				name = previous_holder_grandeur_value
+				value = scope:target_title.holder.court_grandeur_current
+			}
+		}
+	}
+	
+	hidden_effect = {
+		if = {
+			limit = {
+				exists = scope:target_holder.dynasty
+				exists = scope:the_claimant.dynasty
+				scope:target_holder = {
+					has_variable = conqueror
+					scope:target_title.holder.dynasty = scope:the_claimant.dynasty
+				}
+				scope:the_claimant = {
+					OR = {
+						is_ai = no
+						ai_has_cautious_personality = no
+					}
+					NOT = { has_variable = conqueror }
+				}
+			}
+			scope:the_claimant = {
+				if = {
+					limit = {
+						is_ai = no
+					}
+					trigger_event = {
+						id = conqueror.0001
+						days = 10
+					}
+				}
+				else = {
+					trigger_event = conqueror.0001
+				}
+			}
+		}
+	}
+
+	resolve_title_and_vassal_change = scope:change
+		
+	# BTWK - Now actually apply the government change
+	scope:the_claimant = { BTWK_apply_new_government_type_for_unlanded = yes }
+	
+	# We give you decent Legitimacy so you don't get immediately deposed - people _really_ want you in the throne
+	# Can you even get Legitimacy?
+	if = {
+		limit = {
+			scope:the_claimant = {
+				is_valid_for_legitimacy_change = yes
+			}
+		}
+		# Per tier
+		if = {
+			limit = {
+				scope:target_title.tier ?= tier_empire
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 1000
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:target_title.tier = tier_kingdom
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 750
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				scope:target_title.tier = tier_duchy
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 500
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		else = {
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = 300
+					multiply = nomadic_legitimacy_claimant_multiplier
+				}
+			}
+		}
+		# Per number of faction members
+		if = {
+			limit = {
+				list_size:num_faction_members > 0
+				scope:the_claimant = {
+					is_valid_for_legitimacy_change = yes
+				}
+			}
+			scope:the_claimant = {
+				add_legitimacy = {
+					value = list_size:num_faction_members
+					multiply = 50
+				}
+			}
+		}
+		
+	}
+
+	# Add Appropriate Grandeur
+	scope:the_claimant = {
+		if = {
+			limit = {
+				exists = var:previous_holder_grandeur_value
+				has_royal_court = yes
+				has_dlc_feature = royal_court
+			}
+			hidden_effect = {
+				change_current_court_grandeur = -100 # Reset to 0
+				change_current_court_grandeur = var:previous_holder_grandeur_value
+				remove_variable = previous_holder_grandeur_value
+			}
+			change_current_court_grandeur = massive_court_grandeur_gain # Gain a bonus to Grandeur for winning a claim faction
+		}
+	}
+
+	# Byzantine flavor
+	if = {
+		limit = {
+			scope:target_title = title:e_byzantium
+			has_ep3_dlc_trigger = yes
+		}
+		scope:the_claimant = { 
+			trigger_event = {
+				id = ep3_emperor_yearly.2030
+				days = 15
+			}
+		}
+	}
+	
+	if = {
+		limit = {
+			exists = scope:handover_suzerain
+		}
+		start_tributary_interaction_effect = {
+			TRIBUTARY = scope:the_claimant
+			SUZERAIN = scope:handover_suzerain
+		}
+	}
+
+}
+
+# ROOT is a combat side in this scripted effect, but the THIS scope should be the commander
+commander_trait_leveling_leveling_effect = {
+	if = { # Terrain Based
+		limit = {
+			OR = {
+				has_trait = desert_warrior
+				has_trait = open_terrain_expert
+				has_trait = rough_terrain_expert
+				has_trait = forest_fighter
+				has_trait = jungle_stalker
+			}
+		}
+		if = {
+			limit = {
+				has_trait = desert_warrior
+				location = {
+					OR = {
+						terrain = drylands 
+						terrain = desert
+						terrain = desert_mountains
+						terrain = oasis
+					}
+				}
+			}
+			add_trait_xp = {
+				trait = desert_warrior
+				value = {
+					value = $XP$
+					multiply = 2
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_trait = open_terrain_expert
+				location = {
+					OR = {
+						terrain = farmlands
+						terrain = plains
+						terrain = steppe
+					}
+				}
+			}
+			add_trait_xp = {
+				trait = open_terrain_expert
+				value = {
+					value = $XP$
+					multiply = 2
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_trait = rough_terrain_expert
+				location = {
+					OR = {
+						terrain = hills
+						terrain = mountains
+						terrain = wetlands
+					}
+				}
+			}
+			add_trait_xp = {
+				trait = rough_terrain_expert
+				value = {
+					value = $XP$
+					multiply = 2
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_trait = forest_fighter
+				location = {
+					OR = {
+						terrain = forest
+						terrain = taiga
+					}
+				}
+			}
+			add_trait_xp = {
+				trait = forest_fighter
+				value = {
+					value = $XP$
+					multiply = 2
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_trait = jungle_stalker
+				location = {
+					terrain = jungle
+				}
+			}
+			add_trait_xp = {
+				trait = jungle_stalker
+				value = {
+					value = $XP$
+					multiply = 2
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+	}
+	if = { # Forder
+		limit = {
+			has_trait = forder
+			location = {
+				OR = {
+					is_coastal = yes
+					is_riverside_province = yes
+				}
+			}
+		}
+		add_trait_xp = {
+			trait = forder
+			value = {
+				value = $XP$
+				multiply = 2
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
+	if = { # Attackers/Defenders
+		limit = {
+			OR = {
+				has_trait = aggressive_attacker
+				has_trait = unyielding_defender
+			}
+		}
+		if = {
+			limit = {
+				has_trait = aggressive_attacker
+				root = { is_combat_side_attacker = yes }
+			}
+			add_trait_xp = {
+				trait = aggressive_attacker
+				value = {
+					value = $XP$
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_trait = unyielding_defender
+				root = { is_combat_side_attacker = no }
+			}
+			add_trait_xp = {
+				trait = unyielding_defender
+				value = {
+					value = $XP$
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+	}
+	if = { # Flexible Leader
+		limit = {
+			has_trait = flexible_leader
+		}
+		add_trait_xp = {
+			trait = flexible_leader
+			value = {
+				value = $XP$
+				multiply = 0.33
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
+	if = { # Roman Training
+		limit = {
+			has_trait = roman_trained
+		}
+		add_trait_xp = {
+			trait = roman_trained
+			value = {
+				value = $XP$
+				multiply = 0.5
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
+	if = { # Religious
+		limit = {
+			has_trait = holy_warrior
+			root.enemy_side.side_commander.religion != root.side_commander.religion
+		}
+		add_trait_xp = {
+			trait = holy_warrior
+			value = {
+				value = $XP$
+				multiply = 0.75
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
+	if = { # Larger Armies
+		limit = {
+			OR = {
+				has_trait = reckless
+				has_trait = cautious_leader
+			}
+			root = { troops_ratio < 0.95 }
+		}
+		if = {
+			limit = {
+				has_trait = reckless
+			}
+			add_trait_xp = {
+				trait = reckless
+				value = {
+					value = $XP$
+					multiply = 3
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_trait = cautious_leader
+			}
+			add_trait_xp = {
+				trait = cautious_leader
+				value = {
+					value = $XP$
+					multiply = 3
+					add = {
+						value = martial
+						divide = 10
+					}
+				}
+			}
+		}
+	}
+	if = { # Seasonal
+		limit = {
+			has_trait = winter_soldier
+			location = { has_winter_combat_trigger = yes }
+		}
+		add_trait_xp = {
+			trait = winter_soldier
+			value = {
+				value = $XP$
+				multiply = 0.75
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
+	if = { # Peasant Leader fighting non peasants
+		limit = {
+			has_trait = peasant_leader
+			root.enemy_side.side_commander ?= {
+				is_lowborn = no
+			}
+		}
+		add_trait_xp = {
+			trait = peasant_leader
+			value = {
+				value = $XP$
+				multiply = 0.75
+				add = {
+					value = martial
+					divide = 10
+				}
+			}
+		}
+	}
 }

@@ -816,6 +816,7 @@ BTWK_britannia_high_king.0009 = {
 						}
 					}
 				}
+				this != root	# Don't make yourself a subject king!
 			}
 			show_as_tooltip = {
 				start_tributary = {
@@ -935,7 +936,7 @@ BTWK_britannia_high_king.0011 = {
 		first_valid = {
 			triggered_desc = {
 				trigger = { scope:claimant = root }
-				desc = BTWK_britannia_high_king.0011.desc.other
+				desc = BTWK_britannia_high_king.0011.desc.claimant
 			}
 			triggered_desc = {
 				trigger = { has_variable = HK_britannia_supporter }
@@ -1313,8 +1314,8 @@ BTWK_britannia_high_king.0013 = {
 # BTWK_britannia_high_king.0020 - Unfit to Rule (warning)
 # BTWK_britannia_high_king.0021 - No Longer Unfit to Rule
 # BTWK_britannia_high_king.0022 - Unfit to Rule, High Kingship lost
-# BTWK_britannia_high_king.0023 - Death of the High King before first reform (CK2: 314480)
-# BTWK_britannia_high_king.0024 - Abdication of the High King before first reform (CK2: 314481)
+# BTWK_britannia_high_king.0023 - Death of the High King before first reform
+# BTWK_britannia_high_king.0024 - Abdication of the High King before first reform
 # BTWK_britannia_high_king.0025 - High King deposed by war
 
 # Unfit to Rule (warning)
@@ -2369,8 +2370,28 @@ BTWK_britannia_high_king.0124 = {
 BTWK_britannia_high_king.0125 = { 
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_britannia_high_king.0125.t
-	desc = BTWK_britannia_high_king.0125.desc
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { has_variable = HK_reform_empower_high_council_opponent }
+				desc = BTWK_britannia_high_king.0125.t.opponent
+			}
+			desc = BTWK_britannia_high_king.0125.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:HK_britannia_opponent_leader = this }
+				desc = BTWK_britannia_high_king.0125.desc.HK_britannia_opponent_leader
+			}
+			triggered_desc = {
+				trigger = { has_variable = HK_reform_empower_high_council_opponent }
+				desc = BTWK_britannia_high_king.0125.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0125.desc
+		}
+	}
 	theme = war
 	override_background = {
 		reference = throne_room_scope
@@ -2396,8 +2417,10 @@ BTWK_britannia_high_king.0125 = {
 		else = {
 			custom_tooltip = BTWK_britannia_high_king.0125.a.tt.a
 		}
-		custom_description = {
-			text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+		scope:high_king = {
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+			}
 		}
 	}
 
@@ -2447,6 +2470,11 @@ BTWK_britannia_high_king.0125 = {
 		}
 		remove_variable = HK_reform_empower_high_council_supporter
 		remove_variable = HK_reform_empower_high_council_opponent
+		scope:high_king = {
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_empower_high_council_make_subject_king_vassals
+			}
+		}
 	}
 }
 
@@ -2717,6 +2745,7 @@ BTWK_britannia_high_king.0128 = {
 		name = {
 			trigger = {
 				NOR = {
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 				}
@@ -2727,7 +2756,7 @@ BTWK_britannia_high_king.0128 = {
 		name = {
 			trigger = {
 				NOR = {
-					this = scope:claimant
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 				}
@@ -2738,7 +2767,7 @@ BTWK_britannia_high_king.0128 = {
 		name = {
 			trigger = {
 				NOR = {
-					this = scope:claimant
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
@@ -2759,7 +2788,7 @@ BTWK_britannia_high_king.0129 = {
 	desc = {
 		first_valid = {
 			triggered_desc = {
-				trigger = { scope:claimant = root }
+				trigger = { scope:high_king = root }
 				desc = BTWK_britannia_high_king.0129.desc.high_king
 			}
 			triggered_desc = {
@@ -2787,7 +2816,14 @@ BTWK_britannia_high_king.0129 = {
 	}
 	
 	immediate = {
-		scope:high_king = { save_scope_as = background_throne_room_scope }
+		title:e_britannia.holder = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { scope:high_king = { has_title = title:e_britannia } }
+			scope:high_king.player_heir = { save_scope_as = high_king_player_heir }
+		}
+		else = {
+			title:e_britannia.holder = { save_scope_as = high_king_player_heir }
+		}
 		if = {
 			limit = { this = scope:high_king }
 			BTWK_britannia_high_kingship_remove_authority_effect = { 
@@ -2827,6 +2863,7 @@ BTWK_britannia_high_king.0129 = {
 		name = {
 			trigger = {
 				NOR = {
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 				}
@@ -2837,7 +2874,7 @@ BTWK_britannia_high_king.0129 = {
 		name = {
 			trigger = {
 				NOR = {
-					this = scope:claimant
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 				}
@@ -2848,7 +2885,7 @@ BTWK_britannia_high_king.0129 = {
 		name = {
 			trigger = {
 				NOR = {
-					this = scope:claimant
+					this = scope:high_king
 					has_variable = BTWK_britannia_high_king_was_reform_supporter
 					has_variable = BTWK_britannia_high_king_was_reform_opponent
 					BTWK_britannia_high_kingship_is_allowed_culture_trigger = yes
@@ -3180,7 +3217,7 @@ BTWK_britannia_high_king.0160 = {
 	}
 }
 
-# Reform Passed - Reclaim the Legacy of Caratacus
+# Reform Passed - Heirs of Macsen Wledig
 BTWK_britannia_high_king.0170 = { 
 	type = character_event
 	content_source = dlc_BTWK
@@ -3607,8 +3644,28 @@ BTWK_britannia_high_king.0184 = {
 BTWK_britannia_high_king.0185 = { 
 	type = character_event
 	content_source = dlc_BTWK
-	title = BTWK_britannia_high_king.0185.t
-	desc = BTWK_britannia_high_king.0185.desc
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { has_variable = HK_reform_restore_imperial_dignity_opponent }
+				desc = BTWK_britannia_high_king.0185.t.opponent
+			}
+			desc = BTWK_britannia_high_king.0185.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:HK_britannia_opponent_leader = this }
+				desc = BTWK_britannia_high_king.0185.desc.HK_britannia_opponent_leader
+			}
+			triggered_desc = {
+				trigger = { has_variable = HK_reform_restore_imperial_dignity_opponent }
+				desc = BTWK_britannia_high_king.0185.desc.opponent
+			}
+			desc = BTWK_britannia_high_king.0185.desc
+		}
+	}
 	theme = war
 	override_background = {
 		reference = throne_room_scope
@@ -3723,7 +3780,9 @@ BTWK_britannia_high_king.0186 = {
 		name = BTWK_britannia_high_king.0186.a
 		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.1
 		# Gain e_roman_britannia and destroy e_britannia
+		add_trait = augustus
 		get_title = title:e_roman_britannia
+		give_nickname = nick_the_restorer
 		destroy_title = title:e_britannia
 		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.2
 		custom_tooltip = BTWK_britannia_high_king.0186.a.tt.3
@@ -3765,9 +3824,42 @@ BTWK_britannia_high_king.0186 = {
 				}
 			}
 		}
+		# Romano-British gets Cultivated Sophistication if you have the DLC and the culture has slots available
+		if = {
+			limit = { 
+				has_dlc_feature = roads_to_power 
+				culture:romanobritish = {
+					free_tradition_slot > 0
+					NOT = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+				}
+			}
+			culture:romanobritish = {
+				add_culture_tradition = tradition_ep3_cultivated_sophistication
+			}
+		}
+		# Plus your culture too, if you are Imperial and not Romano-British
+		if = {
+			limit = { 
+				has_dlc_feature = roads_to_power 
+				culture = {
+					NOT = { this = culture:romanobritish }
+					has_cultural_pillar = heritage_latin
+					free_tradition_slot > 0
+					NOT = { has_cultural_tradition = tradition_ep3_cultivated_sophistication }
+				}
+			}
+			culture = {
+				add_culture_tradition = tradition_ep3_cultivated_sophistication
+			}
+		}
 		# Free conversion to Sub-Roman
 		if = {
-			limit = { NOT = { government_has_flag = government_is_administrative } }
+			limit = { 
+				NOR = {
+					government_has_mechanic = administrative
+					government_has_flag = government_is_romanized_government
+				}
+			}
 			convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:sub_roman }
 		}
 		dynasty = { 
@@ -4038,7 +4130,14 @@ BTWK_britannia_high_king.0189 = {
 	}
 	
 	immediate = {
-		scope:high_king = { save_scope_as = background_throne_room_scope }
+		title:e_britannia.holder = { save_scope_as = background_throne_room_scope }
+		if = {
+			limit = { scope:high_king = { has_title = title:e_britannia } }
+			scope:high_king.player_heir = { save_scope_as = high_king_player_heir }
+		}
+		else = {
+			title:e_britannia.holder = { save_scope_as = high_king_player_heir }
+		}
 		if = {
 			limit = { this = scope:high_king }
 			BTWK_britannia_high_kingship_remove_authority_effect = { 

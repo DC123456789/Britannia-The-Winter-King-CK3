@@ -1,0 +1,95 @@
+﻿#GIFTS
+gift_value = {
+	value = 50
+	if = {
+		limit = {
+			scope:actor = {
+				government_has_flag = government_is_celestial
+				is_governor = yes
+			}
+		}
+		subtract = 30
+	}
+	if = {
+		limit = {
+			scope:recipient.ai_greed > 0
+		}
+		add = {
+			value = scope:recipient.ai_greed
+			divide = 4
+		}
+	}
+
+	if = {
+		limit = {
+			scope:recipient = { is_playable_character = yes }
+			scope:recipient.primary_title.tier < tier_duchy
+		}
+		multiply = 2
+	}
+	else_if = {
+		limit = {
+			scope:recipient.primary_title.tier >= tier_duchy
+		}
+		multiply = 3
+	}
+
+	if = {
+		limit = {
+			scope:recipient = {
+				liege = scope:actor
+				is_theocratic_lessee = yes
+			}
+			scope:actor.primary_title.tier < tier_duchy
+		}
+		multiply = 2
+	}
+	else_if = {
+		limit = {
+			scope:recipient = {
+				liege = scope:actor
+				is_theocratic_lessee = yes
+			}
+			scope:actor.primary_title.tier >= tier_duchy
+		}
+		multiply = 3
+	}
+
+	if = {
+		limit = {
+			scope:actor = {
+				dynasty ?= {
+					has_dynasty_perk = fp1_adventure_legacy_2
+				}
+			}
+		}
+		multiply = 0.5
+	}
+
+	if = {
+		limit = {
+			scope:recipient = {
+				OR = {
+					AND = {
+						is_playable_character = yes
+						government_has_flag = government_is_tribal
+					}
+					AND = {
+						is_playable_character = no
+						liege ?= {
+							government_has_flag = government_is_tribal
+						}
+					}
+					AND = {
+						is_playable_character = no
+						host ?= {
+							government_has_flag = government_is_tribal
+						}
+					}
+				}
+			}
+		}
+		multiply = 0.33		# BTWK
+		min = 5
+	}
+}

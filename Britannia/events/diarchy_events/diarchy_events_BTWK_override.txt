@@ -1,0 +1,572 @@
+﻿namespace = diarchy
+
+#	War won! what do
+diarchy.8011 = {
+	type = character_event
+	id_override_priority = 10
+	title = diarchy.8011.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { diarchy_8011_has_titles_to_transfer = no }
+				desc = diarchy.8011.desc.all_titles_legally_yours
+			}
+			desc = diarchy.8011.desc.fallback
+		}
+	}
+	theme = emperor
+	left_portrait = {
+		character = scope:attacker
+		animation = sword_coup_degrace
+	}
+	right_portrait = {
+		character = scope:defender
+		animation = sword_yield_start
+	}
+	override_background = { reference = throne_room }
+
+	immediate = {
+		# Alright, let's figure out where our gains might go.
+		## First off, try to pick a prize county.
+		ordered_in_list = {
+			list = titles_taken
+			limit = { tier = tier_county }
+			order_by = development_level
+			save_scope_as = prize_county
+		}
+		## Now we work out what titles we'd give over if we transferred them.
+		### Create missing duchies.
+		hidden_effect = {
+			every_in_list = {
+				list = titles_taken
+				limit = {
+					duchy = { is_title_created = no }
+				}
+				create_title_and_vassal_change = {
+					type = created
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				duchy = {
+					# Make the guy.
+					change_title_holder = {
+						holder = scope:attacker
+						change = scope:change
+					}
+					# Cheekily whack it in the OG list so the logic doesn't break.
+					add_to_list = titles_taken
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+		### Vassals.
+		every_in_list = {
+			list = vassals_taken
+			limit = {
+				NOT = {
+					any_held_title = {
+						any_this_title_or_de_jure_above = { is_in_list = attacker_pre_held_titles }
+					}
+				}
+			}
+			# Track the transfer of everyone.
+			add_to_list = vassals_to_transfer_all
+			scope:attacker = {
+				increment_variable_effect = {
+					VAR = vassal_tally_all
+					VAL = prev.sub_realm_size
+				}
+			}
+			# And the transfer of just those that wouldn't stay with your prize county.
+			if = {
+				limit = {
+					exists = scope:prize_county
+					NOT = {
+						any_held_title = {
+							any_this_title_or_de_jure_above = { this = scope:prize_county.duchy }
+						}
+					}
+				}
+				add_to_list = vassals_to_transfer_prize
+				scope:attacker = {
+					increment_variable_effect = {
+						VAR = vassal_tally_prize
+						VAL = prev.sub_realm_size
+					}
+				}
+			}
+		}
+		### Counties.
+		every_in_list = {
+			list = titles_taken
+			limit = {
+				NOT = {
+					any_this_title_or_de_jure_above = { is_in_list = attacker_pre_held_titles }
+				}
+			}
+			# Track the transfer of everything.
+			add_to_list = titles_to_transfer_all
+			scope:attacker = {
+				increment_variable_effect = {
+					VAR = title_tally_all
+					VAL = 1
+				}
+			}
+			# And the transfer of just those that wouldn't stay with your prize county.
+			if = {
+				limit = {
+					exists = scope:prize_county
+					NOR = {
+						this = scope:prize_county.duchy
+						duchy = scope:prize_county.duchy
+					}
+				}
+				add_to_list = titles_to_transfer_prize
+				scope:attacker = {
+					increment_variable_effect = {
+						VAR = title_tally_prize
+						VAL = 1
+					}
+				}
+			}
+		}
+		### Flag anything that has another rightful holder.
+		every_in_list = {
+			list = titles_taken
+			limit = {
+				tier = tier_county
+				duchy.holder ?= {
+					this != scope:attacker
+					any_liege_or_above = { this = scope:attacker.liege }
+					save_temporary_scope_as = legal_holder
+				}
+				# Don't give away our prize.
+				trigger_if = {
+					limit = { exists = scope:prize_county }
+					NOR = {
+						this = scope:prize_county.duchy
+						duchy = scope:prize_county.duchy
+					}
+				}
+			}
+			add_to_list = rightful_holder_is_other_vassal_list
+		}
+		## We may choose to appoint interrim governors, in which case we want to know who those are.
+		## First, let's assemble a rough candidates list.
+		every_in_list = {
+			list = target_titles
+			title_capital_county.title_province = {
+				save_scope_as = province_temp
+				every_pool_character = {
+					province = scope:province_temp
+					limit = {
+						# Some sensible restrictions.
+						is_adult = yes
+						has_any_bad_relationship_with_root_trigger = no
+						# We want competent governors, civil or military.
+						OR = {
+							stewardship >= very_high_skill_rating
+							martial >= very_high_skill_rating
+						}
+						# And make sure they're faith-valid.
+						faith = { save_temporary_scope_as = faith_temp }
+						"root.faith.faith_hostility_level(scope:faith_temp)" <= faith_astray_level
+					}
+					add_to_list = interim_governors_prefilter_list
+				}
+			}
+		}
+		## Set a control for how many times we'll want to iterate over the list.
+		save_scope_value_as = {
+			name = candidates_required
+			value = "list_size(target_titles)"
+		}
+		## Ok, now we try to process people _within_ that list according to preferance.
+		ordered_in_list = {
+			list = interim_governors_prefilter_list
+			order_by = {
+				value = 1
+			}
+			check_range_bounds = no
+			max = scope:candidates_required
+			add_to_list = interim_governors_actual_list
+		}
+		## Finally, we save the relative list sizes for use as a comparator in one of the option triggers.
+		### Transfer all title lists size.
+		save_scope_value_as = {
+			name = transfer_all_size
+			value = {
+				every_in_list = {
+					list = vassals_to_transfer_all
+					add = 1
+				}
+				every_in_list = {
+					list = titles_to_transfer_all
+					add = 1
+				}
+			}
+		}
+		### Reserve prize title lists size.
+		save_scope_value_as = {
+			name = transfer_prize_size
+			value = {
+				every_in_list = {
+					list = vassals_to_transfer_prize
+					add = 1
+				}
+				every_in_list = {
+					list = titles_to_transfer_prize
+					add = 1
+				}
+			}
+		}
+	}
+
+	# Keep them all.
+	option = {
+		name = diarchy.8011.a
+		trigger = { diarchy_8011_has_titles_to_transfer = yes }
+
+		# You keep _everything_.
+		custom_tooltip = diarchy.8011.tt.all_lands_remain_in_your_custody
+		# Lose opinion with the emps scaling according to how many titles you were fighting for.
+		reverse_add_opinion = {
+			target = liege
+			modifier = suspicion_opinion
+			opinion = {
+				value = -10
+				multiply = {
+					every_in_list = {
+						list = target_titles
+						add = 1
+					}
+				}
+			}
+		}
+		# Fire the event for the emperor.
+		save_scope_value_as = {
+			name = war_result
+			value = flag:keeping_all
+		}
+		scope:attacker.liege = { trigger_event = diarchy.8012 }
+
+		stress_and_fulfillment_impact = {
+			ambitious = major_stress_impact_loss
+			arrogant = medium_stress_impact_loss
+			greedy = minor_stress_impact_loss
+			generous = minor_stress_impact_gain
+			humble = medium_stress_impact_gain
+			content = major_stress_impact_gain
+		}
+		ai_chance = {
+			base = 1
+			ai_value_modifier = {
+				ai_boldness = 1
+				ai_honor = -1
+			}
+		}
+	}
+	
+	# Turn them over.
+	option = {
+		name = diarchy.8011.b
+		trigger = { diarchy_8011_has_titles_to_transfer = yes }
+
+		# Lose anything you shouldn't have legally owned.
+		custom_tooltip = diarchy.8011.tt.distribution.lands_given_to_emperor
+		# Turn them over to the emperor.
+		diarchy_8011_turn_over_titles = {
+			VASSAL_TRANSFER_LIST = vassals_to_transfer_all
+			TITLE_TRANSFER_LIST = titles_to_transfer_all
+			VASSAL_VAR = vassal_tally_all
+			INFLUENCE_TOOLTIP_TITLE = request_imperial_expedition_influence_from_counties_full_value
+			INFLUENCE_TOOLTIP_VASSAL = request_imperial_expedition_influence_from_vassals_full_value
+		}
+		# Who is, naturally, quite happy about this.
+		reverse_add_opinion = {
+			target = liege
+			modifier = suspicion_opinion
+			opinion = {
+				value = 10
+				multiply = {
+					every_in_list = {
+						list = target_titles
+						add = 1
+					}
+				}
+			}
+		}
+		# Handle the dregs.
+		diarchy_8011_process_niche_titles = yes
+		# Fire the event for the emperor.
+		save_scope_value_as = {
+			name = war_result
+			value = flag:turning_over_all
+		}
+		scope:attacker.liege = { trigger_event = diarchy.8012 }
+
+		stress_and_fulfillment_impact = {
+			content = major_stress_impact_loss
+			humble = medium_stress_impact_loss
+			generous = minor_stress_impact_loss
+			greedy = minor_stress_impact_gain
+			arrogant = medium_stress_impact_gain
+			ambitious = major_stress_impact_gain
+		}
+		ai_chance = {
+			base = 1
+			ai_value_modifier = {
+				ai_honor = 1
+				ai_boldness = -1
+			}
+		}
+	}
+	
+	# Keep the duchy with the highest development county.
+	option = {
+		name = diarchy.8011.c
+		trigger = {
+			exists = scope:prize_county
+			scope:transfer_all_size > scope:transfer_prize_size
+			diarchy_8011_has_titles_to_transfer = yes
+		}
+
+		# We'll keep scope:prize_county & its attached lands.
+		custom_tooltip = diarchy.8011.tt.distribution.reserve_prize
+		# Turn the rest over to the emperor.
+		diarchy_8011_turn_over_titles = {
+			VASSAL_TRANSFER_LIST = vassals_to_transfer_prize
+			TITLE_TRANSFER_LIST = titles_to_transfer_prize
+			VASSAL_VAR = vassal_tally_prize
+			INFLUENCE_TOOLTIP_TITLE = request_imperial_expedition_influence_from_counties_prize_value
+			INFLUENCE_TOOLTIP_VASSAL = request_imperial_expedition_influence_from_vassals_prize_value
+		}
+		# Still pretty happy — you can't be begrudged a bit of a share, after all.
+		reverse_add_opinion = {
+			target = liege
+			modifier = pleased_opinion
+			opinion = {
+				value = 10
+				multiply = {
+					every_in_list = {
+						list = target_titles
+						add = 1
+					}
+				}
+				# Subtract the target duchy we kept for ourselves.
+				add = -10
+				# And make sure we never try to add 0 opinion (i.e., because we had two target duchies).
+				min = 10
+			}
+		}
+		# Handle the dregs.
+		diarchy_8011_process_niche_titles = yes
+		# Fire the event for the emperor.
+		save_scope_value_as = {
+			name = war_result
+			value = flag:turning_over_most
+		}
+		scope:attacker.liege = { trigger_event = diarchy.8012 }
+
+		stress_and_fulfillment_impact = {
+			ambitious = medium_stress_impact_loss
+			arrogant = minor_stress_impact_loss
+			greedy = miniscule_stress_impact_loss
+			generous = miniscule_stress_impact_gain
+			humble = minor_stress_impact_gain
+			content = medium_stress_impact_gain
+		}
+		ai_chance = {
+			base = 1
+			ai_value_modifier = {
+				ai_boldness = 1
+				ai_rationality = 1
+			}
+		}
+	}
+	
+	# Appoint interim governors.
+	option = {
+		name = diarchy.8011.d
+		trigger = { diarchy_8011_has_titles_to_transfer = yes }
+
+		# Ok, let's parse out some titles!
+		## Your stuff is gonna get handed out to a whole bunch of dudes.
+		custom_tooltip = diarchy.8011.tt.distribution.interim_governors
+		custom_tooltip = diarchy.8011.tt.distribution.interim_governors.hook_and_opinion
+		## Begin handing out actual titles.
+		hidden_effect = {
+			create_title_and_vassal_change = {
+				type = granted
+				save_scope_as = change
+				add_claim_on_loss = yes
+			}
+			# Transfer vassals.
+			every_in_list = {
+				list = vassals_to_transfer_all
+				change_liege = {
+					liege = scope:attacker.liege
+					change = scope:change
+				}
+			}
+			# Transfer titles.
+			every_in_list = {
+				list = titles_to_transfer_all
+				limit = { tier >= tier_duchy }
+				# Try to find a suitable governor.
+				## First grabbing them from the list.
+				random_in_list = {
+					list = interim_governors_actual_list
+					limit = {
+						NOT = { is_in_list = governors_used_list }
+					}
+					save_scope_as = interim_gov_temp
+					add_to_list = governors_used_list
+				}
+				## But if we come back empty-handed, then we can just make someone from the duchy.
+				if = {
+					limit = {
+						NOT = { exists = scope:interim_gov_temp }
+					}
+					# If we like the local faith enough, take that.
+					if = {
+						limit = {
+							title_capital_county.faith = { save_temporary_scope_as = faith_temp }
+							"root.faith.faith_hostility_level(scope:faith_temp)" <= faith_astray_level
+						}
+						scope:faith_temp = { save_scope_as = new_gov_faith }
+					}
+					# Else take ours.
+					else = {
+						scope:attacker.faith = { save_scope_as = new_gov_faith }
+					}
+					create_character = {
+						template = ep3_magistrate_character
+						location = root.capital_province
+						culture = title_capital_county.culture
+						faith = scope:new_gov_faith
+						save_scope_as = interim_gov_temp
+					}
+				}
+				# Transfer all the relevant counties.
+				every_de_jure_county = {
+					limit = { is_in_list = titles_to_transfer_all }
+					change_title_holder = {
+						holder = scope:interim_gov_temp
+						change = scope:change
+						take_baronies = yes
+					}
+				}
+				# Then the duchy itself.
+				change_title_holder = {
+					holder = scope:interim_gov_temp
+					change = scope:change
+					take_baronies = yes
+				}
+				# Note whose governments we'll need to adjust — we do this here because we're clearing the scope in a sec + they aren't fully landed till have we resolve.
+				scope:interim_gov_temp = { add_to_list = char_govs_to_change_list }
+				# Remove the governor we just used so that we can see if we need to create someone.
+				clear_saved_scope = interim_gov_temp
+			}
+			resolve_title_and_vassal_change = scope:change
+			every_in_list = {
+				list = char_govs_to_change_list
+				# Force everyone to be governors.
+				if = {
+					limit = { root = { has_government = sub_roman_government } }
+					change_government = sub_roman_government
+				}
+				else_if = {
+					limit = { root = { has_government = germanic_government } }
+					change_government = germanic_government
+				}
+				else = {
+					change_government = administrative_government
+				}
+				# Also you get a hook + opinion with each new governor.
+				## This thing is truculent as all hell and will just error stubbornly simply because we have the temerity to apply effects to a hidden list before we've populated that list (and we do _this_ because we don't know who's in it).
+				### It works fine, it just hates me. Ignore its lies.
+				save_temporary_scope_as = char_temp
+				root = {
+					add_favour_hook_if_possible_simple_effect = { TARGET = scope:char_temp }
+				}
+				## This'll works zero errors though.
+				add_opinion = {
+					target = root
+					modifier = grateful_opinion
+					opinion = 100
+				}
+			}
+		}
+		## Including any dregs.
+		diarchy_8011_process_niche_titles = yes
+		# Gain influence per county.
+		custom_tooltip = {
+			text = diarchy_8011.turn_over_titles.tt.interim_governors.county
+			change_influence = scope:attacker.request_imperial_expedition_influence_from_counties_reduced_value
+		}
+		# Gain influence per vassal by their size.
+		if = {
+			limit = { var:vassal_tally_all >= 1 }
+			custom_tooltip = {
+				text = diarchy_8011.turn_over_titles.tt.interim_governors.vassal
+				change_influence = scope:attacker.request_imperial_expedition_influence_from_vassals_reduced_value
+			}
+		}
+		# Emps is still pretty happy — you're not building too much of a threat.
+		reverse_add_opinion = {
+			target = liege
+			modifier = reputation_opinion
+			opinion = {
+				value = 5
+				multiply = {
+					every_in_list = {
+						list = target_titles
+						add = 1
+					}
+				}
+			}
+		}
+		# Fire the event for the emperor.
+		save_scope_value_as = {
+			name = war_result
+			value = flag:interim_governors
+		}
+		scope:attacker.liege = { trigger_event = diarchy.8012 }
+
+		# No stress here, it's the compromise option.
+		ai_chance = {
+			base = 1
+			ai_value_modifier = {
+				ai_rationality = 1
+				ai_sociability = 1
+			}
+		}
+	}
+	
+	# It is perfectly legal.
+	option = {
+		name = diarchy.8011.e
+		trigger = { diarchy_8011_has_titles_to_transfer = no }
+
+		# You cheeky fucker.
+		custom_tooltip = diarchy.8011.e.tt.keep_everything_but_legally
+		# Fire the event for the emperor.
+		save_scope_value_as = {
+			name = war_result
+			value = flag:legal_shenanigans
+		}
+		scope:attacker.liege = { trigger_event = diarchy.8012 }
+
+		# No stress here, we're just covering an edge case.
+		# Nor do we need AI chance: if you get this option, you got literally no others.
+	}
+
+	after = {
+		# Clean up our variables.
+		remove_variable = vassal_tally_all
+		remove_variable = vassal_tally_prize
+		remove_variable = title_tally_all
+		remove_variable = title_tally_prize
+	}
+}

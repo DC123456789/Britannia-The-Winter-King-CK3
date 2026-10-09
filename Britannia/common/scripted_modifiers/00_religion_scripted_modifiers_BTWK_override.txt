@@ -1,0 +1,462 @@
+﻿#Scripted Modifiers based on a character's Religion or Faith.
+religion_scaled_virtuous_traits_modifier = {
+	modifier = {
+		add = {
+			add = $BASE_VALUE$
+			multiply = $CHARACTER$.num_virtuous_traits
+		}
+		$CHARACTER$ = {
+			num_virtuous_traits > 0
+		}
+	}
+}
+
+religion_scaled_sinful_traits_modifier = {
+	modifier = {
+		add = {
+			add = $BASE_VALUE$
+			multiply = $CHARACTER$.num_sinful_traits
+		}
+		$CHARACTER$ = {
+			num_sinful_traits > 0
+		}
+	}
+}
+
+religion_demand_conversion_default_modifier = {
+	opinion_modifier = {
+		opinion_target = scope:puppet_or_actor
+		who = scope:recipient
+		multiplier = {
+			value = 1
+			if = {
+				limit = {
+					scope:puppet_or_actor ?= {
+						has_government = landless_adventurer_government
+					}
+				}
+				add = -0.5
+			}
+		}
+	}
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_LEARNING
+		add = {
+			value = scope:puppet_or_actor.learning
+			subtract = scope:recipient.learning
+			if = {
+				limit = {
+					scope:puppet_or_actor.learning > scope:recipient.learning
+					scope:puppet_or_actor ?= {
+						has_government = landless_adventurer_government
+						has_perk = defender_of_the_faith_perk
+					}
+				}
+				multiply = 2
+			}
+		}
+	}
+
+	# Doubles a learning advantage only
+	modifier = {
+		desc = PAM_ACTS_CONVERSION_LEARNING_REASON
+		add = {
+			value = scope:puppet_or_actor.learning
+			subtract = scope:recipient.learning
+			min = 0
+		}
+		scope:puppet_or_actor ?= { rite = { rite_has_parameter = tenet_acts_of_apostles_conversion_learning } }
+	}
+
+	modifier = {
+		desc = SCHEME_WEAK_HOOK_USED
+		add = 50
+		scope:hook ?= yes
+	}
+	#Ecclesiastical Domicile Modifiers 
+	modifier = {
+		desc = ESTATE_INCREASE_CONVERSION_ACCEPTANCE
+		add = ecclesiastical_domicile_increase_conversion_acceptance_1
+		scope:recipient.liege.domicile ?= {
+			has_domicile_parameter = estate_increase_conversion_acceptance_1
+		}
+	}
+	modifier = {
+		desc = ESTATE_INCREASE_CONVERSION_ACCEPTANCE
+		add = ecclesiastical_domicile_increase_conversion_acceptance_2
+		scope:recipient.liege.domicile ?= {
+			has_domicile_parameter = estate_increase_conversion_acceptance_2
+		}
+	}
+	modifier = {
+		desc = ESTATE_INCREASE_CONVERSION_ACCEPTANCE
+		add = ecclesiastical_domicile_increase_conversion_acceptance_3
+		scope:recipient.liege.domicile ?= {
+			has_domicile_parameter = estate_increase_conversion_acceptance_3
+		}
+	}
+	ecclesiastical_domicile_cathedral_awe_modifier = yes
+	modifier = {
+		add = 10
+		desc = pam_patron_saint_paul_reason
+		scope:puppet_or_actor = { has_character_modifier = pam_patron_saint_paul }
+	}
+	modifier = {
+		desc = RELIGIOUS_HEAD_INTERACTION_SAVIOR
+		add = 30
+		scope:puppet_or_actor ?= {
+			has_trait = savior
+		}
+	}
+	modifier = {
+		desc = I_HAVE_HERALD_TRAIT
+		add = 75
+		scope:puppet_or_actor ?= {
+			has_trait = herald
+		}
+	}
+	modifier = {
+		desc = RELIGIOUS_HEAD_INTERACTION_DIVINE_BLOOD
+		add = 15
+		scope:puppet_or_actor ?= {
+			has_trait = divine_blood
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_STUBBORN
+		add = -15
+		scope:recipient = {
+			has_trait = stubborn
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_FICKLE
+		add = 10
+		scope:recipient = {
+			has_trait = fickle
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_ZEALOUS
+		add = -120
+		scope:recipient = {
+			has_trait = zealous
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_NOT_CYNICAL
+		add = -60
+		scope:puppet_or_actor = {
+			NAND = {
+				has_government = landless_adventurer_government
+				has_perk = defender_of_the_faith_perk
+			}
+		}
+		scope:recipient = {
+			NOR = {
+				has_trait = zealous
+				has_trait = cynical
+			}
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_HERESIARCH
+		add = -100
+		scope:recipient = {
+			has_trait = heresiarch
+		}
+	}
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_FERVOR
+		scope:puppet_or_actor.faith.fervor != scope:recipient.faith.fervor
+		add = {
+			value = scope:puppet_or_actor.faith.fervor
+			subtract = scope:recipient.faith.fervor
+			if = {
+				limit = {
+					scope:puppet_or_actor ?= {
+						has_government = landless_adventurer_government
+					}
+				}
+				multiply = 0.5
+			}
+		}
+	}
+
+	# modifier = {
+	# 	desc = ASK_FOR_CONVERSION_TAQIYA
+	# 	trigger = {
+	# 		scope:recipient = {
+	# 			target_is_liege_or_above = scope:actor
+	# 		}
+	# 		scope:recipient.faith = {
+	# 			religion = religion:islam_religion
+	# 			has_doctrine_parameter = sanctioned_false_conversion
+	# 		}
+	# 	}
+	# 	add = -20
+	# }
+
+	# modifier = {
+	# 	desc = ASK_FOR_CONVERSION_SANCTIONED_FALSE_CONVERSION
+	# 	trigger = {
+	# 		scope:recipient = {
+	# 			target_is_liege_or_above = scope:actor
+	# 		}
+	# 		scope:recipient.faith = {
+	# 			NOT = { religion = religion:islam_religion }
+	# 			has_doctrine_parameter = sanctioned_false_conversion
+	# 		}
+	# 	}
+	# 	add = -20
+	# }
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_ADAPTIVENESS
+		trigger = {
+			scope:recipient = {
+				target_is_liege_or_above = scope:puppet_or_actor
+			}
+			scope:recipient.rite = {
+				rite_has_parameter = tenet_adaptive_conversion_resistance
+			}
+		}
+		add = -20
+	}
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_LITERALISM
+		trigger = {
+			scope:recipient = {
+				target_is_liege_or_above = scope:puppet_or_actor
+			}
+			scope:recipient.rite = {
+				rite_has_parameter = tenet_literalism_conversion_resistance
+			}
+		}
+		add = -20
+	}
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_LITERALISM_SCHOLAR
+		add = 20
+		scope:puppet_or_actor ?= {
+			has_personal_tenet_flag = tenet_literalism_scholar_conversion
+			has_trait = lifestyle_scholar
+		}
+	}
+
+	# Same-religion targets only
+	modifier = {
+		desc = ASK_FOR_CONVERSION_MONOPHYSITE_CONVICTION
+		add = 20
+		scope:puppet_or_actor ?= {
+			has_personal_tenet_flag = tenet_monophysitism_conversion_conviction
+		}
+		scope:recipient ?= {
+			NOT = { faith = scope:puppet_or_actor.faith }
+			faith.religion = scope:puppet_or_actor.faith.religion
+		}
+	}
+
+	modifier = {
+		desc = ASK_FOR_CONVERSION_DECLINING_IS_A_CRIME
+		trigger = {
+			scope:recipient = {
+				target_is_liege_or_above = scope:puppet_or_actor
+			}
+			scope:puppet_or_actor ?= {
+				refusing_conversion_is_crime_trigger = {
+					CHARACTER = scope:recipient
+				}
+			}
+		}
+		add = 50
+	}
+
+	modifier = {
+		add = intimidated_halved_reason_value
+		scope:puppet_or_actor ?= {
+			is_landless_adventurer = no
+		}
+		scope:recipient = {
+			has_dread_level_towards = {
+				target = scope:puppet_or_actor
+				level = 1
+			}
+		}
+		desc = INTIMIDATED_REASON
+	}
+	modifier = {
+		add = cowed_halved_reason_value
+		scope:puppet_or_actor ?= {
+			is_landless_adventurer = no
+		}
+		scope:recipient = {
+			has_dread_level_towards = {
+				target = scope:puppet_or_actor
+				level = 2
+			}
+		}
+		desc = COWED_REASON
+	}
+
+	modifier = {
+		add = 50
+		scope:recipient = {
+			dynasty ?= { has_dynasty_perk = fp1_adventure_legacy_3 }
+		}
+		desc = FP1_ADVENTURE_LEGACY_3_REASON
+	}
+
+	modifier = {
+		add = 20
+		scope:puppet_or_actor ?= {
+			dynasty ?= { has_dynasty_modifier = fp3_rekindler_of_iran_modifier }
+		}
+		desc = fp3_rekindler_of_iran_modifier_reason
+	}
+
+	modifier = { # Cultural Tradition, harder to convert
+		add = -50
+		scope:recipient = {
+			culture = {
+				has_cultural_parameter = harder_to_convert_character_faith
+			}
+		}
+		desc = CULTURE_HARD_TO_CONVERT_REASON
+	}
+	modifier = {
+		add = {
+			value = scope:recipient.piety_level
+			multiply = -10
+		}
+		scope:recipient = {
+			piety_level > 1
+		}
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_PIOUS
+	}
+
+	modifier = {
+		add = -150
+		scope:recipient = {
+			government_allows = state_faith
+			top_liege = {
+				government_allows = state_faith
+				exists = primary_title.state_rite
+			}
+			rite = top_liege.primary_title.state_rite
+		}
+		desc = EP3_STATE_FAITH_CONVERSION
+	}
+	modifier = {
+		add = 100
+		scope:recipient = {
+			government_allows = state_faith
+			top_liege = {
+				government_allows = state_faith
+				exists = primary_title.state_rite
+			}
+			rite != top_liege.primary_title.state_rite
+		}
+		desc = EP3_STATE_FAITH_CONVERSION_NEG
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_CORONATION_BONUS
+		add = 25
+		scope:puppet_or_actor ?= {
+			has_character_flag = conversion_acceptance_bonus
+		}
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_CORONATION_BONUS
+		add = 10
+		scope:puppet_or_actor ?= {
+			has_character_flag = conversion_acceptance_bonus_low
+		}
+	}
+	modifier = {
+		add = 25
+		exists = scope:influence_send_option
+		scope:influence_send_option = yes
+		desc = INFLUENCE_INTERACTION_ACCEPTANCE_SEND_OPTION
+	}
+	modifier = {
+		desc = ASK_FOR_CONVERSION_RECIPIENT_WILL_NOT_ACCEPT
+		add = -1500
+		scope:recipient = {
+			has_character_flag = ai_will_not_convert
+		}
+	}
+
+	modifier = {
+		scope:puppet_or_actor ?= { government_has_flag = government_is_mandala }
+		add = 25
+		desc = ASK_FOR_CONVERSION_ACTOR_IS_MANDALA
+	}
+
+	modifier = {
+		scope:puppet_or_actor ?= { has_realm_law_flag = vassals_more_inclined_to_convert }
+		add = 25
+		desc = ASK_FOR_CONVERSION_ACTOR_HAS_REVERENCE_DECREE
+	}
+
+	modifier = {
+		scope:puppet_or_actor ?= { has_title = title:h_dar_al_islam }
+		scope:recipient = { faith.religion = religion:islam_religion }
+		add = 75
+		desc = ASK_FOR_CONVERSION_ACTOR_DAR_AL_ISLAM
+	}
+	modifier = {
+		add = spiritual_fulfillment_easier_conversion_value
+		desc = SPIRITUAL_FULFILLMENT_CONVERSION_REASON
+		scope:puppet_or_actor ?= {
+			has_fulfillment_parameter = sp_easier_conversion
+		}
+	}
+	modifier = {
+		add = spiritual_fulfillment_harder_conversion_value
+		desc = SPIRITUAL_FULFILLMENT_HARDER_CONVERSION_REASON
+		scope:puppet_or_actor ?= {
+			has_fulfillment_parameter = sp_harder_conversion
+		}
+	}
+	
+	# BTWK	
+	# Penalty if they are landed and not your vassal
+	modifier = {
+		scope:recipient = { 
+			is_ruler = yes
+			NOT = { any_liege_or_above = { this = scope:puppet_or_actor } }
+		}
+		add = -40
+		desc = ASK_FOR_CONVERSION_RECIPIENT_IS_NOT_VASSAL
+	}
+	
+	# Penalty if you are unreformed
+	modifier = {
+		scope:puppet_or_actor.rite = { has_doctrine_parameter = unreformed }
+		add = -15
+		desc = ASK_FOR_CONVERSION_ACTOR_IS_UNREFORMED
+	}
+	
+	# Penalty if they are reformed and you are not
+	modifier = {
+		scope:puppet_or_actor.rite = { has_doctrine_parameter = unreformed }
+		NOT = { scope:recipient.rite = { has_doctrine_parameter = unreformed } }
+		add = -25
+		desc = ASK_FOR_CONVERSION_WOULD_CONVERT_FROM_REFORMED_TO_UNREFORMED
+	}
+	
+	# Penalty if you are an ethnic faith and they are not of the right culture
+	modifier = {
+		is_wrong_culture_for_ethnic_rite_trigger = {
+			RITE = scope:puppet_or_actor.rite
+			CULTURE = scope:recipient.culture
+		}
+		add = -20
+		desc = ASK_FOR_CONVERSION_WRONG_CULTURE_FOR_ETHNIC_FAITH
+	}
+}

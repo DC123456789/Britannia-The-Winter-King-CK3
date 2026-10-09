@@ -1,25 +1,32 @@
 ﻿doctrine_pluralism_fundamentalist = {
+	doctrine_group_type = doctrine_pluralism
+	index = 0
+	divergence = 0
+
 	icon = "doctrine_pluralism_fundamentalist"
 
 	piety_cost = {
 		value = faith_doctrine_cost_mid
 		if = {
-			limit = { has_doctrine = doctrine_pluralism_fundamentalist }
+			limit = { rite_has_doctrine = doctrine_pluralism_fundamentalist }
 			multiply = faith_unchanged_doctrine_cost_mult
 		}
 		else_if = {
-			limit = { has_doctrine = doctrine_pluralism_pluralistic }
+			limit = { rite_has_doctrine = doctrine_pluralism_pluralistic }
 			multiply = faith_changed_doctrine_cost_mult_two_step
 		}
 	}
 
 	parameters = {
+		pluralism_fundamentalist_proselytization_bonus
+		pluralism_fundamentalist_faction_join_chance
+		pluralism_fundamentalist_vulnerable_to_heresy
+		pluralism_righteous_revocation_tyranny_reduced
+	}
+
+	special_parameters = {
 		hostility_towards_us_mult = 2
-		
-		pluralism_fundamentalist_proselytization_bonus = yes
-		pluralism_fundamentalist_faction_join_chance = yes
-		pluralism_fundamentalist_vulnerable_to_heresy = yes
-		pluralism_righteous_revocation_tyranny_reduced = yes		# BTWK - Tyranny reduction reduced from vanilla
+		heresy_threshold = -5
 	}
 
 	character_modifier = {
@@ -28,54 +35,30 @@
 }
 
 doctrine_pluralism_righteous = {
+	doctrine_group_type = doctrine_pluralism
+	index = 1
+	divergence = 5
+
 	icon = "doctrine_pluralism_righteous"
 
 	piety_cost = {
 		value = faith_doctrine_cost_mid
 		if = {
-			limit = { has_doctrine = doctrine_pluralism_righteous }
+			limit = { rite_has_doctrine = doctrine_pluralism_righteous }
 			multiply = faith_unchanged_doctrine_cost_mult
 		}
 	}
 
 	parameters = {
-		hostility_towards_us_mult = 1
 		# BTWK - Tyranny reduction removed from vanilla
+		# pluralism_righteous_revocation_tyranny_reduced
+	}
+
+	special_parameters = {
+		hostility_towards_us_mult = 1
 	}
 
 	character_modifier = {
 		minority_different_faith_opinion = -10
-	}
-}
-
-doctrine_pluralism_pluralistic = {
-	icon = "doctrine_pluralism_pluralistic"
-
-	piety_cost = {
-		value = faith_doctrine_cost_mid
-		if = {
-			limit = { has_doctrine = doctrine_pluralism_pluralistic }
-			multiply = faith_unchanged_doctrine_cost_mult
-		}
-		else_if = {
-			limit = { has_doctrine = doctrine_pluralism_fundamentalist }
-			multiply = faith_changed_doctrine_cost_mult_two_step
-		}
-	}
-
-	can_pick = {
-		custom_description = {
-			text = incompatible_tenet_pentarchy_trigger
-			NOT = { doctrine:tenet_pentarchy = { is_in_list = selected_doctrines } }
-		}
-	}
-
-	parameters = {
-		hostility_towards_us_mult = 0.5
-		pluralism_pluralistic_proselytization_penalty = yes
-		pluralism_pluralistic_faction_join_chance = yes
-		pluralism_pluralistic_resistant_to_heresy = yes
-		pluralism_pluralistic_holy_wars_preserve_vassals = yes
-		
 	}
 }
