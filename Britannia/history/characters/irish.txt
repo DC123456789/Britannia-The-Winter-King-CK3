@@ -2351,6 +2351,36 @@
 	}
 	597.6.9 = {
 		death = yes
+		effect_even_if_dead = {
+			# Kirkcolm for now
+			province:861 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:861	#1691 #Iona
+				PRESET = yes
+			}
+			religion:christianity_religion = {
+				every_faith = {
+					limit = {
+						is_non_chalcedonianism_christian_faith = no
+						main_rite = {
+							is_rite_enabled = yes
+						}
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:1413
+				SAINT_COUNTY = province:861.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+		}
 	}
 }
 

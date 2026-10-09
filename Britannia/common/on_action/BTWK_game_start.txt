@@ -255,11 +255,13 @@ BTWK_religion_setup = {
 					this = religion:hellenism_religion
 					this = religion:islam_religion
 					this = religion:judaism_religion
-					this = religion:paganism_religion
 					this = religion:scythian_religion
 				}
 			}
-			every_faith = { set_variable = { name = block_conversion } }
+			every_faith = { 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
+			}
 		}
 		religion:christianity_religion = {
 			every_faith = {
@@ -275,16 +277,18 @@ BTWK_religion_setup = {
 					}
 				}
 				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:dualism_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:manichean_faith
+						this = faith:manichaean_faith
 					}
 				}
 				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:islam_religion = {
@@ -298,17 +302,19 @@ BTWK_religion_setup = {
 						this = faith:barghawata
 					}
 				}
-				set_variable = { name = block_conversion } 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		religion:judaism_religion = {
 			every_faith = {
 				limit = {
 					NOR = {
-						this = faith:rabbinism
+						this = faith:rabbinic_faith
 					}
 				}
-				set_variable = { name = block_conversion } 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		
@@ -319,6 +325,7 @@ BTWK_religion_setup = {
 					NOT = { has_variable = block_conversion }
 				}
 				set_variable = { name = block_conversion_till_founded }
+				every_faith_rite = { set_rite_enabled = no }
 			}
 		}
 		

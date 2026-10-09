@@ -119,7 +119,7 @@
 	trait = brave
 	trait = education_martial_prowess_3
 	trait = education_martial_3
-	trait = scholar
+	trait = erudite
 	#trait = heavy_infantry_leader
 	#father=
 	#mother=
@@ -2382,7 +2382,7 @@
 	trait = brave
 	trait = education_martial_prowess_2
 	# trait = veteran
-	trait = scholar
+	trait = erudite
 	trait = lifestyle_poet
 	#mother=
 	437.1.1 = {
@@ -2652,7 +2652,7 @@
 	diplomacy = 8
 	trait = education_martial_4
 	trait = education_martial_prowess_3
-	trait = scholar
+	trait = erudite
 	40.6.13 = {
 		birth = yes
 	}
@@ -2766,7 +2766,7 @@
 	trait = intellect_good_2
 	# trait = powerful_voice
 	trait = education_diplomacy_4
-	trait = scholar
+	trait = erudite
 	trait = gregarious
 	trait = diligent
 	trait = just
@@ -2811,7 +2811,7 @@
 	trait = education_diplomacy_4
 	trait = diligent
 	trait = zealous
-	trait = scholar
+	trait = erudite
 	trait = patient
 	trait = intellect_good_2
 	trait = brave
@@ -3280,7 +3280,7 @@
 	rite = carolingian_christianity
 	culture = "romanogallic"
 	father = 980
-	trait = scholar
+	trait = erudite
 	trait = education_learning_3
 	#mother=
 	459.1.1 = {
@@ -4565,7 +4565,7 @@
 	father = 30089
 	mother = 30090
 	trait = lifestyle_poet
-	trait = scholar
+	trait = erudite
 	trait = gregarious
 	learning = 10
 	465.1.1 = {
@@ -12423,7 +12423,7 @@
 	}
 	424.1.1={
 		trait = trusting
-		trait = scholar
+		trait = erudite
 		trait = patient
 		trait = callous
 		trait = diligent
@@ -12715,7 +12715,7 @@
 	}
 	435.1.1={
 		trait = temperate
-		trait = scholar
+		trait = erudite
 	}
 	480.1.1={
 		death=yes
@@ -13514,5 +13514,38 @@
 	}
 	532.1.1={
 		death=yes
+	}
+}
+
+romanogallic_1 = {
+	name = "palladius_male_roman"
+	culture = romanogallic
+	rite = carolingian_christianity
+	396.1.1 = {
+		birth = yes
+	}
+	461.1.1 = {
+		death = yes
+		effect_even_if_dead = {
+			# Just in Clackmannan for now, as close to Aberdeenshire as we can get
+			province:818 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:818
+				PRESET = yes
+			}
+			# Local saint, only faiths associated with Britannia or Ireland should care
+			faith:christian_faith = { add_saint = { character = root } }
+			faith:pelagian = { add_saint = { character = root } }
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:romanogallic_1
+				SAINT_COUNTY = province:818.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+		}
 	}
 }
