@@ -1,23 +1,42 @@
-﻿BTWK_create_clerical_title_effect = {
-	save_scope_as = effect_character
+﻿BTWK_create_creatable_clerical_title_story = {
+	scope:story_holder = {
+		create_story = {
+			type = creatable_clerical_title_story
+			save_temporary_scope_as = new_creatable_clerical_title_story
+		}
+		scope:new_creatable_clerical_title_story = {
+			set_variable = { name = title value = $TITLE$ }
+			set_variable = { name = region value = $REGION$ }
+			add_to_global_variable_list = {
+				name = creatable_clerical_title_stories
+				target = THIS
+			}
+		}
+	}
+}
+
+BTWK_create_clerical_title_effect = {
+	save_scope_as = kingdom_holder
+	save_scope_as = actor
+	save_scope_as = puppet_or_actor
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
+	$CLERICAL_TITLE_STORY$.var:title = { save_scope_as = clerical_title_template }
 	# Get the best candidate for the new archbishop
-	# TODO This isn't quite working properly
 	if = {
 		limit = { 
 			has_government = ecclesiastical_government
 			primary_title.title_capital_county = {
-				title_province = { geographical_region = effect_region }
+				title_province = { geographical_region = scope:effect_region }
 				NOT = { exists = clerical_region_title }
 			}
 			NOT = { any_held_title = { has_clerical_region = yes } }
 		}
-		save_scope_as = new_archbishop
+		save_scope_as = new_ecclesiastical_holder
 	}
 	else_if = {
 		limit = {
 			primary_title.title_capital_county = {
-				title_province = { geographical_region = effect_region }
+				title_province = { geographical_region = scope:effect_region }
 				NOT = { exists = clerical_region_title }
 			}
 			exists = cp:councillor_court_chaplain
@@ -26,14 +45,14 @@
 			}
 		}
 		cp:councillor_court_chaplain = {
-			save_scope_as = new_archbishop
+			save_scope_as = new_ecclesiastical_holder
 		}
 	}
 	else_if = {
 		limit = {
 			any_vassal = {
 				primary_title.title_capital_county = {
-					title_province = { geographical_region = effect_region }
+					title_province = { geographical_region = scope:effect_region }
 					NOT = { exists = clerical_region_title }
 				}
 				has_government = ecclesiastical_government
@@ -42,29 +61,34 @@
 		ordered_vassal = {
 			limit = {
 				primary_title.title_capital_county = {
-					title_province = { geographical_region = effect_region }
+					title_province = { geographical_region = scope:effect_region }
 					NOT = { exists = clerical_region_title }
 				}
 				has_government = ecclesiastical_government
 			}
 			order_by = learning
-			save_scope_as = new_archbishop
+			save_scope_as = new_ecclesiastical_holder
 		}
 	}
 	else = {
 		ordered_courtier = {
 			limit = {
 				NOT = { any_held_title = { has_clerical_region = yes } }
-				can_be_court_chaplain_trigger = { COURT_OWNER = scope:effect_character }
+				can_be_court_chaplain_trigger = { COURT_OWNER = scope:kingdom_holder }
 			}
 			order_by = learning
-			save_scope_as = new_archbishop
+			save_scope_as = new_ecclesiastical_holder
 		}
+	}
+	custom_tooltip = BTWK_create_clerical_title_effect_create_archbishopric_tt
+	# If the new archbishop was not previously landed, they become your vassal
+	if = {
+		limit = { scope:new_ecclesiastical_holder = { is_ruler = no } }
+		save_scope_as = vassalize_new_ecclesiastical_holder
 	}
 	# Actually create the title
 	$CLERICAL_TITLE_STORY$ = {
 		set_variable = clerical_title_created
-		this.var:title = { save_scope_as = clerical_title_template }
 		this.var:title.title_capital_county.title_province = {
 			create_clerical_region = {
 				domicile_type = ecclesiastical_domicile
@@ -84,36 +108,146 @@
 			set_landless_title = yes
 			set_no_automatic_claims = yes
 			change_title_holder = {
-				holder = scope:new_archbishop
+				holder = scope:new_ecclesiastical_holder
 				change = scope:change
+			}
+			if = {
+				limit = { exists = scope:vassalize_new_ecclesiastical_holder }
+				scope:new_ecclesiastical_holder = {
+					change_liege = {
+						liege = scope:kingdom_holder
+						change = scope:change
+					}
+				}
 			}
 			resolve_title_and_vassal_change = scope:change
 		}
 		hidden_effect = {
-			# TODO Wrap in while loop
-			every_county_in_region = {
-				region = scope:effect_region
-				limit = { NOT = { exists = clerical_region_title } }
-				scope:new_title = { expand_clerical_region = prev }
+			# Need a while loop, as for some reason not all counties will be
+			# added in the first pass
+			while = {
+				limit = {
+					any_county_in_region = {
+						region = scope:effect_region
+						limit = { NOT = { exists = clerical_region_title } }
+					}
+				}
+				every_county_in_region = {
+					region = scope:effect_region
+					limit = { NOT = { exists = clerical_region_title } }
+					scope:new_title = { expand_clerical_region = prev }
+				}
 			}
 		}
-		# TODO Port opinions, etc. from character interaction
-		scope:new_archbishop = {
+	}
+	# We bring the new holder into court as chaplain unless they already hold the seat
+	if = {
+		limit = { 
+			scope:kingdom_holder != scope:new_ecclesiastical_holder
+			primary_title.title_capital_county = {
+				title_province = { geographical_region = scope:effect_region }
+				NOT = { exists = clerical_region_title }
+			}
+		}
+		scope:kingdom_holder = {
 			if = {
 				limit = {
-					is_ruler = yes # Holder becomes a ruler only after resolve_title_and_vassal_change; guard prevents a tooltip crash
-					NOT = { government_has_flag = government_is_ecclesiastical }
+					scope:new_ecclesiastical_holder = {
+						NOT = { is_courtier_of = scope:kingdom_holder }
+						is_ruler = no
+					}
 				}
-				change_government = ecclesiastical_government
+				add_courtier = scope:new_ecclesiastical_holder
 			}
-			faith = {
-				change_fervor = {
-					value = notable_fervor_gain
-					desc = fervor_gain_clerical_title_created
+			if = {
+				limit = {
+					scope:new_ecclesiastical_holder = {
+						NOT = { is_councillor_of = scope:kingdom_holder }
+					}
+				}
+				assign_councillor_type = {
+					type = councillor_court_chaplain
+					remove_existing_councillor = yes
+					target = scope:new_ecclesiastical_holder
 				}
 			}
 		}
-		# TODO Make the archbishop your vassal?
+	}
+	hidden_effect = {
+		if = {
+			limit = {
+				has_pam_dlc_trigger = yes
+				religion = religion:christianity_religion
+				any_character_situation = {
+					situation_type = the_christian_church
+					situation_top_has_catalyst = catalyst_the_christian_church_clerical_region_created
+				}
+			}
+			situation:the_christian_church = {
+				trigger_situation_catalyst = catalyst_the_christian_church_clerical_region_created
+			}
+		}
+	}
+	scope:actor = {
+		# send_interface_toast = {
+			# type = event_toast_effect_good
+			# title = request_ecclesiastical_title_creation_accepted_tt
+			# left_icon = scope:new_title
+			# right_icon = scope:new_ecclesiastical_holder
+			# New holder is grateful — skipped when the petitioner appointed themselves (clergy path), to avoid a self-opinion bonus
+			if = {
+				limit = {
+					scope:new_ecclesiastical_holder != scope:puppet_or_actor
+				}
+				reverse_add_opinion = {
+					target = scope:new_ecclesiastical_holder
+					modifier = grateful_opinion
+					opinion = 50
+				}
+			}
+		# }
+		if = {
+			limit = {
+				NOT = {
+					has_government = ecclesiastical_government
+				}
+			}
+			add_hook = {
+				type = loyalty_hook
+				target = scope:new_ecclesiastical_holder
+			}
+		}
+	}
+	scope:new_ecclesiastical_holder = {
+		if = {
+			limit = {
+				is_ruler = yes # Holder becomes a ruler only after resolve_title_and_vassal_change; guard prevents a tooltip crash
+				NOT = { government_has_flag = government_is_ecclesiastical }
+			}
+			change_government = ecclesiastical_government
+		}			
+		faith = {
+			change_fervor = {
+				value = notable_fervor_gain
+				desc = fervor_gain_clerical_title_created
+			}
+		}
+	}
+	scope:kingdom_holder = { trigger_event = BTWK_clerical_titles.0001 }
+	scope:new_ecclesiastical_holder = { 
+		if = {
+			limit = { NOT = { this = scope:kingdom_holder } }
+			trigger_event = BTWK_clerical_titles.0001
+		}
+	}
+	every_player = {
+		limit = {
+			NOR = {
+				this = scope:kingdom_holder
+				this = scope:new_ecclesiastical_holder
+			}
+		}
+		trigger_event = BTWK_clerical_titles.0001
 	}
 }
 

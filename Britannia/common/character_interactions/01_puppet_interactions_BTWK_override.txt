@@ -97,7 +97,7 @@ request_ecclesiastical_title_creation_interaction = {
 
 	# can_be_picked_title handles title eligibility, so we keep is_shown fast for the AI
 	is_shown = {
-		always = no 		# BTWK disabled
+		# always = no 		# BTWK disabled
 		scope:puppet_or_actor.faith ?= { has_doctrine_parameter = has_clerical_regions }
 		OR = {
 			scope:puppet_or_actor ?= {
@@ -219,6 +219,8 @@ request_ecclesiastical_title_creation_interaction = {
 	}
 
 	# Creates a clerical region on the capital of the picked title; appoints the new holder as court chaplain of that title's holder
+	# BTWK - if this gets changed, make sure to apply any relevant changes to
+	# BTWK_create_clerical_title_effect as well!
 	on_accept = {
 		scope:secondary_recipient = {
 			save_scope_as = new_ecclesiastical_holder

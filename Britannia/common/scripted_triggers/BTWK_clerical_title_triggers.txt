@@ -1,5 +1,35 @@
-﻿BTWK_potential_create_clerical_title_trigger = {
-	$CLERICAL_TITLE_STORY$ = { NOT = { has_variable = clerical_title_created } }
+﻿BTWK_can_create_clerical_title_common_trigger = {
+	highest_held_title_tier > tier_duchy
+	sub_realm_size >= 80
+	trigger_if = {
+		limit = { is_ai = yes }
+		is_independent_ruler = yes
+	}
+}
+
+BTWK_potential_create_clerical_title_trigger = {
+	$CLERICAL_TITLE_STORY$ = { 
+		NOT = { has_variable = clerical_title_created } 
+		NOT = { exists = this.var:title.title_capital_county.clerical_region_title } 
+	}
+	# Culture blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = briton_roman_clerical_title } }
+		is_unromanized_germanic_culture_trigger = no
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
+		is_unromanized_germanic_culture_trigger = yes
+	}
+	# Other blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
+		NOT = { has_global_variable = end_of_britannia }
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = post_ruin_of_britannia_clerical_title } }
+		has_global_variable = end_of_britannia
+	}
 }
 
 BTWK_visible_create_clerical_title_trigger = {
@@ -7,9 +37,19 @@ BTWK_visible_create_clerical_title_trigger = {
 		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
 	}
 	save_temporary_scope_as = trigger_char
-	any_county_in_region = {
-		region = $CLERICAL_TITLE_STORY$.var:region
-		scope:trigger_char = { completely_controls = prev }
+	# Need to be in the region to see the archdiocese
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = visibility_region } }
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:visibility_region
+			scope:trigger_char = { completely_controls = prev }
+		}
+	}
+	trigger_else = {
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:region
+			scope:trigger_char = { completely_controls = prev }
+		}
 	}
 }
 
@@ -21,6 +61,7 @@ BTWK_can_create_clerical_title_trigger = {
 	BTWK_potential_create_clerical_title_trigger = { 
 		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
 	}
+	BTWK_can_create_clerical_title_common_trigger = yes
 	completely_controls = $CLERICAL_TITLE_STORY$.var:title.title_capital_county
 	control_region_fraction_trigger = {
 		FRACTION_REQUIRED = 0.80
