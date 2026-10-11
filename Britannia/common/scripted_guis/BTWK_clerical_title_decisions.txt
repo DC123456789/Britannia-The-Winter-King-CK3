@@ -1,0 +1,56 @@
+﻿BTWK_create_clerical_titles_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = creatable_clerical_title_stories
+				ROOT = {
+					BTWK_visible_create_clerical_title_trigger = {
+						CLERICAL_TITLE_STORY = prev
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_create_clerical_titles_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_visible_create_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+}
+
+BTWK_create_clerical_titles_create = {
+	scope = character
+	
+	is_valid = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_can_create_clerical_title_cost_trigger = yes
+				BTWK_can_create_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+	
+	effect = {
+		BTWK_create_clerical_title_cost_effect = yes
+		BTWK_create_clerical_title_effect = {
+			CLERICAL_TITLE_STORY = scope:scoped_title
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+	}
+}

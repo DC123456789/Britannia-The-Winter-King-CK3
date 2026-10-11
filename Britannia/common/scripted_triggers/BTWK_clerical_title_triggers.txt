@@ -1,0 +1,29 @@
+﻿BTWK_potential_create_clerical_title_trigger = {
+	$CLERICAL_TITLE_STORY$ = { NOT = { has_variable = clerical_title_created } }
+}
+
+BTWK_visible_create_clerical_title_trigger = {
+	BTWK_potential_create_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	save_temporary_scope_as = trigger_char
+	any_county_in_region = {
+		region = $CLERICAL_TITLE_STORY$.var:region
+		scope:trigger_char = { completely_controls = prev }
+	}
+}
+
+BTWK_can_create_clerical_title_cost_trigger = {
+	piety >= 300
+}
+
+BTWK_can_create_clerical_title_trigger = {
+	BTWK_potential_create_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	completely_controls = $CLERICAL_TITLE_STORY$.var:title.title_capital_county
+	control_region_fraction_trigger = {
+		FRACTION_REQUIRED = 0.80
+		REGION = $CLERICAL_TITLE_STORY$.var:region
+	}
+}

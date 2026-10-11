@@ -1,0 +1,122 @@
+﻿BTWK_create_clerical_title_effect = {
+	save_scope_as = effect_character
+	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
+	# Get the best candidate for the new archbishop
+	# TODO This isn't quite working properly
+	if = {
+		limit = { 
+			has_government = ecclesiastical_government
+			primary_title.title_capital_county = {
+				title_province = { geographical_region = effect_region }
+				NOT = { exists = clerical_region_title }
+			}
+			NOT = { any_held_title = { has_clerical_region = yes } }
+		}
+		save_scope_as = new_archbishop
+	}
+	else_if = {
+		limit = {
+			primary_title.title_capital_county = {
+				title_province = { geographical_region = effect_region }
+				NOT = { exists = clerical_region_title }
+			}
+			exists = cp:councillor_court_chaplain
+			cp:councillor_court_chaplain = {
+				NOT = { any_held_title = { has_clerical_region = yes } }
+			}
+		}
+		cp:councillor_court_chaplain = {
+			save_scope_as = new_archbishop
+		}
+	}
+	else_if = {
+		limit = {
+			any_vassal = {
+				primary_title.title_capital_county = {
+					title_province = { geographical_region = effect_region }
+					NOT = { exists = clerical_region_title }
+				}
+				has_government = ecclesiastical_government
+			}
+		}
+		ordered_vassal = {
+			limit = {
+				primary_title.title_capital_county = {
+					title_province = { geographical_region = effect_region }
+					NOT = { exists = clerical_region_title }
+				}
+				has_government = ecclesiastical_government
+			}
+			order_by = learning
+			save_scope_as = new_archbishop
+		}
+	}
+	else = {
+		ordered_courtier = {
+			limit = {
+				NOT = { any_held_title = { has_clerical_region = yes } }
+				can_be_court_chaplain_trigger = { COURT_OWNER = scope:effect_character }
+			}
+			order_by = learning
+			save_scope_as = new_archbishop
+		}
+	}
+	# Actually create the title
+	$CLERICAL_TITLE_STORY$ = {
+		set_variable = clerical_title_created
+		this.var:title = { save_scope_as = clerical_title_template }
+		this.var:title.title_capital_county.title_province = {
+			create_clerical_region = {
+				domicile_type = ecclesiastical_domicile
+				name = CREATED_CLERICAL_TITLE_NAME
+				save_scope_as = new_title
+			}
+		}
+		create_title_and_vassal_change = {
+			type = created
+			save_scope_as = change
+			add_claim_on_loss = no
+		}
+		scope:new_title ?= {
+			set_coa = prev.var:title
+			set_color_from_title = prev.var:title
+			set_capital_county = prev.var:title.title_capital_county
+			set_landless_title = yes
+			set_no_automatic_claims = yes
+			change_title_holder = {
+				holder = scope:new_archbishop
+				change = scope:change
+			}
+			resolve_title_and_vassal_change = scope:change
+		}
+		hidden_effect = {
+			# TODO Wrap in while loop
+			every_county_in_region = {
+				region = scope:effect_region
+				limit = { NOT = { exists = clerical_region_title } }
+				scope:new_title = { expand_clerical_region = prev }
+			}
+		}
+		# TODO Port opinions, etc. from character interaction
+		scope:new_archbishop = {
+			if = {
+				limit = {
+					is_ruler = yes # Holder becomes a ruler only after resolve_title_and_vassal_change; guard prevents a tooltip crash
+					NOT = { government_has_flag = government_is_ecclesiastical }
+				}
+				change_government = ecclesiastical_government
+			}
+			faith = {
+				change_fervor = {
+					value = notable_fervor_gain
+					desc = fervor_gain_clerical_title_created
+				}
+			}
+		}
+		# TODO Make the archbishop your vassal?
+	}
+}
+
+BTWK_create_clerical_title_cost_effect = {
+	piety = -300
+}
