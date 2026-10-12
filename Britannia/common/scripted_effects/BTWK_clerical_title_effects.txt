@@ -7,11 +7,20 @@
 		scope:new_creatable_clerical_title_story = {
 			set_variable = { name = title value = $TITLE$ }
 			set_variable = { name = region value = $REGION$ }
+			set_variable = { name = visibility_region value = $VISIBILITY_REGION$ }
 			add_to_global_variable_list = {
 				name = creatable_clerical_title_stories
 				target = THIS
 			}
 		}
+	}
+}
+
+BTWK_create_clerical_title_warnings_effect = {
+	custom_tooltip = BTWK_create_clerical_title_other_clerical_region_warning
+	if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
+		custom_tooltip = BTWK_create_clerical_title_ruin_of_britannia_warning
 	}
 }
 
@@ -80,10 +89,58 @@ BTWK_create_clerical_title_effect = {
 			save_scope_as = new_ecclesiastical_holder
 		}
 	}
-	custom_tooltip = BTWK_create_clerical_title_effect_create_archbishopric_tt
-	# If the new archbishop was not previously landed, they become your vassal
 	if = {
-		limit = { scope:new_ecclesiastical_holder = { is_ruler = no } }
+		limit = { exists = scope:new_ecclesiastical_holder }
+		custom_tooltip = BTWK_create_clerical_title_effect_create_archbishopric_tt
+	}
+	else = {
+		custom_tooltip = BTWK_create_clerical_title_effect_create_archbishopric_no_existing_holder_tt
+		create_character = {
+			location = this.capital_province
+			template = priest_character_template
+			faith = this.faith
+			rite = this.rite
+			culture = this.culture
+			gender_female_chance = scope_actor_faith_clergy_gender_female_chance
+			save_scope_as = new_ecclesiastical_holder
+		}
+	}
+	# We bring the new holder into court as chaplain unless they already hold the seat
+	if = {
+		limit = { 
+			scope:kingdom_holder != scope:new_ecclesiastical_holder
+			NOT = { exists = primary_title.title_capital_county.clerical_region_title }
+			primary_title.title_capital_county.title_province = {
+				geographical_region = scope:effect_region
+			}
+		}
+		scope:kingdom_holder = {
+			if = {
+				limit = {
+					scope:new_ecclesiastical_holder = {
+						NOT = { is_courtier_of = scope:kingdom_holder }
+						is_ruler = no
+					}
+				}
+				add_courtier = scope:new_ecclesiastical_holder
+			}
+			if = {
+				limit = {
+					scope:new_ecclesiastical_holder = {
+						NOT = { is_councillor_of = scope:kingdom_holder }
+					}
+				}
+				assign_councillor_type = {
+					type = councillor_court_chaplain
+					remove_existing_councillor = yes
+					target = scope:new_ecclesiastical_holder
+				}
+			}
+		}
+	}
+	# If the new archbishop was not previously landed, they will become your vassal
+	if = {
+		limit = { scope:new_ecclesiastical_holder ?= { is_ruler = no } }
 		save_scope_as = vassalize_new_ecclesiastical_holder
 	}
 	# Actually create the title
@@ -129,46 +186,13 @@ BTWK_create_clerical_title_effect = {
 				limit = {
 					any_county_in_region = {
 						region = scope:effect_region
-						limit = { NOT = { exists = clerical_region_title } }
+						NOT = { exists = clerical_region_title }
 					}
 				}
 				every_county_in_region = {
 					region = scope:effect_region
 					limit = { NOT = { exists = clerical_region_title } }
 					scope:new_title = { expand_clerical_region = prev }
-				}
-			}
-		}
-	}
-	# We bring the new holder into court as chaplain unless they already hold the seat
-	if = {
-		limit = { 
-			scope:kingdom_holder != scope:new_ecclesiastical_holder
-			primary_title.title_capital_county = {
-				title_province = { geographical_region = scope:effect_region }
-				NOT = { exists = clerical_region_title }
-			}
-		}
-		scope:kingdom_holder = {
-			if = {
-				limit = {
-					scope:new_ecclesiastical_holder = {
-						NOT = { is_courtier_of = scope:kingdom_holder }
-						is_ruler = no
-					}
-				}
-				add_courtier = scope:new_ecclesiastical_holder
-			}
-			if = {
-				limit = {
-					scope:new_ecclesiastical_holder = {
-						NOT = { is_councillor_of = scope:kingdom_holder }
-					}
-				}
-				assign_councillor_type = {
-					type = councillor_court_chaplain
-					remove_existing_councillor = yes
-					target = scope:new_ecclesiastical_holder
 				}
 			}
 		}
@@ -252,5 +276,5 @@ BTWK_create_clerical_title_effect = {
 }
 
 BTWK_create_clerical_title_cost_effect = {
-	piety = -300
+	add_piety = -300
 }

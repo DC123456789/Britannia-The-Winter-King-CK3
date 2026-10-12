@@ -17,7 +17,26 @@ BTWK_create_clerical_titles_decision = {
 		hegemony = 36
 	}
 
-	desc = BTWK_create_clerical_titles_decision_desc
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					has_variable = selected_title
+					this.var:selected_title ?= {
+						OR = {
+							this.var:title = title:d_et_london
+							this.var:title = title:d_et_lincoln
+							this.var:title = title:d_et_cirencester
+							this.var:title = title:d_et_york
+						}
+					}
+					NOT = { has_global_variable = end_of_britannia }
+				}
+				desc = BTWK_create_clerical_titles_decision_roman_britain_sees_desc
+			}
+			desc = BTWK_create_clerical_titles_decision_desc
+		}
+	}		
 
 	is_shown = {
 		religion = religion:christianity_religion
