@@ -60,3 +60,65 @@ BTWK_create_clerical_titles_create = {
 		}
 	}
 }
+
+BTWK_expand_clerical_titles_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			scope:archbishopric_title = {
+				any_in_list = {
+					variable = clerical_title_expansions
+					ROOT = {
+						BTWK_visible_expand_clerical_title_trigger = {
+							CLERICAL_TITLE_STORY = prev
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_visible_expand_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_expand = {
+	scope = character
+	
+	is_valid = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_can_expand_clerical_title_cost_trigger = yes
+			}
+		}
+	}
+	
+	effect = {
+		BTWK_expand_clerical_title_cost_effect = yes
+		custom_tooltip = {
+			text = BTWK_expand_clerical_titles_decision_button_effect_tt
+			BTWK_expand_clerical_title_effect = {
+				CLERICAL_TITLE_STORY = scope:scoped_title
+			}
+		}
+		BTWK_expand_clerical_title_warnings_effect = {
+			CLERICAL_TITLE_STORY = scope:scoped_title
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+	}
+}
