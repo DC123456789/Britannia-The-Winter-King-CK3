@@ -21,7 +21,10 @@ create_new_ecclesiastical_title_interaction = {
 			# A character may hold only one clerical region, so an existing archbishop cannot default here
 			cp:councillor_court_chaplain ?= {
 				if = {
-					limit = { NOT = { any_held_title = { has_clerical_region = yes } } }
+					limit = {
+						faith = scope:recipient.faith
+						NOT = { any_held_title = { has_clerical_region = yes } }
+					}
 					save_scope_as = secondary_recipient
 				}
 			}
@@ -33,7 +36,10 @@ create_new_ecclesiastical_title_interaction = {
 		scope:recipient = {
 			cp:councillor_court_chaplain ?= {
 				if = {
-					limit = { NOT = { any_held_title = { has_clerical_region = yes } } }
+					limit = {
+						faith = scope:recipient.faith
+						NOT = { any_held_title = { has_clerical_region = yes } }
+					}
 					add_to_list = characters
 				}
 			}
@@ -121,7 +127,10 @@ create_new_ecclesiastical_title_interaction = {
 						any_courtier = {
 							can_be_court_chaplain_trigger = { COURT_OWNER = scope:recipient }
 						}
-						exists = cp:councillor_court_chaplain
+						cp:councillor_court_chaplain ?= {
+							faith = scope:recipient.faith
+							NOT = { any_held_title = { has_clerical_region = yes } }
+						}
 					}
 				}
 				any_courtier = {
@@ -311,6 +320,7 @@ split_ecclesiastical_title_interaction = {
 				scope:secondary_actor ?= {
 					is_ai = yes
 					exists = cp:councillor_court_chaplain
+					cp:councillor_court_chaplain.faith = scope:actor.faith
 					NOT = { cp:councillor_court_chaplain = scope:recipient }
 				}
 			}
@@ -358,6 +368,7 @@ split_ecclesiastical_title_interaction = {
 				if = {
 					limit = {
 						exists = cp:councillor_court_chaplain
+						cp:councillor_court_chaplain.faith = scope:actor.faith
 						cp:councillor_court_chaplain != scope:recipient
 						NOT = {
 							cp:councillor_court_chaplain = {
@@ -429,8 +440,10 @@ split_ecclesiastical_title_interaction = {
 
 	cooldown_against_recipient = { years = 10 }
 
-	# Shown for same-faith ecclesiastical rulers with at least one eligible secular ruler inside it; also the HoF on their own region
 	is_shown = {
+		scope:actor = {
+			pam_is_antipope_trigger = no
+		}
 		scope:recipient = {
 			is_ruler = yes
 			faith ?= scope:actor.faith
@@ -507,6 +520,7 @@ split_ecclesiastical_title_interaction = {
 					OR = {
 						scope:secondary_actor = {
 							exists = cp:councillor_court_chaplain
+							cp:councillor_court_chaplain.faith = scope:actor.faith
 							cp:councillor_court_chaplain != scope:recipient
 						}
 						scope:secondary_actor = {
@@ -2448,7 +2462,7 @@ ecclesiastical_de_jure_shifting_interaction = {
 
 	desc = ecclesiastical_de_jure_shifting_interaction_desc
 
-	cooldown_against_recipient = { years = 3 }
+	cooldown = { years = 3 }
 
 	is_available = {
 		has_pam_dlc_trigger = yes
@@ -2599,6 +2613,24 @@ ecclesiastical_de_jure_shifting_interaction = {
 				any_de_jure_county = {
 					percent >= 0.5
 					holder = { faith = scope:puppet_or_actor.faith }
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				scope:target ?= {
+					tier = tier_kingdom
+				}
+				exists = struggle:iberian_struggle
+			}
+			custom_tooltip = {
+				text = ecclesiastical_de_jure_shifting_kingdom_iberian_struggle_tt
+				scope:puppet_or_actor = {
+					NOT = {
+						any_character_struggle = {
+							is_struggle_type = iberian_struggle
+						}
+					}
 				}
 			}
 		}
@@ -4160,6 +4192,7 @@ ecclesiastical_de_jure_shifting_grant_interaction = {
 	show_all_targets = yes
 	notification_text = ecclesiastical_de_jure_shifting_grant_interaction_notification
 	greeting = positive
+	cooldown_against_recipient = { years = 10 }
 
 	use_diplomatic_range = yes
 	ai_min_reply_days = 1
@@ -4392,6 +4425,24 @@ ecclesiastical_de_jure_shifting_grant_interaction = {
 				any_de_jure_county = {
 					percent >= 0.5
 					holder = { faith = scope:recipient.faith }
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				scope:target ?= {
+					tier = tier_kingdom
+				}
+				exists = struggle:iberian_struggle
+			}
+			custom_tooltip = {
+				text = ecclesiastical_de_jure_shifting_grant_kingdom_iberian_struggle_tt
+				scope:recipient = {
+					NOT = {
+						any_character_struggle = {
+							is_struggle_type = iberian_struggle
+						}
+					}
 				}
 			}
 		}

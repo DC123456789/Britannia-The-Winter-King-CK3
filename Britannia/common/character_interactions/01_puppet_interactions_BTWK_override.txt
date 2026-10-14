@@ -47,6 +47,7 @@ request_ecclesiastical_title_creation_interaction = {
 					limit = {
 						exists = cp:councillor_court_chaplain
 						cp:councillor_court_chaplain = {
+							faith = scope:puppet_or_actor.faith
 							NOT = { any_held_title = { has_clerical_region = yes } }
 						}
 					}
@@ -73,7 +74,10 @@ request_ecclesiastical_title_creation_interaction = {
 		scope:puppet_or_actor = {
 			cp:councillor_court_chaplain ?= {
 				if = {
-					limit = { NOT = { any_held_title = { has_clerical_region = yes } } }
+					limit = {
+						faith = scope:puppet_or_actor.faith
+						NOT = { any_held_title = { has_clerical_region = yes } }
+					}
 					add_to_list = characters
 				}
 			}
@@ -98,7 +102,13 @@ request_ecclesiastical_title_creation_interaction = {
 	# can_be_picked_title handles title eligibility, so we keep is_shown fast for the AI
 	is_shown = {
 		always = no 		# BTWK disabled
-		scope:puppet_or_actor.faith ?= { has_doctrine_parameter = has_clerical_regions }
+		scope:puppet_or_actor.faith ?= {
+			has_doctrine_parameter = has_clerical_regions
+			OR = {
+				NOT = { has_doctrine_parameter = temporal_head_of_faith }
+				NOT = { exists = religious_head }
+			}
+		}
 		OR = {
 			scope:puppet_or_actor ?= {
 				highest_held_title_tier >= tier_duchy
@@ -173,6 +183,7 @@ request_ecclesiastical_title_creation_interaction = {
 			text = pam_request_ecclesiastical_title_creation_needs_free_cleric_tt
 			exists = scope:secondary_recipient
 			scope:secondary_recipient = {
+				faith = scope:puppet_or_actor.faith
 				NOT = { any_held_title = { has_clerical_region = yes } }
 			}
 		}
@@ -299,6 +310,7 @@ request_ecclesiastical_title_creation_interaction = {
 							set_capital_county = scope:clerical_region_anchor_county
 							set_landless_title = yes
 							set_no_automatic_claims = yes
+							set_always_follows_primary_heir = yes
 							change_title_holder = {
 								holder = scope:new_ecclesiastical_holder
 								change = scope:change
@@ -678,7 +690,13 @@ request_ecclesiastical_title_expansion_interaction = {
 		}
 		pam_recipient_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
 		has_pam_dlc_trigger = yes
-		scope:puppet_or_actor.faith ?= { has_doctrine_parameter = has_clerical_regions }
+		scope:puppet_or_actor.faith ?= {
+			has_doctrine_parameter = has_clerical_regions
+			OR = {
+				NOT = { has_doctrine_parameter = temporal_head_of_faith }
+				NOT = { exists = religious_head }
+			}
+		}
 		scope:recipient != scope:puppet_or_actor
 	}
 
@@ -1025,7 +1043,13 @@ request_ecclesiastical_title_merger_interaction = {
 	# Visible for ecclesiastical rulers whose clerical region borders at least one same-faith mergeable neighbor
 	is_shown = {
 		always = no 		# BTWK disabled
-		scope:puppet_or_actor.faith ?= { has_doctrine_parameter = has_clerical_regions }
+		scope:puppet_or_actor.faith ?= {
+			has_doctrine_parameter = has_clerical_regions
+			OR = {
+				NOT = { has_doctrine_parameter = temporal_head_of_faith }
+				NOT = { exists = religious_head }
+			}
+		}
 		pam_recipient_is_clerical_title_authority_trigger = yes # HoF, or the Head of Rites when the faith has no HoF
 		has_pam_dlc_trigger = yes
 		scope:puppet_or_actor ?= {
@@ -1341,7 +1365,13 @@ request_ecclesiastical_title_split_interaction = {
 	# Visible for secular duke+ rulers whose capital sits in a splittable clerical region, and for landed county-tier clergy splitting off from their superior
 	is_shown = {
 		always = no 		# BTWK disabled
-		scope:puppet_or_actor.faith ?= { has_doctrine_parameter = has_clerical_regions }
+		scope:puppet_or_actor.faith ?= {
+			has_doctrine_parameter = has_clerical_regions
+			OR = {
+				NOT = { has_doctrine_parameter = temporal_head_of_faith }
+				NOT = { exists = religious_head }
+			}
+		}
 		OR = {
 			# Clergy branch: county-tier (or landless) clergy splitting off from their superior
 			scope:puppet_or_actor ?= {
@@ -1621,6 +1651,7 @@ request_ecclesiastical_title_split_interaction = {
 				set_capital_county = scope:puppet_or_actor.capital_county
 				set_landless_title = yes
 				set_no_automatic_claims = yes
+				set_always_follows_primary_heir = yes
 				change_title_holder = {
 					holder = scope:new_ecclesiastical_holder
 					change = scope:change
@@ -1733,6 +1764,7 @@ request_ecclesiastical_title_split_interaction = {
 				set_capital_county = scope:puppet_or_actor.liege.capital_county
 				set_landless_title = yes
 				set_no_automatic_claims = yes
+				set_always_follows_primary_heir = yes
 				change_title_holder = {
 					holder = scope:new_ecclesiastical_holder
 					change = scope:change

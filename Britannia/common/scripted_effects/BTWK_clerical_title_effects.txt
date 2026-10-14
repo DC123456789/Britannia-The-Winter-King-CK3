@@ -52,6 +52,7 @@ BTWK_create_clerical_title_effect = {
 			}
 			exists = cp:councillor_court_chaplain
 			cp:councillor_court_chaplain = {
+				faith = scope:kingdom_holder.faith
 				NOT = { any_held_title = { has_clerical_region = yes } }
 			}
 		}
@@ -66,6 +67,7 @@ BTWK_create_clerical_title_effect = {
 					title_province = { geographical_region = scope:effect_region }
 					NOT = { exists = clerical_region_title }
 				}
+				faith = scope:kingdom_holder.faith
 				has_government = ecclesiastical_government
 			}
 		}
@@ -75,6 +77,7 @@ BTWK_create_clerical_title_effect = {
 					title_province = { geographical_region = scope:effect_region }
 					NOT = { exists = clerical_region_title }
 				}
+				faith = scope:kingdom_holder.faith
 				has_government = ecclesiastical_government
 			}
 			order_by = learning
@@ -85,6 +88,7 @@ BTWK_create_clerical_title_effect = {
 		ordered_courtier = {
 			limit = {
 				NOT = { any_held_title = { has_clerical_region = yes } }
+				faith = scope:kingdom_holder.faith
 				can_be_court_chaplain_trigger = { COURT_OWNER = scope:kingdom_holder }
 			}
 			order_by = learning
@@ -166,6 +170,7 @@ BTWK_create_clerical_title_effect = {
 			set_capital_county = scope:clerical_title_seat
 			set_landless_title = yes
 			set_no_automatic_claims = yes
+			set_always_follows_primary_heir = yes
 			change_title_holder = {
 				holder = scope:new_ecclesiastical_holder
 				change = scope:change
@@ -318,6 +323,7 @@ BTWK_expand_clerical_title_warnings_effect = {
 }
 
 BTWK_expand_clerical_title_effect = {
+	save_scope_as = puppet_or_actor
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
 	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title = { save_scope_as = clerical_title }
 	# Actually create the title
@@ -344,8 +350,32 @@ BTWK_expand_clerical_title_effect = {
 			}
 		}
 	}
+	hidden_effect = {
+		if = {
+			limit = {
+				has_pam_dlc_trigger = yes
+				scope:puppet_or_actor = {
+					any_character_situation = {
+						situation_type = the_christian_church
+						situation_top_has_catalyst = catalyst_the_christian_church_clerical_region_expanded
+					}
+				}
+			}
+			situation:the_christian_church = {
+				trigger_situation_catalyst = catalyst_the_christian_church_clerical_region_expanded
+			}
+		}
+	}
 	save_scope_as = expansion_actor
-	scope:clerical_title.holder ?= { save_scope_as = ecclesiastical_holder }
+	scope:clerical_title.holder ?= { save_scope_as = recipient }
+	scope:puppet_or_actor = {
+		faith = {
+			change_fervor = {
+				value = notable_fervor_gain
+				desc = fervor_gain_clerical_title_expanded
+			}
+		}
+	}
 	if = {
 		limit = {
 			scope:ecclesiastical_holder != scope:expansion_actor

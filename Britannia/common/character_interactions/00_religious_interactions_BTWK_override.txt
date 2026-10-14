@@ -63,6 +63,16 @@ seek_indulgences_interaction = {
 			}
 			scope:puppet_or_actor ?= { is_following_religious_head_challenger = no }
 		}
+		scope:actor = {
+			trigger_if = {
+				limit = {
+					cp:councillor_court_chaplain ?= scope:recipient
+					pam_is_archbishop_or_higher_trigger = no
+					actor_has_capital_archbishop_trigger = yes
+				}
+				seek_indulgences_recipient_trigger = yes
+			}
+		}
 	}
 
 	cooldown = { years = 5 }
