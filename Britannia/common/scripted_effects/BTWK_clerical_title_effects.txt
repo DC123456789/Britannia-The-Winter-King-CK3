@@ -29,6 +29,7 @@ BTWK_create_clerical_title_effect = {
 	save_scope_as = kingdom_holder
 	save_scope_as = actor
 	save_scope_as = puppet_or_actor
+	$CLERICAL_TITLE_STORY$ = { save_scope_as = clerical_title_creation_story }
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
 	$CLERICAL_TITLE_STORY$.var:title = { save_scope_as = clerical_title_template }
 	$CLERICAL_TITLE_STORY$.var:seat = { save_scope_as = clerical_title_seat }
@@ -269,6 +270,22 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 	}
+	# Trigger any dependent expansions
+	$CLERICAL_TITLE_STORY$ = {
+		if = {
+			limit = { has_variable_list = clerical_title_dependent_expansions }
+			every_in_list = {
+				variable = clerical_title_dependent_expansions
+				limit = { this.var:title = { has_variable = clerical_title } }
+				save_scope_as = dependent_expansion
+				set_variable = suppress_event
+				scope:kingdom_holder = {
+					BTWK_expand_clerical_title_effect = { CLERICAL_TITLE_STORY = scope:dependent_expansion }
+				}
+				set_variable = dependent_expansion_just_triggered
+			}
+		}
+	}
 	scope:kingdom_holder = { trigger_event = BTWK_clerical_titles.0001 }
 	scope:new_ecclesiastical_holder = { 
 		if = {
@@ -284,6 +301,19 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 		trigger_event = BTWK_clerical_titles.0001
+	}
+	# Clear the flag indicating that dependent expansions that were just triggered
+	$CLERICAL_TITLE_STORY$ = {
+		if = {
+			limit = { has_variable_list = clerical_title_dependent_expansions }
+			every_in_list = {
+				variable = clerical_title_dependent_expansions
+				if = {
+					limit = { has_variable = dependent_expansion_just_triggered }
+					remove_variable = dependent_expansion_just_triggered
+				}
+			}
+		}
 	}
 }
 
@@ -325,9 +355,16 @@ BTWK_expand_clerical_title_warnings_effect = {
 BTWK_expand_clerical_title_effect = {
 	save_scope_as = puppet_or_actor
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
-	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title = { save_scope_as = clerical_title }
-	# Actually create the title
-	custom_tooltip = BTWK_expand_clerical_title_effect_expand_archbishopric_tt
+	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title ?= { save_scope_as = clerical_title }
+	# Make sure tooltip is functional even if clerical title doesn't exist yet
+	if = {
+		limit = { exists = scope:clerical_title }
+		custom_tooltip = BTWK_expand_clerical_title_effect_expand_archbishopric_tt
+	}
+	else = {
+		$CLERICAL_TITLE_STORY$.var:title ?= { save_scope_as = clerical_title_template }
+		custom_tooltip = BTWK_expand_clerical_title_effect_expand_archbishopric_does_not_exist_yet_tt
+	}
 	$CLERICAL_TITLE_STORY$ = {
 		set_variable = clerical_title_expanded
 		hidden_effect = {
@@ -386,21 +423,24 @@ BTWK_expand_clerical_title_effect = {
 			opinion = 30
 		}
 	}
-	trigger_event = BTWK_clerical_titles.0002
-	scope:clerical_title.holder ?= {
-		if = {
-			limit = { this != prev }
-			trigger_event = BTWK_clerical_titles.0002
-		}
-	}
-	every_player = {
-		limit = {
-			NOR = {
-				this = prev
-				has_title = scope:clerical_title
+	if = {
+		limit = { NOT = { $CLERICAL_TITLE_STORY$ = { has_variable = suppress_event } } }
+		trigger_event = BTWK_clerical_titles.0002
+		scope:clerical_title.holder ?= {
+			if = {
+				limit = { this != prev }
+				trigger_event = BTWK_clerical_titles.0002
 			}
 		}
-		trigger_event = BTWK_clerical_titles.0002
+		every_player = {
+			limit = {
+				NOR = {
+					this = prev
+					has_title = scope:clerical_title
+				}
+			}
+			trigger_event = BTWK_clerical_titles.0002
+		}
 	}
 }
 

@@ -2070,11 +2070,12 @@ titular_titles_briton.0010 = {
 	title = titular_titles_briton.0010.t
 	desc = titular_titles_briton.0010.desc
 	theme = war
+	override_background = { reference = ce1_fullscreen_legitimizing_legend }
 	
-	left_portrait = {
-		character = scope:founder
-		animation = personality_war_over_win
-	}
+	# left_portrait = {
+		# character = scope:founder
+		# animation = personality_war_over_win
+	# }
 	
 	immediate = {
 		if = {
@@ -2760,6 +2761,7 @@ titular_titles_briton.0051 = {
 			title:e_britannia.holder = { trigger_event = { id = titular_titles_briton.0052 } }
 		}
 		hidden_effect = {
+			# Do de jure changes
 			title:e_cymru = {
 				every_in_list = {
 					variable = base_kingdom_regions
@@ -2774,14 +2776,34 @@ titular_titles_briton.0051 = {
 			}
 			title:e_hen_ogledd = {
 				every_in_list = {
+					variable = base_kingdom_regions
 					if = {
 						limit = { de_jure_liege = title:e_britannia }
-						variable = base_kingdom_regions
 						set_kingdom_region_de_jure_liege_effect = {
 							REGION_BASE = THIS
 							NEW_DE_JURE_LIEGE = PREV
 						}
 					}
+				}
+			}
+			
+			# Rename Briton archbishoprics if not yet created
+			title:d_et_london = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_london_BRITON
+				}
+			}
+			title:d_et_york = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_york_BRITON
+				}
+			}
+			title:d_et_st_davids = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_st_davids_BRITON
 				}
 			}
 		}
@@ -2809,16 +2831,15 @@ titular_titles_briton.0052 = {
 	theme = war
 	override_background = { reference = fp2_fullscreen_intro }
 	
-	# Ignored in fullscreen events
-	left_portrait = {
-		character = scope:briton_king
-		animation = war_over_loss
-	}
+	# left_portrait = {
+		# character = scope:briton_king
+		# animation = war_over_loss
+	# }
 	
-	right_portrait = {
-		character = scope:anglo_saxon_king
-		animation = war_over_win
-	}
+	# right_portrait = {
+		# character = scope:anglo_saxon_king
+		# animation = war_over_win
+	# }
 	
 	immediate = {
 		if = {
@@ -3564,10 +3585,10 @@ titular_titles_romanized_germanic.0004 = {
 	theme = realm
 	override_background = { reference = ce1_fullscreen_legitimizing_legend }
 	
-	left_portrait = {
-		character = scope:founder
-		animation = personality_honorable
-	}
+	# left_portrait = {
+		# character = scope:founder
+		# animation = personality_honorable
+	# }
 	
 	immediate = {
 		scope:founder = { capital_barony = { save_scope_as = founder_capital } }

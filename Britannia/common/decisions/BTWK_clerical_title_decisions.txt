@@ -23,6 +23,7 @@ BTWK_create_clerical_titles_decision = {
 				trigger = {
 					has_variable = selected_title
 					this.var:selected_title ?= {
+						has_variable = pre_ruin_of_britannia_clerical_title
 						OR = {
 							this.var:title = title:d_et_london
 							this.var:title = title:d_et_lincoln
@@ -254,6 +255,139 @@ BTWK_expand_archdiocese_canterbury_decision = {
 	
 	widget = {
 		gui = "decision_view_expand_archdiocese_canterbury"
+		controller = decision_option_list_controller
+
+		### This placeholder has to be here or the game will crash
+		item = {
+			value = none
+			is_shown = { always = yes }
+			is_valid = { always = yes }
+			localization = placeholder_name
+		}
+	}
+}
+
+BTWK_expand_archdiocese_st_davids_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/BTWK_ck2_bishop_preaching.dds"
+	}
+	decision_group_type = realm
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	desc = BTWK_expand_archdiocese_st_davids_decision_desc	
+
+	is_shown = {
+		religion = religion:christianity_religion
+		faith = { has_doctrine_parameter = has_clerical_regions }
+		is_unromanized_germanic_culture_trigger = no
+		trigger_if = {
+			limit = { is_ai = yes }
+			is_independent_ruler = yes
+		}
+		title:d_et_st_davids = { 
+			has_variable = clerical_title 
+			any_in_list = {
+				variable = clerical_title_expansions
+				ROOT = {
+					BTWK_potential_expand_clerical_title_trigger = {
+						CLERICAL_TITLE_STORY = prev
+					}
+				}
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		BTWK_can_expand_clerical_title_common_trigger = {
+			CLERICAL_TITLE = title:d_et_st_davids.var:clerical_title
+		}
+		custom_tooltip = {
+			text = BTWK_expand_clerical_titles_decision_any_formable_tt
+			title:d_et_st_davids = { 
+				any_in_list = {
+					variable = clerical_title_expansions
+					ROOT = { BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev } }
+				}	
+			}
+		}
+	}
+
+	effect = {
+		# This part is purely for display purposes
+		if = {
+			limit = {
+				is_ai = no
+				has_variable = selected_title
+			}
+			show_as_tooltip = {
+				ROOT = {
+					BTWK_expand_clerical_title_cost_effect = yes
+					BTWK_expand_clerical_title_effect = { CLERICAL_TITLE_STORY = var:selected_title }
+				}
+			}
+		}
+		hidden_effect = {
+			while = {
+				limit = {
+					title:d_et_st_davids = { 
+						any_in_list = {
+							variable = clerical_title_expansions
+							ROOT = { 
+								BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
+								BTWK_can_expand_clerical_title_cost_trigger = yes
+							}
+						}	
+					}
+				}
+				title:d_et_st_davids = { 
+					random_in_list = {
+						variable = clerical_title_expansions
+						limit = {
+							ROOT = { 
+								BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
+								BTWK_can_expand_clerical_title_cost_trigger = yes
+							}
+						}
+					}	
+				}
+				random_in_global_list = {
+					variable = creatable_clerical_title_stories
+					limit = {
+						ROOT = { 
+							BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev } 
+							BTWK_can_expand_clerical_title_cost_trigger = yes
+						}
+					}
+					ROOT = {
+						BTWK_expand_clerical_title_cost_effect = yes
+						BTWK_expand_clerical_title_effect = {
+							CLERICAL_TITLE_STORY = prev
+						}
+					}
+				}
+			}
+			remove_variable = selected_title
+		}
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+	
+	widget = {
+		gui = "decision_view_expand_archdiocese_st_davids"
 		controller = decision_option_list_controller
 
 		### This placeholder has to be here or the game will crash

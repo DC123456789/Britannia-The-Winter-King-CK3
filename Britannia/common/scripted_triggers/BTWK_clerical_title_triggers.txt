@@ -23,7 +23,7 @@ BTWK_potential_create_clerical_title_trigger = {
 		is_unromanized_germanic_culture_trigger = yes
 	}
 	# Other blocks
-	trigger_if = {
+	trigger_if = {	
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
 		NOT = { has_global_variable = end_of_britannia }
 	}
@@ -102,7 +102,7 @@ BTWK_potential_expand_clerical_title_trigger = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
 		is_unromanized_germanic_culture_trigger = yes
 	}
-	# Other blocks
+	# Other blocks/filters
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
 		NOT = { has_global_variable = end_of_britannia }
@@ -110,6 +110,14 @@ BTWK_potential_expand_clerical_title_trigger = {
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = post_ruin_of_britannia_clerical_title } }
 		has_global_variable = end_of_britannia
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = potential_required_created_clerical_title } }
+		$CLERICAL_TITLE_STORY$.var:potential_required_created_clerical_title = { has_variable = clerical_title }
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = potential_requires_clerical_title_created } }
+		$CLERICAL_TITLE_STORY$.var:title = { has_variable = clerical_title }
 	}
 }
 

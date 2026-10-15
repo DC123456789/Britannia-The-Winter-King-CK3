@@ -36,6 +36,18 @@ BTWK_clerical_titles.0001 = {
 			save_scope_as = background_temple_scope
 		}
 		custom_tooltip = BTWK_clerical_titles.0001.tt
+		scope:clerical_title_creation_story = {
+			if = {
+				limit = { has_variable_list = clerical_title_dependent_expansions }
+				every_in_list = {
+					variable = clerical_title_dependent_expansions
+					limit = { has_variable = dependent_expansion_just_triggered }
+					this.var:title.var:clerical_title = { save_scope_as = clerical_title }
+					this.var:region = { save_scope_as = effect_region }
+					custom_tooltip = BTWK_clerical_titles.0002.tt
+				}
+			}
+		}
 	}
 
 	option = {

@@ -2660,7 +2660,7 @@ BTWK_de_jure_setup = {
 		# Post-Roman Briton
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_st_davids
-			SEAT = title:d_et_york.title_capital_county
+			SEAT = title:d_et_st_davids.title_capital_county
 			REGION = geographical_region:btwk_custom_et_st_davids_core
 			VISIBILITY_REGION = geographical_region:btwk_world_britannia
 		}
@@ -2678,15 +2678,32 @@ BTWK_de_jure_setup = {
 			set_variable = briton_roman_clerical_title
 			set_variable = expansion_requires_direct_control
 		}
+		# Literally impossible to do right now unfortunately
+		# BTWK_create_clerical_title_expansion_story = {
+			# TITLE = title:d_et_st_davids
+			# SEAT = title:c_isca_dumnonia
+			# REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			# VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		# }
+		# scope:new_clerical_title_expansion_story = {
+			# set_variable = briton_roman_clerical_title
+			# set_variable = expansion_requires_direct_control
+		# }
 		BTWK_create_clerical_title_expansion_story = {
 			TITLE = title:d_et_st_davids
-			SEAT = title:c_isca_dumnonia
-			REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			SEAT = title:c_glevum
+			REGION = geographical_region:btwk_custom_et_st_davids_extended
 			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
 		}
+		# Automatically triggered by creating Briton variant of London, can also be done 
+		# by decision if the Province of London was created before the Ruin of Britannia happened
 		scope:new_clerical_title_expansion_story = {
 			set_variable = briton_roman_clerical_title
-			set_variable = expansion_requires_direct_control
+			set_variable = {
+				name = potential_required_created_clerical_title
+				value = title:d_et_london
+			}
+			save_scope_as = d_et_st_davids_extended_expansion_story
 		}
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_london
@@ -2697,6 +2714,43 @@ BTWK_de_jure_setup = {
 		scope:new_creatable_clerical_title_story = {
 			set_variable = briton_roman_clerical_title
 			set_variable = post_ruin_of_britannia_clerical_title
+			add_to_variable_list = {
+				name = clerical_title_dependent_expansions
+				target = scope:d_et_st_davids_extended_expansion_story
+			}
+		}
+		# In case the Province of London was created before the Ruin of Britannia happene
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_london
+			SEAT = title:c_lindum
+			REGION = geographical_region:btwk_custom_et_london_briton
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = post_ruin_of_britannia_clerical_title
+			set_variable = potential_requires_clerical_title_created
+			set_variable = expansion_requires_direct_control
+		}
+		# Collect all Briton expansions into a single list for the decision
+		title:d_et_st_davids = {
+			every_in_list = {
+				variable = clerical_title_expansions
+				add_to_global_variable_list = {
+					name = briton_clerical_title_expansion_stories
+					target = THIS
+				}
+			}
+		}
+		title:d_et_london = {
+			every_in_list = {
+				variable = clerical_title_expansions
+				limit = { has_variable = post_ruin_of_britannia_clerical_title }
+				add_to_global_variable_list = {
+					name = briton_clerical_title_expansion_stories
+					target = THIS
+				}
+			}
 		}
 		
 		# MISC TIDYUP
