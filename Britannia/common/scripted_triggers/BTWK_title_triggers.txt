@@ -12,10 +12,66 @@ is_anglo_saxon_kingdom_trigger = {
 	}
 }
 
+BTWK_is_southern_anglo_saxon_kingdom_trigger = {
+	has_variable = is_anglo_saxon_kingdom
+	title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+}
+
 BTWK_title_has_been_created_trigger = {
 	custom_description = {
 		text = BTWK_title_has_been_created
 		subject = $TARGET$
 		$TARGET$ = { has_variable = title_has_been_created }
+	}
+}
+
+BTWK_is_real_empire_or_higher_title_trigger = {
+	tier >= tier_empire
+	trigger_if = {
+		limit = { this = title:e_britannia }
+		OR = {
+			BTWK_britannia_high_kingship_active_trigger = no
+			BTWK_britannia_subject_king_tributaries_active_trigger = no
+		}
+	}
+	trigger_if = {
+		limit = { this = title:e_aengland }
+		OR = {
+			BTWK_aengland_bretwalda_active_trigger = no
+			BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+		}
+	}
+}
+
+BTWK_has_real_empire_or_higher_title_trigger = {
+	highest_held_title_tier >= tier_empire
+	trigger_if = {
+		limit = {
+			has_title = title:e_britannia
+			NOT = {
+				any_held_title = {
+					BTWK_is_real_empire_or_higher_title_trigger = yes
+				}
+			}
+		}
+		title:e_britannia.var:HK_reform_empower_high_council ?= { save_temporary_scope_as = empower_high_council_reform }
+		custom_tooltip = {
+			text = BTWK_has_real_empire_or_higher_title_trigger_britannia_tt
+			BTWK_britannia_high_king_reform_is_passed_trigger = { REFORM_NAME = empower_high_council }
+		}
+	}
+	trigger_if = {
+		limit = {
+			has_title = title:e_aengland
+			NOT = {
+				any_held_title = {
+					BTWK_is_real_empire_or_higher_title_trigger = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			text = BTWK_has_real_empire_or_higher_title_trigger_aengland_tt
+			BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+		}
 	}
 }

@@ -1,6 +1,9 @@
 ﻿BTWK_can_create_clerical_title_common_trigger = {
 	highest_held_title_tier >= tier_kingdom
-	sub_realm_size >= 80
+	OR = {
+		sub_realm_size >= 80
+		BTWK_has_real_empire_or_higher_title_trigger = yes
+	}
 	government_is_not_tribal_trigger = yes
 	trigger_if = {
 		limit = { is_ai = yes }
@@ -21,6 +24,84 @@ BTWK_potential_create_clerical_title_trigger = {
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
 		is_unromanized_germanic_culture_trigger = yes
+	}
+	# Kingdom blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_clerical_title } }
+		$CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_clerical_title = { save_temporary_scope_as = target_anglo_saxon_kingdom }
+		primary_title = {
+			OR = {
+				this = scope:target_anglo_saxon_kingdom
+				AND = {
+					this = title:e_aengland
+					title:e_aengland.var:aengland_primary_kingdom = scope:target_anglo_saxon_kingdom
+				}
+				kingdom ?= scope:target_anglo_saxon_kingdom
+				AND = {
+					tier < tier_kingdom
+					NOT = { kingdom = { has_variable = is_anglo_saxon_kingdom } }
+					title_capital_county = {
+						has_variable = anglo_saxon_duchy
+						this.var:anglo_saxon_duchy.kingdom ?= scope:target_anglo_saxon_kingdom
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title } }
+			scope:target_anglo_saxon_kingdom.title_capital_county = $CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_specific_capital_clerical_title
+		}
+		trigger_if = {
+			limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title } }
+			scope:target_anglo_saxon_kingdom.title_capital_county != $CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+		}
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = no_southern_anglo_saxon_kingdom_clerical_title } }
+		primary_title = {
+			NOR = {
+				BTWK_is_southern_anglo_saxon_kingdom_trigger = yes
+				AND = {
+					this = title:e_aengland
+					title:e_aengland.var:aengland_primary_kingdom = { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+				}
+				kingdom ?= { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+				AND = {
+					tier < tier_kingdom
+					NOT = { kingdom = { has_variable = is_anglo_saxon_kingdom } }
+					title_capital_county = {
+						has_variable = anglo_saxon_duchy
+						this.var:anglo_saxon_duchy.kingdom ?= { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+					}
+				}
+			}
+		}
+	}
+	
+	# Mutually exclusive archdiocese blocks
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_0 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_0 = {
+				has_variable = clerical_title_created
+			}
+		}
+	}
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_1 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_1 = {
+				has_variable = clerical_title_created
+			}
+		}
+	}
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_2 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_2 = {
+				has_variable = clerical_title_created
+			}
+		}
 	}
 	# Other blocks
 	trigger_if = {	
@@ -55,7 +136,7 @@ BTWK_visible_create_clerical_title_trigger = {
 }
 
 BTWK_can_create_clerical_title_cost_trigger = {
-	piety >= 300
+	piety >= 750
 }
 
 BTWK_can_create_clerical_title_trigger = {
@@ -143,7 +224,7 @@ BTWK_visible_expand_clerical_title_trigger = {
 }
 
 BTWK_can_expand_clerical_title_cost_trigger = {
-	piety >= 200
+	piety >= 300
 }
 
 BTWK_can_expand_clerical_title_trigger = {

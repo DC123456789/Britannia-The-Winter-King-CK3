@@ -2577,7 +2577,8 @@ BTWK_de_jure_setup = {
 		# - Germania assimilating the Rhenish Franks and Scandinavia
 		
 		### FORMABLE CLERICAL TITLE DEFINITIONS ###
-		# Roman
+		### Roman Britain
+		# Londinium
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_london
 			SEAT = title:d_et_london.title_capital_county
@@ -2588,6 +2589,7 @@ BTWK_de_jure_setup = {
 			set_variable = briton_roman_clerical_title 
 			set_variable = pre_ruin_of_britannia_clerical_title
 		}
+		# Lindum
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_lincoln
 			SEAT = title:d_et_lincoln.title_capital_county
@@ -2598,6 +2600,7 @@ BTWK_de_jure_setup = {
 			set_variable = briton_roman_clerical_title 
 			set_variable = pre_ruin_of_britannia_clerical_title
 		}
+		# Corinium
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_cirencester
 			SEAT = title:d_et_cirencester.title_capital_county
@@ -2607,7 +2610,48 @@ BTWK_de_jure_setup = {
 		scope:new_creatable_clerical_title_story = { 
 			set_variable = briton_roman_clerical_title 
 			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_corinium_creation_story
 		}
+		# Alternates for Corinium
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_cirencester
+			SEAT = title:d_et_st_davids.title_capital_county
+			REGION = geographical_region:btwk_custom_britannia_prima
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = { name = coa_title value = title:d_et_st_davids }
+			set_variable = { name = name value = flag:d_et_st_davids_ROMAN }
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_st_davids_roman_creation_story
+		}
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_cirencester
+			SEAT = title:d_et_caerleon.title_capital_county
+			REGION = geographical_region:btwk_custom_britannia_prima
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = { name = coa_title value = title:d_et_caerleon }
+			set_variable = { name = name value = flag:d_et_caerleon }
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_caerleon_creation_story
+		}
+		scope:d_et_corinium_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_st_davids_roman_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_caerleon_creation_story }
+		}
+		scope:d_et_st_davids_roman_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_corinium_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_caerleon_creation_story }
+		}
+		scope:d_et_caerleon_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_corinium_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_st_davids_roman_creation_story }
+		}
+		# Eburacum
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_york
 			SEAT = title:d_et_york.title_capital_county
@@ -2615,14 +2659,127 @@ BTWK_de_jure_setup = {
 			VISIBILITY_REGION = geographical_region:btwk_world_britannia
 		}
 		scope:new_creatable_clerical_title_story = { set_variable = briton_roman_clerical_title }
-		# Anglo-Saxon
+		
+		### Anglo-Saxon
+		# Canterbury (fallback)
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_canterbury
 			SEAT = title:d_et_canterbury.title_capital_county
 			REGION = geographical_region:btwk_custom_et_canterbury_core
 			VISIBILITY_REGION = geographical_region:btwk_world_britannia
 		}
-		scope:new_creatable_clerical_title_story = { set_variable = anglo_saxon_clerical_title }
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = no_southern_anglo_saxon_kingdom_clerical_title
+		}
+		# Canterbury alts - one for each Southern Anglo-Saxon Kingdom
+		BTWK_create_creatable_clerical_title_story = {		# Canterbury (Kent)
+			TITLE = title:d_et_canterbury
+			SEAT = title:d_et_canterbury.title_capital_county
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_cantia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Selsey (Sussex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_regentium
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_SELSEY }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_sussex }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# London (Essex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_londinium
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LONDON }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_eastseaxe }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Dommoc (East Anglia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_rendlesham
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_DOMMOC }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_east_anglia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lichfield (Mercia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_letocetum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LICHFIELD }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_mercia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lichfield (Wales - an extension of Mercia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_letocetum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LICHFIELD }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wales }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Dorchester-on-Thames (Wessex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_dorchester
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_DORCHESTER }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wessex }
+			set_variable = { 
+				name = anglo_saxon_kingdom_specific_capital_clerical_title 
+				value = title:c_dorchester 
+			}
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Winchester (Wessex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_venta
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_WINCHESTER }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wessex }
+			set_variable = { 
+				name = anglo_saxon_kingdom_not_specific_capital_clerical_title 
+				value = title:c_dorchester 
+			}
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lincoln (Lindsey)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_lindum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LINCOLN }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_lindsey }
+		}
+		# Canterbury expansions
 		BTWK_create_clerical_title_expansion_story = {
 			TITLE = title:d_et_canterbury
 			SEAT = title:c_magnis
@@ -2650,14 +2807,42 @@ BTWK_de_jure_setup = {
 			set_variable = anglo_saxon_clerical_title
 			set_variable = expansion_requires_direct_control
 		}
+		# York
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_york
 			SEAT = title:d_et_york.title_capital_county
 			REGION = geographical_region:btwk_custom_et_york_anglosaxon
 			VISIBILITY_REGION = geographical_region:btwk_world_britannia
 		}
-		scope:new_creatable_clerical_title_story = { set_variable = anglo_saxon_clerical_title }
-		# Post-Roman Briton
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_york_ANGLO_SAXON }
+			set_variable = { name = colour_title value = title:d_et_lindisfarne }
+			save_scope_as = d_et_york_anglo_saxon_creation_story
+		}
+		# Lindisfarne (York alternate)
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_york
+			SEAT = title:d_et_lindisfarne.title_capital_county
+			REGION = geographical_region:btwk_custom_et_york_anglosaxon
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = coa_title value = title:d_et_lindisfarne }
+			set_variable = { name = name value = flag:d_et_lindisfarne }
+			set_variable = { name = colour_title value = title:d_et_lindisfarne }
+			save_scope_as = d_et_lindisfarne_creation_story
+		}
+		scope:d_et_york_anglo_saxon_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_lindisfarne_creation_story }
+		}
+		scope:d_et_lindisfarne_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_york_anglo_saxon_creation_story }
+		}
+		
+		### Post-Roman Briton
+		# Tyddewi (St David's)
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_st_davids
 			SEAT = title:d_et_st_davids.title_capital_county
@@ -2705,6 +2890,7 @@ BTWK_de_jure_setup = {
 			}
 			save_scope_as = d_et_st_davids_extended_expansion_story
 		}
+		# Lundein
 		BTWK_create_creatable_clerical_title_story = {
 			TITLE = title:d_et_london
 			SEAT = title:d_et_london.title_capital_county

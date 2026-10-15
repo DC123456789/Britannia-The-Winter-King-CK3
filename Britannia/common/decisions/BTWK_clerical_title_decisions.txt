@@ -21,9 +21,17 @@ BTWK_create_clerical_titles_decision = {
 		first_valid = {
 			triggered_desc = {
 				trigger = {
-					has_variable = selected_title
 					this.var:selected_title ?= {
-						has_variable = pre_ruin_of_britannia_clerical_title
+						this.var:title = title:d_et_cirencester
+						this.var:coa_title != title:d_et_cirencester
+					}
+					NOT = { has_global_variable = end_of_britannia }
+				}
+				desc = BTWK_create_clerical_titles_decision_roman_britain_circenster_alt_sees_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
 						OR = {
 							this.var:title = title:d_et_london
 							this.var:title = title:d_et_lincoln

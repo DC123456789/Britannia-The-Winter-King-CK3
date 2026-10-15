@@ -7,6 +7,7 @@
 		scope:new_creatable_clerical_title_story = {
 			set_variable = { name = title value = $TITLE$ }
 			set_variable = { name = seat value = $SEAT$ }
+			set_variable = { name = coa_title value = $TITLE$ }		# By default
 			set_variable = { name = region value = $REGION$ }
 			set_variable = { name = visibility_region value = $VISIBILITY_REGION$ }
 			add_to_global_variable_list = {
@@ -23,6 +24,24 @@ BTWK_create_clerical_title_warnings_effect = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
 		custom_tooltip = BTWK_create_clerical_title_ruin_of_britannia_warning
 	}
+	if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_2 } }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_2 = { save_scope_as = mutually_exclusive_2 }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_1 = { save_scope_as = mutually_exclusive_1 }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_0 = { save_scope_as = mutually_exclusive_0 }
+		custom_tooltip = BTWK_create_clerical_title_three_mutually_exclusive_warning
+	}
+	else_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_1 } }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_1 = { save_scope_as = mutually_exclusive_1 }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_0 = { save_scope_as = mutually_exclusive_0 }
+		custom_tooltip = BTWK_create_clerical_title_two_mutually_exclusive_warning
+	}
+	else_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_0 } }
+		$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_0 = { save_scope_as = mutually_exclusive_0 }
+		custom_tooltip = BTWK_create_clerical_title_one_mutually_exclusive_warning
+	}
 }
 
 BTWK_create_clerical_title_effect = {
@@ -32,7 +51,15 @@ BTWK_create_clerical_title_effect = {
 	$CLERICAL_TITLE_STORY$ = { save_scope_as = clerical_title_creation_story }
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
 	$CLERICAL_TITLE_STORY$.var:title = { save_scope_as = clerical_title_template }
+	$CLERICAL_TITLE_STORY$.var:coa_title = { save_scope_as = clerical_title_coa_template }
 	$CLERICAL_TITLE_STORY$.var:seat = { save_scope_as = clerical_title_seat }
+	if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = colour_title } }
+		$CLERICAL_TITLE_STORY$.var:colour_title = { save_scope_as = clerical_title_colour_template }
+	}
+	else = {
+		$CLERICAL_TITLE_STORY$.var:title = { save_scope_as = clerical_title_colour_template }
+	}
 	# Get the best candidate for the new archbishop
 	if = {
 		limit = { 
@@ -166,8 +193,8 @@ BTWK_create_clerical_title_effect = {
 			add_claim_on_loss = no
 		}
 		scope:new_title ?= {
-			set_coa = scope:clerical_title_template
-			set_color_from_title = scope:clerical_title_template
+			set_coa = scope:clerical_title_coa_template
+			set_color_from_title = scope:clerical_title_colour_template
 			set_capital_county = scope:clerical_title_seat
 			set_landless_title = yes
 			set_no_automatic_claims = yes
@@ -225,49 +252,52 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 	}
-	scope:actor = {
-		# send_interface_toast = {
-			# type = event_toast_effect_good
-			# title = request_ecclesiastical_title_creation_accepted_tt
-			# left_icon = scope:new_title
-			# right_icon = scope:new_ecclesiastical_holder
-			# New holder is grateful — skipped when the petitioner appointed themselves (clergy path), to avoid a self-opinion bonus
+	if = {
+		limit = { exists = scope:new_ecclesiastical_holder }
+		scope:actor = {
+			# send_interface_toast = {
+				# type = event_toast_effect_good
+				# title = request_ecclesiastical_title_creation_accepted_tt
+				# left_icon = scope:new_title
+				# right_icon = scope:new_ecclesiastical_holder
+				# New holder is grateful — skipped when the petitioner appointed themselves (clergy path), to avoid a self-opinion bonus
+				if = {
+					limit = {
+						scope:new_ecclesiastical_holder != scope:puppet_or_actor
+					}
+					reverse_add_opinion = {
+						target = scope:new_ecclesiastical_holder
+						modifier = grateful_opinion
+						opinion = 50
+					}
+				}
+			# }
 			if = {
 				limit = {
-					scope:new_ecclesiastical_holder != scope:puppet_or_actor
+					NOT = {
+						has_government = ecclesiastical_government
+					}
 				}
-				reverse_add_opinion = {
+				add_hook = {
+					type = loyalty_hook
 					target = scope:new_ecclesiastical_holder
-					modifier = grateful_opinion
-					opinion = 50
 				}
 			}
-		# }
-		if = {
-			limit = {
-				NOT = {
-					has_government = ecclesiastical_government
+		}
+		scope:new_ecclesiastical_holder = {
+			if = {
+				limit = {
+					is_ruler = yes # Holder becomes a ruler only after resolve_title_and_vassal_change; guard prevents a tooltip crash
+					NOT = { government_has_flag = government_is_ecclesiastical }
 				}
-			}
-			add_hook = {
-				type = loyalty_hook
-				target = scope:new_ecclesiastical_holder
+				change_government = ecclesiastical_government
 			}
 		}
 	}
-	scope:new_ecclesiastical_holder = {
-		if = {
-			limit = {
-				is_ruler = yes # Holder becomes a ruler only after resolve_title_and_vassal_change; guard prevents a tooltip crash
-				NOT = { government_has_flag = government_is_ecclesiastical }
-			}
-			change_government = ecclesiastical_government
-		}			
-		faith = {
-			change_fervor = {
-				value = notable_fervor_gain
-				desc = fervor_gain_clerical_title_created
-			}
+	faith = {
+		change_fervor = {
+			value = notable_fervor_gain
+			desc = fervor_gain_clerical_title_created
 		}
 	}
 	# Trigger any dependent expansions
@@ -318,7 +348,7 @@ BTWK_create_clerical_title_effect = {
 }
 
 BTWK_create_clerical_title_cost_effect = {
-	add_piety = -300
+	add_piety = -750
 }
 
 
@@ -354,6 +384,7 @@ BTWK_expand_clerical_title_warnings_effect = {
 
 BTWK_expand_clerical_title_effect = {
 	save_scope_as = puppet_or_actor
+	$CLERICAL_TITLE_STORY$ = { save_scope_as = clerical_title_expansion_story }
 	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
 	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title ?= { save_scope_as = clerical_title }
 	# Make sure tooltip is functional even if clerical title doesn't exist yet
@@ -445,5 +476,5 @@ BTWK_expand_clerical_title_effect = {
 }
 
 BTWK_expand_clerical_title_cost_effect = {
-	add_piety = -200
+	add_piety = -300
 }
