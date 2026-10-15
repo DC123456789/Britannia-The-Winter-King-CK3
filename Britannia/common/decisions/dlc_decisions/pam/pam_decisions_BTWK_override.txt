@@ -1,0 +1,766 @@
+﻿# Shape the Christian Church
+pam_shape_the_christian_church_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/pam_decision_shape_the_christian_church.dds"
+	}
+	decision_group_type = religious
+
+	desc = pam_shape_the_christian_church_decision_desc
+	selection_tooltip = pam_shape_the_christian_church_decision_tooltip
+	sort_order = 112
+
+	is_shown = {
+		exists = top_participant_group:the_christian_church
+		# The Controversy phase only exits through the Council ruling
+		NOT = {
+			situation:the_christian_church ?= {
+				has_situation_top_phase_parameter = the_christian_church_investiture_controversy
+			}
+		}
+		has_pam_dlc_trigger = yes
+	}
+
+	is_valid_showing_failures_only = {
+		is_available_adult = yes
+		NOT = { has_trait = excommunicated }
+	}
+
+	is_valid = {
+		OR = {
+			any_held_title = { is_head_of_faith = yes }
+			custom_tooltip = {
+				text = pam_shape_the_christian_church_decision_hor_tt
+				rite.head_of_rite ?= this
+			}
+			custom_tooltip = {
+				text = pam_shape_the_christian_church_decision_cardinal_tt
+				exists = clerical_elector_title
+			}
+			custom_tooltip = {
+				text = pam_shape_the_christian_church_decision_archbishop_tt
+				any_held_title = { has_clerical_region = yes }
+			}
+			highest_held_title_tier >= tier_empire
+			AND = {
+				highest_held_title_tier >= tier_kingdom
+				OR = {
+					has_trait = lifestyle_scholar
+					has_trait = theologian
+					piety_level >= 3
+				}
+			}
+			custom_tooltip = {
+				text = pam_shape_the_christian_church_decision_dynasty_tt
+				dynasty ?= { has_dynasty_perk = pam_legacy_5 }
+			}
+		}
+	}
+
+	cooldown = { years = 10 }
+
+	cost = {
+		piety = major_piety_value
+	}
+
+	widget = {
+		gui = "decision_view_widget_generic_multichoice_with_effects"
+		controller = decision_option_list_controller
+		decision_to_second_step_button = "SELECT_ACTION"
+		show_from_start = yes
+
+		item = {
+			value = push_fragile_unity
+			current_description = pam_shape_the_christian_church_push_fragile_unity_desc
+			localization = pam_shape_the_christian_church_push_fragile_unity_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/fragile_unity.dds"
+			is_shown = {
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = saeculum_obscurum
+						situation_current_phase = conversion_phase
+						situation_current_phase = investiture_crisis
+						situation_current_phase = crusade_phase
+						situation_current_phase = concord
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+						pam_is_the_christian_church_main_power_trigger = no
+					}
+					add = 25
+				}
+				if = { limit = { has_trait = content } add = 12 }
+				if = { limit = { has_trait = humble } add = 12 }
+				if = { limit = { has_trait = patient } add = 10 }
+				if = { limit = { has_trait = lazy } add = 10 }
+				if = { limit = { has_trait = craven } add = 10 }
+				if = { limit = { has_trait = fickle } add = 10 }
+				if = { limit = { has_trait = paranoid } add = 8 }
+				if = { limit = { has_trait = calm } add = 8 }
+			}
+		}
+
+		item = {
+			value = push_saeculum_obscurum
+			current_description = pam_shape_the_christian_church_push_saeculum_obscurum_desc
+			localization = pam_shape_the_christian_church_push_saeculum_obscurum_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/saeculum_obscurum.dds"
+			is_shown = {
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = reform_phase
+						situation_current_phase = fragile_unity
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+						pam_is_the_christian_church_main_power_trigger = no
+					}
+					add = 25
+				}
+				if = { limit = { has_trait = lustful } add = 14 }
+				if = { limit = { has_trait = deceitful } add = 14 }
+				if = { limit = { has_trait = greedy } add = 12 }
+				if = { limit = { has_trait = gluttonous } add = 10 }
+				if = { limit = { has_trait = cynical } add = 12 }
+				if = { limit = { has_trait = lifestyle_reveler } add = 14 }
+				if = { limit = { has_trait = arbitrary } add = 10 }
+				if = { limit = { has_trait = sadistic } add = 8 }
+			}
+		}
+
+		item = {
+			value = push_conversion
+			current_description = pam_shape_the_christian_church_push_conversion_desc
+			localization = pam_shape_the_christian_church_push_conversion_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/conversion.dds"
+			is_shown = {
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = saeculum_obscurum
+						situation_current_phase = investiture_crisis
+						situation_current_phase = concord
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+					}
+					add = 6
+					if = { limit = { ai_zeal >= medium_positive_ai_value } add = 10 }
+					if = { limit = { ai_energy >= medium_positive_ai_value } add = 6 }
+				}
+				if = { limit = { has_trait = zealous } add = 16 }
+				if = { limit = { has_trait = brave } add = 12 }
+				if = { limit = { has_trait = diligent } add = 10 }
+				if = { limit = { has_trait = ambitious } add = 10 }
+				if = { limit = { has_trait = lifestyle_hunter } add = 14 }
+				if = { limit = { has_trait = wrathful } add = 8 }
+			}
+		}
+
+		item = {
+			value = push_reform
+			current_description = pam_shape_the_christian_church_push_reform_desc
+			localization = pam_shape_the_christian_church_push_reform_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/reform.dds"
+			is_shown = {
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = saeculum_obscurum
+						situation_current_phase = conversion_phase
+						situation_current_phase = investiture_crisis
+						situation_current_phase = crusade_phase
+						situation_current_phase = concord
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+					}
+					add = 6
+					if = { limit = { ai_honor >= medium_positive_ai_value } add = 10 }
+					if = { limit = { ai_energy >= medium_positive_ai_value } add = 6 }
+				}
+				if = { limit = { has_trait = zealous } add = 12 }
+				if = { limit = { has_trait = just } add = 14 }
+				if = { limit = { has_trait = honest } add = 10 }
+				if = { limit = { has_trait = temperate } add = 10 }
+				if = { limit = { has_trait = lifestyle_mystic } add = 12 }
+				if = { limit = { has_trait = theologian } add = 16 }
+				if = { limit = { has_trait = stubborn } add = 8 }
+			}
+		}
+
+		item = {
+			value = push_investiture_crisis
+			current_description = pam_shape_the_christian_church_push_investiture_crisis_desc
+			localization = pam_shape_the_christian_church_push_investiture_crisis_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/investiture.dds"
+			is_shown = {
+				always = no		# BTWK
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = fragile_unity
+						situation_current_phase = reform_phase
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						government_is_religious_trigger = no
+						highest_held_title_tier >= tier_kingdom
+					}
+					add = 25
+				}
+				if = {
+					limit = {
+						OR = {
+							any_held_title = {
+								OR = {
+									is_head_of_faith = yes
+									has_clerical_region = yes
+								}
+							}
+							rite.head_of_rite ?= this
+							exists = clerical_elector_title
+						}
+						faith ?= { has_doctrine = doctrine_clerical_succession_conditional }
+					}
+					add = 25
+				}
+				if = { limit = { has_trait = ambitious } add = 16 }
+				if = { limit = { has_trait = arrogant } add = 12 }
+				if = { limit = { has_trait = greedy } add = 10 }
+				if = { limit = { has_trait = cynical } add = 10 }
+				if = { limit = { has_trait = deceitful } add = 8 }
+				if = { limit = { has_trait = stubborn } add = 10 }
+			}
+		}
+
+		item = {
+			value = push_crusade
+			current_description = pam_shape_the_christian_church_push_crusade_desc
+			localization = pam_shape_the_christian_church_push_crusade_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/crusade.dds"
+			is_shown = {
+				always = no		# BTWK
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = concord
+						situation_current_phase = saeculum_obscurum
+						situation_current_phase = investiture_crisis
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+					}
+					add = 6
+					if = { limit = { ai_zeal >= medium_positive_ai_value } add = 8 }
+					if = { limit = { ai_boldness >= medium_positive_ai_value } add = 10 }
+				}
+				if = { limit = { has_trait = crusader_king } add = 25 }
+				if = { limit = { has_trait = zealous } add = 14 }
+				if = { limit = { has_trait = brave } add = 12 }
+				if = { limit = { has_trait = wrathful } add = 10 }
+				if = { limit = { has_trait = ambitious } add = 10 }
+				if = { limit = { has_trait = lifestyle_blademaster } add = 14 }
+				if = { limit = { has_trait = callous } add = 8 }
+			}
+		}
+
+		item = {
+			value = push_concord
+			current_description = pam_shape_the_christian_church_push_concord_desc
+			localization = pam_shape_the_christian_church_push_concord_name
+			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/concord.dds"
+			is_shown = {
+				situation:the_christian_church ?= {
+					OR = {
+						situation_current_phase = fragile_unity
+						situation_current_phase = conversion_phase
+						situation_current_phase = reform_phase
+						situation_current_phase = crusade_phase
+					}
+				}
+			}
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						any_held_title = { is_head_of_faith = yes }
+						pam_is_the_christian_church_main_power_trigger = yes
+					}
+					add = 6
+					if = { limit = { ai_rationality >= medium_positive_ai_value } add = 10 }
+					if = { limit = { ai_boldness <= low_negative_ai_value } add = 6 }
+				}
+				if = {
+					limit = {
+						is_clergy = no
+						has_trait = lifestyle_scholar
+					}
+					add = 8
+				}
+				if = {
+					limit = {
+						is_clergy = no
+						has_trait = theologian
+					}
+					add = 8
+				}
+				if = { limit = { has_trait = patient } add = 12 }
+				if = { limit = { has_trait = calm } add = 12 }
+				if = { limit = { has_trait = humble } add = 10 }
+				if = { limit = { has_trait = temperate } add = 10 }
+				if = { limit = { has_trait = just } add = 8 }
+				if = {
+					limit = {
+						is_clergy = no
+						NOT = { faith.religious_head ?= this }
+					}
+					multiply = 0.5
+				}
+			}
+		}
+	}
+
+	effect = {
+		add_character_flag = {
+			flag = pam_shaped_the_christian_church_recently
+			years = 20
+		}
+		situation:the_christian_church ?= {
+			switch = {
+				trigger = yes
+				scope:push_fragile_unity = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_fragile_unity
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_fragile_unity_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_fragile_unity_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_fragile_unity_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_fragile_unity_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_fragile_unity
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_fragile_unity }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_saeculum_obscurum = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_saeculum_obscurum
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_saeculum_obscurum_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_saeculum_obscurum_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_saeculum_obscurum_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_saeculum_obscurum_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_saeculum_obscurum
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_saeculum_obscurum }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_conversion = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_conversion_phase
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_conversion_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_conversion_phase_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_conversion_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_conversion_phase_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_conversion
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_conversion_phase }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_reform = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_reform_phase
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_reform_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_reform_phase_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_reform_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_reform_phase_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_reform
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_reform_phase }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_investiture_crisis = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_investiture_crisis
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_investiture_crisis_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_investiture_crisis_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_investiture_crisis_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_investiture_crisis_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_investiture_crisis
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_investiture_crisis }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_crusade = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_crusade_phase
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_crusade_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_crusade_phase_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_crusade_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_crusade_phase_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_crusade
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_crusade_phase }
+									}
+								}
+							}
+						}
+					}
+				}
+				scope:push_concord = {
+					if = {
+						limit = {
+							situation_top_has_catalyst = catalyst_shaped_the_christian_church_concord
+						}
+						if = {
+							limit = { root = { any_held_title = { is_head_of_faith = yes } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_concord_hof
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_concord_hof }
+									}
+								}
+							}
+						}
+						else_if = { # Princes of the Church dynasty legacy: the push counts double
+							limit = { root = { dynasty ?= { has_dynasty_perk = pam_legacy_5 } } }
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_concord_dynasty
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_concord_dynasty }
+									}
+								}
+							}
+						}
+						else = {
+							root = {
+								send_interface_toast = {
+									title = pam_shape_the_christian_church_decision_toast
+									left_icon = root
+									custom_tooltip = {
+										text = pam_shape_the_christian_church_decision_toast_concord
+										situation:the_christian_church = { trigger_situation_catalyst = catalyst_shaped_the_christian_church_concord }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 144
+		kingdom = 72
+		empire = 60
+		hegemony = 36
+	}
+
+	ai_potential = {
+		is_available_at_peace = yes
+		NOT = { has_trait = excommunicated }
+		OR = {
+			any_held_title = { is_head_of_faith = yes }
+			rite.head_of_rite ?= this
+			exists = clerical_elector_title
+			any_held_title = { has_clerical_region = yes }
+			AND = { # Pious kings
+				is_clergy = no
+				highest_held_title_tier >= tier_kingdom
+				OR = {
+					has_trait = lifestyle_scholar
+					has_trait = theologian
+					piety_level >= 3
+				}
+			}
+			highest_held_title_tier >= tier_empire
+			dynasty ?= { has_dynasty_perk = pam_legacy_5 } # Princes of the Church dynasty legacy
+		}
+		piety >= massive_piety_value # Do not go into piety debt for this
+	}
+
+	ai_will_do = {
+		base = 0
+		modifier = { # HoF
+			any_held_title = { is_head_of_faith = yes }
+			add = 25
+		}
+		modifier = { # HoR
+			rite.head_of_rite ?= this
+			add = 25
+		}
+		modifier = { # Cardinals
+			exists = clerical_elector_title
+			add = 15
+		}
+		modifier = { # Archbishops
+			any_held_title = { has_clerical_region = yes }
+			add = 10
+		}
+		modifier = { # Other people that would care
+			is_clergy = no
+			OR = {
+				has_trait = lifestyle_scholar
+				has_trait = theologian
+				has_trait = zealous
+				piety_level >= 4
+			}
+			add = 15
+		}
+		modifier = { # And people who wouldn't
+			has_trait = cynical
+			add = -40
+		}
+		modifier = { # Princes of the Church dynasty legacy
+			dynasty ?= { has_dynasty_perk = pam_legacy_5 }
+			add = 15
+		}
+		modifier = { # More likely to happen to push for IC
+			add = 10
+			faith ?= { has_doctrine = doctrine_clerical_succession_conditional }
+			OR = {
+				any_held_title = {
+					OR = {
+						is_head_of_faith = yes
+						has_clerical_region = yes
+					}
+				}
+				rite.head_of_rite ?= this
+				exists = clerical_elector_title
+			}
+		}
+		modifier = { # Already guided the Church within the last 20 years
+			has_character_flag = pam_shaped_the_christian_church_recently
+			factor = 0
+		}
+		modifier = {
+			piety <= massive_piety_value
+			factor = 0
+		}
+	}
+}
