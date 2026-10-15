@@ -66,8 +66,15 @@ pam_latin_as_liturgical_language_trigger = {
 	}
 }
 
+# Great Schism: progress can still change. Any scope
+pam_great_schism_progress_can_change_trigger = {
+	always = no		# Frozen in pre-schism state in BTWK
+	NOT = { has_global_variable = pam_great_schism_decision_taken }
+	exists = situation:the_christian_church
+}
+
 pam_beseech_claims_access_trigger = {
-	always = no		# Disabled in BTW
+	always = no		# Disabled in BTWK
 	has_pam_dlc_trigger = yes
 	pam_clergy_interactions_faith_trigger = yes
 	NOT = {

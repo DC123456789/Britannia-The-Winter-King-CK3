@@ -21,6 +21,7 @@ window = {
 		using = Window_Position_MainTab
 		
 		on_start = "[SetMapMode( 'religions' )]"
+		on_start = "[GetVariableSystem.Set('show_map_mode_banner', 'yes')]"
 		# Get faith to convert to in the button (largest faith in region? Or capital faith?)
 		on_start = "[GetScriptedGui('BTWK_soc_get_christian_rite_to_convert_to').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
 	}
@@ -32,6 +33,7 @@ window = {
 		using = Window_Position_MainTab_Hide
 		
 		on_start = "[SetMapMode( 'realms' )]"
+		on_start = "[GetVariableSystem.Clear( 'show_map_mode_banner')]"
 	}
 
 	margin_widget = {
@@ -1162,12 +1164,7 @@ types Situation
 	type situation_mini_map_mode = mini_map_mode {
 		parentanchor = bottom|left
 		widgetanchor = bottom|right
-		position = { -250 -25 }
-
-		blockoverride "widget_size"
-		{
-			size = { 280 60 }
-		}
+		position = { -250 -87 }
 
 		blockoverride "map_mode_buttons"
 		{			
@@ -1196,6 +1193,12 @@ types Situation
 					datacontext = "[GetMapMode( 'struggle' )]"
 				}
 			}
+		}
+
+		blockoverride "map_mode_button_expand" {}
+
+		blockoverride "map_mode_button_expand_menu" {
+			visible = no
 		}
 	}
 }
