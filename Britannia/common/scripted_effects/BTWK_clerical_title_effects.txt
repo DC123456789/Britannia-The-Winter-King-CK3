@@ -60,67 +60,70 @@ BTWK_create_clerical_title_effect = {
 	else = {
 		$CLERICAL_TITLE_STORY$.var:title = { save_scope_as = clerical_title_colour_template }
 	}
-	# Get the best candidate for the new archbishop
+	# Get the best candidate for the new archbishop, unless someone has already been selected
 	if = {
-		limit = { 
-			has_government = ecclesiastical_government
-			primary_title.title_capital_county = {
-				title_province = { geographical_region = scope:effect_region }
-				NOT = { exists = clerical_region_title }
+		limit = { NOT = { exists = scope:new_ecclesiastical_holder } }
+		if = {
+			limit = { 
+				has_government = ecclesiastical_government
+				primary_title.title_capital_county = {
+					title_province = { geographical_region = scope:effect_region }
+					NOT = { exists = clerical_region_title }
+				}
+				NOT = { any_held_title = { has_clerical_region = yes } }
 			}
-			NOT = { any_held_title = { has_clerical_region = yes } }
+			save_scope_as = new_ecclesiastical_holder
 		}
-		save_scope_as = new_ecclesiastical_holder
-	}
-	else_if = {
-		limit = {
-			primary_title.title_capital_county = {
-				title_province = { geographical_region = scope:effect_region }
-				NOT = { exists = clerical_region_title }
+		else_if = {
+			limit = {
+				primary_title.title_capital_county = {
+					title_province = { geographical_region = scope:effect_region }
+					NOT = { exists = clerical_region_title }
+				}
+				exists = cp:councillor_court_chaplain
+				cp:councillor_court_chaplain = {
+					faith = scope:kingdom_holder.faith
+					NOT = { any_held_title = { has_clerical_region = yes } }
+				}
 			}
-			exists = cp:councillor_court_chaplain
 			cp:councillor_court_chaplain = {
-				faith = scope:kingdom_holder.faith
-				NOT = { any_held_title = { has_clerical_region = yes } }
+				save_scope_as = new_ecclesiastical_holder
 			}
 		}
-		cp:councillor_court_chaplain = {
-			save_scope_as = new_ecclesiastical_holder
-		}
-	}
-	else_if = {
-		limit = {
-			any_vassal = {
-				primary_title.title_capital_county = {
-					title_province = { geographical_region = scope:effect_region }
-					NOT = { exists = clerical_region_title }
-				}
-				faith = scope:kingdom_holder.faith
-				has_government = ecclesiastical_government
-			}
-		}
-		ordered_vassal = {
+		else_if = {
 			limit = {
-				primary_title.title_capital_county = {
-					title_province = { geographical_region = scope:effect_region }
-					NOT = { exists = clerical_region_title }
+				any_vassal = {
+					primary_title.title_capital_county = {
+						title_province = { geographical_region = scope:effect_region }
+						NOT = { exists = clerical_region_title }
+					}
+					faith = scope:kingdom_holder.faith
+					has_government = ecclesiastical_government
 				}
-				faith = scope:kingdom_holder.faith
-				has_government = ecclesiastical_government
 			}
-			order_by = learning
-			save_scope_as = new_ecclesiastical_holder
+			ordered_vassal = {
+				limit = {
+					primary_title.title_capital_county = {
+						title_province = { geographical_region = scope:effect_region }
+						NOT = { exists = clerical_region_title }
+					}
+					faith = scope:kingdom_holder.faith
+					has_government = ecclesiastical_government
+				}
+				order_by = learning
+				save_scope_as = new_ecclesiastical_holder
+			}
 		}
-	}
-	else = {
-		ordered_courtier = {
-			limit = {
-				NOT = { any_held_title = { has_clerical_region = yes } }
-				faith = scope:kingdom_holder.faith
-				can_be_court_chaplain_trigger = { COURT_OWNER = scope:kingdom_holder }
+		else = {
+			ordered_courtier = {
+				limit = {
+					NOT = { any_held_title = { has_clerical_region = yes } }
+					faith = scope:kingdom_holder.faith
+					can_be_court_chaplain_trigger = { COURT_OWNER = scope:kingdom_holder }
+				}
+				order_by = learning
+				save_scope_as = new_ecclesiastical_holder
 			}
-			order_by = learning
-			save_scope_as = new_ecclesiastical_holder
 		}
 	}
 	if = {
@@ -294,10 +297,12 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 	}
-	faith = {
-		change_fervor = {
-			value = notable_fervor_gain
-			desc = fervor_gain_clerical_title_created
+	scope:new_ecclesiastical_holder = {
+		faith = {
+			change_fervor = {
+				value = notable_fervor_gain
+				desc = fervor_gain_clerical_title_created
+			}
 		}
 	}
 	# Trigger any dependent expansions
@@ -316,21 +321,24 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 	}
-	scope:kingdom_holder = { trigger_event = BTWK_clerical_titles.0001 }
-	scope:new_ecclesiastical_holder = { 
-		if = {
-			limit = { NOT = { this = scope:kingdom_holder } }
-			trigger_event = BTWK_clerical_titles.0001
-		}
-	}
-	every_player = {
-		limit = {
-			NOR = {
-				this = scope:kingdom_holder
-				this = scope:new_ecclesiastical_holder
+	if = {
+		limit = { NOT = { $CLERICAL_TITLE_STORY$ = { has_variable = suppress_event } } }
+		scope:kingdom_holder = { trigger_event = BTWK_clerical_titles.0001 }
+		scope:new_ecclesiastical_holder = { 
+			if = {
+				limit = { NOT = { this = scope:kingdom_holder } }
+				trigger_event = BTWK_clerical_titles.0001
 			}
 		}
-		trigger_event = BTWK_clerical_titles.0001
+		every_player = {
+			limit = {
+				NOR = {
+					this = scope:kingdom_holder
+					this = scope:new_ecclesiastical_holder
+				}
+			}
+			trigger_event = BTWK_clerical_titles.0001
+		}
 	}
 	# Clear the flag indicating that dependent expansions that were just triggered
 	$CLERICAL_TITLE_STORY$ = {
