@@ -603,19 +603,34 @@ spreading_of_christianity.0202 = {
 	
 	right_portrait = {
 		character = root
-		animation = interested
+		animation = idle
 	}
 
 	# Accept
 	option = {
 		name = spreading_of_christianity.0202.a
-		custom_tooltip = spreading_of_christianity.0202.a.tt
+		custom_tooltip = spreading_of_christianity.0202.a.tt.1
+		if = {
+			limit = { highest_held_title_tier >= tier_kingdom }
+			custom_tooltip = spreading_of_christianity.0202.a.tt.2
+		}
+		else = {
+			custom_tooltip = spreading_of_christianity.0202.a.tt.2.not_king
+		}
+		custom_tooltip = spreading_of_christianity.0202.a.tt.3
 		scope:gregorian_mission_story = {
 			set_variable = { name = mission_host_king value = root }
 		}
 		# TODO Do AI weights - should generally accept unless zealous
 		# Exception for when they are Bretwalda and being given priority - they should be less likely
 		# to say yes in this case so Canterbury is the archbishopric center in most games
+		
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_zeal = -1.33
+			}
+		}
 	}
 
 	# Refuse
@@ -623,6 +638,20 @@ spreading_of_christianity.0202 = {
 		name = spreading_of_christianity.0202.b
 		custom_tooltip = spreading_of_christianity.0202.b.tt
 		set_variable = rejected_gregorian_mission
+		
+		ai_chance = {
+			base = -25
+			ai_value_modifier = {
+				ai_zeal = 1
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+			}
+		}
 	}
 }
 
@@ -635,6 +664,12 @@ spreading_of_christianity.0203 = {
 	
 	immediate = {		
 		save_scope_as = gregorian_mission_augustine
+		
+		# Augustine abdicates any titles he happens to hold
+		if = {
+			limit = { is_ruler = yes }
+			depose = yes
+		}
 		
 		# Create the appropriate archbishopric
 		save_scope_as = new_ecclesiastical_holder
@@ -793,7 +828,9 @@ spreading_of_christianity.0204 = {
 	}
 	
 	immediate = {
-		custom_tooltip = spreading_of_christianity.0204.tt
+		custom_tooltip = spreading_of_christianity.0204.tt.1
+		custom_tooltip = spreading_of_christianity.0204.tt.2
+		custom_tooltip = spreading_of_christianity.0204.tt.3
 	}
 
 	option = {

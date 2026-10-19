@@ -126,7 +126,19 @@ BTWK_create_clerical_title_effect = {
 			}
 		}
 	}
+	# This can't trigger normally and is just for event immediate block tooltipping
 	if = {
+		limit = {
+			scope:clerical_title_creation_story = {
+				has_variable = clerical_title_created
+			}
+		}
+		custom_description = {
+			text = BTWK_create_clerical_title_effect_create_archbishopric_effect
+			subject = scope:clerical_title_creation_story.var:title.var:clerical_title
+		}
+	}
+	else_if = {
 		limit = { exists = scope:new_ecclesiastical_holder }
 		custom_tooltip = BTWK_create_clerical_title_effect_create_archbishopric_tt
 	}

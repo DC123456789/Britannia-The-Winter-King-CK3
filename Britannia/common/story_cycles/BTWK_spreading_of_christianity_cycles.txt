@@ -54,7 +54,7 @@
 	# Will always ask top liege, will not ask again if they rejected, and the capital of the kingdom
 	# must not already be in a clerical region
 	effect_group = {
-		months = 1
+		days = 15
 		
 		trigger = {
 			NOT = { has_variable = mission_host_king }
@@ -122,6 +122,14 @@
 				effect = {
 					save_scope_as = gregorian_mission_story
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_durovernum
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:k_cantia.holder = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -137,6 +145,14 @@
 				effect = {
 					save_scope_as = gregorian_mission_story
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_durovernum
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:c_durovernum.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -155,6 +171,14 @@
 				effect = {
 					save_scope_as = gregorian_mission_story
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_londinium
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:k_eastseaxe.holder = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -170,6 +194,14 @@
 				effect = {
 					save_scope_as = gregorian_mission_story
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_londinium
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:c_londinium.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -212,6 +244,25 @@
 							}
 						}
 						order_by = sub_realm_size
+						random_in_global_list = {
+							variable = creatable_clerical_title_stories
+							limit = {
+								this.var:title = title:d_et_canterbury
+								has_variable = anglo_saxon_kingdom_clerical_title
+								save_temporary_scope_as = current_story
+								prev = { 
+									BTWK_potential_create_clerical_title_trigger = { 
+										CLERICAL_TITLE_STORY = scope:current_story
+									}
+								}
+							}
+							alternative_limit = {
+								this.var:title = title:d_et_canterbury
+								has_variable = anglo_saxon_kingdom_clerical_title
+								this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+							}
+							save_scope_as = mission_archdiocese_story
+						}
 						trigger_event = spreading_of_christianity.0202
 					}
 				}
@@ -279,7 +330,8 @@
 								add = 20000
 							}
 						}
-						trigger_event = spreading_of_christianity.0202
+						save_scope_as = mission_archdiocese_story
+						this.var:seat.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
 					}
 				}
 			}
