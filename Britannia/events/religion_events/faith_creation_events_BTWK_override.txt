@@ -1,0 +1,120 @@
+﻿namespace = faith_creation
+
+# Notification event for when you create a Head of Faith.
+faith_creation.1010 = {
+	type = character_event
+    id_override_priority = 10
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:faith.religious_head_title = title:k_papal_state
+				}
+				desc = faith_creation.1010.t.BTWK_k_papal_state
+			}
+			desc = faith_creation.1010.t
+		}
+	}
+	desc = {
+		desc = faith_creation.1010.desc.start
+		first_valid = {
+			# I am the new temporal HoF!
+			triggered_desc = {
+				trigger = {
+					scope:faith = {
+						has_doctrine = doctrine_temporal_head
+						religious_head = root
+					}					
+				}
+				desc = faith_creation.1010.desc.temporal.personal
+			}
+			# Some other person is the new temporal HoF!
+			triggered_desc = {
+				trigger = {
+					scope:faith = {
+						has_doctrine = doctrine_temporal_head
+					}
+				}
+				desc = faith_creation.1010.desc.temporal
+			}
+			# BTWK special Papal desc
+			triggered_desc = {
+				trigger = {
+					scope:faith.religious_head_title = title:k_papal_state
+				}
+				desc = faith_creation.1010.desc.spiritual.BTWK_k_papal_state
+			}
+			# No wait we like spiritual HoFs instead!
+			triggered_desc = {
+				trigger = {
+					scope:faith = {
+						has_doctrine = doctrine_spiritual_head
+					}
+				}
+				desc = faith_creation.1010.desc.spiritual
+			}
+		}
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:faith = {
+						has_doctrine = doctrine_temporal_head
+						religious_head = root
+					}					
+				}
+				desc = faith_creation.1010.desc.end.personal
+			}
+			desc = faith_creation.1010.desc.end
+		}
+	}
+	left_portrait = {
+		character = scope:HoF
+		animation = personality_zealous
+	}
+	theme = faith
+	override_background = {
+		reference = temple_scope
+	}
+
+	trigger = {
+		exists = scope:faith.religious_head
+	}
+
+	immediate = {
+		play_music_cue = "mx_cue_epic_sacral_moment"
+
+		scope:faith = {
+			religious_head = {
+				save_scope_as = HoF
+				save_scope_as = background_temple_scope
+			}
+			show_as_tooltip = {
+				change_fervor = {
+					value = major_fervor_gain
+					desc = fervor_gain_recreated_hof
+				}
+			}
+		}
+	}
+
+	option = {
+		name = faith_creation.1010.a
+
+		if = {
+			limit = {
+				root = scope:reformer
+				scope:HoF != scope:reformer
+				scope:faith = {
+					has_doctrine = doctrine_spiritual_head
+				}						
+			}
+			scope:HoF = {
+				add_opinion = {
+					modifier = grateful_opinion
+					target = scope:reformer
+					opinion = 30
+				}
+			}
+		}		
+	}
+}

@@ -1,4 +1,175 @@
-﻿# Shape the Christian Church
+﻿create_hof_decision = {
+	picture = {
+		trigger = { religion = religion:islam_religion }
+		reference = "gfx/interface/illustrations/holding_types/temple_islamic.dds"
+	}
+	picture = {
+		trigger = { religion = religion:judaism_religion }
+		reference = "gfx/interface/illustrations/holding_types/temple_generic_arid.dds"
+	}
+	picture = {
+		trigger = {
+			OR = {
+				religion = religion:zoroastrianism_religion
+				religion = religion:dualism_religion
+			}
+		}
+		reference = "gfx/interface/illustrations/holding_types/fp3_temple_iranian_zoroastrian.dds"
+	}
+	picture = {
+		trigger = { religion = religion:shintoism_religion }
+		reference = "gfx/interface/illustrations/holding_types/tgp_shinto_temple.dds"
+	}
+	picture = {
+		trigger = { faith.religion = { is_in_family = rf_sinitic } }
+		reference = "gfx/interface/illustrations/holding_types/tgp_chinese_pagoda.dds"
+	}
+	picture = {
+		trigger = { faith.religion = { is_in_family = rf_eastern } }
+		reference = "gfx/interface/illustrations/holding_types/temple_india.dds"
+	}
+	picture = {
+		trigger = { religion = religion:tengrism_religion }
+		reference = "gfx/interface/illustrations/holding_types/mpo_temple_steppe.dds"
+	}
+	picture = {
+		trigger = {
+			OR = {
+				religion = religion:germanic_religion
+				religion = religion:baltic_religion
+				religion = religion:finno_ugric_religion
+				religion = religion:slavic_religion
+				religion = religion:magyar_religion
+			}
+		}
+		reference = "gfx/interface/illustrations/holding_types/temple_northern_pagan.dds"
+	}
+	picture = {
+		trigger = { faith.religion = { is_in_family = rf_pagan } }
+		reference = "gfx/interface/illustrations/event_scenes/ep2_holysite_tribal.dds"
+	}
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/pam_decision_create_hof.dds"
+	}
+	
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					faith.main_rite = rite:roman_rite
+				}
+				desc = create_hof_decision_BTWK_christian_faith
+			}
+			desc = create_hof_decision
+		}
+	}
+	
+	decision_group_type = major
+
+	sort_order = 110
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 24
+		duchy = 12
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	is_shown = {
+		OR = {
+			is_landed = yes
+			government_has_flag = government_is_theocracy
+		}
+		faith ?= {
+			OR = {
+				has_doctrine_parameter = spiritual_head_of_faith
+				has_doctrine_parameter = temporal_head_of_faith
+			}
+			NOT = { exists = religious_head }
+			NOT = { has_doctrine_parameter = block_from_create_hof_parameter }
+		}
+	}
+
+	is_valid = {
+		is_landed = yes
+		can_create_head_of_faith_title_trigger = { FAITH = root.faith } # Includes Schism requirements
+	}
+
+	cost = {
+		treasury_or_gold = create_hof_gold_cost
+		piety = create_hof_piety_cost
+	}
+
+	effect = {
+		faith = { save_scope_as = faith }
+		# Tell the player who will actually receive the title
+		if = {
+			limit = { faith = { has_doctrine_parameter = temporal_head_of_faith } }
+			custom_tooltip = create_hof_decision_temporal_self_tt
+		}
+		else_if = {		# BTWK - Pope is always elevated as long as Chalcedonianism is Spiritual
+			limit = { faith.main_rite = rite:roman_rite }
+			custom_tooltip = create_hof_decision_BTWK_pope_tt
+		}
+		else_if = {
+			limit = { is_clergy = yes }
+			custom_tooltip = create_hof_decision_spiritual_self_tt
+		}
+		else_if = {
+			limit = { puppet:theological_agent_puppet ?= { rite = root.rite } }
+			custom_tooltip = create_hof_decision_spiritual_puppet_tt
+		}
+		else_if = {
+			limit = { puppet:external_theological_agent_puppet ?= { rite = root.rite } }
+			custom_tooltip = create_hof_decision_spiritual_external_puppet_tt
+		}
+		else_if = {
+			limit = { cp:councillor_court_chaplain ?= { rite = root.rite } }
+			custom_tooltip = create_hof_decision_spiritual_realm_priest_tt
+		}
+		else = {
+			custom_tooltip = create_hof_decision_spiritual_other_tt
+		}
+		if = {
+			limit = {
+				faith = { has_doctrine_parameter = spiritual_head_of_faith }
+				faith != faith:christian_faith
+				NOT = { rite = faith.main_rite }
+			}
+			custom_tooltip = create_hof_decision_mainline_rite_tt
+		}
+		if = {
+			limit = {
+				faith = { has_doctrine_parameter = spiritual_head_of_faith }
+				faith != faith:christian_faith
+				is_clergy = no
+			}
+			custom_tooltip = create_hof_decision_landed_hof_warning_tt
+		}
+		force_create_head_of_faith_title_effect = yes
+	}
+
+	ai_potential = {
+		is_adult = yes
+		# Defer to a same-faith liege; they should be the one establishing the HoF
+		OR = {
+			top_liege = this
+			NOT = {
+				any_liege_or_above = {
+					faith = root.faith
+				}
+			}
+		}
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+# Shape the Christian Church
 pam_shape_the_christian_church_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/pam_decision_shape_the_christian_church.dds"
