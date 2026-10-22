@@ -621,6 +621,7 @@ spreading_of_christianity.0202 = {
 		scope:gregorian_mission_story = {
 			set_variable = { name = mission_host_king value = root }
 		}
+		
 		# TODO Do AI weights - should generally accept unless zealous
 		# Exception for when they are Bretwalda and being given priority - they should be less likely
 		# to say yes in this case so Canterbury is the archbishopric center in most games
@@ -637,12 +638,26 @@ spreading_of_christianity.0202 = {
 	option = {
 		name = spreading_of_christianity.0202.b
 		custom_tooltip = spreading_of_christianity.0202.b.tt
-		set_variable = rejected_gregorian_mission
+		if = {
+			limit = {
+				exists = scope:bretwalda_initial_request
+				is_ai = yes
+			}
+			set_variable = bretwalda_initial_rejected_gregorian_mission
+		}
+		else = {
+			set_variable = rejected_gregorian_mission
+		}
 		
 		ai_chance = {
 			base = -25
 			ai_value_modifier = {
 				ai_zeal = 1
+			}
+			# Baseline only ~50% chance of saying yes if initial Bretwalda request
+			modifier = {
+				add = 125
+				exists = scope:bretwalda_initial_request
 			}
 			modifier = {
 				add = {
