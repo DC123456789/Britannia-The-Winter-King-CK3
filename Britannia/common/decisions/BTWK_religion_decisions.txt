@@ -1,0 +1,105 @@
+﻿#########################################################################
+# Clerical Title Decisions												#
+#########################################################################
+
+BTWK_soc_invite_gregorian_mission = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/BTWK_spreading_of_christianity.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 36
+		empire = 36
+		hegemony = 36
+	}
+
+	desc = 	BTWK_soc_invite_gregorian_mission_desc
+
+	is_shown = {
+		is_landed = yes
+		is_unromanized_germanic_culture_trigger = yes
+		OR = {
+			faith = rite:roman_rite.faith
+			faith = { has_doctrine_parameter = unreformed }
+		}
+		any_held_title = {
+			tier = prev.primary_title.tier
+			title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+		}
+		NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_started } }
+		OR = {
+			title:c_londinium = { has_clerical_region = no }
+			title:c_lindum = { has_clerical_region = no }
+		}
+	}
+
+	is_valid = {
+		is_independent_ruler = yes
+		highest_held_title_tier >= tier_kingdom
+		trigger_if = {
+			limit = { government_has_flag = government_is_tribal }
+			OR = {
+				has_realm_law = tribal_authority_2
+				has_realm_law = tribal_authority_3
+			}
+		}
+		OR = {
+			AND = {
+				has_title = title:e_aengland
+				title:e_aengland = { title_held_years >= 10 }
+				BTWK_reform_from_tribal_innovations_trigger = yes
+				OR = {
+					custom_tooltip = {
+						text = BTWK_HK_aengland_unite_aengland_decision_has_declared_supremacy_tt
+						BTWK_aengland_bretwalda_has_declared_supremacy_trigger = yes
+					}
+					custom_tooltip = {
+						text = BTWK_HK_aengland_declare_supremacy_decision_hegemony_score_tt
+						this.var:aengland_bretwalda_hegemony_score >= 500
+					}
+				}
+			}
+			AND = {
+				sub_realm_size >= 15
+				primary_title = { title_held_years >= 5 }
+				BTWK_reform_from_tribal_unreformed_pagan_innovations_trigger = yes
+			}
+		}
+		trigger_if = {
+			limit = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_preparations_started } }
+			custom_tooltip = {
+				text = BTWK_soc_invite_gregorian_mission_not_already_started_tt
+				NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_preparations_started } }
+			}
+		}
+	}
+
+	effect = {
+		custom_tooltip = BTWK_soc_invite_gregorian_mission_tt.1
+		if = {
+			limit = { highest_held_title_tier >= tier_kingdom }
+			custom_tooltip = BTWK_soc_invite_gregorian_mission_tt.2
+		}
+		else = {
+			custom_tooltip = BTWK_soc_invite_gregorian_mission_tt.2.not_king
+		}
+		custom_tooltip = BTWK_soc_invite_gregorian_mission_tt.3
+		custom_tooltip = BTWK_soc_invite_gregorian_mission_tt.4
+		hidden_effect = {
+			save_scope_as = gregorian_mission_invited_ruler
+			trigger_event = spreading_of_christianity.0201
+		}
+	}
+	
+	ai_potential = {
+		is_independent_ruler = yes
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}

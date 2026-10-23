@@ -494,6 +494,7 @@ spreading_of_christianity.0200 = {
 			limit = {
 				current_year > 590
 				NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_started } }
+				NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_attempt_started } }
 				OR = {
 					title:c_londinium = { has_clerical_region = no }
 					title:c_lindum = { has_clerical_region = no }
@@ -528,7 +529,8 @@ spreading_of_christianity.0201 = {
 	hidden = yes
 
 	immediate = {
-		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_started }
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_attempt_started }
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_preparations_started }
 		create_character = {
 			age = 55		# Already a bit old when he arrives
 			name = augustinus_male_roman
@@ -618,18 +620,26 @@ spreading_of_christianity.0202 = {
 			custom_tooltip = spreading_of_christianity.0202.a.tt.2.not_king
 		}
 		custom_tooltip = spreading_of_christianity.0202.a.tt.3
+		custom_tooltip = spreading_of_christianity.0202.a.tt.4
 		scope:gregorian_mission_story = {
 			set_variable = { name = mission_host_king value = root }
 		}
-		
-		# TODO Do AI weights - should generally accept unless zealous
-		# Exception for when they are Bretwalda and being given priority - they should be less likely
-		# to say yes in this case so Canterbury is the archbishopric center in most games
 		
 		ai_chance = {
 			base = 100
 			ai_value_modifier = {
 				ai_zeal = -1.33
+			}
+			modifier = {
+				add = 100
+				faith = rite:roman_rite.faith
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != rite:roman_rite.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
 			}
 		}
 	}
@@ -654,17 +664,28 @@ spreading_of_christianity.0202 = {
 			ai_value_modifier = {
 				ai_zeal = 1
 			}
-			# Baseline only ~50% chance of saying yes if initial Bretwalda request
-			modifier = {
-				add = 125
-				exists = scope:bretwalda_initial_request
-			}
 			modifier = {
 				add = {
 					value = ai_rationality
 					multiply = -0.5
 				}
 				ai_rationality >= 0
+			}
+			modifier = {
+				add = 200
+				faith = {
+					this != rite:roman_rite.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				multiply = 0
+				faith = rite:roman_rite.faith
+			}
+			# Baseline only ~50% chance of saying yes if initial Bretwalda request
+			modifier = {
+				add = 125
+				exists = scope:bretwalda_initial_request
 			}
 		}
 	}
@@ -678,6 +699,7 @@ spreading_of_christianity.0203 = {
 	hidden = yes
 	
 	immediate = {		
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_started }
 		save_scope_as = gregorian_mission_augustine
 		
 		# Augustine abdicates any titles he happens to hold
@@ -929,12 +951,139 @@ spreading_of_christianity.0204 = {
 				}
 			}
 		}
+		if = {
+			limit = { this = scope:mission_host_king }
+			add_character_modifier = {
+				modifier = BTWK_soc_accepted_gregorian_mission_modifier
+				years = 30
+			}
+			if = {
+				limit = { this.culture.culture_head = this }
+				add_character_modifier = {
+					modifier = BTWK_soc_accepted_gregorian_mission_culture_modifier
+					years = 30
+				}
+			}
+		}
 	}
 }
 
 # If all potential seats were rejected, notify everyone in Britain that the Gregorian Mission failed
 # (should basically never happen outside player intervention)
-# spreading_of_christianity.0205 = {
+spreading_of_christianity.0205 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0205.t
+	desc = spreading_of_christianity.0205.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = disappointed
+	}
+	
+	immediate = {
+		custom_tooltip = spreading_of_christianity.0205.a.tt.1
+		if = {
+			limit = {
+				is_unromanized_germanic_culture_trigger = yes
+				OR = {
+					faith = rite:roman_rite.faith
+					faith = { has_doctrine_parameter = unreformed }
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+				}
+				OR = {
+					title:c_londinium = { has_clerical_region = no }
+					title:c_lindum = { has_clerical_region = no }
+				}
+			}
+			custom_tooltip = spreading_of_christianity.0205.a.tt.2
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0205.a.anglosaxon.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0205.a.anglosaxon.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.briton.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							OR = {
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.briton.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.other.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								culture = { has_cultural_pillar = heritage_brythonic }
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.other.non_christian
+					}
+				}
+			}
+		}
+	}
+}
 
 # Augustine decides to send missionaries to independent Anglo-Saxon kingdom
 # Notify Augustine as he is technically playable (through console), but the choice is made for him (for now)

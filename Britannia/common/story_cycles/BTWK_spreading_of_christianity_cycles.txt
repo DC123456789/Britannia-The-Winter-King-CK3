@@ -14,7 +14,10 @@
 	on_end = {
 		if = {
 			limit = { NOT = { has_variable = mission_seat_selected } }
-			situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_failed }
+			situation:spreading_of_christianity_situation = { 
+				set_variable = gregorian_mission_attempt_failed
+				remove_variable = gregorian_mission_preparations_started
+			}
 			every_player = {
 				limit = { 
 					OR = {
@@ -23,6 +26,7 @@
 						is_anglo_saxon_culture_trigger = yes
 					}
 				}
+				prev.story_owner = { save_scope_as = gregorian_mission_augustine }
 				trigger_event = spreading_of_christianity.0205
 			}
 		}
@@ -394,4 +398,18 @@
 			remove_variable = mission_host_king
 		}
 	}
+	
+	# TODO Once the mission starts, do a monthly timer keeping track of the time elapsed
+	# Once we reach 30 years, the mission ends
+	
+	# TODO Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
+	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
+	# or have a Christian capital
+	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
+	# in the main host
+	
+	# TODO While you have missionaries, every year the missionaries will convert parts of your realm
+	# If you are not Christian and you have not already refused, you will always be asked to convert
+	# Otherwise, they will attempt to convert pagan vassals in your realm
+	# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
 }
