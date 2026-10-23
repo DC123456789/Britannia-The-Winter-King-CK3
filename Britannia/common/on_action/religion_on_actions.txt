@@ -1856,7 +1856,7 @@ update_main_rite_action = {
 					name = rite_counties
 					value = {
 						value = scope:rite_counties
-						add = 500
+						add = BTWK_roman_rite_main_rite_num_counties_bonus
 					}
 				}
 				save_scope_value_as = {
@@ -1867,20 +1867,29 @@ update_main_rite_action = {
 					}
 				}
 			}
-			if = {		# BTWK - Roman Paganism gets a medium bonus to compensate for being offmap
+			if = {		# BTWK - Roman Paganism gets a medium bonus to compensate for being offmap, declining each year
 				limit = { this = rite:hellenic_pagan }
 				save_scope_value_as = {
 					name = rite_counties
 					value = {
 						value = scope:rite_counties
-						add = 250
+						add = BTWK_hellenic_pagan_main_rite_num_counties_bonus
 					}
 				}
 				save_scope_value_as = {
 					name = rite_holy_sites
 					value = {
 						value = scope:rite_holy_sites
-						add = 3
+						add = {
+							value = 2
+							subtract = {
+								value = current_year
+								subtract = 479
+								divide = 50
+							}
+							min = 0
+							ceiling = yes
+						}
 					}
 				}
 			}
