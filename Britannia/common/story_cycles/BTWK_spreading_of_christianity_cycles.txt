@@ -389,6 +389,14 @@
 					this.var:mission_host_king = { save_scope_as = mission_host_king }
 					story_owner = { trigger_event = spreading_of_christianity.0203 }
 					set_variable = mission_started
+					set_variable = {
+						name = mission_started_spread_to_other_kingdoms_timer
+						years = 5
+					}
+					set_variable = {
+						name = mission_started_overall_timer
+						years = 30
+					}
 				}
 			}
 		}
@@ -399,17 +407,102 @@
 		}
 	}
 	
-	# TODO Once the mission starts, do a monthly timer keeping track of the time elapsed
-	# Once we reach 30 years, the mission ends
-	
 	# TODO Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
 	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
 	# or have a Christian capital
 	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
 	# in the main host
+	effect_group = {
+		years = 1
+		
+		trigger = {
+			has_variable = mission_started
+			NOT = { has_variable = mission_started_spread_to_other_kingdoms_timer }
+		}
+
+		first_valid = {
+			# Look for independent Anglo-Saxon kings that have not either accepted or rejected missionaries
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					random_independent_ruler = {
+						# Prefer king-tier tributaries of the host
+						limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_kingdom
+							suzerain ?= prev.var:mission_host_king
+						}
+						# Otherwise, target king-tier rulers generally
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_kingdom
+						}
+						# Otherwise, target independent duke-tier rulers
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_duchy
+						}
+						# Otherwise, any eligible Anglo-Saxon ruler
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+						}
+						save_scope_as = next_target_king
+						prev.story_owner = { trigger_event = spreading_of_christianity.0210 }
+					}
+				}
+			}
+		}
+	}
 	
 	# TODO While you have missionaries, every year the missionaries will convert parts of your realm
 	# If you are not Christian and you have not already refused, you will always be asked to convert
 	# Otherwise, they will attempt to convert pagan vassals in your realm
 	# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
+	
+	# TODO Once the mission starts, do a monthly timer keeping track of the time elapsed
+	# Once we reach 30 years, the mission ends
 }

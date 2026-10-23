@@ -957,13 +957,6 @@ spreading_of_christianity.0204 = {
 				modifier = BTWK_soc_accepted_gregorian_mission_modifier
 				years = 30
 			}
-			if = {
-				limit = { this.culture.culture_head = this }
-				add_character_modifier = {
-					modifier = BTWK_soc_accepted_gregorian_mission_culture_modifier
-					years = 30
-				}
-			}
 		}
 	}
 }
@@ -1087,10 +1080,117 @@ spreading_of_christianity.0205 = {
 
 # Augustine decides to send missionaries to independent Anglo-Saxon kingdom
 # Notify Augustine as he is technically playable (through console), but the choice is made for him (for now)
-# spreading_of_christianity.0210 = {
+spreading_of_christianity.0210 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0210.t
+	desc = spreading_of_christianity.0210.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = deliberation
+	}
+	
+	immediate = {
+		save_scope_as = gregorian_mission_augustine
+	}
+
+	option = {
+		name = spreading_of_christianity.0210.a
+		scope:next_target_king = { trigger_event = spreading_of_christianity.0211 }
+	}
+}
 
 # Independent Anglo-Saxon king receives Augustine's request to accept missionaries
-# spreading_of_christianity.0211 = {
+spreading_of_christianity.0211 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0211.t
+	desc = spreading_of_christianity.0211.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = writing
+	}
+	
+	right_portrait = {
+		character = root
+		animation = idle
+	}
+
+	# Accept
+	option = {
+		name = spreading_of_christianity.0211.a
+		custom_tooltip = spreading_of_christianity.0211.a.tt.1
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1.33
+				}
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = spreading_of_christianity.0211.b
+		custom_tooltip = spreading_of_christianity.0211.b.tt
+		set_variable = rejected_gregorian_mission_spread
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				add = 200
+				faith = {
+					this != rite:roman_rite.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				multiply = 0.25
+				faith = scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				multiply = 0
+				rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+	}
+}
 
 # Augustine receives reply from king about missionaries
 # spreading_of_christianity.0212 = {
@@ -1101,8 +1201,14 @@ spreading_of_christianity.0205 = {
 # Notify Augustine of King's conversion (or not)
 # spreading_of_christianity.0214 = {
 
-# Vassal of king with missionaries is asked to convert
+# Successor of King with missionaries is asked if he wants to keep them
 # spreading_of_christianity.0215 = {
+
+# Augustine is notified of new king and their response
+# spreading_of_christianity.0216 = {
+
+# Vassal of king with missionaries is asked to convert
+# spreading_of_christianity.0217 = {
 
 # End of the Gregorian Mission, all missionary events end
 # spreading_of_christianity.0220 = {
