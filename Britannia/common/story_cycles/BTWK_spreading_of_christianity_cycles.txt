@@ -13,7 +13,14 @@
 
 	on_end = {
 		if = {
-			limit = { NOT = { has_variable = mission_seat_selected } }
+			limit = { 
+				NOT = { has_variable = mission_seat_selected }
+				NOT = { title:d_et_canterbury = { has_variable = clerical_title } }
+				NAND = {
+					title:d_et_london = { has_variable = clerical_title }
+					title:d_et_lincoln = { has_variable = clerical_title }
+				}
+			}
 			situation:spreading_of_christianity_situation = { 
 				set_variable = gregorian_mission_attempt_failed
 				remove_variable = gregorian_mission_preparations_started
@@ -41,6 +48,7 @@
 			make_story_owner = title:d_et_canterbury.var:clerical_title.holder
 		}
 		else = {
+			save_scope_as = actor
 			create_character = {
 				location = story_owner.capital_province
 				template = priest_character_template
@@ -407,7 +415,7 @@
 		}
 	}
 	
-	# TODO Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
+	# Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
 	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
 	# or have a Christian capital
 	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
@@ -498,10 +506,76 @@
 		}
 	}
 	
-	# TODO While you have missionaries, every year the missionaries will convert parts of your realm
-	# If you are not Christian and you have not already refused, you will always be asked to convert
-	# Otherwise, they will attempt to convert pagan vassals in your realm
-	# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
+	# While you have missionaries, every year the missionaries will convert parts of your realm
+	effect_group = {
+		years = 1
+		
+		trigger = { always = yes }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					every_independent_ruler = {
+						limit = {
+							is_landed = yes
+							has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+						}
+						# If you are not Christian and you have not already refused, you will always be asked to convert
+						if = {
+							limit = { 
+								religion != scope:gregorian_mission_augustine.religion
+								NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+							}
+							trigger_event = { id = spreading_of_christianity.0214 days = { 1 90 } }
+						}
+						# Otherwise, they will attempt to convert pagan vassals in your realm
+						else_if = {
+							limit = {
+								any_vassal = {
+									limit = {
+										religion != scope:gregorian_mission_augustine.religion
+										NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									}
+								}
+							}
+							random_vassal = {
+								limit = {
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									faith = { has_doctrine_parameter = unreformed }
+								}
+								alternative_limit = {
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+								}
+								trigger_event = { id = spreading_of_christianity.0218 days = { 1 90 } }
+							}
+						}
+						# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
+						else = {
+							random_realm_county = {
+								limit = {
+									owner = { faith = scope:gregorian_mission_augustine.faith }
+									faith = { has_doctrine_parameter = unreformed }
+								}
+								random = {
+									chance = 50
+									save_scope_as = county
+									scope:gregorian_mission_augustine = { save_scope_as = councillor_liege }
+									trigger_event = court_chaplain_task.8000		# Gives notification
+									set_county_faith = scope:gregorian_mission_augustine.faith
+									set_county_rite = scope:gregorian_mission_augustine.rite									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	# TODO Once the mission starts, do a monthly timer keeping track of the time elapsed
 	# Once we reach 30 years, the mission ends
