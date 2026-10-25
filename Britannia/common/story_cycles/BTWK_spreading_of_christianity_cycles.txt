@@ -9,6 +9,9 @@
 	}
 
 	on_setup = {
+		title:d_et_canterbury = { 
+			set_variable = { name = BTWK_soc_gregorian_mission_story value = prev }
+		}
 	}
 
 	on_end = {
@@ -37,6 +40,19 @@
 				trigger_event = spreading_of_christianity.0205
 			}
 		}
+		else = {
+			story_owner = { save_scope_as = gregorian_mission_augustine }
+			every_ruler = {
+				limit = {
+					OR = {
+						has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+						is_ai = no
+					}
+				}
+				trigger_event = spreading_of_christianity.0290
+			}
+		}
+		title:d_et_canterbury = { remove_variable = BTWK_soc_gregorian_mission_story }
 	}
 
 	on_owner_death = {
@@ -44,7 +60,10 @@
 		# If the Archbishopric of Canterbury exists and has a holder, transfer it over to them
 		# Otherwise, create a random new priest character and transfer it to them
 		if = {
-			limit = { exists = title:d_et_canterbury.var:clerical_title.holder }
+			limit = { 
+				exists = title:d_et_canterbury.var:clerical_title.holder
+				title:d_et_canterbury.var:clerical_title.holder.religion = religion:christianity_religion
+			}
 			make_story_owner = title:d_et_canterbury.var:clerical_title.holder
 		}
 		else = {
@@ -551,7 +570,7 @@
 									religion != scope:gregorian_mission_augustine.religion
 									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
 								}
-								trigger_event = { id = spreading_of_christianity.0218 days = { 1 90 } }
+								trigger_event = { id = spreading_of_christianity.0219 days = { 1 90 } }
 							}
 						}
 						# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
@@ -577,6 +596,52 @@
 		}
 	}
 	
-	# TODO Once the mission starts, do a monthly timer keeping track of the time elapsed
 	# Once we reach 30 years, the mission ends
+	effect_group = {
+		years = 1
+		
+		trigger = { NOT = { has_variable = mission_started_overall_timer } }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					end_story = yes
+				}
+			}
+		}
+	}
+}
+
+BTWK_soc_gregorian_mission_augustine_canonization_story = {
+
+	on_setup = {
+		set_variable = { name = canonization_timer years = 10 }
+	}
+
+	on_end = {
+		this.var:gregorian_mission_augustine = { save_scope_as = gregorian_mission_augustine }
+		if = {
+			limit = { exists = title:d_et_canterbury.var:clerical_title.holder }
+			title:d_et_canterbury.var:clerical_title.holder = {
+				trigger_event = spreading_of_christianity.0291
+			}
+		}
+	}
+	
+	# Once we reach 10 years, the mission ends
+	effect_group = {
+		months = 1
+		
+		trigger = { NOT = { has_variable = canonization_timer } }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					end_story = yes
+				}
+			}
+		}
+	}
 }
