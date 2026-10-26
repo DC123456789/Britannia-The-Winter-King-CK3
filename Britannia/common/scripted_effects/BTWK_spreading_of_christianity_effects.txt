@@ -35,7 +35,31 @@ BTWK_soc_situation_set_proselytization_modifier_effect = {
 		}
 	}
 	religion:christianity_religion = {
+		# Augustinian Missionaries force priority
 		if = {
+			limit = {
+				scope:current_proselytization_county.holder = {
+					top_liege = {
+						has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+						OR = {
+							title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner.faith ?= this.faith
+							faith = { has_doctrine_parameter = unreformed }
+						}
+					}
+					OR = {
+						title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner.faith ?= this.faith
+						faith = { has_doctrine_parameter = unreformed }
+					}
+				}
+			}
+			scope:current_proselytization_county = {
+				set_variable = { 
+					name = soc_proselytization_target_rite
+					value = title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner.rite
+				}
+			}
+		}
+		else_if = {
 			limit = {
 				any_faith = { any_faith_rite = { this.var:rite_counties_count > 0 } }
 			}
