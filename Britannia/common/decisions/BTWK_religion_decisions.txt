@@ -47,11 +47,16 @@ BTWK_soc_invite_gregorian_mission = {
 				has_realm_law = tribal_authority_3
 			}
 		}
+		BTWK_reform_from_tribal_innovations_trigger = yes
+		primary_title = { title_held_years >= 10 }
+		OR = {
+			sub_realm_size >= 15
+			highest_held_title_tier >= tier_empire
+		}		
 		OR = {
 			AND = {
 				has_title = title:e_aengland
 				title:e_aengland = { title_held_years >= 10 }
-				BTWK_reform_from_tribal_innovations_trigger = yes
 				OR = {
 					custom_tooltip = {
 						text = BTWK_HK_aengland_unite_aengland_decision_has_declared_supremacy_tt
@@ -63,11 +68,8 @@ BTWK_soc_invite_gregorian_mission = {
 					}
 				}
 			}
-			AND = {
-				sub_realm_size >= 15
-				primary_title = { title_held_years >= 5 }
-				BTWK_reform_from_tribal_unreformed_pagan_innovations_trigger = yes
-			}
+			BTWK_reform_from_tribal_unreformed_pagan_innovations_trigger = yes
+			faith = rite:roman_rite.faith
 		}
 		trigger_if = {
 			limit = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_preparations_started } }

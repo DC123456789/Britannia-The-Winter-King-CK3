@@ -507,17 +507,26 @@ spreading_of_christianity.0200 = {
 						faith = { has_doctrine_parameter = unreformed }
 					}
 				}
-				random = {
-					chance = {
-						value = 0
+			}
+			random = {
+				chance = {
+					value = 0
+					add = {
+						value = current_year
+						subtract = 590
+						multiply = 2.5		# Around 52% chance of happening by the historical date (597)
+					}
+					if = {
+						limit = { current_year > 600 }
 						add = {
 							value = current_year
-							subtract = 590
-							multiply = 2.5		# Around 52% chance of happening by the historical date (597)
+							subtract = 600
+							multiply = 2.5
 						}
 					}
-					trigger_event = spreading_of_christianity.0201
+					max = 100
 				}
+				trigger_event = spreading_of_christianity.0201
 			}
 		}
 	}
@@ -640,6 +649,14 @@ spreading_of_christianity.0202 = {
 					this != rite:roman_rite.faith
 					NOT = { has_doctrine_parameter = unreformed }
 				}
+			}
+			modifier = {
+				add = 50
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				subtract = 25
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
 			}
 		}
 	}
@@ -1169,6 +1186,14 @@ spreading_of_christianity.0211 = {
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
+				add = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				subtract = 50
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			modifier = {
 				multiply = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
@@ -1210,6 +1235,14 @@ spreading_of_christianity.0211 = {
 			modifier = {
 				subtract = 50
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				add = 50
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
 			}
 			modifier = {
 				add = 1000
@@ -1438,6 +1471,10 @@ spreading_of_christianity.0214 = {
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
+				add = 25
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
 				multiply = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
@@ -1654,6 +1691,10 @@ spreading_of_christianity.0216 = {
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
+				add = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
 				multiply = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
@@ -1711,6 +1752,10 @@ spreading_of_christianity.0216 = {
 			modifier = {
 				subtract = 50
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
 				add = 1000
@@ -2041,7 +2086,6 @@ spreading_of_christianity.0291 = {
 	}
 
 	immediate = {
-		set_variable = get_here
 		# Need to select a location
 		title:d_et_canterbury.var:clerical_title.title_capital_county = {
 			save_scope_as = canterbury_capital_county
@@ -2174,6 +2218,64 @@ spreading_of_christianity.0291 = {
 					add_saint = scope:gregorian_mission_augustine
 				}
 			}
+			
+			# Create the pallium relic
+			set_artifact_rarity_masterwork = yes
+			create_artifact = {
+				name = artifact_relic_augustine_pallium_name
+				description = artifact_relic_augustine_pallium_desc
+				type = pedestal
+				creator = scope:gregorian_mission_augustine
+				template = christian_artifact_template
+				visuals = pedestal_christian_relic
+				wealth = scope:wealth
+				quality = scope:quality
+				modifier = artifact_placeholder_modifier
+				save_scope_as = newly_created_artifact
+			}
+			save_scope_as = relic_owner
+			scope:newly_created_artifact = {
+				set_variable = { name = historical_unique_artifact value = yes }
+				scope:relic_owner = { save_scope_as = owner } # Required for the 'add_scaled_artifact_' scripted effects
+				add_scaled_artifact_modifier_piety_effect = yes
+				add_scaled_artifact_modifier_grandeur_small_effect = yes
+				if = {
+					limit = {
+						OR = {
+							rarity = famed
+							rarity = illustrious
+						}
+					}
+					add_2_scaled_artifact_modifier_devotion_effect = yes
+				}
+				else = {
+					add_scaled_artifact_modifier_devotion_effect = yes
+				}
+				add_artifact_modifier = artifact_monthly_prestige_penalty_modifier # overwrite default creation modifier
+			}
+			# AI automatically enshrines it in Canterbury
+			if = {
+				limit = {
+					is_ai = yes
+					holy_site:kent.holy_site_barony.holder.faith = this.faith
+					holy_site:kent = { holy_site_artifact_count < 3 }
+				}
+				scope:newly_created_artifact = {
+					set_holy_site_owner = {
+						target = holy_site:kent
+						generate_history = no
+						# history = {		# Doesn't work
+							# type = enshrined
+							# actor = root
+							# recipient = holy_site:kent
+							# location = holy_site:kent.holy_site_barony.title_province
+						# }
+					}
+					equip_artifact_to_owner = yes
+				}
+				holy_site:kent = { save_scope_as = relic_enshrined_location }
+			}
+			
 			every_ruler = {
 				limit = {
 					OR = {
@@ -2212,67 +2314,6 @@ spreading_of_christianity.0292 = {
 	left_portrait = {
 		character = scope:gregorian_mission_augustine
 		animation = dead
-	}
-	
-	immediate = {
-		if = {
-			limit = { this = scope:canterbury_canonizer }
-			hidden_effect = {
-				set_artifact_rarity_masterwork = yes
-				create_artifact = {
-					name = artifact_relic_augustine_pallium_name
-					description = artifact_relic_augustine_pallium_desc
-					type = pedestal
-					creator = scope:gregorian_mission_augustine
-					template = christian_artifact_template
-					visuals = pedestal_christian_relic
-					wealth = scope:wealth
-					quality = scope:quality
-					modifier = artifact_placeholder_modifier
-					save_scope_as = newly_created_artifact
-				}
-				save_scope_as = relic_owner
-				scope:newly_created_artifact = {
-					set_variable = { name = historical_unique_artifact value = yes }
-					scope:relic_owner = { save_scope_as = owner } # Required for the 'add_scaled_artifact_' scripted effects
-					add_scaled_artifact_modifier_piety_effect = yes
-					add_scaled_artifact_modifier_grandeur_small_effect = yes
-					if = {
-						limit = {
-							OR = {
-								rarity = famed
-								rarity = illustrious
-							}
-						}
-						add_2_scaled_artifact_modifier_devotion_effect = yes
-					}
-					else = {
-						add_scaled_artifact_modifier_devotion_effect = yes
-					}
-					add_artifact_modifier = artifact_monthly_prestige_penalty_modifier # overwrite default creation modifier
-				}
-			}
-			# AI automatically enshrines it in Canterbury
-			if = {
-				limit = {
-					is_ai = yes
-					holy_site:kent.holy_site_barony.holder.faith = this.faith
-				}
-				scope:newly_created_artifact = {
-					set_holy_site_owner = {
-						target = holy_site:kent
-						generate_history = no
-						# history = {		# Doesn't work
-							# type = enshrined
-							# actor = root
-							# recipient = holy_site:kent
-							# location = holy_site:kent.holy_site_barony.title_province
-						# }
-					}
-					equip_artifact_to_owner = yes
-				}
-			}
-		}
 	}
 
 	option = {
@@ -2325,7 +2366,11 @@ spreading_of_christianity.0292 = {
 		custom_tooltip = spreading_of_christianity.0292.a.tt
 		if = {
 			limit = { this = scope:canterbury_canonizer }
-			custom_tooltip = spreading_of_christianity.0292.a.tt.relic
+			custom_tooltip = spreading_of_christianity.0292.a.tt.relic.1
+		}
+		if = {
+			limit = { exists = scope:relic_enshrined_location }
+			custom_tooltip = spreading_of_christianity.0292.a.tt.relic.2
 		}
 	}
 }
