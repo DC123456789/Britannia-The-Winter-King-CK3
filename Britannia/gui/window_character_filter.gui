@@ -258,7 +258,7 @@ types Filters {
 												using = Background_Area_Dark
 											}
 												
-											visible = "[Or(And(And(And(And(Not(PatternItem.IsFaith), Not(PatternItem.IsReligion)), Not(PatternItem.IsGovernment)), Not(PatternItem.IsHeritage)), Not(PatternItem.IsCulture)), Or(And(PatternItem.IsFaith, GetScriptedGui('BTWK_faith_visible').IsShown(GuiScope.SetRoot(PatternItem.GetFaith.MakeScope).End)), Or(And(PatternItem.IsReligion, GetScriptedGui('BTWK_religion_visible').IsShown(GuiScope.SetRoot(PatternItem.GetReligion.MakeScope).End)), Or(And(PatternItem.IsGovernment, GetScriptedGui('BTWK_government_visible').IsShown(GuiScope.SetRoot(PatternItem.GetGovernment.MakeScope).End)), Or(And(PatternItem.IsHeritage, GreaterThan_int32(GetDataModelSize(PatternItem.GetHeritage.GetCulturesWithPillar),'(int32)0')), And(PatternItem.IsCulture, GetScriptedGui('BTWK_culture_allowed').IsShown(GuiScope.SetRoot(PatternItem.GetCulture.MakeScope).End)))))))]"
+											visible = "[Or7(And6(Not(PatternItem.IsRite), Not(PatternItem.IsFaith), Not(PatternItem.IsReligion), Not(PatternItem.IsGovernment), Not(PatternItem.IsHeritage), Not(PatternItem.IsCulture)), And(PatternItem.IsRite, GetScriptedGui('BTWK_rite_visible').IsShown(GuiScope.SetRoot(PatternItem.GetRite.MakeScope).End)), And(PatternItem.IsFaith, GetScriptedGui('BTWK_faith_visible').IsShown(GuiScope.SetRoot(PatternItem.GetFaith.MakeScope).End)), And(PatternItem.IsReligion, GetScriptedGui('BTWK_religion_visible').IsShown(GuiScope.SetRoot(PatternItem.GetReligion.MakeScope).End)), And(PatternItem.IsGovernment, GetScriptedGui('BTWK_government_visible').IsShown(GuiScope.SetRoot(PatternItem.GetGovernment.MakeScope).End)), And(PatternItem.IsHeritage, GreaterThan_int32(GetDataModelSize(PatternItem.GetHeritage.GetCulturesWithPillar),'(int32)0')), And(PatternItem.IsCulture, GetScriptedGui('BTWK_culture_allowed').IsShown(GuiScope.SetRoot(PatternItem.GetCulture.MakeScope).End)))]"
 
 											hbox = {
 												margin_left = 6
@@ -305,6 +305,7 @@ types Filters {
 														blockoverride "faith_context"
 														{
 															datacontext = "[GetPlayer.GetFaith]"
+															datacontext = "[GetPlayer.GetRite]"
 														}
 
 														blockoverride "icon_size"
@@ -489,7 +490,7 @@ types Filters {
 													}
 
 													tooltipwidget = {
-														using = religion_tooltip
+														religion_tooltip = {}
 													}
 												}
 												
@@ -509,6 +510,35 @@ types Filters {
 														align = nobaseline
 													}
 													tooltip = "CHARACTER_LIST_GOVERNMENT_TT"
+												}
+
+												hbox = {
+													datacontext = "[PatternItem.GetRite]"
+													visible = "[PatternItem.IsRite]"
+													layoutpolicy_horizontal = expanding
+													margin = { 10 0 }
+													margin_left = 5
+													spacing = 5
+
+													icon = {
+														size = { 45 45 }
+														texture = "[PatternItem.GetRite.GetIcon]"
+													}
+
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														text = "[Rite.GetNameNoTooltip]"
+														align = nobaseline
+													}
+
+													text_single = {
+														text = "[PatternItem.GetType]"
+														align = nobaseline
+													}
+
+													tooltipwidget = {
+														rite_tooltip_click = {}
+													}
 												}
 											}
 										}

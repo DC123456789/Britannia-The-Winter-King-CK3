@@ -1043,11 +1043,44 @@ ep3_frankokratia_capital_sacking_effect = {
 		# }
 		# custom_tooltip = byz_capital_building_destroyed_tooltip
 	# }
-	# scope:claimant.primary_title = {
-		# state_faith = {
-			# change_fervor = {
-				# value = major_fervor_value
-				# desc = imperial_capital_sacked_fervor_gain
+	# scope:claimant = {
+		# if = {
+			# limit = {
+				# government_allows = state_faith
+			# }
+			# primary_title = {
+				# state_rite.faith = {
+					# change_fervor = {
+						# value = major_fervor_value
+						# desc = imperial_capital_sacked_fervor_gain
+					# }
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# scope:claimant.capital_county.rite = {
+					# rite_has_doctrine = special_doctrine_is_eastern_christian_faith
+				# }
+			# }
+			# scope:claimant.capital_county.faith = {
+				# change_fervor = {
+					# value = major_fervor_value
+					# desc = imperial_capital_sacked_fervor_gain
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# scope:claimant.rite = {
+					# rite_has_doctrine = special_doctrine_is_eastern_christian_faith
+				# }
+			# }
+			# scope:claimant.faith = {
+				# change_fervor = {
+					# value = major_fervor_value
+					# desc = imperial_capital_sacked_fervor_gain
+				# }
 			# }
 		# }
 	# }
@@ -2371,7 +2404,7 @@ ep3_frankokratia_grant_latin_empire_effect = {
 	# if = {
 		# limit = {
 			# scope:latin_emperor = {
-				# government_has_flag = government_is_administrative
+				# government_has_mechanic = administrative
 			# }
 		# }
 		# scope:latin_emperor = {
@@ -3150,6 +3183,7 @@ ep3_frankokratia_pick_emperor_beneficiary_effect = {
 			# location = scope:claimant.location
 			# template = ep3_frankokratia_crusader_template
 			# faith = scope:frankokratia_crusader.faith
+			# rite = scope:frankokratia_crusader.rite
 			# culture = scope:frankokratia_crusader.culture
 			# save_scope_as = new_latin_lord
 		# }
@@ -3682,6 +3716,7 @@ ep3_frankokratia_pick_crusader_beneficiary_effect = {
 			# location = scope:latin_emperor.location
 			# template = ep3_frankokratia_crusader_template
 			# faith = scope:frankokratia_crusader.faith
+			# rite = scope:frankokratia_crusader.rite
 			# culture = scope:frankokratia_crusader.culture
 			# save_scope_as = new_latin_lord
 		# }
@@ -4146,26 +4181,9 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 			# NOT = {
 				# liege = title:e_byzantium.holder
 			# }
+			# highest_held_title_tier < tier_kingdom
 		# }
-		# if = {
-			# limit = {
-				# OR = {
-					# religion = religion:islam_religion
-					# culture = { has_cultural_pillar = heritage_iranian }
-					# culture = { has_cultural_pillar = heritage_turkic }
-					# culture = { has_cultural_pillar = heritage_arabic }
-				# }
-				# highest_held_title_tier < tier_kingdom
-				
-			# }
-			# change_government = clan_government
-		# }
-		# else_if = {
-			# limit = {
-				# highest_held_title_tier < tier_kingdom
-			# }
-			# change_government = feudal_government
-		# }
+		# assign_feudal_governments_effect = yes
 		# create_character_memory = {
 			# type = frankokratia_byz_independent_memory
 		# }
@@ -4381,7 +4399,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 			# any_vassal = {
 				# is_in_list = byz_vassals
 				# highest_held_title_tier <= tier_duchy
-				# government_has_flag = government_is_administrative
+				# government_has_mechanic = administrative
 				# OR = {
 					# ai_boldness <= medium_negative_ai_value
 					# ai_honor >= medium_positive_ai_value
@@ -4417,7 +4435,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 				# any_vassal = {
 					# is_in_list = byz_vassals
 					# highest_held_title_tier <= tier_duchy
-					# government_has_flag = government_is_administrative
+					# government_has_mechanic = administrative
 					# OR = {
 						# ai_boldness <= medium_negative_ai_value
 						# ai_honor >= medium_positive_ai_value
@@ -4452,7 +4470,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 				# limit = {
 					# is_in_list = byz_vassals
 					# highest_held_title_tier <= tier_duchy
-					# government_has_flag = government_is_administrative
+					# government_has_mechanic = administrative
 					# OR = {
 						# ai_boldness <= medium_negative_ai_value
 						# ai_honor >= medium_positive_ai_value
@@ -4519,7 +4537,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 			# }
 			# any_vassal = {
 				# highest_held_title_tier >= tier_kingdom
-				# government_has_flag = government_is_administrative
+				# government_has_mechanic = administrative
 			# }
 		# }
 		# while = {
@@ -4540,7 +4558,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 									# title_tier = kingdom
 								# }
 								# highest_held_title_tier >= tier_kingdom
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 						# }
 					# }
@@ -4554,7 +4572,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 									# title_tier = kingdom
 								# }
 								# highest_held_title_tier >= tier_kingdom
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 						# }
 					# }
@@ -4565,7 +4583,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 									# title_tier = kingdom
 								# }
 								# highest_held_title_tier >= tier_kingdom
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 							# save_scope_as = new_byz_liege
 						# }
@@ -4599,7 +4617,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 						# domicile.domicile_location = {
 							# kingdom = {
 								# holder ?= {
-									# government_has_flag = government_is_administrative
+									# government_has_mechanic = administrative
 									# liege = title:e_byzantium.holder
 								# }
 							# }
@@ -4613,7 +4631,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 						# domicile.domicile_location = {
 							# kingdom = {
 								# holder ?= {
-									# government_has_flag = government_is_administrative
+									# government_has_mechanic = administrative
 									# liege = title:e_byzantium.holder
 								# }
 							# }
@@ -4654,7 +4672,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 						# random_vassal = {
 							# limit = {
 								# highest_held_title_tier >= tier_kingdom
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 							# save_scope_as = new_byz_liege
 						# }
@@ -4687,7 +4705,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 	# every_vassal = {
 		# limit = {
 			# highest_held_title_tier = tier_kingdom
-			# government_has_flag = government_is_administrative
+			# government_has_mechanic = administrative
 			# exists = house
 			# save_temporary_scope_as = house_king
 			# house.house_head = {
@@ -4705,7 +4723,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 				# house = {
 					# any_house_member = {
 						# highest_held_title_tier = tier_kingdom
-						# government_has_flag = government_is_administrative
+						# government_has_mechanic = administrative
 						# max_military_strength > scope:house_king.max_military_strength
 					# }
 				# }
@@ -4727,13 +4745,13 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 		# every_vassal_or_below = {
 			# limit = {
 				# highest_held_title_tier >= tier_county
-				# government_has_flag = government_is_administrative
+				# government_has_mechanic = administrative
 				# exists = house
 				# save_temporary_scope_as = house_chud
 				# house.house_head = {
 					# #Not already house head
 					# this != scope:house_chud
-					# government_has_flag = government_is_administrative
+					# government_has_mechanic = administrative
 					# highest_held_title_tier < tier_kingdom
 					# #Only remove player house head status if they're in the realm
 					# OR = {
@@ -4757,7 +4775,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 										# max_military_strength > scope:house_chud.max_military_strength
 									# }
 								# }
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 						# }
 					# }
@@ -4776,7 +4794,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 	# every_vassal_or_below = {
 		# limit = {
 			# is_landed = yes
-			# government_has_flag = government_is_administrative
+			# government_has_mechanic = administrative
 			# highest_held_title_tier < tier_kingdom
 			# OR = {
 				# liege = {
@@ -4785,20 +4803,7 @@ ep3_frankokratia_form_byzantine_kingdoms_effect = {
 				# liege = title:e_byzantium.holder
 			# }
 		# }
-		# if = {
-			# limit = {
-				# OR = {
-					# religion = religion:islam_religion
-					# culture = { has_cultural_pillar = heritage_iranian }
-					# culture = { has_cultural_pillar = heritage_turkic }
-					# culture = { has_cultural_pillar = heritage_arabic }
-				# }
-			# }
-			# change_government = clan_government
-		# }
-		# else = {
-			# change_government = feudal_government
-		# }
+		# assign_feudal_governments_effect = yes
 	# }
 }
 
@@ -4822,11 +4827,11 @@ ep3_frankokratia_byzantine_independence_effect = {
 						# trigger_if = {
 							# limit = {
 								# liege ?= {
-									# government_has_flag = government_is_administrative
+									# government_has_mechanic = administrative
 								# }
 							# }
 							# NOT = {
-								# government_has_flag = government_is_administrative
+								# government_has_mechanic = administrative
 							# }
 						# }
 						# liege = {
@@ -4882,26 +4887,9 @@ ep3_frankokratia_byzantine_independence_effect = {
 					# governor_efficiency >= 1.4
 				# }
 			# }
+			# highest_held_title_tier < tier_kingdom
 		# }
-		# if = {
-			# limit = {
-				# OR = {
-					# religion = religion:islam_religion
-					# culture = { has_cultural_pillar = heritage_iranian }
-					# culture = { has_cultural_pillar = heritage_turkic }
-					# culture = { has_cultural_pillar = heritage_arabic }
-				# }
-				# highest_held_title_tier < tier_kingdom
-				
-			# }
-			# change_government = clan_government
-		# }
-		# else_if = {
-			# limit = {
-				# highest_held_title_tier < tier_kingdom
-			# }
-			# change_government = feudal_government
-		# }
+		# assign_feudal_governments_effect = yes
 		# create_character_memory = {
 			# type = frankokratia_byz_independent_memory
 		# }

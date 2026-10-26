@@ -10,6 +10,14 @@ on_title_destroyed = {
 
 BTWK_on_title_destroyed = {
 	effect = {
+		# Make sure titles having a delayed de jure destruction revert back to normal
+		scope:landed_title = {
+			if = {
+				limit = { has_variable = BTWK_destroy_on_succession_or_gain_same_tier }
+				BTWK_unset_to_be_destroyed_title_effect = yes
+			}
+		}
+	
 		if = {
 			limit = {
 				scope:landed_title = title:e_britannia
@@ -21,6 +29,7 @@ BTWK_on_title_destroyed = {
 				limit = { 
 					owns_story_of_type = BTWK_britannia_high_kingship_story 
 					BTWK_britannia_high_kingship_can_inherit_trigger = no
+					NOT = { title:e_britannia = { has_variable = britannia_block_fall_of_high_king_event } }
 				}
 				save_scope_as = former_high_king
 				set_variable = { name = player_heir_char value = this.player_heir }
@@ -64,6 +73,7 @@ BTWK_on_title_destroyed = {
 			if = {
 				limit = { 
 					BTWK_aengland_bretwalda_can_inherit_trigger = no
+					NOT = { title:e_aengland = { has_variable = aengland_block_fall_of_bretwalda_event } }
 				}
 				save_scope_as = former_bretwalda
 				this.player_heir ?= {
@@ -172,6 +182,7 @@ BTWK_on_title_gain = {
 							gender_female_chance = 0
 							culture = scope:new_holder.culture
 							faith = scope:new_holder.faith
+							rite = scope:new_holder.rite
 							location = scope:title.title_capital_county.title_province
 							save_scope_as = char_to_pass_title_to
 						}
@@ -317,6 +328,36 @@ BTWK_on_title_gain = {
 				scope:previous_holder ?= { remove_character_modifier = BTWK_anglia_unstable_realm }
 			}
 		}
+		
+		# Check for continuing Gregorian Mission
+		if = {
+			limit = { 
+				scope:previous_holder = { has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier }
+				is_independent_ruler = yes
+				is_landed = yes
+				NOR = {
+					has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+					has_variable = rejected_gregorian_mission_spread
+					has_variable = has_event_spreading_of_christianity_0216 
+				}
+				title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+			}
+			# Delay of one day so the next player character still sees it
+			set_variable = has_event_spreading_of_christianity_0216
+			trigger_event = { id = spreading_of_christianity.0216 days = 1 }
+		}
+		
+		# Gregorian Mission story follows the holder of Canterbury
+		if = {
+			limit = {
+				title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+				title:d_et_canterbury.var:clerical_title ?= scope:title
+				religion = religion:christianity_religion
+			}
+			title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story = {
+				make_story_owner = title:d_et_canterbury.var:clerical_title.holder
+			}
+		}
 	}
 }
 
@@ -420,6 +461,17 @@ BTWK_on_title_lost = {
 			remove_character_modifier = BTWK_soc_banning_missionaries_modifier
 			remove_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
 			remove_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+		}
+		
+		# Clear Gregorian mission modifiers if now unlanded or not at least count-tier
+		if = {
+			limit = {
+				OR = {
+					is_landed = no
+					highest_held_title_tier < tier_county
+				}
+			}			
+			remove_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
 		}
 		
 		if = {

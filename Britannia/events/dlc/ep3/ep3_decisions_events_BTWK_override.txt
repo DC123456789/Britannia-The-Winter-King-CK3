@@ -1,0 +1,179 @@
+﻿namespace = ep3_decisions_event
+
+#########################################################
+### Convert to Administrative from Feudalism
+
+ep3_decisions_event.4060 = {
+	type = character_event
+	title = ep3_decisions_event.4060.t
+	desc = {
+		desc = ep3_decisions_event.4060.desc
+		first_valid = { #We talk a bit about the biggest non coverted vassal if there is one.
+			triggered_desc = {
+				trigger = {
+					exists = scope:obstinate_vassal
+					trigger_if = {
+						limit = { exists = scope:non_de_jure_vassal }
+						scope:obstinate_vassal.sub_realm_size >= scope:non_de_jure_vassal.sub_realm_size
+					}
+					trigger_if = {
+						limit = { exists = scope:non_state_faith_vassal }
+						scope:obstinate_vassal.sub_realm_size >= scope:non_state_faith_vassal.sub_realm_size
+					}
+				}
+				desc = ep3_decisions_event.4060.resistance.desc
+			}
+			triggered_desc = {
+				trigger = {
+					exists = scope:non_state_faith_vassal
+					trigger_if = {
+						limit = { exists = scope:non_de_jure_vassal }
+						scope:non_state_faith_vassal.sub_realm_size >= scope:non_de_jure_vassal.sub_realm_size
+					}
+					trigger_if = {
+						limit = { exists = scope:obstinate_vassal }
+						scope:non_state_faith_vassal.sub_realm_size >= scope:obstinate_vassal.sub_realm_size
+					}
+				}
+				desc = ep3_decisions_event.4060.state_faith.desc
+			}
+			triggered_desc = {
+				trigger = {
+					exists = scope:non_de_jure_vassal
+					trigger_if = {
+						limit = { exists = scope:non_state_faith_vassal }
+						scope:non_de_jure_vassal.sub_realm_size >= scope:non_state_faith_vassal.sub_realm_size
+					}
+					trigger_if = {
+						limit = { exists = scope:obstinate_vassal }
+						scope:non_de_jure_vassal.sub_realm_size >= scope:obstinate_vassal.sub_realm_size
+					}
+				}
+				desc = ep3_decisions_event.4060.de_jure.desc
+			}
+		}
+		desc = ep3_decisions_event.4060.outro.desc
+	}
+	theme = emperor
+	override_background = { reference = throne_room }
+	left_portrait = {
+		character = root
+		triggered_animation = {
+			trigger = { religion = religion:christianity_religion }
+			animation = scepter # anim uses crucifix scepter
+		}
+		animation = war_over_tie
+	}
+	lower_right_portrait = {
+		character = scope:obstinate_vassal
+	}
+	lower_center_portrait = {
+		character = scope:non_state_faith_vassal
+	}
+	lower_left_portrait = {
+		character = scope:non_de_jure_vassal
+	}
+
+
+	immediate = {
+		show_as_tooltip = {
+			change_government = government_type
+			if = {
+				limit = {
+					NOT = { has_character_flag = latin_emp_force_admin_flag }
+					top_liege = this
+					BTWK_admin_gov_enabled_trigger = yes
+				}
+				add_character_modifier = { modifier = first_admin_emperor }
+			}
+			# NF tooltip
+			if = {
+				limit = { exists = scope:new_title } # some gov types don't need to create a new title
+				get_title = scope:new_title
+			}
+			# Adopting vassal tooltip
+			every_powerful_vassal = {
+				limit = { has_same_government = root }
+				change_government = government_type
+			}
+		}
+		hidden_effect = {
+			ordered_vassal = {
+				limit = {
+					NOR = {
+						government_has_flag = government_is_theocracy
+						government_has_flag = government_is_republic
+						government_has_flag = government_is_landless_adventurer
+						government_has_flag = government_is_tribal
+						government_has_mechanic = administrative
+						government_has_flag = government_is_romanized_government
+					}
+					primary_title = {
+						target_is_de_jure_liege_or_above = scope:administrative_liege.primary_title #We only auto convert de jure vassals
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = non_de_jure_vassal
+			}
+			ordered_vassal = {
+				limit = {
+					NOR = {
+						government_has_flag = government_is_theocracy
+						government_has_flag = government_is_republic
+						government_has_flag = government_is_landless_adventurer
+						government_has_flag = government_is_tribal
+						government_has_mechanic = administrative
+						government_has_flag = government_is_romanized_government
+						primary_title = {
+							target_is_de_jure_liege_or_above = scope:administrative_liege.primary_title #We only auto convert de jure vassals
+						}
+					}
+					rite = scope:administrative_liege.rite #The future state rite
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = non_state_faith_vassal
+			}
+			ordered_vassal = {
+				limit = {
+					NOR = {
+						government_has_flag = government_is_theocracy
+						government_has_flag = government_is_republic
+						government_has_flag = government_is_landless_adventurer
+						government_has_flag = government_is_tribal
+						government_has_mechanic = administrative
+						government_has_flag = government_is_romanized_government
+						primary_title = {
+							target_is_de_jure_liege_or_above = scope:administrative_liege.primary_title #We only auto convert de jure vassals
+						}
+						rite = scope:administrative_liege.rite #The future state rite
+					}
+				}
+				order_by = sub_realm_size
+				save_scope_as = obstinate_vassal
+			}
+			every_vassal_or_below = {
+				limit = {
+					is_ai = no
+				}
+				trigger_event = {
+					id = ep3_decisions_event.4065
+				}
+			}
+		}
+	}
+	#Finally some Law and Order
+	option = {
+		name = ep3_decisions_event.4060.a
+		if = {
+			limit = {
+				OR = {
+					exists = scope:non_de_jure_vassal
+					exists = scope:obstinate_vassal
+					exists = scope:non_state_faith_vassal
+				}
+			}
+			custom_tooltip = vassal_did_not_become_administrative
+		}
+	}
+}

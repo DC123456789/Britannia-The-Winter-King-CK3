@@ -58,7 +58,10 @@ k_papal_state = {			# Primas Britanniarum ("Primate/Primacy of the Britannias") 
 	ruler_uses_title_name = no
 	can_use_nomadic_naming = no
 	landless = yes
+	allow_domicile = no
 
+	disable_regnal_numbers = never
+	
 	capital = c_londinium		# Temporary
 
 	ai_primary_priority = {
@@ -69,6 +72,18 @@ k_papal_state = {			# Primas Britanniarum ("Primate/Primacy of the Britannias") 
 	no_automatic_claims = yes
 	always_follows_primary_heir = yes
 	de_jure_drift_disabled = yes
+
+	ignore_titularity_for_title_weighting = yes
+
+	holding_regnal_male_names = {
+		Alexander_regnal Anastasius_regnal Benedictus_regnal Bonifatius_regnal Caelestinus Callistus_regnal Clemens_regnal Eugenius_regnal Leo_regnal Gregorius_regnal
+		Hadrianus_regnal Honorius_regnal Innocentius Ioannes_regnal Lucius_regnal Marinus_regnal Martinus_regnal Nicolaus Sergius_regnal Silvester_regnal
+		Stephanus_regnal Urbanus Victor_regnal
+	}
+	holding_regnal_female_names = {
+		Alexandra Anastasia Benedicta Caelestina Clementia Eugenia Gregoria Honoria
+		Innocentia Ioanna Lucia Stephania Theodora Urbana Veronica Victoria
+	}
 }
 
 d_manichean = {
@@ -77,6 +92,7 @@ d_manichean = {
 	ruler_uses_title_name = no
 	can_use_nomadic_naming = no
 	landless = yes
+	allow_domicile = no
 
 	capital = c_londinium		# Temporary
 
@@ -89,6 +105,8 @@ d_manichean = {
 	always_follows_primary_heir = yes
 	de_jure_drift_disabled = yes
 }
+
+# TODO Figure out monastic orders (Benedictines, Columbans?)
 
 e_britannia = {
 	color={ 76 141 67 }
@@ -105,6 +123,10 @@ e_britannia = {
 		custom_tooltip = {
 			text = BTWK_must_create_britannia_through_high_kingship_tt
 			BTWK_britannia_high_kingship_active_trigger = no
+		}
+		trigger_if = {
+			limit = { BTWK_britannia_high_kingship_active_trigger = no }
+			sub_realm_size >= 200
 		}
 	}
 	
@@ -1801,6 +1823,36 @@ e_britannia = {
 					color={ 100 160 124 }
 				}
 			}
+		}
+		
+		d_throne_dumnonia = {
+			color={ 96 180 86 }
+			
+			landless = yes
+			capital = c_lindinis
+	
+			de_jure_drift_disabled = yes
+			can_be_named_after_dynasty = no
+			
+			ai_primary_priority = {
+				add = @always_primary_score
+			}
+			
+			can_create = {
+				always = no
+			}
+		
+			cultural_names = {
+				name_list_briton = cn_dyfneint_briton
+				name_list_cumbrian = cn_dyfneint_briton
+				name_list_armorican = cn_dyfneint_briton
+				name_list_breton = cn_dyfneint_breton
+				name_list_greek = cn_dumnonia_greek
+				name_list_armenian = cn_dumnonia_greek
+				name_list_romanosyrian = cn_dumnonia_greek
+				name_list_romanoegyptian = cn_dumnonia_greek
+				name_list_britannic = cn_dumnonia_britannic
+			}	
 		}
 	}
 	
@@ -37961,6 +38013,10 @@ e_aengland = {
 			text = BTWK_must_create_aengland_through_bretwalda_tt
 			BTWK_aengland_bretwalda_active_trigger = no
 		}
+		trigger_if = {
+			limit = { BTWK_aengland_bretwalda_active_trigger = no }
+			sub_realm_size >= 200
+		}
 	}
 	
 	ai_primary_priority = {
@@ -38156,7 +38212,7 @@ e_aengland = {
 	k_eastseaxe = {
 		color={ 160 85 30 }
 		
-		capital = c_dengie		# Temporary
+		capital = c_londinium
 	
 		de_jure_drift_disabled = yes
 		can_be_named_after_dynasty = no
@@ -39448,6 +39504,7 @@ e_romanized_germanic_britannia = {
 			is_culture_or_descendant_including_romance_trigger = { 
 				CULTURE = title:e_romanized_germanic_britannia.var:romanized_germanic_empire_culture
 			}
+			sub_realm_size >= 200
 		}
 		trigger_else = {
 			custom_tooltip = {
@@ -40370,6 +40427,8 @@ d_laamp_arthur = { # Arthur Pendragon
 	no_automatic_claims = yes
 	destroy_if_invalid_heir = yes
 
+	dlc_feature = roads_to_power
+
 	ai_primary_priority = { add = @never_primary_score }
 }
 
@@ -40383,6 +40442,8 @@ d_laamp_brotherhood_horsemen = { # Sagramor
 	ruler_uses_title_name = no
 	no_automatic_claims = yes
 	destroy_if_invalid_heir = yes
+
+	dlc_feature = roads_to_power
 
 	ai_primary_priority = { add = @never_primary_score }
 }
@@ -40400,6 +40461,8 @@ d_laamp_brotherhood_horsemen = { # Sagramor
 	# no_automatic_claims = yes
 	# destroy_if_invalid_heir = yes
 
+	# dlc_feature = roads_to_power
+
 	# ai_primary_priority = { add = @never_primary_score }
 # }
 
@@ -40413,6 +40476,8 @@ d_laamp_scyldings = { # Scyldings
 	ruler_uses_title_name = no
 	no_automatic_claims = yes
 	destroy_if_invalid_heir = yes
+
+	dlc_feature = roads_to_power
 
 	ai_primary_priority = { add = @never_primary_score }
 }

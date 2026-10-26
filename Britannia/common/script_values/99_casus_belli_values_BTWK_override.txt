@@ -23,25 +23,39 @@
 		if = {
 			limit = {
 				exists = scope:attacker.primary_title
-				scope:attacker.primary_title = {
-					tier = tier_kingdom
+			}
+			if = {
+				limit = {
+					scope:attacker.primary_title = {
+						tier = tier_kingdom
+					}
+				}
+				multiply = {
+					value = 1.5
+					desc = CB_COST_RULES_KINGDOM
 				}
 			}
-			multiply = {
-				value = 1.5
-				desc = CB_COST_RULES_KINGDOM
-			}
-		}
-		else_if = {
-			limit = {
-				exists = scope:attacker.primary_title
-				scope:attacker.primary_title = {
-					tier = tier_empire
+			else_if = {
+				limit = {
+					scope:attacker.primary_title = {
+						tier = tier_empire
+					}
+				}
+				multiply = {
+					value = 2.5
+					desc = CB_COST_RULES_EMPIRE
 				}
 			}
-			multiply = {
-				value = 2.5
-				desc = CB_COST_RULES_EMPIRE
+			else_if = {
+				limit = {
+					scope:attacker.primary_title = {
+						tier = tier_hegemony
+					}
+				}
+				multiply = {
+					value = 3.5
+					desc = CB_COST_RULES_HEGEMONY
+				}
 			}
 		}
 	}

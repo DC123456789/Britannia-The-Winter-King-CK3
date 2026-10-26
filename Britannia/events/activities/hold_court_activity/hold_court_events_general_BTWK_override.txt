@@ -1,0 +1,530 @@
+﻿namespace = hold_court
+
+# Steward wants investment in City
+hold_court.8070 = {
+	type = court_event
+	id_override_priority = 10
+	title = hold_court.8070.t
+	desc = {
+		desc = hold_court.8070.desc.intro
+		first_valid = { # County owner descriptions
+			triggered_desc = {
+				trigger = { scope:target_county.holder = root }
+				desc = hold_court.8060.desc.owned
+			}
+			triggered_desc = {
+				trigger = {
+					exists = scope:vassal
+					scope:vassal = { is_vassal_of = root }
+				}
+				desc = hold_court.8060.desc.vassal
+			}
+			desc = hold_court.8060.desc.subvassal
+		}
+		desc = hold_court.8070.desc.body
+		first_valid = { # City number descriptions
+			triggered_desc = {
+				trigger = {
+					scope:target_county = {
+						any_county_province = { has_holding_type = city_holding }
+					}
+				}
+				desc = hold_court.8070.desc.existing
+			}
+			desc = hold_court.8070.desc.first
+		}
+		desc = hold_court.8070.desc.end
+	}
+	theme = realm
+	lower_right_portrait = scope:vassal
+	court_scene = {
+		button_position_character = scope:steward
+		court_event_force_open = yes
+		show_timeout_info = no
+		should_pause_time = yes
+		roles = {
+			scope:steward = {
+				group = petitioners_group
+				animation = steward
+			}
+		}
+	}
+
+	widget = {
+		gui = "event_window_widget_event_chain_progress"
+		container = "custom_widgets_container"
+		controller = event_chain_progress
+	}
+
+	cooldown = { years = 30 }
+
+	trigger = {
+		exists = cp:councillor_steward
+		cp:councillor_steward = {
+			has_court_event_flag = no
+			is_available_ai_adult = yes
+		}
+		NOT = { has_character_flag = has_had_holding_request_event }
+		NOT = { has_variable = hold_court_8070_city_var }
+		gold > hold_court_holding_cost_double_value
+		OR = {
+			any_held_title = { county_has_empty_province_trigger = yes }
+			any_sub_realm_county = {
+				holder = {
+					NOR = {
+						this = root.cp:councillor_steward
+						is_vassal_of = root.cp:councillor_steward
+					}
+				}
+				any_county_province = { province_has_no_holding_trigger = yes }
+			}
+		}
+		# BTWK
+		NOR = {
+			government_has_flag = government_is_tribal
+			government_has_flag = government_is_pre_feudal
+		}
+	}
+
+	weight_multiplier = {
+		base = 1
+		modifier = {
+			add = 2
+			any_held_title = {
+				title_tier = county
+				county_has_empty_province_trigger = yes
+				county_has_no_city_trigger = yes
+			}
+		}
+		modifier = {
+			add = 1
+			any_held_title = {
+				title_tier = county
+				county_has_empty_province_trigger = yes
+				county_has_all_holding_types = yes
+			}
+		}
+		modifier = {
+			add = -2
+			cp:councillor_steward.stewardship < 10
+		}
+
+		# Court weightings.
+		ep1_weight_up_for_court_type_modifier = { COURT_TYPE = court_administrative }
+	}
+
+	immediate = {
+		add_character_flag = {
+			flag = has_had_holding_request_event
+			years = 15
+		}
+		cp:councillor_steward = {
+			save_scope_as = steward
+			court_event_character_flag_effect = yes
+		}
+		if = { # root's counties...
+			limit = {
+				any_held_title = { county_has_empty_province_trigger = yes }
+			}
+			ordered_held_title = {
+				limit = {
+					county_has_empty_province_trigger = yes
+					county_has_no_city_trigger = yes
+				}
+				alternative_limit = {
+					county_has_empty_province_trigger = yes
+					county_has_all_holding_types = yes
+				}
+				alternative_limit = { county_has_empty_province_trigger = yes }
+				order_by = development_level
+				save_scope_as = target_county
+			}
+		}
+		else = { # ... vassal counties
+			ordered_sub_realm_county = {
+				limit = {
+					holder = {
+						is_vassal_of = root
+						hold_court_8070_vassal_trigger = yes
+					}
+					any_county_province = { province_has_no_holding_trigger = yes }
+					county_has_no_city_trigger = yes
+				}
+				alternative_limit = {
+					holder = {
+						is_vassal_of = root
+						hold_court_8070_vassal_trigger = yes
+					}
+					any_county_province = {	province_has_no_holding_trigger = yes }
+					county_has_all_holding_types = yes
+				}
+				alternative_limit = {
+					holder = {
+						is_vassal_of = root
+						hold_court_8070_vassal_trigger = yes
+					}
+					any_county_province = { province_has_no_holding_trigger = yes }
+				}
+				alternative_limit = {
+					holder = { hold_court_8070_vassal_trigger = yes }
+					any_county_province = { province_has_no_holding_trigger = yes }
+					county_has_no_city_trigger = yes
+				}
+				alternative_limit = {
+					holder = { hold_court_8070_vassal_trigger = yes }
+					any_county_province = { province_has_no_holding_trigger = yes }
+					county_has_all_holding_types = yes
+				}
+				alternative_limit = {
+					holder = { hold_court_8070_vassal_trigger = yes }
+					any_county_province = { province_has_no_holding_trigger = yes }
+				}
+				order_by = development_level
+				save_scope_as = target_county
+				holder = { save_scope_as = vassal }
+			}
+		}
+		scope:target_county = {
+			random_county_province = {
+				limit = { province_has_no_holding_trigger = yes }
+				save_scope_as = target_province
+			}
+		}
+		if = {
+			limit = {
+				any_court_position_holder = { type = royal_architect_court_position }
+			}
+			random_court_position_holder = {
+				type = royal_architect_court_position
+				save_scope_as = royal_architect
+			}
+		}
+		# Trigger next event in chain.
+		hold_court_queue_next_event_effect = yes
+	}
+
+	option = { # Pay for the City
+		name = hold_court.8070.a
+		trigger = {
+			trigger_if = {
+				limit = {
+					is_ai = yes
+				}
+				short_term_gold >= major_gold_value
+			}
+		}
+		remove_treasury_or_gold = hold_court_holding_cost_cheaper_value
+		scope:target_province = {
+			begin_create_holding = {
+				type = city_holding
+				refund_cost = { gold = hold_court_holding_cost_cheaper_value }
+			}
+		}
+		hold_court_8070_completion_effect = yes
+		show_as_tooltip = {
+			if = {
+				limit = { exists = scope:vassal }
+				scope:vassal = {
+					add_opinion = {
+						modifier = grateful_opinion
+						target = root
+						opinion = 10
+					}
+				}
+			}
+			if = {
+				limit = { exists = scope:subvassal }
+				scope:subvassal = {
+					add_opinion = {
+						modifier = grateful_opinion
+						target = root
+						opinion = 10
+					}
+				}
+			}
+		}
+		set_variable = {
+			name = hold_court_8070_city_var
+			value = scope:target_province
+			years = 6
+		}
+		stress_and_fulfillment_impact = {
+			greedy = major_stress_impact_gain
+		}
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_greed = -0.5
+				ai_rationality = 0.25
+				ai_compassion = 0.25
+			}
+			modifier = {	#Weight down for stress.
+				add = -30
+				has_trait = greedy
+			}
+		}
+	}
+
+	option = { # Get the Vassal to pay half
+		name = hold_court.8070.b
+		trigger = {
+			exists = scope:vassal
+			scope:vassal = { is_vassal_of = root }
+			scope:vassal.short_term_gold >= hold_court_holding_cost_half_value
+		}
+		show_as_unavailable = { scope:vassal.short_term_gold < hold_court_holding_cost_half_value }
+		highlight_portrait = scope:vassal
+		remove_treasury_or_gold = hold_court_holding_cost_half_value
+		scope:vassal = {
+			remove_treasury_or_gold = hold_court_holding_cost_half_value
+			add_opinion = {
+				modifier = annoyed_opinion
+				target = root
+				opinion = -15
+			}
+		}
+		scope:target_province = {
+			begin_create_holding = {
+				type = city_holding
+				refund_cost = { gold = hold_court_holding_cost_half_value }
+			}
+		}
+		hold_court_8070_completion_effect = yes
+		set_variable = {
+			name = hold_court_8070_city_var
+			value = scope:target_province
+			years = 6
+		}
+		stress_and_fulfillment_impact = {
+			greedy = medium_stress_impact_gain
+		}
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_greed = -0.25
+				ai_rationality = 0.25
+				ai_compassion = 0.5
+			}
+			modifier = {	#Weight down for stress.
+				add = -15
+				has_trait = greedy
+			}
+		}
+	}
+
+	option = { # Get the Subvassal to pay half
+		name = hold_court.8070.c
+		trigger = {
+			exists = scope:vassal
+			exists = scope:subvassal
+			OR = {
+				scope:subvassal.short_term_gold >= hold_court_holding_cost_half_value
+				scope:vassal.short_term_gold >= hold_court_holding_cost_half_value
+			}
+		}
+		show_as_unavailable = {
+			scope:subvassal.short_term_gold < hold_court_holding_cost_half_value
+			scope:vassal.short_term_gold < hold_court_holding_cost_half_value
+		}
+		remove_treasury_or_gold = hold_court_holding_cost_half_value
+		scope:subvassal = { # Vassals not happy about paying
+			if = {
+				limit = { long_term_gold >= hold_court_holding_cost_half_value }
+				remove_treasury_or_gold = hold_court_holding_cost_half_value
+				add_opinion = {
+					target = root
+					modifier = annoyed_opinion
+					opinion = -15
+				}
+			}
+			else = {
+				scope:vassal = {
+					remove_treasury_or_gold = hold_court_holding_cost_half_value
+					add_opinion = {
+						target = root
+						modifier = annoyed_opinion
+						opinion = -15
+					}
+				}
+			}
+		}
+		scope:target_province = {
+			begin_create_holding = {
+				type = city_holding
+				refund_cost = { gold = hold_court_holding_cost_half_value }
+			}
+		}
+		hold_court_8070_completion_effect = yes
+		set_variable = {
+			name = hold_court_8070_city_var
+			value = scope:target_province
+			years = 6
+		}
+		stress_and_fulfillment_impact = {
+			greedy = medium_stress_impact_gain
+		}
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_greed = -0.25
+				ai_rationality = 0.25
+				ai_compassion = 0.5
+			}
+			modifier = {	#Weight down for stress.
+				add = -15
+				has_trait = greedy
+			}
+		}
+	}
+
+	option = { # Architect involved
+		name = hold_court.8070.d
+		trigger = { exists = scope:royal_architect }
+		scope:royal_architect = {
+			add_opinion = {
+				modifier = grateful_opinion
+				target = root
+				opinion = 10
+			}
+			duel = {
+				skill = stewardship
+				value = average_skill_rating
+				6 = {
+					compare_modifier = {
+						value = scope:duel_value
+						multiplier = 2
+					}
+					desc = hold_court.8060.d.tt_success
+					send_interface_toast = {
+						title = hold_court.8060.d.tt_success
+						left_icon = scope:royal_architect
+						root = {
+							remove_treasury_or_gold = hold_court_holding_cost_architect_cheaper_value
+							scope:target_province = {
+								begin_create_holding = {
+									type = city_holding
+									refund_cost = { gold = hold_court_holding_cost_architect_cheaper_value }
+								}
+							}
+						}
+					}
+				}
+				10 = {
+					compare_modifier = {
+						value = scope:duel_value
+						multiplier = -1
+					}
+					desc = hold_court.8060.d.tt_normal
+					send_interface_toast = {
+						title = hold_court.8060.d.tt_normal
+						left_icon = scope:royal_architect
+						root = {
+							remove_treasury_or_gold = hold_court_holding_cost_cheaper_value
+							scope:target_province = {
+								begin_create_holding = {
+									type = city_holding
+									refund_cost = { gold = hold_court_holding_cost_cheaper_value }
+								}
+							}
+						}
+					}
+				}
+				4 = {
+					compare_modifier = {
+						value = scope:duel_value
+						multiplier = -0.5
+					}
+					desc = hold_court.8060.d.tt_failure
+					send_interface_toast = {
+						title = hold_court.8060.d.tt_failure
+						left_icon = scope:royal_architect
+						root = {
+							remove_treasury_or_gold = hold_court_holding_cost_architect_expensive_value
+							scope:target_province = {
+								begin_create_holding = {
+									type = city_holding
+									refund_cost = { gold = hold_court_holding_cost_architect_expensive_value }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		hold_court_8070_completion_effect = yes
+		stress_and_fulfillment_impact = {
+			diligent = medium_stress_impact_gain
+		}
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_energy = -0.5
+			}
+			modifier = {	#Weight down for stress.
+				add = -30
+				has_trait = diligent
+			}
+		}
+	}
+
+	option = { # Refuse
+		name = hold_court.8070.e
+		add_prestige = minor_prestige_loss
+		scope:steward = {
+			add_opinion = {
+				modifier = disappointed_opinion
+				target = root
+				opinion = -5
+			}
+		}
+		if = {
+			limit = { exists = scope:vassal }
+			scope:vassal = {
+				add_opinion = {
+					modifier = disappointed_opinion
+					target = root
+					opinion = -5
+				}
+			}
+		}
+		if = {
+			limit = { exists = scope:subvassal }
+			scope:subvassal = {
+				add_opinion = {
+					modifier = disappointed_opinion
+					target = root
+					opinion = -5
+				}
+			}
+		}
+		stress_and_fulfillment_impact = {
+			generous = medium_stress_impact_gain
+		}
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_greed = 0.5
+				ai_compassion = -0.25
+			}
+			modifier = {	#Weight down for stress.
+				add = -15
+				has_trait = generous
+			}
+		}
+	}
+
+	after = {
+		scope:steward = {
+			clear_court_event_participation = yes
+		}
+		if = {
+			limit = { has_variable = hold_court_8070_city_var }
+			trigger_event = {
+				id = hold_court.8071
+				days = 1830 # 5 years + 10 days
+			}
+		}
+		# Finish up the chain if relevant.
+		hold_court_queue_post_event_effect = yes
+	}
+}

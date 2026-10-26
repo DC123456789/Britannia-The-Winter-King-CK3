@@ -7,6 +7,7 @@
 spreading_of_christianity.0001 = { # Fullscreen Intro Event
 	type = character_event
 	window = fullscreen_event
+	queue_icon = "gfx/interface/icons/modifiers/icon_piety_christian_02.dds"
 	title = spreading_of_christianity.0001.t
 	desc = {
 		first_valid = {
@@ -425,7 +426,7 @@ spreading_of_christianity.0101 = {
 			trigger = {
 				religion = religion:christianity_religion
 				OR = {
-					culture = { has_cultural_pillar = heritage_brythonic }
+					is_britannic_culture_trigger = yes
 					AND = {
 						culture = { has_cultural_pillar = heritage_latin }
 						capital_province = { geographical_region = btwk_world_britannia }
@@ -438,7 +439,7 @@ spreading_of_christianity.0101 = {
 			trigger = {
 				religion != religion:christianity_religion
 				OR = {
-					culture = { has_cultural_pillar = heritage_brythonic }
+					is_britannic_culture_trigger = yes
 					AND = {
 						culture = { has_cultural_pillar = heritage_latin }
 						capital_province = { geographical_region = btwk_world_britannia }
@@ -452,7 +453,7 @@ spreading_of_christianity.0101 = {
 				religion = religion:christianity_religion
 				NOR = {
 					culture = { has_cultural_pillar = heritage_west_germanic }
-					culture = { has_cultural_pillar = heritage_brythonic }
+					is_britannic_culture_trigger = yes
 					AND = {
 						culture = { has_cultural_pillar = heritage_latin }
 						capital_province = { geographical_region = btwk_world_britannia }
@@ -466,7 +467,7 @@ spreading_of_christianity.0101 = {
 				religion != religion:christianity_religion
 				NOR = {
 					culture = { has_cultural_pillar = heritage_west_germanic }
-					culture = { has_cultural_pillar = heritage_brythonic }
+					is_britannic_culture_trigger = yes
 					AND = {
 						culture = { has_cultural_pillar = heritage_latin }
 						capital_province = { geographical_region = btwk_world_britannia }
@@ -474,6 +475,1902 @@ spreading_of_christianity.0101 = {
 				}
 			}
 			text = spreading_of_christianity.0101.a.other.non_christian
+		}
+	}
+}
+
+###########################################
+# Gregorian/Augustinian Mission Events
+# 0200 - 0299
+###########################################
+
+# Yearly check for if the mission should begin
+spreading_of_christianity.0200 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		if = {
+			limit = {
+				current_year > 590
+				NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_started } }
+				NOT = { situation:spreading_of_christianity_situation = { has_variable = gregorian_mission_attempt_started } }
+				OR = {
+					title:c_londinium = { has_clerical_region = no }
+					title:c_lindum = { has_clerical_region = no }
+				}
+				any_county_in_region = {
+					region = btwk_world_britannia
+					percent >= 0.2
+					holder.top_liege = {
+						culture = { has_same_heritage_group_as = { TARGET = culture:angle } }
+						faith = { has_doctrine_parameter = unreformed }
+					}
+				}
+			}
+			random = {
+				chance = {
+					value = 0
+					add = {
+						value = current_year
+						subtract = 590
+						multiply = 2.5		# Around 52% chance of happening by the historical date (597)
+					}
+					if = {
+						limit = { current_year > 600 }
+						add = {
+							value = current_year
+							subtract = 600
+							multiply = 2.5
+						}
+					}
+					max = 100
+				}
+				trigger_event = spreading_of_christianity.0201
+			}
+		}
+	}
+}
+
+# Mission begins, spawn Augustine of Canterbury and start the story
+spreading_of_christianity.0201 = {
+	scope = none
+	hidden = yes
+
+	immediate = {
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_attempt_started }
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_preparations_started }
+		create_character = {
+			age = 55		# Already a bit old when he arrives
+			name = augustinus_male_roman
+			dynasty = none
+			gender_female_chance = 0
+			random_traits = no
+			location = title:c_durovernum.title_province
+			faith = faith:christian_faith
+			rite = rite:roman_rite		# Swaps to Saxon Rite after arrival
+			culture = culture:roman
+			trait = education_learning_4
+			trait = devoted
+			trait = erudite
+			trait = arrogant
+			trait = diligent
+			trait = patient
+			diplomacy = { min_template_decent_skill max_template_decent_skill }
+			martial = { min_template_low_skill max_template_low_skill }
+			stewardship = { min_template_high_skill max_template_high_skill }
+			intrigue = { min_template_low_skill max_template_low_skill }
+			learning = { min_template_high_skill max_template_high_skill }
+			prowess = { min_template_low_skill max_template_low_skill }
+			save_scope_as = historical_character
+		}
+		scope:historical_character ?= {
+			add_trait_xp = {
+				trait = devoted
+				value = 75
+			}
+			add_piety = 750
+			historical_character_finalization_effect = yes
+			set_variable = BTWK_augustine_of_canterbury
+			save_scope_as = augustine_of_canterbury
+			add_character_flag = ai_will_not_convert
+			create_story = {
+				type = BTWK_soc_gregorian_mission_story
+				save_scope_as = gregorian_mission_story
+			}
+			if = {
+				limit = { exists = title:k_papal_state.holder }
+				set_employer = title:k_papal_state.holder
+			}
+		}
+		if = { limit = { has_variable = BTWK_augustine_of_canterbury  } } # Error suppression
+		spawn_historical_characters_boilerplate_effect = yes
+		
+		# If they were invited by decision, save that character in the story, they will automatically go there
+		if = {
+			limit = { exists = scope:gregorian_mission_invited_ruler }
+			scope:gregorian_mission_story = { 
+				set_variable = { name = mission_host_king value = scope:gregorian_mission_invited_ruler }
+			}
+		}
+	}
+}
+
+# Augustine asks King to establish mission + archbishopric in his realm
+spreading_of_christianity.0202 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0202.t
+	desc = spreading_of_christianity.0202.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = writing
+	}
+	
+	right_portrait = {
+		character = root
+		animation = idle
+	}
+
+	# Accept
+	option = {
+		name = spreading_of_christianity.0202.a
+		custom_tooltip = spreading_of_christianity.0202.a.tt.1
+		if = {
+			limit = { highest_held_title_tier >= tier_kingdom }
+			custom_tooltip = spreading_of_christianity.0202.a.tt.2
+		}
+		else = {
+			custom_tooltip = spreading_of_christianity.0202.a.tt.2.not_king
+		}
+		custom_tooltip = spreading_of_christianity.0202.a.tt.3
+		custom_tooltip = spreading_of_christianity.0202.a.tt.4
+		scope:gregorian_mission_story = {
+			set_variable = { name = mission_host_king value = root }
+		}
+		
+		ai_chance = {
+			base = 100
+			ai_value_modifier = {
+				ai_zeal = -1.33
+			}
+			modifier = {
+				add = 100
+				faith = rite:roman_rite.faith
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != rite:roman_rite.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				add = 50
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				subtract = 25
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = spreading_of_christianity.0202.b
+		custom_tooltip = spreading_of_christianity.0202.b.tt
+		if = {
+			limit = {
+				exists = scope:bretwalda_initial_request
+				is_ai = yes
+			}
+			set_variable = bretwalda_initial_rejected_gregorian_mission
+		}
+		else = {
+			set_variable = rejected_gregorian_mission
+		}
+		
+		ai_chance = {
+			base = -25
+			ai_value_modifier = {
+				ai_zeal = 1
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+			}
+			modifier = {
+				add = 200
+				faith = {
+					this != rite:roman_rite.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				multiply = 0
+				faith = rite:roman_rite.faith
+			}
+			# Baseline only ~50% chance of saying yes if initial Bretwalda request
+			modifier = {
+				add = 125
+				exists = scope:bretwalda_initial_request
+			}
+		}
+	}
+}
+
+# Mission arrives, Augustine arrives and establishes the archbishopric
+# Saxon Rite spawns immediately when the mission arrives for simplicity
+spreading_of_christianity.0203 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {		
+		situation:spreading_of_christianity_situation = { set_variable = gregorian_mission_started }
+		save_scope_as = gregorian_mission_augustine
+		
+		# Augustine abdicates any titles he happens to hold
+		if = {
+			limit = { is_ruler = yes }
+			depose = yes
+		}
+		
+		# Create the appropriate archbishopric
+		save_scope_as = new_ecclesiastical_holder
+		scope:mission_host_king = {
+			random_in_global_list = {
+				variable = creatable_clerical_title_stories
+				# First, try the usual potential check - will work if they are Anglo-Saxon
+				limit = {
+					this.var:title = title:d_et_canterbury
+					has_variable = anglo_saxon_kingdom_clerical_title
+					save_temporary_scope_as = current_story
+					prev = { 
+						BTWK_potential_create_clerical_title_trigger = { 
+							CLERICAL_TITLE_STORY = scope:current_story
+						}
+					}
+				}
+				# Then, try to fall back on wherever the capital of their primary title is
+				alternative_limit = {
+					this.var:title = title:d_et_canterbury
+					NOT = { exists = this.var:seat.clerical_region_title }
+					has_variable = anglo_saxon_kingdom_clerical_title
+					prev.primary_title.title_capital_county.var:anglo_saxon_duchy.kingdom ?= this.anglo_saxon_kingdom_clerical_title
+					this.var:seat.holder.top_liege = prev
+					trigger_if = {
+						limit = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title }
+						this.var:anglo_saxon_kingdom_clerical_title.title_capital_county = this.var:anglo_saxon_kingdom_specific_capital_clerical_title
+					}
+					trigger_if = {
+						limit = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title }
+						this.var:anglo_saxon_kingdom_clerical_title.title_capital_county != this.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+					}
+				}
+				# Then, try to fall back on any seat that they control
+				alternative_limit = {
+					this.var:title = title:d_et_canterbury
+					NOT = { exists = this.var:seat.clerical_region_title }
+					has_variable = anglo_saxon_kingdom_clerical_title
+					this.var:seat.holder.top_liege = prev
+					trigger_if = {
+						limit = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title }
+						this.var:anglo_saxon_kingdom_clerical_title.title_capital_county = this.var:anglo_saxon_kingdom_specific_capital_clerical_title
+					}
+					trigger_if = {
+						limit = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title }
+						this.var:anglo_saxon_kingdom_clerical_title.title_capital_county != this.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+					}
+				}
+				# If that somehow breaks, then just default back to Canterbury
+				alternative_limit = {
+					this.var:title = title:d_et_canterbury
+					NOT = { exists = this.var:seat.clerical_region_title }
+					has_variable = no_southern_anglo_saxon_kingdom_clerical_title
+				}
+				# If that somehow *still* breaks, then any potential archbishopric which will work
+				alternative_limit = {
+					this.var:title = title:d_et_canterbury
+					NOT = { exists = this.var:seat.clerical_region_title }
+				}
+				save_scope_as = canterbury_creation_story
+			}
+			scope:canterbury_creation_story = { set_variable = suppress_event }
+			BTWK_create_clerical_title_effect = {
+				CLERICAL_TITLE_STORY = scope:canterbury_creation_story
+			}
+		}
+		
+		# Start off with some Roman funds
+		add_gold = 100
+		add_treasury = 300
+		
+		# Augustine creates and converts to Saxon Rite
+		create_rite_from_type = {
+			type = saxon_rite
+			convert = yes
+		}
+		set_character_rite = rite:saxon_rite
+		
+		# Any Roman Rite courtiers also convert to Saxon Rite
+		every_courtier = {
+			limit = { rite = rite:roman_rite }
+			set_character_rite = rite:saxon_rite
+		}
+		
+		# Spawn a Roman priests, some of whom will be monks
+		while = {
+			count = 5
+			create_character = {
+				location = this.capital_province
+				template = priest_character_template
+				faith = this.faith
+				rite = this.rite
+				culture = this.culture
+				gender_female_chance = root_faith_clergy_gender_female_chance
+				save_scope_as = new_priest
+			}
+			scope:new_priest = {
+				set_employer = scope:gregorian_mission_augustine
+				random = {
+					chance = 50
+					add_trait = devoted
+					add_trait_xp = {
+						trait = devoted
+						value = 50
+					}
+				}
+			}
+		}
+		
+		# Spawn a few Frankish priests too
+		while = {
+			count = 3
+			create_character = {
+				location = this.capital_province
+				template = priest_character_template
+				faith = this.faith
+				rite = rite:carolingian_christianity
+				culture = culture:frankish
+				gender_female_chance = root_faith_clergy_gender_female_chance
+				save_scope_as = new_priest
+			}
+			scope:new_priest = {
+				set_employer = scope:gregorian_mission_augustine
+			}
+		}
+		
+		# If he is Augustine, flag that he managed to start the mission
+		# This will allow him to be automatically canonized ~10 years after he dies
+		if = {
+			limit = { has_variable = BTWK_augustine_of_canterbury }
+			set_variable = BTWK_augustine_of_canterbury_potential_canonization
+		}
+		
+		# Notify everyone
+		trigger_event = spreading_of_christianity.0204
+		every_player = {
+			limit = { this != scope:gregorian_mission_augustine }
+			trigger_event = spreading_of_christianity.0204
+		}
+	}
+}
+
+# Notify everyone that the Gregorian Mission has begun
+spreading_of_christianity.0204 = {
+	type = character_event
+	window = big_event_window
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0204.t
+	desc = spreading_of_christianity.0204.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:mission_host_king
+		animation = interested
+	}
+	
+	right_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = preaching
+	}
+	
+	immediate = {
+		custom_tooltip = spreading_of_christianity.0204.tt.1
+		custom_tooltip = spreading_of_christianity.0204.tt.2
+		custom_tooltip = spreading_of_christianity.0204.tt.3
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = {
+							this = scope:mission_host_king
+						}
+						desc = spreading_of_christianity.0204.a.mission_host_king
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0204.a.anglosaxon.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0204.a.anglosaxon.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0204.a.briton.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0204.a.briton.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0204.a.other.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0204.a.other.non_christian
+					}
+				}
+			}
+		}
+		if = {
+			limit = { this = scope:mission_host_king }
+			add_character_modifier = {
+				modifier = BTWK_soc_accepted_gregorian_mission_modifier
+				years = 30
+			}
+			custom_tooltip = spreading_of_christianity.0204.tt.mission_host_king
+		}
+	}
+}
+
+# If all potential seats were rejected, notify everyone in Britain that the Gregorian Mission failed
+# (should basically never happen outside player intervention)
+spreading_of_christianity.0205 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0205.t
+	desc = spreading_of_christianity.0205.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = disappointed
+	}
+	
+	immediate = {
+		custom_tooltip = spreading_of_christianity.0205.a.tt.1
+		if = {
+			limit = {
+				is_unromanized_germanic_culture_trigger = yes
+				OR = {
+					faith = rite:roman_rite.faith
+					faith = { has_doctrine_parameter = unreformed }
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+				}
+				OR = {
+					title:c_londinium = { has_clerical_region = no }
+					title:c_lindum = { has_clerical_region = no }
+				}
+			}
+			custom_tooltip = spreading_of_christianity.0205.a.tt.2
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0205.a.anglosaxon.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0205.a.anglosaxon.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.briton.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.briton.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.other.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0205.a.other.non_christian
+					}
+				}
+			}
+		}
+	}
+}
+
+# Augustine decides to send missionaries to independent Anglo-Saxon kingdom
+# Notify Augustine as he is technically playable (through console), but the choice is made for him (for now)
+spreading_of_christianity.0210 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0210.t
+	desc = spreading_of_christianity.0210.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = writing
+	}
+	
+	right_portrait = {
+		character = scope:next_target_king
+		animation = deliberation
+	}
+	
+	immediate = {
+		save_scope_as = gregorian_mission_augustine
+	}
+
+	option = {
+		name = spreading_of_christianity.0210.a
+		custom_tooltip = spreading_of_christianity.0210.a.tt
+		scope:next_target_king = { trigger_event = { id = spreading_of_christianity.0211 days = 10 } }
+	}
+}
+
+# Independent Anglo-Saxon king receives Augustine's request to accept missionaries
+spreading_of_christianity.0211 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0211.t
+	desc = spreading_of_christianity.0211.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = writing
+	}
+	
+	right_portrait = {
+		character = root
+		animation = idle
+	}
+
+	# Accept
+	option = {
+		name = spreading_of_christianity.0211.a
+		add_character_modifier = {
+			modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			years = 30
+		}
+		custom_tooltip = spreading_of_christianity.0211.a.tt
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0212 }
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1.33
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = 100
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 100
+				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				subtract = 50
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = spreading_of_christianity.0211.b
+		custom_tooltip = spreading_of_christianity.0211.b.tt
+		set_variable = rejected_gregorian_mission_spread
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0213 }
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				subtract = 50
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 50
+				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				add = 50
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			modifier = {
+				add = 1000
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				multiply = 0.25
+				faith = scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				multiply = 0
+				rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+	}
+}
+
+# Augustine receives positive reply from king about missionaries
+spreading_of_christianity.0212 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0212.t
+	desc = spreading_of_christianity.0212.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = happiness
+	}
+	
+	right_portrait = {
+		character = scope:next_target_king
+		animation = interested
+	}
+
+	option = {
+		name = spreading_of_christianity.0212.a
+		custom_tooltip = spreading_of_christianity.0212.a.tt
+	}
+}
+
+# Augustine receives negative reply from king about missionaries
+spreading_of_christianity.0213 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0213.t
+	desc = spreading_of_christianity.0213.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = disappointed
+	}
+	
+	right_portrait = {
+		character = scope:next_target_king
+		animation = anger
+	}
+
+	option = {
+		name = spreading_of_christianity.0213.a
+		custom_tooltip = spreading_of_christianity.0213.a.tt
+	}
+}
+
+# Missionaries convert king's capital + archbishopric seat if relevant, king is asked to convert as well
+spreading_of_christianity.0214 = {
+	type = character_event
+	window = big_event_window
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0214.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					OR = {
+						scope:gregorian_mission_story.var:mission_host_king ?= root
+						scope:gregorian_mission_augustine = { any_liege_or_above = { this = root } }
+					}
+				}
+				desc = spreading_of_christianity.0214.desc.augustine_baptized
+			}
+			desc = spreading_of_christianity.0214.desc
+		}
+	}
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = root
+		animation = interested
+	}
+	
+	right_portrait = {
+		character = scope:converting_bishop
+		animation = preaching
+	}
+	
+	trigger = {
+		is_landed = yes
+		is_independent_ruler = yes
+		has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+		title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+		faith != title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner.faith
+	}
+	
+	immediate = {
+		capital_barony = { save_scope_as = root_capital_barony }
+		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
+			save_scope_as = scope:gregorian_mission_augustine
+		}
+		if = {
+			limit = {
+				OR = {
+					scope:gregorian_mission_story.var:mission_host_king ?= root
+					scope:gregorian_mission_augustine = { any_liege_or_above = { this = root } }
+				}
+			}
+			scope:gregorian_mission_augustine = { save_scope_as = converting_bishop }
+		}
+		else = {
+			scope:gregorian_mission_augustine = { save_scope_as = actor }
+			create_character = {
+				location = root.capital_province
+				template = priest_character_template
+				faith = scope:gregorian_mission_augustine.faith
+				rite = scope:gregorian_mission_augustine.rite
+				culture = scope:gregorian_mission_augustine.culture
+				gender_female_chance = scope_actor_faith_clergy_gender_female_chance
+				save_scope_as = converting_bishop
+			}
+			scope:converting_bishop = { set_employer = root }
+		}
+	}
+
+	# Accept
+	option = {
+		name = spreading_of_christianity.0214.a
+		set_character_rite = scope:gregorian_mission_augustine.rite
+		capital_county = {
+			if = {
+				limit = {
+					faith = {
+						OR = {
+							this = root.faith
+							has_doctrine_parameter = unreformed
+						}
+					}
+				}
+				save_scope_as = capital_converted
+				set_county_rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+		scope:gregorian_mission_augustine = {
+			add_opinion = {
+				modifier = grateful_opinion
+				target = root
+				opinion = 30
+			}
+		}
+		if = {
+			limit = {
+				scope:converting_bishop = {
+					NOT = { is_councillor_of = scope:kingdom_holder }
+					OR = {
+						is_courtier_of = root
+						is_vassal_of = root
+					}
+				}
+			}
+			assign_councillor_type = {
+				type = councillor_court_chaplain
+				remove_existing_councillor = yes
+				target = scope:converting_bishop
+			}
+		}
+		custom_tooltip = spreading_of_christianity.0214.a.tt
+		hidden_effect = {
+			every_courtier = {
+				if = {
+					limit = {
+						OR = {
+							is_close_family_of = root
+							is_consort_of = root
+						}
+						ai_zeal <= 50
+					}
+					set_character_rite = scope:gregorian_mission_augustine.rite
+				}
+				else_if = {
+					limit = { ai_zeal <= 25 }
+					set_character_rite = scope:gregorian_mission_augustine.rite
+				}
+			}
+		}
+		save_scope_as = target_king
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0215 }
+		
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = 25
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 25
+				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 25
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = spreading_of_christianity.0214.b
+		set_variable = gregorian_mission_refused_personal_conversion
+		capital_county = {
+			if = {
+				limit = {
+					faith = {
+						OR = {
+							this = root.faith
+							has_doctrine_parameter = unreformed
+						}
+					}
+				}
+				save_scope_as = capital_converted
+				set_county_rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+		scope:gregorian_mission_augustine = {
+			add_opinion = {
+				modifier = annoyed_opinion
+				target = root
+				opinion = -20
+			}
+		}
+		custom_tooltip = spreading_of_christianity.0214.b.tt
+		hidden_effect = {
+			every_courtier = {
+				limit = { ai_zeal <= 25 }
+				random = {
+					chance = 50
+					set_character_rite = scope:gregorian_mission_augustine.rite
+				}
+			}
+		}
+		save_scope_as = target_king
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0215 }
+		
+		# AI will always convert unless they are at least somewhat zealous
+		# Or they are a reformed faith
+		ai_chance = {
+			base = -25
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				add = 1000
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+}
+
+# Notify Augustine of King's conversion (or not)
+spreading_of_christianity.0215 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0215.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:target_king.rite != root.rite }
+				desc = spreading_of_christianity.0215.desc.king_not_converted
+			}
+			desc = spreading_of_christianity.0215.desc.king_converted
+		}
+	}
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:target_king
+		triggered_animation = {
+			scope:target_king.rite = root.rite
+			animation = prayer
+		}
+		animation = boredom
+	}
+	
+	right_portrait = {
+		character = scope:converting_bishop
+		animation = preaching
+	}
+	
+	immediate = {
+		if = {
+			limit = { scope:target_king.rite = root.rite }
+			custom_tooltip = spreading_of_christianity.0215.tt.king_converted
+		}
+		else = {
+			custom_tooltip = spreading_of_christianity.0215.tt.king_not_converted
+		}
+		if = {
+			limit = { exists = scope:capital_converted }
+			show_as_tooltip = {
+				scope:capital_converted = { set_county_rite = root.rite }
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { scope:target_king.rite != root.rite }
+						desc = spreading_of_christianity.0215.a.king_not_converted
+					}
+					desc = spreading_of_christianity.0215.a.king_converted
+				}
+			}
+		}
+	}
+}
+
+# Successor of King with missionaries is asked if he wants to keep them
+spreading_of_christianity.0216 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0216.t
+	desc = spreading_of_christianity.0216.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = preaching
+	}
+	
+	right_portrait = {
+		character = root
+		animation = idle
+	}
+	
+	trigger = {
+		is_independent_ruler = yes
+		is_landed = yes
+		NOR = {
+			has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			has_variable = rejected_gregorian_mission_spread
+		}
+		title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+	}
+	
+	immediate = {
+		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = { 
+			save_scope_as = gregorian_mission_augustine
+		}
+	}
+
+	# Continue mission
+	option = {
+		name = spreading_of_christianity.0216.a
+		add_character_modifier = {
+			modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			years = 30
+		}
+		custom_tooltip = spreading_of_christianity.0216.a.tt
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0217 }
+		scope:gregorian_mission_augustine = {
+			add_opinion = {
+				modifier = grateful_opinion
+				target = root
+				opinion = 15
+			}
+		}
+		remove_variable = has_event_spreading_of_christianity_0216
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1.33
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = 100
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 100
+				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+
+	# Expel missionaries
+	option = {
+		name = spreading_of_christianity.0216.b
+		custom_tooltip = spreading_of_christianity.0216.b.tt
+		set_variable = rejected_gregorian_mission_spread
+		scope:gregorian_mission_augustine = { trigger_event = spreading_of_christianity.0218 }
+		scope:gregorian_mission_augustine = {
+			add_opinion = {
+				modifier = angry_opinion
+				target = root
+				opinion = -30
+			}
+		}
+		every_vassal = {
+			limit = { faith = scope:gregorian_mission_augustine.faith }
+			add_opinion = {
+				modifier = angry_opinion
+				target = root
+				opinion = -30
+			}
+		}
+		remove_variable = has_event_spreading_of_christianity_0216
+		
+		ai_chance = {
+			base = 50		# General bias towards keeping them unless you are zealous
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				subtract = 50
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 50
+				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				subtract = 100
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			modifier = {
+				add = 1000
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+			modifier = {
+				multiply = 0
+				faith = scope:gregorian_mission_augustine.faith
+			}
+		}
+	}
+}
+
+# Augustine is notified of new king keeping missionaries
+spreading_of_christianity.0217 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0217.t
+	desc = spreading_of_christianity.0217.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = happiness
+	}
+	
+	right_portrait = {
+		character = scope:next_target_king
+		animation = interested
+	}
+
+	option = {
+		name = spreading_of_christianity.0217.a
+		custom_tooltip = spreading_of_christianity.0217.a.tt
+	}
+}
+
+# Augustine is notified of new king expelling missionaries
+spreading_of_christianity.0218 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0218.t
+	desc = spreading_of_christianity.0218.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = disappointed
+	}
+	
+	right_portrait = {
+		character = scope:next_target_king
+		animation = anger
+	}
+
+	option = {
+		name = spreading_of_christianity.0218.a
+		custom_tooltip = spreading_of_christianity.0218.a.tt
+	}
+}
+
+# Vassal of king with missionaries is asked to convert
+spreading_of_christianity.0219 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0219.t
+	desc = spreading_of_christianity.0219.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = root
+		animation = thinking
+	}
+	
+	right_portrait = {
+		character = scope:converting_bishop
+		animation = preaching
+	}
+	
+	trigger = {
+		is_landed = yes
+		is_independent_ruler = no
+		top_liege = {
+			has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+		}
+		title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+		faith != title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner.faith
+	}
+	
+	immediate = {
+		capital_barony = { save_scope_as = root_capital_barony }
+		top_liege.cp:councillor_court_chaplain = { save_scope_as = converting_bishop }
+		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
+			save_scope_as = scope:gregorian_mission_augustine
+		}
+	}
+
+	# Accept
+	option = {
+		name = spreading_of_christianity.0219.a
+		set_character_rite = scope:gregorian_mission_augustine.rite
+		capital_county = {
+			if = {
+				limit = {
+					faith = {
+						OR = {
+							this = root.faith
+							has_doctrine_parameter = unreformed
+						}
+					}
+				}
+				save_scope_as = capital_converted
+				set_county_rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+		custom_tooltip = spreading_of_christianity.0219.a.tt
+		hidden_effect = {
+			every_courtier = {
+				if = {
+					limit = {
+						OR = {
+							is_close_family_of = root
+							is_consort_of = root
+						}
+						ai_zeal <= 50
+					}
+					set_character_rite = scope:gregorian_mission_augustine.rite
+				}
+				else_if = {
+					limit = { ai_zeal <= 25 }
+					set_character_rite = scope:gregorian_mission_augustine.rite
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = 25
+				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
+			}
+			modifier = {
+				add = -25
+				liege.faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				add = -25
+				top_liege.faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				multiply = 0
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = spreading_of_christianity.0219.b
+		set_variable = gregorian_mission_refused_personal_conversion
+		
+		# AI will generally convert unless they are at least somewhat zealous
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				add = 1000
+				faith = {
+					this != scope:gregorian_mission_augustine.faith
+					NOT = { has_doctrine_parameter = unreformed }
+				}
+			}
+		}
+	}
+}
+
+# End of the Gregorian Mission, all missionary events end
+spreading_of_christianity.0290 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0290.t
+	desc = spreading_of_christianity.0290.desc
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = prayer
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = {
+							this = scope:gregorian_mission_augustine
+						}
+						desc = spreading_of_christianity.0290.a.gregorian_mission_augustine
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0290.a.anglosaxon.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0290.a.anglosaxon.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0290.a.briton.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0290.a.briton.non_christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0290.a.other.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion != religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0290.a.other.non_christian
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier }
+			remove_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			custom_tooltip = spreading_of_christianity.0290.a.tt
+		}
+	}
+}
+
+# Death of Augustine, canonization + pallium relic (artifact_relic_augustine_pallium_name)
+spreading_of_christianity.0291 = {
+	hidden = yes
+	
+	trigger = {
+		has_pam_dlc_trigger = yes
+		exists = title:d_et_canterbury.var:clerical_title.holder
+		title:d_et_canterbury.var:clerical_title.holder.religion = religion:christianity_religion
+	}
+
+	immediate = {
+		# Need to select a location
+		title:d_et_canterbury.var:clerical_title.title_capital_county = {
+			save_scope_as = canterbury_capital_county
+		}
+		# First, the bishopric capital itself
+		if = {
+			limit = { 
+				scope:canterbury_capital_county.title_province = {
+					NOT = { has_travel_point_of_interest = poi_buried_saint }
+				}
+			}
+			scope:canterbury_capital_county.title_province = {
+				save_scope_as = consecration_province
+			}
+		}
+		# Then, any other province in the bishopric capital county
+		if = {
+			limit = {
+				NOT = { exists = scope:consecration_province }
+			}
+			scope:canterbury_capital_county = {
+				random_county_province = {
+					limit = {
+						has_holding = yes
+						NOT = { has_travel_point_of_interest = poi_buried_saint }
+					}
+					save_scope_as = consecration_province
+				}
+			}
+		}
+		# Then, the capital of any neighouring county
+		else_if = {
+			limit = {
+				NOT = { exists = scope:consecration_province }
+			}
+			scope:canterbury_capital_county = {
+				random_neighboring_county = {
+					limit = {
+						title_province = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+					}
+					save_scope_as = consecration_province
+				}
+			}
+		}
+		# Then, any province in any neighouring county
+		else_if = {
+			limit = {
+				NOT = { exists = scope:consecration_province }
+			}
+			scope:canterbury_capital_county = {
+				random_neighboring_county = {
+					limit = {
+						any_county_province = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+					}
+					random_county_province = {
+						limit = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+						save_scope_as = consecration_province
+					}
+				}
+			}
+		}
+		# Then, any capital county in the archbishopric
+		else_if = {
+			limit = {
+				NOT = { exists = scope:consecration_province }
+			}
+			title:d_et_canterbury.var:clerical_title = {
+				random_county_in_clerical_region = {
+					limit = {
+						title_province = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+					}
+					title_province = {
+						save_scope_as = consecration_province
+					}
+				}
+			}
+		}
+		# Then, any province in the archbishopric
+		else_if = {
+			limit = {
+				NOT = { exists = scope:consecration_province }
+			}
+			title:d_et_canterbury.var:clerical_title = {
+				random_county_in_clerical_region = {
+					limit = {
+						any_county_province = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+					}
+					random_county_province = {
+						limit = {
+							has_holding = yes
+							NOT = { has_travel_point_of_interest = poi_buried_saint }
+						}
+						save_scope_as = consecration_province
+					}
+				}
+			}
+		}
+		
+		if = {
+			limit = { exists = scope:consecration_province }
+			title:d_et_canterbury.var:clerical_title.holder = {
+				save_scope_as = canterbury_canonizer
+			}
+			pam_canonize_saint_effect = {
+				CANONIZER = scope:canterbury_canonizer
+				CANDIDATE = scope:gregorian_mission_augustine
+				CONSECRATION_PROVINCE = scope:consecration_province
+				PRESET = no
+			}
+			# The faith of the Saxon Rite also always gets Augustine as a saint, even if the
+			# archbishop of Canterbury is not the same faith
+			rite:saxon_rite.faith = {
+				if = {
+					limit = { this != title:d_et_canterbury.var:clerical_title.faith }
+					add_saint = scope:gregorian_mission_augustine
+				}
+			}
+			
+			# Create the pallium relic
+			set_artifact_rarity_masterwork = yes
+			create_artifact = {
+				name = artifact_relic_augustine_pallium_name
+				description = artifact_relic_augustine_pallium_desc
+				type = pedestal
+				creator = scope:gregorian_mission_augustine
+				template = christian_artifact_template
+				visuals = pedestal_christian_relic
+				wealth = scope:wealth
+				quality = scope:quality
+				modifier = artifact_placeholder_modifier
+				save_scope_as = newly_created_artifact
+			}
+			save_scope_as = relic_owner
+			scope:newly_created_artifact = {
+				set_variable = { name = historical_unique_artifact value = yes }
+				scope:relic_owner = { save_scope_as = owner } # Required for the 'add_scaled_artifact_' scripted effects
+				add_scaled_artifact_modifier_piety_effect = yes
+				add_scaled_artifact_modifier_grandeur_small_effect = yes
+				if = {
+					limit = {
+						OR = {
+							rarity = famed
+							rarity = illustrious
+						}
+					}
+					add_2_scaled_artifact_modifier_devotion_effect = yes
+				}
+				else = {
+					add_scaled_artifact_modifier_devotion_effect = yes
+				}
+				add_artifact_modifier = artifact_monthly_prestige_penalty_modifier # overwrite default creation modifier
+			}
+			# AI automatically enshrines it in Canterbury
+			if = {
+				limit = {
+					is_ai = yes
+					holy_site:kent.holy_site_barony.holder.faith = this.faith
+					holy_site:kent = { holy_site_artifact_count < 3 }
+				}
+				scope:newly_created_artifact = {
+					set_holy_site_owner = {
+						target = holy_site:kent
+						generate_history = no
+						# history = {		# Doesn't work
+							# type = enshrined
+							# actor = root
+							# recipient = holy_site:kent
+							# location = holy_site:kent.holy_site_barony.title_province
+						# }
+					}
+					equip_artifact_to_owner = yes
+				}
+				holy_site:kent = { save_scope_as = relic_enshrined_location }
+			}
+			
+			every_ruler = {
+				limit = {
+					OR = {
+						has_title = title:d_et_canterbury.var:clerical_title
+						is_ai = no
+					}
+					OR = {
+						faith = rite:saxon_rite.faith
+						faith = title:d_et_canterbury.var:clerical_title.faith
+					}
+				}
+				trigger_event = spreading_of_christianity.0292
+			}
+		}
+	}
+}
+
+spreading_of_christianity.0292 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = spreading_of_christianity.0292.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { this = scope:canterbury_canonizer }
+				desc = spreading_of_christianity.0292.desc.canterbury_canonizer
+			}
+			desc = spreading_of_christianity.0292.desc
+		}
+	}
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = dead
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = {
+							this = scope:canterbury_canonizer
+						}
+						desc = spreading_of_christianity.0292.a.canterbury_canonizer
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							culture = { has_cultural_pillar = heritage_west_germanic }
+						}
+						desc = spreading_of_christianity.0292.a.anglosaxon.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							OR = {
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0292.a.briton.christian
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+							NOR = {
+								culture = { has_cultural_pillar = heritage_west_germanic }
+								is_britannic_culture_trigger = yes
+								AND = {
+									culture = { has_cultural_pillar = heritage_latin }
+									capital_province = { geographical_region = btwk_world_britannia }
+								}
+							}
+						}
+						desc = spreading_of_christianity.0292.a.other.christian
+					}
+				}
+			}
+		}
+		custom_tooltip = spreading_of_christianity.0292.a.tt
+		if = {
+			limit = { this = scope:canterbury_canonizer }
+			custom_tooltip = spreading_of_christianity.0292.a.tt.relic.1
+		}
+		if = {
+			limit = { exists = scope:relic_enshrined_location }
+			custom_tooltip = spreading_of_christianity.0292.a.tt.relic.2
 		}
 	}
 }

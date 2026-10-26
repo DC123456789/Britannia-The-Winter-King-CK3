@@ -3,19 +3,19 @@ soc_phase_2_threshold = 0.25
 soc_phase_3_threshold = 0.50
 soc_phase_4_threshold = 0.75
 
-soc_phase_0_base_spread = -0.24
-soc_phase_1_base_spread = -0.12
+soc_phase_0_base_spread = -0.16
+soc_phase_1_base_spread = -0.08
 soc_phase_2_base_spread = 0
-soc_phase_3_base_spread = 0.06
-soc_phase_4_base_spread = 0.12
+soc_phase_3_base_spread = 0.04
+soc_phase_4_base_spread = 0.08
 
-soc_internal_missionaries_holder_base_spread = 0.18
-soc_internal_missionaries_realm_base_spread = 0.09
-soc_external_missionaries_base_spread = 0.09
-soc_encourage_missionaries_holder_base_spread = 0.18
+soc_internal_missionaries_holder_base_spread = 0.12
+soc_internal_missionaries_realm_base_spread = 0.06
+soc_external_missionaries_base_spread = 0.06
+soc_encourage_missionaries_holder_base_spread = 0.15
 soc_encourage_missionaries_realm_base_spread = 0.09
-soc_ban_missionaries_holder_base_spread = -0.24
-soc_ban_missionaries_realm_base_spread = -0.12
+soc_ban_missionaries_holder_base_spread = -0.16
+soc_ban_missionaries_realm_base_spread = -0.08
 
 # Should not be used outside the BTWK_soc_situation_set_proselytization_modifier_effect scripted effect
 # as that effect sets up many of the variables and lists this uses
@@ -83,7 +83,7 @@ soc_proselytization_monthly_progress_value = {
 			holder.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.06
+			value = 0.04
 			desc = PROSELYTIZATION_PROGRESS_HOLDER_CHRISTIAN
 		}
 	}
@@ -92,23 +92,40 @@ soc_proselytization_monthly_progress_value = {
 			holder.top_liege.religion = religion:christianity_religion
 		}
 		add = {
-			value = 0.03
+			value = 0.02
 			desc = PROSELYTIZATION_PROGRESS_TOP_LIEGE_CHRISTIAN
 		}
 	}
 	if = {
 		limit = { 
-			any_neighboring_county = { religion = religion:christianity_religion }
+			any_neighboring_county = { 
+				religion = religion:christianity_religion
+				OR = {
+					NOT = { rite = { has_doctrine_parameter = other_culture_conversion_penalty_active } }
+					is_same_heritage_group_or_related_heritage_trigger = { TARGET = prev }
+				}
+			}
 		}
 		add = {
-			value = 0.06
+			value = 0.04
+			desc = PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY
+		}
+	}
+	else_if = {
+		limit = { 
+			any_neighboring_county = { 
+				religion = religion:christianity_religion
+			}
+		}
+		add = {
+			value = 0.02
 			desc = PROSELYTIZATION_PROGRESS_NEIGBOURING_CHRISTIAN_COUNTY
 		}
 	}
 	else_if = {
 		limit = { NOT = { holder.religion = religion:christianity_religion } }
 		subtract = {
-			value = 0.06
+			value = 0.04
 			desc = PROSELYTIZATION_PROGRESS_NO_NEIGBOURING_CHRISTIAN_COUNTY_OR_CHRISTIAN_HOLDER
 		}		
 	}
@@ -117,7 +134,7 @@ soc_proselytization_monthly_progress_value = {
 			faith = { NOT = { has_doctrine_parameter = unreformed } }
 		}
 		subtract = {
-			value = 0.3
+			value = 0.2
 			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH
 		}
 	}
@@ -127,7 +144,7 @@ soc_proselytization_monthly_progress_value = {
 			religion = holder.religion
 		}
 		subtract = {
-			value = 0.15
+			value = 0.10
 			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_HOLDER
 		}
 	}
@@ -137,7 +154,7 @@ soc_proselytization_monthly_progress_value = {
 			religion = holder.top_liege.religion
 		}
 		subtract = {
-			value = 0.15
+			value = 0.10
 			desc = PROSELYTIZATION_PROGRESS_IS_ORGANIZED_FAITH_UNDER_SAME_RELIGION_TOP_LIEGE
 		}
 	}
@@ -147,14 +164,14 @@ soc_proselytization_monthly_progress_value = {
 			holder = { has_trait = zealous }
 		}
 		subtract = {
-			value = 0.09		# Relatively small because they should be using the Ban Missionaries interaction
+			value = 0.06		# Relatively small because they should be using the Ban Missionaries interaction
 			desc = PROSELYTIZATION_PROGRESS_HOLDER_ZEALOUS_NON_CHRISTIAN
 		}
 	}
 	# Fervor modifiers
 	subtract = {
 		value = {
-			value = 0.24
+			value = 0.12
 			multiply = {
 				value = faith.fervor
 				divide = 100
@@ -164,9 +181,9 @@ soc_proselytization_monthly_progress_value = {
 	}
 	add = {
 		value = {
-			value = 0.24
+			value = 0.12
 			multiply = {
-				value = var:soc_proselytization_target_faith.fervor
+				value = var:soc_proselytization_target_rite.faith.fervor
 				divide = 100
 			}
 		}
@@ -185,7 +202,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		add = {
-			value = 0.06
+			value = 0.04
 			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
 		}
 	}
@@ -200,7 +217,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		add = {
-			value = 0.03
+			value = 0.02
 			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
 		}
 	}
@@ -219,13 +236,13 @@ soc_proselytization_monthly_progress_value = {
 		if = {
 			limit = { holder.top_liege.religion = religion:christianity_religion }
 			subtract = {
-				value = 0.03
+				value = 0.02
 				desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
 			}
 		}
 		else = {
 			subtract = {
-				value = 0.06
+				value = 0.04
 				desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
 			}
 		}
@@ -239,7 +256,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		subtract = {
-			value = 0.06
+			value = 0.04
 			desc = PROSELYTIZATION_PROGRESS_COUNTY_HERITAGE
 		}
 	}
@@ -261,7 +278,7 @@ soc_proselytization_monthly_progress_value = {
 			title_province = { terrain = hills }
 		}
 		subtract = {
-			value = 0.06
+			value = 0.04
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -273,7 +290,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		subtract = {
-			value = 0.09
+			value = 0.06
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -282,7 +299,7 @@ soc_proselytization_monthly_progress_value = {
 			title_province = { terrain = forest }
 		}
 		subtract = {
-			value = 0.15
+			value = 0.10
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -295,7 +312,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		subtract = {
-			value = 0.21
+			value = 0.12
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -307,7 +324,7 @@ soc_proselytization_monthly_progress_value = {
 			}
 		}
 		subtract = {
-			value = 0.3
+			value = 0.15
 			desc = PROSELYTIZATION_PROGRESS_TERRAIN
 		}
 	}
@@ -356,7 +373,7 @@ soc_proselytization_monthly_progress_value = {
 			save_temporary_value_as = current_harmonic_sum
 			value = 1
 			save_temporary_value_as = current_index
-			# Full contribution if same heritage group, or both are Imperial-like cultures
+			# Full contribution if related heritage group and not communal identity
 			culture = { save_temporary_scope_as = current_county_culture }
 			every_in_list = {
 				variable = nearby_external_missionary_sponsors
@@ -385,6 +402,10 @@ soc_proselytization_monthly_progress_value = {
 						limit = { prev.title_province = { has_holding_type = tribal_holding } }
 						subtract = 0.25
 					}
+					if = {
+						limit = { rite = { has_doctrine_parameter = other_culture_conversion_penalty_active } }
+						multiply = 0.67
+					}
 				}
 				divide = scope:current_index
 				add = scope:current_harmonic_sum
@@ -394,6 +415,30 @@ soc_proselytization_monthly_progress_value = {
 				save_temporary_value_as = current_index
 			}
 			value = scope:current_harmonic_sum
+		}
+		if = {		# Reduced effectiveness of foreign missionaries in Christian realms
+			limit = { top_liege.religion = religion:christianity_religion }
+			multiply = 0.5
+		}
+		if = {		# Reduced effectiveness of foreign missionaries if liege or holder is already sponsoring missionaries
+			limit = {
+				holder = {
+					religion != religion:christianity_religion
+					has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+				}
+			}
+			multiply = 0.75
+		}
+		if = {
+			limit = { 
+				holder = { 
+					any_liege_or_above = {
+						religion != religion:christianity_religion
+						has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+					}
+				}
+			}
+			multiply = 0.75
 		}
 		multiply = soc_external_missionaries_base_spread
 		desc = PROSELYTIZATION_EXTERNAL_MISSIONARIES
@@ -417,6 +462,20 @@ soc_proselytization_monthly_progress_value = {
 			value = 1
 			save_temporary_value_as = current_index
 			holder = {
+				if = {
+					limit = { 		# So that direct holdings of independent rulers aren't penalized
+						this = top_liege 
+						has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+					}
+					value = 0
+					add = 1
+					divide = scope:current_index
+					add = scope:current_harmonic_sum
+					save_temporary_value_as = current_harmonic_sum
+					value = scope:current_index
+					add = 1
+					save_temporary_value_as = current_index
+				}
 				every_liege_or_above = {
 					limit = {
 						religion != religion:christianity_religion
@@ -439,6 +498,17 @@ soc_proselytization_monthly_progress_value = {
 	}
 	if = {
 		limit = {
+			holder.top_liege = {
+				has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			}
+		}
+		add = {
+			value = 0.04
+			desc = PROSELYTIZATION_GREGORIAN_MISSION_MISSIONARIES
+		}
+	}
+	if = {
+		limit = {
 			holder = {
 				religion != religion:christianity_religion
 				has_character_modifier = BTWK_soc_banning_missionaries_modifier
@@ -456,6 +526,20 @@ soc_proselytization_monthly_progress_value = {
 			value = 1
 			save_temporary_value_as = current_index
 			holder = {
+				if = {
+					limit = { 		# So that direct holdings of independent rulers aren't penalized
+						this = top_liege 
+						has_character_modifier = BTWK_soc_banning_missionaries_modifier
+					}
+					value = 0
+					add = 1
+					divide = scope:current_index
+					add = scope:current_harmonic_sum
+					save_temporary_value_as = current_harmonic_sum
+					value = scope:current_index
+					add = 1
+					save_temporary_value_as = current_index
+				}
 				every_liege_or_above = {
 					limit = {
 						religion != religion:christianity_religion
@@ -502,6 +586,13 @@ soc_proselytization_num_external_missionaries = {
 soc_proselytization_num_liege_encouraging_missionaries = {
 	value = 0
 	holder = {
+		if = {
+			limit = {
+				this = top_liege 
+				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+			}
+			add = 1	
+		}
 		every_liege_or_above = {
 			limit = {
 				religion != religion:christianity_religion
@@ -515,6 +606,13 @@ soc_proselytization_num_liege_encouraging_missionaries = {
 soc_proselytization_num_liege_banning_missionaries = {
 	value = 0
 	holder = {
+		if = {
+			limit = {
+				this = top_liege 
+				has_character_modifier = BTWK_soc_banning_missionaries_modifier
+			}
+			add = 1	
+		}
 		every_liege_or_above = {
 			limit = {
 				religion != religion:christianity_religion
@@ -607,7 +705,28 @@ BTWK_soc_external_missionaries_score = {
 
 BTWK_soc_encourage_missionaries_score = {
 	value = -25
-	subtract = ai_zeal
+	if = {
+		limit = {
+			government_has_flag = government_is_tribal
+			BTWK_reform_from_tribal_innovations_trigger = yes
+			faith = { has_doctrine_parameter = unreformed }
+		}
+		add = {
+			value = 15
+			if = {
+				limit = { this.BTWK_tribal_fame_effective_realm_size >= 10 }
+				add = {
+					value = this.BTWK_tribal_fame_effective_realm_size
+					subtract = 10
+				}
+			}
+			max = 50
+		}
+	}
+	subtract = {
+		value = ai_zeal
+		min = -50
+	}
 	add = {
 		value = ai_rationality
 		multiply = 0.5
@@ -620,13 +739,49 @@ BTWK_soc_encourage_missionaries_score = {
 		}
 		subtract = 0.15
 		multiply = 200
-		max = 50
-		min = -25
+		max = 25
+		min = -50
+	}
+	if = {
+		limit = {
+			AND = {
+				has_cultural_pillar = heritage_west_germanic
+				NOT = { has_global_variable = first_saxon_catholic_king }
+			}
+		}
+		subtract = 15
+	}
+	if = {
+		limit = {
+			government_has_flag = government_is_tribal
+			NOT = { BTWK_reform_from_tribal_innovations_trigger = yes }
+			is_imperial_like_culture_trigger = no
+			is_celtic_culture_trigger = no
+		}
+		subtract = 25
 	}
 }
 
 BTWK_soc_ban_missionaries_score = {
 	value = -25
+	if = {
+		limit = {
+			government_has_flag = government_is_tribal
+			BTWK_reform_from_tribal_innovations_trigger = yes
+			faith = { has_doctrine_parameter = unreformed }
+		}
+		subtract = {
+			value = 15
+			if = {
+				limit = { this.BTWK_tribal_fame_effective_realm_size >= 10 }
+				add = {
+					value = this.BTWK_tribal_fame_effective_realm_size
+					subtract = 10
+				}
+			}
+			max = 50
+		}
+	}
 	add = ai_zeal
 	subtract = {
 		value = ai_rationality
@@ -666,13 +821,28 @@ BTWK_convert_to_reformed_faith_score = {
 			BTWK_reform_from_tribal_innovations_trigger = yes
 			faith = { has_doctrine_parameter = unreformed }
 		}
-		add = 25
+		add = {
+			value = 10
+			if = {
+				limit = { this.BTWK_tribal_fame_effective_realm_size >= 10 }
+				add = {
+					value = this.BTWK_tribal_fame_effective_realm_size
+					subtract = 10
+					multiply = 0.67
+				}
+			}
+			max = 40
+		}
 	}
 	if = {
 		limit = {
 			capital_county.faith = {
 				this != prev.faith
 				NOT = { has_doctrine_parameter = unreformed }
+			}
+			OR = {
+				NOT = { government_has_flag = government_is_tribal }
+				is_same_heritage_group_or_related_heritage_trigger = { TARGET = capital_county }
 			}
 		}
 		add = 20
@@ -684,7 +854,18 @@ BTWK_convert_to_reformed_faith_score = {
 				faith != prev.faith
 				NOT = { faith = { has_doctrine_parameter = unreformed } }
 			}
-			add = 1
+			if = {
+				limit = { 
+					OR = {
+						NOT = { prev = { government_has_flag = government_is_tribal } }
+						is_same_heritage_group_or_related_heritage_trigger = { TARGET = prev }
+					}
+				}
+				add = 1
+			}
+			else = {
+				add = 0.5
+			}
 		}
 		if = {
 			limit = { sub_realm_size > 0 }

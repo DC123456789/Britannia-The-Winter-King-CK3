@@ -16,11 +16,11 @@ on_declared_war = {
 					government_has_flag = government_is_tribal
 				}			
 				liege ?= {
-					government_has_flag = government_is_administrative
+					government_has_mechanic = administrative
 				}
 			}
 			scope:defender = {
-				government_has_flag = government_is_administrative
+				government_has_mechanic = administrative
 				liege ?= scope:attacker.liege
 			}
 		}
@@ -46,6 +46,32 @@ on_declared_war = {
 		scope:attacker = {
 			custom_description_no_bullet = {
 				text = attack_breaking_truce_text
+			}
+			# PAM Peace of God: breaking a truce with a co-religionist draws the ban
+			if = {
+				limit = {
+					rite = {
+						rite_has_parameter = tenet_peace_of_god_excommunication_truce
+					}
+					scope:defender = { faith = scope:attacker.faith }
+					NOT = { has_trait = excommunicated }
+					faith = {
+						OR = {
+							AND = {
+								exists = religious_head
+								has_doctrine = doctrine_spiritual_head
+							}
+							has_doctrine_parameter = has_clerical_regions
+							any_faith_ruler = {
+								highest_held_title_tier >= tier_duchy
+								government_has_flag = government_is_theocracy
+							}
+						}
+						faith_has_sacraments_central_trigger = yes
+						NOT = { religious_head ?= scope:attacker }
+					}
+				}
+				add_excommunication_actual_effect = yes
 			}
 
 			# Remove the war target from the bought_truce_list if they're in it
@@ -118,6 +144,21 @@ on_declared_war = {
 					}
 				}
 			}
+		}
+	}
+	# PAM Peace of God: warring on a co-religionist costs piety
+	if = {
+		limit = {
+			scope:defender = { faith = scope:attacker.faith }
+			scope:attacker.rite ?= {
+				rite_has_parameter = tenet_peace_of_god_same_faith_war_piety_penalty
+			}
+		}
+		scope:attacker = {
+			custom_description_no_bullet = {
+				text = attack_same_faith_peace_of_god_text
+			}
+			add_piety = medium_piety_loss
 		}
 	}
 	# Breaking Betrothals
@@ -450,6 +491,9 @@ on_claimant_faction_war_win_common = {
 			suzerain = { save_scope_as = handover_suzerain }
 		}
 	}
+	$ATTACKER$.joined_faction.special_title ?= {
+		save_scope_as = faction_targeted_title
+	}
 	$CLAIMANT$ = {
 		save_scope_as = the_claimant
 	}
@@ -531,8 +575,8 @@ on_claimant_faction_war_win_common = {
 	# Ceremonial Liege
 	if = {
 		limit = {
-			exists = top_liege.primary_title.var:administrative_ui_special_title
-			scope:faction_targeted_title = $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
+			exists = $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
+			scope:faction_targeted_title ?= $DEFENDER$.top_liege.primary_title.var:administrative_ui_special_title
 		}
 		$DEFENDER$ = {
 			every_held_title = {
@@ -556,7 +600,7 @@ on_claimant_faction_war_win_common = {
 		if = {
 			limit = {
 				top_liege = this
-				government_allows = administrative
+				government_has_mechanic = administrative
 				primary_title = { is_in_list = faction_titles }
 			}
 			every_held_title = {
@@ -595,12 +639,12 @@ on_claimant_faction_war_win_common = {
 	# Ensure that the liege structure is preserved
 	if = {
 		limit = {
-			scope:target_title.holder = { top_liege != this }
+			scope:target_holder = { top_liege != this }
 			scope:the_claimant.primary_title.tier < scope:target_title.tier
 		}
 		scope:the_claimant = {
 			change_liege = {
-				liege = scope:target_title.holder.liege
+				liege = scope:target_holder.liege
 				change = scope:change
 			}
 		}
@@ -609,7 +653,7 @@ on_claimant_faction_war_win_common = {
 	# Preserve Grandeur
 	if = {
 		limit = {
-			scope:target_title.holder = {
+			scope:target_holder = {
 				has_royal_court = yes
 				has_dlc_feature = royal_court
 			}
@@ -628,9 +672,9 @@ on_claimant_faction_war_win_common = {
 	hidden_effect = {
 		if = {
 			limit = {
-				exists = scope:target_title.holder.dynasty
+				exists = scope:target_holder.dynasty
 				exists = scope:the_claimant.dynasty
-				scope:target_title.holder = {
+				scope:target_holder = {
 					has_variable = conqueror
 					scope:target_title.holder.dynasty = scope:the_claimant.dynasty
 				}
@@ -675,7 +719,7 @@ on_claimant_faction_war_win_common = {
 		# Per tier
 		if = {
 			limit = {
-				scope:target_title.tier = tier_empire
+				scope:target_title.tier ?= tier_empire
 			}
 			scope:the_claimant = {
 				add_legitimacy = {

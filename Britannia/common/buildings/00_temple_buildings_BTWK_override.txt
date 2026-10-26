@@ -826,11 +826,43 @@ temple_01 = {
 		monthly_piety = 0.01
 	}
 
+	province_rite_modifier = {
+		parameter = tenet_tax_increase_per_piety_level
+		tax_per_piety_level = 0.1
+	}
+
 	flag = temple
 
 	type_icon = "icon_building_monastic_schools.dds"
 
 	on_complete = {
+		save_scope_as = temple_location
+		county.holder ?= {
+			# By God Alone - Secular Faith & Rite: raising a temple lifts a demon's torment (0048)...
+			if = {
+				limit = { has_character_modifier = pam_sf_demon_torment_modifier }
+				send_interface_toast = {
+					type = event_toast_effect_good
+					title = pam_sf_demon_torment_lifted_toast
+					left_icon = this
+					remove_character_modifier = pam_sf_demon_torment_modifier
+					change_spiritual_fulfillment = major_spiritual_fulfillment_value
+				}
+			}
+			# ...and a first church fires the consecration event (0020).
+			if = {
+				limit = {
+					pam_secular_faith_christian_actor_trigger = yes
+					NOT = { has_character_flag = pam_sf_first_church_consecrated }
+				}
+				root.county = { save_scope_as = pam_sf_consecrated_county }
+				#Delayed so it doesn't happen simultaneous with order creation
+				trigger_event = {
+					id = pam_secular_faith_events.0020
+					days = 2
+				} 
+			}
+		}
 		if = {
 			limit = {
 				county.holder.culture = {
@@ -851,7 +883,6 @@ temple_01 = {
 		else = {
 			county.holder ?= { add_piety = massive_piety_gain }
 		}
-		save_scope_as = temple_location
 		if = {
 			limit = {
 				county.holder.culture = {
@@ -860,7 +891,7 @@ temple_01 = {
 			}
 			county.holder.faith = {
 				change_fervor = {
-					value = 5
+					value = notable_fervor_gain
 					desc = fervor_gain_built_temple_holding
 				}
 			}
@@ -868,7 +899,7 @@ temple_01 = {
 		else = {
 			county.holder.faith = {
 				change_fervor = {
-					value = 1
+					value = trivial_fervor_gain
 					desc = fervor_gain_built_temple_holding
 				}
 			}
@@ -1827,6 +1858,11 @@ temple_02 = {
 		monthly_piety = 0.02
 	}
 
+	province_rite_modifier = {
+		parameter = tenet_tax_increase_per_piety_level
+		tax_per_piety_level = 0.1
+	}
+
 	flag = temple
 
 	on_complete = {
@@ -1847,7 +1883,7 @@ temple_02 = {
 			}
 			county.holder.faith = {
 				change_fervor = {
-					value = 2
+					value = small_fervor_gain
 					desc = fervor_gain_upgraded_temple_holding_culture_parameter
 				}
 			}
@@ -2695,6 +2731,11 @@ temple_03 = {
 		monthly_piety = 0.03
 	}
 
+	province_rite_modifier = {
+		parameter = tenet_tax_increase_per_piety_level
+		tax_per_piety_level = 0.1
+	}
+
 	flag = temple
 
 	on_complete = {
@@ -2715,7 +2756,7 @@ temple_03 = {
 			}
 			county.holder.faith = {
 				change_fervor = {
-					value = 2
+					value = small_fervor_gain
 					desc = fervor_gain_upgraded_temple_holding_culture_parameter
 				}
 			}
@@ -3557,6 +3598,11 @@ temple_04 = {
 		monthly_piety = 0.05
 	}
 
+	province_rite_modifier = {
+		parameter = tenet_tax_increase_per_piety_level
+		tax_per_piety_level = 0.1
+	}
+
 	flag = temple
 
 	on_complete = {
@@ -3577,7 +3623,7 @@ temple_04 = {
 			}
 			county.holder.faith = {
 				change_fervor = {
-					value = 2
+					value = small_fervor_gain
 					desc = fervor_gain_upgraded_temple_holding_culture_parameter
 				}
 			}
@@ -3649,11 +3695,14 @@ monastic_schools_01 = {
 	can_construct_potential = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		building_requirement_castle_city_church_temple_citadel_tribe = { LEVEL = 01 }
 		scope:holder = {
@@ -3730,11 +3779,14 @@ monastic_schools_02 = {
 	can_construct_potential = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		building_requirement_castle_city_church_temple_citadel_tribe = { LEVEL = 01 }
 		scope:holder = {
@@ -3809,11 +3861,14 @@ monastic_schools_03 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -3898,11 +3953,14 @@ monastic_schools_04 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -3987,11 +4045,14 @@ monastic_schools_05 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -4076,11 +4137,14 @@ monastic_schools_06 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -4165,11 +4229,14 @@ monastic_schools_07 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {
@@ -4254,11 +4321,14 @@ monastic_schools_08 = {
 	can_construct = {
 		trigger_if = {
 			limit = {
-				scope:holder.faith = {
-					NOT = { has_doctrine_parameter = monastic_schools_allowed_in_every_holding_type }
+				scope:holder.rite = {
+					NOT = { rite_has_parameter = monastic_schools_allowed_in_every_holding_type }
 				}
 			}
-			has_holding_type = church_holding
+			OR = {
+				has_holding_type = church_holding
+				has_holding_type = temple_citadel_holding
+			}
 		}
 		trigger_if = {
 			limit = {

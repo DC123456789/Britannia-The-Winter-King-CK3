@@ -1,0 +1,250 @@
+﻿BTWK_can_create_clerical_title_common_trigger = {
+	highest_held_title_tier >= tier_kingdom
+	OR = {
+		sub_realm_size >= 80
+		BTWK_has_real_empire_or_higher_title_trigger = yes
+	}
+	government_is_not_tribal_trigger = yes
+	trigger_if = {
+		limit = { is_ai = yes }
+		is_independent_ruler = yes
+	}
+}
+
+BTWK_potential_create_clerical_title_trigger = {
+	$CLERICAL_TITLE_STORY$ = { 
+		NOT = { has_variable = clerical_title_created } 
+		NOT = { exists = this.var:seat.clerical_region_title } 
+	}
+	# Culture blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = briton_roman_clerical_title } }
+		is_unromanized_germanic_culture_trigger = no
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
+		is_unromanized_germanic_culture_trigger = yes
+	}
+	# Kingdom blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_clerical_title } }
+		$CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_clerical_title = { save_temporary_scope_as = target_anglo_saxon_kingdom }
+		primary_title = {
+			OR = {
+				this = scope:target_anglo_saxon_kingdom
+				AND = {
+					this = title:e_aengland
+					title:e_aengland.var:aengland_primary_kingdom = scope:target_anglo_saxon_kingdom
+				}
+				kingdom ?= scope:target_anglo_saxon_kingdom
+				AND = {
+					tier < tier_kingdom
+					NOT = { kingdom = { has_variable = is_anglo_saxon_kingdom } }
+					title_capital_county = {
+						has_variable = anglo_saxon_duchy
+						this.var:anglo_saxon_duchy.kingdom ?= scope:target_anglo_saxon_kingdom
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title } }
+			scope:target_anglo_saxon_kingdom.title_capital_county = $CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_specific_capital_clerical_title
+		}
+		trigger_if = {
+			limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title } }
+			scope:target_anglo_saxon_kingdom.title_capital_county != $CLERICAL_TITLE_STORY$.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+		}
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = no_southern_anglo_saxon_kingdom_clerical_title } }
+		primary_title = {
+			NOR = {
+				BTWK_is_southern_anglo_saxon_kingdom_trigger = yes
+				AND = {
+					this = title:e_aengland
+					title:e_aengland.var:aengland_primary_kingdom = { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+				}
+				kingdom ?= { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+				AND = {
+					tier < tier_kingdom
+					NOT = { kingdom = { has_variable = is_anglo_saxon_kingdom } }
+					title_capital_county = {
+						has_variable = anglo_saxon_duchy
+						this.var:anglo_saxon_duchy.kingdom ?= { BTWK_is_southern_anglo_saxon_kingdom_trigger = yes }
+					}
+				}
+			}
+		}
+	}
+	
+	# Mutually exclusive archdiocese blocks
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_0 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_0 = {
+				has_variable = clerical_title_created
+			}
+		}
+	}
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_1 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_1 = {
+				has_variable = clerical_title_created
+			}
+		}
+	}
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = mutually_exclusive_clerical_title_2 } }
+		NOT = { 
+			$CLERICAL_TITLE_STORY$.var:mutually_exclusive_clerical_title_2 = {
+				has_variable = clerical_title_created
+			}
+		}
+	}
+	# Other blocks
+	trigger_if = {	
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
+		NOT = { has_global_variable = end_of_britannia }
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = post_ruin_of_britannia_clerical_title } }
+		has_global_variable = end_of_britannia
+	}
+}
+
+BTWK_visible_create_clerical_title_trigger = {
+	BTWK_potential_create_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	save_temporary_scope_as = trigger_char
+	# Need to be in the visibility region to see the archdiocese
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = visibility_region } }
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:visibility_region
+			scope:trigger_char = { completely_controls = prev }
+		}
+	}
+	trigger_else = {
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:region
+			scope:trigger_char = { completely_controls = prev }
+		}
+	}
+}
+
+BTWK_can_create_clerical_title_cost_trigger = {
+	piety >= 750
+}
+
+BTWK_can_create_clerical_title_trigger = {
+	BTWK_potential_create_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	BTWK_can_create_clerical_title_common_trigger = yes
+	completely_controls = $CLERICAL_TITLE_STORY$.var:seat
+	control_region_fraction_including_tributaries_trigger = {
+		FRACTION_REQUIRED = 0.80
+		REGION = $CLERICAL_TITLE_STORY$.var:region
+	}
+}
+
+BTWK_can_expand_clerical_title_common_trigger = {
+	highest_held_title_tier >= tier_kingdom
+	sub_realm_size >= 40
+	government_is_not_tribal_trigger = yes
+	trigger_if = {
+		limit = { is_ai = yes }
+		is_independent_ruler = yes
+	}
+	$CLERICAL_TITLE$ = {
+		save_temporary_scope_as = archdiocese_title
+		custom_tooltip = {
+			text = BTWK_can_expand_clerical_title_archdiocese_has_holder
+			exists = holder
+		}
+	}
+}
+
+BTWK_potential_expand_clerical_title_trigger = {
+	$CLERICAL_TITLE_STORY$ = {
+		this.var:title = { has_variable = clerical_title }
+		NOT = { exists = this.var:seat.clerical_region_title } 
+		NOT = { has_variable = clerical_title_expanded } 
+	}
+	# Culture blocks
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = briton_roman_clerical_title } }
+		is_unromanized_germanic_culture_trigger = no
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
+		is_unromanized_germanic_culture_trigger = yes
+	}
+	# Other blocks/filters
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = pre_ruin_of_britannia_clerical_title } }
+		NOT = { has_global_variable = end_of_britannia }
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = post_ruin_of_britannia_clerical_title } }
+		has_global_variable = end_of_britannia
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = potential_required_created_clerical_title } }
+		$CLERICAL_TITLE_STORY$.var:potential_required_created_clerical_title = { has_variable = clerical_title }
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = potential_requires_clerical_title_created } }
+		$CLERICAL_TITLE_STORY$.var:title = { has_variable = clerical_title }
+	}
+}
+
+BTWK_visible_expand_clerical_title_trigger = {
+	BTWK_potential_expand_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	save_temporary_scope_as = trigger_char
+	# Need to be in the visibility region to see the archdiocese expansion
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = visibility_region } }
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:visibility_region
+			scope:trigger_char = { completely_controls = prev }
+		}
+	}
+	trigger_else = {
+		any_county_in_region = {
+			region = $CLERICAL_TITLE_STORY$.var:region
+			scope:trigger_char = { completely_controls = prev }
+		}
+	}
+}
+
+BTWK_can_expand_clerical_title_cost_trigger = {
+	piety >= 300
+}
+
+BTWK_can_expand_clerical_title_trigger = {
+	BTWK_potential_expand_clerical_title_trigger = { 
+		CLERICAL_TITLE_STORY = $CLERICAL_TITLE_STORY$ 
+	}
+	BTWK_can_expand_clerical_title_common_trigger = {
+		CLERICAL_TITLE = $CLERICAL_TITLE_STORY$.var:title.var:clerical_title
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = expansion_requires_direct_control } }
+		control_region_fraction_trigger = {
+			FRACTION_REQUIRED = 0.80
+			REGION = $CLERICAL_TITLE_STORY$.var:region
+		}
+	}
+	trigger_else = {
+		control_region_fraction_including_tributaries_trigger = {
+			FRACTION_REQUIRED = 0.80
+			REGION = $CLERICAL_TITLE_STORY$.var:region
+		}
+	}
+}

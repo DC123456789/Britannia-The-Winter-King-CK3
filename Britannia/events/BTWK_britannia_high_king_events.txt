@@ -3766,10 +3766,10 @@ BTWK_britannia_high_king.0186 = {
 	theme = realm
 	override_background = { reference = ep3_fullscreen_restore_rome }
 
-	left_portrait = {
-		character = root
-		animation = war_over_win
-	}
+	# left_portrait = {
+		# character = root
+		# animation = war_over_win
+	# }
 	
 	immediate = {
 		BTWK_britannia_pass_reform_effect = { REFORM = restore_imperial_dignity }
@@ -3854,7 +3854,12 @@ BTWK_britannia_high_king.0186 = {
 		}
 		# Free conversion to Sub-Roman
 		if = {
-			limit = { NOT = { government_has_flag = government_is_administrative } }
+			limit = { 
+				NOR = {
+					government_has_mechanic = administrative
+					government_has_flag = government_is_romanized_government
+				}
+			}
 			convert_to_administrative_from_feudalism_effect = { GOVERNMENT_TO_ADOPT = flag:sub_roman }
 		}
 		dynasty = { 
@@ -3876,10 +3881,10 @@ BTWK_britannia_high_king.0187 = {
 	theme = realm
 	override_background = { reference = ep3_byzantium_throneroom }
 
-	left_portrait = {
-		character = scope:high_king
-		animation = war_over_win
-	}
+	# left_portrait = {
+		# character = scope:high_king
+		# animation = war_over_win
+	# }
 	
 	immediate = {
 		custom_tooltip = BTWK_britannia_high_king.0187.a.tt.1

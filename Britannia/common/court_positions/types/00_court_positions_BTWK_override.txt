@@ -172,7 +172,7 @@ doorkeeper_royal_hall_court_position = {
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		trigger_if = {
 			limit = {
 				is_ai = yes
@@ -183,7 +183,7 @@ doorkeeper_royal_hall_court_position = {
 	}
 
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		NOT = { government_has_flag = government_is_nomadic }
 		highest_held_title_tier >= tier_duchy
 		culture = {
@@ -208,30 +208,8 @@ doorkeeper_royal_hall_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = doorkeeper_royal_hall
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = doorkeeper_royal_hall } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
@@ -439,15 +417,6 @@ antiquarian_court_position = {
 		}
 		if = {
 			limit = {
-				has_variable = fund_inspiration_6508_architect_improvement
-			}
-			add = {
-				value = 5
-				desc = court_position_architect_study_experience
-			}
-		}
-		if = {
-			limit = {
 				liege ?= {
 					domicile ?= { has_domicile_parameter = estate_increase_antiquarian_aptitude }
 				}
@@ -471,7 +440,7 @@ antiquarian_court_position = {
 
 	is_shown = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		trigger_if = {
@@ -486,7 +455,7 @@ antiquarian_court_position = {
 	# Is this an available position for this court? (root is court owner)
 	valid_position = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		trigger_if = {
@@ -512,30 +481,8 @@ antiquarian_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = antiquarian
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = antiquarian } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
@@ -629,7 +576,7 @@ antiquarian_court_position = {
 		if = {
 			limit = {
 				scope:liege = {
-					government_allows = administrative
+					government_has_mechanic = administrative
 				}
 			}
 			add = 150
@@ -716,7 +663,9 @@ master_of_hunt_court_position = {
 	}
 	
 	court_position_asset = {
-		trigger = { culture_has_east_asian_heritage_pillar_trigger = yes }
+		trigger = {
+			culture_has_east_asian_heritage_pillar_trigger = yes
+		}
 		animation = hunting_shortbow_aim_arrow_default
 		background = "gfx/interface/illustrations/event_scenes/tgp_hunt_generic_asia.dds"
 	}
@@ -844,7 +793,7 @@ master_of_hunt_court_position = {
 
 	is_shown = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		trigger_if = {
@@ -859,14 +808,20 @@ master_of_hunt_court_position = {
 	# Is this an available position for this court? (root is court owner)
 	valid_position = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
+		}
+		NOT = {
+			culture = { has_cultural_parameter = cannot_hunt }
 		}
 	}
 
 	is_shown_character = {
 		scope:employee = {
 			court_position_employee_shown_trigger = yes
+			NOT = {
+				culture = { has_cultural_parameter = cannot_hunt }
+			}
 		}
 	}
 
@@ -879,35 +834,13 @@ master_of_hunt_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = master_of_hunt
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = master_of_hunt } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
 			if = {
-				limit = { 
+				limit = {
 					exists = this
 					government_has_flag = government_is_landless_adventurer
 				}
@@ -1164,7 +1097,7 @@ court_musician_court_position = {
 			}
 		}
 		if = {
-			limit = { employer.domicile ?= { has_domicile_parameter = increased_musician_aptitude_1 } }
+			limit = { exists = employer.domicile }
 			add = {
 				value = 0
 				if = {
@@ -1187,7 +1120,10 @@ court_musician_court_position = {
 					limit = { employer.domicile ?= { has_domicile_parameter = increased_musician_aptitude_2 } }
 					add = estate_increase_gardener_aptitude_value_2
 				}
-				else = { add = estate_increase_gardener_aptitude_value_1 }
+				else_if = {
+					limit = { employer.domicile ?= { has_domicile_parameter = increased_musician_aptitude_1 } }
+					add = estate_increase_gardener_aptitude_value_1
+				}
 				desc = estate_musician_building
 			}
 		}
@@ -1205,7 +1141,7 @@ court_musician_court_position = {
 
 	is_shown = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		trigger_if = {
@@ -1219,7 +1155,7 @@ court_musician_court_position = {
 
 	valid_position = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		trigger_if = {
@@ -1274,35 +1210,13 @@ court_musician_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = court_musician
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = court_musician } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
 			if = {
-				limit = { 
+				limit = {
 					exists = this
 					government_has_flag = government_is_landless_adventurer
 				}
@@ -1545,7 +1459,7 @@ keeper_of_swans_court_position = {
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		NOR = {
 			government_has_flag = government_is_nomadic
 			government_has_flag = government_is_celestial
@@ -1560,7 +1474,7 @@ keeper_of_swans_court_position = {
 	}
 
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		highest_held_title_tier >= tier_county
 	}
 
@@ -1580,35 +1494,13 @@ keeper_of_swans_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = keeper_of_swans
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = keeper_of_swans } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
 			if = {
-				limit = { 
+				limit = {
 					exists = this
 					government_has_flag = government_is_landless_adventurer
 				}
@@ -1853,7 +1745,7 @@ court_jester_court_position = {
 	}
 
 	is_shown = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		NOR = {
 			government_has_flag = government_is_nomadic
 			government_has_flag = government_is_celestial
@@ -1869,7 +1761,7 @@ court_jester_court_position = {
 
 	# Is this an available position for this court? (root is court owner)
 	valid_position = {
-		is_landed_or_landless_administrative = yes
+		is_landed_or_landless_administrative_or_theocratic = yes
 		highest_held_title_tier >= tier_duchy
 		culture = {
 			has_cultural_pillar = heritage_latin
@@ -1891,35 +1783,13 @@ court_jester_court_position = {
 	revoke_cost = { # root is the liege, no other scopes are passed here!
 		prestige =  {
 			value = major_court_position_prestige_revoke_cost
-			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = court_jester
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = court_jester } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost
 			if = {
-				limit = { 
+				limit = {
 					exists = this
 					government_has_flag = government_is_landless_adventurer
 				}
@@ -2148,11 +2018,19 @@ garuda_court_position = {
 	# Is this an available position for this court? (root is court owner)
 	is_shown = {
 		always = no 
+		is_landed_or_landless_administrative_or_theocratic = yes
+		trigger_if = {
+			limit = {
+				is_ai = yes
+				highest_held_title_tier <= tier_county
+			}
+			always = no
+		}
 	}
 
 	valid_position = {
 		OR = {
-			is_landed_or_landless_administrative = yes
+			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
 		}
 		highest_held_title_tier >= tier_kingdom
@@ -2176,28 +2054,7 @@ garuda_court_position = {
 			value = major_court_position_prestige_revoke_cost
 			# Set to 0 via obligation hook
 			if = {
-				limit = {
-					court_position_obligation_hook_salary_trigger = {
-						POS = garuda
-						LIEGE = root
-					}
-				}
-				multiply = 0
-			}
-			# Avoid AI prestige issues
-			if = {
-				limit = {
-					exists = this
-					is_ai = yes
-				}
-				multiply = 0
-			}
-			# Special case for events
-			if = {
-				limit = {
-					exists = this
-					has_character_flag = free_revoke_cost
-				}
+				limit = { free_court_position_revoke_trigger = { POS = garuda } }
 				multiply = 0
 			}
 			#Lowering for LAAMPS, to match Camp Officer revoke cost

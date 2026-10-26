@@ -103,7 +103,8 @@ window = {
 
 					button_tab = {
 						name = "open_families_tab"
-						shortcut = "[Select_CString(GetPlayer.GetGovernment.HasRule( 'administrative' ), 'tab_2', 'tab_1')]"
+						visible = "[GetPlayer.GetGovernment.HasRule( 'noble_families' )]"
+						shortcut = "[Select_CString(GetPlayer.GetGovernment.HasMechanic( 'administrative' ), 'tab_2', 'tab_1')]"
 
 						down = "[GetVariableSystem.Exists( 'families' )]"
 
@@ -133,7 +134,7 @@ window = {
 						shortcut = "tab_3"
 						
 						button = {
-							visible = "[GetPlayer.GetGovernment.HasRule( 'administrative' )]"
+							visible = "[GetPlayer.GetGovernment.HasMechanic( 'administrative' )]"
 							shortcut = "tab_3"
 							down = "[GetVariableSystem.Exists( 'themes' )]"
 	
@@ -142,7 +143,7 @@ window = {
 							onclick = "[GetVariableSystem.Clear( 'families' )]"
 						}
 						button = {
-							visible = "[Not(GetPlayer.GetGovernment.HasRule( 'administrative' ))]"
+							visible = "[Not(GetPlayer.GetGovernment.HasMechanic( 'administrative' ))]"
 							shortcut = "tab_2"
 							down = "[GetVariableSystem.Exists( 'themes' )]"
 	
@@ -402,7 +403,7 @@ types GovernmentAdministrationThemes
 			text_single = {
 				layoutpolicy_horizontal = expanding
 
-				text = "[Title.GetNameNoTooltip]"
+				text = "TITLE_NAME_NO_TOOLTIP"
 			}
 
 			expand = { }
@@ -811,8 +812,6 @@ types GovernmentAdministrationThemes
 						default_format = "#low"
 						max_width = 90
 						min_width = 90
-
-						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
 					}
 
 					text_single = {
@@ -1085,7 +1084,8 @@ types GovernmentAdministration
 	}
 
 	type widget_header_state_faith = widget {
-		datacontext = "[Title.GetStateFaith]"
+		datacontext = "[Title.GetStateRite]"
+		datacontext = "[Rite.GetFaith]"
 		visible = "[GetPlayer.GetGovernment.HasRule( 'state_faith' )]"
 		size = { 562 50 }
 
@@ -1096,7 +1096,7 @@ types GovernmentAdministration
 			spacing = 5
 
 			text_single = {
-				text = "[state_faith|E]"
+				text = "[state_rite|E]"
 				align = nobaseline
 				max_width = 120
 			}
@@ -1105,18 +1105,18 @@ types GovernmentAdministration
 				layoutpolicy_horizontal = expanding
 				minimumsize = { 200 33 }
 
-				onclick = "[ToggleGameViewData( 'faith', Faith.GetID )]"
+				onclick = "[ToggleGameViewData( 'faith', Rite.Self )]"
 
 				hbox = {
 					layoutpolicy_horizontal = expanding
 
 					icon = {
 						size = { 30 30 }
-						texture = "[Title.GetStateFaith.GetIcon]"
+						texture = "[Title.GetStateRite.GetIcon]"
 					}
 
 					text_single = {
-						text = "[Faith.GetNameNoTooltip]"
+						text = "[Rite.GetNameNoTooltip]"
 						align = nobaseline
 					}
 
@@ -1163,7 +1163,7 @@ types GovernmentAdministration
 			}
 
 			text_single = {
-				text = "[GovernmentAdministrationWindow.GetCountiesOfStateFaith]"
+				text = "[GovernmentAdministrationWindow.GetCountiesOfStateRite]"
 				align = nobaseline
 			}
 		}
@@ -1523,7 +1523,7 @@ types GovernmentAdministration
 
 					text_label_left = {
 						layoutpolicy_horizontal = expanding
-						text = "[Character.GetUINameNotMeNoTooltip]"
+						text = "CHARACTER_UI_NAME_NOT_ME"
 						align = nobaseline
 						max_width = 380
 						using = Font_Size_Medium
@@ -1810,7 +1810,7 @@ types GovernmentAdministration
 		# Investment cap - Only for admin realms who doesn't use merit
 		vbox = {
 			name = "government_panel_investment_cap_area"
-			visible = "[And( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'administrative' ), Not( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'merit' ) ) )]"
+			visible = "[And( GetPlayer.GetTopLiege.GetGovernment.HasMechanic( 'administrative' ), Not( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'merit' ) ) )]"
 			layoutpolicy_horizontal = expanding
 			spacing = 10
 
@@ -2324,7 +2324,7 @@ types GovernmentAdministration
 								text_single = {
 									max_width = 310
 
-									text = "[Character.GetUINameNotMeNoTooltip]"
+									text = "CHARACTER_UI_NAME_NOT_ME"
 									using = Font_Size_Medium
 									align = nobaseline
 								}
@@ -2362,10 +2362,11 @@ types GovernmentAdministration
 								margin_right = 5
 
 								widget = {
-									datacontext = "[ProminentHouseMemberCharacterList.GetMeritItem( CharacterListItem.GetIndex )]"
 									visible = "[GreaterThanOrEqualTo_int32( Character.GetMeritLevel, '(int32)1' )]"
 									size = { 76 46 }
 									allow_outside = yes
+
+									datacontext = "[ProminentHouseMemberCharacterList.GetMeritItem( CharacterListItem.GetIndex )]"
 
 									### MERIT - Your Family - Character List Selection
 									hbox_merit_with_label = {
@@ -2391,10 +2392,11 @@ types GovernmentAdministration
 								}
 
 								widget = {
-									datacontext = "[ProminentHouseMemberCharacterList.GetMeritItem( CharacterListItem.GetIndex )]"
 									visible = "[EqualTo_int32( Character.GetMeritLevel, '(int32)0' )]"
 									size = { 90 46 }
 									allow_outside = yes
+
+									datacontext = "[ProminentHouseMemberCharacterList.GetMeritItem( CharacterListItem.GetIndex )]"
 
 									### MERIT - Your Family - Character List Selection
 									hbox_merit_with_label = {
@@ -2658,7 +2660,7 @@ types GovernmentAdministration
 								layoutpolicy_horizontal = expanding
 								max_width = 340
 
-								text = "[Character.GetUINameNotMeNoTooltip]"
+								text = "CHARACTER_UI_NAME_NOT_ME"
 								using = Font_Size_Medium
 								align = nobaseline
 							}
@@ -3000,7 +3002,12 @@ types GovernmentAdministration
 		layoutpolicy_horizontal = expanding
 
 		vbox = {
-			margin_top = 12
+			text_single = {
+				text = "[Character.GetHouse.GetNameNoTooltip]"
+				default_format = "#high"
+				using = Font_Size_Medium
+				max_width = 120
+			}
 
 			# House CoA
 			widget = {
@@ -3033,7 +3040,8 @@ types GovernmentAdministration
 				layoutpolicy_horizontal = expanding
 				max_width = 160
 				margin_left = 8
-				align = nobaseline
+				margin_right = 8
+				align = right
 				using = Font_Size_Medium
 				block "subtitle" {}
 			}
@@ -3314,7 +3322,7 @@ types GovernmentAdministration
 			}
 		}
 
-		widget_succession_candidate_banner_small = {
+		widget_appointment_succession_candidate_banner_small = {
 			parentanchor = bottom|hcenter
 			position = { 0 -3 }
 			size = { 60 24 }

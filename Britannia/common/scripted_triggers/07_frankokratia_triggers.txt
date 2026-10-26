@@ -9,22 +9,23 @@ ep3_frankokratia_ghw_trigger = {
 	# NOT = { exists = title:e_latin_empire.holder }
 	# #Byzantine emperor is Christian, but not Catholic
 	# title:e_byzantium.holder.faith = {
-	# 	NOT = { this = faith:catholic }
-	# 	religion = religion:christianity_religion
+		# religion = religion:christianity_religion
+	# }
+	# title:e_byzantium.holder.rite = {
+		# rite_has_doctrine = special_doctrine_is_eastern_christian_faith
 	# }
 	# trigger_if = {
-	# 	limit = {
-	# 		title:e_byzantium.holder = {
-	# 			government_has_flag = government_is_administrative
-	# 		}
-	# 	}
-	# 	#Byzantine state faith is not Catholic
-	# 	title:e_byzantium.holder.primary_title = {
-	# 		state_faith = {
-	# 			NOT = { this = faith:catholic }
-	# 			religion = religion:christianity_religion
-	# 		}
-	# 	}
+		# limit = {
+			# title:e_byzantium.holder = {
+				# government_has_mechanic = administrative
+			# }
+		# }
+		# #Byzantine state rite is still Eastern Christian (not Latin)
+		# title:e_byzantium.holder.primary_title = {
+			# state_rite = {
+				# rite_has_doctrine = special_doctrine_is_eastern_christian_faith
+			# }
+		# }
 	# }
 	
 	# OR = {
@@ -101,14 +102,19 @@ ep3_frankokratia_ghw_trigger = {
 ep3_frankokratia_transiting_relative_trigger = {
 	always = no #BTWK
 	# OR = {
-	# 	AND = {
-	# 		exists = scope:char_temp
-	# 		highest_held_title_tier <= scope:char_temp.highest_held_title_tier
-	# 	}
-	# 	AND = {
-	# 		exists = root
-	# 		highest_held_title_tier <= root.highest_held_title_tier
-	# 	}
+		# # Prefer char_temp; root is a faith in great_holy_war.0001, so do not evaluate root.highest_held_title_tier there.
+		# AND = {
+			# trigger_if = {
+				# limit = {
+					# exists = scope:char_temp
+				# }
+				# highest_held_title_tier <= scope:char_temp.highest_held_title_tier
+			# }
+			# trigger_else = {
+				# exists = root
+				# highest_held_title_tier <= root.highest_held_title_tier
+			# }
+		# }
 	# 	highest_held_title_tier < tier_county
 	# 	NOT = {
 	# 		faith = faith:catholic
@@ -552,8 +558,8 @@ ep3_frankokratia_beneficiary_trigger = {
 	# 	has_trait = incapable
 	# 	has_trait = devoted
 	# 	AND = {
-	# 		scope:frankokratia_crusader.faith = {
-	# 			has_doctrine = doctrine_theocracy_temporal
+	# 		scope:frankokratia_crusader.rite = {
+	# 			rite_has_doctrine = doctrine_theocracy_temporal
 	# 		}
 	# 		has_council_position = councillor_court_chaplain
 	# 	}
@@ -655,6 +661,7 @@ ep3_frankokratia_notification_recipient_trigger = {
 	# 	#Most affected Christians
 	# 	faith = faith:catholic
 	# 	faith = faith:orthodox
+    #   faith = faith:miaphysitism
 	# 	faith = faith:armenian_apostolic
 	# 	#Target faith of crusade
 	# 	faith = scope:defender.faith
@@ -677,7 +684,7 @@ ep3_orthodox_faith_trigger = {
 	always = no #BTWK
 	# OR = {
 	# 	faith = faith:orthodox
-	# 	faith = faith:coptic
+	# 	faith = faith:miaphysitism
 	# 	faith = faith:armenian_apostolic
 	# 	faith = faith:iconoclast
 	# 	faith = faith:bogomilist

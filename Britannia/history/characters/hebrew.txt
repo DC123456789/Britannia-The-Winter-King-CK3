@@ -1,0 +1,50 @@
+﻿###################################
+####     HEBREW CHARACTERS     ####
+###################################
+
+pope_145292 = {
+	name = "Simon" # Peter
+	rite = roman_rite
+	culture = "hebrew"
+	trait = diligent
+	trait = calm
+	trait = zealous
+	trait = education_learning_4
+	3.1.1 = {
+		birth = yes
+	}
+	30.1.1 = {
+		name = "Petrus_regnal"
+		give_nickname = nick_the_rock
+	}
+	64.10.13 = {
+		death = yes
+		effect_even_if_dead = {
+			# Offmap right now, so we're giving him York Minster as that is dedicated to him
+			province:607 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:607 # province:2577 #Vatican, Saint Peter's tomb
+				PRESET = yes
+			}
+			religion:christianity_religion = {
+				every_faith = {
+					limit = {
+						main_rite = { is_rite_enabled = yes }
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:pope_145292
+				SAINT_COUNTY = province:607.county
+				SAINT_CONDITION = "religion = religion:christianity_religion"
+			}
+		}	
+	}
+}

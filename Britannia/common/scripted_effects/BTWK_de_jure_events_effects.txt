@@ -295,3 +295,51 @@ integrate_duchy_anglo_saxon_change_controlled_years_helper_effect = {
 		max = 40
 	}
 }
+
+BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+	save_scope_as = effect_title
+	if = {
+		limit = { exists = holder }
+		holder = {
+			# Title is destroyed if holder is not your vassal, or they have another title
+			# of the same or higher tier
+			if = {
+				limit = { 
+					OR = {
+						NOT = { any_liege_or_above = { this = $DESTROYER$ } } 
+						any_held_title = {
+							this != scope:effect_title
+							tier >= scope:effect_title.tier
+						}
+					}
+				}
+				# destroy_title must be in character scope to work
+				destroy_title = prev
+				if = {
+					limit = { this != $DESTROYER$ }
+					add_opinion = { modifier = BTWK_destroyed_title_opinion target = $DESTROYER$ }
+				}
+			}
+			else = {
+				prev = {
+					custom_tooltip = {
+						text = BTWK_set_to_be_destroyed_title_tt
+					}
+					hidden_effect = {
+						set_variable = BTWK_destroy_on_succession_or_gain_same_tier
+						set_destroy_on_succession = yes
+						set_destroy_on_gain_same_tier = yes
+					}
+				}
+			}
+		}
+	}	
+}
+
+BTWK_unset_to_be_destroyed_title_effect = {
+	hidden_effect = {
+		remove_variable = BTWK_destroy_on_succession_or_gain_same_tier
+		set_destroy_on_succession = no
+		set_destroy_on_gain_same_tier = no
+	}
+}

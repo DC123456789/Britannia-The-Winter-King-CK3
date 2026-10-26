@@ -159,6 +159,7 @@ get_briton_successor_culture_for_province_effect = {
 
 # Note - includes barons
 convert_unlanded_close_family_members_of_culture_effect = {
+	save_temporary_scope_as = effect_character
 	$NEW_CULTURE$ = { save_temporary_scope_as = effect_new_culture }
 	every_close_family_member = {
 		limit = {
@@ -166,6 +167,15 @@ convert_unlanded_close_family_members_of_culture_effect = {
 			OR = {
 				is_landed = no 			# Includes courtiers and landless rulers!
 				highest_held_title_tier = tier_barony
+			}
+			# If they are in the court of another close family member, they will
+			# take their lead instead
+			NOT = {
+				liege_or_court_owner = {
+					is_close_family_of = prev
+					this != scope:effect_character
+					culture != scope:effect_new_culture
+				}
 			}
 		}
 		if = {

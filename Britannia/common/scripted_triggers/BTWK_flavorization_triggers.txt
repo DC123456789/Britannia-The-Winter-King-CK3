@@ -1,0 +1,73 @@
+BTWK_is_king_tier_court_chaplain_or_equivalent_male_trigger = {
+	OR = {
+		liege = {
+			highest_held_title_tier >= tier_kingdom
+			OR = {
+				AND = {
+					religion = religion:christianity_religion
+					OR = {
+						any_held_title = {
+							tier = tier_duchy
+							has_clerical_region = yes
+						}
+						cp:councillor_court_chaplain ?= {
+							primary_title ?= {
+								tier = tier_duchy
+								has_clerical_region = yes
+							}
+						}
+					}
+				}
+				religion = religion:dualism_religion
+			}
+			$CULTURE_CONDITION$
+		}
+		AND = {
+			$CULTURE_CONDITION$
+			NOT = { has_council_position = councillor_court_chaplain }
+			religion = religion:christianity_religion
+			any_held_title = {
+				tier = tier_duchy
+				has_clerical_region = yes
+			}
+		}
+	}
+	is_female = no
+}
+
+BTWK_is_king_tier_court_chaplain_or_equivalent_female_trigger = {
+	OR = {
+		liege = {
+			highest_held_title_tier >= tier_kingdom
+			OR = {
+				AND = {
+					religion = religion:christianity_religion
+					OR = {
+						any_held_title = {
+							tier = tier_duchy
+							has_clerical_region = yes
+						}
+						cp:councillor_court_chaplain ?= {
+							primary_title ?= {
+								tier = tier_duchy
+								has_clerical_region = yes
+							}
+						}
+					}
+				}
+				religion = religion:dualism_religion
+			}
+			$CULTURE_CONDITION$
+		}
+		AND = {
+			$CULTURE_CONDITION$
+			NOT = { has_council_position = councillor_court_chaplain }
+			religion = religion:christianity_religion
+			any_held_title = {
+				tier = tier_duchy
+				has_clerical_region = yes
+			}
+		}
+	}
+	is_female = yes
+}
