@@ -374,10 +374,6 @@ spreading_of_christianity.0100 = {
 	immediate = {
 		save_scope_as = target_char
 		trigger_event = { id = spreading_of_christianity.0101 }
-		every_player = {
-			limit = { NOT = { this = PREV } }
-			trigger_event = { id = spreading_of_christianity.0101 }
-		}
 		set_global_variable = first_saxon_catholic_king
 		# Update situation variables since this event speeds up spread in Anglo-Saxon counties
 		BTWK_soc_situation_update_proselytization_modifiers_effect = yes
@@ -405,6 +401,10 @@ spreading_of_christianity.0101 = {
 			add_piety = 100
 		}
 		custom_tooltip = spreading_of_christianity.0101.tt
+		if = {
+			limit = { exists = scope:created_saxon_rite }
+			custom_tooltip = spreading_of_christianity.0101.tt.saxon_rite.1
+		}
 	}
 
 	option = {
@@ -475,6 +475,70 @@ spreading_of_christianity.0101 = {
 				}
 			}
 			text = spreading_of_christianity.0101.a.other.non_christian
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+	
+	option = {
+		name = spreading_of_christianity.0101.b
+		trigger = { 
+			faith = rite:roman_rite.faith
+			NOT = { exists = rite:saxon_rite }
+		}
+		add_internal_flag = special
+		create_rite_from_type = {
+			type = saxon_rite
+			convert = yes
+		}
+		save_scope_as = created_saxon_rite
+		custom_tooltip = spreading_of_christianity.0101.b.tt
+		hidden_effect = {
+			set_character_rite = rite:saxon_rite
+			every_courtier = {
+				limit = { 
+					faith = root.faith
+					culture = { has_same_culture_heritage = root.culture }
+				}
+				set_character_rite = rite:saxon_rite
+			}
+			every_vassal_or_below = {
+				limit = { 
+					faith = root.faith
+					culture = { has_same_culture_heritage = root.culture }
+				}
+				set_variable = block_faith_conversion_0001_capital_conversion
+				set_character_rite = rite:saxon_rite
+				remove_variable = block_faith_conversion_0001_capital_conversion
+				every_courtier = {
+					limit = { 
+						faith = root.faith
+						culture = { has_same_culture_heritage = root.culture }
+					}
+					set_character_rite = rite:saxon_rite
+				}
+			}
+			every_sub_realm_county = {
+				limit = { 
+					faith = root.faith
+					culture = { has_same_culture_heritage = root.culture }
+				}
+				set_county_rite = rite:saxon_rite
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+	after = {
+		# Other players get notified after so they get notified if the Saxon Rite is created
+		every_player = {
+			limit = { NOT = { this = root } }
+			trigger_event = { id = spreading_of_christianity.0101 }
 		}
 	}
 }
@@ -796,9 +860,13 @@ spreading_of_christianity.0203 = {
 		add_treasury = 300
 		
 		# Augustine creates and converts to Saxon Rite
-		create_rite_from_type = {
-			type = saxon_rite
-			convert = yes
+		if = {
+			limit = { NOT = { exists = rite:saxon_rite } }
+			create_rite_from_type = {
+				type = saxon_rite
+				convert = yes
+			}
+			save_scope_as = created_saxon_rite
 		}
 		set_character_rite = rite:saxon_rite
 		
@@ -890,7 +958,10 @@ spreading_of_christianity.0204 = {
 	
 	immediate = {
 		custom_tooltip = spreading_of_christianity.0204.tt.1
-		custom_tooltip = spreading_of_christianity.0204.tt.2
+		if = {
+			limit = { exists = scope:created_saxon_rite }
+			custom_tooltip = spreading_of_christianity.0204.tt.2
+		}
 		custom_tooltip = spreading_of_christianity.0204.tt.3
 	}
 
