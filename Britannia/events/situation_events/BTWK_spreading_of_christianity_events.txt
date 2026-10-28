@@ -2041,6 +2041,179 @@ spreading_of_christianity.0219 = {
 	}
 }
 
+# Archbishop/king with missionaries is asked to switch rite to Saxon Rite
+spreading_of_christianity.0220 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { has_title = title:d_et_canterbury.var:clerical_title }
+				desc = spreading_of_christianity.0220.t.archbishop
+			}
+			desc = spreading_of_christianity.0220.t
+		}
+	}
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { has_title = title:d_et_canterbury.var:clerical_title }
+				desc = spreading_of_christianity.0220.desc.archbishop
+			}
+			desc = spreading_of_christianity.0220.desc
+		}
+	}
+	theme = faith
+	override_background = { 
+		reference = temple_church
+	}
+	
+	left_portrait = {
+		character = root
+		animation = thinking
+	}
+	
+	right_portrait = {
+		character = scope:gregorian_mission_augustine
+		animation = writing
+		trigger = { scope:gregorian_mission_augustine != root }
+	}
+	
+	trigger = {
+		OR = {
+			AND = {
+				is_landed = yes
+				is_independent_ruler = yes
+				has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+			}
+			has_title = title:d_et_canterbury.var:clerical_title
+		}
+		title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+		exists = rite:saxon_rite
+		rite:saxon_rite.faith ?= root.faith
+	}
+	
+	immediate = {
+		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
+			save_scope_as = scope:gregorian_mission_augustine
+		}
+	}
+
+	# Accept
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { scope:gregorian_mission_augustine = root }
+						desc = spreading_of_christianity.0220.a.archbishop
+					}
+					desc = spreading_of_christianity.0220.a
+				}
+			}
+		}
+		set_character_rite = rite:saxon_rite
+		capital_county = {
+			if = {
+				limit = {
+					holder = root
+					faith = root.faith
+				}
+				set_county_rite = rite:saxon_rite
+			}
+		}
+		custom_tooltip = spreading_of_christianity.0220.a.tt
+		hidden_effect = {
+			every_vassal = {
+				limit = {
+					is_ai = yes
+					faith = root.faith
+					rite != root.rite
+					ai_zeal <= 25
+					culture = { has_same_heritage_group_as = { TARGET = root.culture } }
+				}
+				set_character_rite = rite:saxon_rite				
+			}
+			every_courtier = {
+				if = {
+					limit = {
+						OR = {
+							is_close_family_of = root
+							is_consort_of = root
+						}
+						faith = root.faith
+						rite != root.rite
+						culture = { has_same_heritage_group_as = { TARGET = root.culture } }
+						ai_zeal <= 50
+					}
+					set_character_rite = rite:saxon_rite
+				}
+				else_if = {
+					limit = { ai_zeal <= 25 }
+					set_character_rite = rite:saxon_rite
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = -1.33
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = 1000
+				has_title = title:d_et_canterbury.var:clerical_title
+			}
+		}
+	}
+
+	# Refuse
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { scope:gregorian_mission_augustine = root }
+						desc = spreading_of_christianity.0220.b.archbishop
+					}
+					desc = spreading_of_christianity.0220.b
+				}
+			}
+		}
+		set_variable = gregorian_mission_refused_change_rite
+		
+		# AI will convert unless they are at least somewhat zealous
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = {
+					value = ai_zeal
+					multiply = 1
+				}
+				faith != scope:gregorian_mission_augustine.faith
+				ai_zeal >= 0
+			}
+			modifier = {
+				add = {
+					value = ai_rationality
+					multiply = -0.5
+				}
+				ai_rationality >= 0
+				faith != scope:gregorian_mission_augustine.faith
+			}
+			modifier = {
+				multiply = 0
+				has_title = title:d_et_canterbury.var:clerical_title
+			}
+		}
+	}
+}
+
 # End of the Gregorian Mission, all missionary events end
 spreading_of_christianity.0290 = {
 	type = character_event

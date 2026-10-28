@@ -525,6 +525,29 @@
 		}
 	}
 	
+	# Story owner will attempt to convert to Saxon Rite if possible
+	effect_group = {
+		months = 1
+		
+		trigger = { always = yes }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = {
+					story_owner = {
+						rite:saxon_rite != rite
+						rite:saxon_rite.faith ?= faith
+						NOT = { has_variable = gregorian_mission_refused_change_rite }
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { trigger_event = spreading_of_christianity.0220 }
+				}
+			}
+		}
+	}
+	
 	# While you have missionaries, every year the missionaries will convert parts of your realm
 	effect_group = {
 		years = 1
@@ -549,6 +572,14 @@
 								NOT = { has_variable = gregorian_mission_refused_personal_conversion }
 							}
 							trigger_event = { id = spreading_of_christianity.0214 days = { 1 90 } }
+						}
+						# If you are not Saxon Rite and you have not already refused, you will always be asked to convert
+						else_if = {
+							limit = { 
+								rite:saxon_rite.faith ?= faith
+								NOT = { has_variable = gregorian_mission_refused_change_rite }
+							}
+							trigger_event = { id = spreading_of_christianity.0220 days = { 1 90 } }
 						}
 						# Otherwise, they will attempt to convert pagan vassals in your realm
 						else_if = {
