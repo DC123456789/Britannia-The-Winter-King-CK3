@@ -700,13 +700,16 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_powys.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:powys_suitor = {
 			marry = character:19
 		}
+		# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
+		scope:powys_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_powys = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -722,13 +725,16 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_siluria.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:siluria_suitor = {
 			marry = character:19
 		}
+		# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
+		scope:siluria_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_siluria = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -744,13 +750,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_kernow.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:kernow_suitor = {
 			marry = character:19
 		}
+		scope:kernow_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_kernow = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -766,13 +774,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_gwent.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:gwent_suitor = {
 			marry = character:19
 		}
+		scope:gwent_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_gwent = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -788,13 +798,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_glevum.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:glevum_suitor = {
 			marry = character:19
 		}
+		scope:glevum_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_glevum = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -810,13 +822,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_belgae.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:belgae_suitor = {
 			marry = character:19
 		}
+		scope:belgae_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_belgae = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -832,13 +846,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_cynwidion.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:cynwidion_suitor = {
 			marry = character:19
 		}
+		scope:cynwidion_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_cynwidion = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -854,13 +870,15 @@ BTWK_story_event.0104 = {  # Choose Norwenna's suitor.
 					AND = {
 						is_primary_heir_of = title:k_demetia.holder
 						holds_kingdom_near_dumnonia = no
-						}
 					}
 				}
 			}
+		}
 		scope:demetia_suitor = {
 			marry = character:19
 		}
+		scope:demetia_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_demetia = { save_scope_as = dumnonia_alliance_realm }
 		character:1	= {
 			trigger_event = BTWK_story_event.0105
 		}
@@ -922,62 +940,10 @@ BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances;
 						is_spouse_of = character:19
 					}
 				}
-			}
-			if = {
-				limit = {
-					OR = {
-			# ALLIANCE: UTHER <-> NORWENNA'S SPOUSE'S FATHER IF SPOUSE UNLANDED.
-						AND = {
-							character:19.primary_spouse = { 
-								is_landed = no 
-							}
-							character:19.primary_spouse.father = { 
-								is_alive = yes 
-							}
-						}
-			# ALLIANCE: UTHER <-> NORWENNA'S SPOUSE'S FATHER IF SPOUSE IS VASSAL UNDER FATHER. 
-						AND = {
-							character:19.primary_spouse = { 
-								is_landed = yes
-								is_independent_ruler = no
-							}
-							character:19.primary_spouse.father = {
-								is_alive = yes
-							}
-						}
-					}
-				}			
-				event_alliance_effect = {
-					ACTOR = character:1
-					TARGET = character:19.primary_spouse.father
-				}
-			# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
-				character:19.primary_spouse = {
-					save_scope_as = lady_norwenna_husband
-				}
-				character:19.primary_spouse.father.primary_title = {
-					save_scope_as = dumnonia_alliance_realm
-				}
-			}
-			# ALLIANCE: UTHER <-> NORWENNA'S (LANDED, INDEPENDENT) SPOUSE.
-			else_if = {
-				limit = {
-					character:19.primary_spouse = { 
-						is_landed = yes
-						is_independent_ruler = yes
-					}
-				}
-				event_alliance_effect = {
-					ACTOR = character:1
-					TARGET = character:19.primary_spouse
-				}
-			# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
-				character:19.primary_spouse = {
-					save_scope_as = lady_norwenna_husband
-				}
-				character:19.primary_spouse.primary_title = {
-					save_scope_as = dumnonia_alliance_realm
-				}
+			}		
+			event_alliance_effect = {
+				ACTOR = character:1
+				TARGET = scope:dumnonia_alliance_realm.holder
 			}
 		}
 	}
@@ -1169,7 +1135,7 @@ BTWK_story_event.0120 = {  # Trigger Event for Global Notifications
 				trigger_event = {
 					id = BTWK_story_event.0114	
 				}			
-			set_variable = attended_glevum
+				set_variable = attended_glevum
 			}
 		}	
 
