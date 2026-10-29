@@ -24,6 +24,7 @@ BTWK_create_clerical_titles_decision = {
 					this.var:selected_title ?= {
 						this.var:title = title:d_et_cirencester
 						this.var:coa_title != title:d_et_cirencester
+						has_variable = briton_roman_clerical_title
 					}
 					NOT = { has_global_variable = end_of_britannia }
 				}
@@ -38,10 +39,51 @@ BTWK_create_clerical_titles_decision = {
 							this.var:title = title:d_et_cirencester
 							this.var:title = title:d_et_york
 						}
+						has_variable = briton_roman_clerical_title
 					}
 					NOT = { has_global_variable = end_of_britannia }
 				}
 				desc = BTWK_create_clerical_titles_decision_roman_britain_sees_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						NOT = { has_variable = no_southern_anglo_saxon_kingdom_clerical_title }
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_canterbury_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						has_variable = no_southern_anglo_saxon_kingdom_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_canterbury_from_outside_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_york.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_york_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_lindisfarne.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_lindisfarne_desc
 			}
 			desc = BTWK_create_clerical_titles_decision_desc
 		}
