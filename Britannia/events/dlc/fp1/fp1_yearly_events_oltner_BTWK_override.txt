@@ -1,0 +1,183 @@
+﻿namespace = fp1_yearly
+
+# Become a Berserker
+fp1_yearly.2600 = {
+	type = character_event
+	id_override_priority = 10
+	title = fp1_yearly.2600.t
+	desc = fp1_yearly.2600.desc
+	theme = war
+	left_portrait = {
+		character = scope:berserker_teacher
+		animation = marshal 
+	}
+	override_background = { reference = fp1_tribal_temple }
+
+	trigger = {
+		#DLC check.
+		has_fp1_dlc_trigger = yes
+		
+		#Standard checks.
+		is_available_at_peace_adult = yes
+		NOT = { has_character_flag = had_event_fp1_yearly_2600 }
+		
+		OR = {
+			culture = { has_cultural_pillar = heritage_north_germanic }
+			# religion = religion:germanic_religion
+		}
+		
+		rite = {
+			rite_has_tenet = tenet_warmonger
+		}
+		
+		NOR = {
+			has_trait = craven
+			has_trait = berserker
+		}
+		
+		prowess >= 8
+		
+		any_knight = {
+			is_ai = yes
+			is_physically_able_adult = yes
+			has_trait = berserker
+			NOT = {
+				has_relation_rival = root
+			}
+		}
+	}
+
+	weight_multiplier = {
+		base = 1
+		
+		modifier = {
+			add = 0.5
+			has_trait = impatient
+		}
+		modifier = {
+			add = 0.5
+			has_trait = wrathful
+		}
+		modifier = {
+			add = 0.5
+			prowess >= 12
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			add_character_flag = {
+				flag = had_event_fp1_yearly_2600
+				days = 1825
+			}
+		}
+		
+		random_knight = {
+			limit = {
+				is_ai = yes
+				is_physically_able_adult = yes
+				has_trait = berserker
+				NOT = {
+					has_relation_rival = root
+				}
+			}
+			save_scope_as = berserker_teacher
+		}
+	}
+
+	option = {
+		name = fp1_yearly.2600.a
+		
+		custom_tooltip = fp1_yearly.2600.a.tt
+		
+		hidden_effect = {
+			random_list = {
+				10 = { # Succeed, no one harmed
+					set_variable = {
+						name = success_no_one_harmed
+						value = yes
+					}
+				}
+				5 = { # Succeed, harm someone close to you
+					trigger = {
+						any_courtier = {
+							is_of_major_interest_to_root_trigger = yes
+							is_ai = yes
+							age > 12
+							this != scope:berserker_teacher
+						}
+					}
+					set_variable = {
+						name = success_harm_close_one
+						value = yes
+					}
+				}
+				3 = { # Succeed, kill the berserker who taught you
+					set_variable = {
+						name = success_kill_berserker
+						value = yes
+					}
+				}
+				1 = { # Succeed, kill everyone at court
+					trigger = {
+						is_ai = no
+						any_courtier = {
+							is_of_major_interest_to_root_trigger = yes
+							is_ai = yes
+							age > 12
+						}
+					}
+					set_variable = {
+						name = success_kill_everyone
+						value = yes
+					}
+				}
+				3 = { # Fail, fall asleep
+					set_variable = {
+						name = fail_fall_asleep
+						value = yes
+					}
+					modifier = {
+						add = 10
+						has_trait = lazy
+					}
+				}
+			}
+			trigger_event = fp1_yearly.2601
+		}
+
+		stress_and_fulfillment_impact = {
+			calm = massive_stress_impact_gain
+			lazy = massive_stress_impact_gain
+			patient = major_stress_impact_gain
+			temperate = major_stress_impact_gain
+		}
+		ai_chance = {
+			base = 90
+			modifier = {
+				factor = 0
+				OR = {
+					has_trait = calm
+					has_trait = patient
+					has_trait = lazy
+				}
+			}
+		}
+	}
+
+	option = {
+		name = fp1_yearly.2600.b
+		
+		custom_tooltip = fp1_yearly.2600.b.tt
+
+		stress_and_fulfillment_impact = {
+			impatient = massive_stress_impact_gain
+			wrathful = massive_stress_impact_gain
+			sadistic = medium_stress_impact_gain
+			arrogant = minor_stress_impact_gain
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
