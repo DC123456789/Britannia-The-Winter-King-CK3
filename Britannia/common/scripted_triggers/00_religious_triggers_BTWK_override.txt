@@ -1,4 +1,107 @@
+BTWK_christian_faith_head_requirements_trigger = {
+	root = {
+		government_is_not_tribal_trigger = yes
+		government_is_not_pre_feudal_trigger = yes
+		sub_realm_size >= 300
+		highest_held_title_tier >= tier_empire
+	}
+	num_realm_holy_sites_faithful_holders = {
+		COUNT = 5
+		CHARACTER = root
+	}
+}
+
+### Head of Faith
+can_create_temporal_head_of_faith_title_trigger = {
+	trigger_if = {
+		limit = {
+			this = faith:christian_faith
+		}
+		BTWK_christian_faith_head_requirements_trigger = yes
+	}
+	trigger_else = {
+		num_realm_holy_sites_faithful_holders = {
+			COUNT = holy_sites_to_create_temporal_head_of_faith
+			CHARACTER = root
+		}
+	}
+	root.piety_level >= high_piety_level
+	trigger_if = {
+		limit = { root = { top_liege != this } }
+		custom_description = {
+			text = cannot_create_hof_title_at_or_above_liege_tier
+			root.liege.primary_title.tier > tier_duchy
+		}
+	}
+	root = {
+		trigger_if = {
+			limit = { faith.religious_head ?= this }
+			NOT = {
+				custom_tooltip = {
+					text = empire_faith_gate_hof_temporal_is_hof
+					faith.religious_head ?= this
+				}
+			}
+		}
+	}
+}
+
+can_create_spiritual_head_of_faith_title_trigger = {
+	trigger_if = {
+		limit = {
+			this = faith:christian_faith
+		}
+		BTWK_christian_faith_head_requirements_trigger = yes
+	}
+	trigger_else = {
+		num_realm_holy_sites_faithful_holders = {
+			COUNT = holy_sites_to_create_spiritual_head_of_faith
+			CHARACTER = root
+		}
+	}
+	# Non-mainline rites need one more level of devotion than the mainline rite
+	trigger_if = {
+		limit = {
+			root = { NOT = { rite = faith.main_rite } }
+		}
+		root.piety_level >= high_piety_level
+	}
+	trigger_else = {
+		root.piety_level >= medium_piety_level
+	}
+	trigger_if = {
+		limit = { has_doctrine_parameter = block_from_create_hof_parameter }
+		NOT = { has_doctrine_parameter = block_from_create_hof_parameter }
+	}
+	root = {
+		trigger_if = {
+			limit = { faith.religious_head ?= this }
+			NOT = {
+				custom_tooltip = {
+					text = can_create_spiritual_hof_title_trigger_is_hof_tt
+					faith.religious_head ?= this
+				}
+			}
+		}
+	}
+}
+
 BTWK_can_reform_rite_trigger = {
+	# Identical except for tooltip
+	trigger_if = {
+		limit = { faith = faith:hellenic_pagan }
+		rite:hellenic_pagan = { save_temporary_scope_as = hellenic_pagan_rite }
+		custom_tooltip = {
+			text = rite_is_main_rite_hellenic_pagan_tt
+			rite = faith.main_rite
+		}
+	}
+	trigger_else = {
+		custom_tooltip = {
+			text = rite_is_main_rite_tt
+			rite = faith.main_rite
+		}
+	}
 	government_is_not_tribal_trigger = yes
 	# TODO Maybe need to figure out theocratic requirements?
 	sub_realm_size >= 75

@@ -1,6 +1,42 @@
 
 types TitleSelectionActionTypes
 {
+	type ClericalRegionExpansionWidget = TitleSelectionActionBoxType {
+		blockoverride "no_titles_text" {
+			text = BTWK_expand_clerical_titles_decision_no_title_shown_string
+		}
+		blockoverride "title_visible" {
+			visible = "[GetScriptedGui('BTWK_expand_clerical_titles_show').IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		}
+		blockoverride "title_button_text" {
+			text = BTWK_expand_clerical_titles_button_title_name
+		}
+		blockoverride "title_button" {
+			onclick = "[GetScriptedGui('title_selection_decision_selection').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			down = "[GetScriptedGui('title_selection_decision_is_selected').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		}
+		blockoverride "title_button_coa" {
+			datacontext = "[Scope.Var('title').Var('clerical_title').Title]"
+		}
+		blockoverride "title_button_box_datacontext" {
+			datacontext = "[Scope.Var('region').GeographicalRegion]"
+		}
+		blockoverride "title_select_button_box_datacontext" {
+			datacontext = "[Scope.Var('title').Title]"
+		}
+		blockoverride "selection_button" {
+			onclick = "[GetScriptedGui('BTWK_expand_clerical_titles_expand').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			enabled = "[GetScriptedGui('BTWK_expand_clerical_titles_expand').IsValid(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+			tooltip = "[GetScriptedGui('BTWK_expand_clerical_titles_expand').BuildTooltip(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('scoped_title', Scope.Story.MakeScope).End)]"
+		}
+		blockoverride "selection_button_text_box" {
+			margin_left = 6
+		}
+		blockoverride "selection_button_text" {
+			text = "Integrate"
+		}
+	}
+
 	type TitleSelectionActionBoxType = vbox {
 		layoutpolicy_horizontal = expanding
 		layoutpolicy_vertical = expanding
@@ -92,9 +128,11 @@ types TitleSelectionActionTypes
 				vbox = {
 					layoutpolicy_vertical = expanding
 					margin_top = 12
-					coa_title_tiny = {
-						block "title_button_coa" {
-							datacontext = "[Scope.Title]"
+					block "title_button_coa_type" {
+						coa_title_tiny = {
+							block "title_button_coa" {
+								datacontext = "[Scope.Title]"
+							}
 						}
 					}
 				}

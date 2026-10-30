@@ -468,18 +468,45 @@ BTWK_britannia_high_king_reform_centralize_the_church_trigger = {
 	}
 	trigger_if = {
 		limit = { NOT = { faith = { has_doctrine = doctrine_no_head } } }
-		custom_description = {
-			text = BTWK_HK_britannia_high_king_reform_centralize_the_church_religious_head_condition
-			exists = faith.religious_head
+		trigger_if = {
+			limit = { 
+				faith = faith:christian_faith 
+				NOT = { exists = faith.religious_head }
+			}
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_centralize_the_church_mean_rite_head_opinion
+				faith.main_rite.head_of_rite ?= { 
+					opinion = { target = prev value >= 60 }
+				}
+			}
 		}
-		custom_description = {
-			text = BTWK_britannia_high_king_reform_centralize_the_church_religious_head_opinion
-			faith.religious_head ?= { opinion = { target = prev value >= 60 } }
-		}
+		trigger_else = {
+			custom_description = {
+				text = BTWK_HK_britannia_high_king_reform_centralize_the_church_religious_head_condition
+				exists = faith.religious_head
+			}
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_centralize_the_church_religious_head_opinion
+				faith.religious_head ?= { opinion = { target = prev value >= 60 } }
+			}
+		}		
 	}
 	trigger_if = {
 		limit = { has_religion = religion:christianity_religion }
 		completely_controls = title:c_londinium
+		trigger_if = {
+			limit = { has_pam_dlc_trigger = yes }
+			custom_description = {
+				text = BTWK_britannia_high_king_reform_centralize_the_church_d_et_london_created
+				exists = title:c_londinium.clerical_region_title.holder
+				title:c_londinium.clerical_region_title.holder.faith = this.faith
+			}
+		}
+		trigger_else = {
+			completely_controls = title:c_lindum
+			completely_controls = title:c_corinium
+			completely_controls = title:c_eburacum
+		}
 	}
 	BTWK_britannia_high_king_reform_common_trigger = yes
 }

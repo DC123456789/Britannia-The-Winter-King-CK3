@@ -1286,6 +1286,33 @@
 	}
 	405.1.1 = {
 		death = yes
+		effect_even_if_dead = {
+			# Offmap, so we're giving him Woodnesborough, Eastry (eventually we probably want him somewhere in Angeln)
+			province:143 = {
+				set_variable = hide_location_for_saint
+			}
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:143
+				PRESET = yes
+			}
+			faith:anglo_saxon_pagan = {
+				if = {
+					limit = {
+						main_rite = { is_rite_enabled = yes }
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+			# He's not actually buried here, shouldn't be able to get relics from him
+			BTWK_consume_all_saint_charges = {
+				SAINT_CHARACTER = character:3000
+				SAINT_COUNTY = province:143.county
+				SAINT_FAITH_CONDITION = "this = faith:anglo_saxon_pagan"
+			}
+		}
 	}
 }
 

@@ -211,6 +211,21 @@ BTWK_on_death = {
 			}
 		}
 		
+		# If Augustine managed to start the mission, he becomes a saint 10 years after he dies
+		if = {
+			limit = {
+				has_variable = BTWK_augustine_of_canterbury
+				has_variable = BTWK_augustine_of_canterbury_potential_canonization
+			}
+			create_story = {
+				type = BTWK_soc_gregorian_mission_augustine_canonization_story
+				save_scope_as = canonization_story
+			}
+			scope:canonization_story = { 
+				set_variable = { name = gregorian_mission_augustine value = prev }
+			}
+		}
+		
 		# Struggle catalysts
 		## High King deaths.
 		if = {

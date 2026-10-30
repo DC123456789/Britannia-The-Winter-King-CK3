@@ -1,0 +1,127 @@
+﻿namespace = BTWK_clerical_titles
+
+##################################################
+
+### Clerical Title Creation and Expansion Events
+
+##################################################
+# 0001	    - Creation of Archdiocese
+# 0002      - Expansion of Archdiocese
+
+# Creation of Archdiocese
+BTWK_clerical_titles.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_clerical_titles.0001.t
+	desc = {
+		desc = BTWK_clerical_titles.0001.desc
+	}
+	theme = faith
+	override_background = {
+		reference = temple_scope
+	}
+	
+	left_portrait = {
+		character = scope:kingdom_holder
+		trigger = { scope:kingdom_holder != scope:new_ecclesiastical_holder }
+	}
+	
+	right_portrait = {
+		character = scope:new_ecclesiastical_holder
+		animation = personality_zealous
+	}
+	
+	immediate = {
+		scope:new_ecclesiastical_holder = {
+			save_scope_as = background_temple_scope
+		}
+		custom_tooltip = BTWK_clerical_titles.0001.tt
+		scope:clerical_title_creation_story = {
+			if = {
+				limit = { has_variable_list = clerical_title_dependent_expansions }
+				every_in_list = {
+					variable = clerical_title_dependent_expansions
+					limit = { has_variable = dependent_expansion_just_triggered }
+					this.var:title.var:clerical_title = { save_scope_as = clerical_title }
+					this.var:region = { save_scope_as = effect_region }
+					custom_tooltip = BTWK_clerical_titles.0002.tt
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							faith = scope:new_ecclesiastical_holder.faith
+						}
+						desc = BTWK_clerical_titles.0001.a.same_faith
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+						}
+						desc = BTWK_clerical_titles.0001.a.other_christian
+					}
+					desc = BTWK_clerical_titles.0001.a.non_christian
+				}
+			}
+		}
+	}
+}
+
+# Expansion of Archdiocese
+BTWK_clerical_titles.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_clerical_titles.0002.t
+	desc = {
+		desc = BTWK_clerical_titles.0002.desc
+	}
+	theme = faith
+	override_background = {
+		reference = temple_scope
+	}
+	
+	left_portrait = {
+		character = scope:expansion_actor
+		trigger = { scope:expansion_actor != scope:ecclesiastical_holder }
+	}
+	
+	right_portrait = {
+		character = scope:ecclesiastical_holder
+		animation = personality_zealous
+	}
+	
+	immediate = {
+		scope:ecclesiastical_holder = {
+			save_scope_as = background_temple_scope
+		}
+		custom_tooltip = BTWK_clerical_titles.0002.tt
+	}
+
+	option = {
+		name = {
+			text = {
+				first_valid = {
+					triggered_desc = {
+						trigger = { 
+							faith = scope:ecclesiastical_holder.faith
+						}
+						desc = BTWK_clerical_titles.0002.a.same_faith
+					}
+					triggered_desc = {
+						trigger = {
+							religion = religion:christianity_religion
+						}
+						desc = BTWK_clerical_titles.0002.a.other_christian
+					}
+					desc = BTWK_clerical_titles.0002.a.non_christian
+				}
+			}
+		}
+	}
+}

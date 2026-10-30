@@ -79,6 +79,14 @@ is_wrong_culture_for_ethnic_rite_trigger = {
 			}
 		}
 		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_romanogermanic_culture_faith }
+			scope:trigger_culture = {
+				NOT = {
+					this.var:ancestral_starting_culture ?= culture:romanogermanic
+				}
+			}
+		}
+		AND = {
 			scope:trigger_rite = { rite_has_doctrine = special_doctrine_briton_culture_faith }
 			scope:trigger_culture = {
 				NOT = { has_cultural_pillar = heritage_brythonic }
@@ -108,5 +116,28 @@ is_wrong_culture_for_ethnic_rite_trigger = {
 				NOT = { has_cultural_pillar = heritage_romanized_sarmatian }
 			}
 		}
+	}
+}
+
+BTWK_can_be_elected_pope_trigger = {
+	trigger_if = {
+		limit = { is_ruler = yes }
+		OR = {
+			capital_province = { geographical_region = world_europe_south_italy }
+			any_liege_or_above = { has_title = title:k_papal_state }
+		}
+	}
+	trigger_else_if = {
+		limit = { exists = liege }
+		liege = {
+			OR = {
+				capital_province = { geographical_region = world_europe_south_italy }
+				has_title = title:k_papal_state
+				any_liege_or_above = { has_title = title:k_papal_state }
+			}
+		}
+	}
+	trigger_else = {
+		always = no
 	}
 }

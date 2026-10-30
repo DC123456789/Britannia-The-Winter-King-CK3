@@ -328,6 +328,40 @@ BTWK_on_title_gain = {
 				scope:previous_holder ?= { remove_character_modifier = BTWK_anglia_unstable_realm }
 			}
 		}
+		
+		# Check for continuing Gregorian Mission
+		if = {
+			limit = { 
+				scope:previous_holder = { has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier }
+				is_independent_ruler = yes
+				is_landed = yes
+				NOR = {
+					has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifierest
+					has_variable = rejected_gregorian_mission_spread
+					has_variable = has_event_spreading_of_christianity_0216 
+				}
+				title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+				OR = {
+					scope:title.tier >= tier_kingdom
+					scope:title.tier >= this.highest_held_title_tier
+				}
+			}
+			# Delay of one day so the next player character still sees it
+			set_variable = has_event_spreading_of_christianity_0216
+			trigger_event = { id = spreading_of_christianity.0216 days = 1 }
+		}
+		
+		# Gregorian Mission story follows the holder of Canterbury
+		if = {
+			limit = {
+				title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+				title:d_et_canterbury.var:clerical_title ?= scope:title
+				religion = religion:christianity_religion
+			}
+			title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story = {
+				make_story_owner = title:d_et_canterbury.var:clerical_title.holder
+			}
+		}
 	}
 }
 
@@ -431,6 +465,17 @@ BTWK_on_title_lost = {
 			remove_character_modifier = BTWK_soc_banning_missionaries_modifier
 			remove_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
 			remove_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+		}
+		
+		# Clear Gregorian mission modifiers if now unlanded or not at least count-tier
+		if = {
+			limit = {
+				OR = {
+					is_landed = no
+					highest_held_title_tier < tier_county
+				}
+			}			
+			remove_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
 		}
 		
 		if = {

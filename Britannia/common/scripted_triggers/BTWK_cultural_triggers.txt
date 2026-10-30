@@ -124,6 +124,20 @@ culture_is_ingvaeonic_culture_trigger = {
 	has_cultural_pillar = heritage_west_germanic
 }
 
+# Specifically for Anglo-Saxons and descendant cultures, exclude Frisians and (Low) Saxons
+is_anglo_saxon_culture_trigger = {
+	culture = { culture_is_anglo_saxon_culture_trigger = yes }
+}
+
+culture_is_anglo_saxon_culture_trigger = {
+	has_cultural_pillar = heritage_west_germanic
+	OR = {
+		this.var:ancestral_starting_culture ?= culture:angle
+		this.var:ancestral_starting_culture ?= culture:old_saxon
+		this.var:ancestral_starting_culture ?= culture:jute
+	}
+}
+
 is_unromanized_germanic_culture_trigger = {
 	culture = {
 		OR = {

@@ -145,31 +145,18 @@ great_holy_war.0001 = {
 			}
 			scope:ghw_sponsor = {
 				random_courtier = {
-					alternative_limit = {
-						scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_male_dominated } }
-						is_male = yes
-						is_adult = yes
-						is_ai = yes
-						NOR = {
-							has_trait = excommunicated
-							has_trait = incapable
-							has_trait = devoted
-						}
-						faith = scope:the_faith
-					}
-					alternative_limit = {
-						scope:the_faith = { main_rite = { rite_has_doctrine = doctrine_gender_female_dominated } }
-						is_female = yes
-						is_adult = yes
-						is_ai = yes
-						NOR = {
-							has_trait = excommunicated
-							has_trait = incapable
-							has_trait = devoted
-						}
-						faith = scope:the_faith
-					}
 					limit = {
+						scope:the_faith.main_rite = { rite_has_dominant_ruling_gender = prev }
+						is_adult = yes
+						is_ai = yes
+						NOR = {
+							has_trait = excommunicated
+							has_trait = incapable
+							has_trait = devoted
+						}
+						faith = scope:the_faith
+					}
+					alternative_limit = {
 						is_adult = yes
 						is_ai = yes
 						NOR = {

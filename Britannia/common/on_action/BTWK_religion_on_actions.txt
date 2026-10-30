@@ -1,19 +1,78 @@
 ﻿#On actions related to religion
 
+# Code on-action: a new faith is created (character create/convert, or a rite detaching into its own faith)
+# Root is the new faith; its head/leader is root.main_rite.head_of_rite (use it for faith-setup effects)
+# scope:founder is the acting character that triggered the creation (creator/converter, heresy declarer, or on a divergence the head of the diverging rite)
+# scope:founder can be absent - the game creates faiths with no acting character, so it is entered with ?=
+# scope:old_faith is the faith they used to have
+# scope:old_rite is the rite they used to have
+# scope:diverged (true/false) optional scope, true if the faith was created because of a Rite diverging too much. Notice create a 100+ divergence heresy at the start does not count.
+on_faith_created = {
+	on_actions = {
+		BTWK_on_faith_created
+	}
+}
+
+BTWK_on_faith_created = {
+	effect = {
+		save_scope_as = new_faith
+		scope:old_faith = {
+			if = {
+				limit = { 
+					has_doctrine_parameter = unreformed
+					this = faith:hellenic_pagan
+				}
+				# Since Roman paganism is broken up into rites, the renaming doesn't quite work properly
+				# for the rites has to be redone manually
+				# For porting over the gods, we would have to use custom loc
+				rite:hellenic_pagan = {
+					set_rite_name = {
+						name = hellenic_pagan_old
+						desc = hellenic_pagan_desc
+						adjective = hellenic_pagan_old_adj
+						adherent = hellenic_pagan_old_adherent
+						adherent_plural = hellenic_pagan_old_adherent_plural
+					}
+				}
+				rite:romano_celtic_pagan = {
+					set_rite_name = {
+						name = romano_celtic_pagan_old
+						desc = romano_celtic_pagan_desc
+						adjective = romano_celtic_pagan_old_adj
+						adherent = romano_celtic_pagan_old_adherent
+						adherent_plural = romano_celtic_pagan_old_adherent_plural
+					}
+				}
+				rite:romano_germanic_pagan = {
+					set_rite_name = {
+						name = romano_germanic_pagan_old
+						desc = romano_germanic_pagan_desc
+						adjective = romano_germanic_pagan_old_adj
+						adherent = romano_germanic_pagan_old_adherent
+						adherent_plural = romano_germanic_pagan_old_adherent_plural
+					}
+				}
+			}
+		}
+	}
+}
+
 # Code on-action: character converts faith. Only fired when using the convert window, or the script effect that uses the same logic
 # Root is the converted character
 # scope:old_faith is the faith they used to have
-# scope:actor is the character instigating the conversion
+# scope:old_rite is the rite they used to have
+# scope:founder is the character instigating the conversion
 on_faith_conversion = {
 	on_actions = {
 		BTWK_on_character_faith_change_all
 	}
 }
 
-# Code on-action: character changes faith. Not called when a character gets a faith on birth, creation, and similar
+# Code on-action: character changes faith or rite. Not called when a character gets a faith on birth, creation, and similar
 # Root is the character
 # scope:old_faith is the faith they used to have
-on_character_faith_change = {
+# scope:old_rite is the rite they used to have (can be equal to current rite)
+on_rite_change = {
 	on_actions = {
 		BTWK_on_character_faith_change_all
 	}
@@ -52,6 +111,42 @@ BTWK_on_character_faith_change_all = {
 					catalyst = catalyst_convert_to_reformed_religion
 					character = root
 				}
+			}
+		}
+		
+		# Check for Gregorian Mission story
+		if = {
+			limit = {
+				any_owned_story = {
+					story_type = BTWK_soc_gregorian_mission_story
+				}
+				religion != religion:christianity_religion
+			}
+			random_owned_story = {
+				limit = { story_type = BTWK_soc_gregorian_mission_story }
+				save_scope_as = gregorian_mission_story
+			}
+			if = {
+				limit = { 
+					exists = title:d_et_canterbury.var:clerical_title.holder
+					title:d_et_canterbury.var:clerical_title.holder.religion = religion:christianity_religion
+				}
+				scope:gregorian_mission_story = {
+					make_story_owner = title:d_et_canterbury.var:clerical_title.holder
+				}
+			}
+			else = {
+				save_scope_as = actor
+				create_character = {
+					location = story_owner.capital_province
+					template = priest_character_template
+					faith = scope:old_faith
+					rite = scope:old_rite
+					culture = story_owner.culture
+					gender_female_chance = 0
+					save_scope_as = new_mission_head
+				}
+				scope:gregorian_mission_story = { make_story_owner = scope:new_mission_head }
 			}
 		}
 	}

@@ -815,6 +815,7 @@ the_christian_church = {
 							# Unique to Conversion
 							the_christian_church_county_conversion_bonus = yes
 							the_christian_church_easier_faith_conversion = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_regular_main_power_rulers = {
@@ -824,18 +825,21 @@ the_christian_church = {
 							# Unique to Conversion
 							the_christian_church_county_conversion_bonus = yes
 							the_christian_church_easier_faith_conversion = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_clerical_secondary_powers_rulers = {
 						parameters = {
 							# Unique to Conversion
 							the_christian_church_county_conversion_malus = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_regular_secondary_powers_rulers = {
 						parameters = {
 							# Unique to Conversion
 							the_christian_church_county_conversion_malus = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_clerical_heretic_rulers = {
@@ -1435,7 +1439,7 @@ the_christian_church = {
 		#Crusade Phase - ~1096-1192AD  (First Three) Successful Crusades result in much more Papal Legitimacy, a gradual uptick of Fervor while in Crusades, AI way more likely to choose Crusade-like tenets, etc.
 		crusade_phase = { # ZEAL
 			icon = "gfx/interface/icons/the_christian_church/phase_type_icons/crusade.dds"
-			texture = "gfx/interface/illustrations/event_story/pam_the_christian_church_crusade.dds"
+			texture = "gfx/interface/icons/the_christian_church/phase_type_illustrations_wide/crusade.dds"
 			illustration = "gfx/interface/icons/the_christian_church/phase_type_illustrations/crusade.dds"
 
 			on_start = {
@@ -1445,6 +1449,13 @@ the_christian_church = {
 					every_faith = {
 						limit = { has_variable = variable_ghw_cooldown }
 						remove_variable = variable_ghw_cooldown
+						religious_head ?= {
+							remove_decision_cooldown = pick_crusade_target_decision
+							if = {
+								limit = { has_variable = enact_a_bull_crusade_cooldown }
+								remove_variable = enact_a_bull_crusade_cooldown
+							}
+						}
 					}
 				}
 				pam_refire_great_schism_catalyst_effect = yes
@@ -1461,12 +1472,14 @@ the_christian_church = {
 						parameters = {
 							# Shared with Zeal phases
 							the_christian_church_holy_site_poi_bonus = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_regular_main_power_rulers = {
 						parameters = {
 							# Shared with Zeal phases
 							the_christian_church_holy_site_poi_bonus = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 				}
@@ -1501,11 +1514,13 @@ the_christian_church = {
 					christian_clerical_secondary_powers_rulers = {
 						parameters = {
 							the_christian_church_mild_centralization = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 					christian_regular_secondary_powers_rulers = {
 						parameters = {
 							the_christian_church_personal_secular_obligations = yes
+							the_christian_church_mending_the_schism_active = yes
 						}
 					}
 				}
@@ -1929,12 +1944,12 @@ the_christian_church = {
 
 	situation_decisions = {
 		pam_shape_the_christian_church_decision
-		pam_prevent_great_schism_decision
-		pam_cause_great_schism_decision
-		pam_mend_great_schism_decision
-		mend_the_great_schism_decision
-		pam_unite_miaphysite_churches_decision
-		pam_kingdom_of_heaven_decision
+		# pam_prevent_great_schism_decision
+		# pam_cause_great_schism_decision
+		# pam_mend_great_schism_decision
+		# mend_the_great_schism_decision
+		# pam_unite_miaphysite_churches_decision
+		# pam_kingdom_of_heaven_decision
 		petition_head_of_faith_decision
 	}
 

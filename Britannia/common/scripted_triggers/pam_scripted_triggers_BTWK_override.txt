@@ -65,3 +65,69 @@ pam_latin_as_liturgical_language_trigger = {
 		}
 	}
 }
+
+# Great Schism: progress can still change. Any scope
+pam_great_schism_progress_can_change_trigger = {
+	always = no		# Frozen in pre-schism state in BTWK
+	NOT = { has_global_variable = pam_great_schism_decision_taken }
+	exists = situation:the_christian_church
+}
+
+is_clerical_appointment_valid_trigger = {
+	$TITLE$ = { save_temporary_scope_as = title_temp }
+	$CANDIDATE$ = { save_temporary_scope_as = candidate_temp }
+	$TOP_LIEGE$ = { save_temporary_scope_as = top_liege_temp }
+	trigger_if = {
+		limit = { exists = scope:title_temp }
+		custom_tooltip = { # Has relevant law
+			text = has_appointment_succession_tt
+			$TITLE$ = {
+				OR = {
+					has_title_law = clerical_appointment_law
+					holder ?= { has_realm_law = clerical_appointment_law }
+				}
+			}
+		}
+		custom_tooltip = { # Titles below the holder's primary tier are inherited alongside it, so they cannot be contested on their own
+			text = follows_other_title_appointment_tt
+			scope:title_temp.holder ?= { primary_title.tier = scope:title_temp.tier }
+		}
+	}
+	is_clerical_appointment_valid_base_trigger = {
+		CANDIDATE = $CANDIDATE$
+		TOP_LIEGE = $TOP_LIEGE$
+	}
+	trigger_if = {		# BTWK
+		limit = { scope:title_temp = title:k_papal_state }
+		scope:candidate_temp = { 
+			custom_tooltip = {
+				text = BTWK_can_be_elected_pope_trigger_tt
+				BTWK_can_be_elected_pope_trigger = yes 
+			}
+		}
+	}
+}
+
+pam_beseech_claims_access_trigger = {
+	always = no		# Disabled in BTWK
+	has_pam_dlc_trigger = yes
+	pam_clergy_interactions_faith_trigger = yes
+	NOT = {
+		government_has_flag = government_is_ecclesiastical
+	}
+}
+
+actor_incite_holy_war_shown_trigger = {
+	always = no		# Disabled in BTWK
+	is_ruler = yes
+	OR = {
+		government_has_flag = government_is_ecclesiastical
+		this = religious_head_or_challenger
+	}
+	faith = {
+		NOR = {
+			has_doctrine_parameter = holy_wars_forbidden
+			has_doctrine_parameter = unreformed
+		}
+	}
+}

@@ -1,0 +1,678 @@
+﻿BTWK_soc_gregorian_mission_story = {
+	visible = yes
+	
+	icon = {
+		trigger = {
+			always = yes
+		}
+		reference = "gfx/interface/icons/the_christian_church/phase_type_icons/conversion.dds"
+	}
+
+	on_setup = {
+		title:d_et_canterbury = { 
+			set_variable = { name = BTWK_soc_gregorian_mission_story value = prev }
+		}
+	}
+
+	on_end = {
+		if = {
+			limit = { 
+				NOT = { has_variable = mission_seat_selected }
+				NOT = { title:d_et_canterbury = { has_variable = clerical_title } }
+				NAND = {
+					title:d_et_london = { has_variable = clerical_title }
+					title:d_et_lincoln = { has_variable = clerical_title }
+				}
+			}
+			situation:spreading_of_christianity_situation = { 
+				set_variable = gregorian_mission_attempt_failed
+				remove_variable = gregorian_mission_preparations_started
+			}
+			every_player = {
+				limit = { 
+					OR = {
+						capital_province = { geographical_region = btwk_world_britannia }
+						is_britannic_culture_trigger = yes
+						is_anglo_saxon_culture_trigger = yes
+					}
+				}
+				prev.story_owner = { save_scope_as = gregorian_mission_augustine }
+				trigger_event = spreading_of_christianity.0205
+			}
+		}
+		else = {
+			story_owner = { save_scope_as = gregorian_mission_augustine }
+			every_ruler = {
+				limit = {
+					OR = {
+						has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+						is_ai = no
+					}
+				}
+				trigger_event = spreading_of_christianity.0290
+			}
+		}
+		title:d_et_canterbury = { remove_variable = BTWK_soc_gregorian_mission_story }
+	}
+
+	on_owner_death = {
+		# TODO Check if this actually works
+		# If the Archbishopric of Canterbury exists and has a holder, transfer it over to them
+		# Otherwise, create a random new priest character and transfer it to them
+		if = {
+			limit = { 
+				exists = title:d_et_canterbury.var:clerical_title.holder
+				title:d_et_canterbury.var:clerical_title.holder.religion = religion:christianity_religion
+			}
+			make_story_owner = title:d_et_canterbury.var:clerical_title.holder
+		}
+		else = {
+			save_scope_as = actor
+			create_character = {
+				location = story_owner.capital_province
+				template = priest_character_template
+				faith = story_owner.faith
+				rite = story_owner.rite
+				culture = story_owner.culture
+				gender_female_chance = scope_actor_faith_clergy_gender_female_chance
+				save_scope_as = new_mission_head
+			}
+			make_story_owner = scope:new_mission_head
+		}
+	}
+	
+	# Initial cycle for asking Anglo-Saxon kings if they can come and do missionary work in their kingdom
+	# Will always ask top liege, will not ask again if they rejected, and the capital of the kingdom
+	# must not already be in a clerical region
+	effect_group = {
+		days = 15
+		
+		trigger = {
+			NOT = { has_variable = mission_host_king }
+			NOT = { has_variable = mission_started }
+		}
+
+		first_valid = {
+			# If invited by a Bretwalda, will go found the archbishopric in their capital
+			# No need to ask for permission, you were invited!
+			triggered_effect = {
+				trigger = {
+					this.var:mission_host_king ?= {
+						is_alive = yes
+						is_independent_ruler = yes
+						any_held_title = {
+							tier >= tier_kingdom
+							title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+							title_capital_county = { has_clerical_region = no }
+						}
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					this.var:mission_host_king = { save_scope_as = mission_host_king }
+					story_owner = { trigger_event = spreading_of_christianity.0203 }
+				}
+			}
+			# If there exists a Bretwalda, will always approach them first (?)
+			# 50% chance of AI rejecting here, since we want Canterbury to happen most of the time
+			triggered_effect = {
+				trigger = {
+					title:e_aengland = {
+						has_variable = aengland_primary_kingdom
+						this.var:aengland_primary_kingdom.title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+						title_capital_county = { has_clerical_region = no }
+					}
+					title:e_aengland.holder ?= {
+						is_independent_ruler = yes
+						NOT = { has_variable = bretwalda_initial_rejected_gregorian_mission }
+						NOT = { has_variable = rejected_gregorian_mission }
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					save_scope_as = bretwalda_initial_request
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					title:e_aengland.holder = { trigger_event = spreading_of_christianity.0202 }
+				}
+			}
+			# Otherwise, ask the King of Kent
+			triggered_effect = {
+				trigger = {
+					title:k_cantia.holder ?= {
+						is_independent_ruler = yes
+						NOT = { has_variable = rejected_gregorian_mission }
+						title_capital_county = { has_clerical_region = no }
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_durovernum
+						}
+						save_scope_as = mission_archdiocese_story
+					}
+					title:k_cantia.holder = { trigger_event = spreading_of_christianity.0202 }
+				}
+			}
+			# Otherwise, ask the owner of Canterbury if Anglo-Saxon
+			triggered_effect = {
+				trigger = {
+					title:c_durovernum = { has_clerical_region = no }
+					title:c_durovernum.holder.top_liege ?= {
+						is_unromanized_germanic_culture_trigger = yes
+						NOT = { has_variable = rejected_gregorian_mission }
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_durovernum
+						}
+						save_scope_as = mission_archdiocese_story
+					}
+					title:c_durovernum.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
+				}
+			}
+			# Otherwise, ask the King of Essex
+			triggered_effect = {
+				trigger = {
+					title:k_eastseaxe.holder ?= {
+						is_independent_ruler = yes
+						NOT = { has_variable = rejected_gregorian_mission }
+						title_capital_county = { has_clerical_region = no }
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_londinium
+						}
+						save_scope_as = mission_archdiocese_story
+					}
+					title:k_eastseaxe.holder = { trigger_event = spreading_of_christianity.0202 }
+				}
+			}
+			# Otherwise, ask the owner of London if Anglo-Saxon
+			triggered_effect = {
+				trigger = {
+					title:c_londinium = { has_clerical_region = no }
+					title:c_londinium.holder.top_liege ?= {
+						is_unromanized_germanic_culture_trigger = yes
+						NOT = { has_variable = rejected_gregorian_mission }
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							this.var:seat = title:c_londinium
+						}
+						save_scope_as = mission_archdiocese_story
+					}
+					title:c_londinium.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
+				}
+			}
+			# Otherwise, go to each Anglo-Saxon king in order of realm size
+			triggered_effect = {
+				trigger = {
+					any_independent_ruler = {
+						NOT = { has_variable = rejected_gregorian_mission }
+						is_unromanized_germanic_culture_trigger = yes
+						any_held_title = {
+							tier >= tier_kingdom
+							tier = prev.primary_title.tier
+							title_capital_county.title_province = { 
+								geographical_region = btwk_world_britannia_south 
+							}
+							title_capital_county = { has_clerical_region = no }
+						}
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					ordered_independent_ruler = {
+						limit = {
+							NOT = { has_variable = rejected_gregorian_mission }
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier >= tier_kingdom
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { 
+									geographical_region = btwk_world_britannia_south 
+								}
+								title_capital_county = { has_clerical_region = no }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia_south }
+							}
+						}
+						order_by = sub_realm_size
+						random_in_global_list = {
+							variable = creatable_clerical_title_stories
+							limit = {
+								this.var:title = title:d_et_canterbury
+								has_variable = anglo_saxon_kingdom_clerical_title
+								save_temporary_scope_as = current_story
+								prev = { 
+									BTWK_potential_create_clerical_title_trigger = { 
+										CLERICAL_TITLE_STORY = scope:current_story
+									}
+								}
+							}
+							alternative_limit = {
+								this.var:title = title:d_et_canterbury
+								has_variable = anglo_saxon_kingdom_clerical_title
+								this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+							}
+							save_scope_as = mission_archdiocese_story
+						}
+						trigger_event = spreading_of_christianity.0202
+					}
+				}
+			}
+			# Otherwise, go to potential seat holders in order of realm size
+			# Anglo-Saxon rulers are prioritized
+			triggered_effect = {
+				trigger = {
+					any_in_global_list = {
+						variable = creatable_clerical_title_stories
+						this.var:title = title:d_et_canterbury
+						this.var:seat.holder.top_liege = {
+							NOT = { has_variable = rejected_gregorian_mission }
+						}
+						this.var:seat = { has_clerical_region = no }
+						trigger_if = {
+							limit = { has_variable = anglo_saxon_kingdom_clerical_title }
+							this.var:anglo_saxon_kingdom_clerical_title = {
+								any_direct_de_jure_vassal_title = { count >= 1 }
+							}
+							trigger_if = {
+								limit = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title }
+								this.var:anglo_saxon_kingdom_clerical_title.title_capital_county = this.var:anglo_saxon_kingdom_specific_capital_clerical_title
+							}
+							trigger_if = {
+								limit = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title }
+								this.var:anglo_saxon_kingdom_clerical_title.title_capital_county != this.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+							}
+						}
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					ordered_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:seat.holder.top_liege = {
+								NOT = { has_variable = rejected_gregorian_mission }
+							}
+							this.var:seat = { has_clerical_region = no }
+							trigger_if = {
+								limit = { has_variable = anglo_saxon_kingdom_clerical_title }
+								this.var:anglo_saxon_kingdom_clerical_title = {
+									any_direct_de_jure_vassal_title = { count >= 1 }
+								}
+								trigger_if = {
+									limit = { has_variable = anglo_saxon_kingdom_specific_capital_clerical_title }
+									this.var:anglo_saxon_kingdom_clerical_title.title_capital_county = this.var:anglo_saxon_kingdom_specific_capital_clerical_title
+								}
+								trigger_if = {
+									limit = { has_variable = anglo_saxon_kingdom_not_specific_capital_clerical_title }
+									this.var:anglo_saxon_kingdom_clerical_title.title_capital_county != this.var:anglo_saxon_kingdom_not_specific_capital_clerical_title
+								}
+							}
+						}
+						order_by = {
+							value = this.var:seat.holder.top_liege.sub_realm_size
+							if = {
+								limit = { 
+									this.var:seat.holder.top_liege = {
+										is_unromanized_germanic_culture_trigger = yes
+									}
+								}
+								add = 20000
+							}
+						}
+						save_scope_as = mission_archdiocese_story
+						this.var:seat.holder.top_liege = { trigger_event = spreading_of_christianity.0202 }
+					}
+				}
+			}
+		}
+		
+		fallback = {
+			# End mission if there is no one eligible left who will accept the mission
+			end_story = yes
+		}
+	}
+	
+	# Once the request is accepted, they missionaries arrive one month later
+	# Need to make sure that the king didn't die or get deposed in the meantime though
+	effect_group = {
+		months = 1
+		
+		trigger = {
+			has_variable = mission_host_king
+			NOT = { has_variable = mission_started }
+		}
+
+		first_valid = {
+			# If the king is still capable of accepting the mission, the mission begins
+			triggered_effect = {
+				trigger = {
+					this.var:mission_host_king = {
+						is_alive = yes
+						is_independent_ruler = yes
+						NOT = { has_variable = rejected_gregorian_mission }
+						OR = {
+							any_held_title = {
+								tier >= tier_kingdom
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia_south }
+								title_capital_county = { has_clerical_region = no }
+							}
+							any_in_global_list = {
+								variable = creatable_clerical_title_stories
+								this.var:title = title:d_et_canterbury
+								this.var:seat.holder.top_liege = prev
+								this.var:seat = { has_clerical_region = no }
+							}
+						}
+						any_realm_county = {
+							title_province = { geographical_region = btwk_world_britannia_south }
+						}
+					}
+				}
+				effect = {
+					this.var:mission_host_king = { save_scope_as = mission_host_king }
+					story_owner = { trigger_event = spreading_of_christianity.0203 }
+					set_variable = mission_started
+					set_variable = {
+						name = mission_started_spread_to_other_kingdoms_timer
+						years = 5
+					}
+					set_variable = {
+						name = mission_started_overall_timer
+						years = 30
+					}
+				}
+			}
+		}
+		
+		fallback = {
+			# If the chosen king is no longer valid, then we go back to looking for kings to accept the mission
+			remove_variable = mission_host_king
+		}
+	}
+	
+	# Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
+	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
+	# or have a Christian capital
+	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
+	# in the main host
+	effect_group = {
+		years = 1
+		
+		trigger = {
+			has_variable = mission_started
+			NOT = { has_variable = mission_started_spread_to_other_kingdoms_timer }
+		}
+
+		first_valid = {
+			# Look for independent Anglo-Saxon kings that have not either accepted or rejected missionaries
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					random_independent_ruler = {
+						# Prefer king-tier tributaries of the host
+						limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_kingdom
+							suzerain ?= prev.var:mission_host_king
+						}
+						# Otherwise, target king-tier rulers generally
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_kingdom
+						}
+						# Otherwise, target independent duke-tier rulers
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+							highest_held_title_tier >= tier_duchy
+						}
+						# Otherwise, any eligible Anglo-Saxon ruler
+						alternative_limit = {
+							is_unromanized_germanic_culture_trigger = yes
+							any_held_title = {
+								tier = prev.primary_title.tier
+								title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+							}
+							any_realm_county = {
+								title_province = { geographical_region = btwk_world_britannia }
+							}
+							NOR = {
+								has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+								has_variable = rejected_gregorian_mission_spread
+							}
+						}
+						save_scope_as = next_target_king
+						prev.story_owner = { trigger_event = spreading_of_christianity.0210 }
+					}
+				}
+			}
+		}
+	}
+	
+	# Story owner will attempt to convert to Saxon Rite if possible
+	effect_group = {
+		months = 1
+		
+		trigger = { always = yes }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = {
+					story_owner = {
+						rite:saxon_rite != rite
+						rite:saxon_rite.faith ?= faith
+						NOT = { has_variable = gregorian_mission_refused_change_rite }
+					}
+				}
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { trigger_event = spreading_of_christianity.0220 }
+				}
+			}
+		}
+	}
+	
+	# While you have missionaries, every year the missionaries will convert parts of your realm
+	effect_group = {
+		years = 1
+		
+		trigger = { always = yes }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					save_scope_as = gregorian_mission_story
+					story_owner = { save_scope_as = gregorian_mission_augustine }
+					every_independent_ruler = {
+						limit = {
+							is_landed = yes
+							has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+						}
+						# If you are not Christian and you have not already refused, you will always be asked to convert
+						if = {
+							limit = { 
+								religion != scope:gregorian_mission_augustine.religion
+								NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+							}
+							trigger_event = { id = spreading_of_christianity.0214 days = { 1 90 } }
+						}
+						# If you are not Saxon Rite and you have not already refused, you will always be asked to convert
+						else_if = {
+							limit = { 
+								rite:saxon_rite.faith ?= faith
+								NOT = { has_variable = gregorian_mission_refused_change_rite }
+							}
+							trigger_event = { id = spreading_of_christianity.0220 days = { 1 90 } }
+						}
+						# Otherwise, they will attempt to convert pagan vassals in your realm
+						else_if = {
+							limit = {
+								any_vassal = {
+									limit = {
+										religion != scope:gregorian_mission_augustine.religion
+										NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									}
+								}
+							}
+							random_vassal = {
+								limit = {
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									faith = { has_doctrine_parameter = unreformed }
+								}
+								alternative_limit = {
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+								}
+								trigger_event = { id = spreading_of_christianity.0219 days = { 1 90 } }
+							}
+						}
+						# If there are no more eligible targets, they will have a 50% chance of converting a county with a Christian owner
+						else = {
+							random_realm_county = {
+								limit = {
+									owner = { faith = scope:gregorian_mission_augustine.faith }
+									faith = { has_doctrine_parameter = unreformed }
+								}
+								random = {
+									chance = 50
+									save_scope_as = county
+									scope:gregorian_mission_augustine = { save_scope_as = councillor_liege }
+									trigger_event = court_chaplain_task.8000		# Gives notification
+									set_county_faith = scope:gregorian_mission_augustine.faith
+									set_county_rite = scope:gregorian_mission_augustine.rite									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	# Once we reach 30 years, the mission ends
+	effect_group = {
+		years = 1
+		
+		trigger = { NOT = { has_variable = mission_started_overall_timer } }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					end_story = yes
+				}
+			}
+		}
+	}
+}
+
+BTWK_soc_gregorian_mission_augustine_canonization_story = {
+
+	on_setup = {
+		set_variable = { name = canonization_timer years = 10 }
+	}
+
+	on_end = {
+		this.var:gregorian_mission_augustine = { save_scope_as = gregorian_mission_augustine }
+		if = {
+			limit = { exists = title:d_et_canterbury.var:clerical_title.holder }
+			title:d_et_canterbury.var:clerical_title.holder = {
+				trigger_event = spreading_of_christianity.0291
+			}
+		}
+	}
+	
+	# Once we reach 10 years, the mission ends
+	effect_group = {
+		months = 1
+		
+		trigger = { NOT = { has_variable = canonization_timer } }
+
+		first_valid = {
+			triggered_effect = {
+				trigger = { always = yes }
+				effect = {
+					end_story = yes
+				}
+			}
+		}
+	}
+}
