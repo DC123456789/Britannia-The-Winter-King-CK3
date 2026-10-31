@@ -14,7 +14,117 @@ BTWK_clerical_titles.0001 = {
 	content_source = dlc_BTWK
 	title = BTWK_clerical_titles.0001.t
 	desc = {
-		desc = BTWK_clerical_titles.0001.desc
+		desc = BTWK_clerical_titles.0001.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_cirencester
+						this.var:coa_title != title:d_et_cirencester
+						has_variable = briton_roman_clerical_title
+						NOT = { has_variable = post_ruin_of_britannia_clerical_title }
+					}
+					NOT = { has_global_variable = end_of_britannia }
+				}
+				desc = BTWK_clerical_titles.0001.desc.roman_britain_circenster_alt_sees
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						OR = {
+							this.var:title = title:d_et_london
+							this.var:title = title:d_et_lincoln
+							this.var:title = title:d_et_cirencester
+							this.var:title = title:d_et_york
+						}
+						has_variable = briton_roman_clerical_title
+						NOT = { has_variable = post_ruin_of_britannia_clerical_title }
+					}
+					NOT = { has_global_variable = end_of_britannia }
+				}
+				desc = BTWK_clerical_titles.0001.desc.roman_britain_sees
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						NOT = { has_variable = no_southern_anglo_saxon_kingdom_clerical_title }
+					}
+				}
+				desc = BTWK_clerical_titles.0001.desc.anglo_saxon_canterbury
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						has_variable = no_southern_anglo_saxon_kingdom_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0001.desc.anglo_saxon_canterbury_from_outside
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_york.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0001.desc.anglo_saxon_york
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_lindisfarne.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0001.desc.anglo_saxon_lindisfarne
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_st_davids
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+					title:d_et_canterbury = { has_variable = clerical_title }
+				}
+				desc = BTWK_clerical_titles.0001.desc.briton_st_davids_canterbury_exists
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_st_davids
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0001.desc.briton_st_davids
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_london
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+					title:d_et_st_davids = { has_variable = clerical_title }
+				}
+				desc = BTWK_clerical_titles.0001.desc.briton_london_w_st_davids
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_creation_story ?= {
+						this.var:title = title:d_et_york
+					}
+					has_global_variable = end_of_britannia
+				}
+				desc = BTWK_clerical_titles.0001.desc.briton_york
+			}
+			desc = BTWK_clerical_titles.0001.desc.fallback
+		}
+		desc = BTWK_clerical_titles.0001.desc.outro
 	}
 	theme = faith
 	override_background = {
@@ -35,16 +145,31 @@ BTWK_clerical_titles.0001 = {
 		scope:new_ecclesiastical_holder = {
 			save_scope_as = background_temple_scope
 		}
-		custom_tooltip = BTWK_clerical_titles.0001.tt
+		if = {
+			limit = { exists = scope:new_ecclesiastical_holder.faith.religious_head }
+			scope:new_ecclesiastical_holder.faith.religious_head = { save_scope_as = religious_head }
+		}
+		else_if = {
+			limit = {
+				exists = scope:new_ecclesiastical_holder.faith.main_rite.head_of_rite
+				scope:new_ecclesiastical_holder.faith.main_rite.head_of_rite = { is_clergy = yes }
+			}
+			scope:new_ecclesiastical_holder.faith.main_rite.head_of_rite = { save_scope_as = religious_head }
+		}
+		custom_tooltip = {
+			text = BTWK_clerical_titles.0001.tt
+		}
 		scope:clerical_title_creation_story = {
 			if = {
 				limit = { has_variable_list = clerical_title_dependent_expansions }
 				every_in_list = {
 					variable = clerical_title_dependent_expansions
 					limit = { has_variable = dependent_expansion_just_triggered }
-					this.var:title.var:clerical_title = { save_scope_as = clerical_title }
-					this.var:region = { save_scope_as = effect_region }
-					custom_tooltip = BTWK_clerical_titles.0002.tt
+					custom_tooltip = {
+						text = BTWK_clerical_titles.0002.tt
+						this.var:title.var:clerical_title = { save_scope_as = clerical_title }
+						this.var:region = { save_scope_as = effect_expansion_region }
+					}
 				}
 			}
 		}
@@ -56,7 +181,11 @@ BTWK_clerical_titles.0001 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							faith = scope:new_ecclesiastical_holder.faith
+							religion = religion:christianity_religion
+							faith_hostility_level = {
+								target = scope:new_ecclesiastical_holder.faith
+								value <= faith_astray_level
+							}
 						}
 						desc = BTWK_clerical_titles.0001.a.same_faith
 					}
@@ -99,6 +228,9 @@ BTWK_clerical_titles.0002 = {
 	immediate = {
 		scope:ecclesiastical_holder = {
 			save_scope_as = background_temple_scope
+		}
+		scope:effect_region = {
+			save_scope_as = effect_expansion_region		# Needs to be different to avoid collisions in BTWK_clerical_titles.0001
 		}
 		custom_tooltip = BTWK_clerical_titles.0002.tt
 	}

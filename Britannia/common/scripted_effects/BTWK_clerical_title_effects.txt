@@ -409,7 +409,7 @@ BTWK_expand_clerical_title_warnings_effect = {
 BTWK_expand_clerical_title_effect = {
 	save_scope_as = puppet_or_actor
 	$CLERICAL_TITLE_STORY$ = { save_scope_as = clerical_title_expansion_story }
-	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
+	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_expansion_region }
 	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title ?= { save_scope_as = clerical_title }
 	# Make sure tooltip is functional even if clerical title doesn't exist yet
 	if = {
@@ -428,14 +428,14 @@ BTWK_expand_clerical_title_effect = {
 			while = {
 				limit = {
 					any_county_in_region = {
-						region = scope:effect_region
+						region = scope:effect_expansion_region
 						NOT = { exists = clerical_region_title }
 						# Prevent maxing out the while loop for isolated islands, until this gets changed by Paradox
 						any_neighboring_county = { clerical_region_title = scope:clerical_title }
 					}
 				}
 				every_county_in_region = {
-					region = scope:effect_region
+					region = scope:effect_expansion_region
 					limit = { NOT = { exists = clerical_region_title } }
 					scope:clerical_title = { expand_clerical_region = prev }
 				}
