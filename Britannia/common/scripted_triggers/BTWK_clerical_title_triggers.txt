@@ -122,14 +122,18 @@ BTWK_visible_create_clerical_title_trigger = {
 	# Need to be in the visibility region to see the archdiocese
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = visibility_region } }
-		any_county_in_region = {
-			region = $CLERICAL_TITLE_STORY$.var:visibility_region
-			scope:trigger_char = { completely_controls = prev }
-		}
+		$CLERICAL_TITLE_STORY$.var:visibility_region = { save_temporary_scope_as = visibility_region }
 	}
 	trigger_else = {
+		$CLERICAL_TITLE_STORY$.var:region = { save_temporary_scope_as = visibility_region }
+	}
+	OR = {
+		any_held_title = {
+			has_clerical_region = yes
+			any_county_in_clerical_region = { title_province = { geographical_region = scope:visibility_region } }
+		}
 		any_county_in_region = {
-			region = $CLERICAL_TITLE_STORY$.var:region
+			region = scope:visibility_region
 			scope:trigger_char = { completely_controls = prev }
 		}
 	}
@@ -174,14 +178,28 @@ BTWK_potential_expand_clerical_title_trigger = {
 		NOT = { exists = this.var:seat.clerical_region_title } 
 		NOT = { has_variable = clerical_title_expanded } 
 	}
+	$CLERICAL_TITLE_STORY$.var:title = { save_temporary_scope_as = clerical_title_template_title }
 	# Culture blocks
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = briton_roman_clerical_title } }
-		is_unromanized_germanic_culture_trigger = no
+		OR = {
+			is_unromanized_germanic_culture_trigger = no
+			scope:clerical_title_template_title.var:clerical_title.holder ?= this
+		}
+		NOR = { 
+			title:d_et_canterbury.var:clerical_title.holder ?= this
+		}
 	}
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = anglo_saxon_clerical_title } }
-		is_unromanized_germanic_culture_trigger = yes
+		OR = {
+			is_unromanized_germanic_culture_trigger = yes
+			scope:clerical_title_template_title.var:clerical_title.holder ?= this
+		}
+		NOR = { 
+			title:d_et_london.var:clerical_title.holder ?= this
+			title:d_et_st_davids.var:clerical_title.holder ?= this
+		}
 	}
 	# Other blocks/filters
 	trigger_if = {
@@ -210,14 +228,18 @@ BTWK_visible_expand_clerical_title_trigger = {
 	# Need to be in the visibility region to see the archdiocese expansion
 	trigger_if = {
 		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = visibility_region } }
-		any_county_in_region = {
-			region = $CLERICAL_TITLE_STORY$.var:visibility_region
-			scope:trigger_char = { completely_controls = prev }
-		}
+		$CLERICAL_TITLE_STORY$.var:visibility_region = { save_temporary_scope_as = visibility_region }
 	}
 	trigger_else = {
+		$CLERICAL_TITLE_STORY$.var:region = { save_temporary_scope_as = visibility_region }
+	}
+	OR = {
+		any_held_title = {
+			has_clerical_region = yes
+			any_county_in_clerical_region = { title_province = { geographical_region = scope:visibility_region } }
+		}
 		any_county_in_region = {
-			region = $CLERICAL_TITLE_STORY$.var:region
+			region = scope:visibility_region
 			scope:trigger_char = { completely_controls = prev }
 		}
 	}
@@ -245,6 +267,21 @@ BTWK_can_expand_clerical_title_trigger = {
 		control_region_fraction_including_tributaries_trigger = {
 			FRACTION_REQUIRED = 0.80
 			REGION = $CLERICAL_TITLE_STORY$.var:region
+		}
+	}
+	trigger_if = {
+		limit = { $CLERICAL_TITLE_STORY$ = { has_variable = expansion_requires_same_heritage_control_of_clerical_title } }
+		$CLERICAL_TITLE_STORY$.var:title.var:clerical_title = { save_temporary_scope_as = trigger_clerical_title }
+		custom_tooltip = {
+			text = BTWK_can_expand_clerical_title_archdiocese_has_same_heritage_top_liege
+			scope:trigger_clerical_title.holder.top_liege.culture = { has_same_culture_heritage = prev.culture }
+		}
+		OR = {
+			scope:trigger_clerical_title.holder.rite = this.rite
+			custom_tooltip = {
+				text = BTWK_can_expand_clerical_title_archdiocese_seat_has_same_heritage_top_liege
+				scope:trigger_clerical_title.title_capital_county.holder.top_liege.culture = { has_same_culture_heritage = prev.culture }
+			}
 		}
 	}
 }

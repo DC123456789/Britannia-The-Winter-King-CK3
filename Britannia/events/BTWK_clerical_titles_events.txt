@@ -110,6 +110,14 @@ BTWK_clerical_titles.0001 = {
 						has_variable = post_ruin_of_britannia_clerical_title
 					}
 					title:d_et_st_davids = { has_variable = clerical_title }
+					scope:clerical_title_creation_story = {
+						has_variable_list = clerical_title_dependent_expansions
+						any_in_list = {
+							variable = clerical_title_dependent_expansions
+							has_variable = dependent_expansion_just_triggered
+							this.var:title = title:d_et_st_davids
+						}
+					}
 				}
 				desc = BTWK_clerical_titles.0001.desc.briton_london_w_st_davids
 			}
@@ -124,7 +132,13 @@ BTWK_clerical_titles.0001 = {
 			}
 			desc = BTWK_clerical_titles.0001.desc.fallback
 		}
-		desc = BTWK_clerical_titles.0001.desc.outro
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { exists = scope:religious_head } }
+				desc = BTWK_clerical_titles.0001.desc.outro.no_religious_head
+			}
+			desc = BTWK_clerical_titles.0001.desc.outro
+		}
 	}
 	theme = faith
 	override_background = {
@@ -134,6 +148,7 @@ BTWK_clerical_titles.0001 = {
 	left_portrait = {
 		character = scope:kingdom_holder
 		trigger = { scope:kingdom_holder != scope:new_ecclesiastical_holder }
+		animation = personality_zealous
 	}
 	
 	right_portrait = {
@@ -186,6 +201,22 @@ BTWK_clerical_titles.0001 = {
 								target = scope:new_ecclesiastical_holder.faith
 								value <= faith_astray_level
 							}
+							is_briton_or_latin_culture_trigger = yes
+							capital_county = { geographical_region = btwk_world_britannia_south }
+							NOR = {
+								this = scope:kingdom_holder
+								this = scope:new_ecclesiastical_holder
+							}
+						}
+						desc = BTWK_clerical_titles.0001.a.canterbury_briton
+					}
+					triggered_desc = {
+						trigger = { 
+							religion = religion:christianity_religion
+							faith_hostility_level = {
+								target = scope:new_ecclesiastical_holder.faith
+								value <= faith_astray_level
+							}
 						}
 						desc = BTWK_clerical_titles.0001.a.same_faith
 					}
@@ -208,7 +239,56 @@ BTWK_clerical_titles.0002 = {
 	content_source = dlc_BTWK
 	title = BTWK_clerical_titles.0002.t
 	desc = {
-		desc = BTWK_clerical_titles.0002.desc
+		desc = BTWK_clerical_titles.0002.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_expansion_story ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0002.desc.anglo_saxon_canterbury
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_expansion_story ?= {
+						this.var:title = title:d_et_st_davids
+						this.var:region = geographical_region:btwk_custom_et_canterbury_extension_western_mercia
+						has_variable = briton_roman_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0002.desc.briton_western_mercia
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_expansion_story ?= {
+						this.var:title = title:d_et_canterbury
+						this.var:region = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+						has_variable = briton_roman_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0002.desc.briton_devon_and_cornwall
+			}
+			triggered_desc = {
+				trigger = {
+					scope:clerical_title_expansion_story ?= {
+						this.var:title = title:d_et_london
+						this.var:region = geographical_region:btwk_custom_et_london_briton
+						has_variable = briton_roman_clerical_title
+					}
+				}
+				desc = BTWK_clerical_titles.0002.desc.briton_london
+			}
+			desc = BTWK_clerical_titles.0002.desc.fallback
+		}
+		first_valid = {
+			triggered_desc = {
+				trigger = { NOT = { exists = scope:religious_head } }
+				desc = BTWK_clerical_titles.0002.desc.outro.no_religious_head
+			}
+			desc = BTWK_clerical_titles.0002.desc.outro
+		}
 	}
 	theme = faith
 	override_background = {
@@ -218,6 +298,7 @@ BTWK_clerical_titles.0002 = {
 	left_portrait = {
 		character = scope:expansion_actor
 		trigger = { scope:expansion_actor != scope:ecclesiastical_holder }
+		animation = personality_zealous
 	}
 	
 	right_portrait = {
@@ -229,8 +310,16 @@ BTWK_clerical_titles.0002 = {
 		scope:ecclesiastical_holder = {
 			save_scope_as = background_temple_scope
 		}
-		scope:effect_region = {
-			save_scope_as = effect_expansion_region		# Needs to be different to avoid collisions in BTWK_clerical_titles.0001
+		if = {
+			limit = { exists = scope:ecclesiastical_holder.faith.religious_head }
+			scope:ecclesiastical_holder.faith.religious_head = { save_scope_as = religious_head }
+		}
+		else_if = {
+			limit = {
+				exists = scope:ecclesiastical_holder.faith.main_rite.head_of_rite
+				scope:ecclesiastical_holder.faith.main_rite.head_of_rite = { is_clergy = yes }
+			}
+			scope:ecclesiastical_holder.faith.main_rite.head_of_rite = { save_scope_as = religious_head }
 		}
 		custom_tooltip = BTWK_clerical_titles.0002.tt
 	}
@@ -241,7 +330,17 @@ BTWK_clerical_titles.0002 = {
 				first_valid = {
 					triggered_desc = {
 						trigger = { 
-							faith = scope:ecclesiastical_holder.faith
+							this = scope:expansion_actor
+						}
+						desc = BTWK_clerical_titles.0002.a.expansion_actor
+					}
+					triggered_desc = {
+						trigger = { 
+							religion = religion:christianity_religion
+							faith_hostility_level = {
+								target = scope:new_ecclesiastical_holder.faith
+								value <= faith_astray_level
+							}
 						}
 						desc = BTWK_clerical_titles.0002.a.same_faith
 					}

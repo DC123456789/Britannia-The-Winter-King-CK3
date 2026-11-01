@@ -2879,6 +2879,19 @@ BTWK_de_jure_setup = {
 			# set_variable = briton_roman_clerical_title
 			# set_variable = expansion_requires_direct_control
 		# }
+		# So we allow Britons to just annex Devon and Cornwall to Canterbury if they have taken control of it
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_isca_dumnonia
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = expansion_requires_direct_control
+			set_variable = expansion_requires_same_heritage_control_of_clerical_title
+			save_scope_as = briton_devon_and_cornwall_extension
+		}
 		BTWK_create_clerical_title_expansion_story = {
 			TITLE = title:d_et_st_davids
 			SEAT = title:c_glevum
@@ -2931,6 +2944,12 @@ BTWK_de_jure_setup = {
 					name = briton_clerical_title_expansion_stories
 					target = THIS
 				}
+			}
+		}
+		scope:briton_devon_and_cornwall_extension = {
+			add_to_global_variable_list = {
+				name = briton_clerical_title_expansion_stories
+				target = THIS
 			}
 		}
 		title:d_et_london = {
