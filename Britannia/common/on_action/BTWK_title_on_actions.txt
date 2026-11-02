@@ -336,11 +336,15 @@ BTWK_on_title_gain = {
 				is_independent_ruler = yes
 				is_landed = yes
 				NOR = {
-					has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
+					has_character_modifier = BTWK_soc_accepted_gregorian_mission_modifierest
 					has_variable = rejected_gregorian_mission_spread
 					has_variable = has_event_spreading_of_christianity_0216 
 				}
 				title:d_et_canterbury = { has_variable = BTWK_soc_gregorian_mission_story }
+				OR = {
+					scope:title.tier >= tier_kingdom
+					scope:title.tier >= this.highest_held_title_tier
+				}
 			}
 			# Delay of one day so the next player character still sees it
 			set_variable = has_event_spreading_of_christianity_0216

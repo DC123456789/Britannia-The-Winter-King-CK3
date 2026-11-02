@@ -1,4 +1,196 @@
-﻿create_hof_decision = {
+﻿
+
+# Adopt Theocratic Rule
+pam_convert_to_theocracy_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_personal_religious.dds"
+	}
+	decision_group_type = realm
+	desc = pam_convert_to_theocracy_decision_desc
+	selection_tooltip = pam_convert_to_theocracy_decision_tooltip
+
+	ai_check_interval = 0
+
+	is_shown = {
+		highest_held_title_tier <= tier_duchy
+		highest_held_title_tier >= tier_county
+		OR = {
+			government_has_flag = government_is_feudal
+			government_has_flag = government_is_clan
+			government_has_flag = government_is_japan_feudal
+			government_has_flag = government_is_mandala
+		}
+		NOT = { government_has_flag = government_is_pre_feudal }
+		trigger_if = {
+			limit = {
+				exists = faith.religious_head
+			}
+			faith.religious_head = {
+				NOT = { government_has_flag = government_is_ecclesiastical } #blocked for Christians as they should seek the Ecclesiastical path
+			}
+		}
+		has_pam_dlc_trigger = yes
+		is_ruler = yes
+	}
+
+	is_valid = {
+		custom_tooltip = {
+			text = HOF_INTERACTION_UNREFORMED_FAITH
+			NOT = {
+				faith = { has_doctrine_parameter = unreformed }
+			}
+		}
+		piety_level >= medium_piety_level
+		liege = {
+			trigger_if = {
+				limit = {
+					this != root
+					government_has_flag = government_is_theocracy
+				}
+				custom_tooltip = {
+					text = same_faith_as_liege
+					OR = {
+						religion = liege.religion
+						faith = {
+							faith_hostility_level = {
+								target = root.liege.faith
+								value <= faith_fully_accepted_level
+							}
+						}
+					}
+				}
+				custom_tooltip = {
+					text = same_culture_as_liege
+					OR = {
+						culture = liege.culture
+						culture = {
+							cultural_acceptance = { target = root.liege.culture value >= 90 }
+						}
+					}
+				}
+			}
+			trigger_else = {
+				NOT = { rite = { rite_has_doctrine = doctrine_theocracy_lay_clergy } }
+			}
+		}
+		trigger_if = {
+			limit = {
+				faith = {
+					exists = religious_head
+				}
+			}
+			OR = {
+				custom_tooltip = {
+					text = empire_faith_gate_hof_temporal_is_hof
+					this = faith.religious_head
+				}
+				custom_tooltip = {
+					text = different_rite_than_hof
+					rite != faith.main_rite
+					rite = { "divergence(faith.main_rite)" >= faith.heresy_threshold }
+				}
+				rite = { rite_has_parameter = no_head_of_faith }
+			}
+		}
+		trigger_if = {
+			limit = {
+				top_liege = this
+				is_ai = no
+			}
+			custom_tooltip = {
+				text = all_powerful_vassals_required_tt
+				any_powerful_vassal = {
+					count = all
+					opinion = {
+						target = root
+						value >= 50
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = { is_ai = yes }
+			calc_true_if = {
+				amount >= 2
+				has_trait = zealous
+				rite = { rite_has_doctrine = doctrine_theocracy_temporal }
+				rite = { rite_has_tenet = tenet_communal_identity }
+				culture = { has_cultural_pillar = ethos_spiritual }
+				culture = { has_cultural_pillar = ethos_communal }
+				culture = { has_cultural_tradition = tradition_monastic_communities }
+				dynasty = { has_dynasty_perk = erudition_legacy_2 }
+				dynasty = { has_dynasty_perk = erudition_legacy_4 }
+				dynasty = { has_dynasty_perk = glory_legacy_5 }
+				dynasty = { has_dynasty_perk = law_legacy_2 }
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		is_at_war = no
+	}
+	cost = {
+		piety = massive_piety_value
+		prestige = massive_prestige_value
+	}
+
+	effect = {
+		show_as_tooltip = {
+			primary_title = {
+				every_title_heir = {
+					add_opinion = {
+						modifier = angry_opinion
+						target = root
+						opinion = -50
+					}
+				}
+			}
+			change_government = theocracy_government
+		}
+		hidden_effect = {
+			every_held_title = {
+				title_tier >= county
+				every_title_heir = {
+					add_to_list = heirs
+				}
+			}
+			every_in_list = {
+				list = heirs
+				add_opinion = {
+					modifier = angry_opinion
+					target = root
+					opinion = -50
+				}
+			}
+		}
+		government_type = {
+			save_scope_as = old_government
+		}
+		add_piety_level = 1
+		trigger_event = pam_decision_events.0009
+		hidden_effect = {
+			save_scope_as = theocratic_ruler
+			every_vassal_or_below = {
+				trigger_event = {
+					id = pam_decision_events.0010
+					days = 1
+				}
+			}
+		}
+	}
+
+	ai_potential = {
+		prestige >= massive_prestige_value
+		piety >= massive_piety_value
+		piety_level >= high_piety_level
+	}
+
+	ai_will_do = {
+		base = 0
+	}
+}
+
+create_hof_decision = {
 	picture = {
 		trigger = { religion = religion:islam_religion }
 		reference = "gfx/interface/illustrations/holding_types/temple_islamic.dds"

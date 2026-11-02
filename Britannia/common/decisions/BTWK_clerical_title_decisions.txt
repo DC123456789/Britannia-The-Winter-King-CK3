@@ -24,6 +24,8 @@ BTWK_create_clerical_titles_decision = {
 					this.var:selected_title ?= {
 						this.var:title = title:d_et_cirencester
 						this.var:coa_title != title:d_et_cirencester
+						has_variable = briton_roman_clerical_title
+						NOT = { has_variable = post_ruin_of_britannia_clerical_title }
 					}
 					NOT = { has_global_variable = end_of_britannia }
 				}
@@ -38,14 +40,104 @@ BTWK_create_clerical_titles_decision = {
 							this.var:title = title:d_et_cirencester
 							this.var:title = title:d_et_york
 						}
+						has_variable = briton_roman_clerical_title
+						NOT = { has_variable = post_ruin_of_britannia_clerical_title }
 					}
 					NOT = { has_global_variable = end_of_britannia }
 				}
 				desc = BTWK_create_clerical_titles_decision_roman_britain_sees_desc
 			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						NOT = { has_variable = no_southern_anglo_saxon_kingdom_clerical_title }
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_canterbury_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_canterbury
+						has_variable = anglo_saxon_clerical_title
+						has_variable = no_southern_anglo_saxon_kingdom_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_canterbury_from_outside_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_york.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_york_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_york
+						this.var:seat = title:d_et_lindisfarne.title_capital_county
+						has_variable = anglo_saxon_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_anglo_saxon_lindisfarne_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_st_davids
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+					is_britannic_culture_trigger = yes
+					title:d_et_canterbury = { has_variable = clerical_title }
+				}
+				desc = BTWK_create_clerical_titles_decision_briton_st_davids_welsh_canterbury_exists_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_st_davids
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+					is_britannic_culture_trigger = yes
+				}
+				desc = BTWK_create_clerical_titles_decision_briton_st_davids_welsh_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_st_davids
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_briton_st_davids_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_london
+						has_variable = post_ruin_of_britannia_clerical_title
+					}
+				}
+				desc = BTWK_create_clerical_titles_decision_briton_london_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_york
+					}
+					has_global_variable = end_of_britannia
+				}
+				desc = BTWK_create_clerical_titles_decision_briton_york_desc
+			}
 			desc = BTWK_create_clerical_titles_decision_desc
 		}
-	}		
+	}
 
 	is_shown = {
 		religion = religion:christianity_religion
@@ -162,7 +254,10 @@ BTWK_expand_archdiocese_canterbury_decision = {
 	is_shown = {
 		religion = religion:christianity_religion
 		faith = { has_doctrine_parameter = has_clerical_regions }
-		is_unromanized_germanic_culture_trigger = yes
+		OR = {
+			is_unromanized_germanic_culture_trigger = yes
+			has_title = title:d_et_canterbury.var:clerical_title
+		}
 		trigger_if = {
 			limit = { is_ai = yes }
 			is_independent_ruler = yes
@@ -290,24 +385,55 @@ BTWK_expand_archdiocese_st_davids_decision = {
 		hegemony = 36
 	}
 
-	desc = BTWK_expand_archdiocese_st_davids_decision_desc	
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_st_davids
+					}
+				}
+				desc = BTWK_expand_archdiocese_st_davids_decision_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_canterbury
+						this.var:region = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+					}
+				}
+				desc = BTWK_expand_archdiocese_st_davids_decision_devon_and_cornwall_desc
+			}
+			triggered_desc = {
+				trigger = {
+					this.var:selected_title ?= {
+						this.var:title = title:d_et_london
+						this.var:region = geographical_region:btwk_custom_et_london_briton
+					}
+				}
+				desc = BTWK_expand_archdiocese_st_davids_decision_london_desc
+			}
+			desc = BTWK_expand_archdiocese_st_davids_decision_fallback_desc	
+		}
+	}
 
 	is_shown = {
 		religion = religion:christianity_religion
 		faith = { has_doctrine_parameter = has_clerical_regions }
-		is_unromanized_germanic_culture_trigger = no
+		OR = {
+			is_unromanized_germanic_culture_trigger = no
+			has_title = title:d_et_london.var:clerical_title
+			has_title = title:d_et_st_davids.var:clerical_title
+		}
 		trigger_if = {
 			limit = { is_ai = yes }
 			is_independent_ruler = yes
 		}
-		title:d_et_st_davids = { 
-			has_variable = clerical_title 
-			any_in_list = {
-				variable = clerical_title_expansions
-				ROOT = {
-					BTWK_potential_expand_clerical_title_trigger = {
-						CLERICAL_TITLE_STORY = prev
-					}
+		any_in_global_list = {
+			variable = briton_clerical_title_expansion_stories
+			ROOT = {
+				BTWK_potential_expand_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
 				}
 			}
 		}
@@ -345,32 +471,19 @@ BTWK_expand_archdiocese_st_davids_decision = {
 		hidden_effect = {
 			while = {
 				limit = {
-					title:d_et_st_davids = { 
-						any_in_list = {
-							variable = clerical_title_expansions
-							ROOT = { 
-								BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
-								BTWK_can_expand_clerical_title_cost_trigger = yes
-							}
-						}	
+					any_in_global_list = {
+						variable = briton_clerical_title_expansion_stories
+						ROOT = { 
+							BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
+							BTWK_can_expand_clerical_title_cost_trigger = yes
+						}
 					}
 				}
-				title:d_et_st_davids = { 
-					random_in_list = {
-						variable = clerical_title_expansions
-						limit = {
-							ROOT = { 
-								BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
-								BTWK_can_expand_clerical_title_cost_trigger = yes
-							}
-						}
-					}	
-				}
 				random_in_global_list = {
-					variable = creatable_clerical_title_stories
+					variable = briton_clerical_title_expansion_stories
 					limit = {
 						ROOT = { 
-							BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev } 
+							BTWK_can_expand_clerical_title_trigger = { CLERICAL_TITLE_STORY = prev }
 							BTWK_can_expand_clerical_title_cost_trigger = yes
 						}
 					}

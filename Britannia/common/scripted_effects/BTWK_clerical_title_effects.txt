@@ -195,6 +195,9 @@ BTWK_create_clerical_title_effect = {
 	# Actually create the title
 	$CLERICAL_TITLE_STORY$ = {
 		set_variable = clerical_title_created
+		# By temporarily moving the seat into a new kingdom, we guarantee that we won't
+		# get any unintended spillover provinces in its de jure kingdom
+		hidden_effect = { scope:clerical_title_seat = { set_de_jure_liege_title = scope:clerical_title_template } }
 		scope:clerical_title_seat.title_province = {
 			create_clerical_region = {
 				domicile_type = ecclesiastical_domicile
@@ -202,6 +205,7 @@ BTWK_create_clerical_title_effect = {
 				save_scope_as = new_title
 			}
 		}
+		hidden_effect = { scope:clerical_title_seat = { check_de_jure_liege_effect = yes } }
 		create_title_and_vassal_change = {
 			type = created
 			save_scope_as = change
@@ -405,7 +409,7 @@ BTWK_expand_clerical_title_warnings_effect = {
 BTWK_expand_clerical_title_effect = {
 	save_scope_as = puppet_or_actor
 	$CLERICAL_TITLE_STORY$ = { save_scope_as = clerical_title_expansion_story }
-	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_region }
+	$CLERICAL_TITLE_STORY$.var:region = { save_scope_as = effect_expansion_region }
 	$CLERICAL_TITLE_STORY$.var:title.var:clerical_title ?= { save_scope_as = clerical_title }
 	# Make sure tooltip is functional even if clerical title doesn't exist yet
 	if = {
@@ -424,14 +428,14 @@ BTWK_expand_clerical_title_effect = {
 			while = {
 				limit = {
 					any_county_in_region = {
-						region = scope:effect_region
+						region = scope:effect_expansion_region
 						NOT = { exists = clerical_region_title }
 						# Prevent maxing out the while loop for isolated islands, until this gets changed by Paradox
 						any_neighboring_county = { clerical_region_title = scope:clerical_title }
 					}
 				}
 				every_county_in_region = {
-					region = scope:effect_region
+					region = scope:effect_expansion_region
 					limit = { NOT = { exists = clerical_region_title } }
 					scope:clerical_title = { expand_clerical_region = prev }
 				}
@@ -464,6 +468,7 @@ BTWK_expand_clerical_title_effect = {
 			}
 		}
 	}
+	scope:clerical_title.holder ?= { save_scope_as = ecclesiastical_holder }
 	if = {
 		limit = {
 			scope:ecclesiastical_holder != scope:expansion_actor

@@ -552,6 +552,11 @@ BTWK_character_setup = {
 			}
 			add_trait = offmap_ruler
 		}
+		# Remove Roman Military Training from anyone who shouldn't have it
+		every_living_character = {
+			BTWK_remove_ineligible_traits_effect = yes
+		}
+		
 		if = {
 			limit = { game_start_date = 479.12.3 }
 			# Start Anglian Invasions a few months after start
@@ -2621,7 +2626,7 @@ BTWK_de_jure_setup = {
 		}
 		scope:new_creatable_clerical_title_story = { 
 			set_variable = { name = coa_title value = title:d_et_st_davids }
-			set_variable = { name = name value = flag:d_et_st_davids_ROMAN }
+			set_variable = { name = name value = flag:d_et_st_davids }
 			set_variable = briton_roman_clerical_title 
 			set_variable = pre_ruin_of_britannia_clerical_title
 			save_scope_as = d_et_st_davids_roman_creation_story
@@ -2874,6 +2879,19 @@ BTWK_de_jure_setup = {
 			# set_variable = briton_roman_clerical_title
 			# set_variable = expansion_requires_direct_control
 		# }
+		# So we allow Britons to just annex Devon and Cornwall to Canterbury if they have taken control of it
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_isca_dumnonia
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = expansion_requires_direct_control
+			set_variable = expansion_requires_same_heritage_control_of_clerical_title
+			save_scope_as = briton_devon_and_cornwall_extension
+		}
 		BTWK_create_clerical_title_expansion_story = {
 			TITLE = title:d_et_st_davids
 			SEAT = title:c_glevum
@@ -2926,6 +2944,12 @@ BTWK_de_jure_setup = {
 					name = briton_clerical_title_expansion_stories
 					target = THIS
 				}
+			}
+		}
+		scope:briton_devon_and_cornwall_extension = {
+			add_to_global_variable_list = {
+				name = briton_clerical_title_expansion_stories
+				target = THIS
 			}
 		}
 		title:d_et_london = {
@@ -3543,6 +3567,7 @@ BTWK_de_jure_setup = {
 		# Flag all offmap titles
 		title:h_western_roman_empire = { set_variable = is_offmap_title }
 		title:h_eastern_roman_empire = { set_variable = is_offmap_title }
+		title:k_papal_state = { set_variable = is_offmap_title }
 		title:k_connacht = { set_variable = is_offmap_title }
 		title:k_leinster = { set_variable = is_offmap_title }
 		title:k_dalriada = { set_variable = is_offmap_title }

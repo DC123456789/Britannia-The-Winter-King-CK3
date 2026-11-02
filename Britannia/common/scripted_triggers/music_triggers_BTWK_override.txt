@@ -1,0 +1,40 @@
+﻿should_use_broadly_european_music_trigger = {
+	NOT = { government_has_flag = government_is_nomadic }
+	OR = {
+		AND = {
+			exists = capital_province
+			capital_province = {
+				OR = {
+					geographical_region = world_europe_west
+					geographical_region = world_europe_north
+					geographical_region = world_europe_south
+				}
+			}
+			religion != religion:islam_religion
+		}
+		culture = {
+			OR = {
+				has_cultural_pillar = heritage_iberian
+				has_same_heritage_group_as = { TARGET = culture:angle }
+				has_same_heritage_group_as = { TARGET = culture:roman }
+				has_cultural_pillar = heritage_south_slavic
+				has_cultural_pillar = heritage_west_slavic
+				has_cultural_pillar = heritage_vlach
+				has_cultural_pillar = heritage_magyar
+				has_same_heritage_group_as = { TARGET = culture:briton }
+				any_parent_culture_or_above = {
+					OR = {
+						has_cultural_pillar = heritage_iberian
+						has_same_heritage_group_as = { TARGET = culture:angle }
+						has_same_heritage_group_as = { TARGET = culture:roman }
+						has_cultural_pillar = heritage_south_slavic
+						has_cultural_pillar = heritage_west_slavic
+						has_cultural_pillar = heritage_vlach
+						has_cultural_pillar = heritage_magyar
+						has_same_heritage_group_as = { TARGET = culture:briton }
+					}
+				}
+			}
+		}
+	}
+}
