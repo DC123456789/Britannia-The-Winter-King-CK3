@@ -235,19 +235,32 @@ control_region_fraction_including_tributaries_trigger = {
 	}
 }
 
-BTWK_populist_revolt_create_kingdom_culture_check_trigger = {
+BTWK_event_create_kingdom_culture_check_trigger = {
 	$KINGDOM$ = { save_temporary_scope_as = kingdom_scope }
 	trigger_if = {
 		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_blocked } }
-		scope:next_leader = { is_unromanized_germanic_culture_trigger = no }
+		is_unromanized_germanic_culture_trigger = no
 	}
 	trigger_if = {
 		limit = { scope:kingdom_scope = { has_variable = unromanized_germanic_culture_only } }
-		scope:next_leader = { is_unromanized_germanic_culture_trigger = yes }
+		is_unromanized_germanic_culture_trigger = yes
 	}
 	trigger_if = {
 		limit = { scope:kingdom_scope = { has_variable = roman_culture_only } }
-		scope:next_leader = { culture = { has_cultural_pillar = heritage_latin } }
+		culture = { has_cultural_pillar = heritage_latin }
+	}
+}
+
+BTWK_confederation_can_create_kingdom_trigger = {
+	save_temporary_scope_as = root_scope
+	$KINGDOM$ = { save_temporary_scope_as = kingdom_scope }
+	scope:kingdom_scope = {
+		NOT = { exists = holder }
+		scope:root_scope = { BTWK_event_create_kingdom_culture_check_trigger = { KINGDOM = prev } }
+		any_de_jure_county = {
+			percent >= 0.4
+			holder.top_liege.confederation ?= scope:root_scope.confederation
+		}
 	}
 }
 
