@@ -110,17 +110,6 @@ BTWK_aengland_bretwalda_hegemony_score_gain = {
 	if = {
 		limit = { 
 			exists = this.var:aengland_bretwalda_hegemony_score
-			this.var:aengland_bretwalda_hegemony_score == BTWK_aengland_bretwalda_hegemony_max
-		}
-		add = {
-			value = 0.0001		# For tooltip purposes
-			desc = AENGLAND_HEGEMONY_SCORE_AT_MAX
-		}
-		multiply = 0		# Makes it 0
-	}
-	else_if = {
-		limit = { 
-			exists = this.var:aengland_bretwalda_hegemony_score
 			this.var:aengland_bretwalda_hegemony_score > BTWK_aengland_bretwalda_hegemony_max
 		}
 		if = {
@@ -195,6 +184,19 @@ BTWK_aengland_bretwalda_hegemony_score_gain = {
 				desc = AENGLAND_HEGEMONY_SCORE_STRUGGLE_PHASE_BOOST
 			}
 		}
+		# Standard decay
+		if = {
+			limit = { 
+				exists = this.var:aengland_bretwalda_hegemony_score
+			}
+			subtract = {
+				value = {
+					value = this.var:aengland_bretwalda_hegemony_score
+					multiply = 0.005
+				}
+				desc = AENGLAND_HEGEMONY_SCORE_STRUGGLE_DECAY
+			}
+		}
 	}
 	# Maluses if you don't control enough provinces as Bretwalda
 	if = {
@@ -230,6 +232,19 @@ BTWK_aengland_bretwalda_hegemony_score_gain = {
 		subtract = {
 			value = 20
 			desc = AENGLAND_HEGEMONY_SCORE_IS_TRIBUTARY
+		}
+	}
+	# If at max, capped at 0
+	save_temporary_value_as = current_hegemony_score
+	if = {
+		limit = { 
+			exists = this.var:aengland_bretwalda_hegemony_score
+			this.var:aengland_bretwalda_hegemony_score == BTWK_aengland_bretwalda_hegemony_max
+			scope:current_hegemony_score > 0
+		}
+		multiply = {
+			value = 0		# For tooltip purposes
+			desc = AENGLAND_HEGEMONY_SCORE_AT_MAX
 		}
 	}
 }
