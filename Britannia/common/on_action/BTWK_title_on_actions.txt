@@ -17,6 +17,22 @@ BTWK_on_title_destroyed = {
 				BTWK_unset_to_be_destroyed_title_effect = yes
 			}
 		}
+		
+		# Update flavorization
+		if = {
+			limit = {
+				scope:landed_title = { has_variable = emperor_flag }
+				NOT = { any_held_title = { has_variable = emperor_flag } }
+			}
+			remove_variable = emperor_flag
+		}
+		if = {
+			limit = {
+				scope:landed_title = { has_variable = high_king_flag }
+				NOT = { any_held_title = { has_variable = high_king_flag } }
+			}
+			remove_variable = high_king_flag
+		}
 	
 		if = {
 			limit = {
@@ -151,6 +167,20 @@ BTWK_on_title_gain = {
 		
 		# Update wrong heritage group tribal county penalties
 		BTWK_update_wrong_heritage_group_tribal_county_modifier_for_sub_realm_effect = yes
+		
+		# Update flavorization
+		if = {
+			limit = {
+				scope:title = { has_variable = emperor_flag }
+			}
+			set_variable = emperor_flag
+		}
+		if = {
+			limit = {
+				scope:title = { has_variable = high_king_flag }
+			}
+			set_variable = high_king_flag
+		}
 		
 		# Handle offmap ruler titles
 		if = {
@@ -478,6 +508,22 @@ BTWK_on_title_lost = {
 			remove_character_modifier = BTWK_soc_accepted_gregorian_mission_modifier
 		}
 		
+		# Update flavorization
+		if = {
+			limit = {
+				scope:title = { has_variable = emperor_flag }
+				NOT = { any_held_title = { has_variable = emperor_flag } }
+			}
+			remove_variable = emperor_flag
+		}
+		
+		if = {
+			limit = {
+				scope:title = { has_variable = high_king_flag }
+				NOT = { any_held_title = { has_variable = high_king_flag } }
+			}
+			remove_variable = high_king_flag
+		}
 		if = {
 			limit = {
 				is_playable_character = no

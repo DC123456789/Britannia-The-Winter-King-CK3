@@ -112,6 +112,29 @@
 				}
 				effect = {
 					this.var:mission_host_king = { save_scope_as = mission_host_king }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							save_temporary_scope_as = current_story
+							prev = { 
+								BTWK_potential_create_clerical_title_trigger = { 
+									CLERICAL_TITLE_STORY = scope:current_story
+								}
+							}
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = no_southern_anglo_saxon_kingdom_clerical_title		# Fallback
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					story_owner = { trigger_event = spreading_of_christianity.0203 }
 				}
 			}
@@ -137,6 +160,29 @@
 					save_scope_as = gregorian_mission_story
 					save_scope_as = bretwalda_initial_request
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							save_temporary_scope_as = current_story
+							prev = { 
+								BTWK_potential_create_clerical_title_trigger = { 
+									CLERICAL_TITLE_STORY = scope:current_story
+								}
+							}
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = no_southern_anglo_saxon_kingdom_clerical_title		# Fallback
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:e_aengland.holder = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -437,8 +483,6 @@
 	# Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
 	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
 	# or have a Christian capital
-	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
-	# in the main host
 	effect_group = {
 		years = 1
 		

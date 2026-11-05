@@ -2251,6 +2251,10 @@ BTWK_britannia_high_king.0124 = {
 				trigger = { NOT = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } } }
 				desc = BTWK_britannia_high_king.0124.t.no_opponents
 			}
+			triggered_desc = {
+				trigger = { exists = scope:HK_reform_empower_high_council_second_try }
+				desc = BTWK_britannia_high_king.0124.t.second_try
+			}
 			desc = BTWK_britannia_high_king.0124.t
 		}
 	}
@@ -2259,6 +2263,10 @@ BTWK_britannia_high_king.0124 = {
 			triggered_desc = {
 				trigger = { NOT = { any_tributary = { has_variable = HK_reform_empower_high_council_opponent } } }
 				desc = BTWK_britannia_high_king.0124.desc.no_opponents
+			}
+			triggered_desc = {
+				trigger = { exists = scope:HK_reform_empower_high_council_second_try }
+				desc = BTWK_britannia_high_king.0124.desc.second_try
 			}
 			desc = BTWK_britannia_high_king.0124.desc
 		}
@@ -2279,7 +2287,11 @@ BTWK_britannia_high_king.0124 = {
 	
 	immediate = {
 		ordered_tributary = {
-			limit = { has_variable = HK_reform_empower_high_council_opponent }
+			limit = { 
+				has_variable = HK_reform_empower_high_council_opponent
+				health >= 3		# Don't choose sickly people about to die if possible
+			}
+			alternative_limit = { has_variable = HK_reform_empower_high_council_opponent }
 			order_by = military_power
 			save_scope_as = HK_britannia_opponent_leader
 		}
@@ -2363,6 +2375,20 @@ BTWK_britannia_high_king.0124 = {
 		}
 		
 		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+	option = {		# Screw this, let's do it later
+		name = BTWK_britannia_high_king.0124.c
+		trigger = { 
+			any_tributary = { has_variable = HK_reform_empower_high_council_opponent }
+			exists = scope:HK_reform_empower_high_council_second_try
+		}
+		# Recover some but not all of your spent authority
+		BTWK_britannia_high_kingship_add_authority_effect = { AMOUNT = 150 }
+		custom_tooltip = BTWK_britannia_high_king.0128.tt.a
+		add_character_modifier = {
+			modifier = BTWK_britannia_high_king_reform_blocked_modifier
+			years = 5
+		}
 	}
 }
 
@@ -3532,6 +3558,10 @@ BTWK_britannia_high_king.0184 = {
 				trigger = { NOT = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } } }
 				desc = BTWK_britannia_high_king.0184.t.no_opponents
 			}
+			triggered_desc = {
+				trigger = { exists = scope:HK_reform_restore_imperial_dignity_second_try }
+				desc = BTWK_britannia_high_king.0184.t.second_try
+			}
 			desc = BTWK_britannia_high_king.0184.t
 		}
 	}
@@ -3540,6 +3570,10 @@ BTWK_britannia_high_king.0184 = {
 			triggered_desc = {
 				trigger = { NOT = { any_vassal = { has_variable = HK_reform_restore_imperial_dignity_opponent } } }
 				desc = BTWK_britannia_high_king.0184.desc.no_opponents
+			}
+			triggered_desc = {
+				trigger = { exists = scope:HK_reform_restore_imperial_dignity_second_try }
+				desc = BTWK_britannia_high_king.0184.desc.second_try
 			}
 			desc = BTWK_britannia_high_king.0184.desc
 		}
@@ -3560,7 +3594,11 @@ BTWK_britannia_high_king.0184 = {
 	
 	immediate = {
 		ordered_vassal = {
-			limit = { has_variable = HK_reform_restore_imperial_dignity_opponent }
+			limit = { 
+				has_variable = HK_reform_restore_imperial_dignity_opponent
+				health >= 3		# Don't choose sickly people about to die if possible
+			}
+			alternative_limit = { has_variable = HK_reform_restore_imperial_dignity_opponent }
 			order_by = military_power
 			save_scope_as = HK_britannia_opponent_leader
 		}
@@ -3638,6 +3676,20 @@ BTWK_britannia_high_king.0184 = {
 		}
 		
 		remove_variable = BTWK_britannia_high_king_reform_trying_to_pass
+	}
+	option = {		# Screw this, let's do it later
+		name = BTWK_britannia_high_king.0184.c
+		trigger = { 
+			any_tributary = { has_variable = HK_reform_restore_imperial_dignity_opponent }
+			exists = scope:HK_reform_restore_imperial_dignity_second_try
+		}
+		# Recover some but not all of your spent authority
+		BTWK_britannia_high_kingship_add_authority_effect = { AMOUNT = 200 }
+		custom_tooltip = BTWK_britannia_high_king.0188.tt.a
+		add_character_modifier = {
+			modifier = BTWK_britannia_high_king_reform_blocked_modifier
+			years = 5
+		}
 	}
 }
 
