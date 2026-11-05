@@ -576,7 +576,9 @@
 						# If you are not Saxon Rite and you have not already refused, you will always be asked to convert
 						else_if = {
 							limit = { 
-								rite:saxon_rite.faith ?= faith
+								exists = rite:saxon_rite
+								rite:saxon_rite.faith = faith
+								rite:saxon_rite != rite
 								NOT = { has_variable = gregorian_mission_refused_change_rite }
 							}
 							trigger_event = { id = spreading_of_christianity.0220 days = { 1 90 } }
@@ -585,10 +587,9 @@
 						else_if = {
 							limit = {
 								any_vassal = {
-									limit = {
-										religion != scope:gregorian_mission_augustine.religion
-										NOT = { has_variable = gregorian_mission_refused_personal_conversion }
-									}
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									highest_held_title_tier >= tier_county
 								}
 							}
 							random_vassal = {
@@ -596,10 +597,12 @@
 									religion != scope:gregorian_mission_augustine.religion
 									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
 									faith = { has_doctrine_parameter = unreformed }
+									highest_held_title_tier >= tier_county
 								}
 								alternative_limit = {
 									religion != scope:gregorian_mission_augustine.religion
 									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									highest_held_title_tier >= tier_county
 								}
 								trigger_event = { id = spreading_of_christianity.0219 days = { 1 90 } }
 							}
@@ -629,7 +632,7 @@
 	
 	# Once we reach 30 years, the mission ends
 	effect_group = {
-		years = 1
+		days = 100		# Deliberately on a different timer from the main pulse
 		
 		trigger = { NOT = { has_variable = mission_started_overall_timer } }
 
