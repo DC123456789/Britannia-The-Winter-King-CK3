@@ -1,0 +1,63 @@
+﻿# called when a siege completes. Does *not* fire on reoccupation by province order
+# root is the occupant
+# scope:barony is the barony title that got occupied
+# scope:county is the county title for the barony
+# scope:previous_controller is the previous controller of the county
+# scope:war is the war causing the previous controller and the occupant to be hostile
+# occupied_baronies is a list of all baronies that the siege caused the occupier to control (I.E., can include baronies with no fort level)
+on_siege_completion = {
+	on_actions = {
+		BTWK_on_siege_completion
+		BTWK_laeti_settlement_check
+	}
+}
+	
+BTWK_on_siege_completion = {
+	effect = {
+		# Lose pacification progress if a populist or peasant rebel takes the capital holding
+		if = {
+			limit = {
+				scope:county = { 
+					BTWK_has_negative_cultural_redoubt_modifier_trigger = yes
+					title_province = scope:barony.title_province
+				}
+				has_variable = rebel_leader_peasants
+				joined_faction = var:rebel_leader_peasants
+				exists = scope:war
+				scope:war = {
+					primary_defender = scope:previous_controller
+				}
+			}
+			scope:county = {
+				change_variable = {
+					name = BTWK_cultural_redoubt_pacified_years
+					subtract = BTWK_cultural_redoubt_pacification_rebel_siege_years_lost
+				}
+				if = {
+					limit = { this.var:BTWK_cultural_redoubt_pacified_years < 0 }
+					set_variable = {
+						name = BTWK_cultural_redoubt_pacified_years
+						value = 0
+					}
+				}
+				BTWK_update_cultural_redoubt_modifier_for_sub_realm_effect = yes
+				holder = {
+					send_interface_message = {
+						type = msg_BTWK_cultural_redoubt_pacification_rebel_siege
+						title = msg_BTWK_cultural_redoubt_pacification_rebel_siege.t
+						desc = msg_BTWK_cultural_redoubt_pacification_rebel_siege.desc
+						right_icon = scope:county
+					}
+					every_liege_or_above = {
+						send_interface_message = {
+							type = msg_BTWK_cultural_redoubt_pacification_rebel_siege
+							title = msg_BTWK_cultural_redoubt_pacification_rebel_siege.t
+							desc = msg_BTWK_cultural_redoubt_pacification_rebel_siege.desc
+							right_icon = scope:county
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,37 @@
+# County changes culture
+# Root = County title
+# scope:old_culture = old culture
+
+on_county_culture_change = {
+	on_actions = {
+		BTWK_on_county_culture_change
+		BTWK_laeti_settlement_check
+	}
+}
+
+BTWK_on_county_culture_change = {
+	effect = {
+		if = {
+			limit = { BTWK_has_cultural_redoubt_modifier_trigger = yes }
+			BTWK_update_cultural_redoubt_modifier_effect = yes
+		}
+	}
+}
+
+BTWK_laeti_settlement_check = {
+	effect = {
+		ROOT = {
+			if = {
+				limit = {
+					is_unromanized_germanic_culture_trigger = no
+					any_county_province = {
+						has_province_modifier = laeti_settlement
+					}
+				}
+				every_county_province = {
+					remove_province_modifier = laeti_settlement
+				}
+			}
+		}
+	}
+}

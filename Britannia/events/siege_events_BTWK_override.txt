@@ -1,0 +1,403 @@
+﻿#Events for sieges
+
+namespace = siege
+
+#0001-0999: Capturing prisoners, by Mathilda Bjarnehed and Sean Hughes
+#5001-5999: Assorted events
+
+#########################################
+# CAPTURING PRISONERS 					#
+# 0001-0999	 							#
+# by Mathilda Bjarnehed and Sean Hughes #
+#########################################
+
+#On county capture (all provinces taken), calculate capture using desirable_for_capture_trigger.
+
+scripted_trigger siege_0001_can_be_captured = {
+	# Captured characters must be located in the raided barony itself.
+	location = scope:barony.title_province
+
+	# Reasons to exclude characters from the capture pool:
+	NOR = {
+		# If the raiders have defeated the holder's army, but the army has not yet retreated to a different province, shield them from capture by the raid.
+		exists = commanding_army
+		exists = knight_army
+
+		# Is imprisoned in the barony stay prisoners (special case, any courtiers/vassals of the raider will get released elsewhere).
+		is_imprisoned = yes
+	}
+}
+
+scripted_trigger siege_0001_valid_domicile_trigger = {
+	domicile_is_estate_trigger = yes
+	owner = { save_temporary_scope_as = estate_owner_check }
+	scope:occupant = {
+		OR = {
+			any_war_enemy = { this = scope:estate_owner_check }
+			any_war_enemy = { any_vassal_or_below = { this = scope:estate_owner_check } }
+		}
+	}		
+	# BTWK - cannot capture prisoners from estates of offmap realms
+	owner = {
+		NOR = {
+			has_trait = offmap_ruler
+			any_liege_or_above = { has_trait = offmap_ruler }
+		}
+	}
+}
+
+# Prisoner capture/kill logic, by Mathilda Bjarnehed
+siege.0001 = {
+	hidden = yes
+	id_override_priority = 10
+	
+	trigger = {
+		OR = {
+			AND = {
+				scope:county.holder = scope:previous_controller
+				OR = {
+					any_war_enemy = { this = scope:previous_controller }
+					any_war_enemy = { any_vassal_or_below = { this = scope:previous_controller } }
+				}
+			}
+			AND = {
+				scope:barony.title_province = {
+					any_province_domicile = {
+						domicile_is_estate_trigger = yes
+						owner = {
+							save_temporary_scope_as = estate_owner_check
+						}
+					}
+				}
+				OR = {
+					any_war_enemy = { this = scope:estate_owner_check }
+					any_war_enemy = { any_vassal_or_below = { this = scope:estate_owner_check } }
+				}
+			}
+		}
+	}
+
+	immediate = {
+		save_scope_as = occupant
+		scope:barony.holder = { save_scope_as = holder }
+		scope:barony.title_province = {
+			random_province_domicile = {
+				limit = {
+					siege_0001_valid_domicile_trigger = yes
+				}
+				owner ?= {
+					save_scope_as = estate_owner
+				}
+			}
+		}
+
+		# Depending on if the occupier is an attacker or defender in this war, get the primary attacker/defender of the siege.
+		scope:war = {
+			if = {
+				limit = {
+					is_attacker = scope:occupant
+				}
+				# If occupier is an attacker, the war's primary attacker is also the primary attacker in this siege (the attackers have occupied one of the defender's provinces).
+				primary_attacker = {
+					save_scope_as = primary_siege_attacker
+				}
+				primary_defender = {
+					save_scope_as = primary_siege_defender
+				}
+			}
+			else = {
+				# Otherwise the occupier is a defender, so the primary defender in the war is the primary attacker in the siege (the defenders have occupied one of the attacker's provinces).
+				primary_defender = {
+					save_scope_as = primary_siege_attacker
+				}
+				primary_attacker = {
+					save_scope_as = primary_siege_defender
+				}
+			}
+		}
+		
+		###BUILD CAPTURE ATTEMPT LIST###
+		#Add capture targets from all occupied baronies if it is someone's capital
+		every_in_list = {
+			list = occupied_baronies
+			limit = {
+				exists = holder
+				save_temporary_scope_as = list_barony
+				holder = { capital_barony = { this = scope:list_barony } }
+			}
+			holder = {
+				if = {
+					limit = { siege_0001_can_be_captured = yes }
+					add_to_list = capture_attempt_targets
+				}
+				every_courtier_or_guest = {
+					limit = { siege_0001_can_be_captured = yes }
+					add_to_list = capture_attempt_targets
+				}
+			}
+		}
+		#Add capture targets from all hostile occupied Estates
+		every_in_list = {
+			list = occupied_baronies
+			limit = {
+				title_province = {
+					any_province_domicile = {
+						siege_0001_valid_domicile_trigger = yes
+					}
+				}
+			}
+			title_province = {
+				random_province_domicile = {
+					limit = {
+						siege_0001_valid_domicile_trigger = yes
+					}
+					owner ?= {
+						if = {
+							limit = { siege_0001_can_be_captured = yes }
+							add_to_list = capture_attempt_targets
+						}
+						every_courtier_or_guest = {
+							limit = { siege_0001_can_be_captured = yes }
+							add_to_list = capture_attempt_targets
+						}
+					}
+				}
+			}
+		}
+
+		###BUILD SUCCESSFUL CAPTURE LIST###
+		#Calculate capture success
+		every_in_list = {
+			list = capture_attempt_targets
+			random = {	
+				# Base chance handled in a modifier due to the chance parameter tending to quietly fail to #parse scripted values.
+				chance = 0
+
+				# 35 becomes 20 for average intrigue and prowess, can go as low as 5 at very high intrigue and #prowess
+				modifier = { add = siege_base_capture_chance }
+
+				# Capture Modifiers
+				compare_modifier = { #Adds -20 for 20 intrigue, adds -10 for 10 intrigue
+					#target = this
+					value = intrigue
+					multiplier = -1
+					min = -20
+					}
+				compare_modifier = { #Adds -10 for 20 prowess, -5 for 10 prowess
+					#target = this
+					value = prowess
+					multiplier = -0.5
+					min = -15
+				}
+				# Less likely to capture the estate owner themselves
+				modifier = {
+					scope:estate_owner ?= this
+					add = -10
+				}
+				# If there is an estate, Watchtowers and Guardhouses make captures less likely
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_1
+						}
+					}
+					add = -10
+				}
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_2
+						}
+					}
+					add = -15
+				}
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_3
+						}
+					}
+					add = -20
+				}
+
+				# Capture Effects
+				if = {
+					limit = {
+						desirable_for_capture_trigger = yes
+						NOT = { scope:occupant = { has_variable = rebel_leader_peasants	}}
+					}
+					add_to_list = captured_targets_effects
+				}
+				else = {
+					add_to_list = killed_targets
+				}
+			}
+		}
+		
+
+		### SEND NOTIFICATIONS TO CONCERNED PARTIES ###
+			
+
+		if = {
+			limit = {
+				any_in_list = {
+					list = captured_targets_effects
+					count >= 1
+				}
+			}
+			# Send notification to the county occupier
+			root = {
+				trigger_event = siege.0002
+			}
+
+			#Send notification to holder (about captures and deaths)
+			scope:barony.holder = {
+				if = {
+					limit = {
+						save_temporary_scope_as = notification_target
+						any_in_list = {
+							list = captured_targets_effects
+							this != scope:notification_target
+						}
+					}
+					trigger_event = siege.0003
+				}
+			}
+			scope:estate_owner ?= {
+				if = {
+					limit = {
+						save_temporary_scope_as = notification_target
+						any_in_list = {
+							list = captured_targets_effects
+							this != scope:notification_target
+						}
+					}
+					trigger_event = siege.0003
+				}
+			}
+
+			# Send a message to all other players who may be concerned about the fate of the captured prisoners.
+			every_player = {
+				limit = {
+					NOR = {
+						this = root
+						this = scope:barony.holder
+					}
+					trigger_if = {
+						limit = { exists = scope:estate_owner }
+						this != scope:estate_owner
+					}
+					save_temporary_scope_as = notification_target
+					any_in_list = {
+						list = captured_targets_effects
+						has_any_relation_trigger = { CHARACTER = scope:notification_target }
+					}
+				}
+				trigger_event = siege.0004
+			}
+		}
+
+		if = {
+			limit = {
+				any_in_list = {
+					list = killed_targets
+					count >= 1
+				}
+			}
+
+			#Send notification to holder (about deaths)
+			scope:barony.holder = {
+				trigger_event = siege.0013
+			}
+			scope:estate_owner ?= {
+				trigger_event = siege.0013
+			}
+
+			# Send a message to all other players who may be concerned about the fate of the slain prisoners.
+			every_player = {
+				limit = {
+					NOR = {
+						this = root
+						this = scope:barony.holder
+					}
+					trigger_if = {
+						limit = { exists = scope:estate_owner }
+						this != scope:estate_owner
+					}
+
+					save_temporary_scope_as = notification_target
+					any_in_list = {
+						list = killed_targets
+						has_any_relation_trigger = { CHARACTER = scope:notification_target }
+					}
+				}
+				trigger_event = siege.0014
+			}
+		}	
+ 		
+		### IMPRISON AND KILL EFFECTS ###
+		every_in_list = {
+			list = captured_targets_effects
+
+			# Since we sent custom imprisonment events, we want to block the default ones.
+			hidden_effect = {
+				add_character_flag = {
+					flag = block_imprisonment_event
+					days = 1
+				}
+			}
+
+			prisoner_of_war_capture_effect = {
+				TARGET = this
+				IMPRISONER = root
+			}
+
+			### IF NECESSARY, SEND TOASTS TO WAR LEADERS ###
+
+			# Check if this prisoner is important enough (worth war score) that it is worth sending a toast about them in the first place.
+			if = {
+				limit = {
+					character_is_potential_valuable_prisoner = yes
+				}
+				save_scope_as = valuable_prisoner
+
+				# The imprisoner must be informed that they captured an important hostage.
+				scope:occupant = {
+					trigger_event = siege.0005
+				}
+
+				# The losing primary participant must be informed that they will/have lost warscore because a hostage was captured.
+				if = {
+					limit = {
+						# But not if they themselves are the prisoner! (they will get an event already upon being imprisoned).
+						scope:valuable_prisoner != scope:primary_siege_defender
+					}
+					scope:primary_siege_defender = {
+						trigger_event = siege.0006
+					}
+				}
+
+				# If the primary siege attacker is different from the occupier, we also need to send a message to the siege attacker.
+				if = {
+					limit = {
+						scope:occupant != scope:primary_siege_attacker
+					}
+					scope:primary_siege_attacker = {
+						trigger_event = siege.0007
+					}
+				}
+			}
+		}
+		every_in_list = {
+			list = killed_targets
+
+			death = {
+				death_reason = death_siege
+				#killer = root
+			}
+		}
+	}
+}

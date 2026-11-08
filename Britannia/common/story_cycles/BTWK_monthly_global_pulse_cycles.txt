@@ -1,0 +1,27 @@
+﻿BTWK_monthly_global_pulse_story = {
+	on_setup = {
+		set_variable = { name = monthly_tick_day value = current_day }
+	}
+
+	on_end = {
+	}
+
+	on_owner_death = {
+	}
+	
+	# Monthly global pulse counter
+	effect_group = {
+		days = 1
+		
+		trigger = {
+			current_day = this.var:monthly_tick_day
+		}
+		
+		triggered_effect = {
+			trigger = { always = yes }
+			effect = {
+				trigger_event = { on_action = btwk_monthly_global_pulse } 
+			}
+		}
+	}
+}

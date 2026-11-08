@@ -1,0 +1,4170 @@
+﻿namespace = titular_titles
+namespace = titular_titles_anglosaxon
+namespace = titular_titles_roman
+namespace = titular_titles_briton
+namespace = titular_titles_irish
+namespace = titular_titles_romanized_germanic
+namespace = titular_titles_test
+
+##################################################
+
+### De Jure Title Creation, Expansion, and Restoration Events
+
+##################################################
+
+##################################################
+# Anglo-Saxons
+##################################################
+# 0001	    - Creation of duchy
+# 0002      - Destruction of duchy
+# 0003      - Integration of duchy
+# 0004/0005 - Annex the North Bank (Mercia)
+# 0006/0007 - Create Berkshire
+# 0008/0009 - Expand Surrey
+# 0010/0011 - Unite Northumbria
+# 0012/0013 - Elevate Lindsey
+# 0100/0101	- Creation of kingdom
+
+# Creation of duchy
+titular_titles_anglosaxon.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0001.t
+	desc = {
+		desc = titular_titles_anglosaxon.0001.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_winchestershire }
+				desc = titular_titles_anglosaxon.0001.desc.d_winchestershire
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_hampshire }
+				desc = titular_titles_anglosaxon.0001.desc.d_hampshire
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_somerset }
+				desc = titular_titles_anglosaxon.0001.desc.d_somerset
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_cilternsaete }
+				desc = titular_titles_anglosaxon.0001.desc.d_cilternsaete
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_dorset }
+				desc = titular_titles_anglosaxon.0001.desc.d_dorset
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_wiltshire }
+				desc = titular_titles_anglosaxon.0001.desc.d_wiltshire
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_devon }
+				desc = titular_titles_anglosaxon.0001.desc.d_devon
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_cornwall }
+				desc = titular_titles_anglosaxon.0001.desc.d_cornwall
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_berkshire }
+				desc = titular_titles_anglosaxon.0001.desc.d_berkshire
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_hwicce }
+				desc = titular_titles_anglosaxon.0001.desc.d_hwicce
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_south_angles }
+				desc = titular_titles_anglosaxon.0001.desc.d_south_angles
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_hiccas }
+				desc = titular_titles_anglosaxon.0001.desc.d_hiccas
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_middleseaxe }
+				desc = titular_titles_anglosaxon.0001.desc.d_middleseaxe
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_middle_angles }
+				desc = titular_titles_anglosaxon.0001.desc.d_middle_angles
+			}
+			triggered_desc = {
+				trigger = { scope:new_duchy_title = title:d_mercia }
+				desc = titular_titles_anglosaxon.0001.desc.d_mercia
+			}
+			desc = titular_titles_anglosaxon.0001.desc.fallback
+		}
+		desc = titular_titles_anglosaxon.0001.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				this = scope:conqueror
+				NOT = { exists = scope:new_duchy_title.holder }
+			}
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			scope:new_duchy_title = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+				BTWK_unset_to_be_destroyed_title_effect = yes
+			}
+			resolve_title_and_vassal_change = scope:title_change
+		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:new_duchy_title }
+				}
+				BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+					DESTROYER = scope:conqueror
+				}
+			}
+		}
+		show_as_tooltip = {
+			scope:new_duchy_title = {
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					BTWK_britannia_high_kingship_active_trigger = yes
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+				}
+			}
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:new_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_create_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_create_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
+				}
+				if = {
+					limit = {
+						BTWK_britannia_high_kingship_active_trigger = yes
+						exists = title:e_britannia.holder
+					}
+					BTWK_britannia_high_kingship_remove_authority_effect = { 
+						AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles_anglosaxon.0001.a.anglosaxon
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					} 
+				}
+			}
+			text = titular_titles_anglosaxon.0001.a.briton_roman
+		}
+		name = {
+			text = titular_titles_anglosaxon.0001.a
+		}
+		every_owned_story = {
+			limit = {
+				story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+				this.var:target_duchy = scope:new_duchy_title
+			}
+			save_scope_as = current_story
+			custom_tooltip = BTWK_rise_of_new_anglo_saxon_kingdom_story_end_tt
+			end_story = yes
+		}
+	}
+}
+
+
+# Destruction of duchy
+titular_titles_anglosaxon.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0002.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:conqueror = { is_briton_or_latin_culture_trigger = yes } 
+				}
+				desc = titular_titles_anglosaxon.0002.desc.intro.briton_roman
+			}
+			desc = titular_titles_anglosaxon.0002.desc.intro
+		}
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_surrey }
+				desc = titular_titles_anglosaxon.0002.desc.d_surrey
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_cantware }
+				desc = titular_titles_anglosaxon.0002.desc.d_cantware
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_westcantware }
+				desc = titular_titles_anglosaxon.0002.desc.d_westcantware
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_the_weald }
+				desc = titular_titles_anglosaxon.0002.desc.d_the_weald
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_eastseaxe }
+				desc = titular_titles_anglosaxon.0002.desc.d_eastseaxe
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_middleseaxe }
+				desc = titular_titles_anglosaxon.0002.desc.d_middleseaxe
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_norfolc }
+				desc = titular_titles_anglosaxon.0002.desc.d_norfolc
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_southfolc }
+				desc = titular_titles_anglosaxon.0002.desc.d_southfolc
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_grentbryce }
+				desc = titular_titles_anglosaxon.0002.desc.d_grentbryce
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_gyrwas }
+				desc = titular_titles_anglosaxon.0002.desc.d_gyrwas
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_hiccas }
+				desc = titular_titles_anglosaxon.0002.desc.d_hiccas
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_middle_angles }
+				desc = titular_titles_anglosaxon.0002.desc.d_middle_angles
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_south_angles }
+				desc = titular_titles_anglosaxon.0002.desc.d_south_angles
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_mercia }
+				desc = titular_titles_anglosaxon.0002.desc.d_mercia
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_pecsaete }
+				desc = titular_titles_anglosaxon.0002.desc.d_pecsaete
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_wrocensaete }
+				desc = titular_titles_anglosaxon.0002.desc.d_wrocensaete
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_magonsaete }
+				desc = titular_titles_anglosaxon.0002.desc.d_magonsaete
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_hwicce }
+				desc = titular_titles_anglosaxon.0002.desc.d_hwicce
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_hampshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_hampshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_berkshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_berkshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_cilternsaete }
+				desc = titular_titles_anglosaxon.0002.desc.d_cilternsaete
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_wiltshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_wiltshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_dorset }
+				desc = titular_titles_anglosaxon.0002.desc.d_dorset
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_somerset }
+				desc = titular_titles_anglosaxon.0002.desc.d_somerset
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_devon }
+				desc = titular_titles_anglosaxon.0002.desc.d_devon
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_cornwall }
+				desc = titular_titles_anglosaxon.0002.desc.d_cornwall
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_winchestershire }
+				desc = titular_titles_anglosaxon.0002.desc.d_winchestershire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_deira }
+				desc = titular_titles_anglosaxon.0002.desc.d_deira
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_eoforwic }
+				desc = titular_titles_anglosaxon.0002.desc.d_eoforwic
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_lindsey }
+				desc = titular_titles_anglosaxon.0002.desc.d_lindsey
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_elmetsaete }
+				desc = titular_titles_anglosaxon.0002.desc.d_elmetsaete
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_craven }
+				desc = titular_titles_anglosaxon.0002.desc.d_craven
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_mersey }
+				desc = titular_titles_anglosaxon.0002.desc.d_mersey
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_lancaster }
+				desc = titular_titles_anglosaxon.0002.desc.d_lancaster
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_bernicia }
+				desc = titular_titles_anglosaxon.0002.desc.d_bernicia
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_tynedale }
+				desc = titular_titles_anglosaxon.0002.desc.d_tynedale
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_angletweeddale }
+				desc = titular_titles_anglosaxon.0002.desc.d_angletweeddale
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_cumbria }
+				desc = titular_titles_anglosaxon.0002.desc.d_cumbria
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_anglelothian }
+				desc = titular_titles_anglosaxon.0002.desc.d_anglelothian
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_dumfriesshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_dumfriesshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_anglegalloway }
+				desc = titular_titles_anglosaxon.0002.desc.d_anglegalloway
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_lanarkshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_lanarkshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_ayrshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_ayrshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_stirlingshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_stirlingshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_anglelennox }
+				desc = titular_titles_anglosaxon.0002.desc.d_anglelennox
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_anglemann }
+				desc = titular_titles_anglosaxon.0002.desc.d_anglemann
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_monmouthshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_monmouthshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_glamorganshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_glamorganshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_brecknockshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_brecknockshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_carmarthenshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_carmarthenshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_pembrokeshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_pembrokeshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_cardiganshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_cardiganshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_radnorshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_radnorshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_montgomeryshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_montgomeryshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_denbighshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_denbighshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_caernarfonshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_caernarfonshire
+			}
+			triggered_desc = {
+				trigger = { scope:old_duchy_title = title:d_merionethshire }
+				desc = titular_titles_anglosaxon.0002.desc.d_merionethshire
+			}
+			desc = titular_titles_anglosaxon.0002.desc.fallback
+		}
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:conqueror = { is_briton_or_latin_culture_trigger = yes } 
+				}
+				desc = titular_titles_anglosaxon.0002.desc.outro.briton_roman
+			}
+			desc = titular_titles_anglosaxon.0002.desc.outro
+		}
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:old_duchy_title = {
+			BTWK_destroy_or_set_to_be_destroyed_title_effect = {
+				DESTROYER = scope:conqueror
+			}
+		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_anglo_saxon_duchy_trigger = { DUCHY = scope:old_duchy_title }
+				}
+				BTWK_unset_to_be_destroyed_title_effect = yes
+			}
+		}
+		show_as_tooltip = {
+			scope:old_duchy_title = {
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { this = scope:conqueror }
+			hidden_effect = {
+				scope:old_duchy_title.title_capital_county = {
+					every_county_struggle = {
+						limit = { phase_has_catalyst = catalyst_destroy_anglo_saxon_duchy }
+						activate_struggle_catalyst = {
+							catalyst = catalyst_destroy_anglo_saxon_duchy
+							character = scope:conqueror
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					} 
+				}
+			}
+			text = titular_titles_anglosaxon.0002.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles_anglosaxon.0002.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_anglosaxon.0001.a
+		}
+		if = {
+			limit = {
+				this = scope:conqueror
+			}
+			BTWK_add_authority_on_anglo_saxon_duchy_destruction_effect = yes
+		}
+	}
+}
+
+# Integration of duchy
+titular_titles_anglosaxon.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0003.t
+	desc = titular_titles_anglosaxon.0003.desc
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:current_duchy = { de_jure_liege = { save_scope_as = former_liege_kingdom } }
+		show_as_tooltip = {
+			scope:current_duchy = {
+				check_de_jure_liege_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0003.a.new_liege
+		}
+		name = {
+			trigger = {
+				OR = {
+					has_title = scope:former_liege_kingdom
+					any_liege_or_above = { has_title = scope:former_liege_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0003.a.former_liege
+		}
+		name = {
+			text = titular_titles_anglosaxon.0003.a
+		}
+	}
+}
+
+# Annex the North Bank (Mercia)
+titular_titles_anglosaxon.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0005 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0005 }
+		}
+		title:k_mercia = { set_variable = annexed_north_bank }
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_cilternsaete = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_south_angles = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_hwicce = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					title:d_berkshire.title_capital_county = title:c_dorchester
+				}
+				title:d_berkshire = {
+					set_variable = custom_capital
+					set_capital_county = title:c_vedonium
+				}
+			}
+			if = {
+				limit = {
+					title:k_wessex.title_capital_county = title:c_dorchester
+				}
+				title:k_wessex = {
+					set_variable = custom_capital
+					set_capital_county = title:c_venta
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0005 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0005.t
+	desc = {
+		desc = titular_titles_anglosaxon.0005.desc.1
+		first_valid = {
+			triggered_desc = {
+				trigger = { exists = title:k_wessex.holder }
+				desc = titular_titles_anglosaxon.0005.desc.2.wessex_exists
+			}
+			desc = titular_titles_anglosaxon.0005.desc.2.not_wessex_exists
+		}
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:d_berkshire.de_jure_liege = { save_scope_as = former_kingdom }
+		show_as_tooltip = {
+			title:d_cilternsaete = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_south_angles = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_hwicce = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			if = {
+				limit = {
+					title:d_berkshire.title_capital_county = title:c_dorchester
+				}
+				title:d_berkshire = {
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:c_vedonium }
+				}
+			}
+			if = {
+				limit = {
+					title:k_wessex.title_capital_county = title:c_dorchester
+				}
+				title:k_wessex = {
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:c_venta }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0005.a.conqueror
+		}
+		name = {
+			trigger = {
+				OR = {
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0005.a.former_liege
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0005.a
+		}
+	}
+}
+
+# Create Berkshire
+titular_titles_anglosaxon.0006 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0007 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0007 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0007 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0007.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					scope:conqueror = {
+						has_title = title:k_mercia
+						NOT = { has_title = title:d_berkshire.de_jure_liege }
+					}
+				}
+				desc = titular_titles_anglosaxon.0007.desc.wessex
+			}
+			desc = titular_titles_anglosaxon.0007.desc.wessex
+		}
+	}
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		show_as_tooltip = {
+			title:d_berkshire = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = BERKSHIRE }
+				set_variable = custom_name
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_wiltshire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:d_winchestershire = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+				scope:conqueror = {
+					has_title = title:k_mercia
+					NOT = { has_title = title:d_berkshire.de_jure_liege }
+				}
+			}
+			text = titular_titles_anglosaxon.0007.a.conqueror.mercia
+		}
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+				NOT = {
+					scope:conqueror = {
+						has_title = title:k_mercia
+						NOT = { has_title = title:d_berkshire.de_jure_liege }
+					}
+				}
+			}
+			text = titular_titles_anglosaxon.0007.a.conqueror.wessex
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0007.a
+		}
+	}
+}
+
+# Expand Surrey
+titular_titles_anglosaxon.0008 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_anglosaxon.0009 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0009 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_surrey = {
+				set_variable = title_expanded_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0009 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0009.t
+	desc = titular_titles_anglosaxon.0009.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:d_westcantware.de_jure_liege = { save_scope_as = former_kingdom }
+		show_as_tooltip = {
+			title:d_surrey = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_anglosaxon.0009.a.conqueror
+		}
+		name = {
+			trigger = {
+				OR = {
+					has_title = scope:former_kingdom
+					any_liege_or_above = { has_title = scope:former_kingdom }
+				}
+			}
+			text = titular_titles_anglosaxon.0009.a.former_liege
+		}
+		name = {
+			text = titular_titles_anglosaxon.0009.a
+		}
+	}
+}
+
+# Unite Northumbria
+titular_titles_anglosaxon.0010 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Stop the default kingdom creation event from triggering
+		title:k_northumbria = { set_variable = title_has_been_created }
+		if = {
+			limit = { primary_title = title:k_deira }
+			title:k_northumbria = { 
+				set_coa = k_northumbria_deira
+				set_variable = created_from_deira
+			}
+		}
+		else = {
+			set_variable = created_from_bernicia
+		}
+		# Check for Northumbrian cultural unification
+		trigger_event = { id = culture_shifts.0012 }
+		
+		trigger_event = { id = titular_titles_anglosaxon.0011 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0011 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_bernicia = {
+				every_direct_de_jure_vassal_title = {
+					set_duchy_integrated_effect = {
+						INTEGRATION_KINGDOM = title:k_northumbria
+					}
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:k_deira = {
+				every_direct_de_jure_vassal_title = {
+					set_duchy_integrated_effect = {
+						INTEGRATION_KINGDOM = title:k_northumbria
+					}
+					check_de_jure_liege_effect = yes
+				}
+			}
+			# Northumbria inherits any integration progress from its parent kingdoms
+			title:k_northumbria = {
+				every_in_list = {
+					variable = integratable_duchies
+					if = {
+						limit = { 
+							OR = {
+								AND = {
+									exists = this.var:k_bernicia_integration_years
+									this.var:k_bernicia_integration_years > 0
+								}
+								AND = {
+									exists = this.var:k_deira_integration_years
+									this.var:k_deira_integration_years > 0
+								}
+							}
+						}
+						set_variable = { name = k_northumbria_integration_years value = 0 }
+						if = {
+							limit = { 
+								exists = this.var:k_bernicia_integration_years
+								this.var:k_bernicia_integration_years > this.var:k_northumbria_integration_years
+							}
+							set_variable = { 
+								name = k_northumbria_integration_years 
+								value = this.var:k_bernicia_integration_years 
+							}
+						}
+						if = {
+							limit = { 
+								exists = this.var:k_deira_integration_years
+								this.var:k_deira_integration_years > this.var:k_northumbria_integration_years
+							}
+							set_variable = { 
+								name = k_northumbria_integration_years 
+								value = this.var:k_deira_integration_years 
+							}
+						}
+					}
+				}
+			}
+		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0011 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0011.t
+	desc = titular_titles_anglosaxon.0011.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { NOT = { has_title = title:k_northumbria } }
+				get_title = title:k_northumbria
+				destroy_title = title:k_bernicia
+				destroy_title = title:k_deira
+			}
+		}
+		custom_tooltip = {
+			text = northumbria_de_jure_shift_happened_tt
+		}
+		# Tooltip for Northumbrian cultural unification if applicable
+		if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_bernician } }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_bernician_tt
+			}			
+		}
+		else_if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_deiran } }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_deiran_tt
+			}			
+		}
+		if = {
+			limit = { title:k_northumbria = { has_variable = northumbrian_culture_from_hybrid } }
+			title:k_bernicia.var:anglo_saxon_regional_culture = { save_scope_as = bernician }
+			title:k_deira.var:anglo_saxon_regional_culture = { save_scope_as = deiran }
+			title:k_northumbria.var:anglo_saxon_regional_culture = { save_scope_as = northumbrian }
+			custom_tooltip = {
+				text = northumbrian_culture_emerged_from_hybrid_tt
+			}			
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_anglosaxon.0011.a.founder
+		}
+		name = {
+			text = titular_titles_anglosaxon.0011.a
+		}
+	}
+}
+
+# Elevate Lindsey
+titular_titles_anglosaxon.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Stop the default kingdom creation event from triggering
+		title:k_lindsey = { set_variable = title_has_been_created }		
+		trigger_event = { id = titular_titles_anglosaxon.0013 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0013 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:d_lindsey = {
+				set_duchy_integrated_effect = {
+					INTEGRATION_KINGDOM = title:k_lindsey
+				}
+				check_de_jure_liege_effect = yes
+			}
+		}
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0013 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0013.t
+	desc = titular_titles_anglosaxon.0013.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { NOT = { has_title = title:k_lindsey } }
+				get_title = title:k_lindsey
+			}
+		}
+		show_as_tooltip = {
+			title:d_lindsey = { save_scope_as = integrated_kingdom_pretend }
+			title:k_lindsey = { save_scope_as = integrated_kingdom_pretend_value }
+			title:d_lindsey = {
+				check_de_jure_liege_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_anglosaxon.0013.a.founder
+		}
+		name = {
+			text = titular_titles_anglosaxon.0013.a
+		}
+	}
+}
+
+# Creation of kingdom
+titular_titles_anglosaxon.0100 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			is_anglo_saxon_kingdom_trigger = yes
+			NOT = { has_variable = title_has_been_created }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		hidden_effect = {
+			# After Mercia is formed, k_east_anglia is renamed to East Anglia if it hasn't been already
+			if = {
+				limit = { 
+					scope:title = title:k_mercia 
+					title:k_east_anglia = { has_variable = is_the_angles }
+				}
+				title:k_east_anglia = {
+					reset_title_name = yes
+					remove_variable = is_the_angles
+					set_variable = custom_capital
+					set_capital_county = title:c_rendlesham
+				}
+				save_scope_as = k_east_anglia_name_reset
+			}
+			# Rename Jutish Wessex to Westeotas ("West Jutes")
+			# Note that this can also happen if the cultural divergence event hits Wessex
+			# before it forms and Jutish culture is dominant in the area
+			if = {
+				limit = {
+					scope:title = title:k_wessex
+					scope:founder = { is_culture_or_descendant_trigger = { CULTURE = culture:jute } }
+				}
+				title:k_wessex = {
+					set_title_name = WESTEOTAS
+					set_capital_county = title:c_clausentum
+					set_variable = jutish_wessex
+				}
+			}
+			# Rename Wales to Westerne if it is created by a "Westernian" culture character,
+			# or if it is the creator's first kingdom title
+			if = {
+				limit = { 
+					NOT = { has_variable = title_has_been_created }
+					scope:founder = {
+						OR = {
+							culture.var:anglo_saxon_regional_culture_kingdom ?= title:k_wales
+							AND = {
+								is_independent_ruler = yes
+								highest_held_title_tier = tier_kingdom
+								NOT = { 
+									any_held_title = {
+										count >= 2
+										tier >= tier_kingdom
+									}
+								}
+							}
+						}
+					}
+				}
+				title:k_wales = {
+					set_title_name = WESTERNE
+					set_variable = wales_renamed_westerne
+				}
+			}
+		}
+		trigger_event = { id = titular_titles_anglosaxon.0101 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_anglosaxon.0101 }
+		}
+		scope:title = { set_variable = title_has_been_created }
+		# Britannia struggle catalyst
+		scope:title.title_capital_county = {
+			every_county_struggle = {
+				limit = { phase_has_catalyst = catalyst_create_new_anglo_saxon_kingdom }
+				activate_struggle_catalyst = {
+					catalyst = catalyst_create_new_anglo_saxon_kingdom
+					character = scope:founder
+				}
+			}
+		}
+	}
+}
+
+titular_titles_anglosaxon.0101 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_anglosaxon.0101.t
+	desc = {
+		desc = titular_titles_anglosaxon.0101.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:title = title:k_cantia }
+				desc = titular_titles_anglosaxon.0101.desc.body.cantia
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_sussex }
+				desc = titular_titles_anglosaxon.0101.desc.body.sussex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_eastseaxe }
+				desc = titular_titles_anglosaxon.0101.desc.body.essex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_east_anglia }
+				desc = titular_titles_anglosaxon.0101.desc.body.east_anglia
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_mercia }
+				desc = titular_titles_anglosaxon.0101.desc.body.mercia
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:title = title:k_wessex
+					scope:title = { has_variable = jutish_wessex }
+				}
+				desc = titular_titles_anglosaxon.0101.desc.body.wessex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_wessex }
+				desc = titular_titles_anglosaxon.0101.desc.body.wessex
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_deira }
+				desc = titular_titles_anglosaxon.0101.desc.body.deira
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_bernicia }
+				desc = titular_titles_anglosaxon.0101.desc.body.bernicia
+			}
+			# Northumbria and Lindsey have their own special events
+			triggered_desc = {
+				trigger = { scope:title = title:k_wales }
+				desc = titular_titles_anglosaxon.0101.desc.body.wales
+			}
+			desc = titular_titles_anglosaxon.0101.desc.body.fallback
+		}
+		desc = titular_titles_anglosaxon.0101.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
+		if = {
+			limit = { exists = scope:k_east_anglia_name_reset }
+			show_as_tooltip = {
+				title:k_east_anglia = { set_title_name_w_tooltip_effect = { NEW_NAME = k_east_anglia } }
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_title = scope:title
+			}
+			text = titular_titles_anglosaxon.0101.a.new_king
+		}
+		name = {
+			trigger = { 
+				NOT = { has_title = scope:title }
+				any_liege_or_above = { has_title = scope:title }
+			}
+			text = titular_titles_anglosaxon.0101.a.new_king_vassal
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_anglosaxon.0101.a.anglosaxon
+		}
+		name = {
+			trigger = { 
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_anglosaxon.0101.a.briton_roman
+		}
+		name = {
+			trigger = {
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+					culture = { 
+						OR = {
+							has_cultural_pillar = heritage_west_germanic
+							has_cultural_pillar = heritage_brythonic 
+							has_cultural_pillar = heritage_latin
+						}
+					}
+				}
+			}
+			text = titular_titles_anglosaxon.0101.a
+		}
+		if = {
+			limit = { is_ai = no }
+			every_owned_story = {
+				limit = {
+					story_type = BTWK_rise_of_new_anglo_saxon_kingdom_story
+					this.var:target_kingdom = scope:title
+				}
+				save_scope_as = current_story
+				custom_tooltip = BTWK_rise_of_new_anglo_saxon_kingdom_story_end_tt
+				scope:current_story = { end_story = yes }
+			}
+		}
+	}
+}
+
+##################################################
+# Romans
+##################################################
+
+# Creation of duchy
+titular_titles_roman.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_roman.0001.t
+	desc = {
+		desc = titular_titles_roman.0001.desc.intro
+		first_valid = {
+			desc = titular_titles_roman.0001.desc.fallback
+		}
+		desc = titular_titles_roman.0001.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:conqueror }
+			if = {
+				limit = { 
+					exists = scope:new_roman_duchy_title.holder 
+					NOR = {
+						scope:new_roman_duchy_title.holder = ROOT
+						scope:new_roman_duchy_title.holder = { is_vassal_or_below_of = ROOT }
+					}
+				}
+				create_title_and_vassal_change = {
+					type = usurped
+					save_scope_as = title_change
+					add_claim_on_loss = yes
+				}
+				scope:new_roman_duchy_title = {
+					change_title_holder = {
+						holder = root
+						change = scope:title_change
+					}
+				}
+				resolve_title_and_vassal_change = scope:title_change
+			}
+			else_if = {
+				limit = { NOT = { exists = scope:new_roman_duchy_title.holder } }
+				create_title_and_vassal_change = {
+					type = created
+					save_scope_as = title_change
+					add_claim_on_loss = no
+				}
+				scope:new_roman_duchy_title = {
+					change_title_holder = {
+						holder = root
+						change = scope:title_change
+					}
+				}
+				resolve_title_and_vassal_change = scope:title_change
+			}
+		}
+		every_in_global_list = {
+			variable = celtic_duchy_list
+			if = {
+				limit = {
+					is_capital_in_roman_duchy_trigger = { DUCHY = scope:new_roman_duchy_title }
+					NOT = { has_variable_list = roman_de_jure_territory }
+				}
+				if = {
+					limit = { exists = holder }
+					# destroy_title must be in character scope to work
+					holder = { destroy_title = prev }
+				}
+			}
+		}
+		show_as_tooltip = {
+			scope:new_roman_duchy_title = {
+				check_de_jure_liege_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = titular_titles_roman.0001.a.roman
+		}
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			text = titular_titles_roman.0001.a.briton
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles_roman.0001.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_roman.0001.a
+		}
+	}
+}
+
+# Destruction of duchy
+titular_titles_roman.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_roman.0002.t
+	desc = {
+		desc = titular_titles_roman.0002.desc.intro
+		first_valid = {
+			desc = titular_titles_roman.0002.desc.fallback
+		}
+		desc = titular_titles_roman.0002.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				exists = scope:old_roman_duchy_title.holder 
+				scope:old_roman_duchy_title.holder = { top_liege_can_create_roman_title_trigger = yes }
+			}
+			destroy_title = scope:old_roman_duchy_title
+		}
+		show_as_tooltip = {
+			scope:old_roman_duchy_title = {
+				check_de_jure_liege_effect = yes
+				every_in_list = {
+					variable = roman_de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_latin }
+			}
+			text = titular_titles_roman.0002.a.roman
+		}
+		name = {
+			trigger = { 
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			text = titular_titles_roman.0002.a.briton
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+			}
+			text = titular_titles_roman.0002.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_roman.0002.a
+		}
+	}
+}
+
+# Creation of Roman province
+titular_titles_roman.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			has_variable = is_roman_province_title
+			NOT = { has_variable = title_has_been_created }
+		}
+	}
+	
+	immediate = {
+		top_liege = { save_scope_as = founder }
+		trigger_event = { id = titular_titles_roman.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_roman.0004 }
+		}
+		scope:title = { set_variable = title_has_been_created }
+	}
+}
+
+titular_titles_roman.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_roman.0004.t
+	desc = {
+		desc = titular_titles_roman.0004.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:title = title:k_maxima_cesariensis }
+				desc = titular_titles_roman.0004.desc.body.maxima_cesariensis
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_flavia_cesariensis }
+				desc = titular_titles_roman.0004.desc.body.flavia_cesariensis
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_britannia_prima }
+				desc = titular_titles_roman.0004.desc.body.britannia_prima
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_britannia_secunda }
+				desc = titular_titles_roman.0004.desc.body.britannia_secunda
+			}
+			triggered_desc = {
+				trigger = { 
+					scope:title = title:k_valentia
+					title:k_valentia = {
+						any_direct_de_jure_vassal_title = {
+							NOT = { title_capital_county.title_province = { geographical_region = btwk_custom_roman_britain } }
+						}
+					}
+				}
+				desc = titular_titles_roman.0004.desc.body.valentia_extended
+			}
+			triggered_desc = {
+				trigger = { scope:title = title:k_valentia }
+				desc = titular_titles_roman.0004.desc.body.valentia
+			}
+			desc = titular_titles_roman.0004.desc.body.fallback
+		}
+		desc = titular_titles_roman.0004.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:title = {
+			random_direct_de_jure_vassal_title = {
+				save_scope_as = vassal_duchy_1
+			}
+			random_direct_de_jure_vassal_title = {
+				limit = { this != scope:vassal_duchy_1 }
+				save_scope_as = vassal_duchy_2
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				this = scope:founder
+			}
+			text = titular_titles_roman.0004.a.founder
+		}
+		name = {
+			trigger = { 
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_latin
+				}
+			}
+			text = titular_titles_roman.0004.a.roman
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_brythonic
+				}
+			}
+			text = titular_titles_roman.0004.a.briton
+		}
+		name = {
+			trigger = {
+				NOT = { this = scope:founder }
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic
+				}
+				any_held_title = {
+					tier = prev.primary_title.tier
+					title_capital_county.title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			text = titular_titles_roman.0004.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_roman.0004.a
+		}
+		if = {
+			limit = { this = scope:founder }
+			dynasty = { add_dynasty_prestige = medium_dynasty_prestige_value }
+		}
+	}
+}
+
+##################################################
+# Britons
+##################################################
+# 0001/0002 - Kingdom of Deheubarth
+# 0003/0004 - Reunification of Dumnonia
+# 0005/0006 - Kingdom of Strathclyde
+# 0007/0008 - High Kingdom of Yr Hen Ogledd
+# 0009/0010 - High Kingdom of Britannia (reunification)
+# 0011 		- Glywyssing rename (hidden)
+# 0012/0013	- High Kingdom of Cymru
+# 0014/0015	- Fall of Novant
+# 0016/0017	- Conquest of Aeron
+# 0018/0019	- Britannic Empire (from Britannia)
+# 0050-0052 - Ruin of Britannia
+
+# Kingdom of Deheubarth
+titular_titles_briton.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0002 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0002 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_demetia = { 
+				set_variable = formed_deheubarth
+				# set_title_name = DEHEUBARTH
+				reset_title_name = yes
+				set_coa = k_deheubarth
+				set_kingdom_expanded_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0002.t
+	desc = titular_titles_briton.0002.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		# This shows the de jure shift as a tooltip
+		show_as_tooltip = {
+			title:k_demetia = { 
+				set_title_name_w_tooltip_effect = { NEW_NAME = DEHEUBARTH }
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_briton.0002.a.founder
+		}
+		name = {
+			text = titular_titles_briton.0002.a
+		}
+	}
+}
+
+# Reunification of Dumnonia
+titular_titles_briton.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0004 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_dumnonia = { 
+				set_kingdom_expanded_effect = yes
+				every_in_list = {
+					variable = dynamic_de_jure_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0004.t
+	desc = titular_titles_briton.0004.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			destroy_title = title:k_kernow
+		}
+		show_as_tooltip = {
+			title:k_dumnonia = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_briton.0004.a.founder
+		}
+		name = {
+			text = titular_titles_briton.0004.a
+		}
+	}
+}
+
+# Formation of Strathclyde
+titular_titles_briton.0005 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0006 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0006 }
+		}
+		hidden_effect = {
+			title:k_strathclyde = { 
+				set_variable = formed_strathclyde
+				# set_title_name = STRATHCLYDE
+				reset_title_name = yes
+			}
+			if = {
+				limit = { completely_controls = title:c_luguvalium }
+				title:k_strathclyde = { 
+					set_kingdom_expanded_effect = yes
+					if = {
+						limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+						set_kingdom_expanded_alt_3_effect = yes
+					}
+					every_in_list = {
+						variable = de_jure_affected_territory
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+			if = {
+				limit = { 
+					completely_controls = title:c_desnes_mor 
+					NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				}
+				title:k_strathclyde = { 
+					set_kingdom_expanded_alt_2_effect = yes
+					set_kingdom_expanded_alt_3_effect = yes
+					every_in_list = {
+						variable = de_jure_affected_territory
+						check_de_jure_liege_effect = yes
+					}
+				}
+				title:k_ynys_man = {
+					set_variable = formed_ynys_man
+					set_variable = custom_name
+					# set_title_name = MANAW
+					set_variable = custom_capital
+					set_capital_county = title:c_german
+				}
+			}
+			if = {
+				limit = { completely_controls = title:c_din_eidyn }
+				title:k_strathclyde = { 
+					set_kingdom_expanded_alt_effect = yes
+					every_in_list = {
+						variable = de_jure_affected_territory
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0006 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0006.t
+	desc = titular_titles_briton.0006.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { completely_controls = title:c_luguvalium }
+				destroy_title = title:k_rheged
+			}
+			if = {
+				limit = { completely_controls = title:c_din_eidyn }
+				destroy_title = title:k_lothian
+			}
+		}
+		title:k_strathclyde = { 
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = STRATHCLYDE } }
+		}
+		if = {
+			limit = { scope:founder = { completely_controls = title:c_luguvalium } }
+			title:k_strathclyde = { 
+				save_scope_as = title_expanded_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_kingdoms
+						any_in_list = {
+							variable = expansion_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_de_jure_pretend
+				if = {
+					limit = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+					save_scope_as = title_expanded_alt_3_de_jure_pretend
+					every_in_list = {
+						variable = de_jure_affected_territory
+						# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+						limit = {
+							has_variable_list = expansion_alt_3_kingdoms
+							any_in_list = {
+								variable = expansion_alt_3_kingdoms
+								this = title:k_strathclyde
+							}
+						}
+						show_as_tooltip = {
+							check_de_jure_liege_effect = yes
+						}
+					}
+					clear_saved_scope = title_expanded_de_jure_pretend
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { title:k_rheged = { has_variable = title_expanded_de_jure } }
+				scope:founder = { completely_controls = title:c_desnes_mor }
+			}
+			title:k_strathclyde = {
+				save_scope_as = title_expanded_alt_2_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_2_kingdoms
+						any_in_list = {
+							variable = expansion_alt_2_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_2_de_jure_pretend
+				save_scope_as = title_expanded_alt_3_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+					limit = {
+						has_variable_list = expansion_alt_3_kingdoms
+						any_in_list = {
+							variable = expansion_alt_3_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_3_de_jure_pretend
+				title:k_ynys_man = {
+					show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+				}
+			}
+		}
+		if = {
+			limit = { scope:founder = { completely_controls = title:c_din_eidyn } }
+			title:k_strathclyde = { 
+				save_scope_as = title_expanded_alt_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					limit = {
+						has_variable_list = expansion_alt_kingdoms
+						any_in_list = {
+							variable = expansion_alt_kingdoms
+							this = title:k_strathclyde
+						}
+					}
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+				clear_saved_scope = title_expanded_alt_de_jure_pretend
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_briton.0006.a.founder
+		}
+		name = {
+			text = titular_titles_briton.0006.a
+		}
+	}
+}
+
+# High Kingdom of Hen Ogledd
+titular_titles_briton.0007 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		scope:title = {
+			this = title:e_hen_ogledd
+		}
+		OR = {
+			scope:transfer_type ?= flag:created
+			# First creation regardless of anything else always triggers the event
+			scope:title = { NOT = { has_variable = title_has_been_created } }
+		}
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		# Stop event from triggering twice if triggered from the decision
+		title:e_hen_ogledd = { set_variable = title_has_been_created }
+		clear_saved_scope = transfer_type
+		trigger_event = { id = titular_titles_briton.0008 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0008 }
+		}
+		title:e_hen_ogledd = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0008 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = titular_titles_briton.0008.t
+	desc = titular_titles_briton.0008.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { NOT = { has_title = title:e_hen_ogledd } }
+				get_title = title:e_hen_ogledd
+			}
+			if = {
+				limit = { has_variable = vassalize_all_hen_ogledd_tributaries }
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				every_tributary = {
+					limit = {
+						culture = {
+							OR = {
+								has_cultural_pillar = heritage_brythonic
+								has_cultural_pillar = heritage_latin
+							}
+						}
+						highest_held_title_tier <= tier_kingdom
+						primary_title.title_capital_county.title_province = { 
+							geographical_region = btwk_world_britannia_hen_ogledd 
+						}
+					}
+					hidden_effect = {
+						every_tributary = {
+							limit = { has_subject_contract_group = tributary_foederatus }
+							make_foederati_tributary_effect = { SUZERAIN = scope:founder }				
+						}
+					}
+					change_liege = {
+						liege = scope:founder
+						change = scope:change
+					}
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:btwk_world_britannia
+			}
+		}
+		custom_tooltip = {
+			text = hen_ogledd_de_jure_shift_happened_tt
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0008.a.founder
+		trigger = {
+			OR = {
+				this = scope:founder
+				any_liege_or_above = { this = scope:founder }
+			}
+		}
+	}
+	
+	option = {
+		name = titular_titles_briton.0008.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+# High Kingdom of Britannia (reunification)
+titular_titles_briton.0009 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		primary_title = { save_scope_as = founder_old_primary }
+		trigger_event = { id = titular_titles_briton.0010 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0010 }
+		}
+		title:e_britannia = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = prev
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0010 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	queue_icon = "gfx/interface/icons/culture_tradition/4-items/crown.dds"
+	title = titular_titles_briton.0010.t
+	desc = titular_titles_briton.0010.desc
+	theme = war
+	override_background = { reference = ce1_fullscreen_legitimizing_legend }
+	
+	# left_portrait = {
+		# character = scope:founder
+		# animation = personality_war_over_win
+	# }
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_britannia = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			title:e_britannia = { set_destroy_on_succession = no }
+			if = {
+				limit = { has_primary_title = title:e_hen_ogledd }
+				title:e_britannia = { 
+					set_capital_county_w_tooltip_effect = { CAPITAL = title:e_hen_ogledd.title_capital_county }
+				}
+			}
+			if = {
+				limit = { has_title = title:e_cymru }
+				destroy_title = title:e_cymru
+			}
+			if = {
+				limit = { has_title = title:e_hen_ogledd }
+				destroy_title = title:e_hen_ogledd
+			}
+			give_nickname = nick_y_mab_darogan
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:btwk_world_britannia
+			}
+		}
+		else = {
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
+		custom_tooltip = {
+			text = britannia_de_jure_shift_happened_tt
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0010.a.founder
+		trigger = {
+			this = scope:founder
+		}
+		if = {
+			limit = { exists = struggle:britannia_struggle }
+			custom_tooltip = reunite_the_britons_decision_end_struggle_tt
+			BTWK_end_britannia_struggle_effect = yes
+			if = {
+				limit = { has_dlc_feature = legends }
+				legend_seed_struggle_ending_effect = {
+					ENDER = root
+					STRUGGLE = britannia_struggle
+				}
+			}
+			struggle:britannia_struggle = { end_struggle = reunite_the_britons_decision }
+		}
+		dynasty = {
+			add_dynasty_modifier = BTWK_britannia_high_king_reclaim_caratacus_legacy_modifier
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0010.a.briton
+		trigger = {
+			NOT = { this = scope:founder }
+			is_britannic_culture_trigger = yes
+		}
+	}
+	
+	option = {
+		name = titular_titles_briton.0010.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+titular_titles_briton.0011 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		title:k_siluria = { has_variable = use_siluria_name }
+		OR = {
+			NOT = { exists = title:k_siluria.holder }
+			title:k_siluria.holder ?= {
+				culture = {
+					NOR = {
+						this = culture:briton
+						this = culture:armorican
+						has_cultural_pillar = heritage_latin
+					}
+				}
+			}
+			title:k_siluria.holder = { 			
+				sub_realm_size <= 11		# k_siluria starts with 13 counties
+				# If you control at least one of the main Silurian cities (it controls Isca Siluria at start),
+				# your threshold is lower
+				NOR = {
+					completely_controls = title:c_isca_siluria
+					completely_controls = title:c_venta_siluria
+				}
+			}	
+			title:k_siluria.holder = { sub_realm_size <= 8 }		# Base de jure territory is 6
+		}
+	}
+	
+	immediate = {
+		title:k_siluria = {
+			remove_variable = use_siluria_name
+			remove_variable = custom_name
+			reset_title_name = yes
+		}
+	}
+}
+
+# High Kingdom of Cymru
+titular_titles_briton.0012 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			this = title:e_cymru
+			NOT = { has_variable = title_has_been_created }
+		}
+		NOT = { culture = { has_cultural_pillar = heritage_goidelic } }
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0013 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0013 }
+		}
+		title:e_cymru = {
+			set_variable = title_has_been_created
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0013 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = titular_titles_briton.0013.t
+	desc = titular_titles_briton.0013.desc
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
+		title:e_cymru = {
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = {
+			trigger = { 
+				has_title = scope:title
+			}
+			text = titular_titles_briton.0013.a.founder
+		}
+		name = {
+			trigger = { 
+				NOT = { has_title = scope:title }
+				any_liege_or_above = { has_title = scope:title }
+			}
+			text = titular_titles_briton.0013.a.founder_vassal
+		}
+		name = {
+			trigger = { 
+				culture = { 
+					OR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_briton.0013.a.briton_roman
+		}
+		name = {
+			trigger = { 
+				culture = {
+					has_cultural_pillar = heritage_west_germanic
+				}
+				NOR = { 
+					has_title = scope:title
+					any_liege_or_above = { has_title = scope:title }
+				}
+			}
+			text = titular_titles_briton.0013.a.anglosaxon
+		}
+		name = {
+			text = titular_titles_briton.0013.a
+		}
+	}
+}
+
+# Fall of Novant
+titular_titles_briton.0014 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_briton.0015 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0015 }
+		}
+		hidden_effect = {
+			title:k_ynys_man = {
+				set_variable = formed_ynys_man
+				set_variable = custom_name
+				# set_title_name = MANAW
+				reset_title_name = yes
+				set_variable = custom_capital
+				set_capital_county = title:c_german
+			}
+			title:k_rheged = { 
+				set_kingdom_expanded_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:k_strathclyde = { 
+				set_kingdom_expanded_alt_2_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0015 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0015.t
+	desc = titular_titles_briton.0015.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:k_rheged = { 
+			save_scope_as = title_expanded_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+			clear_saved_scope = title_expanded_de_jure_pretend
+		}
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				# Want to avoid having the same duchy show up twice in the same effect - messes up the tooltip
+				limit = {
+					has_variable_list = expansion_alt_2_kingdoms
+					any_in_list = {
+						variable = expansion_alt_2_kingdoms
+						this = title:k_strathclyde
+					}
+				}
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+			clear_saved_scope = title_expanded_de_jure_pretend
+		}
+		title:k_ynys_man = { 
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = MANAW } }
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_briton.0015.a.conqueror
+		}
+		name = {
+			trigger = {
+				has_title = title:k_ynys_man
+			}
+			text = titular_titles_briton.0015.a.novant
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+					has_title = title:k_ynys_man
+				}
+			}
+			text = titular_titles_briton.0015.a
+		}
+	}
+}
+
+# Conquest of Aeron
+titular_titles_briton.0016 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_briton.0017 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0017 }
+		}
+		hidden_effect = {
+			title:k_strathclyde = { 
+				set_kingdom_expanded_alt_2_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0017 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0017.t
+	desc = titular_titles_briton.0017.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:k_strathclyde = { 
+			save_scope_as = title_expanded_alt_2_de_jure_pretend
+			every_in_list = {
+				variable = de_jure_affected_territory
+				show_as_tooltip = {
+					check_de_jure_liege_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_briton.0017.a.conqueror
+		}
+		name = {
+			trigger = {
+				has_title = title:k_ynys_man
+			}
+			text = titular_titles_briton.0017.a.novant
+		}
+		name = {	
+			trigger = {		
+				NOR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+					has_title = title:k_ynys_man
+				}
+			}
+			text = titular_titles_briton.0017.a
+		}
+	}
+}
+
+# Britannic Empire
+titular_titles_briton.0018 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_briton.0019 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0019 }
+		}
+		hidden_effect = {
+			title:e_britannia = { 
+				remove_variable = high_king_flag
+				set_variable = emperor_flag
+				set_variable = is_roman_empire_or_claimant_title
+				set_title_name = BRITANNIC_EMPIRE
+				set_definitive_form = yes
+				holder = { 
+					remove_character_flag = high_king_flag
+					add_character_flag = emperor_flag
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0019 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_briton.0019.t
+	desc = titular_titles_briton.0019.desc
+	theme = realm
+	window = big_event_window
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		title:e_britannia = { 
+			show_as_tooltip = { set_title_name_w_tooltip_effect = { NEW_NAME = BRITANNIC_EMPIRE } }
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_briton.0019.a.founder
+		}
+		# TODO Outrage from other emperors?
+		name = {
+			text = titular_titles_briton.0019.a
+		}
+	}
+}
+
+# Ruin of Britannia
+titular_titles_briton.0050 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			NOT = { exists = struggle:britannia_struggle }
+			struggle:britannia_struggle = { has_struggle_phase_parameter = allow_briton_culture_split }
+		}
+		NOT = { has_global_variable = end_of_britannia }
+	}
+	
+	immediate = {
+		# Only triggers if < 40% of Britannia is controlled by an Imperial-adjacent culture
+		if = {
+			limit = {
+				BTWK_britannia_romanized_control_share < BTWK_britannia_ruin_of_britannia_trigger_share
+			}
+			if = {
+				limit = { NOT = { has_global_variable = end_of_britannia_timer_started } }
+				set_global_variable = end_of_britannia_timer_started
+				set_global_variable = { name = end_of_britannia_timer days = 3650 }
+			}
+			else_if = {
+				limit = { 
+					has_global_variable = end_of_britannia_timer_started
+					NOT = { has_global_variable = end_of_britannia_timer }
+				}
+				remove_global_variable = end_of_britannia_timer_started
+				remove_global_variable = end_of_britannia_timer
+				trigger_event = { id = titular_titles_briton.0051 }
+			}
+		}
+		else = {
+			if = {
+				limit = { has_global_variable = end_of_britannia_timer_started }
+				remove_global_variable = end_of_britannia_timer_started
+				remove_global_variable = end_of_britannia_timer
+			}
+		}
+	}
+}
+
+titular_titles_briton.0051 = {
+	scope = none
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		set_global_variable = end_of_britannia
+	
+		# Try to choose the most relevant/powerful Briton king
+		if = {
+			limit = { exists = title:e_britannia.holder }
+			title:e_britannia.holder = { save_scope_as = briton_king }
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					is_briton_or_latin_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia_south }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					is_briton_or_latin_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia_south }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					is_briton_or_latin_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					is_briton_or_latin_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		else = {
+			ordered_ruler = {
+				limit = {
+					is_briton_or_latin_culture_trigger = yes
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = briton_king
+			}
+		}
+		
+		# Try to choose the most relevant/powerful Anglo-Saxon king
+		if = {
+			limit = { exists = title:e_aengland.holder }
+			title:e_aengland.holder = { save_scope_as = anglo_saxon_king }
+		}
+		else_if = {
+			limit = {
+				any_independent_ruler = {
+					can_create_germanic_title_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			ordered_independent_ruler = {
+				limit = {
+					can_create_germanic_title_culture_trigger = yes
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = anglo_saxon_king
+			}
+		}
+		else = {
+			ordered_independent_ruler = {
+				limit = {
+					can_create_germanic_title_culture_trigger = yes
+					any_realm_province = { geographical_region = btwk_world_britannia }
+				}
+				order_by = sub_realm_size
+				position = 0
+				save_scope_as = anglo_saxon_king
+			}
+		}
+		
+		# Figure out which culture controls most of Britannia
+		if = {
+			limit = {
+				NOT = {
+					any_county_in_region = {
+						region = btwk_world_britannia
+						percent >= 0.5
+						holder.top_liege.culture = { has_cultural_pillar = heritage_west_germanic }
+					}
+				}
+			}
+			every_culture_global = {
+				set_variable = {
+					name = britannia_controlled_counties
+					value = 0
+				}
+			}
+			every_county_in_region = {
+				region = btwk_world_britannia
+				holder.top_liege.culture = {
+					change_variable = {
+						name = britannia_controlled_counties
+						add = 1
+					}
+				}
+			}
+			ordered_culture_global = {
+				order_by = this.var:britannia_controlled_counties
+				limit = {
+					culture_is_imperial_like_culture_trigger = no
+				}
+				save_scope_as = britannia_largest_controlled_culture
+			}
+		}
+		
+		# Breakup of Briton and Armorican shift to Breton
+		trigger_event = { id = culture_shifts.0001 }
+		
+		# Notification event
+		culture:briton = { save_scope_as = briton }
+		culture:welsh = { save_scope_as = welsh }
+		culture:cornish = { save_scope_as = cornish }
+		culture:cumbrian = { save_scope_as = cumbrian }
+		culture:armorican = { save_scope_as = armorican }
+		culture:breton = { save_scope_as = breton }
+		trigger_event = { id = titular_titles_briton.0052 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_briton.0052 }
+		}
+		if = {
+			limit = { 
+				exists = title:e_britannia.holder
+				title:e_britannia.holder = { is_ai = yes }
+			}
+			title:e_britannia.holder = { trigger_event = { id = titular_titles_briton.0052 } }
+		}
+		hidden_effect = {
+			# Do de jure changes
+			title:e_cymru = {
+				every_in_list = {
+					variable = base_kingdom_regions
+					if = {
+						limit = { de_jure_liege = title:e_britannia }
+						set_kingdom_region_de_jure_liege_effect = {
+							REGION_BASE = THIS
+							NEW_DE_JURE_LIEGE = PREV
+						}
+					}
+				}
+			}
+			title:e_hen_ogledd = {
+				every_in_list = {
+					variable = base_kingdom_regions
+					if = {
+						limit = { de_jure_liege = title:e_britannia }
+						set_kingdom_region_de_jure_liege_effect = {
+							REGION_BASE = THIS
+							NEW_DE_JURE_LIEGE = PREV
+						}
+					}
+				}
+			}
+			
+			# Rename Briton archbishoprics if not yet created
+			title:d_et_london = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_london_BRITON
+					set_color_from_title = title:k_londinium
+				}
+			}
+			title:d_et_york = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_york_BRITON
+					set_color_from_title = title:k_ebrauc
+				}
+			}
+			title:d_et_st_davids = {
+				if = {
+					limit = { NOT = { has_variable = clerical_title } }
+					set_title_name = d_et_st_davids_BRITON
+					set_color_from_title = title:e_cymru
+				}
+			}
+		}
+	}
+}
+
+titular_titles_briton.0052 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	queue_icon = "gfx/interface/icons/struggle_types/struggle_britannia_phase_invasion.dds"
+	# window = big_event_window
+	title = titular_titles_briton.0052.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					exists = scope:britannia_largest_controlled_culture
+					NOT = { scope:britannia_largest_controlled_culture = { has_cultural_pillar = heritage_west_germanic } }
+				}
+				desc = titular_titles_briton.0052.desc.other_culture
+			}
+			desc = titular_titles_briton.0052.desc
+		}
+	}
+	theme = war
+	override_background = { reference = fp2_fullscreen_intro }
+	
+	# left_portrait = {
+		# character = scope:briton_king
+		# animation = war_over_loss
+	# }
+	
+	# right_portrait = {
+		# character = scope:anglo_saxon_king
+		# animation = war_over_win
+	# }
+	
+	immediate = {
+		if = {
+			limit = { has_title = title:e_britannia }
+			destroy_title = title:e_britannia
+		}
+		custom_tooltip = {
+			text = briton_culture_split_happened_tt
+		}
+		custom_tooltip = {
+			text = armorican_culture_divergence_happened_tt
+		}
+		custom_tooltip = {
+			text = britannia_mechanics_disabled_tt
+		}
+		if = {
+			limit = { has_cultural_pillar = heritage_brythonic }
+			custom_tooltip = {
+				text = brythonic_culture_blocked_from_pre_feudal_to_sub_roman
+			}			
+		}
+		custom_tooltip = {
+			text = cymru_de_jure_shift_happened_tt
+		}
+		custom_tooltip = {
+			text = hen_ogledd_de_jure_shift_happened_tt
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0052.a.briton
+		trigger = {
+			is_britannic_culture_trigger = yes
+			NOT = { culture = { has_cultural_pillar = heritage_latin } }
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0052.a.roman
+		trigger = {
+			culture = { has_cultural_pillar = heritage_latin }
+			any_realm_province = { geographical_region = btwk_world_britannia }
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0052.a.anglosaxon
+		trigger = {
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			any_realm_province = { geographical_region = btwk_world_britannia }
+		}
+	}
+
+	option = {
+		name = titular_titles_briton.0052.a.other_germanic
+		trigger = {
+			can_create_germanic_title_culture_trigger = yes
+			NOT = { culture = { has_cultural_pillar = heritage_west_germanic } }
+			any_realm_province = { geographical_region = btwk_world_britannia }
+		}
+	}
+	
+	option = {
+		name = titular_titles_briton.0052.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+##################################################
+# Irish/Gaels
+##################################################
+# 0001/0002 - Kingdom of Lleyn
+# 0003/0004 - Reconquest of Lleyn
+# 0005/0006 - High Kingdom of Comruig
+
+# Kingdom of Lleyn
+titular_titles_irish.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		trigger_event = { id = titular_titles_irish.0002 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_irish.0002 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_lleyn = { 
+				set_kingdom_formed_effect = yes
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			title:k_gwynedd = { set_capital_county = title:c_caer_gei }
+		}
+	}
+}
+
+titular_titles_irish.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_irish.0002.t
+	desc = titular_titles_irish.0002.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:k_lleyn = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			if = {
+				limit = {
+					government_is_not_tribal_trigger = no
+					NOT = { has_trait = reaver }
+					number_of_commander_traits < 3
+				}
+				add_trait = reaver
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						BTWK_britannia_high_kingship_active_trigger = yes
+						exists = title:e_britannia.holder
+					}
+					BTWK_britannia_high_kingship_remove_authority_effect = { 
+						AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+					}
+				}
+			}
+		}
+		# This shows the de jure shift as a tooltip
+		show_as_tooltip = {
+			title:k_lleyn = { 
+				save_scope_as = title_created_de_jure_pretend
+				every_in_list = {
+					variable = de_jure_affected_territory
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_caer_gei } }
+			if = {
+				limit = {
+					BTWK_britannia_high_kingship_active_trigger = yes
+					has_title = title:e_britannia
+				}
+				BTWK_britannia_high_kingship_remove_authority_effect = { 
+					AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_creation_loss
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_irish.0002.a.founder
+		}
+		name = {
+			text = titular_titles_irish.0002.a
+		}
+	}
+}
+
+# Reconquest of Lleyn
+titular_titles_irish.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = conqueror
+		trigger_event = { id = titular_titles_irish.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_irish.0004 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			title:k_lleyn = { 
+				remove_variable = title_created_de_jure
+				every_in_list = {
+					variable = de_jure_affected_territory
+					check_de_jure_liege_effect = yes
+				}
+			}
+			destroy_title = title:k_lleyn
+			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_deganwy } }
+		}
+	}
+}
+
+titular_titles_irish.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_irish.0004.t
+	desc = titular_titles_irish.0004.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				OR = {
+					this = scope:conqueror
+					has_title = title:k_lleyn
+				}
+			}
+			show_as_tooltip = { destroy_title = title:k_lleyn }
+		}
+		if = {
+			limit = {
+				this = scope:conqueror
+				BTWK_britannia_high_kingship_active_trigger = yes
+				exists = title:e_britannia.holder
+			}
+			BTWK_britannia_high_kingship_add_authority_effect = { 
+				AMOUNT = BTWK_britannia_high_king_authority_anglo_saxon_duchy_destruction_gain
+			}
+		}
+		# This shows the de jure shift as a tooltip
+		show_as_tooltip = {
+			title:k_lleyn = { 
+				save_scope_as = title_created_de_jure_ignore
+				every_in_list = {
+					variable = de_jure_affected_territory
+					show_as_tooltip = {
+						check_de_jure_liege_effect = yes
+					}
+				}
+			}
+			title:k_gwynedd = { set_capital_county_w_tooltip_effect = { CAPITAL = title:c_deganwy } }
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles_irish.0004.a.conqueror
+		}
+		name = {
+			text = titular_titles_irish.0004.a
+		}
+	}
+}
+
+# High Kingdom of Comruig (Irish Cymru)
+titular_titles_irish.0005 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		# scope:transfer_type = flag:created
+		scope:title = {
+			this = title:e_cymru
+			OR = {
+				NOT = { has_variable = title_has_been_created_irish }
+				has_variable = force_creation_event
+			}
+		}
+		culture = { has_cultural_pillar = heritage_goidelic }
+	}
+	
+	immediate = {
+		save_scope_as = founder
+		primary_title = { save_scope_as = founder_primary_title }
+		title:e_cymru = { 
+			remove_variable = force_creation_event 
+			set_variable = title_has_been_created_irish
+		}
+		trigger_event = { id = titular_titles_irish.0006 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_irish.0006 }
+		}
+		title:e_cymru = {
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}
+	}
+}
+
+titular_titles_irish.0006 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = big_event_window
+	title = titular_titles_irish.0006.t
+	desc = titular_titles_irish.0006.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_cymru = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:btwk_world_britannia
+			}
+		}
+		title:e_cymru = {
+			every_in_list = {
+				variable = base_kingdom_regions_alt
+				set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = PREV
+				}
+			}
+		}
+	}
+
+	option = {
+		name = titular_titles_irish.0006.a.founder
+		trigger = {
+			OR = {
+				this = scope:founder
+				any_liege_or_above = { this = scope:founder }
+			}
+		}
+	}
+	
+	option = {
+		name = titular_titles_irish.0006.a
+		trigger = { always = no }
+		fallback = yes
+	}
+}
+
+##################################################
+# Romanized Germanic
+##################################################
+
+# Romanized Germanic Kingdom (Britannia)
+titular_titles_romanized_germanic.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		scope:founder.culture.var:ancestral_non_roman_culture = { save_scope_as = founder_kingdom_culture }
+		trigger_event = { id = titular_titles_romanized_germanic.0002 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_romanized_germanic.0002 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		hidden_effect = {
+			scope:capital_kingdom = {
+				# Scopes don't play well with title localization so we have to make different keys for each culture
+				if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH }
+					set_variable = custom_name
+					set_coa = k_visigoths_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:ostrogoth }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH }
+					set_variable = custom_name
+					set_coa = k_ostrogoths_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:burgundian }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_BURGUNDIAN }
+					set_variable = custom_name
+					set_coa = k_burgundians_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TAIFAL }
+					set_variable = custom_name
+					set_coa = k_taifals_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:vandal }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VANDAL }
+					set_variable = custom_name
+					# set_coa = k_vandals_britannia		# TODO
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:suebic }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_SUEBIC }
+					set_variable = custom_name
+					set_coa = k_suebi_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:frankish }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_FRANKISH }
+					set_variable = custom_name
+					set_coa = k_franks_britannia
+				}
+				else_if = {
+					limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:alan }
+					set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_ALAN }
+					set_variable = custom_name
+					set_coa = k_alans_britannia
+				}
+				else = {
+					# We reserve a few generic keys in case we forget to update this - in any case it's *very* unlikely
+					# that there will ever be more than 1 kingdom (the player kingdom)
+					if = {
+						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_0 } }
+						set_global_variable = {
+							name = romanized_germanic_kingdom_britannia_culture_0
+							value = scope:founder.culture.var:ancestral_non_roman_culture
+						}
+						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_0 }
+						set_variable = custom_name
+					}
+					else_if = {
+						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_1 } }
+						set_global_variable = {
+							name = romanized_germanic_kingdom_britannia_culture_1
+							value = scope:founder.culture.var:ancestral_non_roman_culture
+						}
+						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_1 }
+						set_variable = custom_name
+					}
+					else_if = {
+						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_2 } }
+						set_global_variable = {
+							name = romanized_germanic_kingdom_britannia_culture_2
+							value = scope:founder.culture.var:ancestral_non_roman_culture
+						}
+						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_2 }
+						set_variable = custom_name
+					}
+					else_if = {
+						limit = { NOT = { has_global_variable = romanized_germanic_kingdom_britannia_culture_3 } }
+						set_global_variable = {
+							name = romanized_germanic_kingdom_britannia_culture_3
+							value = scope:founder.culture.var:ancestral_non_roman_culture
+						}
+						set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_3 }
+						set_variable = custom_name
+					}
+				}
+			}
+			scope:founder.culture.var:ancestral_non_roman_culture = { 
+				set_variable = { name = britannia_cultural_kingdom_title value = scope:capital_kingdom }
+				scope:capital_kingdom = {
+					set_variable = { name = romanized_germanic_kingdom_culture value = prev }
+				}
+			}
+		}
+	}
+}
+
+titular_titles_romanized_germanic.0002 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles_romanized_germanic.0002.t
+	desc = titular_titles_romanized_germanic.0002.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:founder
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		show_as_tooltip = {
+			scope:capital_kingdom = {
+				set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TOOLTIP }
+			}
+		}
+		if = {
+			limit = { this = scope:founder }
+			scope:capital_kingdom = {
+				if = {
+					limit = {
+						NOT = { holder ?= scope:founder }
+					}
+					create_title_and_vassal_change = {
+						type = usurped
+						save_scope_as = title_change
+						add_claim_on_loss = yes
+					}
+					change_title_holder = {
+						holder = scope:founder
+						change = scope:title_change
+					}
+					resolve_title_and_vassal_change = scope:title_change
+				}
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+			}
+			text = titular_titles_romanized_germanic.0002.a.founder
+		}
+		name = {
+			trigger = {
+				OR = {
+					AND = {
+						has_title = scope:capital_kingdom
+						NOT = { this = scope:founder }
+					}
+					any_liege_or_above = {
+						AND = {
+							has_title = scope:capital_kingdom
+							NOT = { this = scope:founder }
+						}
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0002.a.former_holder
+		}
+		name = {
+			text = titular_titles_romanized_germanic.0002.a
+		}
+	}
+}
+
+scripted_effect rename_britannia_cultural_kingdom_title_effect = {
+	# Scopes don't play well with title localization so we have to make different keys for each culture
+	if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:visigoth }
+		if = {		# If there is already a Gothia, than rename the kingdom to Visigothia
+			limit = { culture:ostrogoth = { has_variable = britannia_cultural_empire_title_founded } }
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH_empire_formed_alt }
+			set_variable = custom_name
+		}
+		else = {
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VISIGOTH_empire_formed }
+			set_variable = custom_name
+		}
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:ostrogoth }
+		if = {		# If there is already a Gothia, than rename the kingdom to Ostrogothia
+			limit = { culture:ostrogoth = { has_variable = britannia_cultural_empire_title_founded } }
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH_empire_formed_alt }
+			set_variable = custom_name
+		}
+		else = {
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_OSTROGOTH_empire_formed }
+			set_variable = custom_name
+		}
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:burgundian }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_BURGUNDIAN_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:taifal }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_TAIFAL_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:vandal }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_VANDAL_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:suebic }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_SUEBIC_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:frankish }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_FRANKISH_empire_formed }
+		set_variable = custom_name
+	}
+	else_if = {
+		limit = { scope:founder.culture.var:ancestral_non_roman_culture = culture:alan }
+		set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_ALAN_empire_formed }
+		set_variable = custom_name
+	}
+	else = {
+		# We reserve a few generic keys in case we forget to update this - in any case it's *very* unlikely
+		# that there will ever be more than 1 kingdom (the player kingdom)
+		if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_0 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_0_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_1 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_1_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_2 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_2_empire_formed }
+			set_variable = custom_name
+		}
+		else_if = {
+			limit = { 
+				global_var:romanized_germanic_kingdom_britannia_culture_3 ?= scope:founder.culture.var:ancestral_non_roman_culture
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = ROMANIZED_GERMANIC_BRITANNIA_KINGDOM_NAME_GENERIC_3_empire_formed }
+			set_variable = custom_name
+		}
+	}
+}
+
+# Romanized Germanic Empire (Britannia)
+titular_titles_romanized_germanic.0003 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	immediate = {
+		save_scope_as = founder
+		# Do rename and variables here so it appears in the notification event
+		scope:founder.culture.var:ancestral_non_roman_culture = {
+			set_variable = britannia_cultural_empire_title_founded
+			this.var:britannia_cultural_kingdom_title = {
+				save_scope_as = britannia_cultural_kingdom_title
+			}
+		}
+		scope:founder.primary_title = { save_scope_as = founder_primary_title }
+		title:e_romanized_germanic_britannia = {
+			set_variable = { 
+				name = romanized_germanic_empire_culture
+				value = scope:founder.culture.var:ancestral_non_roman_culture 
+			}
+			set_title_name_w_tooltip_effect = { NEW_NAME = e_romanized_germanic_britannia_FORMED }
+			# COA is set in common/coat_of_arms/dynamic_definitions/BTWK_e_romanized_germanic_britannia_coas
+			# to handle religion switches better
+			set_capital_county_w_tooltip_effect = { CAPITAL = scope:britannia_cultural_kingdom_title.title_capital_county }
+		}
+		trigger_event = { id = titular_titles_romanized_germanic.0004 }
+		every_player = {
+			limit = { NOT = { this = PREV } }
+			trigger_event = { id = titular_titles_romanized_germanic.0004 }
+		}
+		# This is where the actual de jure shift happens
+		# It happens immediately after the notification events are fired,
+		# so that the correct tooltips are generated but the de jure shift 
+		# has already occured by the time the players actually see it
+		title:e_romanized_germanic_britannia = {
+			every_in_list = {
+				variable = base_kingdom_regions
+				set_kingdom_region_de_jure_liege_effect = {
+					REGION_BASE = THIS
+					NEW_DE_JURE_LIEGE = prev
+				}
+			}
+		}
+		hidden_effect = {
+			scope:britannia_cultural_kingdom_title = {
+				rename_britannia_cultural_kingdom_title_effect = yes
+			}
+		}
+	}
+}
+
+titular_titles_romanized_germanic.0004 = {
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	queue_icon = "gfx/interface/icons/culture_tradition/4-items/crown.dds"
+	title = titular_titles_romanized_germanic.0004.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { root = scope:founder }
+				desc = titular_titles_romanized_germanic.0004.desc.founder
+			}
+			desc = titular_titles_romanized_germanic.0004.desc
+		}		
+	}
+	theme = realm
+	override_background = { reference = ce1_fullscreen_legitimizing_legend }
+	
+	# left_portrait = {
+		# character = scope:founder
+		# animation = personality_honorable
+	# }
+	
+	immediate = {
+		scope:founder = { capital_barony = { save_scope_as = founder_capital } }
+		if = {
+			limit = { this = scope:founder }
+			create_title_and_vassal_change = {
+				type = created
+				save_scope_as = title_change
+				add_claim_on_loss = no
+			}
+			title:e_romanized_germanic_britannia = {
+				change_title_holder = {
+					holder = root
+					change = scope:title_change
+				}
+			}
+			resolve_title_and_vassal_change = scope:title_change
+			legend_seed_great_deed_region_effect = {
+				REGION = geographical_region:btwk_world_britannia
+			}
+		}
+		else = {
+			custom_tooltip = titular_titles_romanized_germanic.0004.a.tt
+			scope:founder = { custom_tooltip = found_romanized_germanic_empire_britannia_decision_struggle_effect_tt }
+			show_as_tooltip = { BTWK_end_britannia_struggle_effect = yes }
+		}
+		custom_tooltip = {
+			text = romanized_germanic_britannia_de_jure_shift_happened_tt
+		}
+		show_as_tooltip = {
+			scope:britannia_cultural_kingdom_title = {
+				rename_britannia_cultural_kingdom_title_effect = yes
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:founder
+					AND = {
+						any_liege_or_above = { this = scope:founder }
+						culture = {
+							NOR = {
+								has_cultural_pillar = heritage_latin
+								has_cultural_pillar = heritage_brythonic
+							}
+						}
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.founder
+		}
+		name = {
+			trigger = {
+				any_liege_or_above = { this = scope:founder }
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_brythonic
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.founder_roman_briton
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+				}
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_brythonic
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a.roman_briton
+		}
+		name = {
+			trigger = {
+				NOR = {
+					this = scope:founder
+					any_liege_or_above = { this = scope:founder }
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_latin
+							has_cultural_pillar = heritage_brythonic
+						}
+					}
+				}
+			}
+			text = titular_titles_romanized_germanic.0004.a
+		}
+		if = {
+			limit = { this = scope:founder }
+			if = {
+				limit = { exists = struggle:britannia_struggle }
+				custom_tooltip = titular_titles_romanized_germanic.0004.a.tt
+				if = {
+					limit = { has_dlc_feature = legends }
+					legend_seed_struggle_ending_effect = {
+						ENDER = root
+						STRUGGLE = britannia_struggle
+					}
+				}
+				BTWK_end_britannia_struggle_effect = yes
+				struggle:britannia_struggle = { end_struggle = found_romanized_germanic_empire_britannia_decision }
+			}
+			give_nickname = nick_the_great
+			dynasty = {
+				add_dynasty_modifier = BTWK_found_romanized_germanic_empire_britannia_modifier
+			}
+		}
+	}
+}
+
+##################################################
+# Generic
+##################################################
+
+# Notify kingdom region integration
+titular_titles.0001 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = titular_titles.0001.t
+	desc = {
+		desc = titular_titles.0001.desc.intro
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_gwynedd }
+				desc = titular_titles.0001.desc.cymru
+			}
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_londinium }
+				desc = titular_titles.0001.desc.lloegyr
+			}
+			triggered_desc = {
+				trigger = { scope:region_base_title = title:k_ebrauc }
+				desc = titular_titles.0001.desc.hen_ogledd
+			}
+			desc = titular_titles.0001.desc.fallback
+		}
+		desc = titular_titles.0001.desc.outro
+	}
+	theme = realm
+	override_background = terrain
+	
+	left_portrait = {
+		character = scope:conqueror
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		set_kingdom_region_de_jure_liege_tooltip_only_effect = {
+			REGION_BASE = scope:region_base_title
+			NEW_DE_JURE_LIEGE = scope:new_de_jure_liege_title
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				OR = {
+					this = scope:conqueror
+					any_liege_or_above = { this = scope:conqueror }
+				}
+			}
+			text = titular_titles.0001.a.conqueror
+		}
+		name = {
+			text = titular_titles.0001.a
+		}
+	}
+}
+
+##################################################
+# Debug Test Events
+##################################################
+
+# Revert all de jure changes (aka apply Briton setup)
+titular_titles_test.0001 = {
+	hidden = yes
+
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = roman_duchy_list
+			remove_variable = roman_title_created_de_jure
+		}
+		
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Apply full Anglo-Saxon de jure setup
+titular_titles_test.1001 = {
+	hidden = yes
+	
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			set_variable = title_created_de_jure
+		}
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Apply Anglo-Saxon de jure setup in Aengland only
+titular_titles_test.1002 = {
+	hidden = yes
+
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			if = {
+				limit = {
+					NOT = { title_capital_county = { title_province = { geographical_region = btwk_custom_wales } } }
+				}
+				remove_variable = title_created_de_jure
+			}
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			if = {
+				limit = { 
+					NOT = { target_is_de_jure_liege_or_above = title:k_wales }
+					NOR = {
+						this = title:d_stirlingshire
+						this = title:d_anglelennox
+						this = title:d_lanarkshire
+						this = title:d_ayrshire
+						this = title:d_anglemann
+					}
+				}
+				set_variable = title_created_de_jure
+			}
+		}
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Apply full Roman de jure setup
+titular_titles_test.2001 = {
+	hidden = yes
+
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = roman_duchy_list
+			set_variable = roman_title_created_de_jure
+		}
+		
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}
+
+# Apply Roman de jure setup within historical borders only
+titular_titles_test.2002 = {
+	hidden = yes
+
+	immediate = {
+		every_in_global_list = {
+			variable = norse_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			remove_variable = title_created_de_jure
+		}
+		every_in_global_list = {
+			variable = roman_duchy_list
+			if = {
+				limit = {
+					OR = {
+						NOT = { this.var:roman_kingdom = title:k_valentia }
+						this = title:d_westrheged
+						this = title:d_eastrheged
+					}
+				}
+				set_variable = roman_title_created_de_jure
+			}
+		}
+		
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+	}
+}

@@ -1,0 +1,274 @@
+﻿namespace = raiding
+
+# Chance to kidnap prisoners from the holding holder.
+raiding.0013 = {
+	hidden = yes
+	scope = army
+	id_override_priority = 10
+
+	trigger = { # Only take prisoners if this barony is the holder's capital (where their family/courtiers live), or there is an estate
+		OR = {
+			scope:barony.holder.capital_barony = scope:barony
+			location = {
+				any_province_domicile = {
+					domicile_is_estate_trigger = yes
+				}
+			}
+		}
+	}
+
+	immediate = {
+		# For localization.
+		scope:raider = { save_scope_as = occupant }
+		scope:barony.holder = { save_scope_as = holder }
+		location = {
+			random_province_domicile = {
+				limit = {
+					domicile_is_estate_trigger = yes
+				}
+				owner ?= { save_scope_as = estate_holder }
+			}
+		}
+
+		#BUILD CAPTURE ATTEMPT LIST
+		scope:barony.holder = {
+			if = {
+				limit = { raiding_0012_can_be_captured = yes }
+				add_to_list = capture_attempt_targets
+			}
+			every_courtier_or_guest = {
+				limit = { raiding_0012_can_be_captured = yes }
+				add_to_list = capture_attempt_targets
+			}
+		}
+		scope:estate_holder ?= {
+			if = {
+				limit = {		# BTWK - cannot capture prisoners from estates of offmap realms
+					NOR = {
+						has_trait = offmap_ruler
+						any_liege_or_above = { has_trait = offmap_ruler }
+					}
+				}
+				if = {
+					limit = {
+						raiding_0012_can_be_captured = yes
+						is_landed = no # they are at the estate
+					}
+					add_to_list = capture_attempt_targets
+				}
+				every_courtier_or_guest = {
+					limit = {
+						raiding_0012_can_be_captured = yes
+						location = scope:barony.title_province
+					}
+					add_to_list = capture_attempt_targets
+				}
+			}
+		}
+
+		#CALCULATE CAPTURE CHANCE
+		every_in_list = {
+			list = capture_attempt_targets
+			random = {	
+				# Base chance handled in a modifier due to the chance parameter tending to quietly fail to parse scripted values.
+				chance = 0
+
+				# Base chance starts at 20%, before value modifiers & target modifiers.
+				modifier = { add = raid_base_capture_chance }
+
+				# Add -0.5 chance per 1pt of Intrigue, averaging out at -5% chance for 10pts of Intrigue.
+				modifier = {
+					add = {
+						value = this.intrigue
+						multiply = -0.5
+						min = -10
+					}
+					# Requiring a certain base level to be at all effective.
+					intrigue > low_skill_rating
+				}
+				# Add -0.5 chance per 1pt of Prowess, averaging out at -5% chance for 10pts of Prowess.
+				modifier = {
+					add = {
+						value = this.prowess
+						multiply = -0.5
+						min = -10
+					}
+					# Requiring a certain base level to be at all effective.
+					prowess > low_skill_rating
+				}
+				# Less likely to capture the ruler themselves in a raid
+				modifier = {
+					is_landed = yes
+					add = -10
+				}
+				# Less likely to capture the estate owner themselves
+				modifier = {
+					scope:estate_holder ?= this
+					add = -10
+				}
+				# If there is an estate, Watchtowers and Guardhouses make captures less likely
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_1
+						}
+					}
+					add = -10
+				}
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_2
+						}
+					}
+					add = -15
+				}
+				modifier = {
+					location = {
+						any_province_domicile = {
+							domicile_is_estate_trigger = yes
+							has_domicile_parameter = raids_less_likely_to_make_prisoners_3
+						}
+					}
+					add = -20
+				}
+
+				modifier = {
+					root = {
+						OR = {
+							raid_intent = capture_intent_nomadic
+							raid_intent = capture_intent_norse
+						}
+					}
+					has_raid_intent_immunity = no
+					add = {
+						value = 15
+						if = {
+							limit = {
+								has_raid_intent_protection = yes
+							}
+							subtract = 10
+						}
+						if = {
+							limit = {
+								scope:raider = { has_perk = kidnapper_perk }
+							}
+							add = 10
+						}
+						if = {
+							limit = {
+								scope:raider.culture ?= { has_innovation = innovation_motte }
+							}
+							add = 5
+						}
+					}
+				}
+
+				# Capture Effects
+				if = {
+					limit = { desirable_for_capture_trigger = yes }
+					add_to_list = captured_targets_effects
+				}
+				else = { add_to_list = killed_targets }
+			}
+		}
+
+		#NOTIFY CONCERNED PARTIES
+		#Inform about captures.
+		if = {
+			limit = {
+				any_in_list = {
+					list = captured_targets_effects
+					count >= 1
+				}
+			}
+			#Inform raider.
+			scope:raider = {
+				trigger_event = siege.0002
+			}
+			#Inform affected holder about captures.
+			scope:barony.holder = {
+				if = {
+					limit = {
+						save_temporary_scope_as = notification_target
+						any_in_list = {
+							list = captured_targets_effects
+							this != scope:notification_target
+						}
+					}
+					trigger_event = siege.0003
+				}
+			}
+			#Inform concerned players about captures.
+			every_player = {
+				limit = {
+					NOR = {
+						this = scope:raider
+						this = scope:barony.holder
+					}
+					save_temporary_scope_as = notification_target
+					any_in_list = {
+						list = captured_targets_effects
+						has_any_relation_trigger = { CHARACTER = scope:notification_target }
+					}
+				}
+				trigger_event = siege.0004
+			}
+		}
+		#Inform about kills.
+		if = {
+			limit = {
+				any_in_list = {
+					list = killed_targets
+					count >= 1
+				}
+			}
+			# Inform affected holder about kills.
+			scope:barony.holder = {
+				trigger_event = siege.0013
+			}
+			#Inform concerned players about kills.
+			every_player = {
+				limit = {
+					NOR = {
+						this = scope:raider
+						this = scope:barony.holder
+					}
+					save_temporary_scope_as = notification_target
+					any_in_list = {
+						list = killed_targets
+						has_any_relation_trigger = { CHARACTER = scope:notification_target }
+					}
+				}
+				trigger_event = siege.0014
+			}
+		}
+
+
+		#IMPRISON & KILL EFFECTS
+		every_in_list = {
+			list = captured_targets_effects
+
+			hidden_effect = {
+				add_character_flag = {
+					flag = block_imprisonment_event
+					days = 1
+				}
+			}
+
+			prisoner_of_war_capture_effect = {
+				TARGET = this
+				IMPRISONER = scope:raider
+			}
+		}
+		every_in_list = {
+			list = killed_targets
+			limit = { is_alive = yes }
+			death = {
+				death_reason = death_raid
+			}
+		}
+	}
+}

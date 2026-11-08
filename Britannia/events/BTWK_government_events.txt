@@ -1,0 +1,451 @@
+﻿namespace = BTWK_government
+
+#convert_pre_feudal_to_feudalism_decision
+BTWK_government.0001 = {
+	type = character_event
+	title = BTWK_government.0001.t
+	desc = BTWK_government.0001.desc
+	theme = realm
+	override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = storyteller
+	}
+
+	immediate = {
+		save_scope_as = actor
+		show_as_tooltip = {
+			change_government = feudal_government
+			custom_tooltip = easier_for_vassals_to_convert_to_feudal
+		}
+		hidden_effect = {
+			every_liege_or_above = {
+				limit = {
+					NOT = { top_liege = this }
+				}
+				send_interface_message = {
+					type = event_stewardship_neutral_with_text
+					title = msg_vassal_pre_feudal_to_feudal
+					desc = msg_vassal_pre_feudal_to_feudal_desc
+					right_icon = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = major_decisions.0001.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0002 = {
+	type = letter_event
+	opening = BTWK_government.0002.opening
+	desc = BTWK_government.0001.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			scope:actor = { change_government = feudal_government }
+			custom_tooltip = easier_to_convert_to_feudal
+		}
+	}
+
+	option = {
+		name = BTWK_government.0002.a
+	}
+}
+
+#convert_sub_roman_to_germanic_decision
+BTWK_government.0003 = {
+	type = character_event
+	title = BTWK_government.0003.t
+	desc = BTWK_government.0003.desc
+	theme = realm
+	# override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = storyteller
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = germanic_government
+				}
+				change_government = germanic_government
+			}
+			else = {
+				change_government = germanic_no_dlc_government
+			}
+			custom_tooltip = sub_roman_vassals_have_converted
+		}
+		hidden_effect = {
+			every_liege_or_above = {
+				limit = {
+					NOT = { top_liege = this }
+				}
+				send_interface_message = {
+					type = event_stewardship_neutral_with_text
+					title = msg_vassal_to_germanic
+					desc = msg_vassal_to_germanic_desc
+					right_icon = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0003.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0004 = {
+	type = letter_event
+	opening = BTWK_government.0004.opening
+	desc = BTWK_government.0003.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = germanic_government
+				}
+				change_government = germanic_government
+			}
+			else = {
+				change_government = germanic_no_dlc_government
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0004.a
+	}
+}
+
+#convert_germanic_to_sub_roman_decision
+BTWK_government.0005 = {
+	type = character_event
+	title = BTWK_government.0005.t
+	desc = BTWK_government.0005.desc
+	theme = realm
+	# override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = storyteller
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = sub_roman_government
+				}
+				change_government = sub_roman_government
+			}
+			else = {
+				change_government = sub_roman_no_dlc_government
+			}
+			custom_tooltip = germanic_vassals_have_converted
+		}
+		hidden_effect = {
+			every_liege_or_above = {
+				limit = {
+					NOT = { top_liege = this }
+				}
+				send_interface_message = {
+					type = event_stewardship_neutral_with_text
+					title = msg_vassal_to_sub_roman
+					desc = msg_vassal_to_sub_roman_desc
+					right_icon = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0005.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0006 = {
+	type = letter_event
+	opening = BTWK_government.0006.opening
+	desc = BTWK_government.0005.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			if = {
+				limit = { BTWK_admin_gov_enabled_trigger = yes }
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = sub_roman_government
+				}
+				change_government = sub_roman_government
+			}
+			else = {
+				change_government = sub_roman_no_dlc_government
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0006.a
+	}
+}
+
+#convert_to_administrative_decision
+BTWK_government.0007 = {
+	type = character_event
+	title = BTWK_government.0007.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:actor.primary_title = { has_variable = is_roman_empire_or_claimant_title } }
+				desc = BTWK_government.0007.desc.roman_empire
+			}
+			desc = BTWK_government.0007.desc
+		}
+	}
+	theme = realm
+	# override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = storyteller
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = administrative_government
+			}
+			change_government = administrative_government
+		}
+		custom_tooltip = bureaucratic_vassals_have_converted_to_administrative
+		hidden_effect = {
+			every_liege_or_above = {
+				limit = {
+					NOT = { top_liege = this }
+				}
+				send_interface_message = {
+					type = event_stewardship_neutral_with_text
+					title = msg_vassal_to_admin
+					desc = msg_vassal_to_admin_desc
+					right_icon = root
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0007.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0008 = {
+	type = letter_event
+	opening = BTWK_government.0008.opening
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { scope:actor.primary_title = { has_variable = is_roman_empire_or_claimant_title } }
+				desc = BTWK_government.0007.desc.roman_empire
+			}
+			desc = BTWK_government.0007.desc
+		}
+	}
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = administrative_government
+			}
+			change_government = administrative_government
+		}
+	}
+
+	option = {
+		name = BTWK_government.0008.a
+	}
+}
+
+# Warning that you may lose your administrative government
+BTWK_government.0009 = {
+	type = character_event
+	title = BTWK_government.0009.t
+	desc = BTWK_government.0009.desc
+	theme = realm
+	override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = worry
+	}
+
+	option = {
+		name = BTWK_government.0009.a
+		if = {
+			limit = { BTWK_should_become_germanic_government_trigger = yes }
+			custom_tooltip = BTWK_government.0009.a.tt.germanic
+		}
+		else = {
+			custom_tooltip = BTWK_government.0009.a.tt.sub_roman
+		}
+	}
+}
+
+# Administrative government decays into Sub-Roman/Dynastic Sub-Roman
+BTWK_government.0010 = {
+	type = character_event
+	title = BTWK_government.0010.t
+	desc = BTWK_government.0010.desc
+	theme = realm
+	override_background = { reference = courtyard }
+	left_portrait = {
+		character = root
+		animation = sadness
+	}
+
+	immediate = {
+		if = {
+			limit = { BTWK_should_become_germanic_government_trigger = yes }
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = germanic_government
+			}
+			change_government = germanic_government
+			custom_tooltip = administrative_vassals_have_converted_to_germanic
+			hidden_effect = {
+				every_vassal_or_below = {
+					limit = { 
+						government_has_flag = government_is_administrative_proper
+					}
+					tgp_domicile_conversion_when_changing_government_type = {
+						NEW_DOMICILE_TYPE = estate
+						NEW_GOVERNMENT_TYPE = germanic_government
+					}
+					change_government = germanic_government
+					trigger_event = {
+						id = BTWK_government.0011
+						days = 3
+					}
+				}
+			}
+		}
+		else = {
+			tgp_domicile_conversion_when_changing_government_type = {
+				NEW_DOMICILE_TYPE = estate
+				NEW_GOVERNMENT_TYPE = sub_roman_government
+			}
+			change_government = sub_roman_government
+			custom_tooltip = administrative_vassals_have_converted_to_sub_roman
+			hidden_effect = {
+				every_vassal_or_below = {
+					limit = { 
+						government_has_flag = government_is_administrative_proper
+					}
+					tgp_domicile_conversion_when_changing_government_type = {
+						NEW_DOMICILE_TYPE = estate
+						NEW_GOVERNMENT_TYPE = sub_roman_government
+					}
+					change_government = sub_roman_government
+					trigger_event = {
+						id = BTWK_government.0011
+						days = 3
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0010.a
+	}
+}
+
+# Notify vassals
+BTWK_government.0011 = {
+	type = letter_event
+	opening = BTWK_government.0011.opening
+	desc = BTWK_government.0010.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		if = {
+			limit = { government_has_flag = government_is_sub_roman }
+			show_as_tooltip = {
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = sub_roman_government
+				}
+				change_government = sub_roman_government
+			}
+		}
+		else_if = {
+			limit = { government_has_flag = government_is_sub_roman }
+			show_as_tooltip = {
+				tgp_domicile_conversion_when_changing_government_type = {
+					NEW_DOMICILE_TYPE = estate
+					NEW_GOVERNMENT_TYPE = germanic_government
+				}
+				change_government = germanic_government
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_government.0011.a
+	}
+}
+
+
+BTWK_government.0020 = { # Replaces vanilla major_decisions.0002
+	type = letter_event
+	opening = major_decisions.0002.opening
+	desc = major_decisions.0001.desc
+	sender = {
+		character = scope:actor
+		animation = personality_rational
+	}
+
+	immediate = {
+		show_as_tooltip = {
+			change_government = pre_feudal_government
+		}
+	}
+
+	option = {
+		name = major_decisions.0001.a
+	}
+}

@@ -1,0 +1,193 @@
+﻿tribal_government = {
+	government_rules = {
+		rulers_should_have_dynasty = yes
+		regiments_prestige_as_gold = yes
+		legitimacy = yes
+		always_use_patronym = yes
+		affected_by_development = yes
+		allow_accolades = yes
+	}
+
+	royal_court = any
+	
+	supply_limit_mult_for_others = -0.5
+	primary_holding = tribal_holding
+	required_county_holdings = { tribal_holding }
+
+	valid_holdings = { castle_holding temple_citadel_holding }
+
+	prestige_opinion_override = { -10 0 3 5 10 20 }
+
+	vassal_contract_group = tribal_vassal
+
+	ai = {
+		use_legends = yes
+	}
+	
+	character_modifier = {
+		title_creation_cost_mult = -0.5
+		army_maintenance_mult = -0.5
+
+		feudal_government_vassal_opinion = -20
+		pre_feudal_government_vassal_opinion = -10
+		clan_government_vassal_opinion = -20
+		republic_government_vassal_opinion = -20
+		
+		character_travel_safety = 10
+	
+		ai_war_chance = 0.25
+		monthly_prestige = 0.2
+	}
+	
+	flags = {
+		government_is_tribal
+		government_is_tribal_excluding_wanua
+		use_prestige_to_buy_maa
+		government_is_settled
+		government_can_raid_rule
+		may_elevate_co_monarch
+		government_uses_domain_limit
+		government_uses_tribal_authority
+		
+		# BTWK
+		government_has_tribal_fame
+		government_limited_conquest_cb
+		government_allow_pre_feudal_subjugation_limited
+		government_cannot_pacify_cultural_redoubts
+		government_reduced_tributary_tax
+	}
+
+	# Grant candidate for nomads and herders who want to settle
+	grant_vassal_ai_will_do = {
+		value = 0
+		if = {
+			limit = {
+				pam_nomad_grant_settled_government_trigger = yes
+				faith = { has_doctrine_parameter = unreformed }
+			}
+			add = 10
+		}
+	}
+	
+	color = hsv{ 0.02 0.75 0.36 }
+	realm_mask_offset = { 0.0 0.0 }
+	realm_mask_scale = { 0.96 0.96 }
+}
+
+
+### Brief: administrative_government
+# Default administrative government, used for Byzantium
+#
+# This is referenced in code
+#
+administrative_government = {
+	government_rules = {
+		create_cadet_branches = yes
+		rulers_should_have_dynasty = yes
+		dynasty_named_realms = no
+		landless_playable = yes
+		legitimacy = yes
+		state_faith = yes
+		use_as_base_on_landed = yes
+		use_as_base_on_rank_up = yes
+		allow_as_base_for_baronies = no
+		inherit_from_dynastic_government = no
+		sticky_government = yes
+		house_aspirations = yes
+		noble_families = yes
+		admin_allows_holding_multiple_primary_tier_titles = yes
+		treasury = yes
+		treasury_vassal_development = yes
+		replace_gold_cost_by_treasury = yes
+		allow_accolades = yes
+	}
+
+	royal_court = any
+	blocked_subject_courts = { meritocratic_government celestial_government japan_administrative_government administrative_government steppe_admin_government }
+
+	domicile_type = estate
+	main_administrative_tier = duchy
+	min_appointment_tier = county
+	minimum_provincial_maa_tier = duchy
+
+	fallback = 3
+
+	primary_holding = castle_holding
+	valid_holdings = { city_holding temple_citadel_holding }
+	required_county_holdings = { castle_holding city_holding church_holding }
+
+	vassal_contract_group = admin_vassal
+
+	can_get_government = {
+		#The LAAMP Construct Holding decision
+		trigger_if = {
+			limit = {
+				has_variable = {
+					name = city_construction_is_temple_citadel
+					name = city_construction_is_castle
+				}
+			}
+			always = no
+		}
+	}
+
+	character_modifier = {
+		levy_size = -0.5
+		feudal_government_tax_contribution_mult = -0.5
+		feudal_government_levy_contribution_mult = -0.5
+		clan_government_tax_contribution_mult = -0.5
+		clan_government_levy_contribution_mult = -0.5
+		men_at_arms_cap = -2
+		men_at_arms_limit = -2
+		knight_limit = -5
+		vassal_limit = 100
+		accolades = -1
+		title_creation_cost_mult = -0.5
+		mercenary_hire_cost_mult = 2
+		men_at_arms_maintenance = 0.5
+
+		# Vassals get Treasury income that is this percentage less than their taxes to their liege
+		monthly_treasury_from_liege_mult = -0.15
+	}
+
+	top_liege_character_modifier = {
+		# 85% of vassal income goes to the treasury
+		monthly_treasury_from_vassals = 0.85
+		men_at_arms_maintenance = 1.5
+		men_at_arms_recruitment_cost = 1
+	}
+
+	# Use flags instead of has_government for moddability if possible (i.e., wherever not visible to the player).
+	flags = {
+		government_is_administrative
+		government_is_administrative_proper
+		government_has_influence
+		government_has_treasury
+		government_has_powerful_families
+		government_uses_administrative_house_aspirations
+		# These flags only exist for loc and in-game descriptions
+		government_has_estate
+		government_has_title_men_at_arms
+		government_is_settled
+		government_uses_domicile_but_not_adventurer
+		government_uses_domain_limit
+		government_uses_admin_province_obligations
+		government_uses_imperial_bureaucracy
+		government_uses_salary_budget
+		government_uses_military_budget
+		government_has_county_tier_noble_families
+	}
+
+	ai = {
+		use_legends = yes
+	}
+
+	mechanic_type = administrative
+	is_mechanic_type_default = yes
+
+	possible_grant_vassal_governments = { theocracy_government ecclesiastical_government }
+
+	color = { 72 6 92 }
+	realm_mask_offset = { 0.0 0.01 }
+	realm_mask_scale = { 1 1 }
+}

@@ -1,397 +1,4005 @@
 ﻿# Called from code after history generation
 # Empty scope
 on_game_start = {
+	on_actions = { BTWK_on_game_start }
+}
+
+BTWK_on_game_start = {
+	events = {
+		BTWK_startup.1000 # Set up Historical Characters Visual Ages
+	}
+	on_actions = {
+		BTWK_de_jure_setup
+		BTWK_story_trigger_on_game_start_479
+		BTWK_religion_setup
+		BTWK_government_setup
+		BTWK_character_setup
+		BTWK_building_setup
+		BTWK_laeti_setup
+		BTWK_britannia_high_kingship_setup
+		BTWK_aengland_bretwalda_setup
+		BTWK_tribal_fame_calc
+		BTWK_thirteen_treasures_distribution
+		BTWK_game_start_events
+		BTWK_culture_setup_set_blocks
+		BTWK_situation_setup
+		delay = { months = 1 }
+		BTWK_start_monthly_global_pulse
+	}
+	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
+}
+
+# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
+BTWK_on_game_start_after_lobby = {
+	on_actions = { 
+		BTWK_culture_setup 
+		BTWK_county_setup		# Must come after culture setup as it uses variables set there
+		BTWK_laamp_setup
+		BTWK_startup_events
+		BTWK_government_setup_after_lobby
+	}
+	# NOTE: Effects don't seem to work properly here? Call new on actions instead for now
+}
+
+BTWK_game_start_events = {
+	events = {
+		delay = { months = { 4 8 } }
+		BTWK_wre_events.0001
+	}
+}
+
+BTWK_story_trigger_on_game_start_479 = {
 	effect = {
-		### ANGLO-SAXON TITLE SETUP ###
+		if = {
+			limit = { has_game_rule = BTWK_storyline_enabled }		
+			character:1 = {
+				add_character_modifier = {
+					modifier = story_health_bonus_large_modifier
+				}
+				create_story = {
+					type = BTWK_story_uther_high_council	
+				}
+			}
+		}
+	}
+}
+
+BTWK_start_monthly_global_pulse = {
+	effect = {
+		title:c_londinium.holder = { create_story = BTWK_monthly_global_pulse_story }
+	}
+}
+
+# This is separate from the main culture setup as it needs to run before the lobby
+BTWK_culture_setup_set_blocks = {
+	effect = {
+		# Block some cultures in the ruler designer (mostly those that appear over the course of the game)
+		every_culture_global = {
+			limit = {
+				OR = {
+					has_cultural_pillar = heritage_romance
+					has_cultural_pillar = heritage_arabic
+					has_cultural_pillar = heritage_berber
+					has_cultural_pillar = heritage_turkic
+					AND = {
+						has_cultural_pillar = heritage_west_germanic
+						NOR = {
+							this = culture:angle
+							this = culture:old_saxon
+							this = culture:jute
+							this = culture:frisian
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_frankish
+						NOT = {
+							this = culture:frankish
+						}
+					}
+					AND = {
+						has_cultural_pillar = heritage_brythonic
+						NOR = {
+							this = culture:briton
+							this = culture:armorican
+						}
+					}
+					has_cultural_pillar = heritage_gaulish
+					this = culture:norse_gael
+					this = culture:bavarian
+				}
+			}
+			set_variable = block_start_with
+		}
 		
-		## EAST ANGLIA
-		title:d_eastseaxe = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:d_norfolc
+		# Block this from showing so we don't have two Northumbrians in the start screen
+		culture:northumbrian_alt = { set_variable = block_show_ruler_designer }
+		culture:romanohibernian = { set_variable = block_show_ruler_designer }
+	}
+}
+
+BTWK_culture_setup = {
+	effect = {
+		# Find the ancestors of each culture
+		every_culture_global = {
+			if = {
+				limit = { has_cultural_pillar = heritage_latin }
+				set_variable = starting_imperial_culture
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_thetford
+			save_ancestral_starting_culture_effect = yes
+			save_ancestral_non_roman_culture_effect = yes
+		}
+		
+		# TODO Set starting cultural acceptance
+		
+		# Set baseline language knowledge
+		# All Brythonic nobles and Christian clergy should know Latin
+		# Plus "assimilating" Irish (basically Demetia)
+		# Lowborn courtiers have a 75% chance as most of them are going to be minor nobility - still high 
+		# status enough to be probably Latin-speaking at this point
+		every_ruler = {
+			limit = {
+				OR = {
+					culture = { has_cultural_pillar = heritage_brythonic }
+					AND = {
+						culture = culture:irish
+						top_liege = {
+							OR = {
+								has_cultural_pillar = heritage_brythonic
+								has_cultural_pillar = heritage_latin
+								AND = {
+									has_royal_court = yes
+									has_court_language = language_latin
+								}
+								AND = {
+									NOT = { has_dlc_feature = royal_court }
+									has_title = title:k_demetia
+								}
+							}
+						}
+					}
+				}
+				# capital_province = { geographical_region = btwk_world_britannia }
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_gariannonum
+			if = {
+				limit = { NOT = { knows_language = language_latin } }
+				learn_language = language_latin
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_elmham
+			if = {
+				limit = { 
+					NOT = { culture = { has_cultural_pillar = heritage_brythonic } } 
+					NOT = { knows_language = language_brythonic }
+				}
+				learn_language = language_brythonic
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_swaffham
+			every_courtier_or_guest = {
+				limit = {
+					OR = {
+						culture = { has_cultural_pillar = heritage_brythonic }
+						AND = {
+							NOT = { prev.culture = { has_cultural_pillar = heritage_brythonic } }
+							culture = prev.culture
+						}
+					}
+					NOT = { trait = peasant_leader }
+					NOT = { this = character:10 }		# Derfel specifically doesn't know Latin
+				}
+				random = {
+					chance = 75
+					modifier = {
+						add = 25
+						OR = {
+							is_lowborn = no
+							AND = {
+								is_clergy = yes
+								religion = religion:christianity_religion
+							}
+						}
+					}
+					modifier = {
+						add = -100
+						this = character:10
+					}
+					if = {
+						limit = { NOT = { knows_language = language_latin } }
+						learn_language = language_latin
+					}
+					if = {
+						limit = { 
+							NOT = { culture = { has_cultural_pillar = heritage_brythonic } } 
+							NOT = { knows_language = language_brythonic }
+						}
+						learn_language = language_brythonic
+					}
+				}
 			}
 		}
 		
-		title:d_southfolc = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_rendlesham
+		# Custom Court Grandeur settings
+		if = {
+			limit = {
+				has_dlc_feature = royal_court
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_blything
+			character:1 = {		# Dumnonia
+				set_current_court_grandeur = 45
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_hoxne
+			character:14 = {	# Gwent
+				set_current_court_grandeur = 30
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_gippelwich
+		}
+		
+		# Set global variables references for loc purposes
+		set_global_variable = { name = briton_culture value = culture:briton }
+		set_global_variable = { name = welsh_culture value = culture:welsh }
+		set_global_variable = { name = cornish_culture value = culture:cornish }
+		set_global_variable = { name = cumbrian_culture value = culture:cumbrian }
+		
+		set_global_variable = { name = angle_culture value = culture:angle }
+		set_global_variable = { name = old_saxon_culture value = culture:old_saxon }
+		set_global_variable = { name = jute_culture value = culture:jute }
+		
+		set_global_variable = { name = romanobritish_culture value = culture:romanobritish }
+	}
+}
+
+BTWK_religion_setup = {
+	effect = {
+		# Block all irrelevant vanilla faiths permanently
+		every_religion_global = {
+			limit = {
+				NOR = {
+					this = religion:basque_religion
+					this = religion:celtic_religion
+					this = religion:christianity_religion
+					this = religion:dualism_religion
+					this = religion:germanic_religion
+					this = religion:hellenism_religion
+					this = religion:islam_religion
+					this = religion:judaism_religion
+					this = religion:scythian_religion
+				}
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_beodericsworth
+			every_faith = { 
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
 			}
+		}
+		religion:christianity_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:christian_faith
+						this = faith:pelagian
+						this = faith:arian
+						this = faith:priscillianism
+						this = faith:novatianist
+						this = faith:adoptionist
+						this = faith:valentinianism
+					}
+				}
+				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		religion:dualism_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:manichaean_faith
+					}
+				}
+				set_variable = { name = block_conversion } 
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		religion:islam_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:sadr_al_islam
+						this = faith:sunni
+						this = faith:shia
+						this = faith:kharijite
+						this = faith:barghawata
+					}
+				}
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		religion:judaism_religion = {
+			every_faith = {
+				limit = {
+					NOR = {
+						this = faith:rabbinic_faith
+					}
+				}
+				set_variable = { name = block_conversion }
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		
+		# Block all relevant Muslim faiths until it appears
+		religion:islam_religion = {
+			every_faith = {
+				limit = {
+					NOT = { has_variable = block_conversion }
+				}
+				set_variable = { name = block_conversion_till_founded }
+				every_faith_rite = { set_rite_enabled = no }
+			}
+		}
+		
+		# Transfer tenets from Chalcedonian to all enabled Christian Rites
+		# since they are all offshoots and should have a similar theology unless otherwise specified
+		every_tenet = {
+			save_scope_as = current_tenet
+			if = {
+				limit = { 
+					rite:roman_rite = {
+						has_at_least_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = permitted
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = known
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					rite:roman_rite = {
+						has_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
+				religion:christianity_religion = {
+					every_faith = {
+						limit = { 
+							NOT = { has_variable = block_conversion } 
+							main_rite = {
+								has_tenet_status = {
+									tenet = scope:current_tenet
+									status = unknown
+								}
+							}
+						}
+						set_tenet_status = {
+							tenet = scope:current_tenet
+							status = prohibited
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_government_setup = {
+	effect = {
+		# Rename East Anglia during Aelle's reign
+		if = {
+			limit = { game_start_date < 497.4.16 }
+			title:k_east_anglia = { 
+				set_variable = is_the_angles
+				set_title_name = k_the_angles 
+			}
+		}
+
+		if = {
+			limit = { game_start_date < 600.1.1 }
+			# Make sure all Anglo-Saxon rulers start tribal
+			every_ruler = {
+				limit = {
+					culture = { has_cultural_pillar = heritage_west_germanic }
+					government_has_flag = government_is_feudal
+					capital_province = { geographical_region = btwk_world_britannia }
+				}
+				change_government = tribal_government
+			}
+		}
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_feudal
+				NOT = { 
+					any_held_title = {
+						has_variable = is_offmap_title 
+					}
+				}
+			}
+			BTWK_set_starting_government = yes
+		}
+		
+		# Set up laws
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_feudal
+			}
+			if = {
+				limit = { 
+					is_romanized_government_culture_trigger = yes
+				}
+				add_realm_law_skip_effects = crown_authority_1
+			}
+		}
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_tribal
+			}
+			if = {
+				limit = { 
+					is_romanized_government_culture_trigger = yes
+				}
+				add_realm_law_skip_effects = tribal_authority_2
+			}
+			else_if = {
+				limit = { 
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_goidelic
+							has_cultural_pillar = heritage_pictish
+							has_cultural_pillar = heritage_west_germanic
+							has_cultural_pillar = heritage_central_germanic
+						}
+					}
+				}
+				add_realm_law_skip_effects = tribal_authority_1
+			}
+		}
+	}
+}
+
+BTWK_government_setup_after_lobby = {
+	effect = {
+		# Set offmap ruler governments after the lobby so they are not selectable in the starting screen
+		every_ruler = {
+			limit = {
+				government_has_flag = government_is_feudal
+				any_held_title = {
+					has_variable = is_offmap_title 
+				}
+			}
+			BTWK_set_starting_government = yes
+		}
+	}
+}
+
+BTWK_county_setup = {
+	effect = {
+		# Wales (minus Anglesey and the Pembroke area) gets the Cultural Redoubt modifier
+		every_county_in_region = {
+			region = btwk_custom_wales
+			limit = {
+				NOR = {
+					duchy = title:d_osmaeliog
+					this = title:c_roose
+					this = title:c_pembroke
+				}
+			}
+			BTWK_update_cultural_redoubt_modifier_effect = yes
+		}
+		every_county_in_region = {
+			region = btwk_custom_cornwall
+			BTWK_update_cultural_redoubt_modifier_effect = yes
+		}
+		
+		# Initialize wrong-heritage group tribal county penalty modifiers
+		every_county = {
+			BTWK_update_wrong_heritage_group_tribal_county_modifier_effect = yes
+		}
+	}
+}
+
+BTWK_situation_setup = {
+	effect = {
+		# Remove world_europe from earthquake zones - as world_europe_south as still in there, 
+		# parts of the map that actually should get earthquakes will still get them
+		remove_list_global_variable = { name = earthquake_region_list target = geographical_region:world_europe }
+	}
+}
+
+BTWK_character_setup = {
+	effect = {
+		# Give offmap title trait to all relevant characters
+		every_independent_ruler = {
+			limit = { 
+				any_held_title = {
+					has_variable = is_offmap_title 
+				}
+			}
+			add_trait = offmap_ruler
+		}
+		# Remove Roman Military Training from anyone who shouldn't have it
+		every_living_character = {
+			BTWK_remove_ineligible_traits_effect = yes
+		}
+		
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			# Start Anglian Invasions a few months after start
+			character:80 ?= {
+				trigger_event = { id = BTWK_anglo_saxon_invasions.0001 days = { 120 240 } }
+				create_maa_regiment = {
+					type = landsknecht
+					check_can_recruit = no
+					size = 5
+				}
+			}
+			# Move East Anglian capital to Elmham
+			title:k_east_anglia = {
+				set_variable = custom_capital
+				set_capital_county = title:c_elmham
+			}
+			# Also give Cerdic some extra troops to help him out
+			character:86 ?= {
+				create_maa_regiment = {
+					type = landsknecht
+					check_can_recruit = no
+					size = 5
+				}
+				if = {
+					limit = { is_ai = yes }
+					spawn_army = {
+						name = SOUTH_SAXON_WARRIORS
+						levies = 200
+						men_at_arms = {
+							type = pikemen_unit
+							men = 200
+						}
+						men_at_arms = {
+							type = landsknecht
+							men = 150
+						}
+						men_at_arms = {
+							type = onager
+							men = 15
+						}
+						location = this.capital_province
+						inheritable = no
+					}
+				}
+			}
+			
+			# Trigger Derfel's Wolftails event 3-4 years after start
+			character:10 ?= {
+				trigger_event = { id = BTWK_story_event.0155 days = { 1095 1460 } }
+			}			
+			
+			# Remove claims of most king-level rulers on their vassals
+			every_independent_ruler = {
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege = prev }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Remove Corneu claims on each other
+			character:1 ?= {			# King Uther of Dumnonia
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_kernow } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:13 ?= {			# King Mark of Cornwall
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_dumnonia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Coeling
+			character:303 ?= {			# King Gwrast of Rheged
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:8004 ?= {			# Prince Pappo of Hen Ogledd 
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:1510 ?= {			# King Cygnar of Bryneich
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_jarrow
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+				add_pressed_claim = title:e_hen_ogledd
+			}
+			character:1511 ?= {			# Prince Bran of Bryneich
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_jarrow
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+				add_pressed_claim = title:e_hen_ogledd
+			}
+			character:135 ?= {			# King Arthwys of Peibion
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:365 ?= {			# King Einion of Ebrauc
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_elmet
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:15 ?= {			# King Cadwallon of Gwynedd (female line)
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:1381 ?= {			# King Dogfael of Dogfeilion (female line)
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_rheged
+								has_title = title:k_bryneich
+								has_title = title:k_pennines
+								has_title = title:k_ebrauc
+								has_title = title:k_elmet
+								has_title = title:c_praetorium
+							}							
+						}
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Macsen
+			character:1917 ?= {			# King Dingat of Novant
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_demetia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:6032 ?= {			# King Caradoc Freichfras of Cynllibiwg
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_gwent } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			# Some other misc claims that don't really make sense
+			character:18 ?= {			# King Gundleus of Siluria
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:d_westpowys } }
+					scope:current_char = { remove_claim = PREV }
+				}
+				every_sibling = {
+					save_scope_as = current_char
+					every_claim = {
+						limit = { holder.top_liege ?= { has_title = title:d_westpowys } }
+						scope:current_char = { remove_claim = PREV }
+					}
+				}
+			}
+			character:16 ?= {			# King Gorfyddyd of Powys
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_gwent } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:74 ?= {			# King Decimus of Linnius
+				save_scope_as = current_char
+				every_claim = {
+					limit = { holder.top_liege ?= { has_title = title:k_east_anglia } }
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			character:1388 ?= {			# King Anwrid of Manaw
+				save_scope_as = current_char
+				every_claim = {
+					limit = { 
+						holder.top_liege ?= { 
+							OR = {
+								has_title = title:k_lleyn 
+								has_title = title:k_gwynedd 
+							} 
+						}
+						# As a grandson of Cunedda it makes sense for him to have a weak claim
+						NOT = { this = title:k_gwynedd }
+					}
+					scope:current_char = { remove_claim = PREV }
+				}
+			}
+			
+			# Generate extra family members for Creoda of Lindsey as his line dying out early
+			# breaks Linnius quite a bit
+			character:1258 ?= {
+				save_scope_as = current_char
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					rite = this.rite
+					gender_female_chance = 0
+					age = 12
+					father = this
+					dynasty = inherit
+					save_scope_as = child_1
+				}
+				add_courtier = scope:child_1
+				create_character = {
+					location = this.location
+					culture = this.culture
+					faith = this.faith
+					rite = this.rite
+					gender_female_chance = 0
+					age = 7
+					father = this
+					dynasty = inherit
+					save_scope_as = child_2
+				}
+				add_courtier = scope:child_2
+			}
+			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
+				}
+			}
+		}
+		
+		# Save Aelle for tooltip purposes
+		title:e_aengland = {
+			set_variable = {
+				name = aelle_of_anglia_char
+				value = character:80
+			}
+		}
+	}
+}
+
+BTWK_de_jure_setup = {
+	effect = {		
+		# Arbitary character for convenience purposes
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
+		
+		### DEFAULT SETUP ###
+		every_county = {
+			set_variable = {
+				name = default_duchy
+				value = this.duchy
+			}
+		}
+		every_duchy = {
+			set_variable = {
+				name = default_kingdom
+				value = this.kingdom
+			}
+			set_variable = {
+				name = default_capital
+				value = this.title_capital_county
+			}
+		}
+		every_kingdom = {
+			set_variable = {
+				name = default_empire
+				value = this.empire
+			}
+			set_variable = {
+				name = default_capital
+				value = this.title_capital_county
+			}
+		}
+		
+		### DEFINE KINGDOM REGIONS ###
+		## geographical regions cannot hold variables and so we need to associate them with a title instead
+		## If you add a new one, you need to edit titular_titles.0001 in BTWK_titular_titles_events.txt
+		title:k_londinium = {
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_south_lloegyr }
+			title:k_belgae = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_cantuaria = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_londinium = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_icenia = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_cynwidion = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_lindum = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_glevum = { set_variable = { name = kingdom_region value = PREV } }
+		}
+		title:k_gwynedd = {
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_south_cymry }
+			title:k_dumnonia = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_kernow = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_gwent = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_powys = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_siluria = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_demetia = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_gwynedd = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_lleyn = { set_variable = { name = kingdom_region value = PREV } }
+		}
+		title:k_ebrauc = {
+			set_variable = { name = kingdom_geographical_region_var value = geographical_region:btwk_world_britannia_hen_ogledd }
+			title:k_ebrauc = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_elmet = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_pennines = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_rheged = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_bryneich = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_lothian = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_strathclyde = { set_variable = { name = kingdom_region value = PREV } }
+			title:k_ynys_man = { set_variable = { name = kingdom_region value = PREV } }
+		}
+		
+		every_kingdom = {
+			if = {
+				limit = { has_variable = kingdom_region }
+				this.var:kingdom_region = { 
+					add_to_variable_list = {
+						name = kingdom_region_titles
+						target = PREV
+					}
+				}
+			}
+		}
+		
+		# Initialize default kingdom region lieges
+		every_kingdom = {
+			if = {
+				limit = { has_variable_list = kingdom_region_titles }
+				set_variable = { name = kingdom_region_empire value = this.de_jure_liege }
+				add_to_global_variable_list = {
+					name = kingdom_region_list
+					target = THIS
+				}
+			}
+		}
+		
+		### ANGLO-SAXON TITLE SETUP ###
+		
+		## KENT
+		title:d_cantware = {
+			title:c_durovernum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_thanet = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_portus_dubris = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_portus_lemanis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_durolevum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cranbrook = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_durovernum }
+			set_variable = { name = creation_requirement_2 value = title:c_portus_dubris }
+			set_variable = { name = creation_requirement_2_alt value = title:c_durolevum }
+		}
+		title:d_westcantware = {
+			title:c_aylesford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_crayford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hadlow = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_noviomagus_cantiacorum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_kingston = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_the_downs = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_aylesford }
+			set_variable = { name = creation_requirement_1 value = title:c_crayford }
+		}
+		title:d_surrey = {
+			title:c_crondall = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_alaunodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_woking = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_godalming = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_noviomagus_cantiacorum = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_kingston = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_the_downs = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_woking }
+			set_variable = { name = creation_requirement_2 value = title:c_alaunodunum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_godalming }
+		}
+		
+		title:k_cantia = {
+			title:d_eastseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_the_weald = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_hampshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_winchestershire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## ESSEX
 		title:d_eastseaxe = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_camulodunum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_stour
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_tendring
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_dengie
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_thunreslea
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_dunmow
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_uttlesford
-			}
+			title:c_camulodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_stour = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tendring = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dengie = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_thunreslea = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dunmow = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_roding = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_dengie }
+			set_variable = { name = creation_requirement_1_alt value = title:c_thunreslea }
+			set_variable = { name = creation_requirement_2 value = title:c_camulodunum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_tendring }
 		}
 		title:d_middleseaxe = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_londinium
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_brinavis
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_east_lea
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_west_lea
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_verulanium
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_hertford
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_ash
-			}
+			title:c_londinium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_brinavis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_east_lea = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_west_lea = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_verulanium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hertford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ash = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_chesham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_uttlesford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_londinium }
+			set_variable = { name = creation_requirement_2 value = title:c_verulanium }
+			set_variable = { name = creation_requirement_2_alt value = title:c_brinavis }
 		}
 		
-		## KENT
-		title:d_cantware = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_durovernum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_thanet
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_portus_dubris
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_portus_lemanis
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_durolevum
-			}
-		}
-		title:d_westcantware = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_aylesford
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_crayford
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_noviomagus_cantiacorum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_kingston
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_the_downs
-			}
-		}
-		title:d_surrey = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_durnovaria
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_alaunodunum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_woking
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_godalming
-			}
+		title:k_eastseaxe = {
+			title:d_westcantware = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## SUSSEX
 		title:d_the_weald = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_regentium
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_portus_adurni
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_arundel
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_novus_portus
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_anderitum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_hastings
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_anderida
-			}
+			title:c_regentium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_arundel = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_novus_portus = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_anderitum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hastings = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_anderida = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_portus_adurni = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_regentium }
+			set_variable = { name = creation_requirement_2 value = title:c_arundel }
+			set_variable = { name = creation_requirement_2_alt value = title:c_novus_portus }
+		}
+		
+		title:k_sussex = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_hampshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_winchestershire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wiltshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
 		}
 		
 		## WESSEX
 		title:d_hampshire = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_clausentum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_lemanus
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_vectis
-			}
+			title:c_clausentum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lemanus = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vectis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_portus_adurni = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_clausentum }
+			set_variable = { name = creation_requirement_2 value = title:c_portus_adurni }
+			set_variable = { name = creation_requirement_2_alt value = title:c_vectis }
+		}
+		title:d_winchestershire = {
+			title:c_venta = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_somborne = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vindomis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_calleva = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_basing = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_andover = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_reading = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_spinae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_crondall = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_venta }
+			set_variable = { name = creation_requirement_2 value = title:c_andover }
+			set_variable = { name = creation_requirement_2_alt value = title:c_basing }
 		}
 		title:d_berkshire = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_venta
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_vindomis
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_calleva
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_andover
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_reading
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_spinae
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_vedonium
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_wantage
-			}
+			title:c_vedonium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_abingdon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wantage = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_durocornovium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_alchester = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dorchester = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lechlade = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wychwood = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_reading = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_spinae = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_alaunodunum = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_dorchester }
+			set_variable = { name = creation_requirement_1_alt value = title:c_vedonium }
+			set_variable = { name = creation_requirement_2 value = title:c_abingdon }
+			set_variable = { name = creation_requirement_2_alt value = title:c_wantage }
+		}
+		title:d_cilternsaete = {
+			title:c_aylesbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_chiltern_hills = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bensington = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dorchester = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_aylesbury }
+			set_variable = { name = creation_requirement_1_alt value = title:c_bensington }
 		}
 		title:d_wiltshire = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_sorviodunum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_ambra
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_tisbury
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_verlucio
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_cunetio
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_durocornovium
-			}
+			title:c_sorviodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ambra = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tisbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_verlucio = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cunetio = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_barbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_malmesbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_chippenham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_durocornovium = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_sorviodunum }
+			set_variable = { name = creation_requirement_2 value = title:c_ambra }
+			set_variable = { name = creation_requirement_2_alt value = title:c_barbury }
 		}
 		title:d_dorset = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_durnovaria
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_velox
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_vindocladia
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_dunum
-			}
+			title:c_durnovaria = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bridport = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_velox = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vindocladia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_shaftesbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_sherborne = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_durnovaria }
+			set_variable = { name = creation_requirement_2 value = title:c_sherborne }
+			set_variable = { name = creation_requirement_2_alt value = title:c_bridport }
 		}
 		title:d_somerset = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_lindinis
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_peonnum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_avalon
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_tone
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_caer_draitou
-			}
+			title:c_lindinis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_petherton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_peonnum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_avalon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_iscalis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tone = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cynwit = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_caer_draitou = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_frome = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_abona = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_lindinis }
+			set_variable = { name = creation_requirement_2 value = title:c_avalon }
+			set_variable = { name = creation_requirement_2_alt value = title:c_iscalis }
+			set_variable = { name = creation_requirement_3 value = title:c_cynwit }
+			set_variable = { name = creation_requirement_3_alt value = title:c_tone }
 		}
 		title:d_devon = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_isca_dumnonia
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_muridunum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_nemetostatio
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_milidunum
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_tamaris
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_hartland
-			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_pilton
-			}
+			title:c_isca_dumnonia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_muridunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_nemetostatio = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_milidunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tamaris = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hartland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_pilton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dulverton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_isca_dumnonia }
+			set_variable = { name = creation_requirement_2 value = title:c_milidunum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_pilton }
 		}
 		title:d_cornwall = {
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_din_tagell
+			title:c_din_tagell = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_triggshire = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_liskeard = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bodmin = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_voliba = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lands_end = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lyonesse = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_liskeard }
+			set_variable = { name = creation_requirement_2 value = title:c_bodmin }
+		}
+		
+		title:k_wessex = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_the_weald = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_hwicce = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		## EAST ANGLIA
+		title:d_norfolc = {
+			title:c_nortwic = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_thetford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gariannonum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_elmham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_branodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lynn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_swaffham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_elmham }
+			set_variable = { name = creation_requirement_2 value = title:c_nortwic }
+			set_variable = { name = creation_requirement_2_alt value = title:c_thetford }
+		}
+		title:d_southfolc = {
+			title:c_rendlesham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_blything = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hoxne = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gippelwich = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_beodericsworth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_camboritum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_exning = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_rendlesham }
+			set_variable = { name = creation_requirement_2 value = title:c_gippelwich }
+		}
+		title:d_grentbryce = {
+			title:c_grantabrycge = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ely = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_huntingdon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vicanus = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_godmundceaster = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_grantabrycge }
+		}
+		title:d_gyrwas = {
+			title:c_durobrivae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_peterborough = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wisbech = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wisse = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_the_fens = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_stamford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_peterborough }
+			set_variable = { name = creation_requirement_1_alt value = title:c_durobrivae }
+			set_variable = { name = creation_requirement_2 value = title:c_wisbech }
+			set_variable = { name = creation_requirement_2_alt value = title:c_the_fens }
+		}
+		
+		title:k_east_anglia = {
+			title:d_hiccas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middle_angles = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_south_angles = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_lindsey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		## MERCIA
+		title:d_hiccas = {
+			title:c_durocobrivis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hitchin = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wing = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ivel = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_durocobrivis }
+			set_variable = { name = creation_requirement_2 value = title:c_hitchin }
+		}
+		title:d_middle_angles = {
+			title:c_irthlingborough = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ratae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_harborough = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lillingas = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_sence = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tripontium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_soar = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wreake = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vernemetum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_margidunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_rutland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_oundle = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_leam = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_ratae }
+			set_variable = { name = creation_requirement_2 value = title:c_oundle }
+			set_variable = { name = creation_requirement_2_alt value = title:c_tripontium }
+		}
+		title:d_south_angles = {
+			title:c_lactodorum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_magiovinium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bannaventa = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bedford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_brinavae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_alchester = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_bannaventa }
+			set_variable = { name = creation_requirement_2 value = title:c_lactodorum }
+		}
+		title:d_mercia = {
+			title:c_arden_forest = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wolverhampton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_letocetum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tamworth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_repton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_breedon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_burton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_pennocrucium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_stafford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_stoke_on_trent = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_tamworth }
+			set_variable = { name = creation_requirement_2 value = title:c_letocetum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_repton }
+		}
+		title:d_pecsaete = {
+			title:c_lutudarum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bakewell = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_aquae_arnemetiae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dovedale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_scarsdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hollingworth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cheadle = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_bakewell }
+			set_variable = { name = creation_requirement_2 value = title:c_lutudarum }
+		}
+		title:d_wrocensaete = {
+			title:c_pengwern = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_oswestry = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_whitchurch = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_viroconium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tegeingl = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_maelor = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_deva = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_english_maelor = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_wirral = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_nantwich = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_runcorn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_middlewich = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_viroconium }
+			set_variable = { name = creation_requirement_2 value = title:c_deva }
+		}
+		title:d_magonsaete = {
+			title:c_ariconium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_newent = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cantref_coch = { 
+				set_variable = { name = anglo_saxon_duchy value = PREV } 
+				set_variable = { name = anglo_saxon_duchy_dependency value = title:d_monmouthshire } 
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_liskeard
+			title:c_ergyng = { 
+				set_variable = { name = anglo_saxon_duchy value = PREV } 
+				set_variable = { name = anglo_saxon_duchy_dependency value = title:d_monmouthshire } 
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_bodmin
+			title:c_ewyas = { 
+				set_variable = { name = anglo_saxon_duchy value = PREV } 
+				set_variable = { name = anglo_saxon_duchy_dependency value = title:d_monmouthshire } 
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_voliba
+			title:c_trefyclawdd = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_bravonium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wigmore = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wenlock = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_chirbury = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_montgomery = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_magnis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lugg_vale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_pensax = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ludlow = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_magnis }
+			set_variable = { name = creation_requirement_2 value = title:c_wenlock }
+			set_variable = { name = creation_requirement_2_alt value = title:c_lugg_vale }
+		}
+		title:d_hwicce = {
+			title:c_corinium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_withington = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_aquae_sulis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_glevum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_winchcombe = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_avona = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_salinae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_husmerae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_alcester = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_warwick = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lechlade = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			title:c_wychwood = { set_variable = { name = expansion_anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_avona }
+			set_variable = { name = creation_requirement_1_alt value = title:c_glevum }
+			set_variable = { name = creation_requirement_2 value = title:c_corinium }
+			set_variable = { name = creation_requirement_2_alt value = title:c_aquae_sulis }
+		}
+		
+		title:k_mercia = {
+			title:d_surrey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middleseaxe = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_berkshire = { add_to_variable_list = { name = integration_kingdoms target = PREV } }		# Only after reorganization
+			title:d_cilternsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_grentbryce = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_gyrwas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_lindsey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_mersey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		## DEIRA
+		title:d_deira = {
+			title:c_derventio = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_falsgrave = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_praetorium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_delgovicia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_petuaria = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_holderness = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_whitby = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_praetorium }
+			set_variable = { name = creation_requirement_1_alt value = title:c_petuaria }
+			set_variable = { name = creation_requirement_2 value = title:c_delgovicia }
+			set_variable = { name = creation_requirement_2_alt value = title:c_derventio }
+		}
+		title:d_eoforwic = {
+			title:c_eburacum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ainsty = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_easingwold = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_isurium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cataractonium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lavatrae = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_allerton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_eburacum }
+			set_variable = { name = creation_requirement_2 value = title:c_isurium }
+			set_variable = { name = creation_requirement_2_alt value = title:c_ainsty }
+		}
+		title:d_lindsey = {
+			title:c_lindum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_segelocum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ad_abum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_luda = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_banovallum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_sleaford = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_axholme = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hatfield = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bassetlaw = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_lindum }
+			set_variable = { name = creation_requirement_2 value = title:c_ad_abum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_sleaford }
+		}
+		title:d_elmetsaete = {
+			title:c_loidis = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_selby = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_campodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_legiolium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_danum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hallam = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_staincross = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_rigodunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_loidis }
+			set_variable = { name = creation_requirement_2 value = title:c_campodunum }
+			set_variable = { name = creation_requirement_2_alt value = title:c_danum }
+		}
+		title:d_craven = {
+			title:c_dent = { set_variable = { name = secondary_anglo_saxon_duchy value = PREV } }
+			title:c_stainforth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_varfedale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_varfedale }
+		}
+		title:d_mersey = {
+			title:c_leyland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_blackburn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_mamucium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_coccium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_west_derby = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_mamucium }
+			set_variable = { name = creation_requirement_2 value = title:c_west_derby }
+			set_variable = { name = creation_requirement_2_alt value = title:c_coccium }
+		}
+		title:d_lancaster = {
+			title:c_dent = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_furness = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_kendal = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_bravoniacum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_setantia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lancaster = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_lancaster }
+			set_variable = { name = creation_requirement_2 value = title:c_furness }
+			set_variable = { name = creation_requirement_2_alt value = title:c_setantia }
+		}
+		
+		title:k_deira = {
+			title:d_pecsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wrocensaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		## BERNICIA
+		title:d_bernicia = {
+			title:c_bernicia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_medcaut = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gefrin = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_breamish = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_merse = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lammermuirs = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_teviotdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_bernicia }
+			set_variable = { name = creation_requirement_1_alt value = title:c_gefrin }
+			set_variable = { name = creation_requirement_2 value = title:c_medcaut }
+			set_variable = { name = creation_requirement_2_alt value = title:c_teviotdale }
+		}
+		title:d_tynedale = {
+			title:c_coriosopitum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vindobala = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_hexham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_jarrow = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_old_tyne = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_billingham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_vinovia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_darlington = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_coquet = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tynemouth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_stamfordham = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_redesdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_jarrow }
+			set_variable = { name = creation_requirement_2 value = title:c_hexham }
+			set_variable = { name = creation_requirement_2_alt value = title:c_old_tyne }
+			set_variable = { name = creation_requirement_3 value = title:c_tynemouth }
+			set_variable = { name = creation_requirement_3_alt value = title:c_vindobala }
+		}
+		title:d_angletweeddale = {
+			title:c_jedburgh = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_selkirk = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wedale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_jedburgh }
+		}
+		title:d_cumbria = {
+			title:c_luguvalium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gilsland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_eden = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_wigton = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_derwent = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_copeland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_armterid = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_luguvalium }
+			set_variable = { name = creation_requirement_2 value = title:c_wigton }
+			set_variable = { name = creation_requirement_2_alt value = title:c_armterid }
+		}
+		title:d_anglelothian = {
+			title:c_dunpelder = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_din_eidyn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_inveresk = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_abercorn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_dunpelder }
+			set_variable = { name = creation_requirement_2 value = title:c_din_eidyn }
+		}
+		title:d_dumfriesshire = {
+			title:c_liddesdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_eskdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_annandale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_north_annandale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_nithsdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_north_nithsdale = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_nithsdale }
+			set_variable = { name = creation_requirement_2 value = title:c_annandale }
+		}
+		title:d_anglegalloway = {
+			title:c_desnes_ioan = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_novantia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_rhinns = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_desnes_mor = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_glenkens = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_novantia }
+			set_variable = { name = creation_requirement_2 value = title:c_rhinns }
+			set_variable = { name = creation_requirement_2_alt value = title:c_desnes_mor }
+		}
+		title:d_ayrshire = {
+			title:c_ayr = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cunninghame = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_north_cunninghame = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_southayr = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_ayr }
+			set_variable = { name = creation_requirement_2 value = title:c_cunninghame }
+		}
+		title:d_lanarkshire = {
+			title:c_govan = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cadzow = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lanark = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_renfrew = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_strathgryffe = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_peebles = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_lanark }
+			set_variable = { name = creation_requirement_2 value = title:c_govan }
+		}
+		title:d_stirlingshire = {
+			title:c_stirling = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_falkirk = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_clackmannan = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_stirling }
+			set_variable = { name = creation_requirement_2 value = title:c_abercorn }
+		}
+		title:d_anglelennox = {
+			title:c_altclut = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_lumonwy = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_strathblane = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_kirkintilloch = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			# TEMPORARY - eventually to go in d_perthshire
+			title:c_menteith = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_altclut }
+		}
+		title:d_anglemann = {
+			title:c_ynys_man = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_manann = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_german = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_german }
+		}
+		
+		title:k_bernicia = {
+			title:d_pecsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wrocensaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		title:k_lindsey = {
+			title:d_gyrwas = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_middle_angles = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_mercia = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_pecsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wrocensaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_lindsey = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_elmetsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+		}
+		
+		title:k_northumbria = {
+			title:d_pecsaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:d_wrocensaete = { add_to_variable_list = { name = integration_kingdoms target = PREV } }
+			title:k_deira = { every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = title:k_northumbria } } }
+			title:k_bernicia = { every_direct_de_jure_vassal_title = { add_to_variable_list = { name = integration_kingdoms target = title:k_northumbria } } }
+		}
+		
+		## WALES
+		title:d_monmouthshire = {
+			title:c_venta_siluria = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_burrium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_isca_siluria = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gobannium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gwynllwg = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_machen = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_gobannium }
+			set_variable = { name = creation_requirement_2 value = title:c_venta_siluria }
+		}
+		title:d_glamorganshire = {
+			title:c_penychen = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_meisgyn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_gwrinydd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_nidum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_leucarum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_penychen }
+			set_variable = { name = creation_requirement_2 value = title:c_gwrinydd }
+			set_variable = { name = creation_requirement_2_alt value = title:c_leucarum }
+		}
+		title:d_brecknockshire = {
+			title:c_buelt = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_talgarth = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cicucium = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cantref_tewdos = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_cicucium }
+			set_variable = { name = creation_requirement_2 value = title:c_buelt }
+			set_variable = { name = creation_requirement_2_alt value = title:c_talgarth }
+		}
+		title:d_carmarthenshire = {
+			title:c_moridunum = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_emlyn = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dinefwr = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_llanymddyfri = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cydweli = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_moridunum }
+			set_variable = { name = creation_requirement_2 value = title:c_dinefwr }
+		}
+		title:d_pembrokeshire = {
+			title:c_pembroke = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_roose = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_menevia = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cemais = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_pembroke }
+			set_variable = { name = creation_requirement_2 value = title:c_roose }
+			set_variable = { name = creation_requirement_2_alt value = title:c_menevia }
+		}
+		title:d_cardiganshire = {
+			title:c_ceredigion = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_penweddig = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cardigan = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_cardigan }
+			set_variable = { name = creation_requirement_2 value = title:c_ceredigion }
+		}
+		title:d_radnorshire = {
+			title:c_gwrtheyrnion = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_maelienydd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_elfael = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_trefyclawdd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_trefyclawdd }
+			set_variable = { name = creation_requirement_2 value = title:c_maelienydd }
+			set_variable = { name = creation_requirement_2_alt value = title:c_elfael }
+		}
+		title:d_montgomeryshire = {
+			title:c_caer_swys = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_caereinion = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dinnewrac = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ceri = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_montgomery = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_montgomery }
+			set_variable = { name = creation_requirement_2 value = title:c_caereinion }
+			set_variable = { name = creation_requirement_2_alt value = title:c_caer_swys }
+		}
+		title:d_denbighshire = {		# Includes Flintshire
+			title:c_chirkland = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_deganwy = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_rhufoniog = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dogfeiling = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_tegeingl = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ial = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_maelor = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_english_maelor = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_rhufoniog }
+			set_variable = { name = creation_requirement_2 value = title:c_deganwy }
+		}
+		title:d_caernarfonshire = {		# Includes Anglesey
+			title:c_arfon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_arllechwedd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_henis_wyren = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_ynys_mon = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_rhosyr = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_cemaes = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_eifionydd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_arfon }
+			set_variable = { name = creation_requirement_2 value = title:c_ynys_mon }
+			set_variable = { name = creation_requirement_2_alt value = title:c_arllechwedd }
+		}
+		title:d_merionethshire = {
+			title:c_mawddwy = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_caer_gei = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_edeyrnion = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_meirionnydd = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			title:c_dunoding = { set_variable = { name = anglo_saxon_duchy value = PREV } }
+			set_variable = { name = creation_requirement_1 value = title:c_meirionnydd }
+			set_variable = { name = creation_requirement_2 value = title:c_caer_gei }
+			set_variable = { name = creation_requirement_2_alt value = title:c_dunoding }
+		}
+		
+		### ROMAN TITLE SETUP ###
+		# If names are updated, the set_roman_duchy_name_effect also needs to be updated!
+		
+		## MAXIMA CAESARIENSIS
+		title:k_maxima_cesariensis = {
+			title:d_lundein = {			# Londiniensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_londiniensia }
+				title:c_londinium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_brinavis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_west_lea = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_east_lea = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_londinium }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_middleseaxe }
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_lands_end
+			title:d_mincip = {			# Catuvellaunia		
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_catuvellaunia }
+				set_variable = { name = roman_adj value = flag:cn_catuvellaunia_adj }
+				set_variable = { name = roman_default_name value = flag:cn_municipium }
+				set_variable = { name = roman_default_adj value = flag:cn_municipium_adj }
+				set_variable = { name = greek_name value = flag:cn_catuvellaunia_greek }
+				set_variable = { name = greek_adj value = flag:cn_catuvellaunia_greek_adj }
+				set_variable = { name = greek_default_name value = flag:cn_municipium_greek }
+				set_variable = { name = greek_default_adj value = flag:cn_municipium_greek_adj }
+				title:c_verulanium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hertford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_chesham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ash = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_durocobrivis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hitchin = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wing = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_aylesbury = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_chiltern_hills = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bensington = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_alchester = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dorchester = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_verulanium }
+				set_variable = { name = creation_requirement_2 value = title:c_durocobrivis }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_middleseaxe }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_hiccas }
 			}
-			add_to_variable_list = {
-				name = de_jure_territory
-				target = title:c_lyonesse
+			title:d_trinovantia = {		# Trinovantia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_trinovantia }
+				title:c_camulodunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stour = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tendring = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dengie = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_thunreslea = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dunmow = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_roding = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_uttlesford = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_camulodunum }
+				set_variable = { name = creation_requirement_2 value = title:c_dengie }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_eastseaxe }
+			}
+			title:d_cantuaria = {		# Cantiacia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_cantiacia }
+				title:c_durovernum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_thanet = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_portus_dubris = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_portus_lemanis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_durolevum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cranbrook = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_aylesford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_crayford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hadlow = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_noviomagus_cantiacorum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_kingston = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_the_downs = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_durovernum }
+				set_variable = { name = creation_requirement_2 value = title:c_aylesford }
+				set_variable = { name = creation_requirement_3 value = title:c_portus_dubris }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_cantware }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_westcantware }
+			}
+			title:d_rhegin = {			# Regnia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_regnia }
+				title:c_regentium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_arundel = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_novus_portus = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_anderitum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hastings = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_anderida = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_portus_adurni = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_regentium }
+				set_variable = { name = creation_requirement_2 value = title:c_anderitum }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_the_weald }
+			}
+			title:d_eastdumnonia = {	# Atrebatia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_atrebatia }
+				title:c_calleva = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_basing = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_andover = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_reading = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_spinae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vedonium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cunetio = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_crondall = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_alaunodunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_woking = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_godalming = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_calleva }
+				set_variable = { name = creation_requirement_2 value = title:c_cunetio }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_hampshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_surrey }
+			}
+			title:d_the_belgae = {		# Belgia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_belgia }
+				title:c_venta = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_somborne = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vindomis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_clausentum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lemanus = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vectis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_sorviodunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ambra = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_verlucio = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_venta }
+				set_variable = { name = creation_requirement_2 value = title:c_clausentum }
+				set_variable = { name = creation_requirement_3 value = title:c_sorviodunum }
+				set_variable = { name = creation_requirement_3_alt value = title:c_lemanus }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_hampshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_wiltshire }
+			}
+		}		
+		
+		## FLAVIA CAESARIENSIS
+		title:k_flavia_cesariensis = {
+			title:d_lindum = {			# Lindinensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_lindinensia }
+				title:c_lindum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_segelocum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ad_abum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_luda = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_banovallum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_sleaford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_axholme = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hatfield = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bassetlaw = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_lindum }
+				set_variable = { name = creation_requirement_2 value = title:c_banovallum }
+				set_variable = { name = creation_requirement_2_alt value = title:c_luda }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_lindsey }
+			}
+			title:d_the_fens = {		# Durobrivensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_durobrivensia }
+				title:c_ely = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_huntingdon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_durobrivae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_peterborough = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wisbech = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wisse = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_the_fens = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stamford = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_durobrivae }
+				set_variable = { name = creation_requirement_2 value = title:c_wisbech }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_gyrwas }
+			}
+			title:d_went = {			# Icenia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_icenia }
+				title:c_nortwic = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_thetford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gariannonum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_elmham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_branodunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lynn = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_swaffham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rendlesham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_blything = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hoxne = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gippelwich = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_beodericsworth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_camboritum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_exning = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_grantabrycge = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_nortwic }
+				set_variable = { name = creation_requirement_2 value = title:c_gippelwich }
+				set_variable = { name = creation_requirement_2_alt value = title:c_beodericsworth }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_norfolc }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_southfolc }
+			}
+			title:d_eastgwent = {		# Lactodurensia	
+				set_variable = { name = roman_kingdom value = PREV }	
+				set_variable = { name = roman_name value = flag:cn_lactodorensia }
+				title:c_lactodorum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_magiovinium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bannaventa = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_irthlingborough = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ivel = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bedford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vicanus = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_godmundceaster = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_lactodorum }
+				set_variable = { name = creation_requirement_2 value = title:c_bannaventa }
+				set_variable = { name = creation_requirement_2_alt value = title:c_magiovinium }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_south_angles }
+			}
+			title:d_lerion = {			# Corieltauvia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_corieltauvia }
+				title:c_ratae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_harborough = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lillingas = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_sence = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tripontium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_soar = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wreake = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vernemetum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_margidunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rutland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_oundle = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_ratae }
+				set_variable = { name = creation_requirement_2 value = title:c_tripontium }
+				set_variable = { name = creation_requirement_3 value = title:c_vernemetum }
+				set_variable = { name = creation_requirement_3_alt value = title:c_margidunum }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_middle_angles }
+			}
+			title:d_the_peak = {		# Lutadorensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_lutudarensia }
+				title:c_lutudarum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bakewell = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_aquae_arnemetiae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dovedale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_scarsdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hollingworth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_repton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_breedon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cheadle = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_lutudarum }
+				set_variable = { name = creation_requirement_2 value = title:c_aquae_arnemetiae }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_pecsaete }
 			}
 		}
-
-		# Mark some faiths to block conversion till specific decisions are taken.
-		# TODO Block all Muslim faiths until it appears
-		# religion:islam_religion = {
-			# set_variable = { name = block_conversion_till_decision_taken }
+		
+		## BRITANNIA PRIMA		
+		title:k_britannia_prima = {
+			title:d_corinium = {		# Dobunnia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_dobunnia }
+				title:c_corinium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lechlade = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_malmesbury = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_withington = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wychwood = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_abingdon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wantage = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_durocornovium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_barbury = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_brinavae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_aquae_sulis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_chippenham = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_corinium }
+				set_variable = { name = creation_requirement_2 value = title:c_aquae_sulis }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_hwicce }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_wiltshire }
+			}
+			title:d_centgwent = {		# Glevensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_glevensia }
+				title:c_glevum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_winchcombe = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_avona = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_salinae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_husmerae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_alcester = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_warwick = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_leam = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_arden_forest = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ariconium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_newent = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cantref_coch = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_magnis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lugg_vale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_pensax = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_glevum }
+				set_variable = { name = creation_requirement_2 value = title:c_avona }
+				set_variable = { name = creation_requirement_2_alt value = title:c_magnis }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_hwicce }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_magonsaete }
+			}
+			title:d_avalon = {			# Lendeniensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_lindinis }
+				set_variable = { name = roman_name value = flag:cn_lendeniensia }
+				title:c_lindinis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_peonnum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_avalon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_iscalis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_frome = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_abona = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_lindinis }
+				set_variable = { name = creation_requirement_2 value = title:c_iscalis }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_somerset }
+			}
+			title:d_centdumnonia = {	# Durotrigia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_durotrigia }
+				title:c_durnovaria = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bridport = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_velox = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vindocladia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_shaftesbury = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_sherborne = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tisbury = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_durnovaria }
+				set_variable = { name = creation_requirement_2 value = title:c_vindocladia }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_dorset }
+			}
+			title:d_westdumnonia = {	# Dumnonia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_dumnonia }
+				set_variable = { name = roman_adj value = flag:cn_dumnonia_adj }
+				set_variable = { name = roman_default_name value = flag:cn_isca }
+				set_variable = { name = roman_default_adj value = flag:cn_isca_adj }
+				set_variable = { name = greek_name value = flag:cn_dumnonia_greek }
+				set_variable = { name = greek_adj value = flag:cn_dumnonia_greek_adj }
+				set_variable = { name = greek_default_name value = flag:cn_isca_greek_loc }
+				set_variable = { name = greek_default_adj value = flag:cn_isca_greek_loc_adj }
+				title:c_petherton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tone = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cynwit = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_caer_draitou = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_isca_dumnonia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_muridunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_nemetostatio = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_milidunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tamaris = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hartland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_pilton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dulverton = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_isca_dumnonia }
+				set_variable = { name = creation_requirement_2 value = title:c_tamaris }
+				set_variable = { name = creation_requirement_3 value = title:c_muridunum }
+				set_variable = { name = creation_requirement_3_alt value = title:c_tone }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_devon }
+			}
+			title:d_kernow = {			# Cornubia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_cornubia }
+				title:c_din_tagell = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_triggshire = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_liskeard = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bodmin = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_voliba = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lands_end = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lyonesse = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_din_tagell }
+				set_variable = { name = creation_requirement_2 value = title:c_liskeard }
+				set_variable = { name = creation_requirement_3 value = title:c_voliba }
+				set_variable = { name = creation_requirement_3_alt value = title:c_lands_end }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_cornwall }
+			}
+			title:d_gwent = {			# Siluria
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_siluria }
+				set_variable = { name = roman_adj value = flag:cn_siluria_adj }
+				set_variable = { name = roman_default_name value = flag:cn_ventensia }
+				set_variable = { name = roman_default_adj value = flag:cn_ventensia_adj }
+				set_variable = { name = greek_name value = flag:cn_siluria_greek }
+				set_variable = { name = greek_adj value = flag:cn_siluria_greek_adj }
+				set_variable = { name = greek_default_name value = flag:cn_venta_greek }
+				set_variable = { name = greek_default_adj value = flag:cn_venta_greek }
+				title:c_ergyng = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_venta_siluria = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_burrium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_isca_siluria = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gobannium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ewyas = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_buelt = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gwynllwg = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_machen = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_penychen = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_meisgyn = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gwrinydd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_nidum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_leucarum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_talgarth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cicucium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cantref_tewdos = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_venta_siluria }
+				set_variable = { name = creation_requirement_2 value = title:c_isca_siluria }
+				set_variable = { name = creation_requirement_3 value = title:c_nidum }
+				set_variable = { name = creation_requirement_3_alt value = title:c_leucarum }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_monmouthshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_glamorganshire }
+			}
+			title:d_deheubarth = {	# Demetia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_demetia }
+				title:c_moridunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_pembroke = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_roose = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_menevia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cemais = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_emlyn = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dinefwr = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_llanymddyfri = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cydweli = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ceredigion = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_penweddig = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cardigan = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_moridunum }
+				set_variable = { name = creation_requirement_2 value = title:c_dinefwr }
+				set_variable = { name = creation_requirement_3 value = title:c_menevia }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_carmarthenshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_pembrokeshire }
+			}
+			title:d_eastpowys = {		# Cornovia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_viroconium }
+				set_variable = { name = roman_name value = flag:cn_cornovia }
+				title:c_caer_swys = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_mawddwy = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_caereinion = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dinnewrac = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_chirkland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gwrtheyrnion = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_maelienydd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ceri = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_elfael = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_trefyclawdd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bravonium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wigmore = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_pengwern = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_oswestry = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_whitchurch = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_viroconium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wolverhampton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wenlock = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_chirbury = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_montgomery = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ludlow = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_viroconium }
+				set_variable = { name = creation_requirement_2 value = title:c_bravonium }
+				set_variable = { name = creation_requirement_3 value = title:c_caer_swys }
+				set_variable = { name = creation_requirement_3_alt value = title:c_caereinion }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_wrocensaete }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_magonsaete }
+				set_variable = { name = creation_requirement_title_unformed_3 value = title:d_montgomeryshire }
+			}
+			title:d_luitcoyt = {		# Letocetum ("Letocetensia")
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_letocetensia }
+				title:c_letocetum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tamworth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_burton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_pennocrucium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stafford = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stoke_on_trent = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_letocetum }
+				set_variable = { name = creation_requirement_2 value = title:c_repton }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_mercia }
+			}
+			title:d_deva = {			# Deva ("Devensia")
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_devensia }
+				title:c_deva = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_english_maelor = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wirral = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_nantwich = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_middlewich = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_deva }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_wrocensaete }
+			}
+			title:d_arfon = {			# Venedotia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_venedotia }
+				title:c_deganwy = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rhufoniog = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_caer_gei = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_edeyrnion = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_arfon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_arllechwedd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_henis_wyren = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ynys_mon = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rhosyr = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cemaes = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_meirionnydd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dunoding = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_eifionydd = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dogfeiling = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tegeingl = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ial = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_maelor = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_arfon }
+				set_variable = { name = creation_requirement_2 value = title:c_caer_gei }
+				set_variable = { name = creation_requirement_2_alt value = title:c_arllechwedd }
+				set_variable = { name = creation_requirement_3 value = title:c_meirionnydd }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_caernarfonshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_merionethshire }
+				set_variable = { name = creation_requirement_title_unformed_3 value = title:d_denbighshire }
+			}
+		}
+		
+		## BRITANNIA SECUNDA
+		title:k_britannia_secunda = {
+			title:d_ebrauc = {			# Eboracensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_eboracensia }
+				title:c_eburacum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ainsty = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_loidis = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_selby = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_campodunum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_legiolium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_danum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hallam = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_staincross = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rigodunum = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_eburacum }
+				set_variable = { name = creation_requirement_2 value = title:c_legiolium }
+				set_variable = { name = creation_requirement_2_alt value = title:c_campodunum }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_eoforwic }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_elmetsaete }
+			}
+			title:d_deifr = {			# Parisia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_parisia }
+				title:c_derventio = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_falsgrave = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_praetorium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_delgovicia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_petuaria = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_holderness = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_whitby = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_derventio }
+				set_variable = { name = creation_requirement_2 value = title:c_petuaria }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_deira }
+			}
+			title:d_catraeth = {			# Brigantia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_isurium }
+				set_variable = { name = roman_name value = flag:cn_brigantia }
+				set_variable = { name = roman_adj value = flag:cn_brigantia_adj }
+				set_variable = { name = roman_default_name value = flag:cn_cataractonensia }
+				set_variable = { name = roman_default_adj value = flag:cn_cataractonensia_adj }
+				set_variable = { name = greek_name value = flag:cn_brigantia_greek }
+				set_variable = { name = greek_adj value = flag:cn_brigantia_greek_adj }
+				set_variable = { name = greek_default_name value = flag:cn_cataractonensia_greek }
+				set_variable = { name = greek_default_adj value = flag:cn_cataractonensia_greek }
+				title:c_easingwold = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_isurium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cataractonium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lavatrae = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_allerton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dent = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stainforth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_varfedale = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_isurium }
+				set_variable = { name = creation_requirement_2 value = title:c_cataractonium }
+				set_variable = { name = creation_requirement_2_alt value = title:c_varfedale }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_deira }
+			}
+			title:d_argoed = {		# Setantia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_setantia }
+				title:c_setantia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lancaster = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_leyland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_blackburn = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_mamucium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_coccium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_west_derby = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_runcorn = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_setantia }
+				set_variable = { name = creation_requirement_2 value = title:c_lancaster }
+				set_variable = { name = creation_requirement_3 value = title:c_mamucium }
+				set_variable = { name = creation_requirement_3_alt value = title:c_coccium }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_lancaster }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_mersey }
+			}
+		}
+		
+		## VALENTIA
+		title:k_valentia = {
+			title:d_westrheged = {	# Carvetia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_carvetia }
+				title:c_luguvalium = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gilsland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_eden = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wigton = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_derwent = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_copeland = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_furness = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_kendal = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_bravoniacum = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_luguvalium }
+				set_variable = { name = creation_requirement_2 value = title:c_derwent }
+				set_variable = { name = creation_requirement_2_alt value = title:c_copeland }
+				set_variable = { name = creation_requirement_3 value = title:c_eden }
+				set_variable = { name = creation_requirement_3_alt value = title:c_bravoniacum }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_cumbria }
+			}
+			title:d_eastrheged = {	# Textoverdia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_textoverdia }
+				title:c_coriosopitum = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vindobala = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_hexham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_jarrow = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_old_tyne = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_billingham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_vinovia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_darlington = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_coriosopitum }
+				set_variable = { name = creation_requirement_2 value = title:c_hexham }
+				set_variable = { name = creation_requirement_2_alt value = title:c_old_tyne }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_tynedale }
+			}
+			title:d_bryneich = {		# Bremenensia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_redesdale }
+				set_variable = { name = roman_name value = flag:cn_bremenensia }
+				title:c_bernicia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_medcaut = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_gefrin = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_breamish = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_coquet = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_tynemouth = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_stamfordham = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_redesdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_jedburgh = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_teviotdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_selkirk = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_redesdale }
+				set_variable = { name = creation_requirement_2 value = title:c_bernicia }
+				set_variable = { name = creation_requirement_2_alt value = title:c_medcaut }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_bernicia }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_tynedale }
+			}
+			title:d_eidyn = {			# Votadinia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_dunpelder }
+				set_variable = { name = roman_name value = flag:cn_votadinia }
+				title:c_merse = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_dunpelder = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_wedale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lammermuirs = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_din_eidyn = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_inveresk = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_abercorn = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_dunpelder }
+				set_variable = { name = creation_requirement_2 value = title:c_din_eidyn }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_anglelothian }
+			}
+			title:d_selgovae = {		# Selgovia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_annandale }
+				set_variable = { name = roman_name value = flag:cn_selgovia }
+				title:c_armterid = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_liddesdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_eskdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_annandale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_north_annandale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_nithsdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_north_nithsdale = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_desnes_ioan = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_annandale }
+				set_variable = { name = creation_requirement_2 value = title:c_armterid }
+				set_variable = { name = creation_requirement_3 value = title:c_nithsdale }
+				set_variable = { name = creation_requirement_3_alt value = title:c_desnes_ioan }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_dumfriesshire }
+			}
+			title:d_strathclyde = {	# Damnonia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_title_capital value = title:c_cadzow }
+				set_variable = { name = roman_name value = flag:cn_damnonia }
+				title:c_peebles = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_kirkintilloch = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_govan = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cadzow = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lanark = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_renfrew = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_strathgryffe = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_ayr = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_cunninghame = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_north_cunninghame = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_falkirk = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_cadzow }
+				set_variable = { name = creation_requirement_2 value = title:c_ayr }
+				set_variable = { name = creation_requirement_3 value = title:c_govan }
+				set_variable = { name = creation_requirement_3_alt value = title:c_kirkintilloch }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_lanarkshire }
+				set_variable = { name = creation_requirement_title_unformed_2 value = title:d_ayrshire }
+			}
+			title:d_galloway = {		# Novantia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_novantia }
+				title:c_southayr = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_novantia = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_rhinns = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_desnes_mor = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_glenkens = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_novantia }
+				set_variable = { name = creation_requirement_2 value = title:c_desnes_mor }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_anglegalloway }
+			}
+			title:d_ynys_man = {		# Monapia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_monapia }
+				title:c_ynys_man = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_manann = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_german = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_german }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_anglemann }
+			}
+			# TEMPORARY IN VALENTIA - EVENTUALLY TO BE MOVED TO CALEDONIA
+			title:d_manaw = {			# Maeatia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_maeatia }
+				title:c_stirling = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_clackmannan = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_menteith = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_stirling }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_stirlingshire }
+			}
+			title:d_lennox = {		# Attacotia
+				set_variable = { name = roman_kingdom value = PREV }
+				set_variable = { name = roman_name value = flag:cn_attacottia }
+				title:c_altclut = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_lumonwy = { set_variable = { name = roman_duchy value = PREV } }
+				title:c_strathblane = { set_variable = { name = roman_duchy value = PREV } }
+				set_variable = { name = creation_requirement_1 value = title:c_altclut }
+				set_variable = { name = creation_requirement_title_unformed_1 value = title:d_anglelennox }
+			}
+		}
+		
+		### BRITON TITLE SETUP ###
+		
+		# FORMABLE KINGDOMS
+		
+		# EXPANDABLE KINGDOMS
+		title:k_demetia = {
+			title:d_westpowys = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+		}
+		title:k_dumnonia = {
+			title:d_kernow = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+			title:d_penwith = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+			title:d_lyonesse = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+		}
+		title:k_strathclyde = {
+			title:d_westrheged = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+			title:d_selgovae = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+			title:d_eidyn = { add_to_variable_list = { name = expansion_alt_kingdoms target = PREV } }
+			title:d_tweeddale = { add_to_variable_list = { name = expansion_alt_kingdoms target = PREV } }
+			title:d_aeron = { add_to_variable_list = { name = expansion_alt_2_kingdoms target = PREV } }
+			title:d_galloway = { add_to_variable_list = { name = expansion_alt_3_kingdoms target = PREV } }
+		}
+		title:k_rheged = {
+			title:d_galloway = { add_to_variable_list = { name = expansion_kingdoms target = PREV } }
+		}
+		
+		# FORMABLE EMPIRES
+		title:e_britannia = {
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_gwynedd }
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_londinium }
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_ebrauc }
+		}
+		title:e_cymru = {
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_gwynedd }
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_londinium }
+			# If e_cymru is created when not already de jure, it only gets Cymry, not Lloegyr
+			# This is also used by the Irish variant initially - consider that if changing this
+			add_to_variable_list = { name = base_kingdom_regions_alt target = title:k_gwynedd }
+		}
+		title:e_hen_ogledd = {
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_ebrauc }
+		}
+		
+		### IRISH TITLE SETUP ###
+		
+		# FORMABLE KINGDOMS
+		title:k_lleyn = {
+			title:d_arfon = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
+			title:d_osmaeliog = { add_to_variable_list = { name = formable_kingdoms target = PREV } }
+		}
+		title:d_arfon = {		# Associated duchy-level de jure shifts
+			title:c_eifionydd = {
+				set_dependent_expansion_effect = { NEW_LIEGE = prev DEPENDENT_TITLE = title:k_lleyn DEPENDENT_TITLE_FLAG = flag:formable }
+			}
+		}
+		title:d_northgwynedd = {
+			title:c_arllechwedd = { 
+				set_dependent_expansion_effect = { NEW_LIEGE = prev DEPENDENT_TITLE = title:k_lleyn DEPENDENT_TITLE_FLAG = flag:formable }
+			}
+		}
+		
+		# FORMABLE EMPIRES
+		# Irish variant only gets Cymry when formed, not Lloegyr
+		# Already added above!
+		# title:e_cymru = {
+			# add_to_variable_list = { name = base_kingdom_regions_alt target = title:k_gwynedd }
 		# }
+		# For Irish variant only
+		# Eventually we want this to be Alba annexing Hen Ogledd
+		title:e_cymru = {
+			add_to_variable_list = { name = expansion_kingdom_regions target = title:k_ebrauc }
+		}
+		
+		### ROMANIZED GERMANIC TITLE SETUP ###
+		# FORMABLE EMPIRES
+		title:e_romanized_germanic_britannia = {
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_gwynedd }
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_londinium }
+			add_to_variable_list = { name = base_kingdom_regions target = title:k_ebrauc }
+		}
+		
+		### OTHER TITLE SETUP - CURRENTLY NOT ON THE MAP ###
+		# Kingdom
+		# - Regional de jure drift in Gaul (groups of duchies)
+		#	- Can swap between Roman/Armorican (for some)/Frankish/Romanized Germanic kingdoms
+		# 	- For Roman, there is also a distinction between whether or not the Roman provinces have been restored
+		#	- For this, we probably want to make "duchy regions" analagous to the "kingdom regions" we already have for Britannia/Cymru/Hen Ogledd
+		
+		# - Formation of In Fochla
+		# - k_jutland assimilating k_angeln
+		
+		# Empire
+		# - Formation of Alba
+		
+		# - Merging Ireland, Alba, and (Irish) Cymru into a single empire of "The Isles"?
+		# - e_scandinavia uniting the four starting Norse empires
+		
+		# - Expansion of Alba into Hen Ogledd
+		# - Assimilating Alba and Ireland into Britannia
+		# - Francia assimilating the Germanic kingdoms
+		# - Germania assimilating the Rhenish Franks and Scandinavia
+		
+		### FORMABLE CLERICAL TITLE DEFINITIONS ###
+		### Roman Britain
+		# Londinium
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_london
+			SEAT = title:d_et_london.title_capital_county
+			REGION = geographical_region:btwk_custom_maxima_caesariensis
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+		}
+		# Lindum
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_lincoln
+			SEAT = title:d_et_lincoln.title_capital_county
+			REGION = geographical_region:btwk_custom_flavia_caesariensis
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+		}
+		# Corinium
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_cirencester
+			SEAT = title:d_et_cirencester.title_capital_county
+			REGION = geographical_region:btwk_custom_britannia_prima
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_corinium_creation_story
+		}
+		# Alternates for Corinium
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_cirencester
+			SEAT = title:d_et_st_davids.title_capital_county
+			REGION = geographical_region:btwk_custom_britannia_prima
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = { name = coa_title value = title:d_et_st_davids }
+			set_variable = { name = name value = flag:d_et_st_davids }
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_st_davids_roman_creation_story
+		}
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_cirencester
+			SEAT = title:d_et_caerleon.title_capital_county
+			REGION = geographical_region:btwk_custom_britannia_prima
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = { name = coa_title value = title:d_et_caerleon }
+			set_variable = { name = name value = flag:d_et_caerleon }
+			set_variable = briton_roman_clerical_title 
+			set_variable = pre_ruin_of_britannia_clerical_title
+			save_scope_as = d_et_caerleon_creation_story
+		}
+		scope:d_et_corinium_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_st_davids_roman_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_caerleon_creation_story }
+		}
+		scope:d_et_st_davids_roman_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_corinium_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_caerleon_creation_story }
+		}
+		scope:d_et_caerleon_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_corinium_creation_story }
+			set_variable = { name = mutually_exclusive_clerical_title_1 value = scope:d_et_st_davids_roman_creation_story }
+		}
+		# Eburacum
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_york
+			SEAT = title:d_et_york.title_capital_county
+			REGION = geographical_region:btwk_world_britannia_hen_ogledd
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { set_variable = briton_roman_clerical_title }
+		
+		### Anglo-Saxon
+		# Canterbury (fallback)
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:d_et_canterbury.title_capital_county
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = no_southern_anglo_saxon_kingdom_clerical_title
+		}
+		# Canterbury alts - one for each Southern Anglo-Saxon Kingdom
+		BTWK_create_creatable_clerical_title_story = {		# Canterbury (Kent)
+			TITLE = title:d_et_canterbury
+			SEAT = title:d_et_canterbury.title_capital_county
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_cantia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Selsey (Sussex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_regentium
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_SELSEY }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_sussex }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# London (Essex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_londinium
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LONDON }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_eastseaxe }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Dommoc (East Anglia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_rendlesham
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_DOMMOC }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_east_anglia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lichfield (Mercia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_letocetum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LICHFIELD }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_mercia }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lichfield (Wales - an extension of Mercia)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_letocetum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LICHFIELD }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wales }
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Dorchester-on-Thames (Wessex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_dorchester
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_DORCHESTER }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wessex }
+			set_variable = { 
+				name = anglo_saxon_kingdom_specific_capital_clerical_title 
+				value = title:c_dorchester 
+			}
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Winchester (Wessex)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_venta
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_WINCHESTER }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_wessex }
+			set_variable = { 
+				name = anglo_saxon_kingdom_not_specific_capital_clerical_title 
+				value = title:c_dorchester 
+			}
+		}
+		BTWK_create_creatable_clerical_title_story = {		# Lincoln (Lindsey)
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_lindum
+			REGION = geographical_region:btwk_custom_et_canterbury_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_canterbury_LINCOLN }
+			set_variable = { name = anglo_saxon_kingdom_clerical_title value = title:k_lindsey }
+		}
+		# Canterbury expansions
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_magnis
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_western_mercia
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = { set_variable = anglo_saxon_clerical_title }
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_isca_dumnonia
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = expansion_requires_direct_control
+		}
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_menevia
+			REGION = geographical_region:btwk_custom_et_st_davids_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = anglo_saxon_clerical_title
+			set_variable = expansion_requires_direct_control
+		}
+		# York
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_york
+			SEAT = title:d_et_york.title_capital_county
+			REGION = geographical_region:btwk_custom_et_york_anglosaxon
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = name value = flag:d_et_york_ANGLO_SAXON }
+			set_variable = { name = colour_title value = title:d_et_lindisfarne }
+			save_scope_as = d_et_york_anglo_saxon_creation_story
+		}
+		# Lindisfarne (York alternate)
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_york
+			SEAT = title:d_et_lindisfarne.title_capital_county
+			REGION = geographical_region:btwk_custom_et_york_anglosaxon
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = anglo_saxon_clerical_title
+			set_variable = { name = coa_title value = title:d_et_lindisfarne }
+			set_variable = { name = name value = flag:d_et_lindisfarne }
+			set_variable = { name = colour_title value = title:d_et_lindisfarne }
+			save_scope_as = d_et_lindisfarne_creation_story
+		}
+		scope:d_et_york_anglo_saxon_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_lindisfarne_creation_story }
+		}
+		scope:d_et_lindisfarne_creation_story = {
+			set_variable = { name = mutually_exclusive_clerical_title_0 value = scope:d_et_york_anglo_saxon_creation_story }
+		}
+		
+		### Post-Roman Briton
+		# Tyddewi (St David's)
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_st_davids
+			SEAT = title:d_et_st_davids.title_capital_county
+			REGION = geographical_region:btwk_custom_et_st_davids_core
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = { 
+			set_variable = briton_roman_clerical_title
+			set_variable = post_ruin_of_britannia_clerical_title
+		}
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_st_davids
+			SEAT = title:c_magnis
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_western_mercia
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = expansion_requires_direct_control
+		}
+		# Literally impossible to do right now unfortunately
+		# BTWK_create_clerical_title_expansion_story = {
+			# TITLE = title:d_et_st_davids
+			# SEAT = title:c_isca_dumnonia
+			# REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			# VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		# }
+		# scope:new_clerical_title_expansion_story = {
+			# set_variable = briton_roman_clerical_title
+			# set_variable = expansion_requires_direct_control
+		# }
+		# So we allow Britons to just annex Devon and Cornwall to Canterbury if they have taken control of it
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_canterbury
+			SEAT = title:c_isca_dumnonia
+			REGION = geographical_region:btwk_custom_et_canterbury_extension_devon_and_cornwall
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = expansion_requires_direct_control
+			set_variable = expansion_requires_same_heritage_control_of_clerical_title
+			save_scope_as = briton_devon_and_cornwall_extension
+		}
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_st_davids
+			SEAT = title:c_glevum
+			REGION = geographical_region:btwk_custom_et_st_davids_extended
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		# Automatically triggered by creating Briton variant of London, can also be done 
+		# by decision if the Province of London was created before the Ruin of Britannia happened
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = {
+				name = potential_required_created_clerical_title
+				value = title:d_et_london
+			}
+			save_scope_as = d_et_st_davids_extended_expansion_story
+		}
+		# Lundein
+		BTWK_create_creatable_clerical_title_story = {
+			TITLE = title:d_et_london
+			SEAT = title:d_et_london.title_capital_county
+			REGION = geographical_region:btwk_custom_et_london_briton
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia
+		}
+		scope:new_creatable_clerical_title_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = post_ruin_of_britannia_clerical_title
+			add_to_variable_list = {
+				name = clerical_title_dependent_expansions
+				target = scope:d_et_st_davids_extended_expansion_story
+			}
+		}
+		# In case the Province of London was created before the Ruin of Britannia happene
+		BTWK_create_clerical_title_expansion_story = {
+			TITLE = title:d_et_london
+			SEAT = title:c_lindum
+			REGION = geographical_region:btwk_custom_et_london_briton
+			VISIBILITY_REGION = geographical_region:btwk_world_britannia_south
+		}
+		scope:new_clerical_title_expansion_story = {
+			set_variable = briton_roman_clerical_title
+			set_variable = post_ruin_of_britannia_clerical_title
+			set_variable = potential_requires_clerical_title_created
+			set_variable = expansion_requires_direct_control
+		}
+		# Collect all Briton expansions into a single list for the decision
+		title:d_et_st_davids = {
+			every_in_list = {
+				variable = clerical_title_expansions
+				add_to_global_variable_list = {
+					name = briton_clerical_title_expansion_stories
+					target = THIS
+				}
+			}
+		}
+		scope:briton_devon_and_cornwall_extension = {
+			add_to_global_variable_list = {
+				name = briton_clerical_title_expansion_stories
+				target = THIS
+			}
+		}
+		title:d_et_london = {
+			every_in_list = {
+				variable = clerical_title_expansions
+				limit = { has_variable = post_ruin_of_britannia_clerical_title }
+				add_to_global_variable_list = {
+					name = briton_clerical_title_expansion_stories
+					target = THIS
+				}
+			}
+		}
+		
+		# MISC TIDYUP
+		
+		# Collect all formable/expandable kingdoms for each duchy - in case of conflicts, the kingdom that was formed/expanded most recently gets priority
+		# We do this by moving the specific kingdom to the bottom of the list, which is the one that is checked in check_de_jure_liege_duchy_effect
+		every_duchy = {
+			save_temporary_scope_as = current_duchy
+			if = {
+				limit = { has_variable_list = integration_kingdoms }
+				every_in_list = {
+					variable = integration_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:integration }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+					# Also want a list of integratable duchies for each kingdom
+					scope:current_kingdom = {
+						add_to_variable_list = {
+							name = integratable_duchies
+							target = scope:current_duchy
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = formable_kingdoms }
+				every_in_list = {
+					variable = formable_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:formable }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_kingdoms }
+				every_in_list = {
+					variable = expansion_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:expansion }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:expansion_alt }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_2_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_2_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:expansion_alt_2 }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_3_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_3_kingdoms
+					save_temporary_scope_as = current_kingdom
+					scope:story_holder = {
+						create_story = {
+							type = formable_and_expansion_liege_title_struct_story
+							save_temporary_scope_as = new_formable_and_expansion_kingdom_struct_story
+						}
+						scope:new_formable_and_expansion_kingdom_struct_story = {
+							set_variable = { name = liege_title value = scope:current_kingdom }
+							set_variable = { name = shift_type value = flag:expansion_alt_3 }
+						}
+					}
+					scope:current_duchy = {
+						add_to_variable_list = {
+							name = formable_and_expansion_liege_title_shifts
+							target = scope:new_formable_and_expansion_kingdom_struct_story
+						}
+					}
+				}
+			}
+		}
+		
+		
+		# Get a list of provinces that can be under each duchy - we use this to determine which 
+		# provinces to recalculate when a de jure shift happens
+		# dynamic_de_jure_territory is the list of all titles that can be directly under the scope
+		# de_jure_affected_territory is the list of all titles whose de jure liege can be affected by variables on/associated with the scope
+		# - by definition, de_jure_affected_territory is a superset of dynamic_de_jure_territory
+		every_county = {
+			if = {
+				limit = { has_variable = anglo_saxon_duchy }
+				this.var:anglo_saxon_duchy = {
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = baseline_dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+				if = {
+					limit = { has_variable = anglo_saxon_duchy_dependency }
+					this.var:anglo_saxon_duchy_dependency = {
+						add_to_variable_list = {
+							name = de_jure_affected_territory
+							target = PREV
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = secondary_anglo_saxon_duchy }
+				this.var:secondary_anglo_saxon_duchy = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = expansion_anglo_saxon_duchy }
+				this.var:expansion_anglo_saxon_duchy = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = roman_duchy }
+				this.var:roman_duchy = { 
+					add_to_variable_list = {
+						name = roman_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = baseline_roman_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = roman_de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable = dependent_expansion }
+				this.var:dependent_expansion.var:new_liege = { 
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+				this.var:dependent_expansion.var:dependent_title = { 
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+		}
+		
+		# Similar list for kingdoms
+		every_duchy = {
+			if = {
+				limit = { has_variable_list = integration_kingdoms }
+				every_in_list = {
+					variable = integration_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = formable_kingdoms }
+				every_in_list = {
+					variable = formable_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_kingdoms }
+				every_in_list = {
+					variable = expansion_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_2_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_2_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_alt_3_kingdoms }
+				every_in_list = {
+					variable = expansion_alt_3_kingdoms
+					add_to_variable_list = {
+						name = dynamic_de_jure_territory
+						target = PREV
+					}
+					add_to_variable_list = {
+						name = de_jure_affected_territory
+						target = PREV
+					}
+				}
+			}
+		}
+		
+		# Similar list for empires
+		# every_kingdom = {
+			# if = {
+				# limit = { has_variable = formable_empire_1 }
+				# this.var:formable_empire_1 = { 
+					# add_to_variable_list = {
+						# name = dynamic_de_jure_territory
+						# target = PREV
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_variable = expansion_empire_1 }
+				# this.var:expansion_empire_1 = { 
+					# add_to_variable_list = {
+						# name = dynamic_de_jure_territory
+						# target = PREV
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_variable = expansion_alt_empire_1 }
+				# this.var:expansion_alt_empire_1 = { 
+					# add_to_variable_list = {
+						# name = dynamic_de_jure_territory
+						# target = PREV
+					# }
+				# }
+			# }
+		# }
+		every_empire = {	# Kingdom regions are defined a bit differently
+			save_temporary_scope_as = current_empire
+			if = {
+				limit = { has_variable_list = base_kingdom_regions }
+				every_in_list = {
+					variable = base_kingdom_regions
+					every_in_list = {
+						variable = kingdom_region_titles
+						scope:current_empire = {
+							add_to_variable_list = {
+								name = dynamic_de_jure_territory
+								target = PREV
+							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = base_kingdom_regions_alt }
+				every_in_list = {
+					variable = base_kingdom_regions_alt
+					every_in_list = {
+						variable = kingdom_region_titles
+						scope:current_empire = {
+							add_to_variable_list = {
+								name = dynamic_de_jure_territory
+								target = PREV
+							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_kingdom_regions }
+				every_in_list = {
+					variable = expansion_kingdom_regions
+					every_in_list = {
+						variable = kingdom_region_titles
+						scope:current_empire = {
+							add_to_variable_list = {
+								name = dynamic_de_jure_territory
+								target = PREV
+							}
+							add_to_variable_list = {
+								name = de_jure_affected_territory
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		# Get a complete list of all regions that can be under each empire
+		every_empire = {
+			save_temporary_scope_as = current_empire
+			if = {
+				limit = { has_variable_list = base_kingdom_regions }
+				every_in_list = {
+					variable = base_kingdom_regions
+					scope:current_empire = {
+						add_to_variable_list = {
+							name = base_and_expansion_kingdom_regions
+							target = PREV
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = base_kingdom_regions_alt }
+				every_in_list = {
+					variable = base_kingdom_regions_alt
+					scope:current_empire = {
+						add_to_variable_list = {
+							name = base_and_expansion_kingdom_regions
+							target = PREV
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_variable_list = expansion_kingdom_regions }
+				every_in_list = {
+					variable = expansion_kingdom_regions
+					scope:current_empire = {
+						add_to_variable_list = {
+							name = base_and_expansion_kingdom_regions
+							target = PREV
+						}
+					}
+				}
+			}
+		}
+		
+		# Get a list of what duchies are under what hierarchies
+		title:e_aengland = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_duchy }
+				if = {
+					limit = { has_variable_list = dynamic_de_jure_territory }
+					add_to_global_variable_list = {
+						name = anglo_saxon_duchy_list
+						target = THIS
+					}
+				}
+				set_variable = is_anglo_saxon_duchy
+			}
+			every_direct_de_jure_vassal_title = {
+				add_to_global_variable_list = {
+					name = anglo_saxon_kingdom_list
+					target = THIS
+				}
+				if = {
+					limit = {
+						OR = {
+							this = title:k_cantia
+							this = title:k_eastseaxe
+							this = title:k_sussex
+							this = title:k_east_anglia
+							this = title:k_wessex
+							this = title:k_mercia
+							this = title:k_bernicia
+							this = title:k_deira
+							this = title:k_lindsey
+							this = title:k_northumbria
+						}
+					}
+					add_to_global_variable_list = {
+						name = anglo_saxon_heptarchy_kingdom_list
+						target = THIS
+					}
+					set_variable = is_anglo_saxon_kingdom
+				}
+			}
+		}
+		title:e_britannia = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_duchy }
+				add_to_global_variable_list = {
+					name = celtic_duchy_list
+					target = THIS
+				}
+				set_variable = is_briton_roman_duchy
+			}
+			every_direct_de_jure_vassal_title = {
+				set_variable = is_briton_kingdom
+			}
+		}
+		every_duchy = {
+			limit = { has_variable_list = roman_de_jure_territory }
+			add_to_global_variable_list = {
+				name = roman_duchy_list
+				target = THIS
+			}
+		}
+		
+		# Flag kingdoms for which cultures are allowed to create them, so that they're not
+		# incorrectly created during populist revolts
+		title:e_britannia = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = unromanized_germanic_culture_blocked
+			}
+		}
+		title:e_aengland = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = unromanized_germanic_culture_only
+			}
+		}
+		title:e_roman_britannia = {
+			every_direct_de_jure_vassal_title = {
+				set_variable = roman_culture_only
+			}
+		}
+		
+		# Flag creation requirements for Anglo-Saxon duchies - Anglo-Saxons should prioritize these
+		every_in_global_list = {
+			variable = anglo_saxon_duchy_list
+			this.var:creation_requirement_1 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_1_alt ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_2 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_2_alt ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_3 ?= { set_variable = anglo_saxon_duchy_requirement }
+			this.var:creation_requirement_3_alt ?= { set_variable = anglo_saxon_duchy_requirement }
+		}
+		
+		# Initialize de jure structure
+		every_county = {
+			check_de_jure_liege_county_effect = yes
+		}
+		every_duchy = {
+			check_de_jure_liege_duchy_effect = yes
+		}
+		every_kingdom = {
+			check_de_jure_liege_kingdom_effect = yes
+		}
+		
+		# Initialize other related flags and lists here
+		title:e_roman_britannia = {
+			every_in_de_jure_hierarchy = {
+				limit = { tier = tier_kingdom }
+				set_variable = is_roman_province_title
+			}
+		}
+		
+		title:e_roman_britannia = { set_variable = is_roman_empire_or_claimant_title }
+		title:e_romanized_germanic_britannia = { set_variable = is_roman_empire_or_claimant_title }
+		title:h_western_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
+		title:h_eastern_roman_empire = { set_variable = is_roman_empire_or_claimant_title }
+		
+		# For determining Augustus trait
+		title:e_roman_britannia = { set_variable = is_roman_empire_title }
+		title:h_western_roman_empire = { set_variable = is_roman_empire_title }
+		title:h_eastern_roman_empire = { set_variable = is_roman_empire_title }
+		
+		# This forces Britannic and Brythonic characters to use "Emperor" for these titles
+		title:e_roman_britannia = { set_variable = emperor_flag }
+		title:e_romanized_germanic_britannia = { set_variable = emperor_flag }
+		
+		# This forces these titles to use "High King", even for cultures that would otherwise
+		# want to use Emperor (especially Romano-British and Britannic)
+		# Note that e_britannia can switch to being an empire through decision (for now)
+		title:e_britannia = { set_variable = high_king_flag }
+		title:e_hen_ogledd = { set_variable = high_king_flag }
+		title:e_cymru = { set_variable = high_king_flag }
+		
+		# Flag all offmap titles
+		title:h_western_roman_empire = { set_variable = is_offmap_title }
+		title:h_eastern_roman_empire = { set_variable = is_offmap_title }
+		title:k_papal_state = { set_variable = is_offmap_title }
+		title:k_connacht = { set_variable = is_offmap_title }
+		title:k_leinster = { set_variable = is_offmap_title }
+		title:k_dalriada = { set_variable = is_offmap_title }
+		title:k_gaul = { set_variable = is_offmap_title }
+		title:k_franks = { set_variable = is_offmap_title }
+		title:k_visigoths = { set_variable = is_offmap_title }
+		title:k_ostrogoths = { set_variable = is_offmap_title }
+		title:k_burgundy = { set_variable = is_offmap_title }
+		title:k_alemannia = { set_variable = is_offmap_title }
+		title:k_broceliande = { set_variable = is_offmap_title }
+		title:k_thuringia = { set_variable = is_offmap_title }
+		title:k_angeln = { set_variable = is_offmap_title }
+		title:d_fortriu = { set_variable = is_offmap_title }
+		title:d_nordalbingia = { set_variable = is_offmap_title }
+		title:d_friesland = { set_variable = is_offmap_title }
+		title:d_zealand = { set_variable = is_offmap_title }
+		title:d_vestfold = { set_variable = is_offmap_title }
+		title:d_westgotaland = { set_variable = is_offmap_title }
+		title:d_tiundaland = { set_variable = is_offmap_title }
+		title:d_tarbellia = { set_variable = is_offmap_title }
 	}
 }
 
-# Like on_game_start, except it is called once the host (or player, in single player) exits the lobby. Good for anything where you need to know who the players are, or what the game rules are
-on_game_start_after_lobby = {
-	effect = {		
-		# TODO Set starting cultural acceptance		
+#Make sure Roman castles start with at least wall upgrade 3
+
+BTWK_building_setup = {
+	effect = {
+		every_province = {
+			if = {
+				limit = { 
+					has_holding_type = castle_holding
+					culture = { has_cultural_pillar = heritage_latin }
+				}
+				if = {
+					limit = { 
+						OR = {
+							duchy.title_capital_county.title_province = this # Is duchy capital
+							kingdom.title_capital_county.title_province = this # Is kingdom capital							
+						}
+					}	
+					add_building = castle_02
+				}					
+				if = {
+					limit = {
+						OR = {
+							terrain = farmlands
+							terrain = plains
+							terrain = wetlands
+							terrain = floodplains
+						}
+					}
+					add_building = curtain_walls_01
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = curtain_walls_02
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = taiga
+							terrain = forest
+							terrain = jungle
+						}
+					}
+					add_building = ramparts_01
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = ramparts_02
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							terrain = mountains
+							terrain = desert_mountains
+							terrain = hills
+						}
+					}
+					add_building = hill_forts_01
+					if = {
+						limit = { has_building_or_higher = castle_02 }
+						random = {
+							chance = 50
+							add_building = hill_forts_02
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					culture = { has_cultural_pillar = heritage_brythonic }
+					has_holding_type = castle_holding
+					OR = {
+						terrain = mountains
+						terrain = desert_mountains
+						terrain = hills
+					}
+				}
+				add_building = hill_forts_01
+				random = {
+					chance = 50
+					add_building = hill_forts_02
+				}
+			}
+			if = {
+				limit = { 
+					has_holding_type = tribal_holding
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				add_building = palisades_01
+				if = {
+					limit = { 
+						OR = {
+							duchy.title_capital_county.title_province = this # Is duchy capital
+							kingdom.title_capital_county.title_province = this # Is kingdom capital							
+						}
+					}	
+					add_building = palisades_02
+				}
+				random = {					
+					chance = 50
+					add_building = war_camps_01
+				}
+			}
+			
+			if = {
+				limit = { 
+					has_holding = yes
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+				generate_building = yes
+			}
+		}
+		
+		# Londinium needs a holy site building for the religious high king reform
+		# This is here in case we move all the faith holy sites away at some point
+		title:b_londiniumcastle = {
+			if = {
+				limit = {
+					title_province = {
+						has_special_building_slot = no
+					}
+				}
+				title_province = {
+					add_special_building_slot = holy_site_cathedral_01
+				}
+			}
+		}
+	}
+}
+
+BTWK_laeti_setup = {
+	effect = {
+		# Set up Laeti
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1258 = {		# Winta of Winteringas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:14119 = {		# Ethelwine of Billingas
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:10058 = {		# Waltheof of Chilternsaete
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+			character:3007 = {		# Esla Gewissson of Wallingford
+				vassal_contract_set_obligation_level = {
+					type = special_contract level = special_contract_laetus
+				}
+			}
+		}
+		every_ruler = {
+			limit = {
+				is_independent_ruler = no
+				vassal_contract_has_flag = has_laetus_contract
+			}
+			every_directly_owned_province = {
+				limit = {
+					has_holding_type = tribal_holding
+					has_holding = yes
+				}
+				add_province_modifier = { 
+					modifier = laeti_settlement 
+					years = 100 
+				}
+				add_building = palisades_01
+				add_building = war_camps_01
+				random_list = {
+					50 = {
+						add_building = palisades_02
+					}
+					50 = {
+						add_building = war_camps_02
+					}
+				}
+			}
+			create_maa_regiment = {
+				type = light_footmen
+				check_can_recruit = no
+				size = 2
+			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
+			}
+		}
+		
+		# Set up Foederati (they are defined elsewhere)
+		every_ruler = {
+			limit = {
+				is_tributary = yes
+				has_subject_contract_group = tributary_foederatus
+			}
+			every_directly_owned_province = {
+				limit = {
+					has_holding_type = tribal_holding
+					has_holding = yes
+				}
+				add_province_modifier = { 
+					modifier = laeti_settlement 
+					years = 100 
+				}
+				add_building = palisades_01
+				add_building = war_camps_01
+			}
+			create_maa_regiment = {
+				type = light_footmen
+				check_can_recruit = no
+				size = 3
+			}
+			create_maa_regiment = {
+				type = landsknecht
+				check_can_recruit = no
+				size = 1
+			}
+			tributary_contract_set_obligation_level = { 
+				type = tributary_war_participation_obligation
+				level = tributary_war_participation_obligation_forced 
+			}
+		}
+	}
+}
+
+BTWK_britannia_high_kingship_setup = {
+	effect = {
+		# Arbitary character for convenience purposes
+		title:c_londinium.holder = { save_temporary_scope_as = story_holder }
+		
+		# Initialize reform story cycles
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_high_kingship }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = establish_coregency }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = establish_central_mint }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = empower_high_council }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = centralize_the_church }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = formalize_succession }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = unify_legal_codes }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = reclaim_caratacus_legacy }
+		BTWK_britannia_high_king_create_reform_struct_story_effect = { REFORM_NAME = restore_imperial_dignity }
+		
+		# If the High Kingship is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_britannia_high_kingship_active_trigger = yes
+				BTWK_britannia_high_kingship_can_inherit_trigger = no
+			}
+			title:e_britannia = { set_destroy_on_succession = yes }
+		}
+			
+		# Add High Kingship claims + dynasty authority to the dynasties of previous High Kings
+		if = {
+			limit = { game_start_date = 479.12.3 }
+			character:1 ?= {			# High King Uther Pendragon
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 80		# Uther was High King very recently for a while
+					}
+				}
+			}
+			character:40 ?= {			# Agricola, brother of High King Ambrosius Aurelianus
+				add_pressed_claim = title:e_britannia
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 60		# Ambrosius Aurelianus was High King for a while, but it has been a few years since
+					}
+				}
+			}
+			character:16 ?= {			# Gorfyddyd, descendant of High King Vortigern
+				add_unpressed_claim = title:e_britannia		# Has been a few generations
+				dynasty = {
+					set_variable = {
+						name = britannia_high_kingship_authority
+						value = 20		# Has been a long time since Vortigern and Vortimer were High King
+					}
+				}
+			}
+		}
+		
+		# Save Macsen Wledig for tooltip purposes
+		title:e_britannia = {
+			set_variable = {
+				name = macsen_wledig_char
+				value = character:1513
+			}
+		}
+	}
+}
+
+BTWK_aengland_bretwalda_setup = {
+	effect = {
+		# If the Bretwalda system is active and not sufficiently reformed, make sure it is destroyed on succession
+		if = {
+			limit = {
+				BTWK_aengland_bretwalda_active_trigger = yes
+				BTWK_aengland_bretwalda_can_inherit_trigger = no
+			}
+			title:e_aengland = { set_destroy_on_succession = yes }
+		}
+		if = {
+			limit = { game_start_date = 479.12.3 }			
+			# Aelle and Cerdic start with a bit of hegemony score
+			character:80 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 35
+				}
+			}
+			character:86 ?= {
+				set_variable = {
+					name = aengland_bretwalda_hegemony_score
+					value = 15
+				}
+			}
+		}
+	}
+}
+
+BTWK_tribal_fame_calc = {
+	effect = {
+		trigger_event = {
+			id = tribal_fame.0001
+		}
+	}
+}
+
+BTWK_thirteen_treasures_distribution = {
+	effect = {
+		character:3 = { #Arthur Pendragon
+			save_scope_as = owner_mantle_of_arthur
+			create_artifact_mantle_of_arthur_effect = {
+				OWNER = scope:owner_mantle_of_arthur
+			}
+		}
+		title:k_gwynedd.holder = { #Cadwallon ap Cunedag
+			save_scope_as = owner_coat_of_padarn
+			create_artifact_coat_of_padarn_effect = {
+				OWNER = scope:owner_coat_of_padarn
+			}
+		}
+		title:c_altclut.holder = {  #FOR TESTING
+			save_scope_as = owner_mantle_of_tegau_eurfron
+			create_artifact_mantle_of_tegau_eurfron_effect = {
+				OWNER = scope:owner_mantle_of_tegau_eurfron
+			}
+		}
+	}
+}
+
+BTWK_laamp_setup = {
+	effect = {
+		# Starting camp purposes.
+		## Arthur
+		character:3 ?= {
+			if = {
+				limit = { 
+					is_alive = yes
+					is_landless_adventurer = yes
+				}
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				add_courtier = character:708		# Amhar
+				add_courtier = character:709		# Loholt
+				add_courtier = character:220		# Taliesin
+				add_courtier = character:1641		# Sir Cei/Kay
+				add_courtier = character:269		# Sir Gawain
+				add_courtier = character:271		# Sir Agravain
+				add_courtier = character:707		# Ailleann
+				add_courtier = character:1006		# Culhwch
+				add_courtier = character:1007		# Sir Dagonet
+				add_courtier = character:1008		# Sir Aglaval
+				add_courtier = character:1009		# Sir Lanval
+				add_courtier = character:1011		# Sir Balan
+				add_courtier = character:1012		# Sir Balin
+				add_courtier = character:1013		# Blaise
+				add_courtier = character:1014		# St. Illtyd
+				add_courtier = character:1017		# Eiddilig
+				add_courtier = character:1018		# Sir Bedivere
+				add_courtier = character:1019		# Morfans the Ugly
+			}
+		}
+		## Sagramor
+		character:21 ?= {
+			if = {
+				limit = { 
+					is_alive = yes
+					is_landless_adventurer = yes
+				}
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+			}
+		}
+	}
+}
+
+BTWK_startup_events = {
+	effect = {
+		every_player = {
+			trigger_event = BTWK_startup.0001
+		}
 	}
 }

@@ -1,0 +1,52 @@
+﻿namespace = BTWK_plague
+
+##############################
+# PLAGUE OF JUSTINIAN EVENTS #
+##############################
+
+##############################
+
+BTWK_plague.0001 = {  # Plague arrives on the map
+	type = character_event
+	content_source = dlc_BTWK
+	window = fullscreen_event
+	queue_icon = "gfx/interface/icons/epidemics/bubonic_plague.dds"
+	title = BTWK_plague.0001.t
+	desc = {
+		desc = BTWK_plague.0001.desc
+		triggered_desc = {
+			trigger = { religion = religion:christianity_religion }
+			desc = BTWK_plague.0001.desc_christian
+		}
+	}
+	theme = plague
+	override_background = { reference = ce1_fullscreen_black_death }
+
+	option = {
+		name = BTWK_plague.0001.a_standard
+		name = {
+			trigger = {
+				has_trait = cynical
+			}
+			text = BTWK_plague.0001.a_cynical
+		}
+		name = {
+			trigger = {
+				religion = {
+					is_in_family = rf_abramaic
+				}
+				has_trait = zealous
+			}
+			text = BTWK_plague.0001.a_zealous_abrahamic
+		}
+		name = {
+			trigger = {
+				religion = {
+					is_in_family = rf_pagan
+				}
+				has_trait = zealous
+			}
+			text = BTWK_plague.0001.a_zealous_pagan
+		}
+	}
+}

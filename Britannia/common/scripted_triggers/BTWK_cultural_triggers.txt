@@ -1,8 +1,14 @@
-﻿# Does the culture derive primarily from Romano-British?
+﻿is_child_culture_of_trigger = {
+	$TARGET$ = { save_temporary_scope_as = target_culture }
+	any_parent_culture = { this = scope:target_culture }
+}
+
+# Does the culture derive primarily from Romano-British?
 is_romanobritish_culture_trigger = {
 	culture = { culture_is_romanobritish_culture_trigger = yes }
 }
 
+# TODO Make this a (hidden?) parameter of Romano-British and derived cultures instead
 culture_is_romanobritish_culture_trigger = {
 	has_cultural_pillar = heritage_latin
 	OR = {
@@ -17,98 +23,465 @@ culture_is_romanobritish_culture_trigger = {
 }
 
 # Determines access to Brythonic titles and mechanics
-# Does the culture derive primarily from Briton, Cumbrian, or Romano-British?
-is_brythonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_brythonic_culture_trigger_desc
-        culture = { culture_is_brythonic_culture_trigger = yes }
+is_briton_or_latin_culture_trigger = {
+    custom_description = {
+		text = BTWK_is_britannic_culture
+        culture = { culture_is_briton_or_latin_culture_trigger = yes }
 	}
 }
 
-culture_is_brythonic_culture_trigger = {
+culture_is_briton_or_latin_culture_trigger = {
 	OR = {
-		AND = {
-			has_cultural_pillar = heritage_celtic
-			OR = {
-				THIS = culture:briton
-				THIS = culture:cumbrian
-				any_parent_culture = {
-					culture_is_brythonic_culture_trigger = yes
+		has_cultural_pillar = heritage_brythonic
+        has_cultural_pillar = heritage_latin
+        AND = {
+            has_cultural_pillar = heritage_romance
+			this.var:ancestral_starting_culture ?= culture:romanobritish
+			NOT = { 
+				this.var:ancestral_non_roman_culture ?= { 
+					culture_is_romanized_barbarian_culture_trigger = yes
 				}
 			}
-		}
-        AND = {
-            has_cultural_pillar = heritage_latin
-            OR = {
-                THIS = culture:romanobritish
-                any_parent_culture = {
-                    culture_is_romanobritish_culture_trigger = yes
-                }
-            }
         }
 	}
 }
 
-# Determines access to Romanized Germanic titles (= Roman titles, pretty much)
-# TODO Might want to split the Germanic heritage to handle this more easily
-is_romanized_germanic_culture_trigger = {
-    custom_tooltip = {
-		text = is_romanized_germanic_culture_trigger_desc
-		culture = { culture_is_romanized_germanic_culture_trigger = yes }
+# Specifically, does the culture derive primarily from Briton or Romano-British?
+is_britannic_culture_trigger = {
+	culture = { culture_is_britannic_culture_trigger = yes }
+}
+
+culture_is_britannic_culture_trigger = {
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+        AND = {
+            has_cultural_pillar = heritage_latin
+			this.var:ancestral_starting_culture = culture:romanobritish
+        }
+        AND = {
+            has_cultural_pillar = heritage_romance
+			this.var:ancestral_starting_culture ?= culture:romanobritish
+			NOT = { 
+				this.var:ancestral_non_roman_culture ?= { 
+					culture_is_romanized_barbarian_culture_trigger = yes
+				}
+			}
+        }
 	}
 }
 
-culture_is_romanized_germanic_culture_trigger = {
-	has_cultural_pillar = heritage_germanic
-	OR = {
-		THIS = culture:visigoth
-		THIS = culture:ostrogoth
-		THIS = culture:burgundian
-		THIS = culture:taifal
-		THIS = culture:vandal
-		THIS = culture:suebic
-		any_parent_culture = {
-			custom_tooltip = {
-				text = is_romanized_germanic_trigger_desc
-				culture_is_romanized_germanic_culture_trigger = yes
-			}
+is_celtic_culture_trigger = {
+    custom_tooltip = {
+		text = is_celtic_culture_trigger_desc
+        culture = { has_same_heritage_family_as = { TARGET = culture:briton } }
+	}
+}
+
+can_create_roman_celtic_titles_trigger = {
+	culture = {
+		NOR = {
+			has_cultural_pillar = heritage_west_germanic
+			has_cultural_pillar = heritage_central_germanic
+			has_cultural_pillar = heritage_north_germanic
 		}
+	}
+}
+
+# Determines access to Romanized Germanic titles (= Roman titles, pretty much)
+is_romanized_barbarian_culture_trigger = {
+	culture = { culture_is_romanized_barbarian_culture_trigger = yes }
+}
+
+culture_is_romanized_barbarian_culture_trigger = {
+	OR = {
+		has_cultural_pillar = heritage_romanized_germanic
+		has_cultural_pillar = heritage_romanized_sarmatian
+		has_cultural_pillar = heritage_frankish
+	}
+}
+
+is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	culture = { culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = yes }
+}
+
+culture_is_romanized_barbarian_culture_or_romance_descendant_trigger = {
+	OR = {
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_romance
+	}
+	this.var:ancestral_non_roman_culture ?= {
+		culture_is_romanized_barbarian_culture_trigger = yes
 	}
 }
 
 # Determines access to Anglo-Saxon titles and mechanics
 # Does the culture derive primarily from Angle, Old Saxon, Jute, or Old Frisian?
 is_ingvaeonic_culture_trigger = {
-    custom_tooltip = {
-		text = is_ingvaeonic_culture_trigger_desc
-		culture = { culture_is_ingvaeonic_culture_trigger = yes }
-	}
+	culture = { has_cultural_pillar = heritage_west_germanic }
 }
 
 culture_is_ingvaeonic_culture_trigger = {
-	has_cultural_pillar = heritage_germanic
+	has_cultural_pillar = heritage_west_germanic
+}
+
+# Specifically for Anglo-Saxons and descendant cultures, exclude Frisians and (Low) Saxons
+is_anglo_saxon_culture_trigger = {
+	culture = { culture_is_anglo_saxon_culture_trigger = yes }
+}
+
+culture_is_anglo_saxon_culture_trigger = {
+	has_cultural_pillar = heritage_west_germanic
 	OR = {
-		THIS = culture:angle
-		THIS = culture:old_saxon
-		THIS = culture:jute
-		THIS = culture:oldfrisian
-		any_parent_culture = {
-			custom_tooltip = {
-				text = is_ingvaeonic_trigger_desc
-				culture_is_ingvaeonic_culture_trigger = yes
+		this.var:ancestral_starting_culture ?= culture:angle
+		this.var:ancestral_starting_culture ?= culture:old_saxon
+		this.var:ancestral_starting_culture ?= culture:jute
+	}
+}
+
+is_unromanized_germanic_culture_trigger = {
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_west_germanic
+			has_cultural_pillar = heritage_central_germanic
+			has_cultural_pillar = heritage_north_germanic
+		}
+	}
+}
+
+is_germanic_culture_trigger = {
+	culture = { has_same_heritage_group_as = { TARGET = culture:angle } }
+}
+
+is_old_saxon_culture_trigger = { 
+# Used in Anglo-Saxon patron deity selection: Wodan (Angle, Frisian, Jutish) vs. Seaxneat (Saxon)
+	OR = {
+		is_culture_or_descendant_trigger = { CULTURE = culture:old_saxon }
+		is_culture_or_descendant_trigger = { CULTURE = culture:saxon }
+	}
+}
+
+is_imperial_culture_trigger = {
+	culture = { has_cultural_pillar = heritage_latin }
+}
+
+is_imperial_like_culture_trigger = { 
+	custom_tooltip = {
+		text = is_imperial_like_culture_trigger_desc
+		culture = { culture_is_imperial_like_culture_trigger = yes }
+	}
+}
+
+culture_is_imperial_like_culture_trigger = { 
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+		has_cultural_pillar = heritage_latin
+		culture_is_romanized_barbarian_culture_trigger = yes
+		has_cultural_pillar = heritage_gaulish
+		has_cultural_pillar = heritage_romance
+	}
+}
+
+is_romanized_government_culture_trigger = {
+	culture = {
+		OR = {
+			has_cultural_pillar = heritage_latin
+			has_cultural_pillar = heritage_romanized_germanic
+			has_cultural_pillar = heritage_romanized_sarmatian
+			has_cultural_pillar = heritage_frankish
+			has_cultural_pillar = heritage_romance
+			has_cultural_pillar = heritage_gaulish
+			AND = {
+				has_cultural_pillar = heritage_brythonic
+				NOT = { has_global_variable = end_of_britannia }
 			}
 		}
 	}
 }
 
-can_create_roman_celtic_titles_trigger = {
+is_same_heritage_group_or_related_heritage_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
 	OR = {
-		culture = { NOT = { has_cultural_pillar = heritage_germanic } }
-		is_romanized_germanic_culture_trigger = yes
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
 	}
 }
 
-can_create_germanic_title_trigger = {
-	has_cultural_pillar = heritage_germanic
-	is_romanized_germanic_culture_trigger = no
+# Same as is_same_heritage_group_or_related_heritage_trigger, but also checks for parent-child cultures
+is_same_heritage_group_or_related_culture_trigger = {
+	save_temporary_scope_as = temp_current_scope
+	$TARGET$ = { save_temporary_scope_as = temp_target_scope }
+	OR = {
+		$TARGET$.culture = { has_same_heritage_group_as = { TARGET = scope:temp_current_scope.culture } }
+		AND = {
+			is_imperial_like_culture_trigger = yes
+			$TARGET$ = { is_imperial_like_culture_trigger = yes }
+		}
+		$TARGET$.culture = { any_parent_culture = { this = scope:temp_current_scope.culture } }
+		culture = { any_parent_culture = { this = scope:temp_target_scope.culture } }
+	}
+}
+
+# Either is the given culture, or is a descendant of it through a chain of parent/child cultures
+# that all share the same heritage
+culture_is_culture_or_descendant_trigger = {
+	custom_description = {
+		text = culture_is_culture_or_descendant_trigger
+		$CULTURE$ = { save_temporary_scope_as = trigger_current_culture }
+		OR = {
+			this = $CULTURE$
+			any_parent_culture = {
+				has_same_culture_heritage = prev
+				culture_is_culture_or_descendant_helper_trigger = yes
+			}
+		}
+	}
+}
+
+# Avoids recursive triggers with parameters, which hang the game
+culture_is_culture_or_descendant_helper_trigger = {
+	OR = {
+		this = scope:trigger_current_culture
+		any_parent_culture = {
+			has_same_culture_heritage = prev
+			culture_is_culture_or_descendant_helper_trigger = yes
+		}
+	}
+}
+
+is_culture_or_descendant_trigger = {
+	$CULTURE$ = { 
+		save_temporary_scope_as = trigger_current_culture 
+		custom_description = {
+			text = is_culture_or_descendant_trigger
+			subject = this
+			object = prev
+			prev.culture = { culture_is_culture_or_descendant_trigger = { CULTURE = scope:trigger_current_culture } }
+		}
+	}
+}
+
+# Avoids recursive triggers with parameters, which hang the game
+culture_is_culture_or_descendant_including_romance_helper_trigger = {
+	OR = {
+		this = scope:trigger_current_culture
+		any_parent_culture = {
+			has_same_culture_heritage = prev
+			culture_is_culture_or_descendant_helper_trigger = yes
+		}
+		AND = {
+			has_cultural_pillar = heritage_romance
+			any_parent_culture = {
+				culture_is_culture_or_descendant_including_romance_helper_trigger = yes
+			}
+		}
+	}
+}
+
+culture_is_culture_or_descendant_including_romance_trigger = {
+	$CULTURE$ = { 
+		save_temporary_scope_as = trigger_current_culture 
+		prev = { 
+			culture_is_culture_or_descendant_including_romance_helper_trigger = yes
+		}
+	}
+}
+
+# Either is the given culture, or is a descendant of it through a chain of parent/child cultures
+# that all share the same heritage
+# This trigger also allows returns true for any Romance culture that is descended from same-heritage 
+# descendants of the given culture, or Romance descendants of such a culture
+# Use when you want a custom description
+is_culture_or_descendant_including_romance_trigger = {
+	$CULTURE$ = { 
+		save_temporary_scope_as = trigger_current_culture 
+		custom_description = {
+			text = is_culture_or_descendant_including_romance_trigger
+			subject = this
+			object = prev
+			prev.culture = { 
+				culture_is_culture_or_descendant_including_romance_helper_trigger = yes
+			}
+		}
+	}
+}
+
+# Use when you want a custom tooltip
+is_culture_or_descendant_including_romance_w_tooltip_trigger = {
+	$CULTURE$ = { save_temporary_scope_as = trigger_current_culture	}	
+	custom_tooltip = {
+		text = is_culture_or_descendant_including_romance_tt
+		is_culture_or_descendant_including_romance_trigger = { CULTURE = scope:trigger_current_culture }
+	}
+}
+
+# Determines if whether or not the domicile holder participates in a culture shift is primarily
+# determined by the domicile holder, and if they should be treated as a domicile holder rather
+# than an ordinary landed ruler
+is_independent_domicile_holder_for_culture_shift_trigger = {					
+	is_landed = no
+	# Doesn't have a close family member whose culture will take precedence
+	NOT = {
+		any_close_family_member = {
+			is_landed = yes
+			culture = prev.culture
+		}
+	}
+}
+
+BTWK_ai_should_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# The Gaels want to convert the Picts and Cumbrians
+			culture = culture:gaelic
+			OR = {
+				scope:county.culture = culture:cumbrian
+				scope:county.culture = culture:pictish
+			}
+		}
+		AND = {
+			# Anglo-Saxon rulers should convert counties of 'old' cultures to the new one.
+			culture = { has_variable = is_anglo_saxon_unified_culture }
+			OR = {
+				scope:county.culture = culture:old_saxon
+				scope:county.culture = culture:jute
+				scope:county.culture = culture:angle
+				scope:county.culture = { 
+					has_variable = anglo_saxon_regional_culture_kingdom
+				}
+			}
+		}
+		AND = {
+			# Britons / Romano-Britons should try to reconvert Anglo-Saxon provinces
+			OR = {
+				culture = culture:romanobritish
+				culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				culture = { has_cultural_pillar = heritage_brythonic }
+			}
+			OR = {
+				scope:county = {
+					has_cultural_pillar = heritage_west_germanic
+					title_province = { geographical_region = btwk_world_britannia }
+				}
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+		AND = {
+			# Briton/Welsh should try to reconvert Irish in Wales
+			culture = { has_cultural_pillar = heritage_brythonic }
+			scope:county = {
+				culture = culture:irish
+				title_province = { geographical_region = btwk_world_britannia_south_cymry }
+			}
+		}
+		BTWK_ai_should_aggressively_promote_culture_trigger = yes
+	}
+}
+
+# For if the AI should ignore even adjacency requirements when converting culture
+BTWK_ai_should_aggressively_promote_culture_trigger = {
+	OR = {
+		AND = {
+			# Ingvaeonic rulers should convert counties of Celtic/Roman cultures to their own
+			culture = { has_cultural_pillar = heritage_west_germanic }
+			OR = {
+				scope:county.culture = culture:romanobritish
+				scope:county.culture = {
+					has_cultural_pillar = heritage_romance
+					var:ancestral_starting_culture ?= culture:romanobritish
+				}
+				scope:county.culture = { has_cultural_pillar = heritage_brythonic }
+				scope:county.culture = { has_cultural_pillar = heritage_pictish }
+			}
+			struggle:britannia_struggle = {
+				OR = {
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_slightly_faster
+					has_struggle_phase_parameter = county_culture_conversion_in_region_proceeds_faster
+				}
+			}
+		}
+	}
+}
+
+bg_game_type_region_tabula_trigger = { #For Roman and Romanized cultures and as fallback for pre-chess cultures
+	OR = {
+		has_cultural_pillar = heritage_latin
+		has_cultural_pillar = heritage_gaulish
+		has_cultural_pillar = heritage_basque
+		has_cultural_pillar = heritage_israelite
+		has_cultural_pillar = heritage_romanized_germanic
+		has_cultural_pillar = heritage_romanized_sarmatian
+		has_cultural_pillar = heritage_berber
+		has_cultural_pillar = heritage_turkic
+	}
+}
+
+bg_game_type_region_hnefatafl_trigger = { #For Germanic cultures
+	OR = {
+		has_cultural_pillar = heritage_west_germanic
+		has_cultural_pillar = heritage_frankish
+		has_cultural_pillar = heritage_central_germanic
+		has_cultural_pillar = heritage_north_germanic
+	}
+}
+
+bg_game_type_region_fidchell_trigger = { #For Celtic cultures
+	OR = {
+		has_cultural_pillar = heritage_brythonic
+		has_cultural_pillar = heritage_goidelic
+		has_cultural_pillar = heritage_pictish
+	}
+}
+
+#Chess automatically functions as a fallback and will be used for Romance and Arabic cultures
+
+bg_game_type_region_pachisi_trigger = { #Off-map
+	always = no
+}
+
+bg_game_type_region_go_trigger = { #Off-map
+	always = no
+}
+
+culture_has_coronations_trigger = {
+	trigger_if = {
+		limit = { NOT = { culture = { has_innovation = innovation_coronations } } }
+		culture = { has_innovation = innovation_coronations }
+	}
+	trigger_else_if = {
+		limit = { 
+			culture = { 
+				has_innovation = innovation_coronations
+				NOT = { has_variable = coronations_enabled }
+			}
+		}
+		custom_tooltip = {
+			text = wait_for_coronations_to_be_enabled
+			culture = { 
+				has_innovation = innovation_coronations
+				has_variable = coronations_enabled
+			}
+		}
+	}
+	trigger_else = {
+		culture = { has_innovation = innovation_coronations }
+	}
+}
+
+BTWK_can_pick_for_hybridization_trigger = {
+	custom_tooltip = {
+		text = BTWK_can_pick_for_hybridization_trigger_tt
+		has_cultural_pillar = $HERITAGE$
+	}
 }

@@ -1,0 +1,275 @@
+﻿namespace = travel_events_bp3
+
+scripted_trigger bp3_travel_event_default_trigger = {
+	has_bp3_dlc_trigger = yes
+	is_location_valid_for_travel_event_on_land = yes
+	is_available_travelling_adult = yes
+}
+
+scripted_trigger travel_events_bp3_1_character = {
+	age >= 12
+	OR = {
+		is_child_of = root
+		is_spouse_of = root
+		has_friendly_relationship_trigger = { CHARACTER = root }
+	}
+}
+
+travel_events_bp3.30 = { # The Mercenaries of <X>
+	type = character_event
+	content_source = dlc_015
+	id_override_priority = 10
+	title = travel_events_bp3.30.t
+	desc = travel_events_bp3.30.desc
+
+	theme = travel
+
+	override_background = { reference = tavern }
+
+	cooldown = { years = 10 }
+
+	left_portrait = {
+		character = root
+		animation = drink
+	}
+
+	right_portrait = {
+		character = scope:soldier_character
+		animation = toast
+	}
+
+	trigger = {
+		static_group_filter = {
+			group = travel_events_bp3.30
+			match = 0.50
+		}
+		bp3_travel_event_default_trigger = yes
+		location = {
+			has_holding_type = castle_holding
+		}
+		highest_held_title_tier < tier_empire
+		maa_regiments_max_count > 0 #This is to ensure we don't fire the event for characters that are not allowed to have MAA at all
+	}
+
+	immediate = {
+		mp_delay_travel_plan = { DAYS = 90 }
+		create_character = {
+			template = great_mercenary
+			culture = root.location.culture
+			faith = root.location.faith
+			rite = root.location.rite
+			gender_female_chance = root_soldier_female_chance
+			location = root.location
+			save_scope_as = soldier_character
+
+			after_creation = {
+				add_character_flag = {
+					flag = need_military_outfit
+				}
+				if = {
+					limit = { NOT = { has_trait = lifestyle_blademaster } }
+					add_trait = lifestyle_blademaster
+				}
+				add_trait_xp = {
+					trait = lifestyle_blademaster
+					value = 75
+				}
+			}
+		}
+		add_character_flag = temporary_court_position_cost_removal
+	}
+
+	option = {
+		name = travel_events_bp3.30.a
+		remove_short_term_gold = medium_gold_value
+		spawn_army = {
+			name = mercenary_army_default
+			levies = {
+				value = 40
+				multiply = {
+					value = highest_held_title_tier
+					min = 1
+				}
+			}
+			location = root.capital_province
+			inheritable = no
+			war_keep_on_attacker_victory = yes
+		}
+
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 5
+				has_education_martial_trigger = yes
+			}
+			modifier = {
+				factor = 5
+				OR = {
+					has_trait = brave
+					has_trait = ambitious
+				}
+			}
+		}
+	}
+
+	option = {
+		name = travel_events_bp3.30.b
+		trigger = {
+			NOR = {
+				is_valid_to_hire_court_position_type = bodyguard_court_position
+				is_valid_to_hire_court_position_type = master_of_arms_camp_officer
+			}
+		}
+		remove_short_term_gold = {
+			value = tiny_gold_value
+			min = 20
+			max = 100
+		}
+		show_as_tooltip = { add_courtier = scope:soldier_character }
+		hidden_effect = {
+			scope:soldier_character = { add_to_court_and_entourage_effect = yes }
+		}
+
+		stress_and_fulfillment_impact = {
+			paranoid = medium_stress_gain
+			shy = minor_stress_gain
+		}
+
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_trait = paranoid
+					has_trait = shy
+				}
+			}
+		}
+	}
+
+	option = {
+		name = travel_events_bp3.30.c
+		trigger = {
+			OR = {
+				is_valid_to_hire_court_position_type = bodyguard_court_position
+				is_valid_to_hire_court_position_type = master_of_arms_camp_officer
+			}
+		}
+		remove_short_term_gold = {
+			value = minor_gold_value
+			min = 20
+			max = 100
+		}
+
+		hidden_effect = {
+			scope:soldier_character = { add_to_court_and_entourage_effect = yes }
+		}
+		if = {
+			limit = {
+				is_valid_to_hire_court_position_type = bodyguard_court_position
+			}
+			court_position_grant_effect = { POS = bodyguard CANDIDATE = scope:soldier_character EMPLOYER = root }
+		}
+		else_if = {
+			limit = {
+				is_valid_to_hire_court_position_type = master_of_arms_camp_officer
+			}
+			camp_officer_grant_effect = { POS = master_of_arms CANDIDATE = scope:soldier_character EMPLOYER = root }
+		}
+
+		scope:soldier_character = {
+			add_opinion = {
+				modifier = friendliness_opinion
+				target = root
+				opinion = 25
+			}
+		}
+
+		stress_and_fulfillment_impact = {
+			paranoid = medium_stress_gain
+			shy = minor_stress_gain
+		}
+
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_trait = paranoid
+					has_trait = shy
+				}
+			}
+		}
+	}
+
+	option = {
+		name = travel_events_bp3.30.d
+		stress_and_fulfillment_impact = {
+			base = minor_stress_impact_loss
+		}
+
+		ai_chance = {
+			base = 200
+			modifier = {
+				factor = 5
+				OR = {
+					has_trait = shy
+					has_trait = paranoid
+				}
+			}
+		}
+	}
+
+	option = {
+		name = travel_events_bp3.30.e
+		trigger = {
+			OR = {
+				has_trait = callous
+				has_trait = wrathful
+			}
+		}
+
+		add_dread = medium_dread_gain
+		scope:soldier_character = {
+			death = {
+				death_reason = death_murder
+				killer = root
+			}
+		}
+
+		stress_and_fulfillment_impact = {
+			callous = minor_stress_impact_loss
+			wrathful = medium_stress_impact_loss
+			compassionate = minor_stress_gain
+		}
+
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 5
+				OR = {
+					has_trait = callous
+					has_trait = wrathful
+				}
+			}
+			modifier = {
+				factor = 0
+				has_trait = compassionate
+			}
+		}
+	}
+
+	after = {
+		mp_resume_travel_plan = yes
+		scope:soldier_character = {
+			if = {
+				limit = {
+					is_alive = yes
+					NOT = { is_courtier_of = root }
+				}
+				silent_disappearance_effect = yes
+			}
+		}
+		remove_character_flag = temporary_court_position_cost_removal
+	}
+}

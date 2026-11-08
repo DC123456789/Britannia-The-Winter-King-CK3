@@ -1,0 +1,230 @@
+﻿BTWK_admin_gov_enabled_trigger = {
+	OR = {
+		has_ep3_dlc_trigger = yes
+		has_tgp_dlc_trigger = yes
+	}
+	# has_dlc_feature = admin_gov
+}
+
+government_is_tribal_trigger = {	
+	custom_tooltip = {
+		text = government_is_tribal_trigger
+		government_has_flag = government_is_tribal
+	}
+}
+
+government_is_not_tribal_trigger = {	
+	custom_description = {
+		text = government_is_not_tribal_trigger
+		NOT = { government_has_flag = government_is_tribal }
+	}
+}
+
+government_is_not_pre_feudal_trigger = {	
+	custom_description = {
+		text = government_is_not_pre_feudal_trigger
+		NOT = { government_has_flag = government_is_pre_feudal }
+	}
+}
+
+BTWK_has_sub_roman_government_trigger = {
+	OR = {
+		has_government = sub_roman_government
+		has_government = sub_roman_no_dlc_government
+	}
+}
+
+BTWK_has_germanic_government_trigger = {
+	OR = {
+		has_government = germanic_government
+		has_government = germanic_no_dlc_government
+	}
+}
+
+BTWK_should_become_sub_roman_government_trigger = {
+	OR = {
+		top_liege = {
+			BTWK_has_sub_roman_government_trigger = yes
+		}
+		AND = {
+			OR = {
+				is_independent_ruler = yes
+				liege = {
+					NOT = {
+						government_has_mechanic = administrative
+					}
+				}
+			}
+			NOT = {
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_frankish
+						this.var:ancestral_non_roman_culture ?= {
+							has_cultural_pillar = heritage_frankish
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_should_become_germanic_government_trigger = {
+	OR = {
+		top_liege = {
+			BTWK_has_germanic_government_trigger = yes
+		}
+		AND = {
+			OR = {
+				is_independent_ruler = yes
+				liege = {
+					NOT = {
+						government_has_mechanic = administrative
+					}
+				}
+			}
+			culture = {
+				OR = {
+					has_cultural_pillar = heritage_frankish
+					this.var:ancestral_non_roman_culture ?= {
+						has_cultural_pillar = heritage_frankish
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_reform_from_pre_feudal_innovations_trigger = {
+	custom_description = { #You need to have 75% of all era 2 innovations
+		text = has_75_pc_of_era_2_innovations
+		culture = {
+			calc_true_if = {
+				amount >= 11
+				has_innovation = innovation_battlements
+				has_innovation = innovation_mangonel
+				has_innovation = innovation_burhs
+				has_innovation = innovation_house_soldiers
+				has_innovation = innovation_horseshoes
+				has_innovation = innovation_sappers
+				has_innovation = innovation_hereditary_rule
+				has_innovation = innovation_manorialism
+				has_innovation = innovation_development_02
+				has_innovation = innovation_currency_02
+				has_innovation = innovation_royal_prerogative
+				has_innovation = innovation_chronicle_writing
+				has_innovation = innovation_armilary_sphere
+				has_innovation = innovation_baliffs
+			}
+		}
+	}
+}
+
+BTWK_reform_from_tribal_unreformed_pagan_innovations_trigger = {
+	custom_description = { #You need to have 25% of all era 2 innovations
+		text = has_25_pc_of_era_2_innovations
+		subject = root.culture
+		culture = {
+			calc_true_if = {
+				amount >= 4
+				has_innovation = innovation_battlements
+				has_innovation = innovation_mangonel
+				has_innovation = innovation_burhs
+				has_innovation = innovation_house_soldiers
+				has_innovation = innovation_horseshoes
+				has_innovation = innovation_sappers
+				has_innovation = innovation_hereditary_rule
+				has_innovation = innovation_manorialism
+				has_innovation = innovation_development_02
+				has_innovation = innovation_currency_02
+				has_innovation = innovation_royal_prerogative
+				has_innovation = innovation_chronicle_writing
+				has_innovation = innovation_armilary_sphere
+				has_innovation = innovation_baliffs
+			}
+		}
+	}
+}
+
+BTWK_reform_from_tribal_innovations_trigger = {
+	custom_description = { #You need to have at least 14 innovations total
+		text = has_80_pc_of_tribal_innovations
+		subject = this.culture
+		culture = {
+			any_known_innovation = {
+				count >= 14
+				innovation_is_regional = no
+			}
+		}
+	}
+}
+
+should_be_BTWK_client_kingdom_tributary_trigger = {
+	$SUZERAIN$ = { NOT = { government_has_flag = government_is_tribal } }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	OR = {
+		$TRIBUTARY$ = { NOT = { government_has_flag = government_is_tribal } }
+		$SUZERAIN$.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	}
+}
+
+BTWK_client_kingdom_can_enforce_vassalage_trigger = {
+	$SUZERAIN$ = { save_temporary_scope_as = suzerain_scope }
+	$TRIBUTARY$ = { save_temporary_scope_as = tributary_scope }
+	scope:suzerain_scope.culture = { has_same_culture_heritage = scope:tributary_scope.culture }
+	OR = {
+		scope:tributary_scope.highest_held_title_tier < scope:suzerain_scope.highest_held_title_tier
+		AND = {
+			scope:tributary_scope.highest_held_title_tier = scope:suzerain_scope.highest_held_title_tier
+			scope:tributary_scope.realm_size <= 10
+			scope:suzerain_scope.realm_size >= 50
+		}
+	}
+}
+
+BTWK_can_switch_away_from_laetus_contract_trigger = {
+	trigger_if = {
+		limit = { scope:vassal = { vassal_contract_has_flag = has_laetus_contract } }
+		scope:liege = { 
+			prestige_level >= 2 
+			save_temporary_scope_value_as = {
+				name = military_power_ratio
+				value = {
+					value = military_power
+					divide = {
+						value = scope:vassal.military_power
+						min = 1
+					}					
+				}
+			}
+			custom_description = {
+				text = BTWK_can_switch_away_from_laetus_contract_trigger_military_power_condition
+				object = scope:vassal
+				value = scope:military_power_ratio
+				scope:military_power_ratio >= 4
+			}
+		}
+	}
+}
+
+BTWK_government_type_is_hidden_trigger = {
+	OR = {
+		AND = {
+			this = government_type:sub_roman_government
+			BTWK_admin_gov_enabled_trigger = no
+		}
+		AND = {
+			this = government_type:sub_roman_no_dlc_government
+			BTWK_admin_gov_enabled_trigger = yes
+		}
+		AND = {
+			this = government_type:germanic_government
+			BTWK_admin_gov_enabled_trigger = no
+		}
+		AND = {
+			this = government_type:germanic_no_dlc_government
+			BTWK_admin_gov_enabled_trigger = yes
+		}
+		this = government_type:landless_adventurer_government_bm_placeholder
+	}
+}

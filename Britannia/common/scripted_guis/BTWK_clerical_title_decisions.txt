@@ -1,0 +1,173 @@
+﻿BTWK_create_clerical_titles_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = creatable_clerical_title_stories
+				ROOT = {
+					BTWK_visible_create_clerical_title_trigger = {
+						CLERICAL_TITLE_STORY = prev
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_create_clerical_titles_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_visible_create_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+}
+
+BTWK_create_clerical_titles_create = {
+	scope = character
+	
+	is_valid = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_can_create_clerical_title_cost_trigger = yes
+				BTWK_can_create_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+	
+	effect = {
+		BTWK_create_clerical_title_cost_effect = yes
+		custom_tooltip = {
+			text = BTWK_create_clerical_titles_decision_button_effect_tt
+			BTWK_create_clerical_title_effect = {
+				CLERICAL_TITLE_STORY = scope:scoped_title
+			}
+			# Needs to be after because the tooltip is generated after the effect in here is 'run'
+			scope:scoped_title.var:title = { save_scope_as = clerical_title_template }
+			scope:scoped_title.var:region = { save_scope_as = effect_region }
+		}
+		scope:scoped_title = {
+			if = {
+				limit = { has_variable_list = clerical_title_dependent_expansions }
+				every_in_list = {
+					variable = clerical_title_dependent_expansions
+					this.var:title = { save_scope_as = clerical_title_template }
+					this.var:region = { save_scope_as = effect_region }
+					if = {
+						limit = { scope:clerical_title_template = { has_variable = clerical_title } }
+						scope:clerical_title_template.var:clerical_title = { save_scope_as = clerical_title }
+						root = {
+							custom_tooltip = {
+								text = BTWK_expand_clerical_titles_decision_button_effect_tt
+							}
+						}
+					}
+					else = {
+						root = {
+							custom_tooltip = {
+								text = BTWK_expand_clerical_titles_decision_button_effect_does_not_exist_yet_tt
+							}
+						}
+					}
+				}
+			}
+		}
+		BTWK_create_clerical_title_warnings_effect = {
+			CLERICAL_TITLE_STORY = scope:scoped_title
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			scope:archbishopric_title = {
+				any_in_list = {
+					variable = clerical_title_expansions
+					ROOT = {
+						BTWK_visible_expand_clerical_title_trigger = {
+							CLERICAL_TITLE_STORY = prev
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_st_davids_none_shown = {
+	scope = character
+	
+	is_shown = {
+		NOT = {
+			any_in_global_list = {
+				variable = briton_clerical_title_expansion_stories
+				ROOT = {
+					BTWK_visible_create_clerical_title_trigger = {
+						CLERICAL_TITLE_STORY = prev
+					}
+				}
+			}
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_show = {
+	scope = character
+	
+	is_shown = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_visible_expand_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+}
+
+BTWK_expand_clerical_titles_expand = {
+	scope = character
+	
+	is_valid = {
+		scope:scoped_title = {
+			ROOT = {
+				BTWK_can_expand_clerical_title_cost_trigger = yes
+				BTWK_can_expand_clerical_title_trigger = {
+					CLERICAL_TITLE_STORY = prev
+				}
+			}
+		}
+	}
+	
+	effect = {
+		BTWK_expand_clerical_title_cost_effect = yes
+		custom_tooltip = {
+			text = BTWK_expand_clerical_titles_decision_button_effect_tt
+			BTWK_expand_clerical_title_effect = {
+				CLERICAL_TITLE_STORY = scope:scoped_title
+			}
+		}
+		BTWK_expand_clerical_title_warnings_effect = {
+			CLERICAL_TITLE_STORY = scope:scoped_title
+		}
+		if = {
+			limit = { has_variable = selected_title }
+			remove_variable = selected_title
+		}
+	}
+}

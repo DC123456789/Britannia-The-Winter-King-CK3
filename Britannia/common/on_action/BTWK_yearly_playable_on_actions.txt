@@ -1,0 +1,114 @@
+﻿yearly_playable_pulse = {
+	on_actions = {
+		btwk_yearly_playable_pulse
+	}
+}
+
+btwk_yearly_playable_pulse = {
+	effect = {
+		# Hen Ogledd control progress check
+		if = {
+			limit = {
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_brythonic
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				highest_held_title_tier = tier_kingdom
+				control_region_fraction_including_tributaries_trigger = {
+					FRACTION_REQUIRED = 0.70
+					REGION = geographical_region:btwk_world_britannia_hen_ogledd
+				}
+			}
+			if = {
+				limit = { has_variable = hen_ogledd_control_years }
+				change_variable = { name = hen_ogledd_control_years add = 1 }
+			}
+			else = {
+				set_variable = { name = hen_ogledd_control_years value = 1 }
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = hen_ogledd_control_years
+				this.var:hen_ogledd_control_years > 0
+			}
+			change_variable = { name = hen_ogledd_control_years subtract = 1 }
+		}
+		
+		# Offmap rulers and their siblings/children marry if > 21 and still unmarries
+		if = {
+			limit = { 
+				is_ai = yes
+				has_trait = offmap_ruler
+			}
+			save_scope_as = offmap_ruler_scope
+			if = {
+				limit = {
+					is_married = no
+					is_eunuch_trigger = no
+					NOT = { has_trait = celibate }
+					NOT = { has_trait_with_flag = can_not_marry }
+					age >= 21
+				}				
+				random = {
+					chance = 33
+					BTWK_generate_spouse_effect = yes
+				}
+			}
+			any_child = {
+				if = {
+					limit = {
+						is_ruler = no
+						employer = scope:offmap_ruler_scope
+						is_married = no
+						is_eunuch_trigger = no
+						NOT = { has_trait = celibate }
+						NOT = { has_trait_with_flag = can_not_marry }
+						age >= 21
+					}				
+					random = {
+						chance = 33
+						BTWK_generate_spouse_effect = yes
+					}
+				}
+				any_child = {
+					if = {
+						limit = {
+							is_ruler = no
+							employer = scope:offmap_ruler_scope
+							is_married = no
+							is_eunuch_trigger = no
+							NOT = { has_trait = celibate }
+							NOT = { has_trait_with_flag = can_not_marry }
+							age >= 21
+						}
+					
+						random = {
+							chance = 33
+							BTWK_generate_spouse_effect = yes
+						}
+					}
+				}
+			}
+			any_sibling = {
+				if = {
+					limit = {
+						is_ruler = no
+						employer = scope:offmap_ruler_scope
+						is_married = no
+						is_eunuch_trigger = no
+						NOT = { has_trait = celibate }
+						NOT = { has_trait_with_flag = can_not_marry }
+						age >= 21
+					}				
+					random = {
+						chance = 33
+						BTWK_generate_spouse_effect = yes
+					}
+				}
+			}
+		}
+	}
+}

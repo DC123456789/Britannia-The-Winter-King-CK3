@@ -1,0 +1,514 @@
+﻿@ai_standard_liege_desire = 2
+@ai_standard_vassal_desire = 1
+# Everything below this line is 'Fine Print'
+
+special_contract = {
+	display_mode = radiobutton
+	is_shown = {
+		scope:subject.primary_title.tier >= tier_county
+	}
+	obligation_levels = {
+		special_contract_none = {
+			is_valid = {
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			
+			position = { 0 1 }
+			default = yes
+			score = 0
+
+			ai_subject_desire = {
+				value = 0
+				if = {
+					limit = {
+						scope:subject = {
+							vassal_contract_has_flag = has_scutage_contract
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									vassal_contract_obligation_level:feudal_government_taxes >= feudal_tax_normal_level
+								}
+							}
+						}
+					}
+					add = @ai_standard_vassal_desire
+				}
+			}
+
+
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = {
+						scope:subject = {
+							vassal_contract_has_flag = has_scutage_contract
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									vassal_contract_obligation_level:feudal_government_taxes < feudal_tax_normal_level
+								}
+							}
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+				if = {
+					limit = {
+						scope:subject = {
+							vassal_contract_has_flag = has_march_contract
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									vassal_contract_obligation_level:feudal_government_levies < feudal_levies_normal_level
+								}
+							}
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+				if = {
+					limit = {
+						scope:subject = {
+							vassal_contract_has_flag = has_palatinate_contract
+
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									OR = {
+										vassal_contract_obligation_level:feudal_government_taxes >= feudal_tax_normal_level
+										vassal_contract_obligation_level:feudal_government_levies >= feudal_levies_normal_level
+									}
+								}
+							}
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+			}
+		}
+		special_contract_scutage = {
+			is_shown = { #disabled
+				always = no
+				#scope:vassal.primary_title.tier >= tier_duchy
+				#scope:vassal = { government_has_flag = government_is_feudal }
+			}
+			is_valid = { #disabled
+				always = no
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			parent = special_contract_none
+			position = { 1 1 }
+			score = 0
+
+			tax_factor = scutage_contract_tax
+			levies_factor = -0.75
+
+			subject_modifier = {
+				men_at_arms_maintenance = -0.2
+			}
+
+			flag = has_scutage_contract
+			flag = obligation_high_taxes
+
+			ai_liege_desire = {
+				value = @ai_standard_liege_desire
+				if = {
+					limit = {
+						scope:subject = {
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									vassal_contract_obligation_level:feudal_government_taxes >= feudal_tax_normal_level
+								}
+							}
+						}
+					}
+					add = 5
+				}
+				if = {
+					limit = {
+						scope:liege = {
+							ai_should_focus_on_building_in_their_capital = yes
+						}
+					}
+					add = 10
+				}
+			}
+			ai_subject_desire = -2
+		}
+		special_contract_march = {
+			is_shown = {
+				scope:subject.primary_title.tier >= tier_duchy
+				scope:subject = { government_is_not_tribal_trigger = yes }
+			}
+			is_valid = {
+				scope:liege.culture = {
+					has_innovation = innovation_bannus
+				}
+				custom_tooltip = {
+					text = special_contract_march_border_trigger
+					scope:subject = {
+						OR = {
+							vassal_contract_has_flag = has_march_contract
+							primary_title = { has_variable = historical_margrave }
+							any_sub_realm_county = {
+								any_neighboring_county = {
+									holder.top_liege != scope:subject.top_liege
+								}
+							}
+						}
+					}
+				}
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			parent = special_contract_none
+			position = { 1 0 }
+			score = 0
+
+			tax_factor = march_contract_taxes
+
+			subject_modifier = {
+				levy_size = 0.2
+				army_maintenance_mult = -0.2
+				garrison_size = 0.2
+				levy_reinforcement_rate = 0.2
+				controlled_province_advantage = 5
+			}
+
+			flag = has_march_contract
+
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = {
+						scope:subject = {
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									OR = {
+										vassal_contract_obligation_level:feudal_government_taxes < feudal_tax_normal_level
+										vassal_contract_obligation_level:feudal_government_levies > feudal_levies_normal_level
+									}
+								}
+							}
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+			}
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+		special_contract_castellan = {
+			is_shown = {
+				scope:subject.primary_title.tier = tier_county
+				scope:subject = { government_is_not_tribal_trigger = yes }
+			}
+			is_valid = {
+				scope:liege.culture = {
+					has_innovation = innovation_bannus
+				}
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			
+			parent = special_contract_none
+			position = { 1 0 }
+			score = 0
+
+			tax_factor = march_contract_taxes
+			levies_factor = 0.5
+
+			subject_modifier = {
+				levy_size = 0.2
+				army_maintenance_mult = -0.2
+				garrison_size = 0.2
+				levy_reinforcement_rate = 0.2
+				controlled_province_advantage = 5
+			}
+
+			flag = has_castellan_contract
+			flag = obligation_high_levies
+
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = {
+						scope:subject = {
+							OR = {
+								government_has_flag = government_is_clan
+								AND = {
+									government_has_flag = government_is_feudal
+									OR = {
+										vassal_contract_obligation_level:feudal_government_taxes < feudal_tax_normal_level
+										vassal_contract_obligation_level:feudal_government_levies > feudal_levies_normal_level
+									}
+								}
+							}
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+			}
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+		special_contract_palatinate = {
+			is_shown = { #disabled
+				always = no
+				#scope:vassal = { government_has_flag = government_is_feudal } 
+			}
+			is_valid = { #disabled
+				always = no
+				#scope:liege.culture = {
+				#	has_innovation = innovation_rightful_ownership
+				#}
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			parent = special_contract_none
+			position = { 1 2 }
+			score = 0
+
+			tax_factor = palatinate_contract_taxes
+			levies_factor = palatinate_contract_levies
+
+			liege_modifier = {
+				monthly_prestige_gain_mult = 0.05
+			}
+
+			subject_modifier = {
+				monthly_prestige_gain_mult = 0.2
+				fellow_vassal_opinion = 15
+				owned_personal_scheme_success_chance_add = 10
+				owned_hostile_scheme_success_chance_add = 10
+			}
+
+			flag = has_palatinate_contract
+
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = {
+						scope:subject = {
+							government_has_flag = government_is_feudal
+							vassal_contract_obligation_level:feudal_government_taxes < feudal_tax_low_level
+							vassal_contract_obligation_level:feudal_government_levies < feudal_levies_low_level
+						}
+					}
+					add = @ai_standard_liege_desire
+				}
+			}
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+		special_contract_laetus = {
+			is_shown = {
+				scope:liege = {
+					government_has_flag = government_is_feudal
+					culture = {
+						OR = {
+							has_cultural_pillar = heritage_latin
+							has_cultural_pillar = heritage_brythonic
+						}
+					}
+				}
+				scope:subject = {
+					is_unromanized_germanic_culture_trigger = yes
+				}
+			}
+			is_valid = {
+				scope:liege.culture = {
+					has_innovation = innovation_foederati
+				}
+				BTWK_can_switch_away_from_subject_kingdom_vassal_contract_trigger = yes
+			}
+			parent = special_contract_none
+			position = { 1 0 }
+			score = 1
+			
+			tax_factor = -2
+			levies = 0.6
+
+			liege_modifier = {
+				monthly_income_mult = -0.1
+				levy_reinforcement_rate = 0.05
+			}
+
+			subject_modifier = {
+				levy_size = 1.0
+				men_at_arms_maintenance = -0.25
+				garrison_size = 0.50
+				levy_reinforcement_rate = 0.5
+			}
+			
+			flag = has_laetus_contract
+			flag = vassal_contract_cannot_revoke_titles
+			flag = religiously_protected
+
+			ai_liege_desire = 0
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+		special_contract_subject_kingdom = {
+			is_shown = {
+				scope:liege = { has_title = title:e_britannia }
+				BTWK_britannia_subject_king_vassals_active_trigger = yes
+				OR = {
+					scope:subject.primary_title.tier >= tier_kingdom
+					scope:subject = { vassal_contract_has_flag = has_subject_kingdom_vassal_contract }
+					scope:subject = { has_variable = force_subject_kingdom }
+				}
+			}
+			is_valid = {
+				scope:liege = { has_title = title:e_britannia }
+				BTWK_britannia_subject_king_vassals_active_trigger = yes
+				trigger_if = {
+					limit = { 
+						scope:subject = { 
+							NOR = {
+								vassal_contract_has_flag = has_subject_kingdom_vassal_contract 
+								has_variable = force_subject_kingdom
+							}
+						}
+					}
+					scope:subject = { highest_held_title_tier >= tier_kingdom }
+				}
+				BTWK_can_switch_away_from_laetus_contract_trigger = yes
+			}
+			parent = special_contract_none
+			position = { 1 0 }
+			score = 1
+
+			tax_factor = -0.33
+			subject_opinion = 5
+			
+			flag = has_subject_kingdom_vassal_contract
+			flag = vassal_contract_cannot_revoke_titles
+
+			ai_liege_desire = 0
+			ai_subject_desire = @ai_standard_vassal_desire
+		}
+	}
+}
+
+suzerain_war_participation_guarantee = {
+	display_mode = radiobutton		# Checkbox doesn't have proper GUI support if there conditions for disabling
+	obligation_levels = {
+		suzerain_war_participation_guarantee_none = {
+			position = { 0 0 }
+
+			is_valid = {
+				trigger_if = {
+					limit = {
+						scope:subject = { BTWK_britannia_high_kingship_is_subject_king_tributary_trigger = yes }
+					}
+					custom_tooltip = {
+						text = britannia_subject_king_guarantee_always
+						always = no
+					}
+				}
+			}
+			
+			ai_liege_desire = {
+				value = 0
+				if = {		# AI wants to centralize so they can vassalize
+					limit = { NOT = { scope:subject = { has_subject_contract_group = tributary_BTWK_client_kingdom } } }
+					add = @ai_standard_liege_desire
+				}
+			}
+			ai_subject_desire = 0
+			score = -2
+		}
+		suzerain_war_participation_guarantee_available = {
+			parent = suzerain_war_participation_guarantee_none
+			default = yes
+			position = { 1 0 }
+
+			subject_opinion = 15
+
+			# flag referenced in code, do not change without approval
+			flag = tributary_contract_suzerain_guarantee_override
+
+			ai_liege_desire = {
+				value = 0
+				if = {
+					limit = { scope:subject = { has_subject_contract_group = tributary_BTWK_client_kingdom } }
+					add = @ai_standard_liege_desire
+				}
+			}
+			ai_subject_desire = @ai_standard_vassal_desire
+			score = 2
+		}
+	}
+}
+
+# Do not add any more levels to this, code checks only for non-default to determine behavior
+tributary_war_participation_obligation = {
+	display_mode = checkbox
+	obligation_levels = {
+		tributary_war_participation_obligation_none = {
+			default = yes
+			position = { 0 0 }
+
+			ai_liege_desire = 0
+			ai_subject_desire = @ai_standard_vassal_desire
+			score = 1
+		}
+		tributary_war_participation_obligation_forced = {
+			parent = tributary_war_participation_obligation_none
+			position = { 1 0 }
+
+			is_valid = {
+				trigger_if = {
+					limit = {
+						scope:subject = { has_subject_contract_group = tributary_foederatus }
+					}
+					always = yes
+				}
+				trigger_else_if = {
+					limit = { scope:subject = { has_government = herder_government } }
+					custom_tooltip = {
+						text = herder_cannot_war_tt
+						always = no
+					}
+				}
+				trigger_else_if = {
+					limit = {
+						scope:subject.suzerain ?= { government_has_flag = government_is_steppe_admin } 
+					}
+					always = yes
+				}
+				trigger_else_if = {
+					limit = { NOT = { scope:subject = { has_relation_blood_brother = overlord } } }
+					custom_tooltip = {
+						text = war_support_obligation_conditions_unmet_tt
+						scope:subject = {
+							OR = {
+								is_ai = no # human players cannot be obedient, so this is always valid for them
+								is_obedient = yes
+							}
+							vassal_contract_obligation_level:suzerain_war_participation_guarantee > 0
+						}
+					}
+				}
+				trigger_else = {
+					scope:subject = { has_relation_blood_brother = overlord }
+				}
+			}
+
+			subject_opinion = -25
+
+			flag = tributary_contract_tributary_forced_war_override
+
+			ai_liege_desire = @ai_standard_liege_desire
+			ai_subject_desire = 0
+			score = -3
+		}
+	}
+}

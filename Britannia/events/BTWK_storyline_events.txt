@@ -1,0 +1,2572 @@
+﻿namespace = BTWK_story_event
+
+################################
+# THE WINTER KING STORY EVENTS #
+################################
+
+# FIRST 2 DIGITS = STORY PART; LAST 2 DIGITS = EVENT ID; 
+
+# MAY REQUIRE A FILE FOR NON-CANON/ALT-CANON EVENTS.
+
+# NOTICE 21/09/2023: THE EVENT WINDOWS (ANIMATIONS, THEMES, ETC.) NEED TO BE CALIBRATIED APPROPRIATELY WHEN ABLE.
+# NOTICE 22/10/2023: MAY WANT TO REARRANGE EVENT IDS WHEN SECTIONS ARE MAINLY COMPLETE TO BE CHRONOLOGICAL
+
+################################
+
+# BTWK_story_event.setup = UTLITY: Add modifiers to story characters
+
+### PART 1 - THE WINTER KING ###
+## UTHER'S ILLNESS AND ARTHUR'S RETURN ##
+
+# BTWK_story_event.0101 = STORYLINE TRIGGER.
+
+# BTWK_story_event.0102 = GLEVUM: Option for independent kings to go to the High Council.
+# BTWK_story_event.0103 = GLEVUM: Spring 480 AD. Start of High Council at Glevum
+# BTWK_story_event.0118 = GLEVUM: Tewdric suggests to Agricola to make suggestion
+# BTWK_story_event.0117 = GLEVUM: Agricola chooses whether to propose Arthur as Norwenna's Suitor
+# BTWK_story_event.0113 = GLEVUM: Uther responds to Agricola's challenge
+# BTWK_story_event.0104 = GLEVUM: Select spouse for Norwenna
+# BTWK_story_event.0105 = GLEVUM: Uther gets guardian selection event: broadcasts choice to take the oath to direct vassals and Tewdric
+# BTWK_story_event.0119 = GLEVUM: Choose to become an oath-taker for Mordred's protection 
+# BTWK_story_event.0120 = GLEVUM: Hidden Trigger Event for the council end notifications
+# BTWK_story_event.0114 = GLEVUM: Notification of the results of the council to the attendees
+# BTWK_story_event.0115 = GLEVUM: Notification of the results of the council to all players in S.B. & Armorica
+
+# BTWK_story_event.0106 = UTHER'S DEATH: Summer 480 AD. Uther Pendragon's health is worsening...
+# BTWK_story_event.0107 = UTHER'S DEATH: Autumn 480 AD. If Uther is still alive, he becomes incapable...
+# BTWK_story_event.0110 = UTHER'S DEATH: Uther is Dead - Global Event
+# BTWK_story_event.0111 = UTHER'S DEATH: Tag Switch Event for Player Mordred
+
+# BTWK_story_event.0112 = RETURN OF ARTHUR: Arthur Introductory Event
+
+# BTWK_story_event.0150 - 0154 = Sagramor joins Arthur in Dumnonia
+# BTWK_story_event.0155 - 0159 = Derfel is granted the Wolftails
+
+## AFTERMATH OF UTHER'S DEATH ##
+
+# BTWK_story_event.0108 = GUNDLEUS' BETRAYAL.
+# BTWK_story_event.0109 = GUNDLEUS WINS THE WAR
+# BTWK_story_event.0121 = ARTHUR WINS THE WAR
+# BTWK_story_event.0122 = NOTIFICATION EVENT FOR MORDRED
+# IDs 123 - x: Reserved for unqiue story chain for Gundleus on claiming Dumnonia by intrigue.
+
+
+### PART 2 - THE PRINCESS BRIDE ###
+## OWAIN/ARTHUR POWER STRUGGLE ##
+# BTWK_story_event.0300 - Arthur chooses a wife (Guinevere or Ceinwyn)
+
+### PART 3 - THE RETURN OF MERLIN ###
+
+### PART 4 - THE ISLE OF THE DEAD ###
+
+### PART 5 - THE SHIELD WALL ###
+
+### PART 6 - THE DARK ROAD ###
+
+### PART 7 - THE BROKEN ROAD ###
+
+### PART 8 - CAMELOT ###
+
+### PART 9 - THE MYSTERIES OF ISIS ###
+
+### PART 10 - THE FIRES OF MAI DUN ###
+
+### PART 11 - MYNYDD BADDON ###
+
+### PART 12 - NIMUE'S CURSE ###
+
+### PART 13 - THE LAST ENCHANTMENT ###
+
+
+############## UTHER'S ILLNESS and ARTHUR'S RETURN ##############
+
+# TODO LIST:
+	# ADD LOCS FOR ALL EVENTS.
+	# ADD TRIGGERED DESC FOR TEWDRIC ACCEPTING THE HOSTING OF THE COUNCIL
+	# ADD OPINION MODIFIERS FOR ARTHUR AND TEWDRIC/AGRICOLA IF THEY SUPPORT HIS RETURN AT THE COUNCIL.
+	# ADD DEATH-OATH EVENT:
+	# 	a window of time to try and seek vengeance (imprison/kill the murderer). If you can't avenge Mordred's death, you get a prestige malus for breaking the oath, 
+	# 	with increased opinion maluses with just/zealous (etc.) characters, and no opinion malus with deceitful characters. If a character is just and zealous, they may commit suicide.
+	#	add rival.
+
+### PART 1 ###
+BTWK_story_event.0101 = {  # Uther introductory event 
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+
+	immediate = {
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0103
+				days = 50
+			} 
+		}
+
+		every_ruler = {
+			limit = {
+				holds_kingdom_near_dumnonia = yes 
+				culture = {
+					culture_is_britannic_culture_trigger = yes
+				}
+			}
+			trigger_event = {
+				id = BTWK_story_event.0102
+				days = 25
+			}
+		}
+	}
+}
+
+BTWK_story_event.0102 = {  # Event for ai selection of whether they want to go to glevum + catalogue norwenna's suitors.
+
+	# MAY WANT A SECOND GLOBAL VARIABLE LIST FOR ALL VALID KINGS, IN CASE WE MAKE GLEVUM INTO A RESKINNED FEAST ACTIVITY
+	# IN THIS CASE, PROBABLY WANT TO REFERENCE NEW FILE SO I DON'T HAVE TO KEEP CHANGING EVENT ID - "BTWK_storyline_activity_events", etc.
+	# Add separate tooltips for if you or your heir is elegible to become Mordred's guardian
+
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0102.t
+	desc = BTWK_story_event.0102.desc
+	theme = realm 
+
+	right_portrait = {
+		character = root  
+		animation = personality_honorable
+	}
+
+	trigger = {
+		character:1 = {
+			is_alive = yes
+		}
+	}
+
+	option = {  # Go to the council
+		name = BTWK_story_event.0102.a
+
+		if = {
+			limit = {
+				root = {
+					is_married = no
+				}
+			}
+			add_to_global_variable_list = {
+				name = char_is_norwenna_wedding_prospect
+				target = root
+			}
+			add_to_global_variable_list = {
+				name = attending_glevum
+				target = root
+			}
+		}
+
+		else_if = {
+			limit = {
+				exists = root.primary_heir
+				root.primary_heir = {
+					is_adult = yes
+					is_married = no
+				}
+			}
+			add_to_global_variable_list = {
+				name = char_is_norwenna_wedding_prospect
+				target = root.primary_heir
+			}
+			add_to_global_variable_list = {
+				name = attending_glevum
+				target = root
+			}
+			add_to_global_variable_list = {
+				name = attending_glevum
+				target = root.primary_heir
+			}
+		}
+		# IF CHAR = TEWDRIC OR AGRICOLA
+		else_if = {
+			limit = {
+				OR = {
+					this = character:14
+					this = character:40
+				}
+			}
+			add_to_global_variable_list = {
+				name = attending_glevum
+				target = this
+			}
+		}
+	# AI CHANCE MUST STILL BE MODIFIED ACCORDINGLY
+	# ADD AN OPINION BASED MODIFIER TO AI CHANCE?
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 10
+				has_trait = deceitful
+			}
+			modifier = {
+				add = -10
+				has_trait = arrogant
+			}
+			modifier = {
+				add = -10
+				has_trait = vengeful
+			}
+			modifier = {
+				add = 20
+				has_trait = ambitious
+			}
+		}
+	}
+
+	option = {  # Don't go to the council
+		name = BTWK_story_event.0102.b
+		trigger = {
+			NOT = {root.primary_title = title:k_gwent}   
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+BTWK_story_event.0103 = {  # Arrived at Glevum High Council. 
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0103.t
+	desc = BTWK_story_event.0103.desc
+	theme = realm
+	
+	right_portrait = {
+		character = character:1  # Uther
+		animation = personality_honorable
+	}	
+	left_portrait = {
+		character = character:14  # Tewdric
+		animation = personality_honorable
+	}
+
+	trigger = {
+		character:1 = {is_alive = yes}
+	}
+
+	# Start of NORWWNNA MARRIAGE CHAIN
+	option = {  
+		name = BTWK_story_event.0103.a
+		trigger = {
+			global_variable_list_size = {
+				name = char_is_norwenna_wedding_prospect
+				value > 0
+			} 
+			character:19 = {
+				is_alive = yes
+			}
+		}
+
+		# Event for Tewdric
+		if = {
+			limit = {
+				character:40 = {
+					is_alive = yes
+				}
+				character:14 = {
+					is_alive = yes
+				}
+			}
+			character:14 = {
+				trigger_event = {
+					id = BTWK_story_event.0118  
+					days = 1
+				}
+			}
+		}
+		
+		# Skip to suitor selection if Agricola is dead.
+		else = {
+			character:1 = {
+				trigger_event = {
+					id = BTWK_story_event.0104  
+					days = 1
+				}
+			}
+		}
+	}
+
+	# If Norwenna is dead, skip to the GUARDIAN SELECTION EVENT.
+	option = {  
+		name = BTWK_story_event.0103.b
+		trigger = {
+			character:19 = {
+				is_alive = no
+			}
+		}
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0105
+				days = 1
+			}
+		}
+	}
+}
+
+BTWK_story_event.0118 = { # Event for Tewdric: Fills player in on his opinions on bringing Arthur home
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0118.t
+	desc = BTWK_story_event.0118.desc
+	theme = realm
+
+	immediate = {
+		character:40 = {
+			save_scope_as = agricola_of_glevum
+		}
+	}
+	# Agricola's suggestion subchain
+	option = {
+		name = BTWK_story_event.0118.a
+		custom_tooltip = BTWK_story_event.0118.tt_a
+		character:40 = {
+			trigger_event = BTWK_story_event.0117
+		}
+		ai_chance = {
+			base = 1000
+		}
+	}
+
+	# Skip to suitor selection
+	option = {
+		name = BTWK_story_event.0118.b
+		character:40 = {
+			trigger_event = BTWK_story_event.0104
+		}
+		add_prestige = -100
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+BTWK_story_event.0117 = {  # Event for Agricola: Decide whether to put forward Arthur as a marriage suggestion.  
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0117.t
+	desc = BTWK_story_event.0117.desc
+	theme = realm
+
+	# Fulfil Tewdric's wishes
+	option = {
+		name = BTWK_story_event.0117.a
+		# AGRICOLA GAINS FAVOUR ON TEWDRIC
+		add_favour_hook_if_possible_simple_effect = { 
+			TARGET = character:14 
+		}
+		character:14 = {
+			add_opinion = {
+				modifier = pleased_opinion 
+				TARGET = character:40
+				opinion = 5 # Lower opinion gain than loss as courtly liege like Tewdric would expect you to do as he commands
+			}
+		}
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0113
+				days = 1
+			}
+		}
+		ai_chance = {
+			base = 1000
+		}
+	}
+
+	# Go against Tewdric's wishes / Don't want to upset Uther.
+	option = {
+		name = BTWK_story_event.0117.b
+		# GOING AGAINST LIEGE'S DESIRES - NOT VERY PROFESSIONAL 
+		add_prestige = -100
+		character:14 = {
+			add_opinion = {
+				modifier = frustrated_opinion 
+				target = character:40
+				opinion = -10
+			}
+		}
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0104
+				days = 1
+			}
+		}		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+BTWK_story_event.0113 = {  # Event for Uther: Reaction to Agricola's suggestion.
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0113.t
+	desc = BTWK_story_event.0113.desc
+	theme = realm
+	
+	# UTHER REJECTS AGRICOLA'S PROPOSAL
+	option = {
+		name = BTWK_story_event.0113.a
+		custom_tooltip = BTWK_story_event.0113.tt_a
+		character:1 = {	
+			trigger_event = {
+				id = BTWK_story_event.0104
+				days = 1
+			}
+		}
+		# Add displeased opinion for Tewdric.
+		ai_chance = {
+			base = 1000
+		}
+	}
+
+	# UTHER ACCEPTS AGRICOLA'S PROPOSAL
+	option = {
+		name = BTWK_story_event.0113.b
+		character:1 = {
+			add_stress = 100
+			add_prestige = -250
+			trigger_event = {
+				id = BTWK_story_event.0105
+				days = 1
+			}
+		}
+		character:3 = {
+			marry = character:19
+			remove_trait = restricted_marriage
+		}
+		character:19 = { 
+			remove_trait = restricted_marriage 
+		} 
+
+		# Add pleased opinion modifier for tewdric
+		character:40 = {
+			add_character_modifier = {
+				modifier = approved_by_high_king
+				years = 2
+			}
+			# Add respect opinion modifier
+		}	
+		ai_chance = {
+				base = 0
+		}
+	}
+}
+
+BTWK_story_event.0104 = {  # Choose Norwenna's suitor. 
+
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0104.t
+	desc = BTWK_story_event.0104.desc
+	theme = realm 
+
+	right_portrait = {
+		character = character:1  # Uther
+		animation = personality_honorable
+	}	
+	left_portrait = {
+		character = character:19
+		animation = personality_honorable
+	}
+	# SHOULD PROBABLY HAVE AN EVENT FIRE AT SOME POINT BEFORE THE COUNCIL FOR PLAYER RULERS TO BE ABLE TO CHOOSE IF THEY OR THEIR HEIR HAVE THE MARRIAGE.
+	# Done below as I have no way of distinguishing whether or not the suitor is the king or heir of a kingdom
+	immediate = {
+		every_in_global_list = {
+			variable = char_is_norwenna_wedding_prospect
+			if = {
+				limit = {
+					this = {
+						is_married = yes
+					}
+				}
+				remove_list_global_variable = {
+					name = char_is_norwenna_wedding_prospect
+					target = this
+				}
+			}
+		}
+		######## POWYS ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_powys
+				}
+			}
+			title:k_powys.holder = {
+				save_scope_as = powys_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_powys.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_powys.holder.primary_heir = {
+				save_scope_as = powys_suitor
+			}
+		}
+		######## SILURIA ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_siluria
+				}
+			}
+			title:k_siluria.holder = {
+				save_scope_as = siluria_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_siluria.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_siluria.holder.primary_heir = {
+				save_scope_as = siluria_suitor
+			}
+		}
+		######## KERNOW ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_kernow
+				}
+			}
+			title:k_kernow.holder = {
+				save_scope_as = kernow_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_kernow.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_kernow.holder.primary_heir = {
+				save_scope_as = kernow_suitor
+			}
+		}
+		######## GWENT ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_gwent
+				}
+			}
+			title:k_gwent.holder = {
+				save_scope_as = gwent_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_gwent.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_gwent.holder.primary_heir = {
+				save_scope_as = gwent_suitor
+			}
+		}
+		######## GLEVUM ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_glevum
+				}
+			}
+			title:k_glevum.holder = {
+				save_scope_as = glevum_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_glevum.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_glevum.holder.primary_heir = {
+				save_scope_as = glevum_suitor
+			}
+		}
+		######## BELGAE ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_belgae
+				}
+			}
+			title:k_belgae.holder = {
+				save_scope_as = belgae_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_belgae.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_belgae.holder.primary_heir = {
+				save_scope_as = belgae_suitor
+			}
+		}
+		######## CYNWIDION ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_cynwidion
+				}
+			}
+			title:k_cynwidion.holder = {
+				save_scope_as = cynwidion_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_cynwidion.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_cynwidion.holder.primary_heir = {
+				save_scope_as = cynwidion_suitor
+			}
+		}
+		######## DEMETIA ########
+		if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					has_primary_title = title:k_demetia
+				}
+			}
+			title:k_demetia.holder = {
+				save_scope_as = demetia_suitor
+			}
+		}
+		else_if = {
+			limit = {
+				any_in_global_list = {
+					variable = char_is_norwenna_wedding_prospect
+					is_primary_heir_of = title:k_demetia.holder
+					holds_kingdom_near_dumnonia = no
+				}
+			}
+			title:k_demetia.holder.primary_heir = {
+				save_scope_as = demetia_suitor
+			}
+		}
+		######## ARTHUR ########
+		# FOR LOC PURPOSES
+		character:3 = {
+			save_scope_as = prince_arthur
+		}										
+	}
+
+
+	################### Powys ###################
+	option = { 
+		name = BTWK_story_event.0104.a
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_powys
+					AND = {
+						is_primary_heir_of = title:k_powys.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:powys_suitor = {
+			marry = character:19
+		}
+		# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
+		scope:powys_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_powys = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}
+	################### Siluria ###################
+	option = { 
+		name = BTWK_story_event.0104.b
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_siluria
+					AND = {
+						is_primary_heir_of = title:k_siluria.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:siluria_suitor = {
+			marry = character:19
+		}
+		# SAVE SCOPES FOR TRIGGERED DESC IN CONCLUSION EVENT
+		scope:siluria_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_siluria = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}
+	################### Kernow ###################
+	option = { 
+		name = BTWK_story_event.0104.c
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_kernow
+					AND = {
+						is_primary_heir_of = title:k_kernow.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:kernow_suitor = {
+			marry = character:19
+		}
+		scope:kernow_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_kernow = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}
+	################### Gwent ###################
+	option = { 
+		name = BTWK_story_event.0104.d
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_gwent
+					AND = {
+						is_primary_heir_of = title:k_gwent.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:gwent_suitor = {
+			marry = character:19
+		}
+		scope:gwent_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_gwent = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}	
+	################### Glevum ###################
+	option = { 
+		name = BTWK_story_event.0104.e
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_glevum
+					AND = {
+						is_primary_heir_of = title:k_glevum.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:glevum_suitor = {
+			marry = character:19
+		}
+		scope:glevum_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_glevum = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}	
+	################### Belgae ###################
+	option = { 
+		name = BTWK_story_event.0104.f
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_belgae
+					AND = {
+						is_primary_heir_of = title:k_belgae.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:belgae_suitor = {
+			marry = character:19
+		}
+		scope:belgae_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_belgae = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}	
+	################### Cynwidion ###################
+	option = { 
+		name = BTWK_story_event.0104.g
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_cynwidion
+					AND = {
+						is_primary_heir_of = title:k_cynwidion.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:cynwidion_suitor = {
+			marry = character:19
+		}
+		scope:cynwidion_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_cynwidion = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}	
+	################### Demetia ###################
+	option = { 
+		name = BTWK_story_event.0104.h
+		trigger = {
+			any_in_global_list = {
+				variable = char_is_norwenna_wedding_prospect
+				OR = {
+					has_primary_title = title:k_demetia
+					AND = {
+						is_primary_heir_of = title:k_demetia.holder
+						holds_kingdom_near_dumnonia = no
+					}
+				}
+			}
+		}
+		scope:demetia_suitor = {
+			marry = character:19
+		}
+		scope:demetia_suitor = { save_scope_as = lady_norwenna_husband }
+		title:k_demetia = { save_scope_as = dumnonia_alliance_realm }
+		character:1	= {
+			trigger_event = BTWK_story_event.0105
+		}
+	}
+	################### Arthur ###################	
+	option = {
+		name = BTWK_story_event.0104.i
+		trigger = {
+			character:3 = {
+				is_alive = yes
+			}
+		}
+		character:3 = {
+			marry = character:19
+			remove_trait = restricted_marriage
+		}
+		root = {
+			add_stress = 100
+			trigger_event = {
+				id = BTWK_story_event.0105
+			}
+		}
+		ai_chance = {
+			base = -100
+		}
+	}
+}
+
+BTWK_story_event.0105 = {  # Event for Uther: Hidden effects = create alliances; Not hidden = trigger oath taking event for powerful vassals & Tewdric players.
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0105.t
+	desc = BTWK_story_event.0105.desc
+	theme = realm 
+
+	right_portrait = {
+		character = character:1  # Uther
+		animation = personality_honorable
+	}	
+	lower_left_portrait = {
+		character = character:5  # Mordred
+		animation = no
+	}
+	lower_center_portrait = {
+		character = character:14  # Tewdric
+		animation = no
+	}
+	lower_right_portrait = {
+		character = character:3  # Arthur
+		animation = no
+	}
+
+	# NEW UTHER ALLIANCE AFTER MARRIAGE 
+	immediate = {
+		if = {
+			limit = {
+				NOT = { 
+					character:3 = {
+						is_spouse_of = character:19
+					}
+				}
+			}		
+			event_alliance_effect = {
+				ACTOR = character:1
+				TARGET = scope:dumnonia_alliance_realm.holder
+			}
+		}
+	}
+
+	option = {
+		name = BTWK_story_event.0105.a
+
+		hidden_effect = { 
+			# REMOVE RESTRICTED MARRIAGE TRAIT IN NEXT EVENT IN ORDER TO ALERT THE PLAYER IT HAS HAPPENED
+			character:19 = { remove_trait = restricted_marriage } 
+
+			# DELAYED TRIGGER OF CONCLUSION EVENTS TO ALLOW PLAYER OATH SELECTION TO HAVE TIME TO RUN
+			character:1 = { 
+				set_variable = uther_finished_glevum
+				trigger_event = {
+					id = BTWK_story_event.0120
+					days = 2
+				}
+			}
+
+			# TRIGGER DEATH-OATH EVENTS FOR PLAYER VASSALS AND TEWDRIC
+			# TEWDRIC AND OWAIN ARE CANON OATH-TAKERS. IF THEY AREN'T PLAYERS, BELOW MAKES SURE THEY BECOME OATH TAKERS.	
+			# ELSE, POWERFUL UTHER VASSALS GET A CHOICE TO TAKE THE DECISION	
+			# NOT SURE IF MERLIN SHOULD GET THE TRAIT
+
+			# TEWDRIC
+			if = { 
+				limit = {
+					character:14 = {
+						is_ai = no
+					}
+				}
+				character:14 = {
+					set_variable = tewdric_of_gwent
+					trigger_event = BTWK_story_event.0119
+				}	
+			}
+			else = {
+				character:14 = {
+					add_character_modifier = {
+						modifier = story_death_oath
+					}
+				}
+			}
+
+			# OWAIN
+			if = {
+				limit = {
+					character:20 = {
+						is_ai = no
+					}
+				}
+				character:20 = {
+					set_variable = is_vassal_owain
+					trigger_event = BTWK_story_event.0119
+				}
+			}
+			else = {
+				character:20 = {
+					add_character_modifier = {
+						modifier = story_death_oath
+					}
+				}
+			}
+
+			# ARTHUR - JUST GIVE THE MODIFIER TO HIM UPON HIS RETURN AS HE IS UNPLAYABLE AT THIS POINT
+
+			# OTHER POWERFUL & PLAYER UTHER VASSALS
+			# FLAG CHECK TO MAKE SURE EVENT DOESN'T FIRE TWICE FOR PLAYER OWAIN
+			every_powerful_vassal = {
+				limit = {
+					is_ai = no
+					NOT = { has_variable = is_vassal_owain }
+				}
+				trigger_event = BTWK_story_event.0119
+			}
+		}
+	}
+}
+
+BTWK_story_event.0119 = {  # Event for Uther's Direct Vassals & Tewdric (players) if they want to take the death oath
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0119.t
+	desc = {
+		desc = BTWK_story_event.0119.desc_header
+		first_valid = {
+			# TEWDRIC
+			triggered_desc = {
+				trigger = {
+					has_variable = tewdric_of_gwent
+				}
+				desc = BTWK_story_event.0119.desc_tewdric
+			}
+			# DUMNONIAN VASSALS
+			triggered_desc = {
+				trigger = {
+					NOT = { has_variable = tewdric_of_gwent }
+				}
+				desc = BTWK_story_event.0119.desc_vassal
+			}
+		}
+	}
+	theme = realm 
+
+	right_portrait = {
+		character = root 
+		animation = personality_honorable
+	}
+	
+	# TAKE DEATH-OATH
+	option = {
+		name = BTWK_story_event.0119.a
+		custom_tooltip = BTWK_story_event.0119.tt_a
+		add_prestige = 100
+		add_character_modifier = {
+			modifier = story_death_oath
+		}
+		
+		ai_chance = {
+			base = 50
+			# Likes Uther => increased chance
+			modifier = {
+				add = 25
+				has_trait = loyal
+			}
+		}
+	}
+
+	# DO NOT TAKE DEATH-OATH
+	option = {
+		name = BTWK_story_event.0119.b
+		if = {
+			limit = {
+				OR = {
+					has_trait = just
+					has_trait = loyal
+				}
+			}
+			add_stress = 30
+		}
+		add_prestige = -50
+
+		ai_chance = {
+			base = 50
+			# Dislikes Uther => increased chance
+			modifier = {
+				add = -25
+				has_trait  = disloyal
+			}
+		}
+	}
+}
+
+BTWK_story_event.0120 = {  # Trigger Event for Global Notifications  
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+
+	immediate = {
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0106
+				days = {30 60}
+			}
+		}
+		# NOTIFIY GLEVUM ATTENDEE PLAYERS THE CONCLUSION OF THE COUNCIL
+		set_global_variable = glevum_finished
+		every_in_global_list = {
+			variable = attending_glevum
+			if = {
+				limit = {
+					is_ai = yes
+					has_trait = restricted_marriage
+				}
+				remove_trait = restricted_marriage
+			}
+
+			else_if = {
+				limit = {
+					OR = {
+						is_ai = no
+						any_sub_realm_title = {
+							this = title:c_glevum
+							is_independent_ruler = yes
+						}
+					}
+				}
+				trigger_event = {
+					id = BTWK_story_event.0114	
+				}			
+				set_variable = attended_glevum
+			}
+		}	
+
+		# NOTIFY SOUTH BRITANNIA & ARMORICA PLAYERS THE RESULT OF THE COUNCIL
+		every_player = {
+			limit = {
+				OR = {
+					root.capital_province = {
+						geographical_region = btwk_world_britannia_south
+					}
+					root.capital_province = {
+						geographical_region = world_armorica
+					}
+				}
+				NOT = {
+					is_target_in_global_variable_list= {
+						name = attending_glevum
+						target = this
+					}
+				}
+				NOT = {
+					has_variable = uther_finished_glevum
+				}
+
+			}
+			trigger_event = {
+				id = BTWK_story_event.0115
+			}
+		}
+	}
+}
+
+BTWK_story_event.0114 = {  # Notification for Glevum attendees the council is over.
+
+ # THIS EVENT NEED REJIGGING WITH TRIGGERED DESCS AND THAT
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0114.t
+	theme = realm 
+	desc = {
+		first_valid = {
+			# NORWENNA'S NEW SPOUSE 
+			triggered_desc = {
+				trigger = {
+					is_spouse_of = character:19
+					has_trait = restricted_marriage
+				}
+				desc = BTWK_story_event.0114.desc_alliance_if_suitor_realm
+			}
+
+			# OTHER SUITORS
+			triggered_desc = {
+				trigger = {
+					NOT = { is_spouse_of = character:19	}
+					has_trait = restricted_marriage
+				}
+				desc =  BTWK_story_event.0114.desc_alliance_else
+			}
+
+			# EVERYONE ELSE FROM GLEVUM BUT UTHER
+			triggered_desc = {
+				trigger = {
+					NOT = { is_spouse_of = character:19 }
+					NOT = { has_trait = restricted_marriage }
+					NOT = { has_variable = uther_finished_glevum }
+				}
+				desc = BTWK_story_event.0114.desc_alliance_else		# Shares loc with other suitors for now
+			}
+
+			# UTHER
+			triggered_desc = {
+				trigger = {
+					has_variable = uther_finished_glevum
+				}
+				desc = BTWK_story_event.0114.desc.uther_alliance
+			}
+		}
+	}
+	
+	left_portrait = {
+		character = character:1   # Uther
+		animation = personality_honorable
+	}
+	
+	lower_center_portrait = {
+		character = character:19  # Norwenna
+		animation = no
+	}
+
+	right_portrait = {
+		character = character:19.primary_spouse 
+		animation = personality_honorable
+		trigger = { exists = character:19.primary_spouse }
+	}
+
+	immediate = {
+		character:40 = {
+			set_variable = owns_glevum
+		}
+	}
+	
+	option = {
+		trigger = {
+			has_trait = restricted_marriage
+		}
+		# SPOUSE
+		name = { 
+			trigger = {
+				is_spouse_of = character:19
+			}
+			text = BTWK_story_event.0114.a
+		}
+		# SUITORS
+		name = {
+			trigger = {
+				NOT = { is_spouse_of = character:19	}
+			}
+			text = BTWK_story_event.0114.b
+		}
+		remove_trait = restricted_marriage
+	}
+
+	# GLEVUM ATTENDEES
+	option = {
+		name = BTWK_story_event.0114.c
+		trigger = {
+			NOT = { is_spouse_of = character:19}
+			NOT = { has_trait = restricted_marriage }
+		}
+		if = {
+			limit = {
+				any_sub_realm_title = {
+					this = title:c_glevum
+					is_independent_ruler = yes
+				}
+			}
+			title:c_glevum = {
+				add_county_modifier = {
+					modifier = story_recently_hosted_high_council
+					years = 2
+				}
+			}
+		}
+	}
+
+	# UTHER
+	option = {
+		name = BTWK_story_event.0114.d
+		trigger = {
+			has_variable = uther_finished_glevum
+		}
+		character:1 = {
+			trigger_event = {
+				id = BTWK_story_event.0106
+				days = {20 50}
+			}
+		}
+	}
+}
+
+BTWK_story_event.0115 = {  # Notification for the South Britannia & Armorica players the results of the council
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0115.t
+	desc = {
+		desc = BTWK_story_event.0115.desc_header
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					character:19 = {
+						primary_spouse = character:3
+					}
+				}
+				desc = BTWK_story_event.0115.desc_arthur
+			}
+			triggered_desc = {
+				trigger = {
+					NOT = {
+						character:19 = {
+							primary_spouse = character:3
+						}
+					}
+				}
+				desc = BTWK_story_event.0115.desc_alliance		
+			}
+			triggered_desc = {
+				trigger = {
+					character:19 = {
+						is_alive = no
+					}
+				}
+				desc = BTWK_story_event.0115.desc_norwenna_dead
+			}
+		}
+	}
+	theme = realm 
+	
+	left_portrait = {
+		character = character:1   # Uther
+		animation = personality_honorable
+	}
+	
+	lower_center_portrait = {
+		character = character:19  # Norwenna
+		animation = no
+	}
+
+	right_portrait = {
+		character = character:19.primary_spouse 
+		animation = personality_honorable
+		trigger = { exists = character:19.primary_spouse }
+	}
+
+	option = {
+		name = BTWK_story_event.0115.a
+	}
+}
+
+BTWK_story_event.0106 = {  # Uther's health is worsening
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0106.t
+	desc = BTWK_story_event.0106.desc
+	theme = skull 
+
+	# More fitting music cue/sounds needed
+	right_portrait = {
+		character = character:1  # Uther
+		animation = personality_honorable
+	}
+	
+	option = {	
+
+		hidden_effect = {
+			remove_generated_diarch_consequences_effect = {
+				NEW_DIARCH = character:51
+				LIEGE = title:k_dumnonia.holder
+			}
+		}	
+
+		name = BTWK_story_event.0106.a
+		character:1 = {
+			add_trait = pneumonic
+			remove_character_modifier = story_health_bonus_large_modifier
+			designate_diarch = character:51  # Father Bedwin 
+			trigger_event = {
+				id = BTWK_story_event.0107
+				days = {50 70}
+			}
+		}
+	}
+}
+
+BTWK_story_event.0107 = {  # Uther is now incapable
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0107.t
+	desc = BTWK_story_event.0107.desc
+	# More fitting music cue/sounds needed
+	theme = skull
+
+	right_portrait = {
+		character = character:1
+		animation = worry
+	}
+	
+	option = {
+		name = BTWK_story_event.0107.a
+		character:1 = {
+			add_trait = incapable
+		}	
+	}
+}
+
+BTWK_story_event.0110 = {  # Global event alerting of Uther's death.
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0110.t
+	desc = {
+		desc = BTWK_story_event.0110.desc.header
+		########### DOESN'T WORK #############
+		first_valid = {
+			# Triggered desc for would be glevum attendees
+			triggered_desc = {
+				trigger = {
+					NOT = { has_global_variable = glevum_finished }
+					is_target_in_global_variable_list = {
+						name = attending_glevum
+						target = this
+					}
+				}
+			}
+			desc = BTWK_story_event.0110.desc.was_attending_glevum
+		}
+		#########################################
+		desc = BTWK_story_event.0110.desc.footer
+	}
+	# More fitting music cue/sounds needed
+	theme = dynasty
+	left_portrait = {
+		character = character:3
+		animation = personality_honorable
+	}
+	lower_right_portrait = {
+		character = character:1
+		animation = no
+	}
+	lower_center_portrait = {
+		character = character:5
+		animation = no
+	}
+
+		
+	option = {
+		# Dumnonians
+		name = {
+		   trigger = { 
+				top_liege = { 
+					has_title = title:k_dumnonia 
+				}
+				NOT = {
+					culture = {
+						has_cultural_pillar = heritage_west_germanic 
+					}
+				}
+		    }
+		   text = BTWK_story_event.0110.a
+		}
+		# Non-Dumnonian Brythons & Imperials.
+		name = {
+		   trigger = { 
+				culture = {
+					OR = {
+						has_cultural_pillar = heritage_brythonic
+						has_cultural_pillar = heritage_latin
+					}
+				}
+				NOT = { 
+					top_liege = { 
+						has_title = title:k_dumnonia 
+					} 
+				}
+		   }
+		   text = BTWK_story_event.0110.b
+		}
+
+		# Is a North Sea Germanic.
+		name = {
+			trigger = {
+				culture = { 
+					has_cultural_pillar = heritage_west_germanic 
+				}
+			}
+			text = BTWK_story_event.0110.c
+		}
+
+		# Doesn't have cultural pillars Brythonic, Latin & North Sea Germanic
+		name = {
+			trigger = {
+				culture = {
+					NOR = {
+						has_cultural_pillar = heritage_brythonic 
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_west_germanic
+					}
+				}
+				NOT = {
+					top_liege = { 
+						has_title = title:k_dumnonia 
+					}
+				}
+			}
+			text = BTWK_story_event.0110.d
+		}
+	}
+}
+
+BTWK_story_event.0111 = {  # Event for Mordred: Player gets to choose to play Arthur or not.
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0111.t
+	desc = BTWK_story_event.0111.desc
+	theme = dynasty
+	# More fitting sound & music cue
+	left_portrait = {
+		character = character:3
+		animation = scheme
+	}
+	lower_right_portrait = {
+		character = character:1
+		animation = no
+	}
+	lower_center_portrait = {
+		character = character:5
+		animation = no
+	}
+
+	# Give Arthur his army if Mordred is AI
+	immediate = {
+		if = {
+			limit = {
+				character:5 = {
+					is_ai = yes
+				}
+			}
+			character:3 = {
+				spawn_army = {
+					name = "Arthur's Company"
+					men_at_arms = {
+						type = teulu
+						men = 35
+					}
+					men_at_arms = {
+						type = cataphract
+						men = 5
+					}
+					war_keep_on_attacker_victory = yes
+					inheritable = no
+					location = province:12
+					origin = province:12
+				}
+			}
+		}
+	}
+
+	option = {  # Continue to play as Mordred.
+		name = BTWK_story_event.0111.a
+		# Ensure Arthur still gets his army if you don't choose to play as him.
+		# This is required as we want to alert the player that they gain special troops if they play as Arthur
+		if = {
+			limit = {
+				is_ai = no
+			}
+			hidden_effect = {
+				character:3 = {
+					spawn_army = {
+						name = "Arthur's Company"
+						men_at_arms = {
+							type = teulu
+							men = 35
+						}
+						men_at_arms = {
+							type = cataphract
+							men = 5
+						}
+						war_keep_on_attacker_victory = yes
+						inheritable = no
+						location = character:3.capital_province
+						origin = character:3.capital_province
+					}
+				}
+			}
+		}
+		character:18 = {
+			create_story = story_gundleus_claimant_scheme
+		}
+	}
+
+	option = {  # Continue as Arthur.
+		name = BTWK_story_event.0111.b
+		trigger = {
+			is_ai = no
+		}
+		set_player_character = character:3
+		character:3 = {
+			trigger_event = {
+				id = BTWK_story_event.0112
+				days = 1
+			}
+		}
+	}
+}
+
+# Event for Arthur: Flavour text for the player. 
+# Called from on_death rather than from inside the story cycle since that causes wars to invalidate
+# for some reason
+BTWK_story_event.0112 = {  
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0112.t
+	desc = BTWK_story_event.0112.desc
+	theme = dynasty
+
+	right_portrait = {
+		character = root
+		animation = personality_honorable
+	}
+	
+	immediate = {
+		character:1 = { save_scope_as = uther_pendragon }
+		character:7 = { save_scope_as = mordred_pendragon_elder }
+		title:k_dumnonia.holder = { save_scope_as = mordred_pendragon }
+	}
+
+	option = {
+		name = BTWK_story_event.0112.a
+		if = {
+			limit = { NOT = { has_variable = received_BTWK_story_event_0112 } }
+			remove_trait = bastard
+			add_trait_force_tooltip = bastard_founder			# Stops Arthur's house from automatically changing once he has a legitimate child
+			create_title_and_vassal_change = {
+				type = granted
+				save_scope_as = arthur_pendragon_durnac
+				add_claim_on_loss = no
+			}
+			title:d_centdumnonia = {
+				every_de_jure_county = {
+					limit = {
+						holder = title:k_dumnonia.holder
+					}
+					change_title_holder = {
+						holder = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							NOT = { exists = holder }
+							holder = title:k_dumnonia.holder
+						}
+					}
+					change_title_holder = {
+						holder = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
+				every_de_jure_county_holder = {
+					limit = {
+						primary_title = {
+							tier < tier_duchy
+							duchy = title:d_centdumnonia
+						}
+						liege = title:k_dumnonia.holder					
+					}
+					change_liege = {
+						liege = character:3
+						change = scope:arthur_pendragon_durnac
+					}
+				}
+			}
+			change_liege = {
+				liege = title:k_dumnonia.holder
+				change = scope:arthur_pendragon_durnac
+			}
+			resolve_title_and_vassal_change = scope:arthur_pendragon_durnac
+			change_government = title:k_dumnonia.holder.government_type
+			
+			# hidden_effect = {
+				# every_held_title = {
+					# limit = { tier <= tier_county }
+					# title_province = { refill_levy = yes }
+				# }
+			# }
+			
+			if = {
+				limit = {
+					NOT = { has_character_modifier = story_death_oath }
+				}
+				add_character_modifier = {
+					modifier = story_death_oath
+				}
+			}
+			
+			spawn_army = {
+				name = "Arthur's Company"
+				men_at_arms = {
+					type = teulu
+					men = 35
+				}
+				men_at_arms = {
+					type = cataphract
+					men = 5
+				}
+				war_keep_on_attacker_victory = yes
+				inheritable = no
+				location = province:12
+				origin = province:12
+			}
+			
+			# Get claim on Dumnonia
+			add_unpressed_claim = title:k_dumnonia
+			
+			# Become regent of Dumnonia
+			title:k_dumnonia.holder = {
+				if = {
+					limit = { has_diarchy_type = regency }
+					set_diarch = root
+					set_diarchy_swing = 30
+				}
+				else = {
+					designate_diarch = root
+				}
+			}
+			
+			# Don't trigger this twice if the event happens twice (will happen if you switch from Uther)
+			set_variable = received_BTWK_story_event_0112
+			
+			# Start story
+			create_story = BTWK_story_arthur
+		}
+	}
+}
+
+BTWK_story_event.0108 = { # Event for Gundleus (or generally Norwenna's Spouse): Declare claimant war on Dumnonia.
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0108.t
+	desc = BTWK_story_event.0108.desc
+	theme = dynasty
+	trigger = {
+		NOT = {
+			is_at_war_with = title:k_dumnonia.holder
+		}
+	}
+
+	immediate = {
+		set_global_variable = gundleus_non_canon_started
+	}
+
+	option = {  # Declare claimant war for Dumnonia (canon for Gundleus)
+		name = BTWK_story_event.0108.a
+
+		ai_chance = {
+			# Base is higher here as the trait checks for being deceitful & ambitious have already happened in the story cycle trigger
+			base = 75
+			modifier = {
+				add = -25
+				has_trait = craven
+			}
+			modifier = {
+				add = -25
+				has_trait = loyal
+			}
+			}
+
+		start_war = {
+			casus_belli = claim_cb
+			target = title:k_dumnonia.holder
+			claimant = root
+			target_title = title:k_dumnonia
+		}
+
+		set_global_variable = gundleus_dumnonia_war_started
+	}
+
+	option = {  # Stay “loyal” to your oath to Uther. (story divergence for Gundleus).
+		name = BTWK_story_event.0108.b
+
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				has_trait = just
+			}
+			modifier = {
+				add = 25
+				has_trait = loyal
+			}
+		}
+
+		trigger = {
+			character:5 = {
+				has_title = title:k_dumnonia
+			}
+		}
+		# Gundleus’ character would be such that not declaring war could just enable him to take Dumnonia via subterfuge. 
+		# May be an easier way to take Dumnonia for players, if Dumnonia is balanced to have a stronger professional army, the player is in harder difficulties, 
+		# or Gorfyddyd is no longer allied to Siluria.
+		# Defensive alliance forms with Mordred. Keep negotiated alliance with Gorfyddyd.
+		# Next event for Gundleus will trigger in a few months for Mordred’s coronation.
+	}
+}
+
+BTWK_story_event.0109 = {  # Event for Gundleus: Deal with the last Pendragons. (NON-CANON)
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0109.t
+	desc = BTWK_story_event.0109.desc
+	theme = dynasty
+
+	option = {  # Kill the Pendragons
+		name = BTWK_story_event.0109.a
+
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				has_trait = sadistic
+			}
+			modifier = {
+				add = 25
+				has_trait = paranoid
+			}
+		}
+		character:5 = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+		character:3 = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+		# Add prestige & opinion maluses
+	}
+
+	option = {  # Spare the Pendragons
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				has_trait = just
+			}
+			modifier = {
+				add = 25
+				has_trait = compassionate
+			}
+		}
+		name = BTWK_story_event.0109.b
+		imprison = {
+			target = character:5
+			type = dungeon
+		}
+		imprison = {
+			target = character:3
+			type = dungeon
+		}
+	}
+}
+
+BTWK_story_event.0121 = {  # Event for Arthur: Deal with the aggressors (if event.0108 triggers a war)
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0121.t
+	desc = BTWK_story_event.0121.desc
+	theme = dynasty
+	trigger = {
+		character:5 = {
+			NOT = { is_at_war_with = BTWK_story_gundleus_claimant_scheme.story_owner }
+		}
+	}
+
+	immediate = {
+		character:5 = {
+			trigger_event = {
+				days = 3
+				id = BTWK_story_event.0122
+			}
+		}
+	}
+	option = {  # Kill Norwenna's Spouse for the transgression
+		name = BTWK_story_event.0121.a
+		character:19.primary_spouse = {
+			death = {
+				killer = root
+				death_reason = execution
+			}
+		}
+	}
+
+	option = {  # Spare Norwenna's Spouse
+		name = BTWK_story_event.0121.b
+		imprison = {
+			target = character:19.primary_spouse
+			type = dungeon
+		}
+
+	}
+}
+
+BTWK_story_event.0122 = {  # Event for Mordred: Notification Event from previous
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0122.t
+	desc = {
+		desc = BTWK_story_event.0122.desc_header
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					character:19.primary_spouse = {
+						is_alive = yes
+					}
+				}
+				desc = BTWK_story_event.0122.desc_spared
+			}
+			triggered_desc = {
+				trigger = {
+					character:19.primary_spouse = {
+						is_alive = no
+					}
+				}
+				desc = BTWK_story_event.0122.desc_executed
+			}
+		}
+	}
+	theme = dynasty
+
+	option = {
+		name = BTWK_story_event.0122.a
+	}
+}
+
+## BOOK LAAMPS
+# Sagramor receives summons from Arthur, decides whether to join him or not
+# Called from Arthur's BTWK_story_arthur
+BTWK_story_event.0150 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0150.t
+	desc = BTWK_story_event.0150.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+
+	right_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+	
+	immediate = {
+		save_scope_as = sagramor
+		character:3 = { save_scope_as = arthur }
+		if = {
+			limit = { scope:arthur = { highest_held_title_tier >= tier_kingdom } }
+			scope:arthur.primary_title = { save_scope_as = arthur_kingdom }
+		}
+		else = {
+			scope:arthur.liege.primary_title = { save_scope_as = arthur_kingdom }
+		}
+	}
+
+	# Join him!
+	option = {
+		name = BTWK_story_event.0150.a
+		reverse_add_opinion = {
+			target = scope:arthur
+			modifier = pleased_opinion
+			opinion = 20
+		}
+		create_title_and_vassal_change = {
+			type = swear_fealty
+			save_scope_as = change
+			add_claim_on_loss = no
+		}
+		change_liege = {
+			liege = scope:arthur_kingdom.holder
+			change = scope:change
+		}
+		resolve_title_and_vassal_change = scope:change
+		add_contact = scope:arthur
+		scope:arthur = { 
+			trigger_event = BTWK_story_event.0151
+			if = {
+				limit = { NOT = { has_title = scope:arthur_kingdom } }
+				scope:arthur_kingdom.holder = { trigger_event = BTWK_story_event.0152 }
+			}
+		}
+		title:d_laamp_brotherhood_horsemen = { set_variable = horsemen_vassalized }
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+	# Don't
+	option = {
+		name = BTWK_story_event.0150.b
+		reverse_add_opinion = {
+			target = scope:arthur
+			modifier = disappointed_opinion
+			opinion = -20
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Notify Arthur of Sagramor's arrival
+BTWK_story_event.0151 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0151.t
+	desc = BTWK_story_event.0151.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:sagramor = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:sagramor = {
+				reverse_add_opinion = {
+					target = scope:arthur
+					modifier = pleased_opinion
+					opinion = 20
+				}
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:arthur_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+				add_contact = scope:arthur
+			}
+		}
+	}
+
+	# Great!
+	option = {
+		name = BTWK_story_event.0151.a
+	}
+}
+
+# Notify Mordred of Sagramor's arrival
+BTWK_story_event.0152 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0152.t
+	desc = BTWK_story_event.0152.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:arthur
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:sagramor
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:sagramor = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:sagramor = {
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:arthur_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+	}
+
+	# Hmm...
+	option = {
+		name = BTWK_story_event.0152.a
+	}
+}
+
+# Ping Derfel's sponsor
+BTWK_story_event.0155 = {
+	type = character_event
+	content_source = dlc_BTWK
+	hidden = yes
+	
+	trigger = {
+		this = character:10
+		is_alive = yes
+		is_ruler = no
+		is_incapable = no
+	}
+
+	immediate = {
+		if = {
+			limit = { 
+				any_liege_or_above = {
+					OR = {
+						this = character:3
+						diarch ?= character:3
+					}
+				}
+			}
+			character:3 = { trigger_event = BTWK_story_event.0156 }
+		}
+		else_if = {
+			limit = { 
+				liege = { is_ai = yes }
+				top_liege = { is_ai = no }
+			}
+			top_liege = { trigger_event = BTWK_story_event.0156 }
+		}
+		else_if = {
+			limit = { liege ?= { NOT = { this = root } } }
+			liege = { trigger_event = BTWK_story_event.0156 }
+		}
+		else = {		# Possible if wandering?
+			trigger_event = BTWK_story_event.0156
+		}
+	}
+}
+
+# Derfel gains the Wolftails
+BTWK_story_event.0156 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0156.t
+	desc = BTWK_story_event.0156.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+	
+	immediate = {
+		character:10 = { save_scope_as = derfel }
+		character:2 = { save_scope_as = merlin }
+		character:briton0001 = { save_scope_as = hywel }
+		save_scope_as = sponsor
+		scope:sponsor = {
+			if = {
+				limit = {
+					highest_held_title_tier >= tier_kingdom
+				}
+				primary_title = { save_scope_as = sponsor_kingdom }
+			}
+			else_if = {
+				limit = { liege = { highest_held_title_tier >= tier_kingdom } }
+				liege.primary_title = { save_scope_as = sponsor_kingdom }
+			}
+			else_if = {
+				limit = { top_liege = { highest_held_title_tier >= tier_kingdom } }
+				top_liege.primary_title = { save_scope_as = sponsor_kingdom }
+			}
+		}
+	}
+
+	# Grant him the Wolftails
+	option = {
+		name = BTWK_story_event.0156.a
+		reverse_add_opinion = {
+			target = scope:derfel
+			modifier = grateful_opinion
+			opinion = 50
+		}
+		scope:derfel = {
+			set_house = house:house_cadarn
+			create_landless_adventurer_title_effect = {
+				REASON = flag:voluntary
+				FLAVOR_CHAR = scope:sponsor
+			}
+			scope:new_title = {
+				set_title_name = d_laamp_wolftails
+				set_title_prefix = d_laamp_wolftails_article
+				set_definitive_form = yes
+				set_coa = d_laamp_wolftails
+			}
+			hidden_effect = {
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				set_variable = flavourise_camp_purpose_mercenaries
+			}
+			if = {
+				limit = { exists = scope:sponsor_kingdom }
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+			add_contact = scope:sponsor
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+			trigger_event = BTWK_story_event.0157
+		}
+		scope:sponsor = {
+			if = {
+				limit = { NOT = { has_title = scope:sponsor_kingdom } }
+				scope:sponsor_kingdom.holder = { trigger_event = BTWK_story_event.0158 }
+			}
+		}
+		set_global_variable = wolftails_created
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+	# Have him serve in my court
+	option = {
+		name = BTWK_story_event.0156.b
+		scope:derfel = { 
+			set_house = house:house_cadarn
+			if = {
+				limit = { NOT = { liege = scope:sponsor } }
+				set_employer = scope:sponsor
+			}
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+	
+	# Play as Derfel!
+	option = {
+		name = BTWK_story_event.0156.c
+		reverse_add_opinion = {
+			target = scope:derfel
+			modifier = grateful_opinion
+			opinion = 50
+		}
+		scope:derfel = {
+			set_house = house:house_cadarn
+			create_landless_adventurer_title_effect = {
+				REASON = flag:voluntary
+				FLAVOR_CHAR = scope:sponsor
+			}
+			scope:new_title = {
+				set_title_name = d_laamp_wolftails
+				set_title_prefix = d_laamp_wolftails_article
+				set_definitive_form = yes
+				set_coa = d_laamp_wolftails
+			}
+			hidden_effect = {
+				add_realm_law_skip_effects = camp_purpose_mercenaries
+				set_variable = flavourise_camp_purpose_mercenaries
+			}
+			if = {
+				limit = { exists = scope:sponsor_kingdom }
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+			add_contact = scope:sponsor
+			if = {
+				limit = {
+					OR = {
+						scope:sponsor = character:3		# Arthur
+						scope:sponsor = character:2		# Merlin
+					}
+				}
+				set_relation_friend = scope:sponsor
+			}
+			root = { set_player_character = scope:derfel }
+			trigger_event = BTWK_story_event.0157
+		}
+		scope:sponsor = { 
+			if = {
+				limit = { NOT = { has_title = scope:sponsor_kingdom } }
+				scope:sponsor_kingdom.holder = { trigger_event = BTWK_story_event.0158 }
+			}
+		}
+		set_global_variable = wolftails_created
+		
+		add_internal_flag = special
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Player Derfel intro event
+BTWK_story_event.0157 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0157.t
+	desc = BTWK_story_event.0157.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+
+	right_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	option = {
+		name = BTWK_story_event.0157.a
+	}
+}
+
+# Notify Mordred of Derfel's elevation
+BTWK_story_event.0158 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0158.t
+	desc = BTWK_story_event.0158.desc
+	theme = martial
+
+	left_portrait = {
+		character = scope:sponsor
+		animation = chancellor
+	}
+
+	right_portrait = {
+		character = scope:derfel
+		animation = marshal
+	}
+	
+	immediate = {
+		scope:derfel = { save_scope_as = bg_override_char }
+		show_as_tooltip = {
+			scope:derfel = {
+				create_title_and_vassal_change = {
+					type = swear_fealty
+					save_scope_as = change
+					add_claim_on_loss = no
+				}
+				change_liege = {
+					liege = scope:sponsor_kingdom.holder
+					change = scope:change
+				}
+				resolve_title_and_vassal_change = scope:change
+			}
+		}
+	}
+
+	# Hmm...
+	option = {
+		name = BTWK_story_event.0158.a
+	}
+}
+
+## ARTHUR'S MARRIAGE
+# Arthur chooses a wife (Guinevere or Ceinwyn)
+BTWK_story_event.0300 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0300.t
+	desc = BTWK_story_event.0300.desc
+	theme = dynasty
+	
+	trigger = {
+		this = character:3		# Arthur
+		has_trait = restricted_marriage
+		OR = {
+			has_title = title:k_dumnonia
+			is_diarch_of_target = title:k_dumnonia.holder
+			current_year > 485
+		}
+		character:27 = { 
+			OR = {
+				is_adult = yes
+				is_alive = no
+			}
+		}
+	}
+
+	left_portrait = {
+		character = scope:guinevere
+		animation = flirtation
+	}
+
+	right_portrait = {
+		character = scope:ceinwyn
+		animation = personality_compassionate
+	}
+	
+	immediate = {
+		save_scope_as = arthur
+		character:26 = { save_scope_as = guinevere }
+		character:27 = { save_scope_as = ceinwyn }
+		scope:ceinwyn.host = { save_scope_as = ceinwyn_host }
+	}
+
+	# Guinevere
+	option = {
+		name = BTWK_story_event.0300.a
+		remove_trait = restricted_marriage
+		scope:guinevere = { remove_trait = restricted_marriage }
+		marry = scope:guinevere
+		set_relation_lover = scope:guinevere
+		# Get rivalry with Gorfyddyd
+		if = {
+			limit = { character:16 ?= { is_alive = yes } }
+			character:16 = { set_relation_rival = root }
+		}
+		hidden_effect = {
+			scope:ceinwyn = { remove_trait = restricted_marriage }
+		}
+		scope:ceinwyn_host = { trigger_event = BTWK_story_event.0301 }
+		
+		ai_chance = {
+			base = 80
+		}
+	}
+	
+	# Ceinwyn
+	option = {
+		name = BTWK_story_event.0300.b
+		remove_trait = restricted_marriage
+		scope:ceinwyn = { remove_trait = restricted_marriage }
+		marry = scope:ceinwyn
+		hidden_effect = {
+			scope:guinevere = { remove_trait = restricted_marriage }
+		}
+		add_stress = 30
+		scope:ceinwyn_host = { trigger_event = BTWK_story_event.0302 }
+		
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+# Ceinwyn's host (usually Gorfyddyd) hears about Ceinwyn getting scorned
+BTWK_story_event.0301 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0301.t
+	desc = BTWK_story_event.0301.desc
+	theme = dynasty
+	
+	left_portrait = {
+		character = scope:arthur
+		animation = shame
+	}
+	
+	lower_center_portrait = scope:guinevere
+
+	right_portrait = {
+		character = scope:ceinwyn
+		animation = shock
+	}
+
+	option = {
+		name = {
+			trigger = { character:16 ?= root }
+			text = BTWK_story_event.0301.a.gorfyddyd
+		}
+		name = {
+			trigger = { NOT = { character:16 ?= root } }
+			text = BTWK_story_event.0301.a
+		}
+		show_as_tooltip = {
+			scope:ceinwyn = { remove_trait_force_tooltip = restricted_marriage }
+			if = {
+				limit = { character:16 ?= root }
+				set_relation_rival = scope:arthur
+			}
+		}
+	}
+}
+
+# Ceinwyn's host (usually Gorfyddyd) hears about Ceinwyn getting married
+BTWK_story_event.0302 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0302.t
+	desc = BTWK_story_event.0302.desc
+	theme = marriage
+
+	left_portrait = {
+		character = scope:ceinwyn
+		animation = wedding_happy_cry
+	}
+	
+	right_portrait = {
+		character = scope:arthur
+		animation = wedding_happy_cry
+	}
+
+	option = {
+		name = {
+			trigger = { character:16 ?= root }
+			text = BTWK_story_event.0302.a.gorfyddyd
+		}
+		name = {
+			trigger = { NOT = { character:16 ?= root } }
+			text = BTWK_story_event.0302.a
+		}
+		show_as_tooltip = {
+			scope:ceinwyn = { remove_trait_force_tooltip = restricted_marriage }
+			scope:arthur = { marry = scope:ceinwyn }
+		}
+	}
+}
+
+# TODO various notification events + fallout of the choice
+# - If Arthur marries Guinevere (canon), Derfel marries Ceinwyn
+# - If Arthur marries Ceinwyn, Lancelot marries Guinevere and Derfel marries Nimue

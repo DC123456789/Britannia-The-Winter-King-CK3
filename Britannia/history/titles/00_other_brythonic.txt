@@ -26,30 +26,30 @@ e_britannia = {
 	#	law = temple_tax_0
 	#	law = mil_train_2
 		# law = investiture_law_1	
-		set_global_flag = vortigern_high_king
+		effect = { set_global_variable = vortigern_high_king }
 	}
 	428.1.1 = {
-		set_global_flag = saxons_north
+		effect = { set_global_variable = saxons_north }
 	}
 	433.1.1 = {
-		set_global_flag = saxons_south
+		effect = { set_global_variable = saxons_south }
 	}
 	437.1.1 = {
-		set_global_flag = first_civil_war
+		effect = { set_global_variable = first_civil_war }
 	}
 	437.4.1 = {
-		set_global_flag = first_civil_war_over
+		effect = { set_global_variable = first_civil_war_over }
 	}
 	438.1.1={
-		set_global_flag = saxon_revolt_initial
+		effect = { set_global_variable = saxon_revolt_initial }
 	}
 	441.1.1 = {
-		set_global_flag = vortimer_revolt_start
-		set_global_flag = vortimer_revolt
+		effect = { set_global_variable = vortimer_revolt_start }
+		effect = { set_global_variable = vortimer_revolt }
 	}
 	441.4.1={
 		holder=1218		# Vortimer
-		set_global_flag = vortigern_deposed
+		effect = { set_global_variable = vortigern_deposed }
 	}
 	450.1.1={
 		holder=1010		# Vortigern again
@@ -81,95 +81,39 @@ e_britannia = {
 # 	}
 # }
 
-# k_glevum = {
-# 	410.1.1 = {
-# 		set_global_flag = glevum_created
-# 	}
-# 	455.1.1 = {
-# 		holder = 1002		# Ambrosius Aurelianus
-# 		liege = 0
-# 	#	set_tribute_suzerain = { who = e_britannia type = britannia_subject }
-# 	}
-# 	456.1.1={
-# 	#	clear_tribute_suzerain = e_britannia
-# 	}
-# 	460.1.1 = {
-# 		liege = e_britannia
-# 	}
-# 	475.1.1 = {
-# 		holder = 0
-# 		liege = 0
-# 		clr_global_flag = glevum_created
-# 	}
-# 	504.6.6={
-# 		set_global_flag = glevum_created
-# 	}
-# 	512.4.2 = {
-# 		liege=0
-# 		holder=0
-# 	}
-# }
-
-# e_hen_ogledd = {
-# 	410.1.1={
-# 		holder=300		# Coel Hen
-# 		liege=0
-# 	#	law = agnatic_succession
-# 	#	law = succ_primogeniture
-# 		# law = crown_authority_1
-# 		# law = tribal_organization_2
-# 	#	law = feudal_contract_2
-# 	#	law = feudal_tax_1
-# 	#	law = city_contract_1
-# 	#	law = city_tax_2
-# 	#	law = temple_contract_0
-# 	#	law = temple_tax_1
-# 	#	law = mil_train_1
-# 		# law = investiture_law_1
-# 		set_global_flag = hen_ogledd_formed
-# 	}
-# 	420.11.4={
-# 		holder=301		# Ceneu ap Coel
-# 	#	law = succ_elective_gavelkind
-# 	}
-# 	451.12.23={
-# 		holder=302		# Mor ap Ceneu
-# 	}
-# 	470.7.18={
-# 		holder=0
-# 		clr_global_flag = hen_ogledd_formed
-# 	}
-# }
-
-# k_cornovia = {
-# 	383.1.1={
-# 		holder=0
-# 		liege=0
-# 	#	law = agnatic_succession
-# 	#	law = succ_elective_gavelkind
-# 		# law = tribal_organization_2
-# 		# law = crown_authority_0
-# 		# law = investiture_law_1
-# 	}
-# 	420.11.4={
-# 		de_jure_liege = e_britannia
-# 	}
-# }
-
-# d_arthur_company = {
-# 	410.1.1 = {
-# 	#	active = no
-# 	}
-# 	479.7.5 = {
-# 	#	law = succ_primogeniture
-# 		holder = 3
-# 		liege = k_benoic
-# 	#	active = yes
-# 	}
-# 	480.10.20 = {
-# 		holder = 0
-# 		liege = 0
-# 		set_global_flag = arthur_returned
-# 	#	active = no
-# 	}
-# }
+e_hen_ogledd = {
+	410.1.1={
+		holder=300		# Coel Hen
+		liege=0
+	#	law = agnatic_succession
+	#	law = succ_primogeniture
+		# law = crown_authority_1
+		# law = tribal_organization_2
+	#	law = feudal_contract_2
+	#	law = feudal_tax_1
+	#	law = city_contract_1
+	#	law = city_tax_2
+	#	law = temple_contract_0
+	#	law = temple_tax_1
+	#	law = mil_train_1
+		# law = investiture_law_1
+		effect = { 
+			set_global_variable = hen_ogledd_formed
+			set_title_name = e_hen_ogledd
+		}
+	}
+	420.11.4={
+		holder=301		# Ceneu ap Coel
+	#	law = succ_elective_gavelkind
+	}
+	451.12.23={
+		holder=302		# Mor ap Ceneu
+	}
+	470.7.18={
+		holder=0
+		effect = { 
+			remove_global_variable = hen_ogledd_formed
+			reset_title_name = yes
+		}
+	}
+}

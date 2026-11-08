@@ -4,10 +4,11 @@
 ###################################
 1 = {
 	# King Uther Pendragon of Dumnonia							# KING, book/legendary character
-	name = "Uther"
+	name = "victor_male_romanobritish"
 	#ADD NICK "Pendragon"
 	dynasty_house = house_pendragon
-	religion = "briton_pagan"
+	dna = 1_uther_pendragon
+	rite = romano_celtic_pagan
 	martial = 11
 	diplomacy = 12
 	intrigue = 6
@@ -16,14 +17,17 @@
 	culture = "romanobritish"
 	trait = brave
 	trait = education_martial_4
-	trait = hunter_2
-	trait = education_martial_prowess_2
-	trait = tolerant
-	trait = war_hero
+	trait = lifestyle_hunter
+	trait = education_martial_prowess_3
+	trait = strategist
+	trait = overseer
+	#trait = tolerant
+	trait = compassionate
+	#trait = war_hero
 	trait = arrogant
 	trait = just
-	trait = honest
-	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	#trait = honest
+	trait = pneumonic
 	father = 1000	# Constantine
 	mother = 1003	# Anna
 	fertility = 0
@@ -31,12 +35,11 @@
 		birth = "427.5.10"
 		effect = {
 			add_character_flag = uther_pendragon
-			save_global_event_target_as = uther_pendragon
 		}
 	}
 	447.11.3 = {
 		effect = {
-			add_prestige = 2300
+			add_prestige = 5000
 			add_piety = 150
 		}
 	}
@@ -46,12 +49,49 @@
 		}
 		add_spouse = 11		# Queen Isabel
 		add_pressed_claim = e_britannia
+		learn_language = language_brythonic
 	}
 	469.6.13 = {
 		give_nickname = nick_pendragon
+		effect = {
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = medium_lifestyle_random_xp_low
+						max = medium_lifestyle_random_xp_high
+					}
+				}
+			}
+		}
+		portrait_override = { 
+			portrait_modifier_overrides={
+				custom_hair=male_hair_western_07
+				custom_beards=male_beard_western_01
+			}
+		}
 	}
 	479.5.1 = {
-		trait = pneumonic
+		#trait = pneumonic
+		designate_diarch = character:51  # Father Bedwin 
+		remove_generated_diarch_consequences_effect = {
+			NEW_DIARCH = character:51
+			LIEGE = character:1
+		}
+	}
+	479.6.23 = {
+		effect = {
+			add_character_modifier = {
+				modifier = BTWK_was_recently_high_king_modifier
+				years = 15
+			}
+			add_opinion = {
+				target = character:3
+				modifier = angry_opinion
+				opinion = -100		# He's really pissed
+			}			
+		}
 	}
 	480.10.20 = {
 		death = {
@@ -62,33 +102,37 @@
 
 3 = {
 	# Arthur, book/legendary character
-	name = "Arthur"
+	name = "arthur_male_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "briton_pagan"
+	dna = 3_arthur_pendragon
+	rite = romano_celtic_pagan
 	martial = 6
 	diplomacy = 9
 	intrigue = 2
 	stewardship = 11
 	learning = 8
+	prowess = 9
 	fertility = 0
 	culture = "romanobritish"
 	#health=7
-	#add_trait="blood_pendragon"
+	#trait="blood_pendragon"
 	trait = bastard
-	#add_trait="excalibur"
+	#trait="excalibur"
 	#trait = intellect_good_1
 	trait = intellect_good_2	# Add by Clay
 	trait = brave
 	trait = education_martial_prowess_4
-	trait = diligent
+	#trait = diligent
 	trait = just
-	trait = tolerant
-	trait = veteran
-	trait = generous
+	#trait = tolerant
+	trait = compassionate
+	# trait = veteran
+	#trait = generous
 	trait = content
 	trait = education_martial_4
 	trait = open_terrain_expert
 	trait = brother_of_mithra
+	trait = restricted_marriage
 	# trait = inspiring_leader	# Add by Clay
 	trait = physique_good_2	# Add by Clay
 	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
@@ -100,31 +144,46 @@
 		birth = "455.12.3"
 		employer = 1
 		effect = {
-			save_global_event_target_as = arthur_pendragon
-		}
-		effect = {
-			add_character_flag = arthur
+			add_character_flag = arthur_pendragon
 		}
 	}
 	470.3.21 = {
 		effect = {
 			set_relation_lover = character:707			# Aileann
 		}
+		learn_language = language_brythonic
 	}
 	472.1.1 = {
 		effect = {
 			set_global_variable = arthur_had_excalibur
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = medium_lifestyle_random_xp_low
+						max = medium_lifestyle_random_xp_high
+					}
+				}
+			}
+		}
+		portrait_override = { 
+			portrait_modifier_overrides={
+				custom_hair=male_hair_western_05
+				custom_beards=male_empty
+			}
 		}
 	}
 	475.1.1 = {
 		set_relation_friend = character:21		# Sagramor
 	}
 	479.7.5 = {
-		employer = 32
-		give_council_position = councillor_marshal
+		# employer = 32
+		# give_council_position = councillor_marshal
 		effect = {
 			add_prestige = 550
 			set_relation_friend = character:2
+			# Obsolete with laamps?
 			# spawn_unit = {
 			# 	earmark = arthur_warrior_band
 			# 	province = 78				# Ynys Trebes
@@ -144,10 +203,10 @@
 	480.10.20 = {
 		employer = 5
 		give_nickname = nick_pendragon
-		add_pressed_claim = k_dumnonia
+		# add_pressed_claim = title:k_dumnonia
 		effect = {
 			add_prestige = 600
-			add_character_flag = returned
+			add_character_flag = arthur_returned
 			# disband_event_forces = arthur_warrior_band
 			# spawn_unit = {
 			# 	earmark = arthur_warrior_band
@@ -184,7 +243,7 @@
 		}
 	}
 	504.6.6 = {
-		add_trait = maimed
+		trait = maimed
 		death = {
 			death_reason = death_disappearance
 		}
@@ -193,9 +252,9 @@
 
 5 = {
 	# Mordred (child), book/legendary character
-	name = "Mordred"
+	name = "mordred_male_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 11
 	diplomacy = 4
 	intrigue = 10
@@ -207,11 +266,11 @@
 	trait = beauty_bad_1
 	trait = physique_good_1
 	trait = aggressive_attacker
-	trait = wrathful
-	trait = sadistic
-	trait = cynical
-	trait = deceitful
-	trait = lustful
+#	trait = wrathful
+#	trait = sadistic
+#	trait = cynical
+#	trait = deceitful
+#	trait = lustful
 	father = 7	#Mordred
 	mother = 19	#Norwenna
 	479.12.2 = {
@@ -241,9 +300,9 @@
 
 7 = {
 	# Mordred (father), book character
-	name = "Mordred"
+	name = "mordred_male_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 9
 	diplomacy = 7
 	intrigue = 6
@@ -260,6 +319,7 @@
 	}
 	476.5.18 = {
 		add_spouse = 19		# Norwenna
+		learn_language = language_brythonic
 	}
 	479.6.23 = {
 		effect = {
@@ -274,9 +334,10 @@
 
 14 = {
 	# King Tewdric of Gwent										# KING, partly book character
-	name = "Tewdric"
-	dynasty = 5
-	religion = "catholic"
+	name = "theodoric_male_romanobritish"
+	dynasty_house = house_caradoc
+	dna = 14_tewdric_of_gwent
+	rite = britannic_rite
 	martial = 8
 	diplomacy = 9
 	intrigue = 4
@@ -284,15 +345,15 @@
 	learning = 10
 	culture = "romanobritish"
 	trait = just
-	trait = temperate
-	trait = scholar
-	# add_trait="honorable"
+	# trait = temperate
+	trait = theologian		# Increases his ai_zeal score
+	# trait="honorable"
 	trait = patient
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_3
 	trait = chaste
 	trait = generous
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	trait = beauty_bad_1	# Add by Clay
 	father = 805
 	mother = 1520
@@ -310,6 +371,12 @@
 	}
 	461.6.28 = {
 		add_spouse = 240		# Enid
+		portrait_override = { 
+			portrait_modifier_overrides={
+				custom_hair=male_hair_byzantine_02
+				custom_beards=male_empty
+			}
+		}
 	}
 	470.4.18 = {
 		effect = {
@@ -322,7 +389,10 @@
 			#	who = 1		# Uther		
 			#	years = 1000
 			#}
-			create_alliance = character:1
+			event_alliance_effect = {
+				TARGET = character:1
+				ACTOR = character:14
+			}
 		}
 	}
 	490.1.1 = {
@@ -335,22 +405,24 @@
 
 19 = {
 	# Norwenna, book character
-	name = "Norwenna"
+	name = "norwenna_female_romanobritish"
+	dna = 19_norwenna
 	female = yes
 	dynasty = 52
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 3
 	diplomacy = 8
 	intrigue = 3
 	stewardship = 7
 	learning = 6
-	health = 2
 	culture = "romanobritish"
 	trait = gluttonous
 	trait = arrogant
 	trait = family_first
 	trait = education_stewardship_1
 	trait = ambitious
+	trait = beauty_bad_1
+	trait = restricted_marriage
 	454.12.10 = {
 		birth = "454.12.10"
 	}
@@ -358,7 +430,7 @@
 		employer = 1
 	}
 	479.6.23 = {
-		add_trait = celibate
+		trait = celibate
 	}
 	480.10.20 = {
 		death = {
@@ -370,21 +442,22 @@
 
 20 = {
 	# Lord Owain Marshal of Dumnonia, book/legendary character
-	name = "Owain"
+	name = "owen_male_romanobritish"
 	dynasty = 38
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 10
 	diplomacy = 5
 	intrigue = 7
 	stewardship = 6
 	learning = 3
+	prowess = 8
 	culture = "romanobritish"
-	trait = deceitful
+	# trait = deceitful
 	trait = brave
 	trait = ambitious
 	trait = arrogant
 	trait = greedy
-	trait = war_hero
+	# trait = war_hero
 	trait = education_martial_3
 	trait = aggressive_attacker
 	trait = brother_of_mithra
@@ -403,6 +476,16 @@
 		give_council_position = councillor_marshal
 		effect = {
 			add_prestige = 655
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = medium_lifestyle_random_xp_low
+						max = medium_lifestyle_random_xp_high
+					}
+				}
+			}
 		}
 	}
 	480.12.5 = {
@@ -415,17 +498,17 @@
 
 22 = {
 	# Prince Gereint of the Stones, partly book character
-	name = "Gereint"
+	name = "gerontius_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 7
 	diplomacy = 6
 	intrigue = 5
 	stewardship = 5
 	learning = 4
 	culture = "romanobritish"
-	trait = veteran
-	# add_trait="honorable"
+	# trait = veteran
+	# trait="honorable"
 	trait = loyal
 	trait = brave
 	trait = honest
@@ -477,17 +560,17 @@
 
 24 = {
 	# Vassal King Melwas of the Belgae, book/legendary character
-	name = "Melwas"
+	name = "melwas_male_romanobritish"
 	dynasty = 25
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 8
 	diplomacy = 7
 	intrigue = 6
 	stewardship = 9
 	learning = 6
 	culture = "romanobritish"
-	trait = arrogant
-	trait = shy
+	# trait = arrogant
+	# trait = shy
 	trait = education_martial_2
 	trait = greedy
 	trait = paranoid
@@ -507,7 +590,7 @@
 		add_spouse = 247		# Lady Nwylle
 	}
 	490.8.24 = {
-		add_trait = ill
+		trait = ill
 		death = {
 			death_reason = death_ill
 		}
@@ -516,24 +599,24 @@
 
 28 = {
 	# Prince Meurig Heir of Gwent, partly book character
-	name = "Meurig"
-	dynasty = 5
+	name = "meurig_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 2
 	diplomacy = 9
 	intrigue = 7
 	stewardship = 5
 	learning = 8
-	trait = scholar
+	trait = erudite
 	trait = arrogant
 	trait = education_learning_3
 	trait = lustful
-	#add_trait="weak"
+	#trait="weak"
 	trait = physique_bad_1	# Add by Clay
 	trait = education_martial_prowess_1
 	trait = ambitious
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	# trait = stiff	# Add by Clay
 	# trait = short	# Add by Clay
 	trait = intellect_good_1
@@ -546,14 +629,75 @@
 		}
 		set_relation_guardian = character:14
 	}
+	489.1.1 = {
+		add_spouse = 247		# Princess Dyfwn ferch Glywys of Glwyssing
+	}
 	512.4.2 = {
 		death = yes
 	}
 }
 
+40 = {
+	# Agricola, Marshal of Gwent
+	name = "agricola_male_roman"
+	dynasty = 1069
+	martial = 11
+	diplomacy = 12
+	intrigue = 6
+	stewardship = 10
+	learning = 12
+	culture = "romanobritish"
+	religion = "hellenic_pagan"
+	trait = physique_good_3
+	trait = temperate
+	# trait="honorable"
+	trait = loyal
+	trait = war_hero
+	# trait = tolerant
+	trait = compassionate
+	trait = brave
+	trait = education_martial_prowess_3
+	trait = education_martial_4
+	trait = roman_trained
+	trait = open_terrain_expert
+	#trait = heavy_infantry_leader
+	trait = brother_of_mithra
+	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	trait = intellect_good_1	# Add by Clay
+	father = 1637
+	mother = 1069
+	435.11.14 = {
+		#Theodosius II bans paganism (again, but moreso)
+		birth = yes
+	}
+	470.1.1 = {
+		employer = 14
+		give_council_position = councillor_marshal
+		effect = {
+			add_prestige = 570
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = low_lifestyle_random_xp_low
+						max = low_lifestyle_random_xp_high
+					}
+				}
+			}
+		}
+	}
+	470.6.13 = {
+		set_relation_friend = character:14
+	}
+	503.12.26 = {
+		death = "503.12.26"
+	}
+}
+
 41 = {
 	# Lord Marcus of Magnis, Praetor of Glevensium (fictional)
-	name = "Marcus"
+	name = "mark_male_roman"
 	dynasty = 158
 	martial = 10
 	diplomacy = 8
@@ -561,15 +705,15 @@
 	stewardship = 7
 	learning = 6
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	trait = unyielding_defender
 	trait = honest
-	trait = veteran
+	# trait = veteran
 	trait = brave
 	trait = education_martial_3
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = loyal
-	# add_trait="honorable"
+	# trait="honorable"
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
 	#father=
@@ -592,7 +736,7 @@
 
 42 = {
 	# Lord Gydion of Ratae (fictional)
-	name = "Gydion"
+	name = "gydion_male_romanobritish"
 	dynasty = 30
 	martial = 7
 	diplomacy = 9
@@ -600,13 +744,13 @@
 	stewardship = 8
 	learning = 6
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	trait = unyielding_defender
 	trait = just
-	trait = veteran
+	# trait = veteran
 	trait = brave
 	trait = education_martial_2
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = education_martial_prowess_1
 	father = 91	# Lord Brochvael Conwy
 	#mother=
@@ -617,6 +761,9 @@
 			add_gold = 60
 		}
 	}
+	479.1.1 = {
+		learn_language = language_brythonic
+	}
 	500.4.17 = {
 		death = "500.4.17"
 	}
@@ -624,7 +771,7 @@
 
 43 = {
 	# Lord Cadog of Vindocladia (fictional)
-	name = "Cadog"
+	name = "cadog_male_romanobritish"
 	dynasty = 210
 	martial = 7
 	diplomacy = 6
@@ -632,13 +779,13 @@
 	stewardship = 7
 	learning = 4
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	trait = education_stewardship_3
 	trait = arbitrary
 	trait = temperate
 	trait = brave
-	trait = stubborn
-	trait = diligent
+	# trait = stubborn
+	# trait = diligent
 	trait = education_martial_prowess_1
 	#father=
 	#mother=
@@ -659,7 +806,7 @@
 
 49 = {
 	# Lord Meriadoc of Londinium (fictional)
-	name = "Meriadoc"
+	name = "meriadoc_male_romanobritish"
 	dynasty = 207
 	martial = 3
 	diplomacy = 9
@@ -667,12 +814,12 @@
 	stewardship = 5
 	learning = 7
 	culture = "romanobritish"
-	religion = "catholic"
-	# add_trait="honorable"
+	rite = britannic_rite
+	# trait="honorable"
 	trait = craven
 	trait = temperate
 	trait = diligent
-	trait = scholar
+	trait = erudite
 	trait = education_intrigue_2
 	#father=49
 	#mother=
@@ -689,7 +836,7 @@
 
 50 = {
 	# Magistrate Cildydd of Aquae Sulis (book character)
-	name = "Cildydd"
+	name = "cildydd_male_romanobritish"
 	dynasty = 220
 	martial = 2
 	diplomacy = 7
@@ -697,12 +844,12 @@
 	stewardship = 7
 	learning = 8
 	culture = "romanobritish"
-	religion = catholic
-	trait = scholar
+	rite = britannic_rite
+	trait = erudite
 	trait = temperate
 	trait = patient
 	trait = greedy
-	trait = poet
+	trait = lifestyle_poet
 	trait = loyal
 	trait = education_stewardship_3
 	#father=
@@ -725,7 +872,7 @@
 
 51 = {
 	# Bishop Bedwin of Lindinis, Chancellor of Dumnonia (book character)
-	name = "Bedwin"
+	name = "bedwin_male_romanobritish"
 	#dynasty=54
 	martial = 8
 	diplomacy = 11
@@ -733,17 +880,18 @@
 	stewardship = 7
 	learning = 9
 	culture = "romanobritish"
-	religion = "catholic"
-	trait = scholar
-	trait = temperate
+	rite = britannic_rite
+	trait = erudite
+	#  trait = temperate
 	trait = patient
 	trait = diligent
 	trait = celibate
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	trait = education_diplomacy_3
 	trait = loyal
 	trait = honest
-	trait = veteran
+	# trait = veteran
 	trait = education_learning_3
 	trait = brother_of_mithra
 	#father=
@@ -755,7 +903,11 @@
 		employer = 1
 		give_council_position = councillor_chancellor
 		effect = {
-			# give_minor_title = title_appointed_regent # No regencies
+			designate_diarch = character:51
+			remove_generated_diarch_consequences_effect = {
+				NEW_DIARCH = character:51
+				LIEGE = character:1
+			}
 			add_prestige = 490
 			add_piety = 550
 		}
@@ -766,7 +918,7 @@
 		# give_minor_title = title_appointed_regent # No regencies
 	}
 	486.11.6 = {
-		add_trait = ill
+		trait = ill
 		death = {
 			death_reason = death_ill
 		}
@@ -774,8 +926,8 @@
 }
 
 58 = {
-	# King Meriadoc of Cynwidion (book character)
-	name = "Meriadoc"
+	# King Meriadoc of Stronggore (book character)
+	name = "meriadoc_male_romanobritish"
 	dynasty = 292
 	martial = 6
 	diplomacy = 5
@@ -783,10 +935,10 @@
 	stewardship = 4
 	learning = 6
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	trait = gregarious
 	trait = patient
-	trait = veteran
+	# trait = veteran
 	trait = brave
 	trait = education_martial_3
 	trait = education_martial_prowess_2
@@ -806,7 +958,7 @@
 
 59 = {
 	# Lord Vitalinus of Londinium (book character)
-	name = "Vitalinus"
+	name = "vitalinus_male_romanobritish"
 	dynasty = 207
 	martial = 5
 	diplomacy = 6
@@ -814,8 +966,8 @@
 	stewardship = 8
 	learning = 7
 	culture = "romanobritish"
-	religion = "catholic"
-	# trait = "falconer" # TODO: No exact conversion - Maybe hunter_1?
+	rite = britannic_rite
+	# trait = "falconer" # TODO: No exact conversion - Maybe lifestyle_hunter?
 	trait = temperate
 	trait = patient
 	trait = loyal
@@ -837,7 +989,7 @@
 
 60 = {
 	# Queen Anna of Broceliande (book/legendary character)
-	name = "Anna"
+	name = "anna_female_romanobritish_anna"
 	female = yes
 	dynasty_house = house_pendragon
 	martial = 3
@@ -846,7 +998,7 @@
 	stewardship = 9
 	learning = 9
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = bastard
 	trait = generous
 	trait = compassionate
@@ -862,6 +1014,9 @@
 			add_prestige = 270
 		}
 	}
+	479.1.1 = {
+		learn_language = language_brythonic
+	}
 	507.1.26 = {
 		death = "507.1.26"
 	}
@@ -869,19 +1024,20 @@
 
 67 = {
 	# Bishop Sansum (book character)
-	name = "Sansum"
+	name = "sansum_male_romanobritish"
 	#dynasty=32
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 4
 	diplomacy = 8
 	intrigue = 11
 	stewardship = 6
 	learning = 2
 	culture = "romanobritish"
+	sexuality = homosexual
 	trait = deceitful
 	trait = craven
 	trait = celibate
-	trait = arrogant
+	# trait = arrogant
 	trait = zealous
 	trait = ambitious
 	trait = education_learning_4
@@ -908,7 +1064,7 @@
 
 71 = {
 	# Queen Morgause of Lothian (book/legendary character)
-	name = "Morgause"
+	name = "morgause_female_romanobritish"
 	female = yes
 	dynasty_house = house_pendragon
 	martial = 6
@@ -917,7 +1073,7 @@
 	stewardship = 10
 	learning = 12
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = bastard
 	trait = just
 	trait = compassionate
@@ -928,14 +1084,18 @@
 	451.3.27 = {
 		birth = "451.3.27"
 	}
+	479.1.1 = {
+		learn_language = language_brythonic
+	}
 	514.2.16 = {
 		death = "514.2.16"
 	}
 }
 
+
 74 = {
 	# Lord Decimus of Lindum, High Lord of The Wetlands (fictional)
-	name = "Decimus"
+	name = "decimus_male_roman"
 	dynasty = 232
 	martial = 8
 	diplomacy = 9
@@ -943,14 +1103,14 @@
 	stewardship = 9
 	learning = 6
 	culture = "romanobritish"
-	religion = "pelagian"
-	trait = deceitful
+	rite = britannic_rite
+	# 3trait = deceitful
 	trait = patient
 	trait = education_diplomacy_3
 	trait = temperate
-	trait = ambitious
+	# trait = ambitious
 	trait = diligent
-	trait = scholar
+	trait = erudite
 	trait = intellect_good_1	# Add by Clay
 	father = 1222
 	#mother=
@@ -971,9 +1131,9 @@
 
 91 = {
 	# Lord Brochvael Conwy (fictional)
-	name = "Brochvael"
+	name = "brochvael_male_romanobritish"
 	dynasty = 30
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 7
 	diplomacy = 9
 	intrigue = 4
@@ -983,8 +1143,8 @@
 	trait = brave
 	trait = gregarious
 	trait = education_martial_3
-	trait = veteran
-	trait = hunter_2
+	# trait = veteran
+	trait = lifestyle_hunter
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
 	#father=
@@ -1005,7 +1165,7 @@
 
 93 = {
 	# Lord Gareth of Verulanium (fictional)
-	name = "Gareth"
+	name = "gareth_male_romanobritish"
 	dynasty = 36
 	martial = 6
 	diplomacy = 7
@@ -1013,14 +1173,14 @@
 	stewardship = 5
 	learning = 2
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = unyielding_defender
 	trait = loyal
 	trait = brave
 	trait = education_martial_3
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = arbitrary
-	trait = veteran
+	# trait = veteran
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
 	#father= 
@@ -1039,20 +1199,20 @@
 
 94 = {
 	# Lord Cornelius of Corinium (fictional)
-	name = "Cornelius"
+	name = "cornelius_male_roman"
 	dynasty = 143
-	religion = "hellenic_pagan"
+	rite = britannic_rite
 	culture = "romanobritish"
 	martial = 7
 	diplomacy = 5
 	intrigue = 6
 	stewardship = 3
 	learning = 7
-	trait = scholar
+	trait = erudite
 	trait = just
 	trait = brave
 	trait = education_martial_3
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = diligent
 	trait = content
 	trait = loyal
@@ -1075,9 +1235,9 @@
 
 96 = {
 	# Lord Einion of Buelt (fictional)
-	name = "Einion"
+	name = "einion_male_romanobritish"
 	dynasty = 30
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 11
 	diplomacy = 7
 	intrigue = 6
@@ -1088,8 +1248,8 @@
 	trait = gregarious
 	trait = temperate
 	trait = education_martial_3
-	trait = veteran
-	trait = hunter_2
+	# trait = veteran
+	trait = lifestyle_hunter
 	trait = brother_of_mithra
 	trait = education_martial_prowess_2
 	father = 91	# Lord Brochvael Conwy
@@ -1107,9 +1267,9 @@
 
 99 = {
 	# Lord Marius of Luguvallum (fictional)
-	name = "Marius"
+	name = "marius_male_roman"
 	dynasty = 147
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 10
 	diplomacy = 8
 	intrigue = 5
@@ -1123,7 +1283,7 @@
 	trait = brave
 	trait = education_martial_3
 	trait = unyielding_defender
-	trait = hunter_2
+	trait = lifestyle_hunter
 	#father=
 	#mother=
 	436.11.10 = {
@@ -1143,16 +1303,16 @@
 
 101 = {
 	# Lord Cai of Cunetio (fictional)
-	name = "Cai"
+	name = "cai_male_romanobritish"
 	dynasty = 267
-	religion = "briton_pagan"
+	rite = britannic_rite
 	martial = 5
 	diplomacy = 9
 	intrigue = 7
 	stewardship = 7
 	learning = 6
 	culture = "romanobritish"
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = arrogant
 	trait = gregarious
 	trait = education_martial_prowess_3
@@ -1175,17 +1335,17 @@
 }
 
 104 = {
-	# Lord Elfin of Causennae (fictional)
-	name = "Elfin"
+	# Lord Elfin of Rutland (fictional)
+	name = "elfin_male_romanobritish"
 	dynasty = 226
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 3
 	diplomacy = 4
 	intrigue = 8
 	stewardship = 9
 	learning = 8
 	culture = "romanobritish"
-	trait = hunter_2
+	trait = lifestyle_hunter
 	trait = arrogant
 	trait = lustful
 	trait = education_martial_prowess_2
@@ -1206,11 +1366,12 @@
 	}
 }
 
+
 108 = {
 	# Lord Mared of Verlucio (fictional)
-	name = "Mared"
+	name = "mared_male_romanobritish"
 	dynasty = 231
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 7
 	diplomacy = 3
 	intrigue = 9
@@ -1224,7 +1385,7 @@
 	trait = brave
 	trait = education_martial_3
 	trait = rough_terrain_expert
-	trait = veteran
+	# trait = veteran
 	trait = ambitious
 	#father=
 	#mother=
@@ -1242,10 +1403,10 @@
 
 123 = {
 	# Lady Enid, spouse of Prince Gereint (legendary character)
-	name = "Enid"
+	name = "enid_female_romanobritish"
 	female = yes
 	dynasty = 208
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 4
 	diplomacy = 7
 	intrigue = 8
@@ -1253,8 +1414,8 @@
 	learning = 8
 	culture = "romanobritish"
 	trait = just
-	trait = compassionate
-	trait = humble
+	# trait = compassionate
+	# trait = humble
 	trait = gregarious
 	trait = family_first
 	trait = temperate
@@ -1270,9 +1431,9 @@
 
 124 = {
 	# Cadwy, son of Prince Gereint
-	name = "Cadwy"
+	name = "cadwy_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	martial = 7
 	diplomacy = 9
@@ -1289,7 +1450,7 @@
 		birth = yes
 	}
 	504.6.6 = {
-		religion = catholic
+		rite = britannic_rite
 		effect = {
 			add_pressed_claim = k_dumnonia
 		}
@@ -1305,9 +1466,9 @@
 
 125 = {
 	# Lord Gadric of Tripontium (fictional)
-	name = "Gadric"
+	name = "gadric_male_romanobritish"
 	dynasty = 169
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 4
 	diplomacy = 8
 	intrigue = 6
@@ -1319,9 +1480,9 @@
 	trait = patient
 	trait = education_stewardship_2
 	trait = chaste
-	trait = veteran
+	# trait = veteran
 	trait = unyielding_defender
-	trait = mystic_3
+	trait = lifestyle_mystic
 	#father=
 	#mother=
 	438.11.10 = {
@@ -1338,9 +1499,9 @@
 
 126 = {
 	# Aurelius, son of Cornelius of Corinium (fictional)
-	name = "Aurelius"
+	name = "aurelius_male_roman"
 	dynasty = 143
-	religion = "hellenic_pagan"
+	rite = britannic_rite
 	culture = "romanobritish"
 	martial = 7
 	diplomacy = 9
@@ -1348,9 +1509,11 @@
 	stewardship = 7
 	learning = 8
 	trait = diligent
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	trait = education_martial_prowess_2
 	trait = just
+	disallow_random_traits = yes	# Required for children if giving them more than 1 personality trait
 	father = 94
 	mother = 127
 	467.2.16 = {
@@ -1363,10 +1526,10 @@
 
 127 = {
 	# Lady Viola of Corinium (fictional)
-	name = "Viola"
+	name = "viola_female_roman"
 	female = yes
 	dynasty = 221
-	religion = "hellenic_pagan"
+	rite = romano_celtic_pagan
 	martial = 4
 	diplomacy = 7
 	intrigue = 8
@@ -1377,7 +1540,8 @@
 	trait = arrogant
 	trait = gregarious
 	trait = family_first
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	trait = lustful
 	father = 128	# Lord Meriadoc of Clausentum
 	#mother=
@@ -1391,9 +1555,9 @@
 
 128 = {
 	# Lord Meriadoc of Clausentum (fictional)
-	name = "Meriadoc"
+	name = "meriadoc_male_romanobritish"
 	dynasty = 221
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	martial = 8
 	diplomacy = 8
@@ -1401,11 +1565,12 @@
 	stewardship = 4
 	learning = 9
 	trait = education_martial_prowess_1
-	trait = veteran
+	# trait = veteran
 	trait = arrogant
 	trait = education_intrigue_1
-	trait = scholar
-	trait = tolerant
+	trait = erudite
+	# trait = tolerant
+	trait = compassionate
 	trait = arbitrary
 	#father=
 	#mother=
@@ -1423,9 +1588,9 @@
 
 129 = {
 	# Minac of Clausentum (fictional)
-	name = "Minac"
+	name = "minac_male_romanobritish"
 	dynasty = 221
-	religion = "pelagian"
+	rite = britannic_rite
 	martial = 7
 	diplomacy = 8
 	intrigue = 6
@@ -1437,7 +1602,8 @@
 	trait = education_martial_prowess_1
 	trait = ambitious
 	trait = education_intrigue_2
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	father = 128
 	#mother=
 	453.4.28 = {
@@ -1448,42 +1614,100 @@
 	}
 }
 
-151 = {
-	# Queen Sarlinna of Elmet (fictional)
-	name = "Sarlinna"
-	female = yes
-	religion = "briton_pagan"
+130 = {
+	# Lord Cynfawr of Vernemetum (fictional)
+	name = "cynfawr_male_romanobritish"
+	dynasty = 55
+	rite = romano_celtic_pagan
 	martial = 5
 	diplomacy = 8
-	intrigue = 6
-	stewardship = 8
-	learning = 5
+	intrigue = 10
+	stewardship = 9
+	learning = 10
 	culture = "romanobritish"
-	trait = family_first
-	trait = stubborn
-	trait = compassionate
-	trait = just
+	trait = disloyal
+	trait = ambitious
+	trait = patient
+	trait = education_martial_prowess_1
+	trait = deceitful
 	trait = education_intrigue_1
-	trait = loyal
-	trait = intellect_good_1	# Add by Clay
-	trait = beauty_good_1	# Add by Clay
-	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	sexuality = homosexual
+	# trait = "falconer" # TODO: No exact conversion - Maybe lifestyle_hunter?
 	#father=
 	#mother=
-	441.4.25 = {
-		birth = "441.4.25"
+	446.11.30 = {
+		birth = "446.11.30"
+		effect = {
+			add_prestige = 165
+		}
 	}
-	475.11.2 = {
-		death = "475.11.2"
+	472.4.30 = {
+		add_spouse = 133		# Lady Ailleann
+	}
+	479.1.1 = {
+		learn_language = language_brythonic
+	}
+	501.4.6 = {
+		death = "501.4.6"
+	}
+}
+
+133 = {
+	# Lady Aelwyd of Vernemetum (fictional)
+	name = "aelwyd_female_briton"
+	female = yes
+	rite = romano_celtic_pagan
+	martial = 4
+	diplomacy = 10
+	intrigue = 8
+	stewardship = 7
+	learning = 9
+	culture = "briton"
+	trait = temperate
+	trait = zealous
+	# trait = gregarious
+	trait = education_intrigue_3
+	trait = lustful
+	# trait = deceitful
+	trait = lifestyle_mystic
+	#father=
+	#mother=
+	455.10.24 = {
+		birth = "455.10.24"
+	}
+	# 478.1.5 = {
+		# give_nickname = nick_lady_of_evening
+	# }
+	497.2.14 = {
+		death = "497.2.14"
+	}
+}
+
+134 = {
+	# Padarn of Vernemetum (fictional)
+	name = "padarn_male_romanobritish"
+	dynasty = 55
+	rite = romano_celtic_pagan
+	culture = "romanobritish"
+	trait = patient
+	trait = diligent
+	trait = shy
+	father = 130
+	mother = 133
+	473.6.18 = {
+		birth = "473.6.18"
+	}
+	521.12.6 = {
+		death = "521.12.6"
 	}
 }
 
 153 = {
 	# High Lady Margred of The Wetlands (fictional)
-	name = "Margred"
+	name = "margaret_female_romanobritish"
 	female = yes
 	#dynasty=240
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 3
 	diplomacy = 5
 	intrigue = 10
@@ -1495,8 +1719,8 @@
 	trait = arrogant
 	trait = education_diplomacy_1
 	trait = family_first
-	trait = temperate
-	trait = greedy
+	# trait = temperate
+	# trait = greedy
 	trait = beauty_good_1
 	#father=
 	#mother=
@@ -1509,10 +1733,10 @@
 }
 
 154 = {
-	# Verutius of Lindum (fictional)
-	name = "Verutius"
+	# King Verutius of Lindum (fictional)
+	name = "verutius_male_roman"
 	dynasty = 232
-	religion = "pelagian"
+	rite = britannic_rite
 	martial = 4
 	diplomacy = 8
 	intrigue = 5
@@ -1529,20 +1753,20 @@
 	father = 74
 	mother = 153
 	462.4.17 = {
-		birth = "462.4.17"
+		birth = yes
 	}
-	503.12.20 = {
-		death = "503.12.20"
+	535.1.1 = {
+		death = yes
 	}
 }
 
 240 = {
 	# Queen Enid of Gwent (book character)
-	name = "Enid"
+	name = "enid_female_romanobritish"
 	female = yes
 	dynasty = 281
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 3
 	diplomacy = 7
 	intrigue = 10
@@ -1569,10 +1793,10 @@
 
 245 = {
 	# Publius of Vindocladia (fictional)
-	name = "Publius"
+	name = "publius_male_roman"
 	dynasty = 210
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	trait = diligent
 	father = 43
 	mother = 243
@@ -1586,10 +1810,10 @@
 
 247 = {
 	# Lady Nwylle of the Belgae (fictional)
-	name = "Nwylle"
+	name = "nwylle_female_romanobritish"
 	female = yes
 	dynasty = 173
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 4
 	diplomacy = 9
 	intrigue = 8
@@ -1612,15 +1836,17 @@
 
 248 = {
 	# Maelgore, son of King Melwas of the Belgae (fictional)
-	name = "Maelgore"
+	name = "maelgore_male_romanobritish"
 	dynasty = 25
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = diligent
 	trait = patient
 	trait = shy
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	trait = education_martial_prowess_1
+	disallow_random_traits = yes	# Required for children if giving them more than 1 personality trait
 	father = 24
 	mother = 247
 	464.3.28 = {
@@ -1633,9 +1859,9 @@
 
 254 = {
 	# Dagomarcus of Luguvallum (fictional)
-	name = "Dagomarcus"
+	name = "dagomarcus_male_romanobritish"
 	dynasty = 147
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 10
 	diplomacy = 7
 	intrigue = 3
@@ -1661,10 +1887,10 @@
 
 255 = {
 	# Lady Cornelia of Deva (fictional)
-	name = "Cornelia"
+	name = "cornelia_female_roman"
 	female = yes
 	dynasty = 289
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 4
 	diplomacy = 8
 	intrigue = 10
@@ -1688,7 +1914,7 @@
 
 265 = {
 	# Lord Ganval of Durocobrivis (fictional)
-	name = "Ganval"
+	name = "ganval_male_romanobritish"
 	dynasty = 240
 	martial = 10
 	diplomacy = 6
@@ -1696,11 +1922,11 @@
 	stewardship = 9
 	learning = 6
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = britannic_rite
 	trait = greedy
 	trait = temperate
 	trait = ambitious
-	trait = veteran
+	# trait = veteran
 	trait = honest
 	trait = education_stewardship_2
 	trait = education_martial_prowess_2
@@ -1719,9 +1945,9 @@
 
 294 = {
 	# Gwydre ap Arthur (book/legendary character)
-	name = "Gwydre"
+	name = "gwydre_male_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 3	# Arthur
 	mother = 26	# Guinevere
@@ -1737,7 +1963,7 @@
 	}
 	501.6.7 = {
 		add_spouse = 295		# Morwenna
-		religion = catholic
+		rite = britannic_rite
 	}
 	504.6.6 = {
 		death = {
@@ -1748,9 +1974,9 @@
 
 295 = {
 	# Morwenna ferch Derfel (book character)
-	name = "Morwenna"
+	name = "morwenna_female_romanobritish"
 	dynasty = 20
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	female = yes
 	father = 10	# Derfel
@@ -1766,7 +1992,7 @@
 	}
 	501.2.7 = {
 		add_spouse = 294		# Gwydre
-		religion = catholic
+		rite = britannic_rite
 	}
 	504.6.6 = {
 		death = {
@@ -1777,9 +2003,9 @@
 
 296 = {
 	# Seren ferch Derfel (book character)
-	name = "Seren"
+	name = "seren_female_romanobritish"
 	dynasty = 20
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	female = yes
 	father = 10	# Derfel
@@ -1790,7 +2016,7 @@
 	}
 	502.4.9 = {
 		add_spouse = 150		# Llaennong, Prince of Elmet (replacing "Ederyn")
-		religion = catholic
+		rite = britannic_rite
 	}
 	503.1.4 = {
 		death = {
@@ -1801,9 +2027,9 @@
 
 297 = {
 	# Dian ferch Derfel (book character)
-	name = "Dian"
+	name = "dian_female_romanobritish"
 	dynasty = 20
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	female = yes
 	father = 10	# Derfel
@@ -1822,9 +2048,9 @@
 
 298 = {
 	# Arthur-bach ap Gwydre (book character)
-	name = "Arthur"
+	name = "arthur_male_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 294	# Gwydre
 	mother = 295	# Morwenna
@@ -1842,9 +2068,9 @@
 
 299 = {
 	# Seren ferch Gwydre (book character)
-	name = "Seren"
+	name = "seren_female_romanobritish"
 	dynasty_house = house_pendragon
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 294	# Gwydre
 	mother = 295	# Morwenna
@@ -1863,20 +2089,20 @@
 
 300 = {
 	# Coel Hen, King of Hen Ogledd
-	name = "Coel"
+	name = "coel_male_romanobritish"
 	dynasty = 296
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 10
 	diplomacy = 9
 	intrigue = 6
 	stewardship = 8
 	learning = 7
 	culture = "romanobritish"
-	#add_trait="blood_coel_hen"
+	#trait="blood_coel_hen"
 	trait = brave
 	trait = education_martial_4
-	trait = hunter_2
-	trait = veteran
+	trait = lifestyle_hunter
+	# trait = veteran
 	trait = education_martial_prowess_3
 	# trait = inspiring_leader # TODO: No direct conversion
 	trait = just
@@ -1904,13 +2130,123 @@
 	}
 }
 
+301 = {
+	# Ceneu ap Coel Hen, King of Hen Ogledd
+	name = "ceneu_male_romanobritish"
+	dynasty = 296
+	martial = 13
+	diplomacy = 12
+	intrigue = 6
+	stewardship = 13
+	learning = 10
+	culture = "romanobritish"
+	rite = britannic_rite
+	#trait="blood_coel_hen"
+	trait = loyal
+	trait = education_martial_prowess_3
+	trait = arrogant
+	trait = lifestyle_hunter
+	trait = ambitious
+	trait = physique_good_2	# Add by Clay
+	trait = intellect_good_1	# Add by Clay
+	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	father = 300	# Coel Hen
+	mother = 309	# Princess Ystradwal of Dumnonia
+	384.9.13 = {
+		birth = "384.9.13"
+		effect = {
+			add_prestige = 1070
+		}
+	}
+	445.1.1 = {
+		effect = {
+			add_gold = 220
+		}
+	}
+	451.12.23 = {
+		trait = pneumonic
+		death = {
+			death_reason = death_pneumonic
+		}
+	}
+}
+
+302 = {
+	# Mor ap Ceneu, King of Hen Ogledd
+	name = "mor_male_romanobritish"
+	dynasty = 296
+	rite = britannic_rite
+	martial = 12
+	diplomacy = 10
+	intrigue = 10
+	stewardship = 13
+	learning = 8
+	culture = "romanobritish"
+	#trait="blood_coel_hen"
+	trait = brave
+	trait = cynical
+	trait = arrogant
+	trait = temperate
+	trait = ambitious
+	# trait = veteran
+	trait = education_martial_3
+	trait = education_martial_prowess_3
+	trait = lifestyle_hunter
+	trait = physique_good_2	# Add by Clay
+	father = 301	# Ceneu
+	#mother=
+	406.1.17 = {
+		birth = "406.1.17"
+		effect = {
+			add_prestige = 960
+		}
+	}
+	470.7.18 = {
+		trait = wounded_1
+		death = {
+			death_reason = death_wounded_1
+		}
+	}
+}
+
+304 = {
+	# Gwal, daughter of Coel Hen
+	name = "gwal_female_romanobritish"
+	female = yes
+	dynasty = 296
+	rite = romano_celtic_pagan
+	martial = 4
+	diplomacy = 15
+	intrigue = 10
+	stewardship = 12
+	learning = 8
+	culture = "romanobritish"
+	trait = beauty_good_1
+	trait = compassionate
+	trait = arrogant
+	trait = gregarious
+	trait = family_first
+	trait = intellect_good_1
+	father = 300	# Coel Hen
+	mother = 309	# Princess Ystradwal of Dumnonia
+	381.7.10 = {
+		birth = yes
+		effect = {
+			add_prestige = 330
+		}
+	}
+	458.12.4 = {
+		death = "458.12.4"
+	}
+}
+
 309 = {
 	# Princess Ystradwal ferch Gradion of Dumnonia, wife of Coel Hen
-	name = "Ystradwal"
+	name = "ystradwal_female_romanobritish"
 	female = yes
 	dynasty = 3
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = beauty_good_1
 	trait = physique_good_1
 	father = 1234
@@ -1928,10 +2264,10 @@
 
 315 = {
 	# Saturnina of Lindum (fictional)
-	name = "Saturnina"
+	name = "saturnina_female_roman"
 	dynasty = 232
 	female = yes
-	religion = "pelagian"
+	rite = britannic_rite
 	martial = 4
 	diplomacy = 6
 	intrigue = 7
@@ -1953,7 +2289,7 @@
 
 342 = {
 	# Lady Senena of Isca  (fictional)
-	name = "Senena"
+	name = "senena_female_romanobritish"
 	female = yes
 	martial = 4
 	diplomacy = 7
@@ -1961,9 +2297,9 @@
 	stewardship = 6
 	learning = 8
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = temperate
-	trait = poet
+	trait = lifestyle_poet
 	trait = stubborn
 	trait = education_intrigue_1
 	439.6.21 = {
@@ -1974,11 +2310,88 @@
 	}
 }
 
+365 = {
+	# Einion ap Mor, King of Ebrauc
+	name = "einion_male_romanobritish"
+	dynasty = 296
+	rite = britannic_rite
+	martial = 10
+	diplomacy = 10
+	intrigue = 10
+	stewardship = 10
+	learning = 8
+	culture = "romanobritish"
+	#trait="blood_coel_hen"
+	trait = brave
+	trait = cynical
+	# trait = arrogant
+	trait = temperate
+	# trait = ambitious
+	# trait = veteran
+	trait = scarred
+	trait = education_diplomacy_3
+	trait = education_martial_prowess_2
+	# trait = just
+	trait = physique_good_1	# Add by Clay
+	# trait = tall # TODO: Height is now tied to genetics	# Add by Clay
+	father = 302	# Mor ap Ceneu
+	#mother=
+	449.7.17 = {
+		birth = yes
+		effect = {
+			add_prestige = 775
+		}
+	}
+	470.7.18 = {
+		give_nickname = nick_the_grey
+		add_spouse = 368
+	}
+	505.3.28 = {
+		death = "505.3.28"
+	}
+}
+
+366 = {
+	# Eliffer of Ebrauc
+	name = "eliffer_male_romanobritish"
+	dynasty = 296
+	rite = britannic_rite
+	martial = 6
+	diplomacy = 8
+	intrigue = 11
+	stewardship = 6
+	learning = 6
+	culture = "romanobritish"
+	#trait="blood_coel_hen"
+	trait = education_martial_2
+	trait = education_martial_prowess_2
+	trait = diligent
+	trait = greedy
+	trait = ambitious
+	trait = deceitful
+	trait = physique_good_1
+	father = 365
+	mother = 368
+	478.9.24 = {
+		birth = yes
+		effect = {
+			add_prestige = 105
+			add_gold = 105
+		}
+	}
+	505.3.28 = {
+		give_nickname = nick_gosgorddfawr
+	}
+	560.5.19 = {
+		death = "560.5.19"
+	}
+}
+
 368 = {
 	# Lady Veneva of Ebrauc (fictional)
-	name = "Veneva"
+	name = "veneva_female_romanobritish"
 	female = yes
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 5
 	diplomacy = 5
 	intrigue = 6
@@ -1990,25 +2403,25 @@
 	trait = arrogant
 	# father=
 	# mother=
-	435.7.12 = {
+	452.7.12 = {
 		birth = yes
 	}
-	493.10.25 = {
+	503.10.25 = {
 		death = yes
 	}
 }
 
 670 = {
 	# Magistrate Nabur of Durnovaria (book character)
-	name = "Nabur"
+	name = "nabur_male_romanobritish"
 	martial = 4
 	diplomacy = 7
 	intrigue = 10
 	stewardship = 6
 	learning = 9
 	culture = "romanobritish"
-	religion = "catholic"
-	trait = scholar
+	rite = britannic_rite
+	trait = erudite
 	trait = greedy
 	trait = deceitful
 	trait = education_diplomacy_3
@@ -2036,9 +2449,9 @@
 
 700 = {
 	# Lucius (fictional)
-	name = "Lucius"
+	name = "lucius_male_roman"
 	dynasty = 324
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 6
 	diplomacy = 5
 	intrigue = 7
@@ -2047,14 +2460,15 @@
 	culture = "romanobritish"
 	trait = education_diplomacy_4
 	trait = just
-	# add_trait="honorable"
+	# trait="honorable"
 	trait = intellect_good_3
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_prowess_2
-	trait = tolerant
+	# trait = tolerant
+	trait = compassionate
 	trait = diligent
-	# trait = "falconer" # TODO: No exact conversion - Maybe hunter_1?
-	trait = poet
+	# trait = "falconer" # TODO: No exact conversion - Maybe lifestyle_hunter?
+	trait = lifestyle_poet
 	trait = brother_of_mithra
 	448.12.3 = {
 		birth = "448.12.3"
@@ -2074,10 +2488,10 @@
 
 805 = {
 	# Ynyrius, father of King Tewdric of Gwent
-	name = "Ynyrius"
+	name = "ynyrius_male_romanobritish"
 	father = 1635
-	dynasty = 5
-	religion = "catholic"
+	dynasty_house = house_caradoc
+	rite = britannic_rite
 	martial = 10
 	diplomacy = 12
 	intrigue = 5
@@ -2086,15 +2500,15 @@
 	culture = "romanobritish"
 	trait = just
 	trait = temperate
-	trait = veteran
+	# trait = veteran
 	trait = roman_trained
-	# add_trait="honorable"
+	# trait="honorable"
 	trait = education_martial_prowess_3
 	trait = education_martial_3
 	trait = arrogant
 	trait = greedy
 	trait = intellect_good_1
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	410.1.1 = {
 		birth = yes
 		effect = {
@@ -2113,9 +2527,9 @@
 
 1000 = {
 	# King Constantine of Dumnonia
-	name = "Constantine"
+	name = "constantine_male_romanobritish_constantine"
 	dynasty = 3
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 8
 	diplomacy = 16
 	intrigue = 8
@@ -2125,11 +2539,11 @@
 	trait = education_martial_3
 	trait = family_first
 	trait = compassionate
-	trait = veteran
+	# trait = veteran
 	trait = just
-	# add_trait="honorable"
+	# trait="honorable"
 	trait = ambitious
-	#add_trait="brother_of_mithra"
+	#trait="brother_of_mithra"
 	father = 1205
 	#mother=
 	419.9.15 = {
@@ -2148,9 +2562,9 @@
 
 1001 = {
 	# Constans, son of Constantine III
-	name = "Constans"
+	name = "constans_male_roman"
 	dynasty = 1068
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 10
 	diplomacy = 15
 	intrigue = 10
@@ -2161,7 +2575,7 @@
 	trait = education_learning_2
 	trait = family_first
 	trait = trusting
-	trait = veteran
+	# trait = veteran
 	trait = content
 	trait = just
 	trait = education_martial_prowess_3
@@ -2190,17 +2604,17 @@
 
 1002 = {
 	# Ambrosius Aurelianus (aka AAtY)
-	name = "Ambrosius"
+	name = "ambrosius_male_roman"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	martial = 10
 	diplomacy = 13
 	intrigue = 8
 	stewardship = 12
 	learning = 10
 	culture = "romanobritish"
-	# add_trait="honorable"
-	trait = veteran
+	# trait="honorable"
+	# trait = veteran
 	trait = education_martial_prowess_3
 	trait = education_martial_3
 	trait = ambitious
@@ -2223,6 +2637,20 @@
 			set_global_variable = aurelianus_born
 		}
 	}
+	450.1.1 = {
+		effect = {
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = medium_lifestyle_random_xp_low
+						max = medium_lifestyle_random_xp_high
+					}
+				}
+			}
+		}
+	}
 	475.1.1 = {
 		death = yes
 	}
@@ -2230,10 +2658,10 @@
 
 1003 = {
 	# Anna, mother of Uther (fictional)
-	name = "Anna"
+	name = "anna_female_romanobritish_anna"
 	female = yes
 	dynasty = 224
-	religion = "hellenic_pagan"
+	rite = romano_celtic_pagan
 	martial = 5
 	diplomacy = 12
 	intrigue = 8
@@ -2262,10 +2690,10 @@
 
 1005 = {
 	# Cæcilia, daughter of Ambrosius Aurelianus  (fictional)
-	name = "CE_cilia"
+	name = "ce_cilia_female_roman"
 	dynasty_house = house_morys
 	female = yes
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = bastard
 	trait = beauty_good_1
@@ -2289,9 +2717,9 @@
 
 1006 = {
 	# Culhwch, son of Goleuddydd and Cilydd (book/legendary character)
-	name = "Culhwch"
+	name = "culhwch_male_romanobritish"
 	dynasty = 1070
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 8
 	diplomacy = 7
 	intrigue = 6
@@ -2300,7 +2728,7 @@
 	culture = "romanobritish"
 	trait = bastard
 	trait = physique_good_3
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_prowess_3
 	trait = education_martial_3
 	trait = loyal
@@ -2318,6 +2746,18 @@
 	476.2.10 = {
 		give_nickname = nick_longspear
 		employer = 1
+		effect = {
+			add_trait = lifestyle_blademaster
+			add_trait_xp = {
+				trait = lifestyle_blademaster
+				value = {
+					integer_range = {
+						min = low_lifestyle_random_xp_low
+						max = low_lifestyle_random_xp_high
+					}
+				}
+			}
+		}
 	}
 	479.7.5 = {
 		employer = 3		# Arthur
@@ -2332,8 +2772,8 @@
 
 1007 = {
 	# Sir Dagonet (book/legendary character)
-	name = "Dagonet"
-	religion = "briton_pagan"
+	name = "dagonet_male_romanobritish"
+	rite = romano_celtic_pagan
 	martial = 2
 	diplomacy = 10
 	intrigue = 5
@@ -2363,9 +2803,9 @@
 
 1008 = {
 	# Sir Aglaval (i.e. Sir Aglovale) (book/legendary character)
-	name = "Aglaval"
-	dynasty = 1004
-	religion = "catholic"
+	name = "aglaval_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	martial = 7
 	diplomacy = 7
@@ -2396,9 +2836,9 @@
 
 1009 = {
 	# Sir Lanval (book/legendary character)
-	name = "Lanval"
+	name = "lanval_male_romanobritish"
 	dynasty = 216
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	martial = 12
 	diplomacy = 8
 	intrigue = 6
@@ -2406,13 +2846,13 @@
 	learning = 6
 	culture = "romanobritish"
 	trait = physique_good_3
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_prowess_3
 	trait = education_martial_3
 	trait = loyal
-	trait = diligent
+	# trait = diligent
 	trait = brave
-	trait = chaste
+	# trait = chaste
 	trait = arrogant
 	trait = generous
 	trait = beauty_good_2
@@ -2435,9 +2875,9 @@
 
 1011 = {
 	# Sir Balan (book/legendary character)
-	name = "Balan"
+	name = "balan_male_romanobritish"
 	dynasty = 147
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	father = 99
@@ -2461,9 +2901,9 @@
 
 1012 = {
 	# Sir Balin (book/legendary character)
-	name = "Balin"
+	name = "balin_male_romanobritish"
 	dynasty = 147
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	father = 99
@@ -2487,9 +2927,9 @@
 
 1013 = {
 	# Blaise (book/legendary character)
-	name = "Blaise"
+	name = "blaise_male_romanobritish"
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = education_martial_prowess_2
 	443.7.19 = {
 		birth = yes
@@ -2509,12 +2949,12 @@
 
 1014 = {
 	# St. Illtyd (partly book/legendary character)
-	name = "Illtyd"
+	name = "illtyd_male_romanobritish"
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	dynasty = 1075
 	trait = education_martial_prowess_2
-	trait = scholar
+	trait = erudite
 	trait = theologian
 	trait = diligent
 	father = 1015
@@ -2536,10 +2976,10 @@
 
 1017 = {
 	# Eiddilig (book/legendary character)
-	name = "Eiddilig"
+	name = "eiddilig_male_romanobritish"
 	dynasty = 1076
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = dwarf
 	trait = deceitful
 	451.9.10 = {
@@ -2560,12 +3000,12 @@
 
 1018 = {
 	# Sir Bedivere (book/legendary character)
-	name = "Bedwyr"
+	name = "bedwyr_male_romanobritish"
 	dynasty = 1076
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = education_martial_prowess_3
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_3
 	trait = loyal
 	trait = beauty_good_2
@@ -2587,13 +3027,13 @@
 
 1019 = {
 	# Morfans the Ugly (book character)
-	name = "Morfans"
+	name = "morfans_male_romanobritish"
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	diplomacy = 8
 	martial = 10
 	trait = education_martial_prowess_3
-	trait = veteran
+	# trait = veteran
 	trait = education_martial_3
 	trait = loyal
 	trait = beauty_bad_3
@@ -2621,22 +3061,22 @@
 
 1069 = {
 	#Wife of AAtE, Mother of AAtY, added by Clay (Named after Tacitus' wife) (fictional)
-	name = "Julia"
+	name = "julia_female_roman_julia"
 	female = yes
-	dynasty = 3
+	# dynasty = 3
 	martial = 5
 	diplomacy = 8
 	intrigue = 5
 	learning = 8
 	stewardship = 5
 	culture = "romanobritish"
-	religion = catholic
+	rite = britannic_rite
 	# trait = tall # TODO: Height is now tied to genetics
 	trait = physique_good_2
 	trait = intellect_good_2
 	trait = education_stewardship_4
-	father = 1519
-	mother = 1516
+	# father = 1519
+	# mother = 1516
 	402.4.6 = {
 		#Easter Sunday, 402. Stillicho defeats Visigoths at Battle of Pollentia
 		birth = yes
@@ -2652,11 +3092,11 @@
 
 1200 = {
 	# King Claudius of Siluria
-	name = "Glewisus"
-	dynasty = 1059
-	religion = briton_pagan
+	name = "glewisus_male_romanobritish"
+	dynasty_house = house_finddu
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	father = 1201
 	# mother=
 	428.1.1 = {
@@ -2672,11 +3112,11 @@
 
 1201 = {
 	# King Solor of Siluria
-	name = "Solor"
-	dynasty = 1059
-	religion = briton_pagan
+	name = "solor_male_romanobritish"
+	dynasty_house = house_finddu
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	father = 1203
 	trait = twin
 	# mother=
@@ -2690,11 +3130,11 @@
 
 1203 = {
 	# King Mor of Siluria 
-	name = "Mor"
-	dynasty = 1059
-	religion = "briton_pagan"
+	name = "mor_male_romanobritish"
+	dynasty_house = house_finddu
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	trait = education_martial_prowess_2
 	father = 1204
 	# mother=
@@ -2707,12 +3147,12 @@
 }
 
 1204 = {
-	# King Owain Finddu/Eugenius of Siluria 
-	name = "Owain_Finddu"
-	dynasty = 1059
-	religion = "briton_pagan"
+	# King Owain "Finddu"/Eugenius of Siluria 
+	name = "owen_male_romanobritish"
+	dynasty_house = house_finddu
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	trait = intellect_good_1
 	trait = education_martial_prowess_2
 	father = 1513
@@ -2729,9 +3169,9 @@
 
 1205 = {
 	# King Conomor of Dumnonia-Kernow
-	name = "Conomor"
+	name = "conomor_male_romanobritish"
 	dynasty = 3
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1519
 	mother = 1516
@@ -2749,11 +3189,11 @@
 
 1206 = {
 	# King Anwn Dynod/Antonius Donatus Gregorius of Dyfed
-	name = "Antonius"
-	dynasty = 1059
-	religion = "briton_pagan"
+	name = "anthony_male_roman"
+	dynasty_house = house_dynod
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	trait = physique_good_1
 	father = 1513
 	mother = 1614
@@ -2767,9 +3207,9 @@
 
 1207 = {
 	# King Elaf of the Belgae
-	name = "Elaf"
+	name = "elaf_male_romanobritish"
 	dynasty = 25
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	#father=
@@ -2784,9 +3224,9 @@
 
 1208 = {
 	# Chief Verica the Elder of Celemion (fictional?)
-	name = "Verica"
+	name = "verica_male_romanobritish"
 	dynasty = 171
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	#father=
@@ -2801,9 +3241,9 @@
 
 1209 = {
 	# Chief Verica the Younger of Celemion (fictional?)
-	name = "Verica"
+	name = "verica_male_romanobritish"
 	dynasty = 171
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	father = 1208
@@ -2818,9 +3258,9 @@
 
 1211 = {
 	# King Tudwal of Cynwidion (fictional)
-	name = "Tudwal"
+	name = "tudwal_male_romanobritish"
 	dynasty = 292
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	# father=
@@ -2835,9 +3275,9 @@
 
 1212 = {
 	# King Elwydd of Cynwidion (fictional)
-	name = "Elwydd"
+	name = "elwydd_male_romanobritish"
 	dynasty = 292
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1211
 	# mother=
@@ -2851,9 +3291,9 @@
 
 1213 = {
 	# King Gyllad of Colun (fictional)
-	name = "Gyllad"
+	name = "gyllad_male_romanobritish"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	# father=
@@ -2868,9 +3308,9 @@
 
 1214 = {
 	# King Elgan of Went (fictional)
-	name = "Elgan"
+	name = "elgan_male_romanobritish"
 	dynasty = 727
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	# father=
@@ -2885,9 +3325,9 @@
 
 1219 = {
 	# King Gwrangon of Ceint
-	name = "Gwrangon"
+	name = "gwrangon_male_romanobritish"
 	dynasty = 623
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = physique_good_1
 	trait = education_martial_prowess_1
@@ -2909,9 +3349,9 @@
 
 1220 = {
 	# Lord Druidan of Rhegin (fictional)
-	name = "Druidan"
+	name = "druidan_male_romanobritish"
 	dynasty = 701
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = education_martial_prowess_1
 	# father=
@@ -2926,9 +3366,9 @@
 
 1221 = {
 	# Lord Gawain of Rhegin (fictional)
-	name = "Gawain"
+	name = "gawain_male_romanobritish"
 	dynasty = 701
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1220
 	# mother=
@@ -2942,9 +3382,9 @@
 
 1222 = {
 	# Lord Verutius of Linnius (fictional)
-	name = "Veritius"
+	name = "veritius_male_romanobritish"
 	dynasty = 232
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = education_martial_prowess_2
 	trait = physique_good_1
@@ -2960,11 +3400,11 @@
 
 1227 = {
 	# King Custennin Fawr of Gwynedd
-	name = "Custennin"
-	dynasty = 1059
-	religion = "briton_pagan"
+	name = "constantine_male_romanobritish_custennin"
+	dynasty_house = house_fawr
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	trait = education_martial_prowess_2
 	trait = beauty_good_1
 	# trait = tall # TODO: Height is now tied to genetics
@@ -2981,9 +3421,9 @@
 
 1234 = {
 	# King Gadion of Dumnonia
-	name = "Gadion"
+	name = "gadion_male_romanobritish"
 	dynasty = 3
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1235
 	# mother=
@@ -2997,8 +3437,8 @@
 
 1249 = {
 	# King Natan of Gwinttguic (following Mordred's death)
-	name = "Natan"
-	religion = "catholic"
+	name = "nathan_male_romanobritish"
+	rite = britannic_rite
 	culture = "romanobritish"
 	dynasty = 201
 	trait = education_martial_prowess_1
@@ -3014,9 +3454,9 @@
 
 1289 = {
 	# King Appius of Rhegin (fictional)
-	name = "Appius"
+	name = "appius_male_roman"
 	dynasty = 701
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1221
 	# mother=
@@ -3030,9 +3470,9 @@
 
 1290 = {
 	# Praetor Corineus of Segontiacia (fictional)
-	name = "Corineus"
+	name = "corineus_male_romanobritish"
 	dynasty = 202
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	# father=
 	# mother=
@@ -3046,9 +3486,9 @@
 
 1291 = {
 	# King Gudovan of Grwath (fictional)
-	name = "Gudovan"
+	name = "gudovan_male_romanobritish"
 	dynasty = 202
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1290
 	# mother=
@@ -3062,9 +3502,9 @@
 
 1292 = {
 	# Lord Bleiddig of Lerion (fictional)
-	name = "Bleiddig"
+	name = "bleiddig_male_romanobritish"
 	dynasty = 717
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1302
 	# mother=
@@ -3078,9 +3518,9 @@
 
 1300 = {
 	# Pellamus of Lundein (fictional/legendary - father of Pellinore and the Wounded King)
-	name = "Pellamus"
-	dynasty = 1004
-	religion = "catholic"
+	name = "pellamus_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	# father=
 	# mother=
@@ -3094,9 +3534,9 @@
 
 1301 = {
 	# Pellinore of Lundein (book/legendary character)
-	name = "Pellinore"
-	dynasty = 1004
-	religion = "catholic"
+	name = "pellinore_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1300
 	# mother=
@@ -3106,6 +3546,7 @@
 	470.1.1 = {
 		employer = 2
 		trait = lunatic_1
+		trait = blind
 	}
 	492.1.1 = {
 		death = yes
@@ -3114,9 +3555,9 @@
 
 1302 = {
 	# Dyfri of the Fens (fictional)
-	name = "Dyfri"
+	name = "dyfri_male_romanobritish"
 	dynasty = 717
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1303
 	# mother=
@@ -3130,9 +3571,9 @@
 
 1303 = {
 	# Cledwyn of the Fens (fictional)
-	name = "Cledwyn"
+	name = "cledwyn_male_romanobritish"
 	dynasty = 717
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	# father=
 	# mother=
@@ -3146,9 +3587,9 @@
 
 1304 = {
 	# Mercurius of Baddon (fictional)
-	name = "Mercurius"
+	name = "mercurius_male_roman"
 	dynasty = 143
-	religion = "hellenic_pagan"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1305
 	# mother=
@@ -3162,9 +3603,9 @@
 
 1305 = {
 	# Caius of Baddon (fictional)
-	name = "Caius"
+	name = "caius_male_roman"
 	dynasty = 143
-	religion = "hellenic_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	# father=
 	# mother=
@@ -3178,11 +3619,11 @@
 
 1315 = {
 	# Einion "the Giant" of Celemion (after Mordred's death)
-	name = "Einion"
+	name = "einion_male_romanobritish"
 	dynasty = 25
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
-	trait = blademaster_2
+	trait = lifestyle_blademaster
 	trait = education_martial_4
 	martial = 13
 	trait = physique_good_3
@@ -3194,7 +3635,7 @@
 		birth = yes
 	}
 	504.6.6 = {
-		religion = catholic
+		rite = britannic_rite
 		give_nickname = "nick_the_giant"
 	}
 	537.1.1 = {
@@ -3204,11 +3645,11 @@
 
 1515 = {
 	# St Peblig	
-	name = "Peblig"
+	name = "peblig_male_romanobritish"
 	dynasty = 1059
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	trait = intellect_good_2
 	father = 1513
 	mother = 1614
@@ -3222,11 +3663,11 @@
 
 1516 = {
 	# Gratianna ferch Magnus Maximus, wife of King Tudwal of Dumnonia
-	name = "Gratianna"
+	name = "gratianna_female_romanobritish"
 	female = yes
 	dynasty = 1059
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = intellect_good_2
 	trait = physique_good_1
 	father = 1513
@@ -3240,11 +3681,11 @@
 }
 
 1517 = {
-	name = "Severa"	# Severa Macsen, Vortigern's wife
+	name = "severa_female_roman"	# Severa Macsen, Vortigern's wife
 	female = yes
 	dynasty = 1059
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	trait = beauty_good_1
 	trait = physique_good_1
 	father = 1513
@@ -3262,9 +3703,9 @@
 
 1518 = {
 	# King Guoremor of Dumnonia
-	name = "Guoremor"
+	name = "guoremor_male_romanobritish"
 	dynasty = 3
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1234
 	# mother=
@@ -3278,9 +3719,9 @@
 
 1519 = {
 	# King Tudwal of Dumnonia
-	name = "Tudwal"
+	name = "tudwal_male_romanobritish"
 	dynasty = 3
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	trait = beauty_good_2
 	father = 1518
@@ -3298,10 +3739,10 @@
 
 1520 = {
 	# Madrun ferch Vortimer, wife of King Ynyrius of Gwent
-	name = "Madrun"
+	name = "madrun_female_romanobritish"
 	female = yes
 	dynasty = 728
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1218
 	420.1.1 = {
@@ -3314,11 +3755,11 @@
 
 1612 = {
 	# Ceindrech ferch Reiden, first wife of Magnus Maximus
-	name = "Ceindrech"
+	name = "ceindrych_female_romanobritish"
 	female = "yes"
 	dynasty = 627
-	religion = "briton_pagan"
-	culture = "briton"
+	rite = romano_celtic_pagan
+	culture = "romanobritish"
 	father = 1613
 	336.1.1 = {
 		birth = yes
@@ -3330,9 +3771,9 @@
 
 1613 = {
 	# Father of Ceindrech
-	name = "Reiden"
+	name = "reiden_male_romanobritish"
 	dynasty = 627
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	316.1.1 = {
 		birth = yes
@@ -3344,11 +3785,11 @@
 
 1614 = {
 	# Elen of the Hosts
-	name = "Elen"
+	name = "elen_female_romanobritish"
 	dynasty = 1061
 	female = "yes"
 	father = 1615
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = intellect_good_2
 	trait = beauty_good_2
@@ -3365,10 +3806,10 @@
 
 1615 = {
 	# King Eudaf Hen of Gwent
-	name = "Eudaf"
+	name = "eudaf_male_romanobritish"
 	dynasty = 1061
 	father = 1616
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	273.1.1 = {
 		birth = yes
@@ -3381,10 +3822,10 @@
 
 1616 = {
 	# King Einudd of Gwent, father of Eudaf Hen
-	name = "Einudd"
+	name = "einudd_male_romanobritish"
 	dynasty = 1061
 	father = 2503
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	240.1.1 = {
 		birth = yes
@@ -3396,9 +3837,9 @@
 
 1622 = {
 	# Lord Ceredig of Avon (fictional)
-	name = "Ceredig"
+	name = "ceredig_male_romanobritish"
 	dynasty = 1062
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	380.1.1 = {
 		birth = yes
@@ -3410,9 +3851,9 @@
 
 1623 = {
 	# Lord Urien of Tripontium (fictional)
-	name = "Urien"
+	name = "urien_male_romanobritish"
 	dynasty = 1063
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	380.1.1 = {
 		birth = yes
@@ -3424,9 +3865,9 @@
 
 1625 = {
 	# Lord Minac of Durocornovium (fictional)
-	name = "Minac"
+	name = "minac_male_romanobritish"
 	dynasty = 1065
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	380.1.1 = {
 		birth = yes
@@ -3438,9 +3879,9 @@
 
 1626 = {
 	# Lord Lanval of Aquae Sulis (fictional)
-	name = "Lanval"
+	name = "lanval_male_romanobritish"
 	dynasty = 1066
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	380.1.1 = {
 		birth = yes
@@ -3452,9 +3893,9 @@
 
 1627 = {
 	# OBSOLETE CHARACTER
-	name = "Apon"
+	name = "apon_male_romanobritish"
 	dynasty = 1067
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	380.1.1 = {
 		birth = yes
@@ -3466,14 +3907,14 @@
 
 1633 = {
 	#Constantine III
-	name = "Constantine"
+	name = "constantine_male_romanobritish_constantine"
 	dynasty = 1068
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	martial = 8
 	trait = education_martial_prowess_3
 	trait = education_martial_3
-	trait = veteran
+	# trait = veteran
 	trait = diligent
 	trait = ambitious
 	#father=1238	
@@ -3482,7 +3923,7 @@
 		birth = yes
 	}
 	407.1.1 = {
-		trait = northaugustus
+		trait = augustus
 		# effect = {
 		# 	# Legio I Flavia Gallicana Constantia
 		# 	79 = {
@@ -3519,9 +3960,9 @@
 
 1636 = {
 	# Prince Erbin of Dumnonia, father of Gereint (historically, King of Dumnonia)
-	name = "Erbin"
+	name = "erbin_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1000
 	mother = 1003
@@ -3535,10 +3976,10 @@
 
 1638 = {
 	# Princess Anna ferch Vortimer of Britannia, mother of Sir Kay
-	name = "Anna"
+	name = "anna_female_romanobritish_anna"
 	female = yes
 	dynasty = 728
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1218
 	422.1.1 = {
@@ -3552,10 +3993,10 @@
 
 1646 = {
 	# Princess Afrella of Britannia, aka St. Afrella
-	name = "Afrella"
+	name = "afrella_female_romanobritish"
 	female = yes
 	dynasty = 728
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1218
 	448.1.1 = {
@@ -3568,11 +4009,11 @@
 
 1727 = {
 	# Cilydd, father of Culhwch
-	name = "Cilydd"
+	name = "cilydd_male_romanobritish"
 	dynasty = 1070
 	culture = "romanobritish"
 	trait = physique_good_2	# Add by Clay
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	#father=
 	#mother=
 	425.1.1 = {
@@ -3588,11 +4029,11 @@
 
 1728 = {
 	# King Meurig II of Gwent
-	name = "Meurig"
-	dynasty = 5
+	name = "meurig_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	father = 28
 	#mother=
 	492.1.1 = {
@@ -3610,11 +4051,11 @@
 
 1729 = {
 	# King Erbic of Gwent
-	name = "Erbic"
-	dynasty = 5
+	name = "erbic_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	father = 1728
 	#mother=
 	508.1.1 = {
@@ -3627,11 +4068,11 @@
 
 1730 = {
 	# King Erb of Gwent
-	name = "Erb"
-	dynasty = 5
+	name = "erb_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	father = 1729
 	#mother=
 	524.1.1 = {
@@ -3644,9 +4085,9 @@
 
 1731 = {
 	# King Constantine IV of Dumnonia
-	name = "Constantine"
+	name = "constantine_male_romanobritish_constantine"
 	dynasty_house = house_morys
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = lustful
 	trait = wrathful
@@ -3662,9 +4103,9 @@
 
 1735 = {
 	# High Lord Justinus of Glouvia (fictional - fills in the generation between AAtY and Aurelius Caninus)
-	name = "Justinus"
+	name = "justinus_male_romanobritish"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1002
 	#mother=
@@ -3682,9 +4123,9 @@
 
 1736 = {
 	# High Lord Aurelius "Caninus" of Glouvia
-	name = "Aurelius"
+	name = "aurelius_male_roman"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1735
 	#mother=
@@ -3709,9 +4150,9 @@
 
 1737 = {
 	# High Lord Conmail of Glouvia
-	name = "Conmail"
+	name = "conmail_male_romanobritish"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1764
 	#mother=
@@ -3727,9 +4168,9 @@
 
 1748 = {
 	# High Lord Farinmail of Baddon
-	name = "Farinmail"
+	name = "farinmail_male_romanobritish"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1764
 	#mother=
@@ -3745,9 +4186,9 @@
 
 1749 = {
 	# High Lord Condidan of Ceri
-	name = "Condidan"
+	name = "cyndyddan_male_romanobritish"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1764
 	#mother=
@@ -3763,9 +4204,9 @@
 
 1764 = {
 	# High Lord Brochmael of Glouvia  (fictional - fills in the generation after Aurelius Caninus)
-	name = "Brochmael"
+	name = "brochmael_male_romanobritish"
 	dynasty = 1069
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1736
 	#mother=
@@ -3779,11 +4220,11 @@
 
 1907 = {
 	# Cynwyd of Cynwidion
-	name = "Cynwyd"
-	dynasty = 318
+	name = "cynwyd_male_romanobritish"
+	dynasty_house = house_cynfeling
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait="blood_coel_hen"
+	rite = britannic_rite
+	#trait="blood_coel_hen"
 	father = 132
 	#mother=
 	491.1.1 = {
@@ -3796,11 +4237,11 @@
 
 1908 = {
 	# Cadrawd of Cynwidion
-	name = "Cadrawd"
-	dynasty = 318
+	name = "cadrawd_male_romanobritish"
+	dynasty_house = house_cynfeling
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait="blood_coel_hen"
+	rite = britannic_rite
+	#trait="blood_coel_hen"
 	father = 1907
 	#mother=
 	510.1.1 = {
@@ -3811,11 +4252,33 @@
 	}
 }
 
+1920 = {
+	# Peredyr of Ebrauc
+	name = "peredyr_male_briton"
+	dynasty = 296
+	rite = britannic_rite
+	culture = "cumbrian"
+	#trait="blood_coel_hen"
+	trait = physique_good_3
+	father = 366
+	#mother=
+	510.1.1 = {
+		birth = yes
+		give_nickname = "nick_arueu_dur"
+	}
+	560.5.19 = {
+		give_nickname = nick_arueu_dur
+	}
+	580.1.1 = {
+		death = yes
+	}
+}
+
 1998 = {
 	# Sallustius Lucullus ap Adminius, Governor of Britannia
-	name = "Sallustius_Lucullus"
+	name = "sallustius_lucullus_male_romanobritish"
 	dynasty = 631
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1994
 	# mother=
@@ -3832,13 +4295,13 @@
 
 2345 = {
 	# Marcus, usurper in Britannia
-	name = "Marcus"
+	name = "mark_male_roman"
 	dynasty = 203
-	religion = catholic
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
-	trait = northaugustus
+	trait = augustus
 	371.1.1 = {
 		birth = yes
 	}
@@ -3851,13 +4314,13 @@
 
 2346 = {
 	# Gratianus, usurper in Britannia
-	name = "Gratianus"
+	name = "gratianus_male_roman"
 	dynasty = 204
-	religion = catholic
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
-	trait = northaugustus
+	trait = augustus
 	376.1.1 = {
 		birth = yes
 	}
@@ -3870,10 +4333,10 @@
 
 2503 = {
 	# King Gwrddwfn of the Silures
-	name = "Gwrddwfn"
+	name = "gwrddwfn_male_romanobritish"
 	dynasty = 1061
 	father = 2504
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	215.1.1 = {
 		birth = yes
@@ -3885,10 +4348,10 @@
 
 2504 = {
 	# King Cwrrig Fawr of the Silures
-	name = "Cwrrig"
+	name = "cwrrig_male_romanobritish"
 	dynasty = 1061
 	father = 2505
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	180.1.1 = {
 		birth = yes
@@ -3903,10 +4366,10 @@
 
 2505 = {
 	# King Meirchion Fawdfilr of the Silures
-	name = "Meirchion"
+	name = "meirchion_male_romanobritish"
 	dynasty = 1061
 	father = 2506
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	140.1.1 = {
 		birth = yes
@@ -3921,10 +4384,10 @@
 
 2506 = {
 	# King Owain of the Silures
-	name = "Owain"
+	name = "owen_male_romanobritish"
 	dynasty = 1061
 	father = 2507
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	100.1.1 = {
 		birth = yes
@@ -3936,10 +4399,10 @@
 
 2507 = {
 	# King Coellyn of the Silures
-	name = "Coellyn"
+	name = "coellyn_male_romanobritish"
 	dynasty = 1061
 	father = 1992
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	50.1.1 = {
 		birth = yes
@@ -3951,9 +4414,9 @@
 
 2513 = {
 	# Iumetel ap Ritigrn
-	name = "Iumetel"
+	name = "iumetel_male_romanobritish"
 	dynasty = 296
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 2512
 	#mother=
@@ -3967,9 +4430,9 @@
 
 2514 = {
 	# Grat ap Iumetel
-	name = "Grat"
+	name = "grat_male_romanobritish"
 	dynasty = 296
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 2513
 	#mother=
@@ -3983,9 +4446,9 @@
 
 2515 = {
 	# Urban ap Grat
-	name = "Urban"
+	name = "urban_male_romanobritish"
 	dynasty = 296
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 2514
 	#mother=
@@ -3999,9 +4462,9 @@
 
 2516 = {
 	# Telpuil ap Urban
-	name = "Telpuil"
+	name = "telpuil_male_romanobritish"
 	dynasty = 296
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 2515
 	#mother=
@@ -4015,9 +4478,9 @@
 
 2517 = {
 	# Teuhant ap Telpuil
-	name = "Teuhant"
+	name = "teuhant_male_romanobritish"
 	dynasty = 296
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 2516
 	#mother=
@@ -4031,9 +4494,9 @@
 
 2518 = {
 	# Tegfan Gloff ap Teuhant, father of Coel Hen
-	name = "Tegfan"
+	name = "tegfan_male_romanobritish"
 	dynasty = 296
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 2517
 	#mother=
@@ -4048,9 +4511,9 @@
 
 2539 = {
 	# King Arran of Went (fictional)
-	name = "Arran"
+	name = "arran_male_romanobritish"
 	dynasty = 727
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1214
 	# mother=
@@ -4064,9 +4527,9 @@
 
 2540 = {
 	# King Veritus of Colun (fictional)
-	name = "Veritus"
+	name = "veritus_male_romanobritish"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1213
 	# mother=
@@ -4080,9 +4543,9 @@
 
 3123 = {
 	# Lord Eldoc of Bibrax (fictional)
-	name = "Eldoc"
+	name = "eldoc_male_romanobritish"
 	dynasty = 1071
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
@@ -4096,9 +4559,9 @@
 
 3124 = {
 	# Lord Minac of Bibrax (fictional)
-	name = "Minac"
+	name = "minac_male_romanobritish"
 	dynasty = 1071
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 3123
 	#mother=
@@ -4112,9 +4575,9 @@
 
 3125 = {
 	# Lord Lladarn of The Downs (fictional)
-	name = "Lladarn"
+	name = "lladarn_male_romanobritish"
 	dynasty = 1072
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
@@ -4128,9 +4591,9 @@
 
 3126 = {
 	# Lord Morien of The Downs (fictional)
-	name = "Morien"
+	name = "morien_male_romanobritish"
 	dynasty = 1072
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 3125
 	#mother=
@@ -4144,9 +4607,9 @@
 
 3127 = {
 	# Lord Morfans of Anderida Silva (fictional)
-	name = "Morfans"
+	name = "morfans_male_romanobritish"
 	dynasty = 1073
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
@@ -4160,9 +4623,9 @@
 
 3128 = {
 	# Lord Valerin of Anderida Silva (fictional)
-	name = "Valerin"
+	name = "valerin_male_romanobritish"
 	dynasty = 1073
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 3127
 	#mother=
@@ -4176,9 +4639,9 @@
 
 3129 = {
 	# Lord Elgwyn of Caer Anderida (fictional)
-	name = "Elgwyn"
+	name = "elgwyn_male_romanobritish"
 	dynasty = 1074
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	#father=
 	#mother=
@@ -4192,9 +4655,9 @@
 
 3130 = {
 	# Lord Tristan of Caer Anderida (fictional)
-	name = "Tristan"
+	name = "tristan_male_romanobritish"
 	dynasty = 1074
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 3129
 	#mother=
@@ -4208,9 +4671,9 @@
 
 3345 = {
 	# Lord Eldoc of Avon - FICTIONAL
-	name = "Eldoc"
+	name = "eldoc_male_romanobritish"
 	dynasty = 1062
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1622
 	413.1.1 = {
@@ -4223,9 +4686,9 @@
 
 3346 = {
 	# Lord Gerlyd of Tripontium -  FICTIONAL
-	name = "Gerlyd"
+	name = "gerlyd_male_romanobritish"
 	dynasty = 1063
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	father = 1623
 	412.1.1 = {
@@ -4238,10 +4701,10 @@
 
 3490 = {
 	# King Cogidumnus of Regenses
-	name = "Cogidumnus"
+	name = "cogidumnus_male_romanobritish"
 	dynasty = 633
 	culture = "romanobritish"
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	father = 3489
 	#mother=
 	22.1.4 = {
@@ -4254,10 +4717,10 @@
 
 4000 = {
 	# Cairenn Chasdub, mother of Niall Noígíallach 
-	name = "Carina"
+	name = "carina_female_romanobritish"
 	female = yes
 	#dynasty=
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	#father=
 	340.1.1 = {
@@ -4270,11 +4733,11 @@
 
 4001 = {
 	# Prince Iddon of Gwent	(historical King, replaced by Tewdric)
-	name = "Iddon"
-	dynasty = 5
-	religion = "catholic"
+	name = "iddon_male_romanobritish"
+	dynasty_house = house_caradoc
+	rite = britannic_rite
 	culture = "romanobritish"
-	#add_trait=blood_magnus_maximus
+	#trait=blood_magnus_maximus
 	father = 805
 	mother = 1520
 	453.1.1 = {
@@ -4287,10 +4750,10 @@
 
 4002 = {
 	# Cynan ap Eudaf Hen, King of West Gwynedd
-	name = "Cynan"
+	name = "cynan_male_romanobritish"
 	dynasty = 1061
 	father = 1615
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	288.1.1 = {
 		birth = yes
@@ -4302,10 +4765,10 @@
 
 4003 = {
 	# Gaedon ap Cynan, King of West Gwynedd
-	name = "Gaedon"
+	name = "gaedon_male_romanobritish"
 	dynasty = 1061
 	father = 4002
-	religion = "briton_pagan"
+	rite = romano_celtic_pagan
 	culture = "romanobritish"
 	303.1.1 = {
 		birth = yes
@@ -4317,9 +4780,9 @@
 
 4004 = {
 	# Prince Marianus of Rhegin (fictional)
-	name = "Marianus"
+	name = "marianus_male_roman"
 	dynasty = 701
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1289
 	# mother=
@@ -4333,9 +4796,9 @@
 
 4005 = {
 	# King Gerren ap Constantine of Dumnonia 4004
-	name = "Gerren"
+	name = "gerren_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = wrathful
 	father = 1731
@@ -4350,9 +4813,9 @@
 
 4006 = {
 	# King Bledric ap Constantine of Dumnonia 4005
-	name = "Bledric"
+	name = "bledrig_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = lustful
 	trait = wrathful
@@ -4368,9 +4831,9 @@
 
 4007 = {
 	# King Clemen ap Bledric of Dumnonia 4006
-	name = "Clemen"
+	name = "clement_male_romanobritish"
 	dynasty_house = house_morys
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4006
 	#mother=
@@ -4385,11 +4848,11 @@
 
 4008 = {
 	# King Nynnio ap Erb of Gwent
-	name = "Nynnio"
-	dynasty = 5
+	name = "nynnio_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	father = 1730
 	#mother=
 	595.1.1 = {
@@ -4402,11 +4865,11 @@
 
 4009 = {
 	# King Pebiaw Gladrog (the Leprous) ap Erb of Ergyng
-	name = "Pebiaw"
-	dynasty = 5
+	name = "pebiaw_male_romanobritish"
+	dynasty_house = house_caradoc
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait=blood_magnus_maximus
+	rite = britannic_rite
+	#trait=blood_magnus_maximus
 	father = 1730
 	#mother=
 	597.1.1 = {
@@ -4421,15 +4884,18 @@
 }
 
 4010 = {
-	# St. Patrick
-	name = "Patricius"
+	# St. Patrick, Primate of All Ireland
+	name = "patricius_male_roman"
 	dynasty = 1077
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = insular_celtic
 	father = 4011
 	mother = 4012
 	373.1.1 = {
 		birth = yes
+	}
+	389.1.1 = {
+		trait = education_learning_4
 	}
 	432.1.1 = {
 		trait = devoted
@@ -4444,10 +4910,10 @@
 
 4011 = {
 	# Calpurnius, father of St. Patrick
-	name = "Calpurnius"
+	name = "calpurnius_male_romanobritish"
 	dynasty = 1077
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 4013
 	335.1.1 = {
 		birth = yes
@@ -4462,9 +4928,9 @@
 
 4012 = {
 	# Conchessa, mother of St. Patrick
-	name = "Conchessa"
+	name = "conchessa_female_romanobritish"
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	female = yes
 	340.1.1 = {
 		birth = yes
@@ -4482,10 +4948,10 @@
 
 4013 = {
 	# Potitus, grandfather of St. Patrick
-	name = "Potitus"
+	name = "potitus_male_romanobritish"
 	dynasty = 1077
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	300.1.1 = {
 		birth = yes
 	}
@@ -4496,10 +4962,10 @@
 
 4014 = {
 	# St. Darerca, sister of St. Patrick
-	name = "Darerca"
+	name = "darerca_female_romanobritish"
 	dynasty = 1077
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 4011
 	mother = 4012
 	female = yes
@@ -4516,10 +4982,10 @@
 
 4015 = {
 	# St. Mél of Ardagh
-	name = "ME_l"
+	name = "me_l_male_romanobritish"
 	dynasty = 731
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 1235
 	mother = 4014
 	390.1.1 = {
@@ -4535,10 +5001,10 @@
 
 4016 = {
 	# St. Rioc of Inisboffin
-	name = "Rioc"
+	name = "rioc_male_romanobritish"
 	dynasty = 731
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 1235
 	mother = 4014
 	385.1.1 = {
@@ -4554,10 +5020,10 @@
 
 4017 = {
 	# St. Muinis of Forgney
-	name = "Muinis"
+	name = "muinis_male_romanobritish"
 	dynasty = 731
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 1235
 	mother = 4014
 	388.1.1 = {
@@ -4573,10 +5039,10 @@
 
 4018 = {
 	# St. Maelchu
-	name = "Maelchu"
+	name = "maelchu_male_romanobritish"
 	dynasty = 731
 	culture = "romanobritish"
-	religion = "catholic"
+	rite = britannic_rite
 	father = 1235
 	mother = 4014
 	392.1.1 = {
@@ -4590,16 +5056,16 @@
 	}
 }
 
-4019 = {		# TODO Replace with Yspwys Mwyntyrch ap Yspwys ap Cadrod?
-	# King Unomerus ap Cadrawd of Cynwidion [FICTIONAL]
-	name = "Unomerus"
-	dynasty = 318
+4019 = {
+	# King Yspwys Mwyntyrch ap Yspwys ap Cadrod of Cynwidion
+	name = "yspwys_male_romanobritish"
+	dynasty_house = house_cynfeling
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait="blood_coel_hen"
-	father = 1908
+	rite = britannic_rite
+	#trait="blood_coel_hen"
+	father = 4038
 	#mother=
-	540.1.1 = {
+	550.1.1 = {
 		birth = yes
 	}
 	600.1.1 = {
@@ -4607,13 +5073,13 @@
 	}
 }
 
-4020 = {		# TODO Replace with Mynan ap Yspwys
-	# King Cæcilus ap Unomerus of Cynwidion [FICTIONAL]
-	name = "CE_cilus"
-	dynasty = 318
+4020 = {
+	# King Mynan ap Yspwys of Cynwidion
+	name = "mynan_male_romanobritish"
+	dynasty_house = house_cynfeling
 	culture = "romanobritish"
-	religion = "catholic"
-	#add_trait="blood_coel_hen"
+	rite = britannic_rite
+	#trait="blood_coel_hen"
 	father = 4019
 	#mother=
 	570.1.1 = {
@@ -4626,10 +5092,10 @@
 
 4021 = {
 	# Queen Constantia of Dumnonia
-	name = "Constantia"
+	name = "constantia_female_roman"
 	female = yes
 	dynasty_house = house_morys
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	trait = lustful
 	father = 1731	# King Contantine IV of Dumnonia
@@ -4644,9 +5110,9 @@
 
 4022 = {
 	# Prince Lucretius of Colun/Lord of Camulodunum (fictional)
-	name = "Lucretius"
+	name = "lucretius_male_roman"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 2540
 	# mother=
@@ -4660,9 +5126,9 @@
 
 4023 = {
 	# Lord Leudonus of Camulodunum (fictional)
-	name = "Leudonus"
+	name = "leudonus_male_romanobritish"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4022
 	# mother=
@@ -4676,9 +5142,9 @@
 
 4024 = {
 	# Prince Corineus of Colun/Lord of Caesaromagus (fictional)
-	name = "Corineus"
+	name = "corineus_male_romanobritish"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 2540
 	# mother=
@@ -4692,9 +5158,9 @@
 
 4025 = {
 	# Lord Cerevanus of Caesaromagus (fictional)
-	name = "Cerevanus"
+	name = "cerevanus_male_roman"
 	dynasty = 703
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4024
 	# mother=
@@ -4708,9 +5174,9 @@
 
 4026 = {
 	# Lord Leudonus of Lugus Occidentalis (fictional)
-	name = "Leudonus"
+	name = "leudonus_male_romanobritish"
 	dynasty = 704
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	# father = 
 	# mother=
@@ -4724,9 +5190,9 @@
 
 4027 = {
 	# Lord Tertius of Lugus Occidentalis (fictional)
-	name = "Tertius"
+	name = "tertius_male_roman"
 	dynasty = 704
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4026
 	# mother=
@@ -4740,9 +5206,9 @@
 
 4028 = {
 	# Lord Albanus of Lugus Occidentalis (fictional)
-	name = "Albanus"
+	name = "albanus_male_roman"
 	dynasty = 704
-	religion = "catholic"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4027
 	# mother=
@@ -4756,9 +5222,9 @@
 
 4029 = {
 	# Pellehan of Mincip (fictional/legendary character - aka the Wounded King)
-	name = "Pellehan"
-	dynasty = 1004
-	religion = "catholic"
+	name = "pellehan_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 1300
 	# mother=
@@ -4775,9 +5241,9 @@
 
 4030 = {
 	# Pelles of Mincip (fictional/legendary character - aka the Fisher King)
-	name = "Pelles"
-	dynasty = 1004
-	religion = "catholic"
+	name = "pelles_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4029
 	# mother=
@@ -4791,9 +5257,9 @@
 
 4031 = {
 	# Bran of Mincip (fictional character)
-	name = "Bra3_n"
-	dynasty = 1004
-	religion = "catholic"
+	name = "bra3_n_male_romanobritish"
+	dynasty = 1082
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4030
 	# mother=
@@ -4806,10 +5272,10 @@
 }
 
 4032 = {
-	# Dubricius of Durolavi
-	name = "Dubricius"
+	# Dubricius of Durolavi (fictional)
+	name = "dubricius_male_roman"
 	dynasty = 206
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	# father =
 	# mother=
@@ -4822,10 +5288,10 @@
 }
 
 4033 = {
-	# Meriadoc of Durolavi
-	name = "Meriadoc"
+	# Meriadoc of Durolavi (fictional)
+	name = "meriadoc_male_romanobritish"
 	dynasty = 206
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4032
 	# mother=
@@ -4838,10 +5304,10 @@
 }
 
 4034 = {
-	# Appius of Durolavi
-	name = "Appius"
+	# Appius of Durolavi (fictional)
+	name = "appius_male_roman"
 	dynasty = 206
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4033
 	# mother=
@@ -4854,10 +5320,10 @@
 }
 
 4035 = {
-	# Llanval of Durolavi
-	name = "Llanval"
+	# Llanval of Durolavi (fictional)
+	name = "llanval_male_romanobritish"
 	dynasty = 206
-	religion = "pelagian"
+	rite = britannic_rite
 	culture = "romanobritish"
 	father = 4034
 	# mother=
@@ -4865,6 +5331,526 @@
 		birth = yes
 	}
 	550.1.1 = {
+		death = yes
+	}
+}
+
+4036 = {
+	# King Pertinax of Grwath (fictional)
+	name = "pertinax_male_roman"
+	dynasty = 209
+	rite = britannic_rite
+	culture = "romanobritish"
+	trait = education_martial_prowess_2
+	# father=
+	# mother=
+	382.1.1 = {
+		birth = yes
+	}
+	441.1.1 = {
+		death = yes
+	}
+}
+
+4037 = {
+	# King Caleddin of Grwath (fictional)
+	name = "caleddin_male_romanobritish"
+	dynasty = 209
+	rite = britannic_rite
+	culture = "romanobritish"
+	father = 4036
+	# mother=
+	414.1.1 = {
+		birth = yes
+	}
+	460.1.1 = {
+		death = yes
+	}
+}
+
+4038 = {
+	# Prince Yspwys ap Cadrawd of Cynwidion
+	name = "yspwys_male_romanobritish"
+	dynasty_house = house_cynfeling
+	rite = britannic_rite
+	culture = "romanobritish"
+	father = 1908
+	# mother=
+	528.1.1 = {
+		birth = yes
+	}
+	565.1.1 = {
+		death = yes
+	}
+}
+4039 = {
+	# Lord Dubricius of Meicen (fictional)
+	name = "dubricius_male_roman"
+	dynasty = 211
+	rite = britannic_rite
+	culture = "romanobritish"
+	# father=
+	# mother=
+	446.1.1 = {
+		birth = yes
+	}
+	502.1.1 = {
+		death = yes
+	}
+}
+4040 = {
+	# Lord Gadric of Meicen (fictional)
+	name = "gadric_male_romanobritish"
+	dynasty = 211
+	rite = britannic_rite
+	culture = "romanobritish"
+	father=4039
+	# mother=
+	465.1.1 = {
+		birth = yes
+	}
+	535.1.1 = {
+		death = yes
+	}
+}
+
+4025 = {				# Lord Tristan of Ratae (fictional)
+	name="tristan_male_romanobritish"
+	dynasty=30
+	dna="bdcbk0alfc0"
+  	properties="bh0ebkbebb"
+	culture="romanobritish"
+	rite = britannic_rite
+	father=42		
+	#mother=
+
+	480.3.5={
+		birth=yes
+	}
+	530.2.27={
+		death=yes
+	}
+}
+
+4026 = {				# Lord Cai of Magnis, Praetor of Glevensium (fictional)
+	name="cai_male_romanobritish"	
+	dynasty=158
+	dna="akccd0gbea0"
+	culture="romanobritish"
+	rite = britannic_rite
+
+	father=41
+	#mother=
+
+	483.6.19={
+		birth=yes
+	}
+	498.6.19={
+		trait=stubborn
+		trait=arrogant
+		trait=patient
+		trait=lifestyle_hunter
+		trait=arbitrary
+	}
+	545.12.3={
+		death=yes
+	}
+}
+
+4041 = {
+	# King Edelig of Edeligion
+	name = "edelig_male_romanobritish"
+	dynasty_house = house_finddu
+	rite = romano_celtic_pagan
+	culture = "romanobritish"
+	#trait=blood_magnus_maximus
+	#trait="bastard"
+	father = 1200
+	mother = 1765
+	460.1.1 = {
+		birth = yes
+	}
+	493.1.1 = {
+		death = yes
+	}
+}
+
+4042 = {			# Lord Antoninus of Dereutione (fictional)
+	name="antoninus_male_roman"
+	dynasty=212
+	culture="romanobritish"
+	rite = britannic_rite
+	446.1.1={
+		birth=yes
+	}
+	503.1.1={
+		death=yes
+	}
+}
+
+4043 = {			# Lord Cynwallon of Dereutione (fictional)
+	name="cynwallon_male_romanobritish"
+	dynasty=212
+	culture="romanobritish"
+	rite = britannic_rite
+	father = 4042
+	471.1.1={
+		birth=yes
+	}
+	545.1.1={
+		death=yes
+	}
+}
+
+4044 = {			# Lord Albanus of Delgovicia (fictional)
+	name="albanus_male_roman"
+	dynasty=213
+	culture="romanobritish"
+	rite = britannic_rite
+	437.1.1={
+		birth=yes
+	}
+	496.1.1={
+		death=yes
+	}
+}
+
+4045 = {			# Lord Drystan of Delgovicia (fictional)
+	name="drystan_male_romanobritish"
+	dynasty=213
+	culture="romanobritish"
+	rite = britannic_rite
+	father = 4044
+	464.1.1={
+		birth=yes
+	}
+	541.1.1={
+		death=yes
+	}
+}
+
+4046 = {			# Lord Mardoc of Danum (fictional)
+	name="mardoc_male_romanobritish"
+	dynasty=214
+	culture="romanobritish"
+	rite = romano_celtic_pagan
+	452.1.1={
+		birth=yes
+	}
+	511.1.1={
+		death=yes
+	}
+}
+
+4047 = {			# Lord Minac of Danum (fictional)
+	name="minac_male_romanobritish"
+	dynasty=214
+	culture="romanobritish"
+	rite = romano_celtic_pagan
+	father = 4046
+	475.1.1={
+		birth=yes
+	}
+	556.1.1={
+		death=yes
+	}
+}
+
+4048 = {			# Lord Plinius of Cranbrook (fictional)
+	name="plinius_male_roman"
+	dynasty=215
+	culture="romanobritish"
+	rite = britannic_rite
+	376.1.1={
+		birth=yes
+	}
+	451.1.1={
+		death=yes
+	}
+}
+
+4049 = {			# Lord Marcellus of Cranbrook (fictional)
+	name="marcellus_male_roman"
+	dynasty=215
+	culture="romanobritish"
+	rite = britannic_rite
+	father = 4048
+	404.1.1={
+		birth=yes
+	}
+	468.1.1={
+		death=yes
+	}
+}
+
+4050 = {			# Lord Corineus of Cranbrook (fictional)
+	name="corineus_male_romanobritish"
+	dynasty=215
+	culture="romanobritish"
+	rite = britannic_rite
+	father = 4049
+	435.1.1={
+		birth=yes
+	}
+	491.1.1={
+		death=yes
+	}
+}
+
+4051 = {			# Dubricius of Cranbrook (fictional)
+	name="dubricius_male_roman"
+	dynasty=215
+	culture="romanobritish"
+	rite = britannic_rite
+	father = 4050
+	465.1.1={
+		birth=yes
+	}
+	534.1.1={
+		death=yes
+	}
+}
+
+4052 = {			# Lord Caelgyn of Tripontium (fictional)
+	name="caelgyn_male_romanobritish"
+	dynasty=169
+	rite = britannic_rite
+	culture="romanobritish"
+	father=125
+	#mother=
+	trait=intellect_bad_3
+
+	478.1.1={
+		birth=yes
+	}
+	493.1.1={
+		trait=lazy
+		trait=gluttonous
+		trait=loyal
+		trait=trusting
+	}
+	540.1.1={
+		death=yes
+	}
+}
+
+4053 = {			# Lord Firmus of Clindum (fictional)
+	name="firmus_male_roman"
+	dynasty=1078
+	rite = britannic_rite
+	culture="romanobritish"
+	#mother=
+
+	398.1.1={
+		birth=yes
+	}
+	459.1.1={
+		death=yes
+	}
+}
+
+4054 = {			# Lord Leontius of Clindum (fictional)
+	name="leontius_male_roman"
+	dynasty=1078
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4053
+	#mother=
+
+	429.1.1={
+		birth=yes
+	}
+	472.1.1={
+		trait = wounded_1
+		death={
+			death_reason = death_wounded_1
+		}
+	}
+}
+
+4055 = {			# Lord Valerianus of Clindum (fictional)
+	name="valerianus_male_roman"
+	dynasty=1078
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4054
+	#mother=
+	trait=zealous
+	trait=sadistic
+
+	454.1.1={
+		birth=yes
+	}
+	529.1.1={
+		death=yes
+	}
+}
+
+4059 = {			# Bishop Samson of York (and later Dol)
+	name="samson_male_romanobritish"
+	rite = britannic_rite
+	culture="romanobritish"
+	
+	learning = 10
+	trait = education_learning_3
+	
+	449.1.1 = {
+		birth=yes
+	}
+	479.1.1 = {
+		employer = 365
+		give_council_position = councillor_court_chaplain
+	}
+	489.1.1 = {
+		employer = 1246
+		give_council_position = councillor_court_chaplain
+	}
+	500.1.1 = {
+		death=yes
+	}
+}
+
+4060 = {			# Bishop Piramus of York
+	name="piramus_male_roman"
+	rite = britannic_rite
+	culture="romanobritish"
+
+	learning = 10
+	trait = education_learning_3
+	
+	461.1.1 = {
+		birth=yes
+	}
+	479.1.1 = {
+		learn_language = language_brythonic
+	}
+	489.1.1 = {
+		employer = 365
+		give_council_position = councillor_court_chaplain
+	}
+	540.1.1 = {
+		death=yes
+	}
+}
+
+4061 = {			# Cupetianus of Liddel Water
+	name="cupetianus_male_roman"
+	dynasty=1081
+	rite = britannic_rite
+	culture="romanobritish"
+	#father=
+	#mother=
+	
+	408.1.1 = {
+		birth = yes
+	}
+	476.1.1 = {
+		death = yes
+	}
+}
+
+4062 = {			# Caranteus of Liddel Water
+	name="caranteus_male_roman"
+	dynasty=1081
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4061
+	#mother=
+	
+	434.1.1 = {
+		birth = yes
+	}
+	506.1.1 = {
+		death = yes
+	}
+}
+
+4063 = {			# Barrectus (at Tomen-y-Mur)
+	name="barrectus_male_roman"
+	dynasty=1081
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4062
+	#mother=
+	
+	trait = lifestyle_traveler
+	
+	458.1.1 = {
+		birth = yes
+	}
+	479.1.1 = {
+		employer = 1392
+		add_trait_xp = {
+			trait = lifestyle_traveler
+			track = travel
+			value = { 50 60 }
+		}
+	}
+	565.1.1 = {
+		death = yes
+	}
+}
+
+4064 = {			# Salvianus (at Caer Gai)
+	name="salvianus_male_roman"
+	dynasty=1081
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4061
+	#mother=
+	
+	trait = lifestyle_traveler
+	
+	440.1.1 = {
+		birth = yes
+	}
+	479.1.1 = {
+		employer = 15
+		add_trait_xp = {
+			trait = lifestyle_traveler
+			track = travel
+			value = { 50 60 }
+		}
+	}
+	499.1.1 = {
+		death = yes
+	}
+}
+
+4065 = {			# Vettia Maia
+	female = yes
+	name="maia_female_roman"
+	dynasty=1081
+	rite = britannic_rite
+	culture="romanobritish"
+	father=4064
+	#mother=
+	
+	462.1.1 = {
+		birth = yes
+	}
+	479.1.1 = {
+		add_spouse = 4066
+	}
+	540.1.1 = {
+		death = yes
+	}
+}
+
+4066 = {			# Tigirnicus
+	name="tigirnicus_male_roman"
+	rite = britannic_rite
+	culture="romanobritish"
+	#father=
+	#mother=
+	
+	460.1.1 = {
+		birth = yes
+	}
+	479.1.1 = {
+		add_spouse = 4065
+	}
+	509.1.1 = {
 		death = yes
 	}
 }

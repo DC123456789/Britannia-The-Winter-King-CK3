@@ -1,0 +1,26 @@
+﻿coronation_trigger = {
+	has_ach_dlc_trigger = yes
+	is_landed = yes
+	highest_held_title_tier >= tier_kingdom
+	# Governments where independent king+ rulers can hold Coronations
+	trigger_if = {
+		limit = { tgp_realm_has_ceremonial_liege_trigger = yes }
+		custom_tooltip = {
+			text = tgp_ceremonial_liege_coronation_trigger
+			tgp_has_ceremonial_liege_title_trigger = yes
+		}
+	}
+	trigger_if = {
+		limit = { government_has_mechanic = administrative }
+		is_independent_ruler = yes
+	}
+	trigger_else = {
+		NOR = {
+			government_has_flag = government_is_theocracy
+			government_has_flag = government_is_republic
+			government_has_flag = government_is_mercenary
+			government_has_flag = government_is_holy_order
+		}
+	}
+	culture_has_coronations_trigger = yes
+}

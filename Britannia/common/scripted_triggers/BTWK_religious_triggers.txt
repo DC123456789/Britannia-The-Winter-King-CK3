@@ -1,0 +1,143 @@
+############## PATRON DEITY TRIGGERS ###############
+is_norse_pagan_trigger = {
+	OR = {
+		has_faith = faith:norse_pagan
+	}
+}
+
+is_anglo_saxon_pagan_trigger = {
+	OR = {
+		has_faith = faith:anglo_saxon_pagan
+	}
+}
+
+is_wrong_culture_for_ethnic_rite_trigger = {
+	$RITE$ = { save_temporary_scope_as = trigger_rite }
+	$CULTURE$ = { save_temporary_scope_as = trigger_culture }
+	OR = {
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_ingvaeonic_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_west_germanic }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_frankish_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_frankish }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_suebic_culture_faith }
+			scope:trigger_culture = {
+				NOR = { 
+					has_cultural_pillar = heritage_central_germanic
+					this.var:ancestral_starting_culture ?= culture:suebic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_gothic_culture_faith }
+			scope:trigger_culture = {
+				OR = {
+					NOT = {
+						has_cultural_pillar = heritage_romanized_germanic
+					}
+					this.var:ancestral_starting_culture ?= culture:suebic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_norse_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_north_germanic }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_hellenic_culture_faith }
+			scope:trigger_culture = {
+				OR = {
+					NOT = {
+						has_cultural_pillar = heritage_latin
+						has_cultural_pillar = heritage_romance
+					}
+					this.var:ancestral_starting_culture ?= culture:romanobritish
+					this.var:ancestral_starting_culture ?= culture:romanogallic
+					this.var:ancestral_starting_culture ?= culture:romanorhaetian
+				}
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_romanoceltic_culture_faith }
+			scope:trigger_culture = {
+				NOR = {
+					this.var:ancestral_starting_culture ?= culture:romanobritish
+					this.var:ancestral_starting_culture ?= culture:romanogallic
+					this.var:ancestral_starting_culture ?= culture:romanorhaetian
+					has_cultural_pillar = heritage_gaulish
+				}
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_romanogermanic_culture_faith }
+			scope:trigger_culture = {
+				NOT = {
+					this.var:ancestral_starting_culture ?= culture:romanogermanic
+				}
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_briton_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_brythonic }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_gaelic_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_goidelic }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_pictish_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_pictish }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_basque_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_basque }
+			}
+		}
+		AND = {
+			scope:trigger_rite = { rite_has_doctrine = special_doctrine_alan_culture_faith }
+			scope:trigger_culture = {
+				NOT = { has_cultural_pillar = heritage_romanized_sarmatian }
+			}
+		}
+	}
+}
+
+BTWK_can_be_elected_pope_trigger = {
+	trigger_if = {
+		limit = { is_ruler = yes }
+		OR = {
+			capital_province = { geographical_region = world_europe_south_italy }
+			any_liege_or_above = { has_title = title:k_papal_state }
+		}
+	}
+	trigger_else_if = {
+		limit = { exists = liege }
+		liege = {
+			OR = {
+				capital_province = { geographical_region = world_europe_south_italy }
+				has_title = title:k_papal_state
+				any_liege_or_above = { has_title = title:k_papal_state }
+			}
+		}
+	}
+	trigger_else = {
+		always = no
+	}
+}
