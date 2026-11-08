@@ -366,8 +366,8 @@ spreading_of_christianity.0100 = {
 		culture = { has_cultural_pillar = heritage_west_germanic }
 		any_held_title = {
 			tier >= tier_kingdom
-			NOT = { this = title:k_papal_state }
 		}
+		NOT = { has_trait = offmap_ruler }
 		primary_title.title_capital_county = { geographical_region = btwk_world_britannia }
 		is_independent_ruler = yes
 		religion = religion:christianity_religion
@@ -711,7 +711,7 @@ spreading_of_christianity.0202 = {
 				faith = rite:roman_rite.faith
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = {
 					this != rite:roman_rite.faith
 					NOT = { has_doctrine_parameter = unreformed }
@@ -722,7 +722,7 @@ spreading_of_christianity.0202 = {
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
-				subtract = 25
+				add = -25
 				has_character_modifier = BTWK_soc_banning_missionaries_modifier
 			}
 		}
@@ -763,7 +763,7 @@ spreading_of_christianity.0202 = {
 				}
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = rite:roman_rite.faith
 			}
 			# Baseline only ~50% chance of saying yes if initial Bretwalda request
@@ -1264,11 +1264,11 @@ spreading_of_christianity.0211 = {
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
-				subtract = 50
+				add = -50
 				has_character_modifier = BTWK_soc_banning_missionaries_modifier
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
 					NOT = { has_doctrine_parameter = unreformed }
@@ -1303,15 +1303,15 @@ spreading_of_christianity.0211 = {
 				faith != scope:gregorian_mission_augustine.faith
 			}
 			modifier = {
-				subtract = 50
+				add = -50
 				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
-				subtract = 50
+				add = -50
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
-				subtract = 100
+				add = -100
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
@@ -1326,11 +1326,11 @@ spreading_of_christianity.0211 = {
 				}
 			}
 			modifier = {
-				multiply = 0.25
+				factor = 0.25
 				faith = scope:gregorian_mission_augustine.faith
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				rite = scope:gregorian_mission_augustine.rite
 			}
 		}
@@ -1437,7 +1437,7 @@ spreading_of_christianity.0214 = {
 	immediate = {
 		capital_barony = { save_scope_as = root_capital_barony }
 		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
-			save_scope_as = scope:gregorian_mission_augustine
+			save_scope_as = gregorian_mission_augustine
 		}
 		if = {
 			limit = {
@@ -1478,6 +1478,15 @@ spreading_of_christianity.0214 = {
 					}
 				}
 				save_scope_as = capital_converted
+				set_county_rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+		# If seat of archdiocese is in your realm, it gets converted too
+		if = {
+			limit = {
+				scope:gregorian_mission_augustine.primary_title.title_capital_county.holder.top_liege ?= root
+			}
+			scope:gregorian_mission_augustine.primary_title.title_capital_county = {
 				set_county_rite = scope:gregorian_mission_augustine.rite
 			}
 		}
@@ -1549,7 +1558,7 @@ spreading_of_christianity.0214 = {
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
 					NOT = { has_doctrine_parameter = unreformed }
@@ -1573,6 +1582,15 @@ spreading_of_christianity.0214 = {
 					}
 				}
 				save_scope_as = capital_converted
+				set_county_rite = scope:gregorian_mission_augustine.rite
+			}
+		}
+		# If seat of archdiocese is in your realm, it gets converted too
+		if = {
+			limit = {
+				scope:gregorian_mission_augustine.primary_title.title_capital_county.holder.top_liege ?= root
+			}
+			scope:gregorian_mission_augustine.primary_title.title_capital_county = {
 				set_county_rite = scope:gregorian_mission_augustine.rite
 			}
 		}
@@ -1649,7 +1667,7 @@ spreading_of_christianity.0215 = {
 	left_portrait = {
 		character = scope:target_king
 		triggered_animation = {
-			scope:target_king.rite = root.rite
+			trigger = { scope:target_king.rite = root.rite }
 			animation = prayer
 		}
 		animation = boredom
@@ -1769,7 +1787,7 @@ spreading_of_christianity.0216 = {
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
 					NOT = { has_doctrine_parameter = unreformed }
@@ -1820,15 +1838,15 @@ spreading_of_christianity.0216 = {
 				faith != scope:gregorian_mission_augustine.faith
 			}
 			modifier = {
-				subtract = 50
+				add = -50
 				any_spouse = { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
-				subtract = 50
+				add = -50
 				suzerain ?= { faith = scope:gregorian_mission_augustine.faith }
 			}
 			modifier = {
-				subtract = 100
+				add = -100
 				has_character_modifier = BTWK_soc_encouraging_missionaries_modifier
 			}
 			modifier = {
@@ -1839,7 +1857,7 @@ spreading_of_christianity.0216 = {
 				}
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = scope:gregorian_mission_augustine.faith
 			}
 		}
@@ -1935,7 +1953,7 @@ spreading_of_christianity.0219 = {
 		capital_barony = { save_scope_as = root_capital_barony }
 		top_liege.cp:councillor_court_chaplain = { save_scope_as = converting_bishop }
 		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
-			save_scope_as = scope:gregorian_mission_augustine
+			save_scope_as = gregorian_mission_augustine
 		}
 	}
 
@@ -2000,7 +2018,7 @@ spreading_of_christianity.0219 = {
 				top_liege.faith != scope:gregorian_mission_augustine.faith
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				faith = {
 					this != scope:gregorian_mission_augustine.faith
 					NOT = { has_doctrine_parameter = unreformed }
@@ -2098,7 +2116,7 @@ spreading_of_christianity.0220 = {
 	
 	immediate = {
 		title:d_et_canterbury.var:BTWK_soc_gregorian_mission_story.story_owner = {
-			save_scope_as = scope:gregorian_mission_augustine
+			save_scope_as = gregorian_mission_augustine
 		}
 	}
 
@@ -2210,7 +2228,7 @@ spreading_of_christianity.0220 = {
 				faith != scope:gregorian_mission_augustine.faith
 			}
 			modifier = {
-				multiply = 0
+				factor = 0
 				has_title = title:d_et_canterbury.var:clerical_title
 			}
 		}

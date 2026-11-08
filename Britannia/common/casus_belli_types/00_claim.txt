@@ -530,7 +530,12 @@
 		# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the highest tier target title - but with many exceptions
 		scope:claimant = {
 			if = {
-				limit = { is_ruler = no }
+				limit = { 
+					OR = {
+						is_ruler = no
+						is_landless_adventurer = yes
+					}
+				}
 				BTWK_flag_new_government_type_for_unlanded = {
 					INHERIT_SCOPE = scope:target.holder
 				}

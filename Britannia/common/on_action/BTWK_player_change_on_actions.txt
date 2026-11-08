@@ -1,0 +1,54 @@
+﻿# On actions for when the player character changes, triggered automatically by the game
+
+# For mods that want to intercept all cases where a player changes character from one to another
+# Root is the new player character
+# scope:previous_player_character is the old player character
+on_player_character_change = {
+	on_actions = {
+		BTWK_on_player_character_change
+	}
+}
+
+BTWK_on_player_character_change = {
+	effect = {		
+		if = {
+			limit = {
+				# This should cover most of the cases...?
+				OR = {
+					scope:previous_player_character = { is_alive = no }
+					scope:previous_player_character = { is_ruler = no }
+				}
+				is_landed = yes
+			}
+			if = {
+				limit = { NOT = { religion = religion:christianity_religion } }
+				if = {
+					limit = { 
+						scope:previous_player_character = { has_character_modifier = BTWK_soc_encouraging_missionaries_modifier } 
+					} 
+					add_character_modifier = BTWK_soc_encouraging_missionaries_modifier
+				}
+				if = {
+					limit = { 
+						scope:previous_player_character = { has_character_modifier = BTWK_soc_banning_missionaries_modifier }
+					} 
+					add_character_modifier = BTWK_soc_banning_missionaries_modifier
+				}
+			}
+			else = {
+				if = {
+					limit = { 
+						scope:previous_player_character = { has_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier } 
+					} 
+					add_character_modifier = BTWK_soc_sponsoring_internal_missionaries_modifier
+				}
+				if = {
+					limit = { 
+						scope:previous_player_character = { has_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier }
+					} 
+					add_character_modifier = BTWK_soc_sponsoring_external_missionaries_modifier
+				}
+			}
+		}
+	}
+}

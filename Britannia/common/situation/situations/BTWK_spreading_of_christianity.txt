@@ -78,84 +78,93 @@
 				}
 			}
 			
-			# Recalculate subregion phases
-			save_scope_as = current_sub_region
+			# Recalculate subregion phases - only if no cooldown!
+			BTWK_soc_situation_get_sub_region_province_effect = yes
 			if = {
-				limit = { 
-					local_var:share_sub_region_christian_counties < soc_phase_1_threshold
-					NOT = { sub_region_current_phase = spreading_of_christianity_phase_0 }
-				}
-				set_global_variable = { name = soc_current_phase_change value = flag:decreased }
-				change_phase = spreading_of_christianity_phase_0
-				every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
-			}
-			else_if = {
-				limit = { 
-					local_var:share_sub_region_christian_counties >= soc_phase_1_threshold
-					local_var:share_sub_region_christian_counties < soc_phase_2_threshold
-					NOT = { sub_region_current_phase = spreading_of_christianity_phase_1 }
-				}
-				if = {
-					limit = { sub_region_current_phase = spreading_of_christianity_phase_0 }
-					set_global_variable = { name = soc_current_phase_change value = flag:increased }
-				}
-				else = {
-					set_global_variable = { name = soc_current_phase_change value = flag:decreased }
-				}
-				change_phase = spreading_of_christianity_phase_1
-				every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
-			}
-			else_if = {
-				limit = { 
-					local_var:share_sub_region_christian_counties >= soc_phase_2_threshold
-					local_var:share_sub_region_christian_counties < soc_phase_3_threshold
-					NOT = { sub_region_current_phase = spreading_of_christianity_phase_2 }
-				}
+				limit = { NOT = { scope:sub_region_province = { has_variable = BTWK_soc_sub_region_phase_change_cooldown } } }
+				save_scope_as = current_sub_region
 				if = {
 					limit = { 
-						OR = {
-							sub_region_current_phase = spreading_of_christianity_phase_0
-							sub_region_current_phase = spreading_of_christianity_phase_1
-						}
+						local_var:share_sub_region_christian_counties < soc_phase_1_threshold
+						NOT = { sub_region_current_phase = spreading_of_christianity_phase_0 }
 					}
-					set_global_variable = { name = soc_current_phase_change value = flag:increased }
-				}
-				else = {
 					set_global_variable = { name = soc_current_phase_change value = flag:decreased }
+					change_phase = spreading_of_christianity_phase_0
+					scope:sub_region_province = { set_variable = { name = BTWK_soc_sub_region_phase_change_cooldown years = 10 } }
+					every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
 				}
-				change_phase = spreading_of_christianity_phase_2
-				every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
-			}
-			else_if = {
-				limit = { 
-					local_var:share_sub_region_christian_counties >= soc_phase_3_threshold
-					local_var:share_sub_region_christian_counties < soc_phase_4_threshold
-					NOT = { sub_region_current_phase = spreading_of_christianity_phase_3 }
-				}
-				if = {
+				else_if = {
 					limit = { 
-						OR = {
-							sub_region_current_phase = spreading_of_christianity_phase_0
-							sub_region_current_phase = spreading_of_christianity_phase_1
-							sub_region_current_phase = spreading_of_christianity_phase_2
+						local_var:share_sub_region_christian_counties >= soc_phase_1_threshold
+						local_var:share_sub_region_christian_counties < soc_phase_2_threshold
+						NOT = { sub_region_current_phase = spreading_of_christianity_phase_1 }
+					}
+					if = {
+						limit = { sub_region_current_phase = spreading_of_christianity_phase_0 }
+						set_global_variable = { name = soc_current_phase_change value = flag:increased }
+					}
+					else = {
+						set_global_variable = { name = soc_current_phase_change value = flag:decreased }
+					}
+					change_phase = spreading_of_christianity_phase_1
+					scope:sub_region_province = { set_variable = { name = BTWK_soc_sub_region_phase_change_cooldown years = 10 } }
+					every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
+				}
+				else_if = {
+					limit = { 
+						local_var:share_sub_region_christian_counties >= soc_phase_2_threshold
+						local_var:share_sub_region_christian_counties < soc_phase_3_threshold
+						NOT = { sub_region_current_phase = spreading_of_christianity_phase_2 }
+					}
+					if = {
+						limit = { 
+							OR = {
+								sub_region_current_phase = spreading_of_christianity_phase_0
+								sub_region_current_phase = spreading_of_christianity_phase_1
+							}
 						}
+						set_global_variable = { name = soc_current_phase_change value = flag:increased }
+					}
+					else = {
+						set_global_variable = { name = soc_current_phase_change value = flag:decreased }
+					}
+					change_phase = spreading_of_christianity_phase_2
+					scope:sub_region_province = { set_variable = { name = BTWK_soc_sub_region_phase_change_cooldown years = 10 } }
+					every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
+				}
+				else_if = {
+					limit = { 
+						local_var:share_sub_region_christian_counties >= soc_phase_3_threshold
+						local_var:share_sub_region_christian_counties < soc_phase_4_threshold
+						NOT = { sub_region_current_phase = spreading_of_christianity_phase_3 }
+					}
+					if = {
+						limit = { 
+							OR = {
+								sub_region_current_phase = spreading_of_christianity_phase_0
+								sub_region_current_phase = spreading_of_christianity_phase_1
+								sub_region_current_phase = spreading_of_christianity_phase_2
+							}
+						}
+						set_global_variable = { name = soc_current_phase_change value = flag:increased }
+					}
+					else = {
+						set_global_variable = { name = soc_current_phase_change value = flag:decreased }
+					}
+					change_phase = spreading_of_christianity_phase_3
+					scope:sub_region_province = { set_variable = { name = BTWK_soc_sub_region_phase_change_cooldown years = 10 } }
+					every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
+				}
+				else_if = {
+					limit = { 
+						local_var:share_sub_region_christian_counties >= soc_phase_4_threshold
+						NOT = { sub_region_current_phase = spreading_of_christianity_phase_4 }
 					}
 					set_global_variable = { name = soc_current_phase_change value = flag:increased }
+					change_phase = spreading_of_christianity_phase_4
+					scope:sub_region_province = { set_variable = { name = BTWK_soc_sub_region_phase_change_cooldown years = 10 } }
+					every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
 				}
-				else = {
-					set_global_variable = { name = soc_current_phase_change value = flag:decreased }
-				}
-				change_phase = spreading_of_christianity_phase_3
-				every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
-			}
-			else_if = {
-				limit = { 
-					local_var:share_sub_region_christian_counties >= soc_phase_4_threshold
-					NOT = { sub_region_current_phase = spreading_of_christianity_phase_4 }
-				}
-				set_global_variable = { name = soc_current_phase_change value = flag:increased }
-				change_phase = spreading_of_christianity_phase_4
-				every_situation_sub_region_participant = { trigger_event = spreading_of_christianity.0020 }
 			}
 		}
 		

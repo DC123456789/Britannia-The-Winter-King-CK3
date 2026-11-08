@@ -580,8 +580,53 @@ culture_shifts.0010 = {
 				}
 			}
 			
+			# Small contribution from average Unromanized Germanic non-regional culture dev in the kingdom
+			set_local_variable = { name = num_non_regional_germanic_provinces value = 0 }
+			set_local_variable = { name = total_non_regional_germanic_dev value = 0 }
+			every_direct_de_jure_vassal_title = {
+				every_in_list = {
+					variable = baseline_dynamic_de_jure_territory
+					if = {
+						limit = { 
+							is_unromanized_germanic_culture_trigger = yes
+							NOT = { culture = { has_variable = anglo_saxon_regional_culture_kingdom } }
+							NOT = { culture = { has_variable = is_anglo_saxon_unified_culture } }
+							# Westernian can only appear in Wales
+							OR = {
+								NOT = { scope:current_kingdom = title:k_wales }
+								title_province = { geographical_region = btwk_custom_wales } 
+							}
+						}
+						change_local_variable = { name = num_non_regional_germanic_provinces add = 1 }
+						change_local_variable = { name = total_non_regional_germanic_dev add = development_level }
+					}
+				}
+			}
+			if = {
+				limit = { local_var:num_non_regional_germanic_provinces > 0 }
+				set_variable = { 
+					name = average_non_regional_germanic_dev
+					value = {
+						value = local_var:total_non_regional_germanic_dev
+						divide = local_var:num_non_regional_germanic_provinces
+					}
+				}
+			}
+			else = {
+				set_variable = { name = average_non_regional_germanic_dev value = 0 }
+			}
+			change_variable = { 
+				name = regional_culture_progress_change
+				add = {
+					value = this.var:average_non_regional_germanic_dev
+					subtract = 6
+					divide = 15
+				}
+			}
+				
 			# Randomness factor
 			random_list = {
+				1 = { change_variable = { name = regional_culture_progress_change multiply = 0.60 } }
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 0.70 } }
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 0.80 } }
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 0.90 } }
@@ -589,6 +634,7 @@ culture_shifts.0010 = {
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 1.10 } }
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 1.20 } }
 				1 = { change_variable = { name = regional_culture_progress_change multiply = 1.30 } }
+				1 = { change_variable = { name = regional_culture_progress_change multiply = 1.40 } }
 			}
 			
 			# In order to get any progress at all, there must be a minimum number of West Germanic provinces
@@ -2349,6 +2395,7 @@ culture_shifts.0030 = {
 			
 			# Randomness factor
 			random_list = {
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.60 } }
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.70 } }
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.80 } }
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 0.90 } }
@@ -2356,6 +2403,7 @@ culture_shifts.0030 = {
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.10 } }
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.20 } }
 				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.30 } }
+				1 = { change_variable = { name = brithenig_emergence_progress_change multiply = 1.40 } }
 			}
 			
 			# Actually apply the change
@@ -2872,6 +2920,7 @@ culture_shifts.0032 = {
 			
 			# Randomness factor
 			random_list = {
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.60 } }
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.70 } }
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.80 } }
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 0.90 } }
@@ -2879,6 +2928,7 @@ culture_shifts.0032 = {
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.10 } }
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.20 } }
 				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.30 } }
+				1 = { change_variable = { name = britannic_hybrid_emergence_progress_change multiply = 1.40 } }
 			}
 			
 			# Actually apply the change
@@ -3472,6 +3522,7 @@ culture_shifts.0034 = {
 			
 			# Randomness factor
 			random_list = {
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.60 } }
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.70 } }
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.80 } }
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 0.90 } }
@@ -3479,6 +3530,7 @@ culture_shifts.0034 = {
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.10 } }
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.20 } }
 				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.30 } }
+				1 = { change_variable = { name = britannic_emergence_progress_change multiply = 1.40 } }
 			}
 			
 			# Actually apply the change
@@ -4203,6 +4255,7 @@ culture_shifts.9997 = {
 			
 			# Randomness factor
 			random_list = {
+				1 = { change_local_variable = { name = progress_change multiply = 0.60 } }
 				1 = { change_local_variable = { name = progress_change multiply = 0.70 } }
 				1 = { change_local_variable = { name = progress_change multiply = 0.80 } }
 				1 = { change_local_variable = { name = progress_change multiply = 0.90 } }
@@ -4210,6 +4263,7 @@ culture_shifts.9997 = {
 				1 = { change_local_variable = { name = progress_change multiply = 1.10 } }
 				1 = { change_local_variable = { name = progress_change multiply = 1.20 } }
 				1 = { change_local_variable = { name = progress_change multiply = 1.30 } }
+				1 = { change_local_variable = { name = progress_change multiply = 1.40 } }
 			}
 			
 			scope:culture_spread_progress_story = {

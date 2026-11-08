@@ -802,6 +802,37 @@ BTWK_depose_britannia_high_king_reform_cb = {
 	}
 
 	on_invalidated_desc = msg_depose_britannia_high_king_war_invalidated_message
+	
+	on_invalidated = {
+		if = {
+			limit = { scope:defender = { has_title = title:e_britannia } }
+			# Restart the war (with potentially different targets)
+			war = {
+				save_scope_as = current_war
+				every_war_attacker = {
+					limit = {
+						is_independent_ruler = yes
+						suzerain ?= title:e_britannia.holder
+					}
+					set_variable = HK_reform_empower_high_council_opponent
+				}
+			}
+			if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_empower_high_council }
+				scope:defender = { 
+					save_scope_as = HK_reform_empower_high_council_second_try
+					trigger_event = BTWK_britannia_high_king.0124
+				}
+			}
+			else_if = {
+				limit = { scope:current_war.var:HK_depose_war_reform = title:e_britannia.var:HK_reform_restore_imperial_dignity }
+				scope:defender = { 
+					save_scope_as = HK_reform_restore_imperial_dignity_second_try
+					trigger_event = BTWK_britannia_high_king.0184
+				}
+			}
+		}
+	}
 
 	on_defeat_desc = {
 		desc = BTWK_depose_britannia_high_king_reform_cb_defeat_desc

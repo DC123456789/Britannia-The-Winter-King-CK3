@@ -112,6 +112,29 @@
 				}
 				effect = {
 					this.var:mission_host_king = { save_scope_as = mission_host_king }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							save_temporary_scope_as = current_story
+							prev = { 
+								BTWK_potential_create_clerical_title_trigger = { 
+									CLERICAL_TITLE_STORY = scope:current_story
+								}
+							}
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = no_southern_anglo_saxon_kingdom_clerical_title		# Fallback
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					story_owner = { trigger_event = spreading_of_christianity.0203 }
 				}
 			}
@@ -137,6 +160,29 @@
 					save_scope_as = gregorian_mission_story
 					save_scope_as = bretwalda_initial_request
 					story_owner = { save_scope_as = gregorian_mission_augustine }
+					random_in_global_list = {
+						variable = creatable_clerical_title_stories
+						limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							save_temporary_scope_as = current_story
+							prev = { 
+								BTWK_potential_create_clerical_title_trigger = { 
+									CLERICAL_TITLE_STORY = scope:current_story
+								}
+							}
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = anglo_saxon_kingdom_clerical_title
+							this.var:anglo_saxon_kingdom_clerical_title.holder = prev
+						}
+						alternative_limit = {
+							this.var:title = title:d_et_canterbury
+							has_variable = no_southern_anglo_saxon_kingdom_clerical_title		# Fallback
+						}
+						save_scope_as = mission_archdiocese_story
+					}
 					title:e_aengland.holder = { trigger_event = spreading_of_christianity.0202 }
 				}
 			}
@@ -437,8 +483,6 @@
 	# Starting ~5 years after the mission arrives, will send yearly missives to other Anglo-Saxon kings
 	# encouraging them to convert. Will only have a middling chance unless they are tributary to a Christian suzerain,
 	# or have a Christian capital
-	# The missionaries will only get 20 years in kingdoms that accept them here, in contrast to 30 years
-	# in the main host
 	effect_group = {
 		years = 1
 		
@@ -576,7 +620,9 @@
 						# If you are not Saxon Rite and you have not already refused, you will always be asked to convert
 						else_if = {
 							limit = { 
-								rite:saxon_rite.faith ?= faith
+								exists = rite:saxon_rite
+								rite:saxon_rite.faith = faith
+								rite:saxon_rite != rite
 								NOT = { has_variable = gregorian_mission_refused_change_rite }
 							}
 							trigger_event = { id = spreading_of_christianity.0220 days = { 1 90 } }
@@ -585,10 +631,9 @@
 						else_if = {
 							limit = {
 								any_vassal = {
-									limit = {
-										religion != scope:gregorian_mission_augustine.religion
-										NOT = { has_variable = gregorian_mission_refused_personal_conversion }
-									}
+									religion != scope:gregorian_mission_augustine.religion
+									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									highest_held_title_tier >= tier_county
 								}
 							}
 							random_vassal = {
@@ -596,10 +641,12 @@
 									religion != scope:gregorian_mission_augustine.religion
 									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
 									faith = { has_doctrine_parameter = unreformed }
+									highest_held_title_tier >= tier_county
 								}
 								alternative_limit = {
 									religion != scope:gregorian_mission_augustine.religion
 									NOT = { has_variable = gregorian_mission_refused_personal_conversion }
+									highest_held_title_tier >= tier_county
 								}
 								trigger_event = { id = spreading_of_christianity.0219 days = { 1 90 } }
 							}
@@ -629,7 +676,7 @@
 	
 	# Once we reach 30 years, the mission ends
 	effect_group = {
-		years = 1
+		days = 100		# Deliberately on a different timer from the main pulse
 		
 		trigger = { NOT = { has_variable = mission_started_overall_timer } }
 

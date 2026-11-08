@@ -1,10 +1,11 @@
-version="0.1.2"
+version="0.2.0"
 tags={
 	"Total Conversion"
 	"History"
 }
 name="The Winter King"
 replace_path="common/achievements"
+replace_path="common/coat_of_arms/dynamic_definitions"
 replace_path="common/culture/cultures"
 replace_path="common/culture/name_lists"
 replace_path="common/dynasties"
