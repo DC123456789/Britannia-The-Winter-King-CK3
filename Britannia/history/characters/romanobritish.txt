@@ -5854,3 +5854,41 @@
 		death = yes
 	}
 }
+
+# Saint Alban
+romanobritish_1 = {
+	name = "Alban_regnal"
+	rite = "britannic_rite"
+	culture = "romanobritish"
+	trait = compassionate
+	trait = zealous
+	trait = calm
+	trait = education_martial_3
+	trait = roman_trained
+
+	250.1.1 = {
+		birth = yes
+	}
+	304.1.1 = {
+		death = {
+			death_reason = death_execution
+		}
+		effect_even_if_dead = {
+			pam_canonize_saint_effect = {	
+				CANONIZER = root
+				CANDIDATE = root
+				CONSECRATION_PROVINCE = province:199 #Verulanium
+				PRESET = yes
+			}
+			religion:christianity_religion = {
+				every_faith = {
+					limit = {
+						main_rite = { is_rite_enabled = yes }
+						NOT = { has_saint_character = root }
+					}
+					add_saint = { character = root }
+				}
+			}
+		}
+	}
+}
