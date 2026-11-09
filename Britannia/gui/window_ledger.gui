@@ -2526,9 +2526,6 @@ window = {
 					blockoverride "podium_3" {
 						visible = "[GreaterThan_int32(GetDataModelSize(LedgerWindow.GetFaithsPodium), '(int32)2')]"
 					}
-					blockoverride "podium_item_visible" {
-						visible = "[GetScriptedGui('BTWK_faith_visible').IsShown(GuiScope.SetRoot(LedgerFaithItem.GetFaith.MakeScope).End)]"
-					}
 					
 					blockoverride "scrollbox_empty_visibility" {
 						visible = "[IsDataModelEmpty(LedgerWindow.GetFaiths)]"
@@ -2610,6 +2607,7 @@ window = {
 					blockoverride "ledger_podium_widget" {
 						datacontext = "[FaithItem.GetFaith]"
 						enabled = "[Faith.IsVisibleInGui]"
+						visible = "[GetScriptedGui('BTWK_faith_visible').IsShown(GuiScope.SetRoot(Faith.MakeScope).End)]"
 						button_ledger_faith = {
 							parentanchor = center
 							size = { 120 120 }
