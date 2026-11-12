@@ -1,0 +1,86 @@
+tradition_strong_kinship = {
+	category = regional
+
+	layers = {
+		0 = martial
+		1 = western
+		4 = conversation.dds
+	}
+
+	is_shown = {
+		OR = {
+			culture_is_or_has_ancestor_trigger = { CULTURE = culture:gaelic }
+			culture_is_or_has_ancestor_trigger = { CULTURE = culture:scottish }
+			culture_is_or_has_ancestor_trigger = { CULTURE = culture:vestlondic }
+			culture_is_or_has_ancestor_trigger = { CULTURE = culture:norwegian }
+		}
+	}
+	
+	parameters = {
+		bonuses_from_patriarch_matriarch_trait = yes
+		cultural_house_personal_scheme_success_chance = yes
+		landing_house_members_give_prestige = yes
+		penalty_for_revoking_titles_from_house_members = yes
+		loyal_trait_more_common = yes
+	}
+	character_modifier = {
+		dynasty_house_opinion = 15
+		opinion_of_liege = -10
+	}
+
+	cost = {
+		prestige = {
+			add = {
+				value = tradition_base_cost
+				desc = BASE
+				format = "BASE_VALUE_FORMAT"
+			}
+			if = {
+				limit = {
+					NOR = {
+						culture_pillar:ethos_bellicose = { is_in_list = traits }
+						culture_pillar:ethos_stoic = { is_in_list = traits }
+						culture_pillar:ethos_bureaucratic = { is_in_list = traits }
+					}
+				}
+				add = {
+					value = tradition_incompatible_ethos_penalty
+					desc = not_bellicose_stoic_or_bureaucratic_desc
+				}
+			}
+			if = {
+				limit = {
+					exists = scope:character.house
+					NOT = {
+						scope:character.house = {
+							any_house_member = {
+								count >= 3
+								has_relation_friend = scope:character
+							}
+						}
+					}
+				}
+				add = {
+					value = tradition_unfulfilled_criteria_penalty
+					desc = house_friends_desc
+				}
+			}
+
+			if = {
+				limit = {
+					culture_tradition_reduction_trigger = { TRADITION = tradition_strong_kinship }
+				}
+				multiply = {
+					value = 0.5
+					desc = inspired_by_culture_desc
+				}
+			}
+			
+			multiply = tradition_replacement_cost_if_relevant
+		}
+	}
+	
+	ai_will_do = {
+		value = 400
+	}
+}
