@@ -68,6 +68,7 @@
 ### PART 8 - CAMELOT ###
 
 ### PART 9 - THE MYSTERIES OF ISIS ###
+# BTWK_story_event.0400 - Arthur becomes permanent regent of Dumnonia
 
 ### PART 10 - THE FIRES OF MAI DUN ###
 
@@ -1142,16 +1143,9 @@ BTWK_story_event.0120 = {  # Trigger Event for Global Notifications
 		# NOTIFY SOUTH BRITANNIA & ARMORICA PLAYERS THE RESULT OF THE COUNCIL
 		every_player = {
 			limit = {
-				OR = {
-					root.capital_province = {
-						geographical_region = btwk_world_britannia_south
-					}
-					root.capital_province = {
-						geographical_region = world_armorica
-					}
-				}
+				BTWK_storyline_events_relevant_trigger = yes
 				NOT = {
-					is_target_in_global_variable_list= {
+					is_target_in_global_variable_list = {
 						name = attending_glevum
 						target = this
 					}
@@ -2573,3 +2567,248 @@ BTWK_story_event.0302 = {
 # TODO various notification events + fallout of the choice
 # - If Arthur marries Guinevere (canon), Derfel marries Ceinwyn
 # - If Arthur marries Ceinwyn, Lancelot marries Guinevere and Derfel marries Nimue
+
+## ARTHUR'S PERMANENT REGENCY
+# Arthur takes k_dumnonia as regent
+BTWK_story_event.0500 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0500.t
+	desc = BTWK_story_event.0500.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:arthur
+		animation = marshal
+	}
+
+	right_portrait = {
+		character = scope:mordred
+		animation = anger
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:arthur }
+			hidden_effect = {
+				create_title_and_vassal_change = {
+					type = usurped
+					save_scope_as = arthur_pendragon_dumnonia
+					add_claim_on_loss = no
+				}
+				liege = {
+					every_tributary = {
+						add_to_temporary_list = dumnonia_tributaries
+					}
+					every_held_title = {
+						limit = { tier >= tier_kingdom }
+						change_title_holder_include_vassals = {
+							holder = scope:arthur
+							change = scope:arthur_pendragon_dumnonia
+						}
+					}
+					every_vassal = {
+						limit = { highest_held_title_tier >= tier_county }
+						change_liege = {
+							liege = scope:arthur
+							change = scope:arthur_pendragon_dumnonia
+						}
+					}
+					change_liege = {
+						liege = scope:arthur
+						change = scope:arthur_pendragon_dumnonia
+					}
+				}
+				resolve_title_and_vassal_change = scope:arthur_pendragon_dumnonia
+				every_in_list = {
+					list = dumnonia_tributaries
+					start_tributary_interaction_effect = {
+						TRIBUTARY = this
+						SUZERAIN = scope:arthur
+					}					
+				}
+			}
+			custom_tooltip = BTWK_story_event.0500.a.tt
+			title:k_dumnonia = { 
+				set_variable = BTWK_arthur_regency_enabled
+				set_variable = BTWK_regent_flag
+			}
+			set_variable = BTWK_regent_flag
+			if = {
+				limit = { exists = scope:house_head_transferred }
+				house = { set_house_head = root }
+			}
+			scope:mordred = {
+				add_opinion = {
+					target = root
+					modifier = usurped_title
+				}
+			}
+			show_as_tooltip = {
+				scope:mordred = {				
+					vassal_contract_set_obligation_level = {
+						type = title_revocation_rights
+						level = 1
+					}
+					custom_tooltip = BTWK_story_event.0500.a.arthur.tt.1
+					set_subject_contract_modification_blocked = yes
+				}
+			}
+			if = {
+				limit = { scope:mordred = character:5 }
+				custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_assume_throne_dumnonia_mordred_tt
+			}
+			else = {
+				custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_assume_throne_dumnonia_tt
+			}
+		}
+		else_if = {
+			limit = { this = scope:mordred }
+			custom_tooltip = BTWK_story_event.0500.a.tt
+			if = {
+				limit = { exists = scope:house_head_transferred }
+				show_as_tooltip = { house = { set_house_head = scope:arthur } }
+			}
+			title:d_throne_dumnonia = { set_landless_title = yes }
+			get_title = title:d_throne_dumnonia
+			add_pressed_claim = title:k_dumnonia
+			vassal_contract_set_obligation_level = {
+				type = title_revocation_rights
+				level = 1
+			}
+			set_subject_contract_modification_blocked = yes
+			custom_tooltip = BTWK_story_event.0500.a.mordred.tt
+		}
+		else = {
+			custom_tooltip = BTWK_story_event.0500.a.tt
+		}
+	}
+
+	option = {
+		name = {
+			first_valid = {
+				triggered_desc = {
+					trigger = { this = scope:arthur }
+					desc = BTWK_story_event.0500.a.arthur
+				}
+				triggered_desc = {
+					trigger = { this = scope:mordred }
+					desc = BTWK_story_event.0500.a.mordred
+				}
+				triggered_desc = {
+					trigger = { 
+						any_liege_or_above = {
+							this = scope:arthur
+						}
+					}
+					desc = BTWK_story_event.0500.a.dumnonia_vassal
+				}
+				triggered_desc = {
+					trigger = { 
+						is_briton_or_latin_culture_trigger = yes
+					}
+					desc = BTWK_story_event.0500.a.other_briton
+				}
+				triggered_desc = {
+					trigger = { 
+						is_unromanized_germanic_culture_trigger = yes
+					}
+					desc = BTWK_story_event.0500.a.anglo_saxon
+				}
+				desc = BTWK_story_event.0500.a
+			}
+		}
+	}
+}
+
+# Arthur (or other regent) officially takes the throne
+BTWK_story_event.0501 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0501.t
+	desc = BTWK_story_event.0501.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:arthur
+		animation = personality_honorable
+	}
+
+	right_portrait = {
+		character = scope:mordred
+		animation = anger
+	}
+	
+	immediate = {
+		if = {
+			limit = { this = scope:arthur }
+			title:d_throne_dumnonia = { set_landless_title = no }
+			destroy_title = title:d_throne_dumnonia
+			custom_tooltip = BTWK_story_event.0501.a.tt
+			title:k_dumnonia = { 
+				remove_variable = BTWK_arthur_regency_enabled
+				remove_variable = BTWK_regent_flag
+			}
+			remove_variable = BTWK_regent_flag
+			scope:mordred = {
+				add_opinion = {
+					target = root
+					modifier = usurped_title
+				}
+			}
+		}
+		else_if = {
+			limit = { this = scope:mordred }
+			custom_tooltip = BTWK_story_event.0501.a.tt
+			show_as_tooltip = { destroy_title = title:d_throne_dumnonia }
+		}
+		else = {
+			custom_tooltip = BTWK_story_event.0501.a.tt
+			show_as_tooltip = { destroy_title = title:d_throne_dumnonia }
+		}
+	}
+
+	# Arthur
+	option = {
+		name = {
+			first_valid = {
+				triggered_desc = {
+					trigger = { this = scope:arthur }
+					desc = BTWK_story_event.0501.a.arthur
+				}
+				triggered_desc = {
+					trigger = { this = scope:mordred }
+					desc = BTWK_story_event.0501.a.mordred
+				}
+				triggered_desc = {
+					trigger = { 
+						any_liege_or_above = {
+							this = scope:arthur
+						}
+					}
+					desc = BTWK_story_event.0501.a.dumnonia_vassal
+				}
+				triggered_desc = {
+					trigger = { 
+						is_briton_or_latin_culture_trigger = yes
+					}
+					desc = BTWK_story_event.0501.a.other_briton
+				}
+				triggered_desc = {
+					trigger = { 
+						is_unromanized_germanic_culture_trigger = yes
+					}
+					desc = BTWK_story_event.0501.a.anglo_saxon
+				}
+				desc = BTWK_story_event.0501.a
+			}
+		}
+	}
+}
+# TODO
+# - Added event for if Arthur takes k_dumnonia without going through the decision - either set up the regency or take an enormous amount of stress
+# - If d_throne_dumnonia comes out from under k_dumnonia, holder of k_dumnonia gets a claim on d_throne_dumnonia (refreshed/removed on each succession)
+# - If k_dumnonia and d_throne_dumnonia come under the same ruler, or d_throne_dumnonia somehow gets destroyed, fire the throne assumption event immediately
+#	- If d_throne_dumnonia becomes independent and landless, it will be immediately destroyed and the throne will be reunified
+# - If k_dumnonia is destroyed - no special behaviour needed?
+# - Fix spouse title for regency?

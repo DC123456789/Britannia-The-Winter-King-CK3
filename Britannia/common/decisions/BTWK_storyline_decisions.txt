@@ -1,0 +1,215 @@
+﻿#########################################################################
+# Winter King Storyline Decisions										#
+#########################################################################
+
+BTWK_arthur_dumnonia_permanent_regency = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_knight_kneeling.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 12
+		duchy = 12
+		kingdom = 12
+		empire = 0
+		hegemony = 0
+	}
+
+	desc = BTWK_arthur_dumnonia_permanent_regency_desc
+
+	is_shown = {
+		this = character:3
+		is_diarch = yes
+		liege ?= { 
+			has_title = title:k_dumnonia
+			NOT = { highest_held_title_tier > tier_kingdom }
+		}
+		NOT = { title:k_dumnonia = { has_variable = BTWK_arthur_regency_enabled } }
+	}
+
+	is_valid = {
+		is_diarch = yes
+		is_landed = yes
+		years_as_diarch >= 5
+		custom_tooltip = {
+			text = BTWK_arthur_dumnonia_permanent_regency_diarchy_swing_tt
+			liege = { diarchy_swing >= 80 }
+		}
+		prestige_level >= 3
+		custom_tooltip = {
+			text = BTWK_arthur_dumnonia_permanent_regency_powerful_vassal_opinion_tt
+			liege = {
+				any_powerful_vassal = {
+					percent >= 0.6
+					opinion = {
+						target = ROOT
+						value >= 60
+					}
+				}
+			}
+		}
+		is_incapable = no
+	}
+
+	effect = {
+		save_scope_as = arthur
+		liege = { save_scope_as = mordred }
+		stress_and_fulfillment_impact = {
+			disloyal = medium_stress_impact_loss
+			ambitious = minor_stress_impact_loss
+			arrogant = minor_stress_impact_loss
+			callous = miniscule_stress_impact_loss
+			arbitrary = miniscule_stress_impact_loss
+			just = miniscule_stress_impact_gain
+			humble = minor_stress_impact_gain
+			content = minor_stress_impact_gain
+			loyal = medium_stress_impact_gain
+		}
+		custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_dumnonia_regent_title_tt
+		show_as_tooltip = {
+			liege = { 
+				get_title = title:d_throne_dumnonia
+			}
+		}
+		if = {
+			limit = { scope:mordred = character:5 }
+			title:k_dumnonia = { custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_assume_throne_dumnonia_mordred_tt }
+		}
+		else = {
+			title:k_dumnonia = { custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_assume_throne_dumnonia_tt }
+		}
+		if = {
+			limit = { house.house_head = scope:mordred }
+			save_scope_as = house_head_transferred
+			show_as_tooltip = { house = { set_house_head = root } }
+		}
+		trigger_event = BTWK_story_event.0500
+		scope:mordred = { trigger_event = BTWK_story_event.0500 }
+		every_player = {
+			limit = {
+				BTWK_storyline_events_relevant_trigger = yes
+				NOR = {
+					this = scope:arthur
+					this = scope:mordred
+				}
+			}
+			trigger_event = BTWK_story_event.0500
+		}
+	}
+	
+	cost = {
+		prestige = { value = 1000 }
+	}
+	
+	ai_potential = {
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
+
+BTWK_arthur_dumnonia_claim_throne = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_knight_kneeling.dds"
+	}
+	decision_group_type = major
+
+	ai_check_interval_by_tier = {
+		barony = 0
+		county = 0
+		duchy = 0
+		kingdom = 12
+		empire = 12
+		hegemony = 12
+	}
+
+	desc = BTWK_arthur_dumnonia_claim_throne_desc
+
+	is_shown = {
+		has_title = title:k_dumnonia
+		title:k_dumnonia = { has_variable = BTWK_arthur_regency_enabled }
+	}
+
+	is_valid = {
+		ruled_years >= 10
+		prestige_level >= 3
+		legitimacy_level >= 4
+		trigger_if = {
+			limit = { 
+				this = character:3
+			}
+			character:5 = { save_temporary_scope_as = mordred }
+			custom_tooltip = {
+				text = BTWK_arthur_dumnonia_claim_throne_arthur_mordred_block_tt
+				NOT = { title:d_throne_dumnonia.holder ?= scope:mordred }
+			}
+		}
+		OR = {
+			has_title = title:d_throne_dumnonia
+			custom_tooltip = {
+				text = BTWK_arthur_dumnonia_claim_throne_vassal_has_throne_title
+				title:d_throne_dumnonia.holder = {
+					any_liege_or_above = {
+						character = root
+					}
+				}
+			}
+			NOT = {
+				custom_description = {
+					text = BTWK_title_has_holder
+					subject = title:d_throne_dumnonia
+					exists = title:d_throne_dumnonia.holder
+				}
+			}
+		}
+	}
+
+	effect = {
+		save_scope_as = arthur
+		title:d_throne_dumnonia.holder ?= { save_scope_as = mordred }
+		stress_and_fulfillment_impact = {
+			disloyal = medium_stress_impact_loss
+			ambitious = minor_stress_impact_loss
+			arrogant = minor_stress_impact_loss
+			callous = miniscule_stress_impact_loss
+			arbitrary = miniscule_stress_impact_loss
+			just = miniscule_stress_impact_gain
+			humble = minor_stress_impact_gain
+			content = minor_stress_impact_gain
+			loyal = medium_stress_impact_gain
+		}
+		custom_tooltip = BTWK_arthur_dumnonia_claim_throne_king_title_tt
+		show_as_tooltip = {
+			if = {
+				limit = { exists = title:d_throne_dumnonia.holder }
+				destroy_title = title:d_throne_dumnonia
+			}
+		}
+		trigger_event = BTWK_story_event.0501
+		scope:mordred = { trigger_event = BTWK_story_event.0501 }
+		every_player = {
+			limit = {
+				BTWK_storyline_events_relevant_trigger = yes
+				NOR = {
+					this = scope:arthur
+					this = scope:mordred
+				}
+			}
+			trigger_event = BTWK_story_event.0501
+		}
+	}
+	
+	cost = {
+		prestige = { value = 500 }
+	}
+	
+	ai_potential = {
+	}
+
+	ai_will_do = {
+		base = 100
+	}
+}
