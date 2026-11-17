@@ -22,11 +22,13 @@ BTWK_arthur_dumnonia_permanent_regency = {
 	is_shown = {
 		this = character:3
 		is_diarch = yes
+		is_independent_ruler = no
 		liege ?= { 
 			has_title = title:k_dumnonia
 			NOT = { highest_held_title_tier > tier_kingdom }
 		}
 		NOT = { title:k_dumnonia = { has_variable = BTWK_arthur_regency_enabled } }
+		NOT = { has_variable = BTWK_arthur_seized_dumnonia_throne }
 	}
 
 	is_valid = {
@@ -134,9 +136,9 @@ BTWK_arthur_dumnonia_claim_throne = {
 	}
 
 	is_valid = {
-		ruled_years >= 10
+		title:k_dumnonia = { title_held_years >= 5 }
 		prestige_level >= 3
-		legitimacy_level >= 4
+		legitimacy_level >= 3
 		trigger_if = {
 			limit = { 
 				this = character:3
@@ -149,20 +151,24 @@ BTWK_arthur_dumnonia_claim_throne = {
 		}
 		OR = {
 			has_title = title:d_throne_dumnonia
-			custom_tooltip = {
-				text = BTWK_arthur_dumnonia_claim_throne_vassal_has_throne_title
-				title:d_throne_dumnonia.holder = {
-					any_liege_or_above = {
-						character = root
-					}
-				}
-			}
 			NOT = {
 				custom_description = {
 					text = BTWK_title_has_holder
 					subject = title:d_throne_dumnonia
 					exists = title:d_throne_dumnonia.holder
 				}
+			}
+			AND = {
+				custom_tooltip = {
+					text = BTWK_arthur_dumnonia_claim_throne_vassal_has_throne_title
+					title:d_throne_dumnonia.holder = {
+						any_liege_or_above = {
+							character = root
+						}
+					}
+				}
+				title:k_dumnonia = { title_held_years >= 10 }
+				legitimacy_level >= 4
 			}
 		}
 	}

@@ -2591,41 +2591,50 @@ BTWK_story_event.0500 = {
 		if = {
 			limit = { this = scope:arthur }
 			hidden_effect = {
-				create_title_and_vassal_change = {
-					type = usurped
-					save_scope_as = arthur_pendragon_dumnonia
-					add_claim_on_loss = no
-				}
-				liege = {
-					every_tributary = {
-						add_to_temporary_list = dumnonia_tributaries
+				if = {
+					limit = { NOT = { has_title = title:k_dumnonia } }
+					create_title_and_vassal_change = {
+						type = usurped
+						save_scope_as = arthur_pendragon_dumnonia
+						add_claim_on_loss = no
 					}
-					every_held_title = {
-						limit = { tier >= tier_kingdom }
-						change_title_holder_include_vassals = {
-							holder = scope:arthur
-							change = scope:arthur_pendragon_dumnonia
+					liege = {
+						every_tributary = {
+							add_to_temporary_list = dumnonia_tributaries
 						}
-					}
-					every_vassal = {
-						limit = { highest_held_title_tier >= tier_county }
+						every_held_title = {
+							limit = { tier >= tier_kingdom }
+							change_title_holder_include_vassals = {
+								holder = scope:arthur
+								change = scope:arthur_pendragon_dumnonia
+							}
+						}
+						every_vassal = {
+							limit = { highest_held_title_tier >= tier_county }
+							change_liege = {
+								liege = scope:arthur
+								change = scope:arthur_pendragon_dumnonia
+							}
+						}
 						change_liege = {
 							liege = scope:arthur
 							change = scope:arthur_pendragon_dumnonia
 						}
 					}
-					change_liege = {
-						liege = scope:arthur
-						change = scope:arthur_pendragon_dumnonia
+					resolve_title_and_vassal_change = scope:arthur_pendragon_dumnonia
+					scope:mordred = {
+						add_opinion = {
+							target = root
+							modifier = usurped_title
+						}
 					}
-				}
-				resolve_title_and_vassal_change = scope:arthur_pendragon_dumnonia
-				every_in_list = {
-					list = dumnonia_tributaries
-					start_tributary_interaction_effect = {
-						TRIBUTARY = this
-						SUZERAIN = scope:arthur
-					}					
+					every_in_list = {
+						list = dumnonia_tributaries
+						start_tributary_interaction_effect = {
+							TRIBUTARY = this
+							SUZERAIN = scope:arthur
+						}					
+					}
 				}
 			}
 			custom_tooltip = BTWK_story_event.0500.a.tt
@@ -2638,14 +2647,9 @@ BTWK_story_event.0500 = {
 				limit = { exists = scope:house_head_transferred }
 				house = { set_house_head = root }
 			}
-			scope:mordred = {
-				add_opinion = {
-					target = root
-					modifier = usurped_title
-				}
-			}
 			show_as_tooltip = {
-				scope:mordred = {				
+				scope:mordred = {
+					get_title = title:d_throne_dumnonia
 					vassal_contract_set_obligation_level = {
 						type = title_revocation_rights
 						level = 1
@@ -2671,7 +2675,26 @@ BTWK_story_event.0500 = {
 			}
 			title:d_throne_dumnonia = { set_landless_title = yes }
 			get_title = title:d_throne_dumnonia
+			if = {
+				limit = { is_landed = no }
+				change_government = scope:arthur.government_type
+			}
 			add_pressed_claim = title:k_dumnonia
+			if = {
+				limit = { NOT = { liege = scope:arthur } }
+				hidden_effect = {
+					create_title_and_vassal_change = {
+						type = usurped
+						save_scope_as = arthur_pendragon_dumnonia
+						add_claim_on_loss = no
+					}
+					change_liege = {
+						liege = scope:arthur
+						change = scope:arthur_pendragon_dumnonia
+					}
+					resolve_title_and_vassal_change = scope:arthur_pendragon_dumnonia
+				}
+			}
 			vassal_contract_set_obligation_level = {
 				type = title_revocation_rights
 				level = 1
@@ -2756,6 +2779,10 @@ BTWK_story_event.0501 = {
 					modifier = usurped_title
 				}
 			}
+			if = {
+				limit = { this = character:3 }
+				set_variable = BTWK_arthur_seized_dumnonia_throne
+			}
 		}
 		else_if = {
 			limit = { this = scope:mordred }
@@ -2805,10 +2832,98 @@ BTWK_story_event.0501 = {
 		}
 	}
 }
-# TODO
-# - Added event for if Arthur takes k_dumnonia without going through the decision - either set up the regency or take an enormous amount of stress
-# - If d_throne_dumnonia comes out from under k_dumnonia, holder of k_dumnonia gets a claim on d_throne_dumnonia (refreshed/removed on each succession)
-# - If k_dumnonia and d_throne_dumnonia come under the same ruler, or d_throne_dumnonia somehow gets destroyed, fire the throne assumption event immediately
-#	- If d_throne_dumnonia becomes independent and landless, it will be immediately destroyed and the throne will be reunified
-# - If k_dumnonia is destroyed - no special behaviour needed?
-# - Fix spouse title for regency?
+
+# Arthur takes k_dumnonia without going through the decision - either set up the regency or take an enormous amount of stress
+BTWK_story_event.0502 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0502.t
+	desc = BTWK_story_event.0502.desc
+	theme = realm
+	
+	left_portrait = {
+		character = scope:arthur
+		animation = thinking
+	}
+
+	right_portrait = {
+		character = scope:mordred
+		animation = personality_vengeful
+	}
+	
+	immediate = {
+		save_scope_as = arthur
+		character:5 = { save_scope_as = mordred }
+	}
+
+	# Set up regency
+	option = {
+		name = BTWK_story_event.0502.a
+		custom_tooltip = BTWK_story_event.0502.a.tt
+		custom_tooltip = BTWK_arthur_dumnonia_permanent_regency_assume_throne_dumnonia_mordred_tt
+		trigger_event = BTWK_story_event.0500
+		scope:mordred = { trigger_event = BTWK_story_event.0500 }
+		every_player = {
+			limit = {
+				BTWK_storyline_events_relevant_trigger = yes
+				NOR = {
+					this = scope:arthur
+					this = scope:mordred
+				}
+			}
+			trigger_event = BTWK_story_event.0500
+		}
+	}
+	
+	# Take the throne
+	option = {
+		name = BTWK_story_event.0502.b
+		add_prestige = -100
+		stress_and_fulfillment_impact = {
+			base = major_stress_impact_gain
+			just = major_stress_impact_gain
+			humble = major_stress_impact_gain
+			content = major_stress_impact_gain
+			loyal = massive_stress_impact_gain
+			compassionate = major_stress_impact_gain
+		}
+		set_variable = BTWK_arthur_seized_dumnonia_throne
+	}
+}
+
+
+# Mordred (or other nominal king) returns to power
+BTWK_story_event.0503 = {
+	type = character_event
+	content_source = dlc_BTWK
+	title = BTWK_story_event.0503.t
+	desc = BTWK_story_event.0503.desc
+	theme = realm
+
+	left_portrait = {
+		character = scope:mordred
+		animation = war_over_win
+	}
+	
+	right_portrait = {
+		trigger = { exists = scope:arthur }
+		character = scope:arthur
+		animation = shame
+	}
+	
+	immediate = {
+		save_scope_as = scope:mordred
+		scope:previous_holder ?= { save_scope_as = scope:arthur }
+		title:k_dumnonia = { 
+			remove_variable = BTWK_arthur_regency_enabled
+			remove_variable = BTWK_regent_flag
+		}
+		remove_variable = BTWK_regent_flag
+	}
+
+	option = {
+		name = BTWK_story_event.0501.a
+		title:d_throne_dumnonia = { set_landless_title = no }
+		destroy_title = title:d_throne_dumnonia
+	}
+}

@@ -405,6 +405,46 @@ BTWK_on_title_gain = {
 				make_story_owner = title:d_et_canterbury.var:clerical_title.holder
 			}
 		}
+		
+		# Trigger regency event if Arthur gains Dumnonia while Mordred is still alive
+		if = {
+			limit = {
+				this = character:3
+				scope:title = title:k_dumnonia
+				character:5 ?= {
+					is_alive = yes
+					OR = {
+						is_ruler = no
+						any_liege_or_above = { character = root }
+					}
+				}
+				NOT = { has_variable = BTWK_arthur_seized_dumnonia_throne }
+			}
+			trigger_event = BTWK_story_event.0502
+		}
+		
+		# Give the new Regent of Dumnonia a claim on the Throne if it is not held by one of their vassals
+		if = {
+			limit = {
+				has_title = title:k_dumnonia
+				title:d_throne_dumnonia.holder ?= {
+					NOR = {
+						this = root
+						any_liege_or_above = { this = root }
+					}
+				}
+			}
+			add_pressed_claim = title:d_throne_dumnonia
+		}
+		
+		# Automatically disband the Dumnonian regency if the nominal King of Dumnonia regains power
+		if = {
+			limit = {
+				has_title = title:d_throne_dumnonia
+				scope:title = title:k_dumnonia
+			}
+			trigger_event = BTWK_story_event.0503
+		}
 	}
 }
 
@@ -670,6 +710,17 @@ BTWK_on_title_lost = {
 			BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
 		}
 		
+		# Automatically disband the Throne of Dumnonia regency if the nominal King becomes independent + landless
+		if = {
+			limit = {
+				has_title = title:d_throne_dumnonia
+				is_landed = no
+				is_independent_ruler = yes
+			}
+			title:d_throne_dumnonia = { set_landless_title = no }
+			destroy_title = title:d_throne_dumnonia
+		}
+		
 		if = {
 			limit = {
 				is_playable_character = no
@@ -814,6 +865,25 @@ btwk_on_vassal_change = {
 					BTWK_britannia_high_king_reform_centralize_the_church_check_modifier_effect = yes
 				}
 			}
+		}
+		
+		# Automatically disband the Throne of Dumnonia regency if the nominal King becomes independent + landless
+		if = {
+			limit = {
+				has_title = title:d_throne_dumnonia
+				is_landed = no
+				is_independent_ruler = yes
+			}
+			title:d_throne_dumnonia = { set_landless_title = no }
+			destroy_title = title:d_throne_dumnonia
+		}
+		# Give the Regent of Dumnonia a claim on the Throne if it becomes independent
+		else_if = {
+			limit = {
+				has_title = title:d_throne_dumnonia
+				scope:old_liege ?= { has_title = title:k_dumnonia }
+			}
+			scope:old_liege = { add_pressed_claim = title:d_throne_dumnonia }
 		}
 	}
 }
