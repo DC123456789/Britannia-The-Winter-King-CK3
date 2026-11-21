@@ -11,9 +11,13 @@ walls_00 = {
 
 	is_enabled = {
 		OR = {
+			fort_level < 1
 			AND = {
-				is_county_capital = no
-				fort_level < 1
+				fort_level > 0
+				NOR = {
+					has_building_or_higher = "tribe_01"
+					has_building_or_higher = "pb_walls_01"
+				}
 			}
 			# Using the no_wall holding graphics for cities with special walls so that they don't have double walls
 			has_building_or_higher = "city_wall_of_toledo_01"			
@@ -53,18 +57,10 @@ walls_01_tribal = {
 		graphical_cultures = { emishi_building_gfx amuric_building_gfx }
 	}
 	is_enabled = {
-		OR = {
-			is_county_capital = yes
-			fort_level > 0
-		}
+		has_building_or_higher = "tribe_01"
+		fort_level > 0
 		NOR = {
-			# disabling this level of walled graphics for holdings with special walls and other fortifications so that they always look appropriately fortified. Note: If any of these buildings are given unique 3D assets, this should be looked at again.
-			has_building_or_higher = "palisades_01"
-			has_building_or_higher = "curtain_walls_01"
-			has_building_or_higher = "hill_forts_01"
-			has_building_or_higher = "ramparts_01"
-			has_building_or_higher = "watchtowers_01"
-			has_building_or_higher = "temple_citadel_01"
+			has_building_or_higher = "pb_walls_01"
 			has_building_or_higher = "theodosian_walls_01"
 			has_building_or_higher = "walls_of_benin_01"
 			has_building_or_higher = "walls_of_genoa_01"
@@ -95,7 +91,6 @@ walls_01 = {
 		names = {
 			"mena_walls_01_a_mesh"
 			"mena_walls_01_b_mesh"
-
 		}
 		graphical_regions = { graphical_mena graphical_steppe }
 	}
@@ -157,7 +152,6 @@ walls_01 = {
 	# TGP Southeast Asia
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { southeast_asian_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -167,7 +161,6 @@ walls_01 = {
 	# TGP China
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { chinese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -177,7 +170,6 @@ walls_01 = {
 	# TGP Japan
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { japanese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -186,7 +178,6 @@ walls_01 = {
 	}
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { steppe_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -207,25 +198,14 @@ walls_01 = {
 	is_enabled = {
 		OR = {
 			# These buildings will trigger the visual "upgrade" to this wall asset
-			has_building_or_higher = "palisades_01"
-			has_building_or_higher = "curtain_walls_01"
-			has_building_or_higher = "hill_forts_01"
-			has_building_or_higher = "ramparts_01"
-			has_building_or_higher = "watchtowers_01"
-			has_building_or_higher = "temple_citadel_01"
+			has_building_or_higher = "pb_walls_01"
 			scope:holder = {
 				government_has_flag = government_is_nomadic
 				root = { fort_level = 1 }
 			}
 		}
 		NOR = {
-			# Disabling this level of walled graphics for holdings with special walls and other fortifications so that they always look appropriately fortified. Note: If any of these buildings are given unique 3D assets, this should be looked at again.
-			has_building_or_higher = "palisades_02"
-			has_building_or_higher = "curtain_walls_02"
-			has_building_or_higher = "hill_forts_02"
-			has_building_or_higher = "ramparts_02"
-			has_building_or_higher = "watchtowers_02"
-			has_building_or_higher = "temple_citadel_02"
+			has_building_or_higher = "pb_walls_02"
 			has_building_or_higher = "theodosian_walls_01"
 			has_building_or_higher = "walls_of_benin_01"
 			has_building_or_higher = "walls_of_genoa_01"
@@ -325,7 +305,6 @@ walls_02 = {
 	# TGP Southeast Asia
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { southeast_asian_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -335,7 +314,6 @@ walls_02 = {
 	# TGP China
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { chinese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -345,7 +323,6 @@ walls_02 = {
 	# TGP Japan
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { japanese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -354,7 +331,6 @@ walls_02 = {
 	}
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		governments = { steppe_admin_government celestial_government meritocratic_government }
 		graphical_cultures = { steppe_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
@@ -376,24 +352,14 @@ walls_02 = {
 	is_enabled = {
 		OR = {
 			# These buildings will trigger the visual "upgrade" to this wall asset
-			has_building_or_higher = "palisades_02"
-			has_building_or_higher = "curtain_walls_02"
-			has_building_or_higher = "hill_forts_02"
-			has_building_or_higher = "ramparts_02"
-			has_building_or_higher = "watchtowers_02"
-			has_building_or_higher = "temple_citadel_02"
+			has_building_or_higher = "pb_walls_02"
 			scope:holder = {
 				government_has_flag = government_is_nomadic
 				root = { fort_level = 2 }
 			}
 		}
 		NOR = {
-			# Disabling this level of walled graphics for holdings with special walls and other fortifications so that they always look appropriately fortified. Note: If any of these buildings are given unique 3D assets, this should be looked at again.
-			has_building_or_higher = "curtain_walls_03"
-			has_building_or_higher = "hill_forts_03"
-			has_building_or_higher = "ramparts_03"
-			has_building_or_higher = "watchtowers_03"
-			has_building_or_higher = "temple_citadel_03"
+			has_building_or_higher = "pb_walls_03"
 			has_building_or_higher = "theodosian_walls_01"
 			has_building_or_higher = "walls_of_benin_01"
 			has_building_or_higher = "walls_of_genoa_01"
@@ -488,7 +454,6 @@ walls_03 = {
 	# TGP Southeast Asia
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { southeast_asian_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -498,7 +463,6 @@ walls_03 = {
 	# TGP China
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { chinese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -508,7 +472,6 @@ walls_03 = {
 	# TGP Japan
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { japanese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -517,7 +480,6 @@ walls_03 = {
 	}
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { steppe_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -542,11 +504,7 @@ walls_03 = {
 		# }
 		OR = {
 			# These buildings will trigger the visual "upgrade" to this wall asset
-			has_building_or_higher = "curtain_walls_03"
-			has_building_or_higher = "hill_forts_03"
-			has_building_or_higher = "ramparts_03"
-			has_building_or_higher = "watchtowers_03"
-			has_building_or_higher = "temple_citadel_03"
+			has_building_or_higher = "pb_walls_03"
 			has_building_or_higher = "walls_of_benin_01"
 			has_building_or_higher = "walls_of_genoa_01"
 			has_building_or_higher = "aurelian_walls_01"
@@ -556,12 +514,7 @@ walls_03 = {
 			}
 		}
 		NOR = {
-			# Disabling this level of walled graphics for holdings with special walls and other fortifications so that they always look appropriately fortified. Note: If any of these buildings are given unique 3D assets, this should be looked at again.
-			has_building_or_higher = "curtain_walls_06"
-			has_building_or_higher = "hill_forts_06"
-			has_building_or_higher = "ramparts_06"
-			has_building_or_higher = "watchtowers_06"
-			has_building_or_higher = "temple_citadel_04"
+			has_building_or_higher = "pb_walls_04"
 			has_building_or_higher = "theodosian_walls_01"
 			has_building_or_higher = "city_wall_of_toledo_01"
 			has_building_or_higher = "roman_wall_of_lugo_01"
@@ -651,7 +604,6 @@ walls_04 = {
 	# TGP Southeast Asia
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { southeast_asian_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -661,7 +613,6 @@ walls_04 = {
 	# TGP China
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { chinese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -671,7 +622,6 @@ walls_04 = {
 	# TGP Japan
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { japanese_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -680,7 +630,6 @@ walls_04 = {
 	}
 	asset = {
 		type = pdxmesh
-		requires_dlc_flag = all_under_heaven
 		graphical_cultures = { steppe_building_gfx }
 		graphical_regions = { graphical_western graphical_mena graphical_india graphical_mediterranean graphical_steppe graphical_east_asia graphical_siberia }
 		names = {
@@ -704,11 +653,7 @@ walls_04 = {
 		# }
 		OR = {
 			# These buildings will trigger the visual "upgrade" to this wall asset
-			has_building_or_higher = "curtain_walls_06"
-			has_building_or_higher = "hill_forts_06"
-			has_building_or_higher = "ramparts_06"
-			has_building_or_higher = "watchtowers_06"
-			has_building_or_higher = "temple_citadel_04"
+			has_building_or_higher = "pb_walls_04"
 			has_building_or_higher = "theodosian_walls_01"
 			scope:holder = {
 				government_has_flag = government_is_nomadic

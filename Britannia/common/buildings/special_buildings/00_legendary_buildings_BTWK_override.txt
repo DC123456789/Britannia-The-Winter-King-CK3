@@ -4,6 +4,10 @@
 
 legendary_shrine = {
 
+	construction_time = very_slow_construction_time
+
+	type_icon = "special_buildings/legendary_shrine.dds"
+
 	asset = {
 		type = pdxmesh
 		name = "fp4_legendary_steppe_shrine_01_a_mesh"
@@ -34,10 +38,6 @@ legendary_shrine = {
 		graphical_faiths = { dharmic_gfx }
 	}
 
-	construction_time = very_slow_construction_time
-
-	type_icon = "icon_building_legendary_shrine.dds"
-
 	is_enabled = {
 		always = yes
 	}
@@ -52,23 +52,28 @@ legendary_shrine = {
 	}
 
 	county_modifier = {
-		tax_mult = 0.05
-		monthly_county_control_growth_add = 0.1
-		county_opinion_add = 10
+		religious_tax_mult = 0.05
+		control_baseline_add = 5
+		popular_opinion_add = building_minor_popular_opinion_gain
 	}
 
 	province_modifier = {
-		monthly_income_per_piety_level = 0.1
+		religious_tax_per_piety_level = 0.1
 		stationed_maa_damage_mult_per_piety_level = 0.02
 	}
 
 	ai_value = {
-		base = 100
+		base = 10
 		ai_pious_building_preference_modifier = yes
+		ai_control_baseline_building_modifier = { VALUE = 5 }
+		ai_opinion_baseline_building_modifier = { VALUE = 10 }
 		modifier = { # Fill all building slots before going for special buildings
 			factor = 0
 			free_building_slots > 0
 		}
+		ai_control_need_modifier = yes
+		ai_popular_opinion_need_modifier = yes
+		ai_special_district_modifier = { LEVEL = 1 }
 	}
 
 	on_complete = {
@@ -94,7 +99,6 @@ legendary_shrine = {
 		}
 	}
 
-	type = special
 
 	flag = travel_point_of_interest_religious
 }
