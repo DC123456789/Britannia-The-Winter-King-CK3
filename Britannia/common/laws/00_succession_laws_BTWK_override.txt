@@ -100,6 +100,57 @@ male_only_law = {
 	revoke_cost = {
 		prestige = change_succession_law_prestige_cost
 	}
+
+	requires_approve = { gdp_requires_assembly_approval_trigger = yes }
+	
+	ai_approval = {
+		value = 0
+		if = {
+			limit = {
+				liege ?= {
+					gdp_requires_assembly_approval_trigger = yes
+				}
+			}
+			# Base
+			add = {
+				value = -30
+				desc = LAW_BASE_RELUCTANCE_DESC
+			}
+			# Faith
+			if = {
+				limit = {
+					rite = { rite_has_parameter = male_dominated_law }
+				}
+				add = {
+					value = 25
+					desc = MALE_DOMINATED_RITE_DESC
+				}
+			}
+			# Culture
+			if = {
+				limit = {
+					culture = {
+						has_cultural_parameter = male_only_inheritance
+					}
+				}
+				add = {
+					value = 25
+					desc = MALE_DOMINATED_CULTURE_DESC
+				}
+			}
+			# Staunch Traditionalists never want to change
+			if = {
+				limit = {
+					culture ?= { has_cultural_tradition = tradition_staunch_traditionalists }
+					NOT = { has_realm_law = male_only_law }
+				}
+				add = {
+					value = -100
+					desc = "[GetCultureTradition('tradition_staunch_traditionalists').GetName]"
+				}
+			}
+		}
+	}
 }
 
 male_preference_law = {
@@ -220,5 +271,70 @@ male_preference_law = {
 	}
 	revoke_cost = {
 		prestige = change_succession_law_prestige_cost
+	}
+
+	requires_approve = { gdp_requires_assembly_approval_trigger = yes }
+	
+	ai_approval = {
+		value = 0
+		if = {
+			limit = {
+				liege ?= {
+					gdp_requires_assembly_approval_trigger = yes
+				}
+			}
+			# Base
+			add = {
+				value = -20
+				desc = LAW_BASE_RELUCTANCE_DESC
+			}
+			# Faith
+			if = {
+				limit = {
+					rite = { rite_has_parameter = male_dominated_law }
+				}
+				add = {
+					value = 25
+					desc = MALE_DOMINATED_RITE_DESC
+				}
+			}
+			# Culture
+			if = {
+				limit = {
+					culture = {
+						OR = {
+							AND = {
+								has_cultural_parameter = male_only_inheritance
+								root = {
+									NOT = { has_realm_law = male_only_law }
+								}
+							}
+							has_cultural_parameter = male_preference_inheritance
+							NOR = { # A default if the culture has no specific preference
+								has_cultural_parameter = male_only_inheritance
+								has_cultural_parameter = female_only_inheritance
+								has_cultural_parameter = female_preference_inheritance
+								has_cultural_parameter = gender_equal_inheritance
+							}
+						}
+					}
+				}
+				add = {
+					value = 25
+					desc = MALE_DOMINATED_CULTURE_DESC
+				}
+			}
+			# Staunch Traditionalists never want to change
+			if = {
+				limit = {
+					culture ?= { has_cultural_tradition = tradition_staunch_traditionalists }
+					NOT = { has_realm_law = male_preference_law }
+				}
+				add = {
+					value = -100
+					desc = "[GetCultureTradition('tradition_staunch_traditionalists').GetName]"
+				}
+			}
+		}
 	}
 }

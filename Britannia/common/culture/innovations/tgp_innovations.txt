@@ -53,6 +53,7 @@ innovation_fire_medicine = {
 	group = culture_group_military
 	culture_era = culture_era_early_medieval
 	icon = @gunpowder
+	custom = unlock_gunpowder_buildings
 
 	potential = {
 		silk_road_innovation_trigger = { INNOVATION = fire_medicine }
@@ -63,10 +64,15 @@ innovation_fire_medicine = {
 		unlock_powder_magazines = yes
 	}
 
+	character_modifier = {
+		gunpowder_damage_mult = 0.05
+		gunpowder_maintenance_mult = 0.05
+	}
+
 	flag = global_maa
 	flag = early_medieval_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 		if = {
@@ -94,7 +100,7 @@ innovation_champa_rice = {
 	}
 
 	county_modifier = {
-		wetlands_development_growth_factor = 0.15
+		wetlands_prosperity_growth_factor = 0.15
 		wetlands_construction_gold_cost = -0.1
 		wetlands_levy_size = 0.1
 	}
@@ -108,7 +114,7 @@ innovation_champa_rice = {
 	flag = global_regional
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -160,7 +166,7 @@ innovation_rocket_cart = { # Singijeon & Hwacha, and the Huo Che
 
 	flag = global_regional
 	flag = late_medieval_era_regional
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 		if = {
@@ -194,10 +200,14 @@ innovation_sericulture = { # VICTORIA TECHS ARE BACK BABEYYY AWOOOOU (wolf howl)
 		monthly_prestige_gain_per_legitimacy_level_add = 0.1
 	}
 
+	county_modifier = {
+		trade_good_silk_production_mult = 0.1
+	}
+
 	flag = global_regional
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -240,6 +250,41 @@ innovation_compass = {
 	}
 }
 
+innovation_tea_culture = {
+	skill = stewardship
+	group = culture_group_civic
+	culture_era = culture_era_early_medieval
+	icon = @sericulture
+
+	potential = {
+		silk_road_innovation_trigger = { INNOVATION = tea_culture }
+	}
+
+	county_modifier = {
+		trade_good_tea_production_mult = 0.1
+	}
+
+	parameters = {
+		unlocks_tea_house_buildings = yes
+		silk_road_innovation_parameter = yes
+	}
+
+	flag = silk_road_innovation
+	flag = early_medieval_era_regional
+
+	ai_weight_for_fascination = {
+		value = 100
+		if = {
+			limit = {
+				NOT = {
+					has_cultural_era_or_later = culture_era_early_medieval
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
 innovation_dragon_kiln = {
 	skill = learning
 	group = culture_group_civic
@@ -248,6 +293,10 @@ innovation_dragon_kiln = {
 
 	potential = {
 		silk_road_innovation_trigger = { INNOVATION = dragon_kiln }
+	}
+
+	county_modifier = {
+		trade_good_ceramics_production_mult = 0.15
 	}
 
 	parameters = {
@@ -259,6 +308,41 @@ innovation_dragon_kiln = {
 	flag = tribal_era_regional
 	flag = silk_road_innovation
 	
+	ai_weight_for_fascination = {
+		value = 100
+	}
+}
+
+innovation_lacquerware = {
+	skill = stewardship
+	group = culture_group_civic
+	culture_era = culture_era_tribal
+	icon = @sericulture
+
+	# Exists in all starts but only spreads with Silk Road (All Under Heaven or Silk and Silver)
+	potential = {
+		OR = {
+			silk_road_innovation_trigger = { INNOVATION = lacquerware }
+			has_cultural_pillar = heritage_chinese
+			has_cultural_pillar = heritage_japonic
+			has_cultural_pillar = heritage_korean
+			has_cultural_pillar = heritage_buyeo
+		}
+	}
+
+	character_modifier = {
+		monthly_prestige_gain_mult = 0.05
+	}
+
+	parameters = {
+		unlock_lacquerware_buildings = yes
+		silk_road_innovation_parameter = yes
+	}
+
+	flag = global_regional
+	flag = tribal_era_regional
+	flag = silk_road_innovation
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -279,19 +363,19 @@ innovation_block_printing = {
 	}
 	
 	county_modifier = {
-		development_growth_factor = 0.1
+		prosperity_growth_factor = 0.1
+		trade_good_books_paper_production_mult = 0.15
 	}
 
 	parameters = {
 		cheaper_book_inspiration = yes
 		block_printing_scriptorium_bonuses = yes
-		block_printing_university_bonuses = yes
 		silk_road_innovation_parameter = yes
 	}
 
 	flag = global_regional
 	flag = tribal_era_regional
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -332,7 +416,7 @@ innovation_grenades = {
 	flag = global_maa
 	flag = early_medieval_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 		if = {
@@ -357,20 +441,21 @@ innovation_cupellation = {
 	}
 	
 	province_modifier = {
-		hills_tax_mult = 0.15
-		mountains_tax_mult = 0.15
-		desert_mountains_tax_mult = 0.15
+		mining_tax_mult = 0.05
+	}
+
+	county_modifier = {
+		trade_good_silver_production_mult = 0.1
 	}
 
 	parameters = {
 		silk_road_innovation_parameter = yes
-		cupellation_mine_building_bonuses = yes
 	}
 
 	flag = global_maa
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -412,7 +497,7 @@ innovation_lacquered_armor = {
 	flag = global_maa
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -429,7 +514,9 @@ innovation_double_entry_bookkeeping = {
 	}
 
 	character_modifier = {
-		domain_tax_mult = 0.05
+		civic_tax_mult = 0.05
+		commerce_tax_mult = 0.05
+		monthly_income_from_trade_mult = 0.05
 	}
 
 	parameters = {
@@ -439,7 +526,7 @@ innovation_double_entry_bookkeeping = {
 
 	flag = early_medieval_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 		if = {
@@ -466,6 +553,7 @@ innovation_bulkheads = {
 	character_modifier = {
 		coastal_sea_travel_danger = medium_sea_danger_reduction
 		sea_travel_danger = medium_sea_danger_reduction
+		maritime_tax_mult = 0.05
 	}
 
 	parameters = {
@@ -474,7 +562,7 @@ innovation_bulkheads = {
 
 	flag = early_medieval_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 		if = {
@@ -499,14 +587,15 @@ innovation_coking = {
 	}
 
 	character_modifier = {
-		men_at_arms_recruitment_cost = -0.15
+		men_at_arms_recruitment_cost = -0.1
 	}
 	
 	county_modifier = {
-		forest_development_growth_factor = 0.15
-		taiga_development_growth_factor = 0.15
+		forest_prosperity_growth_factor = 0.15
+		taiga_prosperity_growth_factor = 0.15
 		forest_construction_gold_cost = -0.15
 		taiga_construction_gold_cost = -0.15
+		trade_good_iron_production_mult = 0.1
 	}
 
 	parameters = {
@@ -516,7 +605,7 @@ innovation_coking = {
 
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -563,7 +652,7 @@ innovation_composite_crossbow = {
 	flag = global_maa
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -583,6 +672,7 @@ innovation_pharmacopoeia = {
 	}
 	county_modifier = {
 		epidemic_resistance = 5
+		trade_good_medicaments_production_mult = 0.1
 	}
 
 	parameters = {
@@ -592,7 +682,7 @@ innovation_pharmacopoeia = {
 
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -609,16 +699,17 @@ innovation_waterworks = {
 	}
 	county_modifier = {
 		epidemic_resistance = 5
+		trade_good_rice_production_mult = 0.1
 	}
 
 	parameters = {
-		unlocks_waterworks_buildings = yes
+		waterworks_agricultural_bonuses = yes
 		silk_road_innovation_parameter = yes
 	}
 
 	flag = tribal_era_regional
 	flag = silk_road_innovation
-	
+
 	ai_weight_for_fascination = {
 		value = 100
 	}
@@ -637,18 +728,14 @@ innovation_tiefutu = {
 
 	unlock_maa = tiefutu
 
+	parameters = {
+		tiefutu_iron_armor = yes
+	}
+
 	flag = global_regional
 	flag = global_maa
-	
+
 	ai_weight_for_fascination = {
 		value = 100
-		if = {
-			limit = {
-				NOT = {
-					has_cultural_era_or_later = culture_era_high_medieval
-				}
-			}
-			multiply = 0
-		}
 	}
 }

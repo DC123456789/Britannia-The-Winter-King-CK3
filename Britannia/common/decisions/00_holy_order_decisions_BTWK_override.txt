@@ -21,7 +21,8 @@ create_holy_order_decision = {
 	picture = {
 		reference = "gfx/interface/illustrations/decisions/decision_major_religion.dds"
 	}
-	decision_group_type = major
+	decision_group_type = realm
+	sort_order = 30
 
 	ai_goal = yes
 
@@ -32,6 +33,7 @@ create_holy_order_decision = {
 			highest_held_title_tier >= tier_kingdom
 			any_held_county = {
 				any_in_de_jure_hierarchy = {
+					holder = root
 					barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = root }
 				}
 			}
@@ -66,6 +68,7 @@ create_holy_order_decision = {
 		title_valid = {
 			trigger_if = {
 				limit = { exists = this }
+				holder = scope:ruler
 				barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = scope:ruler }
 			}
 			trigger_else = {
@@ -103,6 +106,7 @@ create_holy_order_decision = {
 			text = "has_two_castle_county"
 			any_held_county = {
 				any_in_de_jure_hierarchy = {
+					holder = root
 					barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = root }
 				}
 			}
@@ -186,23 +190,6 @@ create_holy_order_decision = {
 			limit = {
 				exists = scope:barony
 			}
-			hidden_effect = {
-				if = {
-					limit = { scope:barony.holder != root }
-					create_title_and_vassal_change = {
-						type = leased_out
-						save_scope_as = change
-						add_claim_on_loss = no
-					}
-					scope:barony = {
-						change_title_holder_include_vassals = {
-							holder = root
-							change = scope:change
-						}
-					}
-					resolve_title_and_vassal_change = scope:change
-				}
-			}
 
 			create_character = {
 				template = holy_order_leader_character
@@ -240,18 +227,11 @@ create_holy_order_decision = {
 	ai_potential = {
 		highest_held_title_tier >= tier_kingdom
 		is_playable_character = yes
-		OR = {
-			any_held_title = {
-				title_tier = barony
-				barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = root }
-			}
-			any_vassal = {
-				primary_title.tier = tier_barony
-				any_held_title = {
-					barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = root }
-				}
-			}
-		}
+		is_at_war = no
+		piety_level >= 1
+		trigger_if = { limit = { has_pam_dlc_trigger = yes } OR = { government_has_flag = government_is_theocracy exists = root.puppet:theological_agent_puppet exists = root.puppet:external_theological_agent_puppet } }
+		is_available_adult = yes
+		any_held_title = { title_tier = barony barony_is_valid_for_holy_order_lease_trigger = { CHARACTER = root } }
 	}
 
 	ai_will_do = {

@@ -6,6 +6,7 @@ pam_convert_to_theocracy_decision = {
 		reference = "gfx/interface/illustrations/decisions/decision_personal_religious.dds"
 	}
 	decision_group_type = realm
+	sort_order = 40
 	desc = pam_convert_to_theocracy_decision_desc
 	selection_tooltip = pam_convert_to_theocracy_decision_tooltip
 
@@ -344,15 +345,15 @@ create_hof_decision = {
 	}
 
 	ai_potential = {
+		faith ?= {
+			NOT = { exists = religious_head }
+			OR = { has_doctrine_parameter = spiritual_head_of_faith has_doctrine_parameter = temporal_head_of_faith }
+		}
 		is_adult = yes
 		# Defer to a same-faith liege; they should be the one establishing the HoF
 		OR = {
 			top_liege = this
-			NOT = {
-				any_liege_or_above = {
-					faith = root.faith
-				}
-			}
+			NOT = { any_liege_or_above = { faith = root.faith } }
 		}
 	}
 
@@ -373,6 +374,8 @@ pam_shape_the_christian_church_decision = {
 	sort_order = 112
 
 	is_shown = {
+		is_landless_adventurer = no
+		is_landless_merchant = no
 		exists = top_participant_group:the_christian_church
 		# The Controversy phase only exits through the Council ruling
 		NOT = {

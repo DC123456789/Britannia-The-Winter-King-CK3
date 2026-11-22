@@ -10,12 +10,6 @@ NJominiMap = {
 }
 
 
-NDomain = {
-	LEVIES_AT_MAX_COUNTY_DEVELOPMENT = 2.0		# How many % levies bonus do you get at 100 county development? Interpolated between this value and 0% when between 0 and 100
-	TAX_AT_MAX_COUNTY_DEVELOPMENT = 2.0			# How much % tax bonus do you get at 100 county development? Interpolated between this value and 0% when between 0 and 100
-}
-
-
 NGovernment = {
 	GOVERNMENT_TYPES = {
 		"feudal_government"
@@ -38,6 +32,7 @@ NGovernment = {
 		"meritocratic_government"
 		"steppe_admin_government"
 		"ecclesiastical_government"
+		"merchant_government"
 		
 		# BTWK
 		"pre_feudal_government"
@@ -52,6 +47,14 @@ NCombat = {
 	UNRAISED_LEVY_REGIMENTS_SPEED = 15.0			# How many distance units do unraised regiments travel per day when gathering
 }
 
+NArmy = {
+	MOVEMENT_SPEED_RETREAT = 25					# Movement speed while retreating
+	MOVEMENT_SPEED = 18								# Normal movement speed
+	MOVEMENT_SPEED_BONUS_FRIENDLY_AREA = 0.6		# In friendly areas you get a 90% speed bonus
+	COUNTY_MOVEMENT_ATTRITION_PERCENTAGE = 0.02
+	MINIMUM_COUNTY_MOVEMENT_ATTRITION = 5	
+}
+
 NWar = {
 	MAX_ATTACKER_BATTLES_WAR_SCORE = 75				# How much war score is it possible for the attacker to get from battles. Can be overriden by CB
 }
@@ -63,16 +66,18 @@ NFaith = {
 	MAX_FERVOR_LOSS_PER_DIVERGENT_RITE = 0.33
 }
 
-NArmy = {
-	MOVEMENT_SPEED_RETREAT = 25					# Movement speed while retreating
-	MOVEMENT_SPEED = 18								# Normal movement speed
-	MOVEMENT_SPEED_BONUS_FRIENDLY_AREA = 0.6		# In friendly areas you get a 90% speed bonus
-	COUNTY_MOVEMENT_ATTRITION_PERCENTAGE = 0.02
-	MINIMUM_COUNTY_MOVEMENT_ATTRITION = 5	
+NTitle = {
+	CREATE_TITLE_GOLD_COST = { 0 0 0 50 100 300 750 } # remember to update values in create_duchy_title_value etc. in 01_dynamic_values.txt!
+	USURP_TITLE_GOLD_COST = { 0 0 0 125 250 500 1000 } # remember to update action_can_usurp_title in 00_title_actions.txt!
+	USURP_TITLE_PRESTIGE_GAIN = { 0 0 0 150 200 400 600 }
+}
+
+NDomain = {
+	TAX_AT_MAX_COUNTY_PROSPERITY = 1.0			# Tax bonus at 100 county prosperity, scaling down evenly to 0% at 0 prosperity
 }
 
 NCulture = {
-	MINIMUM_INNOVATIONS_TO_NEXT_ERA = 12									# Raw number of innovations needed to be able to go to the next era. If an era has less innovations than this number, the lowest is used.
+	MINIMUM_INNOVATIONS_TO_NEXT_ERA = 13									# Raw number of innovations needed to be able to go to the next era. If an era has less innovations than this number, the lowest is used.
 	FIRST_ERA_START_YEAR = 1
 	
 	# This counts the # of border counties. So if culture A has a county that borders a single county of culture B, that's 2 border counties. If it bordered 2, it'd be 3 border counties, as each individual county can only get counted once
@@ -164,12 +169,6 @@ NHolyOrder = {
 NRoyalCourt = {
 	COURT_GRANDEUR_STARTING_DEFAULT = 20 # Default starting current grandeur
 	SHARES_COURT_LANGUAGE_WITH_GRANDEST_DIFFERENT_RELIGION_MULTIPLIER = -0.25 # Reduce by 25% if grandest court and us are of different religions
-}
-
-NTitle = {
-	CREATE_TITLE_GOLD_COST = { 0 0 0 50 100 300 750 } # remember to update values in create_duchy_title_value etc. in 01_dynamic_values.txt!
-	USURP_TITLE_GOLD_COST = { 0 0 0 125 250 500 1000 } # remember to update action_can_usurp_title in 00_title_actions.txt!
-	USURP_TITLE_PRESTIGE_GAIN = { 0 0 0 150 200 400 600 }
 }
 
 # Settings for character based travel (not army travel)

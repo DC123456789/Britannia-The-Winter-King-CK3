@@ -437,6 +437,24 @@
 		}
 		localization_key = steppe_admin_icon_concept
 	}
+	text = { # Merchant
+		trigger = {
+			trigger_if = {
+				limit = { is_alive = no }
+				has_government = merchant_government
+			}
+			trigger_else = {
+				trigger_if = {
+					limit = { is_ruler = yes }
+					has_government = merchant_government
+				}
+				trigger_else = {
+					liege ?= { has_government = merchant_government }
+				}
+			}
+		}
+		localization_key = merchant_icon_concept
+	}
 	text = { # Feudal
 		trigger = { always = no }
 		localization_key = feudal_icon_concept
@@ -574,6 +592,12 @@ GetGovernmentTypeIcon = {
 			government_type_has_flag = government_is_steppe_admin
 		}
 		localization_key = steppe_admin_icon_concept
+	}
+	text = { # Merchant
+		trigger = {
+			government_type_has_flag = government_is_merchant
+		}
+		localization_key = merchant_icon_concept
 	}
 	text = { # Feudal
 		trigger = { always = no }

@@ -8,6 +8,17 @@ task_promote_culture = {
 	restart_on_finish = yes
 	highlight_own_realm = yes
 
+	is_shown = {
+		scope:councillor_liege = {
+			trigger_if = {
+				limit = {
+					government_has_flag = government_is_republic
+				}
+				is_landed = yes
+			}
+		}
+	}
+
 	asset = {
 		icon = "gfx/interface/icons/council_task_types/task_promote_culture.dds"
 		background = "gfx/interface/buttons/button_round_bg.dds"
@@ -61,7 +72,7 @@ task_promote_culture = {
 						}
 					}
 				}
-				desc = task_promote_culture_improve_county_opinion
+				desc = task_promote_culture_improve_popular_opinion
 			}
 			triggered_desc = {
 				trigger = {
@@ -131,19 +142,29 @@ task_promote_culture = {
 
 		add = steward_promote_culture_contextual_bonuses
 		
-		if = { # Development reduces the speed. Should be the last non-multiply modifier applied to avoid negative values
+		if = { # Prosperity reduces the speed. Should be the last non-multiply modifier applied to avoid negative values
 			limit = {
 				exists = scope:county
 				scope:county = {
-					development_level > 0
+					prosperity_level > 0
 				}
 			}
 			add = {
-				value = scope:county.promote_culture_development_penalty
-				desc = STEWARD_PROMOTE_CULTURE_DEVELOPMENT_PENALTY
+				value = scope:county.promote_culture_prosperity_penalty
+				desc = STEWARD_PROMOTE_CULTURE_PROSPERITY_PENALTY
 			}
 		}
-		
+		if = {
+			limit = { exists = scope:county.title_province }
+			multiply = {
+				value = 1
+				subtract = {
+					value = scope:county.title_province.province_size_level
+					multiply = promote_culture_settlement_size_penalty_step
+				}
+				desc = STEWARD_PROMOTE_CULTURE_SETTLEMENT_SIZE
+			}
+		}
 		# Conversion speed game rules
 		if = {
 			limit = {
@@ -294,6 +315,26 @@ task_promote_culture = {
 					}
 				}
 			}
+			# NAND = { # Princes in the HRE tend to not convert each other's cultures
+				# exists = title:e_hre.holder
+				# scope:councillor_liege.top_liege = title:e_hre.holder
+				# OR = {
+					# scope:councillor_liege.culture = culture:czech
+					# scope:councillor_liege.culture = { has_cultural_pillar = heritage_central_germanic }
+				# }
+				# OR = {
+					# scope:county.culture = culture:czech
+					# scope:county.culture = { has_cultural_pillar = heritage_central_germanic }
+				# }
+			# }
+			# NOT = { # Do not eliminate the Basques
+				# scope:county.culture = {
+					# this = culture:basque
+					# any_culture_county = {
+						# count <= 5
+					# }
+				# }
+			# }
 			scope:councillor_liege = {
 				OR = {
 					NOT = {
@@ -301,11 +342,18 @@ task_promote_culture = {
 							cultural_acceptance = { target = scope:councillor_liege.culture value >= 50 }
 						}
 					}
+					# scope:county = {
+						# this = title:c_maragha
+						# culture = culture:turkish
+					# }
 					culture = { # All AI's are motivated to spread new Hybrid/Divergent cultures
 						OR = {
 							is_hybrid_culture = yes
 							is_divergent_culture = yes
 						}
+						# NOT = { # Leave the Welsh alone!
+							# this = culture:anglo_saxon
+						# }
 						any_parent_culture = {
 							this = scope:county.culture
 						}

@@ -1,0 +1,114 @@
+﻿tradition_contado = {
+	category = regional
+
+	layers = {
+		0 = steward
+		1 = mediterranean
+		4 = urban_patriciate.dds
+	}
+
+	is_shown = {
+		has_gdp_dlc_trigger = yes
+		has_cultural_pillar = heritage_latin
+	}
+	can_pick = {
+		custom_tooltip = {
+			text = cultrad_not_nomadic_government_type
+			scope:character = {
+				NOT = {
+					government_has_flag = government_is_nomadic
+				}
+			}
+		}
+		NOT = { has_cultural_tradition = tradition_winegrowers }
+	}
+
+	parameters = {
+		contado_castello_buildings = yes
+		contado_borghi_buildings = yes
+		contado_towers_domicile_building = yes
+	}
+	character_modifier = {
+		domicile_monthly_gold_mult = 0.05
+	}
+	county_modifier = {
+		agricultural_tax_mult = 0.1
+		villages_district_district_build_gold_cost = -0.15
+		trade_good_cheese_production_mult = 0.15
+		trade_good_meat_production_mult = 0.15
+		trade_good_wine_production_mult = 0.15
+		trade_good_oil_production_mult = 0.15
+	}
+
+	cost = {
+		prestige = {
+			add = {
+				value = tradition_base_cost
+				desc = BASE
+				format = "BASE_VALUE_FORMAT"
+			}
+			# Ethos requirement.
+			if = {
+				limit = {
+					NOR = {
+						culture_pillar:ethos_communal = { is_in_list = traits }
+						culture_pillar:ethos_courtly = { is_in_list = traits }
+					}
+				}
+				add = {
+					value = tradition_incompatible_ethos_penalty
+					desc = not_communal_or_courtly_desc
+				}
+			}
+			# City requirement.
+			if = {
+				limit = {
+					NOT = {
+						scope:character = {
+							any_sub_realm_county = {
+								percent >= 0.9
+								culture = scope:character.culture
+								any_county_province = {
+									has_holding_type = city_holding
+								}
+							}
+						}
+					}
+				}
+				add = {
+					value = tradition_unfulfilled_criteria_penalty
+					desc = 90_percent_cities_desc
+				}
+			}
+
+			if = {
+				limit = {
+					culture_tradition_reduction_trigger = { TRADITION = tradition_contado }
+				}
+				multiply = {
+					value = 0.5
+					desc = inspired_by_culture_desc
+				}
+			}
+
+			multiply = tradition_replacement_cost_if_relevant
+		}
+	}
+
+	ai_will_do = {
+		value = 200
+		if = {
+			limit = {
+				scope:character = {
+					any_vassal = {
+						OR = {
+							government_has_flag = government_is_republic
+							government_has_flag = government_is_merchant
+						}
+					}
+				}
+			}
+			multiply = 2
+		}
+	}
+}

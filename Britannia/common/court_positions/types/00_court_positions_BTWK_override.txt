@@ -184,7 +184,10 @@ doorkeeper_royal_hall_court_position = {
 
 	valid_position = {
 		is_landed_or_landless_administrative_or_theocratic = yes
-		NOT = { government_has_flag = government_is_nomadic }
+		NOR = {
+			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_merchant
+		}
 		highest_held_title_tier >= tier_duchy
 		culture = {
 			has_cultural_pillar = heritage_brythonic
@@ -333,6 +336,15 @@ antiquarian_court_position = {
 
 	court_position_asset = {
 		trigger = {
+			government_has_flag = government_is_merchant
+		}
+		animation = throne_room_one_handed_passive_3
+		background = "gfx/interface/illustrations/event_scenes/armory.dds"
+		localization_key = antiquarian_merchant
+	}
+	
+	court_position_asset = {
+		trigger = {
 			government_has_flag = government_is_celestial
 		}
 		animation = throne_room_one_handed_passive_3
@@ -435,6 +447,18 @@ antiquarian_court_position = {
 			}
 		}
 		add = court_position_aptitude_low_penalty_value
+		if = {
+			limit = {
+				liege_or_court_owner ?= {
+					has_perk = chains_of_loyalty_perk
+					government_has_flag = government_is_settled_non_tribal
+				}
+			}
+			add = {
+				value = 10
+				desc = chains_of_loyalty_perk_name
+			}
+		}
 		add = general_aptitude_bonus
 	}
 
@@ -442,6 +466,7 @@ antiquarian_court_position = {
 		OR = {
 			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_merchant
 		}
 		trigger_if = {
 			limit = {
@@ -457,12 +482,22 @@ antiquarian_court_position = {
 		OR = {
 			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_merchant
 		}
 		trigger_if = {
 			limit = {
 				is_ai = yes
 			}
 			has_any_artifact = yes
+		}
+		trigger_if = {
+			limit = {
+				government_has_flag = government_is_merchant
+			}
+			custom_tooltip = {
+				text = antiquarian_court_position_parameter_tt
+				has_realm_law = company_purpose_artisan
+			}
 		}
 	}
 
@@ -557,17 +592,21 @@ antiquarian_court_position = {
 
 	on_court_position_received = {
 		antiquarian_title_accepted_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_revoked = {
 		antiquarian_title_revoked_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_invalidated = {
 		antiquarian_title_invalidated_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_vacated = {
 		court_position_vacated_event_effect = {
 			COURT_POSITION_TYPE = antiquarian_court_position
 		}
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 
 	# Scripted value to determine whether an AI will hire/fire a position or not. Hires over 0, fires under -50. Look in _court_positions.info for more extensive documentation!
@@ -646,6 +685,15 @@ master_of_hunt_court_position = {
 
 	court_position_asset = {
 		trigger = {
+			government_has_flag = government_is_merchant
+		}
+		animation = hunting_shortbow_aim_arrow_default
+		background = "gfx/interface/illustrations/event_scenes/ep2_hunt_poachers_camp.dds"
+		localization_key = master_of_hunt_merchant
+	}
+
+	court_position_asset = {
+		trigger = {
 			government_has_flag = government_is_nomadic
 		}
 		animation = hunting_falcon
@@ -709,28 +757,30 @@ master_of_hunt_court_position = {
 			desc = court_position_skill_learning
 		}
 		if = {
-			limit = {
-				hunt_lifestyle_track_greater_equal_trigger = { TRACK = hunter GREATER_EQUAL = 100 }
-			}
-			add = {
-				value = 40
-				desc = court_position_hunter_3_trait
-			}
-		}
-		else_if = {
-			limit = {
-				hunt_lifestyle_track_greater_equal_trigger = { TRACK = hunter GREATER_EQUAL = 50 }
-			}
-			add = {
-				value = 30
-				desc = court_position_hunter_2_trait
-			}
-		}
-		else_if = {
 			limit = { has_trait = lifestyle_hunter }
-			add = {
-				value = 20
-				desc = court_position_hunter_1_trait
+			if = {
+				limit = {
+					hunt_lifestyle_track_greater_equal_trigger = { TRACK = hunter GREATER_EQUAL = 100 }
+				}
+				add = {
+					value = 40
+					desc = court_position_hunter_3_trait
+				}
+			}
+			else_if = {
+				limit = {
+					hunt_lifestyle_track_greater_equal_trigger = { TRACK = hunter GREATER_EQUAL = 50 }
+				}
+				add = {
+					value = 30
+					desc = court_position_hunter_2_trait
+				}
+			}
+			else = {
+				add = {
+					value = 20
+					desc = court_position_hunter_1_trait
+				}
 			}
 		}
 		if = {
@@ -778,6 +828,24 @@ master_of_hunt_court_position = {
 				desc = estate_increase_master_of_hunt_aptitude_desc
 			}
 		}
+		if = {
+			limit = {
+				employer.domicile ?= { has_domicile_parameter = company_increase_master_of_hunt_aptitude_05 }
+			}
+			add = {
+				value = company_study_capstone_court_position_aptitude_05_value
+				desc = domicile_building_parameter_company_increase_master_of_hunt_aptitude_05
+			}
+		}
+		else_if = {
+			limit = {
+				employer.domicile ?= { has_domicile_parameter = company_increase_master_of_hunt_aptitude_04 }
+			}
+			add = {
+				value = company_study_capstone_court_position_aptitude_04_value
+				desc = domicile_building_parameter_company_increase_master_of_hunt_aptitude_04
+			}
+		}
 		# Bonus from court.8311
 		if = {
 			limit = { var:bonus_aptitude_role ?= flag:master_of_hunt }
@@ -795,6 +863,7 @@ master_of_hunt_court_position = {
 		OR = {
 			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_merchant
 		}
 		trigger_if = {
 			limit = {
@@ -810,6 +879,7 @@ master_of_hunt_court_position = {
 		OR = {
 			is_landed_or_landless_administrative_or_theocratic = yes
 			government_has_flag = government_is_nomadic
+			government_has_flag = government_is_merchant
 		}
 		NOT = {
 			culture = { has_cultural_parameter = cannot_hunt }
@@ -918,17 +988,21 @@ master_of_hunt_court_position = {
 
 	on_court_position_received = {
 		master_of_hunt_title_accepted_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_revoked = {
 		master_of_hunt_title_revoked_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_invalidated = {
 		master_of_hunt_title_invalidated_effect = yes
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	on_court_position_vacated = {
 		court_position_vacated_event_effect = {
 			COURT_POSITION_TYPE = master_of_hunt_court_position
 		}
+		scope:liege = { update_merchant_learn_on_the_job_effect = yes }
 	}
 	# Scripted value to determine whether an AI will hire/fire a position or not. Hires over 0, fires under -50. Look in _court_positions.info for more extensive documentation!
 	ai_position_score = {
@@ -1463,6 +1537,7 @@ keeper_of_swans_court_position = {
 		NOR = {
 			government_has_flag = government_is_nomadic
 			government_has_flag = government_is_celestial
+			government_has_flag = government_is_merchant
 		}
 		trigger_if = {
 			limit = {
@@ -1749,6 +1824,7 @@ court_jester_court_position = {
 		NOR = {
 			government_has_flag = government_is_nomadic
 			government_has_flag = government_is_celestial
+			government_has_flag = government_is_merchant
 		}
 		trigger_if = {
 			limit = {

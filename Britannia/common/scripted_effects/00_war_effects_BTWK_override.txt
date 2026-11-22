@@ -1132,3 +1132,102 @@ commander_trait_leveling_leveling_effect = {
 		}
 	}
 }
+
+on_victory_claim_cb_effect = {
+	# take whole realm if target is admin
+	scope:defender ?= {
+		if = {
+			limit = {
+				top_liege = this
+				government_has_mechanic = administrative
+				primary_title = { is_in_list = target_titles }
+			}
+			every_held_title = {
+				title_tier >= county
+				limit = { is_landless_type_title = no }
+				add_to_list = target_titles
+			}
+		}
+	}
+		
+	# Deal with laeti revolts
+	if = {
+		limit = {
+			war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+			scope:attacker = { any_liege_or_above = { this = scope:defender } }
+		}
+		scope:attacker = { becomes_independent = { change = scope:change } }
+	}
+	
+	# BTWK - If the claimant is unlanded, they inherit the government type of the previous holder of the highest tier target title - but with many exceptions
+	scope:claimant = {
+		if = {
+			limit = { 
+				OR = {
+					is_ruler = no
+					is_landless_adventurer = yes
+				}
+			}
+			BTWK_flag_new_government_type_for_unlanded = {
+				INHERIT_SCOPE = scope:target.holder
+			}
+		}
+	}
+
+	if = {
+		limit = { exists = scope:hide_title_change }
+		hidden_effect = {
+			on_victory_claim_cb_handle_titles = yes
+		}
+	}
+	else = {
+		on_victory_claim_cb_handle_titles = yes
+	}
+	
+	# BTWK - Now actually apply the government change
+	scope:claimant = { BTWK_apply_new_government_type_for_unlanded = yes }
+
+	# No special claim CB has vassals using it yet, but we keep these calls for later
+	on_victory_claim_ceremonial_liege_effects = yes
+	on_victory_claim_vassalize_effects = yes
+	claim_war_add_favor = yes
+}
+
+
+on_white_peace_claim_cb_effect = {
+	claim_war_claim_pressed = yes
+
+	# Deal with foederati revolts
+	if = {
+		limit = {
+			war = { has_variable = BTWK_break_tributary_on_victory_or_wp }
+			scope:attacker.suzerain ?= scope:defender
+		}
+		scope:attacker = { end_tributary = yes }
+	}
+	
+	# Deal with laeti revolts
+	if = {
+		limit = {
+			war = { has_variable = BTWK_break_vassal_on_victory_or_wp }
+			scope:attacker = { any_liege_or_above = { this = scope:defender } }
+		}
+		scope:attacker = { 
+			create_title_and_vassal_change = {
+				type = independency
+				save_scope_as = change
+				add_claim_on_loss = no
+			}
+			becomes_independent = { change = scope:change }
+			resolve_title_and_vassal_change = scope:change
+		}
+	}
+	
+	setup_claim_cb = {
+		titles = target_titles
+		attacker = scope:attacker
+		defender = scope:defender
+		claimant = scope:claimant
+		victory = no
+	}
+}

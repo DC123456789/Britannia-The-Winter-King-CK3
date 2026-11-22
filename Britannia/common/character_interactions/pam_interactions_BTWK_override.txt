@@ -693,6 +693,15 @@ petition_antipope_indulgences_interaction = {
 		empire = 12
 		hegemony = 12
 	}
+	ai_frequency_by_tier_government_override = {
+		government = merchant_government
+		barony = 0
+		county = 108
+		duchy = 0
+		kingdom = 0
+		empire = 0
+		hegemony = 0
+	}
 
 	is_available = {
 		always = no		# BTWK Disabled
@@ -1093,6 +1102,7 @@ ecclesiastical_bestow_title_interaction = {
 	auto_accept = {
 		custom_description = {
 			text = ecclesiastical_bestow_title_asks_nothing_tt
+			object = scope:recipient
 			scope:demand_nothing = yes
 		}
 	}
@@ -1846,7 +1856,6 @@ ecclesiastical_bestow_title_interaction = {
 	}
 }
 
-#Secular rulers petition the clergy to proclaim an unheld de jure title above their own and crown them with it
 request_unformed_title_interaction = {
 	category = interaction_category_religion
 	icon = icon_clergy_claim_unformed_kingdom
@@ -3995,7 +4004,7 @@ ecclesiastical_de_jure_shifting_interaction = {
 					holder = {
 						target_is_same_character_or_above = scope:puppet_or_actor
 					}
-					county_control < 100
+					county_control < county_control_baseline
 				}
 			}
 			add = {
@@ -4006,24 +4015,24 @@ ecclesiastical_de_jure_shifting_interaction = {
 							holder = {
 								target_is_same_character_or_above = scope:puppet_or_actor
 							}
-							county_control < 100
+							county_control < county_control_baseline
 						}
 						add = -1
 						if = {
 							limit = {
-								county_control < 75
+								county_control < county_control_relative_40
 							}
 							add = -1
 						}
 						if = {
 							limit = {
-								county_control < 50
+								county_control < county_control_relative_25
 							}
 							add = -1
 						}
 						if = {
 							limit = {
-								county_control < 25
+								county_control < county_control_relative_20
 							}
 							add = -1
 						}

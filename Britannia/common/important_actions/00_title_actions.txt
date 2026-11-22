@@ -26,6 +26,9 @@ action_can_create_title = {
 					}
 					title_capital_county.empire != title:e_japan
 				}
+				prev = {
+					NOT = { government_has_flag = government_is_republic }
+				}
 			}
 			order_by = tier
 			max = 99
@@ -73,16 +76,20 @@ action_can_usurp_title = {
 	combine_into_one = yes
 	priority = 505
 	check_create_action = {
-		ordered_alert_usurpable_title = { # list all creatable/usurpable
-			order_by = tier
-			max = 99
-			check_range_bounds = no
-
-			try_create_important_action = {
-				important_action_type = action_can_usurp_title
-				landed_title = this
+		if = {
+			limit = {
+				NOT = { government_has_flag = government_is_republic } # we do not show the Usurp button for Republics
 			}
-		}		
+			ordered_alert_usurpable_title = { # list all creatable/usurpable
+				order_by = tier
+				max = 99
+				check_range_bounds = no
+				try_create_important_action = {
+					important_action_type = action_can_usurp_title
+					landed_title = this
+				}
+			}
+		}
 	}
 
 	unimportant = {
