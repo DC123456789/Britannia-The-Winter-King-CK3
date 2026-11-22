@@ -161,7 +161,6 @@ ep3_frankokratia_story_owner_trigger = {
 	# 	has_truce = title:e_byzantium.holder
 	# 	has_relation_friend = title:e_byzantium.holder
 	# 	has_relation_lover = title:e_byzantium.holder
-	# 	has_relation_soulmate = title:e_byzantium.holder
 	# }
 	# #Needs to be interesteed in working with Latin shipbuilders
 	# capital_province = {
@@ -319,7 +318,6 @@ ep3_frankokratia_claimant_trigger = {
 	# 	is_consort_of = title:e_byzantium.holder
 	# 	has_relation_soulmate = title:e_byzantium.holder
 	# 	has_relation_friend = title:e_byzantium.holder
-	# 	has_relation_best_friend = title:e_byzantium.holder
 	# }
 	# NAND = {
 	# 	OR = {
@@ -366,7 +364,6 @@ ep3_frankokratia_financier_trigger = {
 	# 	is_vassal_of = title:e_byzantium.holder
 	# 	has_relation_friend = title:e_byzantium.holder
 	# 	has_relation_lover = title:e_byzantium.holder
-	# 	has_relation_soulmate = title:e_byzantium.holder
 	# 	AND = {
 	# 		exists = faith.religious_head
 	# 		this = faith.religious_head
@@ -690,5 +687,39 @@ ep3_orthodox_faith_trigger = {
 	# 	faith = faith:bogomilist
 	# 	faith = faith:paulician
 	# 	faith = faith:nestorian
+	# }
+}
+
+#Byzantine vassal who swears to the new king of their de jure kingdom when Byzantium shatters
+ep3_frankokratia_byz_vassal_joins_new_kingdom_trigger = {
+	always = no #BTWK
+	# is_in_list = byz_vassals
+	# highest_held_title_tier <= tier_duchy
+	# #Only the openly disloyal refuse
+	# OR = {
+		# has_trait = loyal
+		# NOR = {
+			# has_trait = disloyal
+			# has_trait = ambitious
+			# AND = {
+				# ai_boldness >= medium_positive_ai_value
+				# ai_honor <= medium_negative_ai_value
+			# }
+		# }
+	# }
+	# capital_county = {
+		# save_temporary_scope_as = prime_title
+		# kingdom.holder ?= {
+			# is_in_list = byz_vassals
+		# }
+	# }
+	# has_same_government = scope:prime_title.kingdom.holder
+	# #One of their counties borders the king's realm
+	# any_sub_realm_county = {
+		# any_neighboring_county = {
+			# holder = {
+				# target_is_same_character_or_above = scope:prime_title.kingdom.holder
+			# }
+		# }
 	# }
 }

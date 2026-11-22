@@ -911,7 +911,7 @@
 						}
 
 						hbox = {
-							flowcontainer_game_rules_mini = {
+							hbox_game_rules_mini = {
 								name = "game_rules_mini"
 								margin = { 10 0 }
 							}
@@ -1845,7 +1845,6 @@
 										vbox = {
 											layoutpolicy_horizontal = expanding
 
-
 											vbox = {
 												layoutpolicy_horizontal = expanding
 												margin = { 25 8 }
@@ -1901,11 +1900,11 @@
 														layoutpolicy_horizontal = expanding
 														autoresize = no
 
-														text = "BOOKMARK_CHARACTER_SUBHEADING_AND_GOVERNMENT" 
+														text = "BOOKMARK_CHARACTER_SUBHEADING_AND_GOVERNMENT"
 
 														align = nobaseline|hcenter
 														using = Font_Size_Medium
-													}												
+													}
 												}
 												vbox = {
 													layoutpolicy_horizontal = expanding
@@ -1922,8 +1921,6 @@
 														using = Animation_FadeIn_Standard
 													}
 
-
-
 													text_single = {
 														name = "character_name_create"
 														layoutpolicy_horizontal = expanding
@@ -1934,18 +1931,15 @@
 														default_format = "#high;glow_color:{0,0,0,1}"
 													}
 
-
 													text_single = {
 														layoutpolicy_horizontal = expanding
 														autoresize = no
 
-														text = "BOOKMARK_CUSTOM_CHARACTER_SUBHEADING_AND_GOVERNMENT" 
-														
+														text = "BOOKMARK_CUSTOM_CHARACTER_SUBHEADING_AND_GOVERNMENT"
+
 														align = nobaseline|hcenter
 														using = Font_Size_Medium
 													}
-
-
 												}
 											}
 
@@ -3248,7 +3242,6 @@ types BookmarkPortraits
 		down = "[GameSetup.IsBookmarkSelected( Bookmark.Self )]"
 		alwaystransparent = "[GameSetup.IsBookmarkSelected( Bookmark.Self )]"
 		using = SubTabShortcut
-		
 
 		state = {
 			name = "_mouse_enter"
@@ -3609,12 +3602,13 @@ types BookmarkPortraits
 					}
 				}
 
-				flowcontainer = {
-					margin_left = 15
+				container = {
+					ignoreinvisible = yes
 					allow_outside = yes
 
 					icon = {
 						name = "celestial_nameplate"
+						position = { 15 0 }
 						visible = "[Or(BookmarkCharacter.GetGovernmentType.IsType( 'celestial_government'), Or(BookmarkCharacter.GetGovernmentType.IsType( 'mandala_government'), Or(BookmarkCharacter.GetGovernmentType.IsType( 'wanua_government'), Or(BookmarkCharacter.GetGovernmentType.IsType( 'meritocratic_government'), Or(BookmarkCharacter.GetGovernmentType.IsType( 'nomad_government' ), Or(BookmarkCharacter.GetGovernmentType.IsType( 'japan_administrative_government' ), BookmarkCharacter.GetGovernmentType.IsType( 'japan_feudal_government' )))))))]"
 						texture = "gfx/interface/icons/banners/banner_asia_left.dds"
 						spriteType = Corneredtiled
@@ -3775,6 +3769,11 @@ types BookmarkPortraits
 							position = { 0 -25 }
 						}
 
+						coa_merchant_bookmark = {
+							visible = "[BookmarkCharacter.GetGovernmentType.IsType('merchant_government')]"
+							position = { 0 -25 }
+						}
+
 						flowcontainer = {
 							direction = vertical
 							margin_left = 70
@@ -3830,7 +3829,9 @@ types BookmarkPortraits
 
 					icon = {
 						name = "western_nameplate"
+						position = { 15 0 }
 						texture = "gfx/interface/icons/banners/banner_blue_left.dds"
+						minimumsize = { 280 90 }
 						spriteType = Corneredtiled
 						spriteborder = { 72 0 }
 						spriteborder_right = 114
@@ -3966,7 +3967,7 @@ types BookmarkPortraits
 						}
 
 						coa_realm_bookmark = {
-							visible = "[And(And(Not(BookmarkCharacter.GetGovernmentType.IsType('clan_government')), Not(BookmarkCharacter.GetGovernmentType.IsType('landless_adventurer_government_bm_placeholder'))), And(Not( Or(BookmarkCharacter.GetGovernmentType.IsType( 'administrative_government' ), IsBTWKAdminGovernment(BookmarkCharacter.GetGovernmentType))), Not(BookmarkCharacter.GetGovernmentType.IsType('nomad_government'))))]"
+							visible = "[And(And(Not(BookmarkCharacter.GetGovernmentType.IsType('clan_government')), Not(BookmarkCharacter.GetGovernmentType.IsType('landless_adventurer_government_bm_placeholder'))), And(Not( Or(BookmarkCharacter.GetGovernmentType.IsType( 'administrative_government' ), IsBTWKAdminGovernment(BookmarkCharacter.GetGovernmentType))), And(Not(BookmarkCharacter.GetGovernmentType.IsType('nomad_government')), Not(BookmarkCharacter.GetGovernmentType.IsType('merchant_government')))))]"
 							position = { 0 -33 }
 						}
 
@@ -3990,6 +3991,11 @@ types BookmarkPortraits
 							position = { 0 -24 }
 						}
 
+						coa_merchant_bookmark = {
+							visible = "[BookmarkCharacter.GetGovernmentType.IsType('merchant_government')]"
+							position = { 0 -24 }
+						}
+
 						flowcontainer = {
 							direction = vertical
 							margin_left = 70
@@ -4004,6 +4010,20 @@ types BookmarkPortraits
 								text = "[BookmarkCharacter.GetName]"
 								fontsize = 21
 								default_format = "#high;bold;glow_color:{0,0,0,1}"
+							}
+
+							text_single = {
+								visible = "[And( BookmarkCharacter.GetGovernmentType.IsType( 'landless_adventurer_government' ), Not( BookmarkCharacter.HasPortrait ) )]"
+								text = "BOOKMARK_SUBTITLE_NEW_LANDLESS_ADVENTURER"
+								fontsize = 16
+								default_format = "#high;glow_color:{0,0,0,1}"
+							}
+
+							text_single = {
+								visible = "[And( BookmarkCharacter.GetGovernmentType.IsType( 'merchant_government' ), Not( BookmarkCharacter.HasPortrait ) )]"
+								text = "BOOKMARK_SUBTITLE_NEW_MERCHANT"
+								fontsize = 16
+								default_format = "#high;glow_color:{0,0,0,1}"
 							}
 
 							text_single = {

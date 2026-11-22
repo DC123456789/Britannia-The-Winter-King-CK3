@@ -133,6 +133,18 @@
 			}
 			remove_character_flag = high_king_flag
 		}
+		if = { # Force Regent for certain titles
+			limit = {
+				primary_title ?= { has_variable = BTWK_regent_flag }
+			}
+			add_character_flag = BTWK_regent_flag
+		}
+		else_if = {
+			limit = {
+				has_character_flag = BTWK_regent_flag
+			}
+			remove_character_flag = BTWK_regent_flag
+		}
 	}
 }
 
@@ -234,6 +246,18 @@ additional_flavor_check_death_effect = {
 			}
 		}
 	}
+	else_if = {
+		limit = {
+			has_character_flag = BTWK_regent_flag
+			highest_held_title_tier = tier_kingdom
+		}
+		primary_title ?= { 
+			set_variable = {
+				name = BTWK_regent_flag 
+				days = 1
+			}
+		}
+	}
 }
 
 hre_margraves_effect = {
@@ -250,7 +274,7 @@ hre_margraves_effect = {
 							# this = title:d_osterreich
 							# this = title:d_lausitz
 							# this = title:d_meissen
-							# this = title:d_nordgau
+							# this = title:d_cham
 						# }
 					# }
 				# }

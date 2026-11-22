@@ -77,6 +77,26 @@ start_tributary_interaction_effect = {
 			custom_tooltip = no_tributary_war_obligations
 		}
 	}
+	#Merchant Tributaries
+	else_if = {
+		limit = { 
+			$TRIBUTARY$ = { government_has_flag = government_is_merchant }
+		}
+		$TRIBUTARY$ = {
+			# Clear up old patron contracts
+			every_character_task_contract = {
+				limit = { has_task_contract_group = merchant_patron_contract_group }
+				scheme ?= { invalidate_scheme = yes }
+				invalidate_contract = yes
+			}
+			remove_character_flag = patron_contract_cooldown_hobnob
+			# Create tributary
+			start_tributary = {
+				contract_group = tributary_merchant
+				suzerain = $SUZERAIN$
+			}
+		}
+	}
 	# BTWK - Client Kingdom Tributaries
 	else_if = {
 		limit = {
@@ -808,7 +828,15 @@ start_tributary_interaction_effect = {
 			custom_tooltip = no_tributary_war_obligations
 		}
 	}
-	setup_tributary_truces_effect = { SUZERAIN = $SUZERAIN$ TRIBUTARY = $TRIBUTARY$ }
+	# Truces
+	if = {
+		limit = {
+			NOT = {
+				$TRIBUTARY$ = { government_has_flag = government_is_merchant }
+			}
+		}
+		setup_tributary_truces_effect = { SUZERAIN = $SUZERAIN$ TRIBUTARY = $TRIBUTARY$ }
+	}
 	
 	# Check mint modifiers - subject king relationship could be made or broken here
 	$TRIBUTARY$ = {
@@ -823,6 +851,14 @@ start_tributary_interaction_effect = {
 }
 
 revoke_title_interaction_effect = {
+	if = {
+		limit = { scope:landed_title.tier != tier_barony }
+		gg_triggered_catalyst_effect = {
+			ACTOR = scope:actor
+			RECIPIENT = scope:recipient
+			CATALYST = catalyst_gg_title_revoked_from_opposite_party
+		}
+	}
 	if = {
 		limit = {
 			scope:recipient = {
@@ -841,6 +877,23 @@ revoke_title_interaction_effect = {
 			scope:actor.faith.religious_head = {
 				add_opinion = {
 					target = scope:actor
+					modifier = impious_opinion
+					opinion = -20
+				}
+			}
+		}
+		scope:recipient.capital_county.clerical_region_title.holder ?= {
+			if = {
+				limit = {
+					faith = scope:puppet_or_actor.faith
+					NOR = {
+						this = scope:puppet_or_actor
+						this = scope:recipient
+						scope:puppet_or_actor.faith.religious_head ?= this
+					}
+				}
+				add_opinion = {
+					target = scope:puppet_or_actor
 					modifier = impious_opinion
 					opinion = -20
 				}
@@ -1008,39 +1061,33 @@ revoke_title_interaction_effect = {
 			}
 		}
 
-		# If we're a clan this interaction affects unity
+		# House Unity
 		if = {
 			limit = {
-				scope:actor = { government_has_flag = government_is_clan }
-				scope:recipient = { government_has_flag = government_is_clan }
-				exists = scope:actor.house
+				scope:puppet_or_actor = { government_has_flag = government_uses_house_unity }
+				scope:recipient = { government_has_flag = government_uses_house_unity }
+				exists = scope:puppet_or_actor.house
 				exists = scope:recipient.house
-				scope:actor.house = scope:recipient.house
+				scope:puppet_or_actor.house = scope:recipient.house
 				scope:landed_title.tier >= tier_county
 			}
-			scope:actor.house = {
+			scope:puppet_or_actor.house = {
 				if = {
-					limit = {
-						scope:landed_title.tier = tier_county
-					}
+					limit = { scope:landed_title.tier = tier_county }
 					save_scope_value_as = {
 						name = revoke_title_unity_loss
 						value = minor_unity_loss
 					}
 				}
-				if = {
-					limit = {
-						scope:landed_title.tier = tier_duchy
-					}
+				else_if = {
+					limit = { scope:landed_title.tier = tier_duchy }
 					save_scope_value_as = {
 						name = revoke_title_unity_loss
 						value = medium_unity_loss
 					}
 				}
 				else_if = {
-					limit = {
-						scope:landed_title.tier = tier_kingdom
-					}
+					limit = { scope:landed_title.tier = tier_kingdom }
 					save_scope_value_as = {
 						name = revoke_title_unity_loss
 						value = major_unity_loss
@@ -1048,8 +1095,8 @@ revoke_title_interaction_effect = {
 				}
 				if = {
 					limit = { exists = scope:revoke_title_unity_loss }
-					add_clan_unity_interaction_effect = {
-						CHARACTER = scope:actor
+					add_house_unity_interaction_effect = {
+						CHARACTER = scope:puppet_or_actor
 						TARGET = scope:recipient
 						VALUE = scope:revoke_title_unity_loss
 						DESC = clan_unity_title_revoked.desc
@@ -1063,7 +1110,7 @@ revoke_title_interaction_effect = {
 		scope:recipient = {
 			if = {
 				limit = {
-					has_ep3_dlc_trigger = yes
+					has_playable_adventurer_dlc_trigger = yes
 					is_valid_for_laampdom = yes
 				}
 				# Plus for our memory variable.
@@ -1154,19 +1201,15 @@ revoke_title_interaction_effect = {
 							var:requested_my_excommunication = scope:actor
 						}
 					}
-					NOT = {
-						has_relation_rival = scope:actor
-					}
+					NOT = { has_relation_rival = scope:puppet_or_actor }
 				}
 				if = {
-					limit = {
-						has_relation_potential_rival = scope:actor
-					}
+					limit = { has_relation_potential_rival = scope:puppet_or_actor }
 					remove_relation_potential_rival = scope:actor
 				}
-				set_relation_rival = {
-					target = scope:actor
-					reason = rival_revoked_title_reversed
+				set_relation_rival_effect = {
+					TARGET = scope:puppet_or_actor
+					REASON = rival_revoked_title_reversed
 				}
 			}
 			else = {
@@ -1190,6 +1233,28 @@ revoke_title_interaction_effect = {
 					}
 				}
 			}
+		}
+	}
+
+	# Handling for destruction of Republics (losing their last landed county)
+	scope:recipient = {
+		if = {
+			limit = {
+				scope:landed_title = {
+					tier = tier_county
+					is_landless_type_title = no
+					is_noble_family_title = no
+				}
+				gdp_holds_republic_title_trigger = yes
+				NOT = {
+					any_held_county = {
+						is_landless_type_title = no
+						is_noble_family_title = no
+						NOT = { this = scope:landed_title } # last landed county lost
+					}
+				}
+			}
+			gdp_republic_patricians_become_merchants_warning_effect = { DESTROYER = scope:puppet_or_actor }
 		}
 	}
 

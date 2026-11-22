@@ -12,6 +12,7 @@ the_christian_church = {
 	gui_tooltip_group_focused = yes
 	illustration = "gfx/interface/illustrations/event_story/pam_the_christian_church_instability.dds"
 	situation_group_type = major
+	religion = christianity_religion
 
 	is_unique = yes
 	keep_full_history = yes
@@ -413,6 +414,7 @@ the_christian_church = {
 						catalyst_clergy_has_child = minor_situation_catalyst_gain
 						# CBs
 						catalyst_the_christian_church_humiliation_war_declared = medium_situation_catalyst_gain
+						catalyst_challenge_hof_replaced = monumental_situation_catalyst_gain
 						# Activities
 						catalyst_clergy_hosted_feast = minor_situation_catalyst_gain
 						catalyst_clergy_attended_feast = minimal_situation_catalyst_gain
@@ -481,6 +483,8 @@ the_christian_church = {
 						# catalyst_clergy_cardinal_murdered = pam_investiture_crisis_catalyst_major_value
 						# catalyst_clergy_head_of_rite_murdered = pam_investiture_crisis_catalyst_major_value
 						# catalyst_the_christian_church_ruler_imprisons_head_of_faith = pam_investiture_crisis_catalyst_major_plus_value
+						# #CBs
+						# catalyst_challenge_hof_replaced = monumental_situation_catalyst_gain
 						# # A cleric was elevated to an archbishopric (Request Elevation, or a HoF grant/replacement)
 						# catalyst_clergy_elevated_to_archbishopric = pam_investiture_crisis_catalyst_massive_value
 						# catalyst_clergy_gained_landed_title = pam_investiture_crisis_catalyst_trickle_value
@@ -985,6 +989,8 @@ the_christian_church = {
 						catalyst_clergy_embezzled_treasury = medium_situation_catalyst_gain
 						# EC
 						catalyst_hosted_ecumenical_council = massive_plus_situation_catalyst_gain
+						#CBs
+						catalyst_challenge_hof_replaced = monumental_situation_catalyst_gain
 					}
 				}
 				concord = {
@@ -1188,6 +1194,8 @@ the_christian_church = {
 						# # A cleric was elevated to an archbishopric (Request Elevation, or a HoF grant/replacement)
 						# catalyst_clergy_elevated_to_archbishopric = pam_investiture_crisis_catalyst_massive_value
 						# catalyst_clergy_gained_landed_title = pam_investiture_crisis_catalyst_trickle_value
+						# #CBs
+						# catalyst_challenge_hof_replaced = monumental_situation_catalyst_gain
 					# }
 				# }
 				saeculum_obscurum = {
@@ -1383,8 +1391,8 @@ the_christian_church = {
 						character_modifier = {
 							# Unique to IC
 							ecclesiastical_government_tax_contribution_mult = -0.25
-							monthly_county_control_growth_factor = -0.5
-							monthly_county_control_decline_factor = 0.5
+							monthly_control_change_when_below_baseline_mult = -0.25
+							monthly_control_change_when_above_baseline_mult = 0.25
 						}
 						parameters = {
 							the_christian_church_personal_secular_obligations = yes
@@ -1405,8 +1413,8 @@ the_christian_church = {
 						character_modifier = {
 							# Unique to IC
 							ecclesiastical_government_tax_contribution_mult = -0.1
-							monthly_county_control_growth_factor = -0.25
-							monthly_county_control_decline_factor = 0.25
+							monthly_control_change_when_below_baseline_mult = -0.1
+							monthly_control_change_when_above_baseline_mult = 0.1
 						}
 						parameters = {
 							# Standard secondary
@@ -1494,6 +1502,12 @@ the_christian_church = {
 							the_christian_church_can_create_kingdom_of_heaven = yes
 						}
 					}
+					christian_regular_main_power_rulers = {
+						parameters = {
+							# Unique to Crusades
+							the_christian_church_can_create_kingdom_of_heaven = yes
+						}
+					}
 				}
 
 				the_christian_church_subject_effects = {
@@ -1542,7 +1556,7 @@ the_christian_church = {
 						character_modifier = {
 							# Unique to Crusades
 							same_culture_holy_order_hire_cost_mult = -0.25
-							men_at_arms_recruitment_cost = -0.25
+							men_at_arms_recruitment_cost = -0.2
 						}
 						parameters = {
 							the_christian_church_cheaper_religious_wars = yes

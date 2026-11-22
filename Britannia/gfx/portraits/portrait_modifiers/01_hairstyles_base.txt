@@ -855,10 +855,11 @@ hairstyles = {
 					has_character_flag = has_scripted_appearance
 				}
 			}
-			# Different likelyhood of a clean shaven look in different cultures
+			# Different likelyhood of a clean shaven look in different cultures; diasporic courts take the local fashion, not the custom of shaving
 			modifier = {
 				add = @african_clothing_no_hair_chance
 				portrait_african_clothing_trigger = yes
+				NOT = { portrait_dresses_like_domicile_locals_trigger = { CULTURE_SCOPE = scope:culture } }
 			}
 			modifier = {
 				add = 20
@@ -867,6 +868,7 @@ hairstyles = {
 					portrait_malay_clothing_trigger = yes
 					portrait_southeast_asian_clothing_trigger = yes
 				}
+				NOT = { portrait_dresses_like_domicile_locals_trigger = { CULTURE_SCOPE = scope:culture } }
 			}
 			modifier = {
 				add = 2000
@@ -1611,7 +1613,7 @@ hairstyles = {
 				}
 				OR = {
 					culture = culture:pictish
-					culture = gaelic
+					culture = culture:gaelic
 				}
 			}
 		}
@@ -2371,6 +2373,54 @@ hairstyles = {
 		}
 	}
 
+	## Curly and afro hair in East and Southeast Asian wardrobes, which have no styles of their own for them ##
+
+	east_asian_curly_fallback = {
+		dna_modifiers = {
+			accessory = {
+				mode = add
+				gene = hairstyles
+				template = mena_hairstyles_curly
+				range = { 0 1 } # For the randomness to work correctly
+			}
+		}
+		weight = {
+			base = 0
+			modifier = {
+				add = 55
+				exists = this
+				has_gene = {
+					category = gene_hair_type
+					template = hair_curly
+				}
+				portrait_east_asian_hair_fallback_trigger = yes
+			}
+		}
+	}
+
+	east_asian_afro_fallback = {
+		dna_modifiers = {
+			accessory = {
+				mode = add
+				gene = hairstyles
+				template = mena_hairstyles_afro
+				range = { 0 1 } # For the randomness to work correctly
+			}
+		}
+		weight = {
+			base = 0
+			modifier = {
+				add = 55
+				exists = this
+				has_gene = {
+					category = gene_hair_type
+					template = hair_afro
+				}
+				portrait_east_asian_hair_fallback_trigger = yes
+			}
+		}
+	}
+
 	tgp_hairstyles_ainu = { 
 		dna_modifiers = {
 			accessory = {
@@ -2511,7 +2561,7 @@ hairstyles = {
 		weight = {
 			base = 0
 			modifier = { # Men
-				add = 15
+				add = 10
 				is_female = no
 				OR = {
 					NOT = { exists = this }
@@ -2530,6 +2580,38 @@ hairstyles = {
 					portrait_byzantine_clothing_trigger = yes
 				}
 				has_sp5_dlc_triggers = yes
+			}
+		}
+	}
+
+	## GDP - Western ##
+
+	gdp_hairstyles_western = { 
+		dna_modifiers = {
+			accessory = {
+				mode = add
+				gene = hairstyles
+				template = gdp_western_hairstyles
+				range = { 0 1 } # For the randomness to work correctly
+			}
+		}   
+		weight = {
+			base = 0
+			modifier = {
+				add = 20
+				is_female = yes # Currently we only have a female hairstyle
+				OR = {
+					has_gene = {
+						category = gene_hair_type
+						template = hair_straight
+					}
+					has_gene = {
+						category = gene_hair_type
+						template = hair_wavy
+					}
+				}
+				portrait_western_clothing_trigger = yes
+				has_gdp_dlc_trigger = yes
 			}
 		}
 	}

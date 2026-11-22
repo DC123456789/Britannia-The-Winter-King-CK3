@@ -3,9 +3,7 @@
 		save_scope_as = the_adventurer
 		# If we weren't an adventurer before, make us one.
 		if = {
-			limit = {
-				NOT = { has_trait = adventurer }
-			}
+			limit = { NOT = { has_trait = adventurer } }
 			add_trait = adventurer
 		}
 		hidden_effect = {
@@ -17,9 +15,10 @@
 				add_trait = adventurer_follower
 			}
 		}
+		# Liquidate camp
 		custom_tooltip = {
 			text = destroy_laamp_effect.tt.domicile_liquidated
-			laamp_clear_domicile_buildings_effect = yes
+			laamp_clear_domicile_buildings_liquidator_effect = yes
 		}
 		# Contacts have opinions™ about you.
 		## Be they good.
@@ -93,21 +92,34 @@
 }
 
 ep3_become_landed_transfer_effect = {
-	ordered_in_list = {
-		list = $TITLE_LIST$
-		order_by = tier
-		save_scope_as = new_primary_title
-	}
-	hidden_effect = {
-		# Liquidate camp
-		$TITLE_RECEIVER$ = { laamp_clear_domicile_buildings_liquidator_effect = yes }
-	}
-	$TITLE_RECEIVER$ = {
+	$TITLE_RECEIVER$ = { save_scope_as = purchaser }
+	scope:purchaser = {
+		# LAAMP HANDLING
+		hidden_effect = {
+			if = {
+				limit = {
+					government_has_flag = government_is_landless_adventurer
+				}
+				set_variable = { # Used to prevent invalid NF creation
+					name = laamp_invasion_flag
+					value = scope:target
+					days = 1
+				}
+				save_temporary_scope_as = was_adventurer
+			}
+			else_if = {
+				limit = {
+					government_has_flag = government_is_merchant
+				}
+				save_temporary_scope_as = was_merchant
+			}
+		}
 		if = {
 			limit = { character:90028 ?= this }
 			custom_tooltip = ep3_story_cycle_harrying.3053.b.tt
 			add_character_flag = hereward_settled_flag
 		}
+		# TRACKING
 		set_variable = {
 			name = ascended_throne_reason
 			value = $REASON$
@@ -117,28 +129,26 @@ ep3_become_landed_transfer_effect = {
 			name = ascended_throne_value
 			value = $REASON$
 		}
-		set_variable = { # Used to prevent invalid NF creation
-			name = laamp_invasion_flag
-			value = scope:new_primary_title
-			days = 1
-		}
 	}
+	# TRANSFER
 	create_title_and_vassal_change = {
 		type = $TYPE$
 		add_claim_on_loss = yes
 		save_scope_as = title_change
 	}
-	scope:new_primary_title.holder ?= { save_scope_as = old_holder }
+	# SAVE PREVIOUS HOLDER
+	scope:target.holder ?= { save_scope_as = old_holder }
 	if = {
 		limit = { NOT = { exists = scope:old_holder } }
 		scope:new_primary_title = {
 			ordered_de_jure_county = {
 				limit = { holder.top_liege = scope:defender.top_liege }
-				order_by = development_level
+				order_by = prosperity_level
 				holder = { save_scope_as = old_holder }
 			}
 		}
 	}
+	# SAVE SPECIAL GOVERNMENT OVERRIDES
 	scope:supporter ?= { save_scope_as = government_giver }
 	if = {
 		limit = { NOT = { exists = scope:government_giver } }
@@ -147,31 +157,35 @@ ep3_become_landed_transfer_effect = {
 	scope:government_giver.government_type ?= {
 		save_scope_as = old_government
 	}
+	# SAVE FUTURE PRIMARY TITLE
+	ordered_in_list = {
+		list = $TITLE_LIST$
+		order_by = tier
+		save_scope_as = new_primary_title
+	}
+	# SAVE FUTURE CAPITAL
 	if = {
-		limit = {
-			NOT = { exists = scope:new_capital }
-		}
+		limit = { NOT = { exists = scope:new_capital } }
 		ordered_in_list = {
 			list = $TITLE_LIST$
 			limit = { tier = tier_county }
-			order_by = development_level
+			order_by = prosperity_level
 			save_scope_as = new_capital
 		}
 	}
 	if = {
-		limit = {
-			NOT = { exists = scope:new_capital }
-		}
+		limit = { NOT = { exists = scope:new_capital } }
 		scope:new_primary_title ?= {
 			ordered_de_jure_county = {
 				limit = { holder = scope:old_holder }
 				alternative_limit = { holder.top_liege = scope:old_holder.top_liege }
-				order_by = development_level
+				order_by = prosperity_level
 				save_scope_as = new_capital
 			}
 		}
 	}
-	$TITLE_RECEIVER$ = {
+	# TRANSFER TITLES
+	scope:purchaser = {
 		if = {
 			limit = {
 				exists = scope:new_primary_title
@@ -183,7 +197,7 @@ ep3_become_landed_transfer_effect = {
 		else = {
 			scope:new_primary_title ?= {
 				change_title_holder_include_vassals = {
-					holder = $TITLE_RECEIVER$
+					holder = scope:purchaser
 					change = scope:title_change
 					take_baronies = no
 				}
@@ -238,13 +252,13 @@ ep3_become_landed_transfer_effect = {
 			NOT = { scope:new_primary_title ?= this }
 		}
 		change_title_holder_include_vassals = {
-			holder = $TITLE_RECEIVER$
+			holder = scope:purchaser
 			change = scope:title_change
 			take_baronies = no
 		}
 	}
 	if = {
-		limit = { $TITLE_RECEIVER$ = { has_character_flag = special_laamp_char } }
+		limit = { has_character_flag = special_laamp_char }
 		resolve_title_and_vassal_change = scope:title_change
 		# Then we resolve vassalage separately, so that we can lock in tiers.
 		create_title_and_vassal_change = {
@@ -253,6 +267,7 @@ ep3_become_landed_transfer_effect = {
 			save_scope_as = title_change
 		}
 	}
+	# SET VASSALAGE/INDEPENDENCE
 	if = {
 		limit = {
 			exists = scope:new_liege
@@ -264,7 +279,7 @@ ep3_become_landed_transfer_effect = {
 				}
 			}
 		}
-		$TITLE_RECEIVER$ = {
+		scope:purchaser = {
 			change_liege = {
 				liege = scope:new_liege
 				change = scope:title_change
@@ -273,185 +288,131 @@ ep3_become_landed_transfer_effect = {
 	}
 	else_if = {
 		limit = { top_liege != this }
-		$TITLE_RECEIVER$ = { becomes_independent = { change = scope:title_change } }
+		becomes_independent = { change = scope:title_change }
 	}
 	resolve_title_and_vassal_change = scope:title_change
+	# ENNOBLED PENALTIES
 	if = {
 		limit = {
-			$REASON$ = flag:purchased
-			any_in_list = {
-				list = purchase_land_vassals_taken
-				always = yes
+			$NEVER_ENNOBLED$ = flag:no
+			trigger_if = {
+				limit = { exists = scope:republic }
+				scope:republic = no
 			}
 		}
-		create_title_and_vassal_change = {
-			type = $TYPE$
-			add_claim_on_loss = yes
-			save_scope_as = purchase_land_vassal_change
-		}
-		every_in_list = {
-			list = purchase_land_vassals_taken
-			change_liege = {
-				liege = $TITLE_RECEIVER$
-				change = scope:purchase_land_vassal_change
+		scope:purchaser = {
+			# TODO_GDP_CD: Should TITLE_RECEIVER be needed here?
+			ep3_become_landed_ennobled_penalty_effect = {
+				TITLE = scope:new_primary_title
+				TITLE_RECEIVER = scope:purchaser
 			}
 		}
-		resolve_title_and_vassal_change = scope:purchase_land_vassal_change
 	}
-	$TITLE_RECEIVER$ = {
-		if = {
-			limit = { exists = scope:old_government }
-			# We don't expect to actually trigger most of the below, as most are not valid targets to begin with, but all are included for completeness and mod support
-			switch = {
-				trigger = scope:old_government
-				government_type:nomad_government = {
-					#Did you demand a herder's pastureland?
-					if = {
-						limit = {
-							scope:new_capital.title_province = {
-								has_holding = yes
-								NOT = { has_holding_type = nomad_holding }
-							}
+	# Set government type
+	# Skip republics, gdp_found_a_republic_effect handles that path
+	if = {
+		limit = {
+			exists = scope:old_government
+			NOT = {
+				scope:republic ?= yes
+			}
+		}
+		# We don't expect to actually trigger most of the below, as most are not valid targets to begin with, but all are included for completeness and mod support
+		switch = {
+			trigger = scope:old_government
+			government_type:nomad_government = {
+				#Did you demand a herder's pastureland?
+				if = {
+					limit = {
+						scope:new_capital.title_province = {
+							has_holding = yes
+							NOT = { has_holding_type = nomad_holding }
 						}
-						scope:new_capital.title_province = { set_holding_type = nomad_holding }
 					}
-					change_government = nomad_government
+					scope:new_capital.title_province = { set_holding_type = nomad_holding }
 				}
-				government_type:mandala_government = {
+				change_government = nomad_government
+			}
+			government_type:mandala_government = {
+				if = {
+					limit = {
+						faith = { has_doctrine = doctrine_polytheist }
+					}
+					change_government = mandala_government
+					#Sort out the House shenanigans
 					if = {
-						limit = {
-							faith = { has_doctrine = doctrine_polytheist }
-						}
-						change_government = mandala_government
-						#Sort out the House shenanigans
-						if = {
-							limit = { is_house_head = no }
-							house = {
-								if = {
-									limit = {
-										house_head = {
-											is_landed = no
-											is_courtier_of = root
-										}
+						limit = { is_house_head = no }
+						house = {
+							if = {
+								limit = {
+									house_head = {
+										is_landed = no
+										is_courtier_of = root
 									}
-									set_house_head = root
 								}
-							}
-						}
-						else = {
-							house ?= {
-								set_house_aspiration = { type = no_aspect }
+								set_house_head = root
 							}
 						}
 					}
 					else = {
-						assign_feudal_governments_effect = yes
-					}
-				}
-				government_type:japan_administrative_government = {
-					if = {
-						limit = {
-							scope:new_liege ?= { has_government = japan_administrative_government }
+						house ?= {
+							set_house_aspiration = { type = no_aspect }
 						}
-						change_government = japan_administrative_government
 					}
-					else = { change_government = feudal_government }
 				}
-				fallback = {
-					change_government = scope:old_government
+				else = {
+					assign_feudal_governments_effect = yes
 				}
 			}
-		}
-		# Otherwise we proceed as normal
-		else = {
-			$TITLE_RECEIVER$ = {
-				# Change our government according to the government of our liege.
-				assign_new_government_effect = yes
+			government_type:herder_government = {
+				change_government = herder_government
 			}
-			# Ennobled adventurer penalties
-			if = {
-				limit = { $ENNOBLED_ADVENTURER$ = flag:yes }
+			government_type:celestial_government = {
+				change_government = celestial_government
+			}
+			government_type:steppe_admin_government = {
+				change_government = steppe_admin_government
+			}
+			government_type:meritocratic_government = {
+				change_government = meritocratic_government
+			}
+			government_type:japan_feudal_government = {
+				change_government = japan_feudal_government
+			}
+			government_type:japan_administrative_government = {
 				if = {
 					limit = {
-						calc_true_if = {
-							amount = 3
-							prestige_level <= 3
-							scope:new_capital.culture ?= {
-								NOR = {
-									$TITLE_RECEIVER$.culture ?= this
-									$TITLE_RECEIVER$.primary_spouse.culture ?= this
-									$TITLE_RECEIVER$.primary_heir.culture ?= this
-								}
-							}
-							scope:new_capital.faith != faith
-						}
+						scope:new_liege ?= { has_government = japan_administrative_government }
 					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_reason_3
-					add_character_modifier = {
-						modifier = ep3_ennobled_adventurer_modifier_3
-						years = 30
-					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_rules
+					change_government = japan_administrative_government
 				}
-				else_if = {
-					limit = {
-						calc_true_if = {
-							amount = 2
-							prestige_level <= 3
-							scope:new_capital.culture ?= {
-								NOR = {
-									$TITLE_RECEIVER$.culture ?= this
-									$TITLE_RECEIVER$.primary_spouse.culture ?= this
-									$TITLE_RECEIVER$.primary_heir.culture ?= this
-								}
-							}
-							scope:new_capital.faith != faith
-						}
-					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_reason_2
-					add_character_modifier = {
-						modifier = ep3_ennobled_adventurer_modifier_2
-						years = 20
-					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_rules
-				}
-				else_if = {
-					limit = {
-						calc_true_if = {
-							amount = 1
-							prestige_level <= 3
-							scope:new_capital.culture ?= {
-								NOR = {
-									$TITLE_RECEIVER$.culture ?= this
-									$TITLE_RECEIVER$.primary_spouse.culture ?= this
-									$TITLE_RECEIVER$.primary_heir.culture ?= this
-								}
-							}
-							scope:new_capital.faith != faith
-						}
-					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_reason_1
-					add_character_modifier = {
-						modifier = ep3_ennobled_adventurer_modifier_1
-						years = 10
-					}
-					custom_tooltip = ep3_ennobled_adventurer_modifier_rules
-				}
+				else = { change_government = feudal_government }
+			}
+			fallback = {
+				change_government = scope:old_government
 			}
 		}
 	}
-	save_scope_value_as = { name = already_set_government value = yes }		# Don't reset government in the destroy_laamp_effect
-	destroy_laamp_effect = { ADVENTURER = $TITLE_RECEIVER$ }
-	# Setup NF if valid
-	$TITLE_RECEIVER$ = {
-		# Setup NF if valid
-		if = {
-			limit = {
-				government_has_mechanic = administrative
-				government_allows = noble_families
-			}
-			give_new_noble_family_title_effect = yes
+	# Otherwise we proceed as normal
+	else_if = {
+		limit = { NOT = { scope:republic = yes } }
+		scope:purchaser = {
+			# Change our government according to the government of our liege.
+			assign_new_government_effect = yes
 		}
+	}
+	### CLEANUP LANDLESS
+	if = {
+		limit = { exists = scope:was_adventurer }
+		save_scope_value_as = { name = already_set_government value = yes }		# Don't reset government in the destroy_laamp_effect
+		destroy_laamp_effect = { ADVENTURER = scope:purchaser }
+	}
+	# When a merchant founds a republic, their company stays as the founding patrician family title
+	# gdp_found_a_republic_effect handles the full transition, so we do not destroy the company here
+	### Setup Admin NF if valid
+	if = {
+		limit = { government_has_mechanic = administrative }
+		give_new_noble_family_title_effect = yes
 	}
 	
 	# BTWK - If you seized land in a conquest war, you are vulnerable to conquest from
@@ -600,6 +561,7 @@ give_noble_family_title_effect = {
 						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = japan_administrative_government
+						liege = $LIEGE$
 						save_scope_as = new_title
 					}
 				}
@@ -611,6 +573,7 @@ give_noble_family_title_effect = {
 						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = japan_feudal_government
+						liege = $LIEGE$
 						save_scope_as = new_title
 					}
 				}
@@ -622,6 +585,7 @@ give_noble_family_title_effect = {
 						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = celestial_government
+						liege = $LIEGE$
 						save_scope_as = new_title
 					}
 					trigger_event = {
@@ -637,6 +601,7 @@ give_noble_family_title_effect = {
 						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = meritocratic_government
+						liege = $LIEGE$
 						save_scope_as = new_title
 					}
 				}
@@ -648,7 +613,39 @@ give_noble_family_title_effect = {
 						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = steppe_admin_government
+						liege = $LIEGE$
 						save_scope_as = new_title
+					}
+				}
+			}
+			republic_government = { # Republic Government also uses county NFs
+				prev = {
+					save_scope_as = republican_founder
+					if = {
+						limit = { NOT = { has_government = republic_government } }
+						change_government = republic_government
+					}
+					if = {
+						limit = { is_lowborn = no }
+						house = { save_temporary_scope_as = patrician_title_house }
+						every_close_family_member = {
+							limit = {
+								is_alive = yes
+								NOT = { exists = house }
+							}
+							set_house = scope:patrician_title_house
+						}
+					}
+					create_dynamic_title = {
+						name = NEW_PATRICIAN_TITLE_NAME
+						tier = county
+						type = title_type_merchant_family
+						holder = scope:republican_founder
+						article = DEFAULT_TITLE_NAME_ARTICLE
+						save_scope_as = new_title
+					}
+					scope:new_title ?= {
+						add_title_law = noble_family_succession_law
 					}
 				}
 			}
@@ -678,9 +675,10 @@ give_noble_family_title_effect = {
 				prev = {
 					give_noble_family_title = {
 						name = noble_family_name
-						tier = duchy
+						tier = county
 						article = DEFAULT_TITLE_NAME_ARTICLE
 						government = administrative_government
+						liege = $LIEGE$
 						save_scope_as = new_title
 					}
 				}

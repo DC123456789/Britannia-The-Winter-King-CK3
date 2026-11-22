@@ -5,21 +5,21 @@ send_gift_opinion = {
 		value = 5
 		if = {
 			limit = {
-				scope:actor.diplomacy > 0
+				scope:puppet_or_actor.diplomacy > 0
 			}
 			if = {
 				limit = {
-					scope:actor.diplomacy <= 20
+					scope:puppet_or_actor.diplomacy <= 20
 				}
 				add = {
-					value = scope:actor.diplomacy
+					value = puppet_or_actor:actor.diplomacy
 					multiply = 2
 				}
 			}
 			else = {
 				add = 40
 				add = {
-					value = scope:actor.diplomacy
+					value = puppet_or_actor:actor.diplomacy
 					subtract = 20
 				}
 			}
@@ -35,19 +35,19 @@ send_gift_opinion = {
 		}
 		if = {
 			limit = {
-				scope:recipient.liege = scope:actor
+				scope:recipient.liege = scope:puppet_or_actor
 			}
 			divide = 1.5
 		}
 		if = {
 			limit = {
-				scope:recipient = scope:actor.faith.religious_head
+				scope:recipient = scope:puppet_or_actor.faith.religious_head
 			}
 			divide = 3
 		}
 		if = {
 			limit = {
-				scope:actor.culture ?= {
+				scope:puppet_or_actor.culture ?= {
 					has_innovation = fp3_innovation_fritware
 				}
 			}
@@ -57,15 +57,15 @@ send_gift_opinion = {
 	}
 	if = {
 		limit = {
-			scope:actor.culture = { has_cultural_parameter = more_gift_opinion }
+			scope:puppet_or_actor.culture = { has_cultural_parameter = more_gift_opinion }
 		}
 		multiply = 1.2
 	}
 	if = {
 		limit = {
-			scope:actor = {
+			scope:puppet_or_actor = {
 				any_sub_realm_barony = {
-					county.holder = scope:actor
+					county.holder = scope:puppet_or_actor
 					title_province = { 
 						has_building_or_higher = dragon_kiln_01
 					}
@@ -76,9 +76,9 @@ send_gift_opinion = {
 	}
 	if = {
 		limit = {
-			scope:actor = { has_perk = thoughtful_perk }
+			scope:puppet_or_actor = { has_perk = thoughtful_perk }
 		}
-		multiply = 1.5			# BTWK
+		multiply = 1.25
 	}
 	if = {
 		limit = {
@@ -86,6 +86,6 @@ send_gift_opinion = {
 				has_personal_tenet_flag = tenet_simony_personal_gifts
 			}
 		}
-		multiply = 2
+		multiply = 1.25
 	}
 }

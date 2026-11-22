@@ -76,7 +76,7 @@ window = {
 					button_tab = {
 						name = "open_family_tab"
 						shortcut = "tab_1"
-						visible = "[GetPlayer.GetGovernment.HasRule( 'administrative' )]"
+						visible = "[GetPlayer.GetGovernment.HasMechanic( 'administrative' )]"
 
 						down = "[GetVariableSystem.Exists( 'your_family' )]"
 
@@ -2505,7 +2505,7 @@ types GovernmentAdministration
 
 							text_single = {
 								layoutpolicy_horizontal = expanding
-								text = "game_concept_childrens_examination"
+								text = "[childrens_examination|E]"
 								align = nobaseline
 							}
 
@@ -2827,15 +2827,9 @@ types GovernmentAdministration
 
 		tooltipwidget = {
 			widget_value_breakdown_tooltip = {
-				datacontext = "[GovernmentAdministrationWindow.GetHousePowerTooltip( DynastyHouse.Self )]"
-
-				blockoverride "header"
-				{
-					text_label_left = {
-						layoutpolicy_horizontal = expanding
-						text = "game_concept_powerful_family_rating"
-						default_format = "#T"
-					}
+				datacontext = "[DynastyHouse.GetHousePowerBreakdown]"
+				blockoverride "header_text" {
+					text = game_concept_powerful_family_rating
 				}
 			}
 		}
@@ -2863,15 +2857,9 @@ types GovernmentAdministration
 
 		tooltipwidget = {
 			widget_value_breakdown_tooltip = {
-				datacontext = "[GovernmentAdministrationWindow.GetHousePowerTooltip( DynastyHouse.Self )]"
-
-				blockoverride "header"
-				{
-					text_label_left = {
-						layoutpolicy_horizontal = expanding
-						text = "game_concept_powerful_family_rating"
-						default_format = "#T"
-					}
+				datacontext = "[DynastyHouse.GetHousePowerBreakdown]"
+				blockoverride "header_text" {
+					text = game_concept_powerful_family_rating
 				}
 			}
 		}

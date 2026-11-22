@@ -13,6 +13,137 @@ conversion_unreformed_faith_penalty = 0.5
 court_chaplain_conversion_factors = {
 	value = 1
 	if = {
+		limit = { exists = scope:county.title_province }
+		multiply = {
+			value = 1
+			subtract = {
+				value = scope:county.title_province.province_size_level
+				multiply = convert_faith_settlement_size_penalty_step
+			}
+			desc = COURT_CHAPLAIN_CONVERSION_SETTLEMENT_SIZE
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:county.faith
+			exists = scope:councillor.faith
+			scope:councillor.faith = {
+				faith_hostility_level = {
+					target = scope:county.faith
+					value >= faith_evil_level
+				}
+			}
+		}
+		multiply = {
+			value = convert_faith_hostility_evil_mult
+			desc = COURT_CHAPLAIN_CONVERSION_HOSTILITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county.faith
+			exists = scope:councillor.faith
+			scope:councillor.faith = {
+				faith_hostility_level = {
+					target = scope:county.faith
+					value >= faith_hostile_level
+				}
+			}
+		}
+		multiply = {
+			value = convert_faith_hostility_hostile_mult
+			desc = COURT_CHAPLAIN_CONVERSION_HOSTILITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county.faith
+			exists = scope:councillor.faith
+			scope:councillor.faith = {
+				faith_hostility_level = {
+					target = scope:county.faith
+					value >= faith_astray_level
+				}
+			}
+		}
+		multiply = {
+			value = convert_faith_hostility_astray_mult
+			desc = COURT_CHAPLAIN_CONVERSION_HOSTILITY
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:county
+			scope:county.culture = {
+				OR = {
+					is_divergent_culture = yes
+					is_hybrid_culture = yes
+				}
+			}
+			scope:councillor_liege.culture = { has_same_culture_heritage = scope:county.culture }
+		}
+		multiply = {
+			value = convert_faith_divergence_shared_root_mult
+			desc = COURT_CHAPLAIN_CONVERSION_DIVERGENCE
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:county
+			scope:county.culture = scope:councillor_liege.culture
+		}
+		multiply = {
+			value = convert_faith_cultural_same_culture_mult
+			desc = COURT_CHAPLAIN_CONVERSION_CULTURAL_SIMILARITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county
+			scope:councillor_liege.culture = { has_same_culture_heritage = scope:county.culture }
+		}
+		multiply = {
+			value = convert_faith_cultural_same_heritage_mult
+			desc = COURT_CHAPLAIN_CONVERSION_CULTURAL_SIMILARITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county
+			scope:councillor_liege.culture = {
+				cultural_acceptance = { target = scope:county.culture value < 25 }
+			}
+		}
+		multiply = {
+			value = convert_faith_cultural_acceptance_alien_mult
+			desc = COURT_CHAPLAIN_CONVERSION_CULTURAL_SIMILARITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county
+			scope:councillor_liege.culture = {
+				cultural_acceptance = { target = scope:county.culture value < 50 }
+			}
+		}
+		multiply = {
+			value = convert_faith_cultural_acceptance_low_mult
+			desc = COURT_CHAPLAIN_CONVERSION_CULTURAL_SIMILARITY
+		}
+	}
+	else_if = {
+		limit = {
+			exists = scope:county
+			scope:councillor_liege.culture = {
+				cultural_acceptance = { target = scope:county.culture value < 75 }
+			}
+		}
+		multiply = {
+			value = convert_faith_cultural_acceptance_mid_mult
+			desc = COURT_CHAPLAIN_CONVERSION_CULTURAL_SIMILARITY
+		}
+	}
+	if = {
 		limit = {
 			scope:councillor.faith = {
 				has_doctrine_parameter = unreformed

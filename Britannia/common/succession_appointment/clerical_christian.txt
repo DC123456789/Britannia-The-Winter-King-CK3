@@ -2,7 +2,7 @@
 	allow_children = no
 	use_investment_cap = no
 	allowed_candidate_tier = any
-	keep_top_tier_titles_together = yes
+	limit_to_de_jure = no
 	allow_out_of_realm_investment = landless
 	cooldown = yes
 
@@ -129,7 +129,7 @@
 					has_government = ecclesiastical_government
 					is_landed = yes
 				}
-				add = { 
+				add = {
 					value = 25
 					desc = ecclesiastical_government_holder_desc
 				}
@@ -327,6 +327,48 @@
 				add = {
 					value = 15
 					desc = cleric_bonus_desc
+				}
+			}
+
+			if = { # Belongs to a well-regarded Patrician house
+				limit = {
+					scope:title = {
+						has_clerical_region = yes
+					}
+					house ?= {
+						house_head ?= {
+							government_has_flag = government_is_republic
+						}
+						house_power_score >= gdp_patrician_house_score_threshold_1_value
+					}
+				}
+				add = {
+					value = house.house_power_score
+					multiply = 0.1
+					max = 30
+					round = yes
+					desc = republic_house_rating_clerical_succession_desc
+				}
+			}
+
+			if = {
+				limit = {
+					scope:title.holder ?= { is_guelph_trigger = yes }
+					is_ghibelline_trigger = yes
+				}
+				subtract = {
+					value = gdp_ghibelline_ecclesiastical_succession_penalty_value
+					desc = ghibelline_ecclesiastical_succession_desc
+				}
+			}
+			else_if = {
+				limit = {
+					scope:title.holder ?= { is_guelph_trigger = yes }
+					is_family_of_ghibelline_leader_trigger = yes
+				}
+				subtract = {
+					value = gdp_ghibelline_family_ecclesiastical_succession_penalty_value
+					desc = ghibelline_family_ecclesiastical_succession_desc
 				}
 			}
 
@@ -711,7 +753,7 @@
 				limit = {
 					rite = scope:title.holder.rite
 				}
-				add = { 
+				add = {
 					value = 50
 					desc = same_rite_as_holder_desc
 				}
@@ -721,7 +763,7 @@
 				limit = {
 					rite != scope:title.holder.rite
 				}
-				add = { 
+				add = {
 					value = -50
 					desc = different_rite_as_holder_desc
 				}
