@@ -34,7 +34,7 @@ scripted_trigger siege_0001_valid_domicile_trigger = {
 	scope:occupant = {
 		OR = {
 			any_war_enemy = { this = scope:estate_owner_check }
-			any_war_enemy = { any_vassal_or_below = { this = scope:estate_owner_check } }
+			any_war_enemy = { target_is_vassal_or_below = scope:estate_owner_check }
 		}
 	}		
 	# BTWK - cannot capture prisoners from estates of offmap realms
@@ -57,7 +57,7 @@ siege.0001 = {
 				scope:county.holder = scope:previous_controller
 				OR = {
 					any_war_enemy = { this = scope:previous_controller }
-					any_war_enemy = { any_vassal_or_below = { this = scope:previous_controller } }
+					any_war_enemy = { target_is_vassal_or_below = scope:previous_controller }
 				}
 			}
 			AND = {
@@ -71,7 +71,7 @@ siege.0001 = {
 				}
 				OR = {
 					any_war_enemy = { this = scope:estate_owner_check }
-					any_war_enemy = { any_vassal_or_below = { this = scope:estate_owner_check } }
+					any_war_enemy = { target_is_vassal_or_below = scope:estate_owner_check }
 				}
 			}
 		}
@@ -360,6 +360,7 @@ siege.0001 = {
 			# Check if this prisoner is important enough (worth war score) that it is worth sending a toast about them in the first place.
 			if = {
 				limit = {
+					exists = scope:primary_siege_attacker
 					character_is_potential_valuable_prisoner = yes
 				}
 				save_scope_as = valuable_prisoner

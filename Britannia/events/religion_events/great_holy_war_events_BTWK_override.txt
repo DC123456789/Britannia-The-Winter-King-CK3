@@ -213,6 +213,7 @@ great_holy_war.0001 = {
 				faith = scope:the_faith
 				highest_held_title_tier >= tier_county
 				this != scope:ghw_sponsor
+				NOT = { government_has_flag = government_is_merchant }
 			}
 			trigger_event = great_holy_war.0003 #Send event immediately for player, then delay it for all the AIs.
 		}
@@ -688,6 +689,22 @@ great_holy_war.0005 = {
 			fraction = 0.2
 			prestige = no
 			gold = no
+		}
+		#Guelphs & Ghibellines
+		every_pledged_attacker = {
+			limit = {
+				# has_title = title:e_hre
+				faith = {
+					religious_head_title ?= title:k_papal_state
+					exists = religious_head
+				}
+			}
+			gg_reconciliation_catalyst_effect = {
+				ACTOR = this
+				RECIPIENT = faith.religious_head
+				CATALYST = catalyst_gg_emperor_took_the_cross
+				ONCE_A_YEAR = no
+			}
 		}
 	}
 }
