@@ -1,0 +1,224 @@
+﻿generated_merchant_template = {
+	age = { 25 50 }
+	random_traits_list = {
+		count = 1
+		education_intrigue_2 = { weight = { base = 35 } }
+		education_diplomacy_2 = { weight = { base = 35 } }
+		education_learning_2 = { weight = { base = 35 } }
+		education_stewardship_2 = { weight = { base = 35 } }
+		education_stewardship_3 = { weight = { base = 20 } }
+		education_stewardship_4 = { weight = { base = 10 } }
+	}
+	dynasty = generate
+	random_traits = yes
+	faith = this.faith
+	rite = this.rite
+	culture = this.culture
+	gender_female_chance = scope_faith_dominant_gender_female_chance
+	stewardship = {
+		min_template_medium_skill
+		max_template_medium_skill
+	}
+	learning = { 10 15 }
+	trait = lifestyle_traveler
+	after_creation = {
+		add_random_tiered_trait_track_xp_effect = {
+			TRAIT = lifestyle_traveler
+			TRACK = travel
+			LEVEL_1 = yes
+			LEVEL_3 = no
+		}
+		add_random_tiered_trait_track_xp_effect = {
+			TRAIT = lifestyle_traveler
+			TRACK = danger
+			LEVEL_1 = yes
+			LEVEL_3 = no
+		}
+	}
+}
+
+generated_scholar_template = {
+	age = { 25 60 }
+	gender_female_chance = 50 #No gender blocks for physicians
+	random_traits = yes
+	culture = root.culture
+	faith = root.faith
+	rite = root.rite
+	learning = {
+		min_guest_template_skill 
+		max_guest_template_skill
+	}
+	random_traits_list = {
+		education_learning_1 = { weight = { base = 35 } }
+		education_learning_2 = { weight = { base = 35 } }
+		education_learning_3 = { weight = { base = 20 } }
+		education_learning_4 = { weight = { base = 10 } }
+	}
+	random_traits_list = {
+		count = { 0 1 }
+		erudite = {}
+		theologian = {}
+		whole_of_body = {}
+		lifestyle_physician = {}
+		lifestyle_mystic = {}
+		lifestyle_herbalist = {}
+		chaste = {}
+		diligent = {}
+		patient = {}
+		humble = {}
+		shy = {}
+		content = {}
+		cynical = {}
+		lazy = {}
+	}
+	dynasty = none
+	after_creation = {
+		random_list = {
+			200 = {
+				# Character is of average weight, nothing happens	
+			}
+			25 = {
+				change_current_weight = -25
+			}
+			25 = {
+				change_current_weight = -75
+			}
+			25 = {
+				change_current_weight = 25
+			}
+			25 = {
+				change_current_weight = 75
+			}
+			5 = {
+				change_current_weight = 100
+			}
+			5 = {
+				change_current_weight = 200
+			}
+		}
+		random = {
+			chance = 1
+			
+			add_trait = lifestyle_poet
+			
+			modifier = {
+				add = 10
+				culture = { has_cultural_parameter = poet_trait_more_common }
+			}
+			modifier = {
+				add = 5
+				OR = {
+					culture = { has_cultural_pillar = heritage_north_germanic }
+					religion = religion:germanic_religion
+				}
+			}
+		}
+		set_interesting_traits_and_modifiers_effect = yes
+		add_random_tiered_trait_xp_effect = {
+			TRAIT = lifestyle_physician
+			LEVEL_1 = yes
+			LEVEL_3 = yes
+		}
+		add_random_tiered_trait_xp_effect = {
+			TRAIT = lifestyle_mystic
+			LEVEL_1 = yes
+			LEVEL_3 = no
+		}
+	}
+}
+
+bandit_captain_character = {
+	age = { 30 40 }
+	random_traits = yes
+	dynasty = none
+	faith = root.location.faith
+	rite = root.location.rite
+	culture = root.location.culture
+	trait = gallowsbait
+	trait = strong
+	trait = one_eyed
+	random_traits_list = {
+		count = 1
+		education_martial_2 = {}
+		education_martial_3 = {}
+	}
+	random_traits_list = {
+		count = 3
+		ambitious = {}
+		gregarious = {}
+		impatient = {}
+		wrathful = {}
+		callous = {}
+		stubborn = {}
+		vengeful = {}
+		greedy = {}
+		zealous = {}
+		diligent = {}
+		deceitful = {}
+		arrogant = {}
+	}
+	gender_female_chance = root_soldier_female_chance
+	diplomacy = {
+		min_template_medium_skill
+		min_template_medium_skill
+	}
+	martial = {
+		min_template_medium_skill
+		max_template_decent_skill
+	}
+	stewardship = {
+		min_template_medium_skill
+		max_template_decent_skill
+	}
+	intrigue = {
+		min_template_medium_skill
+		max_template_decent_skill
+	}
+	learning = {
+		min_template_low_skill
+		min_template_medium_skill
+	}
+	prowess = {
+		min_template_medium_skill
+		max_template_decent_skill
+	}
+	after_creation = {
+		random_list = {
+			100 = {
+				laamp_rewards_apply_criminal_xp_effect = {
+					TRACK = bandit
+					XP_MAX = gallowsbait_xp_massive_gain
+					XP_MIN = gallowsbait_xp_massive_gain
+				}
+			}
+			100 = {
+				laamp_rewards_apply_criminal_xp_effect = {
+					TRACK = trickster
+					XP_MAX = gallowsbait_xp_massive_gain
+					XP_MIN = gallowsbait_xp_massive_gain
+				}
+			}
+			100 = {
+				laamp_rewards_apply_criminal_xp_effect = {
+					TRACK = thief
+					XP_MAX = gallowsbait_xp_massive_gain
+					XP_MIN = gallowsbait_xp_massive_gain
+				}
+			}
+			100 = {
+				laamp_rewards_apply_criminal_xp_effect = {
+					TRACK = poacher
+					XP_MAX = gallowsbait_xp_massive_gain
+					XP_MIN = gallowsbait_xp_massive_gain
+				}
+			}
+			100 = {
+				laamp_rewards_apply_criminal_xp_effect = {
+					TRACK = marauder
+					XP_MAX = gallowsbait_xp_massive_gain
+					XP_MIN = gallowsbait_xp_massive_gain
+				}
+			}
+		}
+	}
+}
