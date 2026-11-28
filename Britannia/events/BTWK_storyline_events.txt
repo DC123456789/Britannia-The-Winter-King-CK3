@@ -2461,7 +2461,12 @@ BTWK_story_event.0300 = {
 		# Get rivalry with Gorfyddyd
 		if = {
 			limit = { character:16 ?= { is_alive = yes } }
-			character:16 = { set_relation_rival = root }
+			character:16 = { 
+				set_relation_rival_effect = {
+					TARGET = root
+					REASON = rival_insulted_dynasty
+				}
+			}
 		}
 		hidden_effect = {
 			scope:ceinwyn = { remove_trait = restricted_marriage }
@@ -2524,7 +2529,10 @@ BTWK_story_event.0301 = {
 			scope:ceinwyn = { remove_trait_force_tooltip = restricted_marriage }
 			if = {
 				limit = { character:16 ?= root }
-				set_relation_rival = scope:arthur
+				set_relation_rival_effect = {
+					TARGET = scope:arthur
+					REASON = rival_insulted_dynasty
+				}
 			}
 		}
 	}
